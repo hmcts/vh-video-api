@@ -10,7 +10,7 @@ namespace VideoApi.DAL
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddUserSecrets("d76b6eb8-f1a2-4a51-9b8f-21e1b6b81e4f")
+                .AddUserSecrets("9AECE566-336D-4D16-88FA-7A76C27321CD")
                 .Build();
             var builder = new DbContextOptionsBuilder<VideoApiDbContext>();
             builder.UseSqlServer(config.GetConnectionString("VhVideoApi"));
