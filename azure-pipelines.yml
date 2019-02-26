@@ -13,7 +13,7 @@ variables:
     "Testing/TestClientId":"$(vh-admin-web-appid)",
     "Testing/TestClientSecret":"$(vh-admin-web-key)"
     '
-  dalWorkingDirectory: 'VideoAPI/Video.DAL'
+  dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests
   secretsFilter: 'vh-admin-web-appid,vh-admin-web-key,tenantid,vh-video-api-identifieruris' # filters out secrets returned from key vault
 
