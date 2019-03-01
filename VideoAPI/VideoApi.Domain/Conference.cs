@@ -9,13 +9,20 @@ namespace VideoApi.Domain
 {
     public class Conference : Entity<Guid>
     {
-        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber)
+        private Conference()
+        {
+            Participants = new List<Participant>();
+            ConferenceStatuses = new List<ConferenceStatus>();
+        }
+
+        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber) : this()
         {
             Id = Guid.NewGuid();
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
+            
         }
 
         public Guid HearingRefId { get; protected set; }

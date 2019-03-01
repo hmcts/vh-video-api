@@ -4,14 +4,16 @@ using FizzWare.NBuilder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
+using VideoApi.IntegrationTests.Helper;
 
 namespace VideoApi.IntegrationTests.Database
 {
     public abstract class DatabaseTestsBase
     {
         private string _databaseConnectionString;
-        protected DbContextOptions<VideoApiDbContext> BookingsDbContextOptions;
+        protected DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions;
         protected readonly BuilderSettings BuilderSettings = new BuilderSettings();
+        protected TestDataManager TestDataManager;
         
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -27,10 +29,12 @@ namespace VideoApi.IntegrationTests.Database
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(_databaseConnectionString);
-            BookingsDbContextOptions = dbContextOptionsBuilder.Options;
+            VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
             
-            var context = new VideoApiDbContext(BookingsDbContextOptions);
+            var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             context.Database.Migrate();
+            
+            TestDataManager = new TestDataManager(VideoBookingsDbContextOptions);
         }
     }
 }

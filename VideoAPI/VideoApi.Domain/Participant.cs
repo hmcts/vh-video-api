@@ -8,8 +8,13 @@ namespace VideoApi.Domain
 {
     public class Participant : Entity<long>
     {
+        private Participant()
+        {
+            ParticipantStatuses = new List<ParticipantStatus>();
+        }
+
         public Participant(Guid participantRefId, string name, string displayName, string username, string hearingRole,
-            string caseTypeGroup)
+            string caseTypeGroup) : this()
         {
             ParticipantRefId = participantRefId;
             DisplayName = displayName;
