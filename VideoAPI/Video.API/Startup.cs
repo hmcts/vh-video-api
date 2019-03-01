@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
+using Video.API.Events;
 using Video.API.Extensions;
 using VideoApi.Common.Configuration;
 using VideoApi.DAL;
@@ -29,25 +35,39 @@ namespace Video.API
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
-            
+
             services.AddCustomTypes();
-            
+
             RegisterAuth(services);
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
-            
+
             services.AddCors();
-            
+
             services.AddDbContextPool<VideoApiDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("VhVideoApi")));
+
+            RegisterSignalR(services);
         }
-        
+
+        private void RegisterSignalR(IServiceCollection services)
+        {
+            services.AddSignalR()
+                .AddJsonProtocol(options =>
+                {
+                    options.PayloadSerializerSettings.ContractResolver =
+                        new DefaultContractResolver();
+                }).AddHubOptions<EventHub>(options => { options.EnableDetailedErrors = true; });
+
+            ValidateUserTokenForHub(services);
+            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+        }
+
         private void RegisterSettings(IServiceCollection services)
         {
-            services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd",options));
+            services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
         }
-        
+
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var policy = new AuthorizationPolicyBuilder()
@@ -57,7 +77,7 @@ namespace Video.API
             serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
 
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
-            
+
             serviceCollection.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -71,6 +91,44 @@ namespace Video.API
             });
 
             serviceCollection.AddAuthorization();
+        }
+
+        private void ValidateUserTokenForHub(IServiceCollection services)
+        {
+            var azureAdConfiguration = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = azureAdConfiguration.Authority;
+                options.TokenValidationParameters =
+                    new TokenValidationParameters
+                    {
+                        LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                    };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        if (string.IsNullOrEmpty(accessToken)) return Task.CompletedTask;
+
+                        var path = context.HttpContext.Request.Path;
+                        if (path.StartsWithSegments("/eventhub"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,6 +164,16 @@ namespace Video.API
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseMvc();
+
+            app.UseSignalR(routes =>
+            {
+                const string path = "/eventhub";
+                routes.MapHub<EventHub>(path,
+                    options =>
+                    {
+                        options.Transports = HttpTransportType.ServerSentEvents | HttpTransportType.LongPolling;
+                    });
+            });
         }
     }
 }
