@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 
@@ -24,23 +25,21 @@ namespace VideoApi.Domain
         public string Username { get; set; }
         public string HearingRole { get; set; }
         public string CaseTypeGroup { get; set; }
-        protected virtual IList<ParticipantStatus> StatusHistory { get; set; }
+        protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
+
+        public IList<ParticipantStatus> GetParticipantStatuses()
+        {
+            return ParticipantStatuses;
+        }
+
+        public ParticipantStatus GetCurrentStatus()
+        {
+            return ParticipantStatuses.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+        }
 
         public void UpdateParticipantStatus(ParticipantState status)
         {
-            StatusHistory.Add(new ParticipantStatus(status));
+            ParticipantStatuses.Add(new ParticipantStatus(status));
         }
-    }
-
-    public class ParticipantStatus : Entity<long>
-    {
-        public ParticipantStatus(ParticipantState participantState)
-        {
-            ParticipantState = participantState;
-            TimeStamp = DateTime.UtcNow;
-        }
-
-        public ParticipantState ParticipantState { get; set; }
-        public DateTime TimeStamp { get; set; }
     }
 }

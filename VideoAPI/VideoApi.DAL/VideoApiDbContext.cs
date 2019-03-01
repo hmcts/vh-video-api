@@ -2,11 +2,15 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using VideoApi.Domain;
 
 namespace VideoApi.DAL
 {
     public class VideoApiDbContext : DbContext
     {
+        public DbSet<Conference> Conferences { get; set; }
+        public DbSet<Event> Events { get; set; }
+        
         public VideoApiDbContext(DbContextOptions options) : base(options)
         {
         }
