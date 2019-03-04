@@ -6,7 +6,7 @@ namespace VideoApi.DAL.Exceptions
 {
     public class ConferenceNotFoundException : Exception
     {
-        public ConferenceNotFoundException(object conferenceId) : base($"Conference {conferenceId} does not exist")
+        public ConferenceNotFoundException(Guid conferenceId) : base($"Conference {conferenceId} does not exist")
         {
         }
     }

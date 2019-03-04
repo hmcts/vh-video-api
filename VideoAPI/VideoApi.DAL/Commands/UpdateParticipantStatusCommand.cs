@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
@@ -11,6 +12,21 @@ namespace VideoApi.DAL.Commands
         {
             ParticipantId = participantId;
             ParticipantState = participantState;
+        }
+    }
+
+    public class UpdateParticipantStatusCommandHandler : ICommandHandler<UpdateParticipantStatusCommand>
+    {
+        private readonly VideoApiDbContext _context;
+        
+        public UpdateParticipantStatusCommandHandler(VideoApiDbContext context)
+        {
+            _context = context;
+        }
+        
+        public Task Handle(UpdateParticipantStatusCommand command)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
