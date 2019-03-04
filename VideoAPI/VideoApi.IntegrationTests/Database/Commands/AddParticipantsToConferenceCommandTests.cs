@@ -45,7 +45,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var confParticipants = conference.GetParticipants();
             confParticipants.Any(x => x.Username == participant.Username).Should().BeTrue();
-            var afterCount = seededConference.GetParticipants().Count;
+            var afterCount = conference.GetParticipants().Count;
             afterCount.Should().BeGreaterThan(beforeCount);
         }
 
