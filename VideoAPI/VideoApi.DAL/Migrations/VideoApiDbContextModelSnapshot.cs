@@ -45,7 +45,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<Guid?>("ConferenceId");
 
-                    b.Property<int>("ConferenceState");
+                    b.Property<int>("ParticipantState");
 
                     b.Property<DateTime>("TimeStamp");
 

@@ -21,7 +21,7 @@ namespace VideoApi.DAL.Commands
             CaseNumber = caseNumber;
         }
     }
-    
+
     public class CreateConferenceCommandHandler : ICommandHandler<CreateConferenceCommand>
     {
         private readonly VideoApiDbContext _context;
