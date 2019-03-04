@@ -29,8 +29,8 @@ namespace VideoApi.Domain
         public string CaseType { get; protected set; }
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
-        public virtual IList<Participant> Participants { get; set; }
-        public virtual IList<ConferenceStatus> ConferenceStatuses { get; set; }
+        protected virtual IList<Participant> Participants { get; set; }
+        protected virtual IList<ConferenceStatus> ConferenceStatuses { get; set; }
 
         public void AddParticipant(Participant participant)
         {

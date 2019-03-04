@@ -8,6 +8,7 @@ using VideoApi.Domain;
 using System.Collections.Generic;
 using System.Linq;
 using Testing.Common.Helper.Builders;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 
 namespace VideoApi.IntegrationTests.Database.Commands
@@ -28,45 +29,34 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_save_new_participant_to_conference()
+        public async Task should_add_participant_to_conference()
         {
-            //Creating a Conference
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-
-            var participant = new ParticipantBuilder().Build();
-            List<Participant> participants = new List<Participant>() {participant};
-
-            var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants);
-            await _handler.Handle(command);
             var beforeCount = seededConference.GetParticipants().Count;
+            
+            var participant = new ParticipantBuilder(true).Build();
+            var participants = new List<Participant>() {participant};
+            var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants);
+            
+            await _handler.Handle(command);
+            
             var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-
             var confParticipants = conference.GetParticipants();
             confParticipants.Any(x => x.Username == participant.Username).Should().BeTrue();
-
             var afterCount = seededConference.GetParticipants().Count;
             afterCount.Should().BeGreaterThan(beforeCount);
         }
 
         [Test]
-        public async Task should_throw_ConferenceNotFoundException_when_trying_to_add_new_participant_to_non_existing_conference()
+        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var participantId = Guid.NewGuid();
-            var name = "Demo User";
-            var displayName = "Demo User";
-            var userName = "DemoUser";
-            var hearingRole = "Hearing Role";
-            var caseTypeGroup = "Demo Group";
-            Participant participant = new Participant(participantId, name, displayName,
-                                                userName, hearingRole, caseTypeGroup);
-            List<Participant> participants = new List<Participant>() { participant };
+            var participants = new List<Participant>();
 
             var command = new AddParticipantsToConferenceCommand(conferenceId, participants);
-            await _handler.Handle(command);
-
+            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
         [TearDown]

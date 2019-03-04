@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Testing.Common.Helper.Builders;
 using VideoApi.DAL;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.IntegrationTests.Helper
 {
@@ -23,6 +24,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant("Solicitor", "Claimant")
                 .WithParticipant("Solicitor LIP", "Defendant")
                 .WithParticipant("Solicitor", "Defendant")
+                .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             
             using (var db = new VideoApiDbContext(_dbContextOptions))
@@ -39,8 +41,8 @@ namespace VideoApi.IntegrationTests.Helper
             using (var db = new VideoApiDbContext(_dbContextOptions))
             {
                 var conference = await db.Conferences
-                    .Include(x => x.Participants)
-                    .Include(x => x.ConferenceStatuses)
+                    .Include("Participants.ParticipantStatuses")
+                    .Include("ConferenceStatuses")
                     .SingleAsync(x => x.Id == conferenceId);
                 
                 db.Remove(conference);

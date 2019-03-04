@@ -41,7 +41,7 @@ namespace VideoApi.DAL.Commands
                 var participantToRemove = new Participant(Guid.NewGuid(), participant.Name, participant.DisplayName, participant.Username,
                     participant.HearingRole, participant.CaseTypeGroup);
 
-                conference.Participants.Remove(participantToRemove);
+                conference.RemoveParticipant(participantToRemove);
 
             }
             await _context.SaveChangesAsync();

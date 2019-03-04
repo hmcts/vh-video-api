@@ -32,7 +32,7 @@ namespace VideoApi.DAL.Commands
         
         public async Task Handle(UpdateParticipantStatusCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Participants).ThenInclude(x => x.ParticipantStatuses)
+            var conference = await _context.Conferences.Include("Participants.ParticipantStatuses")
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
             
             if (conference == null)

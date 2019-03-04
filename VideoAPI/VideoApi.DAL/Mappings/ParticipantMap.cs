@@ -17,6 +17,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.Username);
             builder.Property(x => x.HearingRole);
             builder.Property(x => x.CaseTypeGroup);
+
+            builder.HasMany<ParticipantStatus>("ParticipantStatuses");
         }
     }
 }

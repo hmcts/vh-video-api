@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace Testing.Common.Helper.Builders
 {
@@ -52,6 +53,12 @@ namespace Testing.Common.Helper.Builders
         public Conference Build()
         {
             return _conference;
+        }
+
+        public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState)
+        {
+            _conference.UpdateConferenceStatus(conferenceState);
+            return this;
         }
     }
 }

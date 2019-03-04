@@ -18,10 +18,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             var conference = new ConferenceBuilder().Build();
 
             var beforeCount = conference.GetParticipants().Count;
-            var participant = Builder<Participant>.CreateNew().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), "Solicitor",
-                    "Claimant")).Build();
-
+            var participant = new ParticipantBuilder().Build();
             conference.AddParticipant(participant);
 
             var afterCount = conference.GetParticipants().Count;
