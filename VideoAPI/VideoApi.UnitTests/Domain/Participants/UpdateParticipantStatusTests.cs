@@ -10,7 +10,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         [Test]
         public void should_add_participant_status()
         {
-            var participant = new ParticipantBuilder("Claimant LIP", "Claimant")
+            var participant = new ParticipantBuilder().WithHearingRole("Claimant LIP").WithCaseTypeGroup("Claimant")
                 .Build();
 
             participant.GetCurrentStatus().Should().BeNull();
