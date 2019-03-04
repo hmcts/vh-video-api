@@ -34,6 +34,18 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conference.CaseNumber.Should().Be(seededConference.CaseNumber);
             conference.ScheduledDateTime.Should().Be(seededConference.ScheduledDateTime);
             conference.HearingRefId.Should().Be(seededConference.HearingRefId);
+
+            var participants = conference.GetParticipants();
+            participants.Should().NotBeNullOrEmpty();
+            foreach (var participant in participants)
+            {
+                participant.Name.Should().NotBeNullOrEmpty();
+                participant.Username.Should().NotBeNullOrEmpty();
+                participant.DisplayName.Should().NotBeNullOrEmpty();
+                participant.ParticipantRefId.Should().NotBeEmpty();
+                participant.HearingRole.Should().NotBeNullOrEmpty();
+                participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
+            }
         }
         
         [TearDown]

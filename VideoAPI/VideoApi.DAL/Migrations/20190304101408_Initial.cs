@@ -24,20 +24,6 @@ namespace VideoApi.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ConferenceStatus",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ConferenceState = table.Column<int>(nullable: false),
-                    TimeStamp = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ConferenceStatus", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Event",
                 columns: table => new
                 {
@@ -58,6 +44,27 @@ namespace VideoApi.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConferenceStatus",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ConferenceState = table.Column<int>(nullable: false),
+                    TimeStamp = table.Column<DateTime>(nullable: false),
+                    ConferenceId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConferenceStatus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConferenceStatus_Conference_ConferenceId",
+                        column: x => x.ConferenceId,
+                        principalTable: "Conference",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Participant",
                 columns: table => new
                 {
@@ -68,11 +75,18 @@ namespace VideoApi.DAL.Migrations
                     DisplayName = table.Column<string>(nullable: true),
                     Username = table.Column<string>(nullable: true),
                     HearingRole = table.Column<string>(nullable: true),
-                    CaseTypeGroup = table.Column<string>(nullable: true)
+                    CaseTypeGroup = table.Column<string>(nullable: true),
+                    ConferenceId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Participant", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Participant_Conference_ConferenceId",
+                        column: x => x.ConferenceId,
+                        principalTable: "Conference",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,19 +96,38 @@ namespace VideoApi.DAL.Migrations
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ParticipantState = table.Column<int>(nullable: false),
-                    TimeStamp = table.Column<DateTime>(nullable: false)
+                    TimeStamp = table.Column<DateTime>(nullable: false),
+                    ParticipantId = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ParticipantStatus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ParticipantStatus_Participant_ParticipantId",
+                        column: x => x.ParticipantId,
+                        principalTable: "Participant",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ConferenceStatus_ConferenceId",
+                table: "ConferenceStatus",
+                column: "ConferenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Participant_ConferenceId",
+                table: "Participant",
+                column: "ConferenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ParticipantStatus_ParticipantId",
+                table: "ParticipantStatus",
+                column: "ParticipantId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Conference");
-
             migrationBuilder.DropTable(
                 name: "ConferenceStatus");
 
@@ -102,10 +135,13 @@ namespace VideoApi.DAL.Migrations
                 name: "Event");
 
             migrationBuilder.DropTable(
+                name: "ParticipantStatus");
+
+            migrationBuilder.DropTable(
                 name: "Participant");
 
             migrationBuilder.DropTable(
-                name: "ParticipantStatus");
+                name: "Conference");
         }
     }
 }

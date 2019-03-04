@@ -9,9 +9,18 @@ namespace Testing.Common.Helper.Builders
     public class ConferenceBuilder
     {
         private readonly Conference _conference;
+        private readonly BuilderSettings _builderSettings;
 
-        public ConferenceBuilder()
+        public ConferenceBuilder(bool ignoreId = false)
         {
+            _builderSettings = new BuilderSettings();
+            if (ignoreId)
+            {
+                _builderSettings.DisablePropertyNamingFor<Participant, long>(x => x.Id);
+                _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
+                _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
+            }
+            
             var hearingRefId = Guid.NewGuid();
             var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseType = "Civil Money Claims";
@@ -21,7 +30,7 @@ namespace Testing.Common.Helper.Builders
 
         public ConferenceBuilder WithParticipant(string hearingRole, string caseTypeGroup)
         {
-            var participant = Builder<Participant>.CreateNew().WithFactory(() =>
+            var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), hearingRole,
                     caseTypeGroup)).Build();
             

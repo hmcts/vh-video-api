@@ -30,7 +30,7 @@ namespace VideoApi.Domain
         public string Username { get; set; }
         public string HearingRole { get; set; }
         public string CaseTypeGroup { get; set; }
-        protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
+        public virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
 
         public IList<ParticipantStatus> GetParticipantStatuses()
         {

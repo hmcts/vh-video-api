@@ -29,6 +29,7 @@ namespace VideoApi.IntegrationTests.Database
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(_databaseConnectionString);
+            dbContextOptionsBuilder.EnableSensitiveDataLogging();
             VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
             
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);

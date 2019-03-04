@@ -8,8 +8,10 @@ namespace VideoApi.DAL
 {
     public class VideoApiDbContext : DbContext
     {
-        public DbSet<Conference> Conferences { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<Participant> Participants { get; set; }
+        public DbSet<Conference> Conferences { get; set; }
+        
         
         public VideoApiDbContext(DbContextOptions options) : base(options)
         {

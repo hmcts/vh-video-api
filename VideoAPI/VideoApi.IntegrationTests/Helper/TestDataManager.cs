@@ -18,7 +18,7 @@ namespace VideoApi.IntegrationTests.Helper
 
         public async Task<Conference> SeedConference()
         {
-            var conference = new ConferenceBuilder()
+            var conference = new ConferenceBuilder(true)
                 .WithParticipant("Claimant LIP", "Claimant")
                 .WithParticipant("Solicitor", "Claimant")
                 .WithParticipant("Solicitor LIP", "Defendant")
@@ -38,8 +38,13 @@ namespace VideoApi.IntegrationTests.Helper
         {
             using (var db = new VideoApiDbContext(_dbContextOptions))
             {
-                var hearing = await db.Conferences.FindAsync(conferenceId);
-                db.Remove(hearing);
+                var conference = await db.Conferences
+                    .Include(x => x.Participants)
+                    .Include(x => x.ConferenceStatuses)
+                    .SingleAsync(x => x.Id == conferenceId);
+                
+                db.Participants.RemoveRange(conference.GetParticipants());
+                db.Remove(conference);
                 await db.SaveChangesAsync();
             }
         }
