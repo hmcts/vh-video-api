@@ -3,7 +3,7 @@
 ## Running Sonar Analysis
 
 ``` bash
-dotnet sonarscanner begin /k:"hmcts-vh-video-api" /d:sonar.cs.opencover.reportsPaths="Artifacts/Coverage/coverage.opencover.xml" /d:sonar.coverage.exclusions="Video.API/Program.cs,Video.API/Startup.cs,Video.API/Extensions/**,Video.API/Swagger/**,Video.API/ConfigureServicesExtensions.cs,Testing.Common/**.cs,VideoApi.Common/**,VideoApi.DAL/Mappings/**,VideoApi.DAL/SeedData/**,VideoApi.DAL/VideoApiDbContext.cs,VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,VideoApi.DAL/Migrations/**,VideoApi.Domain/Ddd/**,VideoApi.Domain/Validations/**,VideoApi.DAL/Commands/**,VideoApi.DAL/Queries/**" /d:sonar.cpd.exclusions="VideoApi.DAL/Migrations/**" /d:sonar.verbose=false
+dotnet sonarscanner begin /k:"hmcts-vh-video-api" /d:sonar.cs.opencover.reportsPaths="Artifacts/Coverage/coverage.opencover.xml" /d:sonar.coverage.exclusions="Video.API/Program.cs,Video.API/Startup.cs,Video.API/Extensions/**,Video.API/Swagger/**,Video.API/ConfigureServicesExtensions.cs,Testing.Common/**,VideoApi.Common/**,VideoApi.DAL/Mappings/**,VideoApi.DAL/SeedData/**,VideoApi.DAL/VideoApiDbContext.cs,VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,VideoApi.DAL/Migrations/**,VideoApi.Domain/Ddd/**,VideoApi.Domain/Validations/**,VideoApi.DAL/Commands/**,VideoApi.DAL/Queries/**" /d:sonar.cpd.exclusions="VideoApi.DAL/Migrations/**" /d:sonar.verbose=false
 dotnet build
 dotnet sonarscanner end
 
