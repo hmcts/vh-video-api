@@ -8,7 +8,7 @@ namespace VideoApi.UnitTests.Domain.Participants
     public class UpdateParticipantStatusTests
     {
         [Test]
-        public void should_add_conference_status()
+        public void should_add_participant_status()
         {
             var participant = new ParticipantBuilder("Claimant LIP", "Claimant")
                 .Build();

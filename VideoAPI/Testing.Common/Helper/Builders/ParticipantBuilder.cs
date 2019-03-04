@@ -8,10 +8,19 @@ namespace Testing.Common.Helper.Builders
     public class ParticipantBuilder
     {
         private readonly Participant _participant;
+        private readonly BuilderSettings _builderSettings;
 
-        public ParticipantBuilder(string hearingRole, string caseTypeGroup)
+        public ParticipantBuilder(string hearingRole, string caseTypeGroup, bool ignoreId = false)
         {
-            _participant = Builder<Participant>.CreateNew().WithFactory(() =>
+            _builderSettings = new BuilderSettings();
+            if (ignoreId)
+            {
+                _builderSettings.DisablePropertyNamingFor<Participant, long>(x => x.Id);
+                _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
+                _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
+            }
+            
+            _participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), hearingRole,
                     caseTypeGroup)).Build();
         }
