@@ -4,7 +4,7 @@ variables:
   apiDirectory: 'VideoAPI/Video.API'
   sonarCloudExtraProperties: |
     sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
-    sonar.coverage.exclusions="**/Program.cs,**/Startup.cs,Builders/**.cs,Configuration/TestSettings.cs,*/Helper/**,ApplicationLogger.cs,BadRequestTelemetry.cs,EnumExtensions.cs,**/AzureTokenProvider.cs,Mappings/**,SeedData/**,VideoApiDbContext.cs,DesignTimeHearingsContextFactory.cs,Extensions/**,Swagger/**,Video.API/ConfigureServicesExtensions.cs,VideoApi.DAL/Migrations/**,Ddd/**,Validations/**,**/ApiUriFactory.cs,Queries/QueryHandler.cs,Queries/QueryHandlerFactory.cs,Commands/CommandHandler.cs,Commands/CommandHandlerFactory.cs"
+    sonar.coverage.exclusions="Video.API/Program.cs,Video.API/Startup.cs,Video.API/Extensions/**,Video.API/Swagger/**,Video.API/ConfigureServicesExtensions.cs,Testing.Common/**.cs,VideoApi.Common/**,VideoApi.DAL/Mappings/**,VideoApi.DAL/SeedData/**,VideoApi.DAL/VideoApiDbContext.cs,VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,VideoApi.DAL/Migrations/**,VideoApi.Domain/Ddd/**,VideoApi.Domain/Validations/**,VideoApi.DAL/Commands/**,VideoApi.DAL/Queries/**"
     sonar.cpd.exclusions="VideoApi.DAL/Migrations/**"
   coverletCoverageExclusions: '"\"[VideoApi.*Tests?]*,[Video.API]Startup,[*]VideoApi.DAL.SeedData.*,[*]VideoApi.DAL.Migrations.*,[*]VideoApi.DAL.Mappings.*,[VideoApi.DAL]DAL.VideoApiDbContext,[VideoApi.DAL]DesignTimeHearingsContextFactory,[VideoApi.Common]*,[Testing.Common]*\""'
   integrationTestsAppSettingsTransform: '
