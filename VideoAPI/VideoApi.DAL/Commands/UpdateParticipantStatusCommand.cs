@@ -1,15 +1,21 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
 {
     public class UpdateParticipantStatusCommand : ICommand
     {
-        public long ParticipantId { get; set; }
-        public ParticipantState ParticipantState { get; set; }
+        public Guid ConferenceId { get; }
+        public long ParticipantId { get; }
+        public ParticipantState ParticipantState { get; }
 
-        public UpdateParticipantStatusCommand(long participantId, ParticipantState participantState)
+        public UpdateParticipantStatusCommand(Guid conferenceId, long participantId, ParticipantState participantState)
         {
+            ConferenceId = conferenceId;
             ParticipantId = participantId;
             ParticipantState = participantState;
         }
@@ -24,9 +30,24 @@ namespace VideoApi.DAL.Commands
             _context = context;
         }
         
-        public Task Handle(UpdateParticipantStatusCommand command)
+        public async Task Handle(UpdateParticipantStatusCommand command)
         {
-            throw new System.NotImplementedException();
+            var conference = await _context.Conferences.Include(x => x.Participants).ThenInclude(x => x.ParticipantStatuses)
+                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
+            
+            if (conference == null)
+            {
+                throw new ConferenceNotFoundException(command.ConferenceId);
+            }
+
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == command.ParticipantId);
+            if (participant == null)
+            {
+                throw new ParticipantNotFoundException(command.ParticipantId);
+            }
+            
+            participant.UpdateParticipantStatus(command.ParticipantState);
+            await _context.SaveChangesAsync();
         }
     }
 }
