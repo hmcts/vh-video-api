@@ -6,7 +6,7 @@ variables:
     sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
     sonar.coverage.exclusions="**/Program.cs,**/Startup.cs,Builders/**,Configuration/**,ApplicationLogger.cs,BadRequestTelemetry.cs,EnumExtensions.cs,**/AzureTokenProvider.cs,Mappings/**,SeedData/**,VideoDbContext.cs,DesignTimeHearingsContextFactory.cs,Extensions/**,Swagger/**,ConfigureServicesExtensions.cs,Migrations/**,Ddd/**,Validations/**"
     sonar.cpd.exclusions="**/Program.cs,**/Startup.cs,Video.DAL/Mappings/**,Migrations/**,SeedData/**,DesignTimeHearingsContextFactory.cs,Ddd/**,Testing.Common/**,Video.API/ConfigureServicesExtensions.cs,Video.API/Extensions/**,Video.API/Swagger/**,Video.Common/**"
-  coverletCoverageExclusions: '"\"[Video.*Tests?]*,[*]Video.DAL.SeedData.*,[*]Video.DAL.Migrations.*,[*]Video.DAL.Mappings.*,[Video.DAL]Video.DAL.VideoDbContext,[Video.DAL]Video.DAL.DesignTimeHearingsContextFactory,[Video.Common]*,[Testing.Common]*\""'
+  coverletCoverageExclusions: '"\"[VideoApi.*Tests?]*,[Video.API]Startup,[*]VideoApi.DAL.SeedData.*,[*]VideoApi.DAL.Migrations.*,[*]VideoApi.DAL.Mappings.*,[VideoApi.DAL]Bookings.DAL.VideoApiDbContext,[VideoApi.DAL]Bookings.DAL.DesignTimeHearingsContextFactory,[VideoApi.Common]*,[Testing.Common]*\""'
   integrationTestsAppSettingsTransform: '
     "AzureAd/TenantId":"$(tenantid)",
     "AzureAd/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
