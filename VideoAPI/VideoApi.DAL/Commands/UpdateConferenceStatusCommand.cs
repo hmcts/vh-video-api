@@ -1,4 +1,7 @@
 using System;
+using System.Threading.Tasks;
+using VideoApi.DAL.Exceptions;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
@@ -12,6 +15,30 @@ namespace VideoApi.DAL.Commands
         {
             ConferenceId = conferenceId;
             ConferenceState = conferenceState;
+        }
+    }
+
+    public class UpdateConferenceStatusCommandHandler : ICommandHandler<UpdateConferenceStatusCommand>
+    {
+        private readonly VideoApiDbContext _context;
+
+        public UpdateConferenceStatusCommandHandler(VideoApiDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task Handle(UpdateConferenceStatusCommand command)
+        {
+            var conference = await _context.Conferences.FindAsync(command.ConferenceId);
+
+            if (conference == null)
+            {
+                throw new ConferenceNotFoundException(command.ConferenceId);
+            }
+
+            ConferenceStatus conferenceStatus = new ConferenceStatus(command.ConferenceState) { ConferenceState = command.ConferenceState, TimeStamp = DateTime.UtcNow};
+            conference.ConferenceStatuses.Add(conferenceStatus);
+            await _context.SaveChangesAsync();
         }
     }
 }

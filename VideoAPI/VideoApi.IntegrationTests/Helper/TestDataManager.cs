@@ -43,7 +43,6 @@ namespace VideoApi.IntegrationTests.Helper
                     .Include(x => x.ConferenceStatuses)
                     .SingleAsync(x => x.Id == conferenceId);
                 
-                db.Participants.RemoveRange(conference.GetParticipants());
                 db.Remove(conference);
                 await db.SaveChangesAsync();
             }

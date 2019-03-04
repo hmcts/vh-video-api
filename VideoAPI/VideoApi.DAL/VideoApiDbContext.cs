@@ -9,7 +9,6 @@ namespace VideoApi.DAL
     public class VideoApiDbContext : DbContext
     {
         public DbSet<Event> Events { get; set; }
-        public DbSet<Participant> Participants { get; set; }
         public DbSet<Conference> Conferences { get; set; }
         
         
