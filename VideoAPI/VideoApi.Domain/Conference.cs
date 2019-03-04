@@ -48,8 +48,9 @@ namespace VideoApi.Domain
             {
                 throw new DomainRuleException(nameof(participant), "Participant does not exist in conference");
             }
-
-            Participants.Remove(participant);
+            
+            var existingParticipant = Participants.Single(x => x.Username == participant.Username);
+            Participants.Remove(existingParticipant);
         }
 
         private bool DoesParticipantExist(string username)

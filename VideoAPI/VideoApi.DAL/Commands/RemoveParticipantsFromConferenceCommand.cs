@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 
@@ -29,7 +30,8 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(RemoveParticipantsFromConferenceCommand command)
         {
-            var conference = await _context.Conferences.FindAsync(command.ConferenceId);
+            var conference = await _context.Conferences.Include("Participants")
+                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
             {
@@ -38,11 +40,7 @@ namespace VideoApi.DAL.Commands
 
             foreach (var participant in command.Participants)
             {
-                var participantToRemove = new Participant(Guid.NewGuid(), participant.Name, participant.DisplayName, participant.Username,
-                    participant.HearingRole, participant.CaseTypeGroup);
-
-                conference.RemoveParticipant(participantToRemove);
-
+                conference.RemoveParticipant(participant);
             }
             await _context.SaveChangesAsync();
         }
