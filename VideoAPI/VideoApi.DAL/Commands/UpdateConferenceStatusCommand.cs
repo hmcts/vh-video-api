@@ -36,7 +36,8 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            ConferenceStatus conferenceStatus = new ConferenceStatus(command.ConferenceState) { ConferenceState = command.ConferenceState, TimeStamp = DateTime.UtcNow};
+            var conferenceStatus = new ConferenceStatus(command.ConferenceState)
+                {ConferenceState = command.ConferenceState, TimeStamp = DateTime.UtcNow};
             conference.ConferenceStatuses.Add(conferenceStatus);
             await _context.SaveChangesAsync();
         }
