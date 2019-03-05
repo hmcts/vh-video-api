@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VideoApi.DAL.Commands
+namespace VideoApi.DAL.Commands.Core
 {
     public class CommandHandlerFactory : ICommandHandlerFactory
     {

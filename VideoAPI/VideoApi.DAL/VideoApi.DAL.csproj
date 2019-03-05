@@ -19,7 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Migrations" />
-  </ItemGroup>
 </Project>

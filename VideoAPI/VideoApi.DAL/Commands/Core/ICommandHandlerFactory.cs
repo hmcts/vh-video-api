@@ -1,5 +1,5 @@
 ﻿
-namespace VideoApi.DAL.Commands
+namespace VideoApi.DAL.Commands.Core
 {
     public interface ICommandHandlerFactory
     {

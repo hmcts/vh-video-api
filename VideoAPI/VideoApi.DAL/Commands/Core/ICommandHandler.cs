@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace VideoApi.DAL.Commands
+namespace VideoApi.DAL.Commands.Core
 {
     public interface ICommandHandler
     {

@@ -12,7 +12,9 @@ using VideoApi.Common;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
+using VideoApi.DAL.Queries.Core;
 
 namespace Video.API
 {
