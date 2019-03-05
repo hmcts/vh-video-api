@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.Domain;
 
 namespace VideoApi.DAL.Commands

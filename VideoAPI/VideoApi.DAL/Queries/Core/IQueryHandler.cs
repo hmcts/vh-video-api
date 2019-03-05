@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace VideoApi.DAL.Queries
+namespace VideoApi.DAL.Queries.Core
 {
     public interface IQueryHandler
     {
