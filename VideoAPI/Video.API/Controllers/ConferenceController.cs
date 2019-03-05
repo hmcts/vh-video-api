@@ -1,12 +1,19 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Video.API.Extensions;
+using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 
 namespace Video.API.Controllers
 {
@@ -36,7 +43,32 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConference(BookNewConferenceRequest request)
         {
-            throw new NotImplementedException();
+            var result = await new BookNewConferenceRequestValidation().ValidateAsync(request);
+            if (!result.IsValid)
+            {
+                ModelState.AddFluentValidationErrors(result.Errors);
+                return BadRequest(ModelState);
+            }
+
+            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
+                request.ScheduledDateTime, request.CaseNumber);
+            await _commandHandler.Handle(createConferenceCommand);
+
+            var conferenceId = createConferenceCommand.NewConferenceId;
+            var participants = request.Participants.Select(x =>
+                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.HearingRole,
+                        x.CaseTypeGroup))
+                .ToList();
+
+            var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants);
+            await _commandHandler.Handle(addParticipantCommand);
+
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            var response = MapConferenceToResponse(queriedConference);
+            return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
         }
 
         /// <summary>
@@ -53,7 +85,31 @@ namespace Video.API.Controllers
         public async Task<IActionResult> UpdateConferenceStatus(Guid conferenceId,
             UpdateConferenceStatusRequest request)
         {
-            throw new NotImplementedException();
+            if (conferenceId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
+                return BadRequest(ModelState);
+            }
+            
+            var result = await new UpdateConferenceStatusRequestValidation().ValidateAsync(request);
+            if (!result.IsValid)
+            {
+                ModelState.AddFluentValidationErrors(result.Errors);
+                return BadRequest(ModelState);
+            }
+            
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (queriedConference == null)
+            {
+                return NotFound();
+            }
+            
+            var command = new UpdateConferenceStatusCommand(conferenceId, request.State);
+            await _commandHandler.Handle(command);
+            return NoContent();
         }
 
         /// <summary>
@@ -68,7 +124,78 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsById(Guid conferenceId)
         {
-            throw new NotImplementedException();
+            if (conferenceId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
+                return BadRequest(ModelState);
+            }
+            
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (queriedConference == null)
+            {
+                return NotFound();
+            }
+            
+            var response = MapConferenceToResponse(queriedConference);
+            return Ok(response);
+        }
+        
+        private ConferenceDetailsResponse MapConferenceToResponse(Conference conference)
+        {
+            var response = new ConferenceDetailsResponse
+            {
+                Id = conference.Id,
+                CaseType = conference.CaseType,
+                CaseNumber = conference.CaseNumber,
+                ScheduledDateTime = conference.ScheduledDateTime,
+                Statuses = MapConferenceStatusToResponse(conference.GetConferenceStatuses()),
+                Participants = MapParticipantsToResponse(conference.GetParticipants())
+            };
+            return response;
+        }
+
+        private List<ParticipantDetailsResponse> MapParticipantsToResponse(IEnumerable<Participant> participants)
+        {
+            var response = new List<ParticipantDetailsResponse>();
+            foreach (var participant in participants)
+            {
+                var paResponse = new ParticipantDetailsResponse
+                {
+                    Name = participant.Name,
+                    Username = participant.Username,
+                    DisplayName = participant.DisplayName,
+                    HearingRole = participant.HearingRole,
+                    CaseTypeGroup = participant.CaseTypeGroup,
+                    Statuses = MapParticipantStatusToResponse(participant.GetParticipantStatuses())
+                };
+                response.Add(paResponse);
+            }
+
+            return response;
+        }
+
+        private List<ParticipantStatusResponse> MapParticipantStatusToResponse(
+            IEnumerable<ParticipantStatus> participantStatuses)
+        {
+            var statusResponse = participantStatuses.Select(x => new ParticipantStatusResponse
+            {
+                ParticipantState = x.ParticipantState,
+                TimeStamp = x.TimeStamp
+            }).ToList();
+            return statusResponse;
+        }
+
+        private List<ConferenceStatusResponse> MapConferenceStatusToResponse(
+            IEnumerable<ConferenceStatus> conferenceStatuses)
+        {
+            return conferenceStatuses.Select(x => new ConferenceStatusResponse
+            {
+                ConferenceState = x.ConferenceState,
+                TimeStamp = x.TimeStamp
+            }).ToList();
         }
     }
 }
