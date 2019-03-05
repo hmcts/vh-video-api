@@ -34,5 +34,13 @@
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Web.config">
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Mappings" />
   </ItemGroup>
 </Project>

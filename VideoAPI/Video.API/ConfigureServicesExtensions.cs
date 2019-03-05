@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using Video.API.Events;
 using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
-using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 
 namespace Video.API
@@ -66,6 +66,15 @@ namespace Video.API
             
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
+            
+            services.AddSignalR()
+                .AddJsonProtocol(options =>
+                {
+                    options.PayloadSerializerSettings.ContractResolver =
+                        new DefaultContractResolver();
+                }).AddHubOptions<EventHub>(options => { options.EnableDetailedErrors = true; });
+            
+            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             
             return services;
         }

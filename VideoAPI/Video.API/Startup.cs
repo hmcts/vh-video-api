@@ -7,12 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
 using Video.API.Events;
 using Video.API.Extensions;
 using VideoApi.Common.Configuration;
@@ -40,27 +37,12 @@ namespace Video.API
 
             RegisterAuth(services);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddCors();
 
             services.AddDbContextPool<VideoApiDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("VhVideoApi")));
-
-            RegisterSignalR(services);
-        }
-
-        private void RegisterSignalR(IServiceCollection services)
-        {
-            services.AddSignalR()
-                .AddJsonProtocol(options =>
-                {
-                    options.PayloadSerializerSettings.ContractResolver =
-                        new DefaultContractResolver();
-                }).AddHubOptions<EventHub>(options => { options.EnableDetailedErrors = true; });
-
-            ValidateUserTokenForHub(services);
-            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
         }
 
         private void RegisterSettings(IServiceCollection services)
@@ -88,30 +70,6 @@ namespace Video.API
                 options.TokenValidationParameters.ValidateLifetime = true;
                 options.Audience = securitySettings.VhVideoApiResourceId;
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
-            });
-
-            serviceCollection.AddAuthorization();
-        }
-
-        private void ValidateUserTokenForHub(IServiceCollection services)
-        {
-            var azureAdConfiguration = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.Authority = azureAdConfiguration.Authority;
-                options.TokenValidationParameters =
-                    new TokenValidationParameters
-                    {
-                        LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                    };
-
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
@@ -129,8 +87,10 @@ namespace Video.API
                     }
                 };
             });
-        }
 
+            serviceCollection.AddAuthorization();
+        }
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
