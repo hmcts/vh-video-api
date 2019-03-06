@@ -144,12 +144,6 @@ namespace VideoApi.IntegrationTests.Steps
             AddParticipantsToConferenceRequest request;
             switch (scenario)
             {
-                case Scenario.Valid:
-                {
-                    request = new AddParticipantsToConferenceRequest
-                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder().Build()}};
-                    break;
-                }
                 case Scenario.Invalid:
                     request = new AddParticipantsToConferenceRequest {Participants = new List<ParticipantRequest>()};
                     break;
@@ -205,11 +199,6 @@ namespace VideoApi.IntegrationTests.Steps
             long participantId;
             switch (scenario)
             {
-                case Scenario.Valid:
-                {
-                    participantId = seededConference.GetParticipants().First().Id;
-                    break;
-                }
                 case Scenario.Nonexistent:
                     participantId = long.MaxValue;
                     break;
