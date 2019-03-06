@@ -6,6 +6,13 @@ namespace VideoApi.IntegrationTests.Steps
 {
     public abstract class StepsBase
     {
+        protected readonly ApiTestContext ApiTestContext;
+
+        protected StepsBase(ApiTestContext apiTestContext)
+        {
+            ApiTestContext = apiTestContext;
+        }
+
         protected async Task<HttpResponseMessage> SendGetRequestAsync(ApiTestContext apiTestContext)
         {
             using (var client = apiTestContext.Server.CreateClient())

@@ -14,7 +14,7 @@ namespace VideoApi.IntegrationTests.Steps
     {
         private readonly ApiTestContext _apiTestContext;
 
-        public CommonSteps(ApiTestContext apiTestContext)
+        public CommonSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
             _apiTestContext = apiTestContext;
         }
