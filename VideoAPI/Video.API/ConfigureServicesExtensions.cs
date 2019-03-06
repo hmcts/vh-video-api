@@ -25,7 +25,7 @@ namespace Video.API
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-            var contractsXmlFile = $"{typeof(PaginatedRequest).Assembly.GetName().Name}.xml";
+            var contractsXmlFile = $"{typeof(BookNewConferenceRequest).Assembly.GetName().Name}.xml";
             var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, contractsXmlFile);
 
             serviceCollection.AddSwaggerGen(c =>

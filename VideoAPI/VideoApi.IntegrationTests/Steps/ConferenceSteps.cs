@@ -135,6 +135,10 @@ namespace VideoApi.IntegrationTests.Steps
             conference.CaseType.Should().NotBeNullOrEmpty();
             conference.CaseNumber.Should().NotBeNullOrEmpty();
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
+            foreach (var status in conference.Statuses)
+            {
+                status.Should().NotBe(ConferenceState.None);
+            }
             
             foreach (var participant in conference.Participants)
             {
@@ -144,6 +148,10 @@ namespace VideoApi.IntegrationTests.Steps
                 participant.Username.Should().NotBeNullOrEmpty();
                 participant.HearingRole.Should().NotBeNullOrEmpty();
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
+                foreach (var status in participant.Statuses)
+                {
+                    status.Should().NotBe(ParticipantState.None);
+                }
             }
         }
     }
