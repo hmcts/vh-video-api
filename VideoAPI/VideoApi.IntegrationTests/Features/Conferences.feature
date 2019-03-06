@@ -2,10 +2,37 @@ Feature: Conferences
   In order to manage conferences
   As an API service
   I want to create, update and retrieve conference data
-  
-  
+
+
   Scenario: Create a new conference
     Given I have a valid book a new conference request
     When I send the request to the endpoint
     Then the response should have the status Created and success status True
     And the conference details should be retrieved
+
+  Scenario: Fail to book a conference with invalid request
+    Given I have an invalid book a new conference request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'HearingRefId is required'
+    And the error response message should also contain 'CaseType is required'
+    And the error response message should also contain 'CaseNumber is required'
+    And the error response message should also contain 'ScheduledDateTime cannot be in the past'
+    And the error response message should also contain 'Please provide at least one participant'
+
+  Scenario: Get details for an existing conference
+    Given I have a get details for a conference request with a valid conference id
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the conference details should be retrieved
+
+  Scenario: Get details for an invalid conference
+    Given I have a get details for a conference request with an invalid conference id
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'Please provide a valid conferenceId'
+
+  Scenario: Get details for a non-existent conference
+    Given I have a get details for a conference request with a nonexistent conference id
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False

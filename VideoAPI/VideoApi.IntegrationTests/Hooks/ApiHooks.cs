@@ -21,6 +21,11 @@ namespace VideoApi.IntegrationTests.Hooks
     [Binding]
     public class ApiHooks
     {
+        protected ApiHooks()
+        {
+            
+        }
+        
         [BeforeFeature]
         public static void BeforeApiFeature(ApiTestContext apiTestContext)
         {
