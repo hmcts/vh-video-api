@@ -164,6 +164,7 @@ namespace Video.API.Controllers
             {
                 var paResponse = new ParticipantDetailsResponse
                 {
+                    Id = participant.Id,
                     Name = participant.Name,
                     Username = participant.Username,
                     DisplayName = participant.DisplayName,
