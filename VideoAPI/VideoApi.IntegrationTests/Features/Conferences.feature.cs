@@ -178,6 +178,83 @@ namespace VideoApi.IntegrationTests.Features
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update status for an existing conference with a valid request")]
+        public virtual void UpdateStatusForAnExistingConferenceWithAValidRequest()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an existing conference with a valid request", null, ((string[])(null)));
+#line 40
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 41
+    testRunner.Given("I have a valid update conference status request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 42
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 43
+    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update status for an invalid conference a valid request")]
+        public virtual void UpdateStatusForAnInvalidConferenceAValidRequest()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an invalid conference a valid request", null, ((string[])(null)));
+#line 45
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 46
+    testRunner.Given("I have an invalid update conference status request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 47
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 48
+    testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 49
+    testRunner.And("the error response message should also contain \'Please provide a valid conference" +
+                    "Id\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update status for an existing conference with an invalid request")]
+        public virtual void UpdateStatusForAnExistingConferenceWithAnInvalidRequest()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an existing conference with an invalid request", null, ((string[])(null)));
+#line 51
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 52
+    testRunner.Given("I have a invalid update conference status request for an existing conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 53
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 54
+    testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 55
+    testRunner.And("the error response message should also contain \'Invalid state provided\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update status for a non-existent conference")]
+        public virtual void UpdateStatusForANon_ExistentConference()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for a non-existent conference", null, ((string[])(null)));
+#line 57
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 58
+    testRunner.Given("I have a nonexistent update conference status request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 59
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 60
+    testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

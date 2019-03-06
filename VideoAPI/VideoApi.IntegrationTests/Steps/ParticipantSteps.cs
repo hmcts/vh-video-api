@@ -24,8 +24,8 @@ namespace VideoApi.IntegrationTests.Steps
         {
         }
 
-        [Given(@"I have a update participant status request a (.*) conference")]
-        [Given(@"I have an update participant status request an (.*) conference")]
+        [Given(@"I have an update participant status request for a (.*) conference")]
+        [Given(@"I have an update participant status request for an (.*) conference")]
         public async Task GivenIHaveAnUpdateParticipantStatusRequest(Scenario scenario)
         {
             Guid conferenceId;
@@ -74,21 +74,15 @@ namespace VideoApi.IntegrationTests.Steps
             UpdateParticipantStatusRequest request;
             switch (scenario)
             {
-                case Scenario.Valid:
-                {
-                    participantId = seededConference.GetParticipants().First().Id;
-                    request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
-                    break;
-                }
                 case Scenario.Nonexistent:
                     participantId = long.MaxValue;
                     request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
                     break;
-                case Scenario.Invalid:
+                case Scenario.Negative:
                     participantId = seededConference.GetParticipants().First().Id;
                     request = new UpdateParticipantStatusRequest();
                     break;
-                case Scenario.Negative:
+                case Scenario.Invalid:
                     participantId = long.MinValue;
                     request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
                     break;
@@ -102,6 +96,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"I have an add participant to a (.*) conference request")]
+        [Given(@"I have an add participant to an (.*) conference request")]
         public async Task GivenIHaveAnAddParticipantToConferenceRequest(Scenario scenario)
         {
             Guid conferenceId;
@@ -139,6 +134,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"I have an add participant to a conference request with a (.*) body")]
+        [Given(@"I have an add participant to a conference request with an (.*) body")]
         public async Task GivenIHaveAnAddParticipantToConferenceRequestWith(Scenario scenario)
         {
             var seededConference = await ApiTestContext.TestDataManager.SeedConference();

@@ -105,6 +105,20 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
+        
+        [Given(@"I have a invalid update conference status request for an existing conference")]
+        public async Task GivenIHaveAnInvalidUpdateConferenceStatusRequestForAnExistentConference()
+        {
+            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            ApiTestContext.NewConferenceId = seededConference.Id;
+            var conferenceId = seededConference.Id;
+            var request = new UpdateConferenceStatusRequest();
+            ApiTestContext.Uri = _endpoints.UpdateConferenceStatus(conferenceId);
+            ApiTestContext.HttpMethod = HttpMethod.Patch;
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
 
         [Then(@"the conference details should be retrieved")]
         public async Task ThenAConferenceDetailsShouldBeRetrieved()
