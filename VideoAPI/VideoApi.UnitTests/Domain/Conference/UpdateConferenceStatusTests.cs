@@ -1,6 +1,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Domain.Conference

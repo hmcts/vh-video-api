@@ -5,7 +5,7 @@ using FizzWare.NBuilder;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
-namespace Testing.Common.Helper.Builders
+namespace Testing.Common.Helper.Builders.Domain
 {
     public class ConferenceBuilder
     {

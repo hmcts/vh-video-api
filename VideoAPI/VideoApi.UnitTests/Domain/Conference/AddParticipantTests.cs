@@ -5,6 +5,7 @@ using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
 using VideoApi.Domain.Validations;
 

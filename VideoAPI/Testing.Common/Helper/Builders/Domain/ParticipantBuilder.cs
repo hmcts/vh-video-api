@@ -3,7 +3,7 @@ using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Domain;
 
-namespace Testing.Common.Helper.Builders
+namespace Testing.Common.Helper.Builders.Domain
 {
     public class ParticipantBuilder
     {
