@@ -19,9 +19,17 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Close;
 
-        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            throw new System.NotImplementedException();
+            await PublishHearingStatusMessage(HearingEventStatus.Closed);
+            
+            var hearingEventMessage = new HearingEventMessage
+            {
+                HearingId = SourceConference.HearingRefId,
+                HearingEventStatus = HearingEventStatus.Closed
+            };
+
+            await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }
 }
