@@ -1,3 +1,5 @@
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using VideoApi.DAL.Queries.Core;
@@ -18,9 +20,19 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Help;
 
-        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            throw new System.NotImplementedException();
+            var vhOfficer = SourceConference.GetParticipants()
+                .FirstOrDefault(x => x.UserRole == UserRole.VideoHearingsOfficer);
+
+            if (vhOfficer == null)
+            {
+                throw new InvalidDataException(
+                    $"Video Hearings Officer cannot be found for {SourceConference.HearingRefId}");
+            }
+
+            await HubContext.Clients.Group(vhOfficer.Username.ToLowerInvariant())
+                .HelpMessage(SourceConference.HearingRefId, SourceParticipant.DisplayName);
         }
     }
 }

@@ -6,6 +6,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
@@ -42,8 +43,15 @@ namespace VideoApi.UnitTests.Events
                 new PauseEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient, EventHubContextMock.Object),
                 new TransferEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient, EventHubContextMock.Object)
             };
-            
-            TestConference = new ConferenceBuilder().WithParticipants(2).Build();
+
+            TestConference = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.VideoHearingsOfficer, null)
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Defendant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .Build();
             
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))

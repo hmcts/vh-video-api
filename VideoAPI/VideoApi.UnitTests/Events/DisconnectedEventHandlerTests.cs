@@ -16,13 +16,13 @@ namespace VideoApi.UnitTests.Events
         private DisconnectedEventHandler _eventHandler;
 
         [Test]
-        public async Task should_send_messages_to_participants_and_service_bus_on_disconnect()
+        public async Task should_send_disconnect_messages_to_participants_and_service_bus_on_participant_disconnect()
         {
             _eventHandler = new DisconnectedEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
                 EventHubContextMock.Object);
 
             var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First();
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Disconnected,
@@ -45,41 +45,47 @@ namespace VideoApi.UnitTests.Events
             eventMessage.Should().BeOfType<ParticipantEventMessage>();
             ((ParticipantEventMessage) eventMessage).ParticipantStatus.Should().Be(ParticipantStatus.Disconnected);
         }
-    }
-    
-    public class HelpEventHandlerTests : EventHandlerTestBase
-    {
-        private HelpEventHandler _eventHandler;
 
         [Test]
-        public async Task should_send_messages_to_participants_and_service_bus_on_disconnect()
+        public async Task
+            should_send_disconnect_and_suspend_messages_to_participants_and_service_bus_on_judge_disconnect()
         {
-            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
+            _eventHandler = new DisconnectedEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
                 EventHubContextMock.Object);
 
             var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First();
+            var participantCount = conference.GetParticipants().Count;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             var callbackEvent = new CallbackEvent
             {
-                EventType = EventType.Help,
+                EventType = EventType.Disconnected,
                 EventId = Guid.NewGuid().ToString(),
                 ParticipantId = participantForEvent.Id.ToString(),
                 ConferenceId = conference.Id.ToString()
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
-
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(participantForEvent.Username, ParticipantStatus.Disconnected),
-                Times.Exactly(conference.GetParticipants().Count));
+                x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
+                    ParticipantStatus.Disconnected),
+                Times.Exactly(participantCount));
+
+            EventHubClientMock.Verify(
+                x => x.HearingStatusMessage(conference.HearingRefId, HearingStatus.Suspended),
+                Times.Exactly(participantCount));
 
             // Verify messages sent to ASB queue
-            ServiceBusQueueClient.Count.Should().Be(1);
+            ServiceBusQueueClient.Count.Should().Be(2);
 
-            var eventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
-            eventMessage.Should().BeOfType<ParticipantEventMessage>();
-            ((ParticipantEventMessage) eventMessage).ParticipantStatus.Should().Be(ParticipantStatus.Disconnected);
+            var participantEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
+            participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
+            ((ParticipantEventMessage) participantEventMessage).ParticipantStatus.Should()
+                .Be(ParticipantStatus.Disconnected);
+
+            var hearingEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
+            hearingEventMessage.Should().BeOfType<HearingEventMessage>();
+            ((HearingEventMessage) hearingEventMessage).HearingStatus.Should().Be(HearingStatus.Suspended);
         }
     }
 }
