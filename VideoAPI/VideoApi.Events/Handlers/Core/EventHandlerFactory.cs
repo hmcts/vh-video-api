@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Domain.Enums;
 
-namespace VideoApi.Events.Handlers
+namespace VideoApi.Events.Handlers.Core
 {
     public interface IEventHandlerFactory
     {

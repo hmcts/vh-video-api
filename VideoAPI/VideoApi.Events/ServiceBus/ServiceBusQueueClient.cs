@@ -4,6 +4,7 @@ using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using VideoApi.Common.Configuration;
+using VideoApi.Events.Models;
 
 namespace VideoApi.Events.ServiceBus
 {

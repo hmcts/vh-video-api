@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
+using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
+using VideoApi.Events.Models;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
@@ -17,7 +18,7 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Disconnected;
 
-        protected override Task PublishStatusAsync(ConferenceEventRequest conferenceEventRequest)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             throw new System.NotImplementedException();
         }

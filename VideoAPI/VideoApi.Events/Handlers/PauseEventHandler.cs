@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
+using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
+using VideoApi.Events.Models;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
@@ -17,9 +18,21 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Pause;
 
-        protected override Task PublishStatusAsync(ConferenceEventRequest conferenceEventRequest)
+        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            throw new System.NotImplementedException();
+            foreach (var participant in SourceConference.GetParticipants())
+            {
+                await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
+                    .HearingStatusMessage(SourceConference.HearingRefId, "Paused");
+            }
+
+            var hearingEventMessage = new HearingEventMessage
+            {
+                HearingId = SourceConference.HearingRefId,
+                HearingStatus = "Paused",
+            };
+
+            await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }
 }

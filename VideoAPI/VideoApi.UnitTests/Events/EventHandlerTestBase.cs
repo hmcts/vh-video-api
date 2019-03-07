@@ -4,8 +4,8 @@ using Moq;
 using NUnit.Framework;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers;
+using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
-using VideoApi.Events.ServiceBus;
 using VideoApi.UnitTests.Stubs;
 
 namespace VideoApi.UnitTests.Events
@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Events
     public abstract class EventHandlerTestBase
     {
         protected Mock<IQueryHandler> QueryHandlerMock;
-        protected IServiceBusQueueClient ServiceBusQueueClient;
+        protected ServiceBusQueueClientStub ServiceBusQueueClient;
         protected Mock<IHubContext<EventHub, IEventHubClient>> EventHubContextMock;
         protected Mock<IEventHubClient> EventHubClientMock;
         protected List<IEventHandler> EventHandlersList;

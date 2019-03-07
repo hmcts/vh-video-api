@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using VideoApi.Events.Models;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.UnitTests.Stubs

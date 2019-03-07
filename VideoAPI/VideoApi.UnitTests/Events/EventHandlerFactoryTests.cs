@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
+using VideoApi.Events.Handlers.Core;
 
 namespace VideoApi.UnitTests.Events
 {

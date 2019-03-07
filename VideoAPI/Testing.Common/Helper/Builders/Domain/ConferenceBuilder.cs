@@ -28,6 +28,20 @@ namespace Testing.Common.Helper.Builders.Domain
             var caseNumber = "Test12345";
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber);
         }
+        
+        public ConferenceBuilder WithParticipants(int numberOfParticipants)
+        {
+            var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All().WithFactory(() =>
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), "Solicitor LIP",
+                    "Claimant")).Build();
+
+            foreach (var participant in participants)
+            {
+                _conference.AddParticipant(participant);
+            }
+            
+            return this;
+        }
 
         public ConferenceBuilder WithParticipant(string hearingRole, string caseTypeGroup)
         {
