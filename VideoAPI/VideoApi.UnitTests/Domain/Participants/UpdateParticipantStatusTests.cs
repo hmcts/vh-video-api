@@ -1,6 +1,5 @@
 using FluentAssertions;
 using NUnit.Framework;
-using Testing.Common.Helper.Builders;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
 
@@ -11,7 +10,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         [Test]
         public void should_add_participant_status()
         {
-            var participant = new ParticipantBuilder().WithHearingRole("Claimant LIP").WithCaseTypeGroup("Claimant")
+            var participant = new ParticipantBuilder().WithHearingRole(UserRole.Individual).WithCaseTypeGroup("Claimant")
                 .Build();
 
             participant.GetCurrentStatus().Should().BeNull();

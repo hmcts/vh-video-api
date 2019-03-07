@@ -48,11 +48,7 @@ namespace VideoApi.Events.Handlers.Core
                 throw new ConferenceNotFoundException(conferenceId);
             }
 
-            if (!long.TryParse(callbackEvent.ParticipantId, out var participantId))
-            {
-                throw new ArgumentException("Invalid ParticipantId format");
-            }
-
+            Guid.TryParse(callbackEvent.ParticipantId, out var participantId);
             SourceParticipant = SourceConference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
             
             await PublishStatusAsync(callbackEvent);

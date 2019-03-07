@@ -1,28 +1,28 @@
 using System;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
 {
     public class SaveEventCommand : ICommand
     {
-        public SaveEventCommand(Guid conferenceId, string externalEventId, DateTime externalTimestamp,
-            long participantId, RoomType? transferredFrom, RoomType? transferredTo, string reason)
+        public SaveEventCommand(string externalEventId, EventType eventType, DateTime externalTimestamp,
+            Guid participantId, RoomType? transferredFrom, RoomType? transferredTo, string reason)
         {
-            ConferenceId = conferenceId;
             ExternalEventId = externalEventId;
+            EventType = eventType;
             ExternalTimestamp = externalTimestamp;
             ParticipantId = participantId;
             TransferredFrom = transferredFrom;
             TransferredTo = transferredTo;
             Reason = reason;
         }
-
-        public Guid ConferenceId { get; set; }
         public string ExternalEventId { get; set; }
+        public EventType EventType { get; set; }
         public DateTime ExternalTimestamp { get; set; }
-        public long ParticipantId { get; set; }
+        public Guid ParticipantId { get; set; }
         public RoomType? TransferredFrom { get; set; }
         public RoomType? TransferredTo { get; set; }
         public string Reason { get; set; }
@@ -36,9 +36,14 @@ namespace VideoApi.DAL.Commands
             _context = context;
         }
 
-        public Task Handle(SaveEventCommand command)
+        public async Task Handle(SaveEventCommand command)
         {
-            throw new System.NotImplementedException();
+            var @event = new Event(command.ExternalEventId, command.EventType, command.ExternalTimestamp,
+                command.ParticipantId, command.TransferredFrom, command.TransferredTo, command.Reason);
+
+            await _context.Events.AddAsync(@event);
+            
+            await _context.SaveChangesAsync(); 
         }
     }
 }

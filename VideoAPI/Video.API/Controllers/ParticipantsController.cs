@@ -43,7 +43,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateParticipantStatus(Guid conferenceId, long participantId,
+        public async Task<IActionResult> UpdateParticipantStatus(Guid conferenceId, Guid participantId,
             UpdateParticipantStatusRequest request)
         {
             if (conferenceId == Guid.Empty)
@@ -52,7 +52,7 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (participantId <= 0)
+            if (participantId == Guid.Empty)
             {
                 ModelState.AddModelError(nameof(participantId), $"Please provide a valid {nameof(participantId)}");
                 return BadRequest(ModelState);
@@ -122,7 +122,7 @@ namespace Video.API.Controllers
             }
 
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.HearingRole,
+                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
                         x.CaseTypeGroup))
                 .ToList();
 
@@ -143,7 +143,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveParticipantFromConference(Guid conferenceId, long participantId)
+        public async Task<IActionResult> RemoveParticipantFromConference(Guid conferenceId, Guid participantId)
         {
             if (conferenceId == Guid.Empty)
             {
@@ -151,7 +151,7 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (participantId <= 0)
+            if (participantId == Guid.Empty)
             {
                 ModelState.AddModelError(nameof(participantId), $"Please provide a valid {nameof(participantId)}");
                 return BadRequest(ModelState);

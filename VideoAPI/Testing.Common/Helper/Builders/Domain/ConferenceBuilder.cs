@@ -17,7 +17,6 @@ namespace Testing.Common.Helper.Builders.Domain
             _builderSettings = new BuilderSettings();
             if (ignoreId)
             {
-                _builderSettings.DisablePropertyNamingFor<Participant, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
             }
@@ -32,7 +31,7 @@ namespace Testing.Common.Helper.Builders.Domain
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
         {
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), "Solicitor LIP",
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), UserRole.Individual,
                     "Claimant")).Build();
 
             foreach (var participant in participants)
@@ -43,10 +42,10 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(string hearingRole, string caseTypeGroup)
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup)
         {
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), hearingRole,
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), userRole,
                     caseTypeGroup)).Build();
             
             participant.UpdateParticipantStatus(ParticipantState.InWaitingRoom);

@@ -56,7 +56,7 @@ namespace Video.API.Controllers
 
             var conferenceId = createConferenceCommand.NewConferenceId;
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.HearingRole,
+                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
                         x.CaseTypeGroup))
                 .ToList();
 
@@ -168,7 +168,7 @@ namespace Video.API.Controllers
                     Name = participant.Name,
                     Username = participant.Username,
                     DisplayName = participant.DisplayName,
-                    HearingRole = participant.HearingRole,
+                    UserRole = participant.UserRole,
                     CaseTypeGroup = participant.CaseTypeGroup,
                     Statuses = MapParticipantStatusToResponse(participant.GetParticipantStatuses())
                 };

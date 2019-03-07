@@ -6,6 +6,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Video.API.Validations;
 using VideoApi.Contract.Requests;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Validation
 {
@@ -21,7 +22,8 @@ namespace VideoApi.UnitTests.Validation
 
         private BookNewConferenceRequest BuildRequest()
         {
-            var participants = Builder<ParticipantRequest>.CreateListOfSize(4).Build().ToList();
+            var participants = Builder<ParticipantRequest>.CreateListOfSize(4)
+                .All().With(x=> x.UserRole = UserRole.Individual).Build().ToList();
             return Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.ScheduledDateTime = DateTime.Now.AddDays(5))
                 .With(x => x.Participants = participants)

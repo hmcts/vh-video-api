@@ -16,7 +16,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
     {
         private SaveEventCommandHandler _handler;
         private Guid _newConferenceId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -24,7 +24,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _handler = new SaveEventCommandHandler(context);
             _newConferenceId = Guid.Empty;
         }
-        
+
         [TearDown]
         public async Task TearDown()
         {
@@ -38,48 +38,34 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
         
         [Test]
-        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
-        {
-            var conferenceId = Guid.NewGuid();
-            var externalEventId = "AutomatedEventTestIdFailSave";
-            var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
-            var participantId = 1;
-            RoomType? transferredFrom = RoomType.WaitingRoom;
-            RoomType? transferredTo = RoomType.ConsultationRoom1;
-            var reason = string.Empty;
-
-            var command = new SaveEventCommand(conferenceId, externalEventId, externalTimeStamp, participantId,
-                transferredFrom, transferredTo, reason);
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
-        }
-        
-        [Test]
         public async Task should_save_event()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             
-            var conferenceId = _newConferenceId;
             var externalEventId = "AutomatedEventTestIdSuccessfulSave";
             var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
             var participantId = seededConference.GetParticipants().First().Id;
             RoomType? transferredFrom = RoomType.WaitingRoom;
             RoomType? transferredTo = RoomType.ConsultationRoom1;
             var reason = string.Empty;
+            var eventType = EventType.Disconnected;
 
-            var command = new SaveEventCommand(conferenceId, externalEventId, externalTimeStamp, participantId,
+            var command = new SaveEventCommand(externalEventId, eventType, externalTimeStamp, participantId,
                 transferredFrom, transferredTo, reason);
             await _handler.Handle(command);
 
             Event savedEvent;
             using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedEvent = await db.Events.FirstOrDefaultAsync(x => x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
+                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                    x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
             }
 
             savedEvent.Should().NotBeNull();
             savedEvent.ExternalEventId.Should().Be(externalEventId);
+            savedEvent.EventType.Should().Be(eventType);
             savedEvent.ExternalTimestamp.Should().Be(externalTimeStamp);
             savedEvent.TransferredFrom.Should().Be(transferredFrom);
             savedEvent.TransferredTo.Should().Be(transferredTo);

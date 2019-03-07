@@ -7,6 +7,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Video.API.Validations;
 using VideoApi.Contract.Requests;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Validation
 {
@@ -104,7 +105,7 @@ namespace VideoApi.UnitTests.Validation
         public async Task should_return_missing_hearing_role_error()
         {
             var request = BuildRequest();
-            request.HearingRole = string.Empty;
+            request.UserRole = UserRole.None;
 
             var result = await _validator.ValidateAsync(request);
 
@@ -118,7 +119,7 @@ namespace VideoApi.UnitTests.Validation
         {
             return Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.CaseTypeGroup = "Claimant")
-                .With(x => x.HearingRole = "Solicitor")
+                .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.Name = Name.FullName())
                 .With(x => x.Username = Internet.Email())
                 .Build();

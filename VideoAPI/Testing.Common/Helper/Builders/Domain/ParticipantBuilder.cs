@@ -2,6 +2,7 @@ using System;
 using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace Testing.Common.Helper.Builders.Domain
 {
@@ -9,25 +10,24 @@ namespace Testing.Common.Helper.Builders.Domain
     {
         private readonly BuilderSettings _builderSettings;
 
-        private string _hearingRole;
+        private UserRole _userRole;
         private string _caseTypeGroup;
 
         public ParticipantBuilder(bool ignoreId = false)
         {
-            _hearingRole = "Claimant LIP";
+            _userRole = UserRole.Individual;
             _caseTypeGroup = "Claimant";
                 
             _builderSettings = new BuilderSettings();
             if (!ignoreId) return;
             
-            _builderSettings.DisablePropertyNamingFor<Participant, long>(x => x.Id);
             _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
             _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
         }
 
-        public ParticipantBuilder WithHearingRole(string hearingRole)
+        public ParticipantBuilder WithHearingRole(UserRole userRole)
         {
-            _hearingRole = hearingRole;
+            _userRole = userRole;
             return this;
         }
         
@@ -40,7 +40,7 @@ namespace Testing.Common.Helper.Builders.Domain
         public Participant Build()
         {
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), _hearingRole,
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), _userRole,
                     _caseTypeGroup)).Build();
             return participant;
         }

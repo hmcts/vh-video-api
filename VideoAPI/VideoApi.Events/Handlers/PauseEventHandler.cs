@@ -5,6 +5,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
+using VideoApi.Events.Models.Enums;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
@@ -23,13 +24,13 @@ namespace VideoApi.Events.Handlers
             foreach (var participant in SourceConference.GetParticipants())
             {
                 await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
-                    .HearingStatusMessage(SourceConference.HearingRefId, "Paused");
+                    .HearingStatusMessage(SourceConference.HearingRefId, HearingStatus.Paused);
             }
 
             var hearingEventMessage = new HearingEventMessage
             {
                 HearingId = SourceConference.HearingRefId,
-                HearingStatus = "Paused",
+                HearingStatus = HearingStatus.Paused,
             };
 
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);

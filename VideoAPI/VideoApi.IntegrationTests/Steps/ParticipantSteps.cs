@@ -29,7 +29,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveAnUpdateParticipantStatusRequest(Scenario scenario)
         {
             Guid conferenceId;
-            long participantId;
+            Guid participantId;
             UpdateParticipantStatusRequest request;
             switch (scenario)
             {
@@ -45,12 +45,12 @@ namespace VideoApi.IntegrationTests.Steps
                 }
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
-                    participantId = 1;
+                    participantId = Guid.NewGuid();
                     request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
                     break;
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
-                    participantId = 1;
+                    participantId = Guid.Empty;
                     request = new UpdateParticipantStatusRequest();
                     break;
 
@@ -70,12 +70,12 @@ namespace VideoApi.IntegrationTests.Steps
             var seededConference = await ApiTestContext.TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             var conferenceId = seededConference.Id;
-            long participantId;
+            Guid participantId;
             UpdateParticipantStatusRequest request;
             switch (scenario)
             {
                 case Scenario.Nonexistent:
-                    participantId = long.MaxValue;
+                    participantId = Guid.NewGuid();
                     request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
                     break;
                 case Scenario.Negative:
@@ -83,7 +83,7 @@ namespace VideoApi.IntegrationTests.Steps
                     request = new UpdateParticipantStatusRequest();
                     break;
                 case Scenario.Invalid:
-                    participantId = long.MinValue;
+                    participantId = Guid.Empty;
                     request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
@@ -110,18 +110,18 @@ namespace VideoApi.IntegrationTests.Steps
                     ApiTestContext.NewConferenceId = seededConference.Id;
                     conferenceId = seededConference.Id;
                     request = new AddParticipantsToConferenceRequest
-                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder().Build()}};
+                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}};
                     break;
                 }
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
                     request = new AddParticipantsToConferenceRequest
-                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder().Build()}};
+                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}};
                     break;
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
                     request = new AddParticipantsToConferenceRequest
-                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder().Build()}};
+                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}};
                     break;
 
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
@@ -161,7 +161,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveAnRemoveParticipantFromConferenceRequest(Scenario scenario)
         {
             Guid conferenceId;
-            long participantId;
+            Guid participantId;
             switch (scenario)
             {
                 case Scenario.Valid:
@@ -175,11 +175,11 @@ namespace VideoApi.IntegrationTests.Steps
                 }
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
-                    participantId = 1;
+                    participantId = Guid.NewGuid();
                     break;
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
-                    participantId = 1;
+                    participantId = Guid.Empty;
                     break;
 
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
@@ -196,14 +196,14 @@ namespace VideoApi.IntegrationTests.Steps
             var seededConference = await ApiTestContext.TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             var conferenceId = seededConference.Id;
-            long participantId;
+            Guid participantId;
             switch (scenario)
             {
                 case Scenario.Nonexistent:
-                    participantId = long.MaxValue;
+                    participantId = Guid.NewGuid();
                     break;
                 case Scenario.Invalid:
-                    participantId = long.MinValue;
+                    participantId = Guid.Empty;
                     break;
 
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);

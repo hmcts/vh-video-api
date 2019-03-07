@@ -21,10 +21,11 @@ namespace VideoApi.IntegrationTests.Helper
         public async Task<Conference> SeedConference()
         {
             var conference = new ConferenceBuilder(true)
-                .WithParticipant("Claimant LIP", "Claimant")
-                .WithParticipant("Solicitor", "Claimant")
-                .WithParticipant("Solicitor LIP", "Defendant")
-                .WithParticipant("Solicitor", "Defendant")
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             

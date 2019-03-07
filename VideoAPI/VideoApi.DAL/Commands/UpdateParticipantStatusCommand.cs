@@ -11,10 +11,10 @@ namespace VideoApi.DAL.Commands
     public class UpdateParticipantStatusCommand : ICommand
     {
         public Guid ConferenceId { get; }
-        public long ParticipantId { get; }
+        public Guid ParticipantId { get; }
         public ParticipantState ParticipantState { get; }
 
-        public UpdateParticipantStatusCommand(Guid conferenceId, long participantId, ParticipantState participantState)
+        public UpdateParticipantStatusCommand(Guid conferenceId, Guid participantId, ParticipantState participantState)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;

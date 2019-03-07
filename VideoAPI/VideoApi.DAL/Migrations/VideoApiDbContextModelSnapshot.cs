@@ -45,7 +45,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<Guid?>("ConferenceId");
 
-                    b.Property<int>("ParticipantState");
+                    b.Property<int>("ConferenceState");
 
                     b.Property<DateTime>("TimeStamp");
 
@@ -68,7 +68,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<DateTime>("ExternalTimestamp");
 
-                    b.Property<string>("ParticipantId");
+                    b.Property<Guid>("ParticipantId");
 
                     b.Property<string>("Reason");
 
@@ -85,9 +85,8 @@ namespace VideoApi.DAL.Migrations
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CaseTypeGroup");
 
@@ -95,11 +94,11 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<string>("DisplayName");
 
-                    b.Property<string>("HearingRole");
-
                     b.Property<string>("Name");
 
                     b.Property<Guid>("ParticipantRefId");
+
+                    b.Property<int>("UserRole");
 
                     b.Property<string>("Username");
 
@@ -116,7 +115,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("ParticipantId");
+                    b.Property<Guid?>("ParticipantId");
 
                     b.Property<int>("ParticipantState");
 

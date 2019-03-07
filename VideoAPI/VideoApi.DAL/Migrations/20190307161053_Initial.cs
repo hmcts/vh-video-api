@@ -32,7 +32,7 @@ namespace VideoApi.DAL.Migrations
                     ExternalEventId = table.Column<string>(nullable: true),
                     EventType = table.Column<int>(nullable: false),
                     ExternalTimestamp = table.Column<DateTime>(nullable: false),
-                    ParticipantId = table.Column<string>(nullable: true),
+                    ParticipantId = table.Column<Guid>(nullable: false),
                     TransferredFrom = table.Column<int>(nullable: true),
                     TransferredTo = table.Column<int>(nullable: true),
                     Reason = table.Column<string>(nullable: true),
@@ -68,13 +68,12 @@ namespace VideoApi.DAL.Migrations
                 name: "Participant",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<Guid>(nullable: false),
                     ParticipantRefId = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     DisplayName = table.Column<string>(nullable: true),
                     Username = table.Column<string>(nullable: true),
-                    HearingRole = table.Column<string>(nullable: true),
+                    UserRole = table.Column<int>(nullable: false),
                     CaseTypeGroup = table.Column<string>(nullable: true),
                     ConferenceId = table.Column<Guid>(nullable: true)
                 },
@@ -97,7 +96,7 @@ namespace VideoApi.DAL.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ParticipantState = table.Column<int>(nullable: false),
                     TimeStamp = table.Column<DateTime>(nullable: false),
-                    ParticipantId = table.Column<long>(nullable: true)
+                    ParticipantId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {

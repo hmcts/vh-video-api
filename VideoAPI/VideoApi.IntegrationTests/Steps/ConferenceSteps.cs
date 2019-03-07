@@ -56,7 +56,10 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) book a new conference request")]
         public void GivenIHaveABookANewConferenceRequest(Scenario scenario)
         {
-            var request = new BookNewConferenceRequestBuilder().Build();
+            var request = new BookNewConferenceRequestBuilder().WithJudge()
+                .WithSolicitor("Claimant").WithIndividual("Claimant")
+                .WithSolicitor("Defendant").WithIndividual("Defendant")
+                .WithVideoHearingsOfficer().Build();
             if (scenario == Scenario.Invalid)
             {
                 request.Participants = new List<ParticipantRequest>();
@@ -142,11 +145,11 @@ namespace VideoApi.IntegrationTests.Steps
             
             foreach (var participant in conference.Participants)
             {
-                participant.Id.Should().BeGreaterThan(0);
+                participant.Id.Should().NotBeEmpty();
                 participant.Name.Should().NotBeNullOrEmpty();
                 participant.DisplayName.Should().NotBeNullOrEmpty();
                 participant.Username.Should().NotBeNullOrEmpty();
-                participant.HearingRole.Should().NotBeNullOrEmpty();
+                participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
                 foreach (var status in participant.Statuses)
                 {

@@ -12,7 +12,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void should_add_conference_status()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant("Claimant LIP", "Claimant")
+                .WithParticipant(UserRole.Individual, "Claimant")
                 .Build();
 
             conference.GetCurrentStatus().Should().BeNull();

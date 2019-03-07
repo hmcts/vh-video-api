@@ -10,20 +10,20 @@ using VideoApi.Events.Models.Enums;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class PauseEventHandlerTests : EventHandlerTestBase
+    public class CloseEventHandlerTests : EventHandlerTestBase
     {
-        private PauseEventHandler _eventHandler;
+        private CloseEventHandler _eventHandler;
 
         [Test]
-        public async Task should_send_messages_to_participants_and_service_bus_on_pause()
+        public async Task should_send_messages_to_participants_and_service_bus_on_close()
         {
-            _eventHandler = new PauseEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
+            _eventHandler = new CloseEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
                 EventHubContextMock.Object);
-            
+
             var conference = TestConference;
             var callbackEvent = new CallbackEvent
             {
-                EventType = EventType.Pause,
+                EventType = EventType.Close,
                 EventId = Guid.NewGuid().ToString(),
                 ConferenceId = conference.Id.ToString()
             };
@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Events
             await _eventHandler.HandleAsync(callbackEvent);
 
             // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(x => x.HearingStatusMessage(conference.HearingRefId, HearingStatus.Paused),
+            EventHubClientMock.Verify(x => x.HearingStatusMessage(conference.HearingRefId, HearingStatus.Closed),
                 Times.Exactly(conference.GetParticipants().Count));
 
             // Verify messages sent to ASB queue
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Events
 
             var eventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             eventMessage.Should().BeOfType<HearingEventMessage>();
-            ((HearingEventMessage) eventMessage).HearingStatus.Should().Be(HearingStatus.Paused);
+            ((HearingEventMessage) eventMessage).HearingStatus.Should().Be(HearingStatus.Closed);
         }
     }
 }
