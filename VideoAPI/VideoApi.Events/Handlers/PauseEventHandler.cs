@@ -21,16 +21,11 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            foreach (var participant in SourceConference.GetParticipants())
-            {
-                await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
-                    .HearingStatusMessage(SourceConference.HearingRefId, HearingStatus.Paused);
-            }
-
+            await PublishHearingStatusMessage(HearingEventStatus.Paused);
             var hearingEventMessage = new HearingEventMessage
             {
                 HearingId = SourceConference.HearingRefId,
-                HearingStatus = HearingStatus.Paused,
+                HearingEventStatus = HearingEventStatus.Paused,
             };
 
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);

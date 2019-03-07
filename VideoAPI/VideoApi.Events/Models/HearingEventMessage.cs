@@ -4,7 +4,7 @@ namespace VideoApi.Events.Models
 {
     public class HearingEventMessage : EventMessage
     {
-        public HearingStatus HearingStatus { get; set; }
+        public HearingEventStatus HearingEventStatus { get; set; }
         public override MessageType MessageType => MessageType.Hearing;
     }
 }

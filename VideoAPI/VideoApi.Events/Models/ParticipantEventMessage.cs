@@ -6,7 +6,7 @@ namespace VideoApi.Events.Models
     public class ParticipantEventMessage : EventMessage
     {
         public Guid ParticipantId { get; set; }
-        public ParticipantStatus ParticipantStatus { get; set; }
+        public ParticipantEventStatus ParticipantEventStatus { get; set; }
         public override MessageType MessageType => MessageType.Participant;
     }
 }

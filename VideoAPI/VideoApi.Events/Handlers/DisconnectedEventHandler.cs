@@ -31,17 +31,13 @@ namespace VideoApi.Events.Handlers
 
         private async Task PublishParticipantDisconnectMessage()
         {
-            foreach (var participant in SourceConference.GetParticipants())
-            {
-                await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
-                    .ParticipantStatusMessage(SourceParticipant.Username, ParticipantStatus.Disconnected);
-            }
+            await PublishParticipantStatusMessage(ParticipantEventStatus.Disconnected);
             
             var participantEventMessage = new ParticipantEventMessage
             {
                 HearingId = SourceConference.HearingRefId,
                 ParticipantId = SourceParticipant.ParticipantRefId,
-                ParticipantStatus = ParticipantStatus.Disconnected
+                ParticipantEventStatus = ParticipantEventStatus.Disconnected
             };
             await ServiceBusQueueClient.AddMessageToQueue(participantEventMessage);
         }
@@ -51,15 +47,10 @@ namespace VideoApi.Events.Handlers
             var hearingEventMessage = new HearingEventMessage
             {
                 HearingId = SourceConference.HearingRefId,
-                HearingStatus = HearingStatus.Suspended
+                HearingEventStatus = HearingEventStatus.Suspended
             };
 
-            foreach (var participant in SourceConference.GetParticipants())
-            {
-                await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
-                    .HearingStatusMessage(SourceConference.HearingRefId, HearingStatus.Suspended);
-            }
-
+            await PublishHearingStatusMessage(HearingEventStatus.Suspended);
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }

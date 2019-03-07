@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 namespace VideoApi.Events.Models.Enums
 {
-    public enum ParticipantStatus
+    public enum ParticipantEventStatus
     {
         [EnumMember(Value = "Not Signed In")]
         NotSignedIn,

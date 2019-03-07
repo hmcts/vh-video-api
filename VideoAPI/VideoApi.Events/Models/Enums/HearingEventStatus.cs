@@ -1,6 +1,6 @@
 namespace VideoApi.Events.Models.Enums
 {
-    public enum HearingStatus
+    public enum HearingEventStatus
     {
         Paused,
         Suspended,

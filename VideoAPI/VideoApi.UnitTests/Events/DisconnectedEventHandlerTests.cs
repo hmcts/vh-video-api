@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Events
 
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(participantForEvent.Username, ParticipantStatus.Disconnected),
+                x => x.ParticipantStatusMessage(participantForEvent.Username, ParticipantEventStatus.Disconnected),
                 Times.Exactly(conference.GetParticipants().Count));
 
             // Verify messages sent to ASB queue
@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Events
 
             var eventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             eventMessage.Should().BeOfType<ParticipantEventMessage>();
-            ((ParticipantEventMessage) eventMessage).ParticipantStatus.Should().Be(ParticipantStatus.Disconnected);
+            ((ParticipantEventMessage) eventMessage).ParticipantEventStatus.Should().Be(ParticipantEventStatus.Disconnected);
         }
 
         [Test]
@@ -68,11 +68,11 @@ namespace VideoApi.UnitTests.Events
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
                 x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    ParticipantStatus.Disconnected),
+                    ParticipantEventStatus.Disconnected),
                 Times.Exactly(participantCount));
 
             EventHubClientMock.Verify(
-                x => x.HearingStatusMessage(conference.HearingRefId, HearingStatus.Suspended),
+                x => x.HearingStatusMessage(conference.HearingRefId, HearingEventStatus.Suspended),
                 Times.Exactly(participantCount));
 
             // Verify messages sent to ASB queue
@@ -80,12 +80,12 @@ namespace VideoApi.UnitTests.Events
 
             var participantEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
-            ((ParticipantEventMessage) participantEventMessage).ParticipantStatus.Should()
-                .Be(ParticipantStatus.Disconnected);
+            ((ParticipantEventMessage) participantEventMessage).ParticipantEventStatus.Should()
+                .Be(ParticipantEventStatus.Disconnected);
 
             var hearingEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             hearingEventMessage.Should().BeOfType<HearingEventMessage>();
-            ((HearingEventMessage) hearingEventMessage).HearingStatus.Should().Be(HearingStatus.Suspended);
+            ((HearingEventMessage) hearingEventMessage).HearingEventStatus.Should().Be(HearingEventStatus.Suspended);
         }
     }
 }

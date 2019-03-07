@@ -9,8 +9,8 @@ namespace VideoApi.Events.Hub
 {
     public interface IEventHubClient
     {
-        Task ParticipantStatusMessage(string email, ParticipantStatus status);
-        Task HearingStatusMessage(Guid hearingId, HearingStatus status);
+        Task ParticipantStatusMessage(string email, ParticipantEventStatus eventStatus);
+        Task HearingStatusMessage(Guid hearingId, HearingEventStatus eventStatus);
         Task ConsultationMessage(Guid hearingId, string requestedBy, string requestedFor, string result);
         Task HelpMessage(Guid hearingId, string participantName);
     }
