@@ -17,24 +17,13 @@ namespace VideoApi.UnitTests.Events
     {
         private PauseEventHandler _pauseEventHandler;
 
-
         [Test]
         public async Task should_send_paused_hearing_messages_to_clients_and_service_bus_when_hearing_is_paused()
         {
             _pauseEventHandler = new PauseEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
                 EventHubContextMock.Object);
-            var conference = new ConferenceBuilder().WithParticipants(2).Build();
             
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(conference);
-
-            foreach (var participant in conference.GetParticipants())
-            {
-                EventHubContextMock.Setup(x => x.Clients.Group(participant.Username.ToString()))
-                    .Returns(EventHubClientMock.Object);
-            }
-
+            var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
             var callbackEvent = new CallbackEvent
             {
