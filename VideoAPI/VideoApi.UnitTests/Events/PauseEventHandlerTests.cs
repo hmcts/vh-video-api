@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Events
         {
             _eventHandler = new PauseEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
                 EventHubContextMock.Object);
-            
+
             var conference = TestConference;
             var callbackEvent = new CallbackEvent
             {
