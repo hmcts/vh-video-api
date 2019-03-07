@@ -7,7 +7,6 @@ using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using System.Collections.Generic;
 using System.Linq;
-using Testing.Common.Helper.Builders;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;

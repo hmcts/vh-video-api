@@ -1,0 +1,27 @@
+using System;
+using FluentAssertions;
+using NUnit.Framework;
+using VideoApi.Domain.Enums;
+using VideoApi.Events.Handlers;
+
+namespace VideoApi.UnitTests.Events
+{
+    public class EventHandlerFactoryTests : EventHandlerTestBase
+    {
+        [TestCase(EventType.Pause, typeof(PauseEventHandler))]
+        [TestCase(EventType.Joined, typeof(JoinedEventHandler))]
+        [TestCase(EventType.Close, typeof(CloseEventHandler))]
+        [TestCase(EventType.Disconnected, typeof(DisconnectedEventHandler))]
+        [TestCase(EventType.Help, typeof(HelpEventHandler))]
+        [TestCase(EventType.Leave, typeof(LeaveEventHandler))]
+        [TestCase(EventType.Transfer, typeof(TransferEventHandler))]
+        public void should_return_instance_of_event_handler_when_factory_get_is_called_with_valid_request(
+            EventType eventType, Type typeOfEventHandler)
+        {
+            var eventHandlerFactory = new EventHandlerFactory(EventHandlersList);
+
+            var eventHandler = eventHandlerFactory.Get(eventType);
+            eventHandler.Should().BeOfType(typeOfEventHandler);
+        }
+    }
+}

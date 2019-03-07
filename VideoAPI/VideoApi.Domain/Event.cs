@@ -16,7 +16,7 @@ namespace VideoApi.Domain
         public string ExternalEventId { get; set; }
         public EventType EventType { get; set; }
         public DateTime ExternalTimestamp { get; set; }
-        public string ParticipantId { get; set; }
+        public long ParticipantId { get; set; }
         public RoomType? TransferredFrom { get; set; }
         public RoomType? TransferredTo { get; set; }
         public string Reason { get; set; }

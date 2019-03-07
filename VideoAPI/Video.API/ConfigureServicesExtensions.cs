@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
-using Video.API.Events;
 using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Events.Hub;
 
 namespace Video.API
 {

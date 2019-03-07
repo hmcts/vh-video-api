@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Testing.Common.Helper.Builders;
@@ -47,6 +48,16 @@ namespace VideoApi.IntegrationTests.Helper
                     .SingleAsync(x => x.Id == conferenceId);
                 
                 db.Remove(conference);
+                await db.SaveChangesAsync();
+            }
+        }
+        
+        public async Task RemoveEvents()
+        {
+            using (var db = new VideoApiDbContext(_dbContextOptions))
+            {
+                var eventsToDelete = db.Events.Where(x => x.ExternalEventId.StartsWith("Automated"));
+                db.Events.RemoveRange(eventsToDelete);
                 await db.SaveChangesAsync();
             }
         }

@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Video.API.Events;
 using Video.API.Extensions;
 using VideoApi.Common.Configuration;
 using VideoApi.DAL;
+using VideoApi.Events.Hub;
 
 namespace Video.API
 {
