@@ -5,6 +5,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
+using VideoApi.Events.Models.Enums;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
@@ -18,9 +19,18 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.JudgeAvailable;
 
-        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            throw new System.NotImplementedException();
+            await PublishParticipantStatusMessage(ParticipantEventStatus.Available);
+            
+            var participantEventMessage = new ParticipantEventMessage
+            {
+                HearingId = SourceConference.HearingRefId,
+                ParticipantId = SourceParticipant.ParticipantRefId,
+                ParticipantEventStatus = ParticipantEventStatus.Available
+            };
+
+            await ServiceBusQueueClient.AddMessageToQueue(participantEventMessage);
         }
     }
 }

@@ -25,7 +25,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Pause,
                 EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id.ToString()
+                ConferenceId = conference.Id.ToString(),
+                TimeStampUtc = DateTime.UtcNow
             };
 
             await _eventHandler.HandleAsync(callbackEvent);

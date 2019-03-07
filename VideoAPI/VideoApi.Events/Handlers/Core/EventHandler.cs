@@ -10,12 +10,9 @@ namespace VideoApi.Events.Handlers.Core
         Task HandleAsync(CallbackEvent callbackEvent);
     }
     
-    public class EventHandler : IEventHandler
+    public abstract class EventHandler : IEventHandler
     {
-        public EventType EventType { get; }
-        public Task HandleAsync(CallbackEvent callbackEvent)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract EventType EventType { get; }
+        public abstract Task HandleAsync(CallbackEvent callbackEvent);
     }
 }

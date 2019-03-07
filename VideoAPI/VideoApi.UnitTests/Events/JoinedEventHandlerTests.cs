@@ -30,7 +30,8 @@ namespace VideoApi.UnitTests.Events
                 EventType = EventType.Joined,
                 EventId = Guid.NewGuid().ToString(),
                 ConferenceId = conference.Id.ToString(),
-                ParticipantId = participantForEvent.Id.ToString()
+                ParticipantId = participantForEvent.Id.ToString(),
+                TimeStampUtc = DateTime.UtcNow
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
@@ -61,7 +62,8 @@ namespace VideoApi.UnitTests.Events
                 EventType = EventType.Joined,
                 EventId = Guid.NewGuid().ToString(),
                 ConferenceId = conference.Id.ToString(),
-                ParticipantId = participantForEvent.Id.ToString()
+                ParticipantId = participantForEvent.Id.ToString(),
+                TimeStampUtc = DateTime.UtcNow
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
@@ -82,10 +84,12 @@ namespace VideoApi.UnitTests.Events
             participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
             ((ParticipantEventMessage) participantEventMessage).ParticipantEventStatus.Should()
                 .Be(ParticipantEventStatus.InHearing);
+            participantEventMessage.MessageType.Should().Be(MessageType.Participant);
 
             var hearingEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             hearingEventMessage.Should().BeOfType<HearingEventMessage>();
             ((HearingEventMessage) hearingEventMessage).HearingEventStatus.Should().Be(HearingEventStatus.Live);
+            hearingEventMessage.MessageType.Should().Be(MessageType.Hearing);
         }
     }
 }

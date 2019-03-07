@@ -5,6 +5,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Domain.Enums;
+using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 using VideoApi.Events.Models.Enums;
@@ -39,7 +40,8 @@ namespace VideoApi.UnitTests.Events
                 ConferenceId = conference.Id.ToString(),
                 ParticipantId = participantForEvent.Id.ToString(),
                 TransferFrom = from,
-                TransferTo = to
+                TransferTo = to,
+                TimeStampUtc = DateTime.UtcNow
             };
             await _eventHandler.HandleAsync(callbackEvent);
 
@@ -54,6 +56,38 @@ namespace VideoApi.UnitTests.Events
             var participantEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
             ((ParticipantEventMessage) participantEventMessage).ParticipantEventStatus.Should().Be(status);
+        }
+        
+        [Test()]
+        public void should_throw_exception_when_transfer_cannot_be_mapped_to_participant_status()
+        {
+            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
+                EventHubContextMock.Object);
+
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
+
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Transfer,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id.ToString(),
+                ParticipantId = participantForEvent.Id.ToString(),
+                TransferFrom = RoomType.WaitingRoom,
+                TransferTo = RoomType.WaitingRoom,
+                TimeStampUtc = DateTime.UtcNow
+            };
+            
+            Assert.ThrowsAsync<RoomTransferException>(() =>
+                _eventHandler.HandleAsync(callbackEvent));
+
+            // Verify messages sent to event hub clients
+            EventHubClientMock.Verify(
+                x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
+                    It.IsAny<ParticipantEventStatus>()), Times.Never);
+
+            // Verify messages sent to ASB queue
+            ServiceBusQueueClient.Count.Should().Be(0);
         }
     }
 }
