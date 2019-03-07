@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
@@ -33,6 +34,7 @@ namespace VideoApi.Events.Handlers.Core
             HubContext = hubContext;
         }
 
+#pragma warning disable S4457 // Parameter validation in "async/await" methods should be wrapped
         public async Task HandleAsync(CallbackEvent callbackEvent)
         {   
             if (!Guid.TryParse(callbackEvent.ConferenceId, out var conferenceId))
