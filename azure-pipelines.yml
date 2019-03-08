@@ -12,6 +12,8 @@ variables:
     "AzureAd/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
     "Testing/TestClientId":"$(vh-admin-web-appid)",
     "Testing/TestClientSecret":"$(vh-admin-web-key)"
+    "ServiceBusQueue/ConnectionString":""
+    "ServiceBusQueue/ConnectionString":"servicebusqueue-connectionstring"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests
