@@ -29,8 +29,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Joined,
                 EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id.ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
 
@@ -61,8 +61,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Joined,
                 EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id.ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
 

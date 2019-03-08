@@ -30,8 +30,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Help,
                 EventId = Guid.NewGuid().ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
-                ConferenceId = conference.Id.ToString(),
+                ParticipantId = participantForEvent.Id,
+                ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
 
@@ -40,31 +40,6 @@ namespace VideoApi.UnitTests.Events
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
                 x => x.HelpMessage(conference.HearingRefId, participantForEvent.DisplayName), Times.Once);
-        }
-        
-        [Test]
-        public void should_throw_exception_when_conference_id_cannot_be_parsed()
-        {
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((Conference) null);
-            
-            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
-
-            var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First();
-            var callbackEvent = new CallbackEvent
-            {
-                EventType = EventType.Help,
-                EventId = Guid.NewGuid().ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
-                ConferenceId = "1235Test",
-                TimeStampUtc = DateTime.UtcNow
-            };
-
-            Assert.ThrowsAsync<ArgumentException>(() =>
-                _eventHandler.HandleAsync(callbackEvent));
         }
         
         [Test]
@@ -83,8 +58,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Help,
                 EventId = Guid.NewGuid().ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
-                ConferenceId = conference.Id.ToString(),
+                ParticipantId = participantForEvent.Id,
+                ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
 
@@ -116,8 +91,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Help,
                 EventId = Guid.NewGuid().ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
-                ConferenceId = conference.Id.ToString(),
+                ParticipantId = participantForEvent.Id,
+                ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
 

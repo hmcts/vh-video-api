@@ -20,10 +20,10 @@ namespace VideoApi.Events.Handlers.Core
         protected readonly IQueryHandler QueryHandler;
         protected readonly IServiceBusQueueClient ServiceBusQueueClient;
         protected readonly IHubContext<EventHub, IEventHubClient> HubContext;
-        
+
         public Conference SourceConference { get; set; }
         public Participant SourceParticipant { get; set; }
-        
+
         public abstract EventType EventType { get; }
 
         protected EventHandlerBase(IQueryHandler queryHandler, IServiceBusQueueClient serviceBusQueueClient,
@@ -36,26 +36,22 @@ namespace VideoApi.Events.Handlers.Core
 
 #pragma warning disable S4457 // Parameter validation in "async/await" methods should be wrapped
         public async Task HandleAsync(CallbackEvent callbackEvent)
-        {   
-            if (!Guid.TryParse(callbackEvent.ConferenceId, out var conferenceId))
-            {
-                throw new ArgumentException("Invalid ConferenceId format");
-            }
-
+        {
             SourceConference =
-                await QueryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                await QueryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(callbackEvent.ConferenceId));
 
             if (SourceConference == null)
             {
-                throw new ConferenceNotFoundException(conferenceId);
+                throw new ConferenceNotFoundException(callbackEvent.ConferenceId);
             }
 
-            Guid.TryParse(callbackEvent.ParticipantId, out var participantId);
-            SourceParticipant = SourceConference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
-            
+            SourceParticipant = SourceConference.GetParticipants()
+                .SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
+
             await PublishStatusAsync(callbackEvent);
         }
-        
+
         /// <summary>
         /// Publish a participant event to all participants in conference
         /// </summary>
@@ -69,7 +65,7 @@ namespace VideoApi.Events.Handlers.Core
                     .ParticipantStatusMessage(SourceParticipant.Username, participantEventStatus);
             }
         }
-        
+
         /// <summary>
         /// Publish a hearing event to all participants in conference
         /// </summary>

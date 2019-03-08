@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Pause,
                 EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id.ToString(),
+                ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
 

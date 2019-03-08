@@ -27,8 +27,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Disconnected,
                 EventId = Guid.NewGuid().ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
-                ConferenceId = conference.Id.ToString(),
+                ParticipantId = participantForEvent.Id,
+                ConferenceId = conference.Id,
                 Reason = "Unexpected drop",
                 TimeStampUtc = DateTime.UtcNow
             };
@@ -62,8 +62,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Disconnected,
                 EventId = Guid.NewGuid().ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
-                ConferenceId = conference.Id.ToString(),
+                ParticipantId = participantForEvent.Id,
+                ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
 

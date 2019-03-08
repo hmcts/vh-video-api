@@ -37,8 +37,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Transfer,
                 EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id.ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
                 TransferFrom = from,
                 TransferTo = to,
                 TimeStampUtc = DateTime.UtcNow
@@ -71,8 +71,8 @@ namespace VideoApi.UnitTests.Events
             {
                 EventType = EventType.Transfer,
                 EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id.ToString(),
-                ParticipantId = participantForEvent.Id.ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
                 TransferFrom = RoomType.WaitingRoom,
                 TransferTo = RoomType.WaitingRoom,
                 TimeStampUtc = DateTime.UtcNow

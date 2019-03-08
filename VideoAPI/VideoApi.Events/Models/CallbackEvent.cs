@@ -9,8 +9,8 @@ namespace VideoApi.Events.Models
         public string EventId { get; set; }
         public EventType EventType { get; set; }
         public DateTime TimeStampUtc { get; set; }
-        public string ConferenceId { get; set; }
-        public string ParticipantId { get; set; }
+        public Guid ConferenceId { get; set; }
+        public Guid ParticipantId { get; set; }
         [EnumDataType(typeof(RoomType))]
         public RoomType? TransferFrom { get; set; }
         [EnumDataType(typeof(RoomType))]

@@ -51,8 +51,21 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
             result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoConferenceIdErrorMessage)
+                .Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task should_return_invalid_conference_id_format_error()
+        {
+            var request = BuildRequest();
+            request.ConferenceId = "uygfuyguds";
+
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.InvalidConferenceIdFormatErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -79,8 +92,20 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
             result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoParticipantIdErrorMessage)
+                .Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task should_return_invalid_participant_id_error()
+        {
+            var request = BuildRequest();
+            request.ParticipantId = "iughfuidshif";
+
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.InvalidParticipantIdFormatErrorMessage)
                 .Should().BeTrue();
         }
         
