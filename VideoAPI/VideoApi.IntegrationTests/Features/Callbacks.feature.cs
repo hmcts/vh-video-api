@@ -123,9 +123,30 @@ namespace VideoApi.IntegrationTests.Features
 #line 20
     testRunner.And("the error response message should also contain \'ConferenceId is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 21
-    testRunner.And("the error response message should also contain \'EventId is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.And("the error response message should also contain \'ConferenceId format is not recogn" +
+                    "ised\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 22
+    testRunner.And("the error response message should also contain \'EventId is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 23
     testRunner.And("the error response message should also contain \'EventType is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Should accept and process a conference event request")]
+        public virtual void ShouldAcceptAndProcessAConferenceEventRequest()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should accept and process a conference event request", null, ((string[])(null)));
+#line 25
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 26
+    testRunner.Given("I have a valid conference event request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 27
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 28
+    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

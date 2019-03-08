@@ -86,7 +86,7 @@ namespace Video.API.Controllers
             };
             
             await _eventHandlerFactory.Get(request.EventType).HandleAsync(callbackEvent);
-            return Ok();
+            return NoContent();
         }
     }
 }

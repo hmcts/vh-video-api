@@ -31,7 +31,8 @@ namespace VideoApi.UnitTests.Events
                 EventId = Guid.NewGuid().ToString(),
                 ConferenceId = conference.Id,
                 ParticipantId = participantForEvent.Id,
-                TimeStampUtc = DateTime.UtcNow
+                TimeStampUtc = DateTime.UtcNow,
+                Reason = "Automated"
             };
 
             await _eventHandler.HandleAsync(callbackEvent);

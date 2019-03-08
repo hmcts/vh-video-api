@@ -80,6 +80,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.EventType = EventType.Transfer)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
+                .With(x => x.Reason = "Automated")
                 .Build();
 
             if (conference == null) return request;
@@ -96,6 +97,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.ParticipantId = string.Empty)
                 .With(x => x.EventId = string.Empty)
                 .With(x => x.EventType = EventType.None)
+                .With(x => x.Reason = "Automated")
                 .Build();
             return request;
         }

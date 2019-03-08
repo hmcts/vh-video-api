@@ -15,17 +15,17 @@ namespace VideoApi.Events.ServiceBus
 
     public class ServiceBusQueueClient : IServiceBusQueueClient
     {
-        private readonly IOptions<ServiceBusSettings> _serviceBusSettings;
+        private readonly ServiceBusSettings _serviceBusSettings;
 
         public ServiceBusQueueClient(IOptions<ServiceBusSettings> serviceBusSettings)
         {
-            _serviceBusSettings = serviceBusSettings;
+            _serviceBusSettings = serviceBusSettings.Value;
         }
 
         public async Task AddMessageToQueue(EventMessage eventMessage)
         {
-            var queueClient = new QueueClient(_serviceBusSettings.Value.ConnectionString,
-                _serviceBusSettings.Value.QueueName);
+            var queueClient = new QueueClient(_serviceBusSettings.ConnectionString,
+                _serviceBusSettings.QueueName);
             var jsonObjectString = JsonConvert.SerializeObject(eventMessage);
 
             var messageBytes = Encoding.UTF8.GetBytes(jsonObjectString);

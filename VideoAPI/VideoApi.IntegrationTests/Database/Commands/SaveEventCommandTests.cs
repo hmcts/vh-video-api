@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
@@ -49,7 +48,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = seededConference.GetParticipants().First().Id;
             RoomType? transferredFrom = RoomType.WaitingRoom;
             RoomType? transferredTo = RoomType.ConsultationRoom1;
-            var reason = string.Empty;
+            var reason = "Automated";
             var eventType = EventType.Disconnected;
 
             var command = new SaveEventCommand(externalEventId, eventType, externalTimeStamp, participantId,

@@ -56,7 +56,7 @@ namespace VideoApi.IntegrationTests.Helper
         {
             using (var db = new VideoApiDbContext(_dbContextOptions))
             {
-                var eventsToDelete = db.Events.Where(x => x.ExternalEventId.StartsWith("Automated"));
+                var eventsToDelete = db.Events.Where(x => x.Reason.StartsWith("Automated"));
                 db.Events.RemoveRange(eventsToDelete);
                 await db.SaveChangesAsync();
             }

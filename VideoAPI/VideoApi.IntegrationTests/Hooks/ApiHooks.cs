@@ -87,8 +87,9 @@ namespace VideoApi.IntegrationTests.Hooks
         }
 
         [AfterFeature]
-        public static void AfterApiFeature(ApiTestContext apiTestContext)
+        public static async Task AfterApiFeature(ApiTestContext apiTestContext)
         {
+            await apiTestContext.TestDataManager.RemoveEvents();
             apiTestContext.Server.Dispose();
         }
     }
