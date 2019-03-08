@@ -46,9 +46,10 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the response message should read '(.*)'")]
         [Then(@"the error response message should contain '(.*)'")]
         [Then(@"the error response message should also contain '(.*)'")]
-        public void ThenTheResponseShouldContain(string errorMessage)
+        public async Task ThenTheResponseShouldContain(string errorMessage)
         {
-            _apiTestContext.ResponseMessage.Content.ReadAsStringAsync().Result.Should().Contain(errorMessage);
+            var messageString = await _apiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            messageString.Should().Contain(errorMessage);
         }
     }
 }

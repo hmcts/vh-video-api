@@ -6,6 +6,7 @@ using System.Reflection;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Video.API.Swagger;
@@ -14,7 +15,9 @@ using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
+using VideoApi.Events.ServiceBus;
 
 namespace Video.API
 {
@@ -64,8 +67,12 @@ namespace Video.API
             services.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
             services.AddScoped<ICommandHandler, CommandHandler>();
             
+            services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
+            services.AddScoped<IServiceBusQueueClient, ServiceBusQueueClient>();
+            
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
+            RegisterEventHandlers(services);
             
             services.AddSignalR()
                 .AddJsonProtocol(options =>
@@ -77,6 +84,29 @@ namespace Video.API
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             
             return services;
+        }
+        
+        private static void RegisterEventHandlers(IServiceCollection serviceCollection)
+        {
+            var eventHandlers = GetAllTypesOf<IEventHandler>();
+            
+            foreach (var eventHandler in eventHandlers)
+            {
+                if (eventHandler.IsInterface || eventHandler.IsAbstract) continue;
+                var serviceType = eventHandler.GetInterfaces()[0];
+                serviceCollection.AddScoped(serviceType, eventHandler);
+            }
+        }
+        
+        private static IEnumerable<Type> GetAllTypesOf<T>()
+        {
+            var platform = Environment.OSVersion.Platform.ToString();
+            var runtimeAssemblyNames = DependencyContext.Default.GetRuntimeAssemblyNames(platform);
+
+            return runtimeAssemblyNames
+                .Select(Assembly.Load)
+                .SelectMany(a => a.ExportedTypes)
+                .Where(t => typeof(T).IsAssignableFrom(t));
         }
         
         private static void RegisterCommandHandlers(IServiceCollection serviceCollection)

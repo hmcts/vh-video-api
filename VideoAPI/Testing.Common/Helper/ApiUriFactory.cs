@@ -19,7 +19,7 @@ namespace Testing.Common.Helper
     public class CallbackEndpoints
     {
         private string ApiRoot => "/callback";
-        public string Event => $"{ApiRoot}/event";
+        public string Event => $"{ApiRoot}/conference";
     }
     
     public class ParticipantsEndpoints
