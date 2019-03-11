@@ -71,136 +71,18 @@ namespace VideoApi.IntegrationTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Update status for an existing conference and existing participant id")]
-        public virtual void UpdateStatusForAnExistingConferenceAndExistingParticipantId()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an existing conference and existing participant id", null, ((string[])(null)));
-#line 6
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 7
-    testRunner.Given("I have an update participant status request for a valid conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 8
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 9
-    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Update status for an invalid conference and existing participant id")]
-        public virtual void UpdateStatusForAnInvalidConferenceAndExistingParticipantId()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an invalid conference and existing participant id", null, ((string[])(null)));
-#line 11
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 12
-    testRunner.Given("I have an update participant status request for an invalid conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 13
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 14
-    testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 15
-    testRunner.And("the error response message should also contain \'Please provide a valid conference" +
-                    "Id\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Update status for an nonexistent conference and existing participant id")]
-        public virtual void UpdateStatusForAnNonexistentConferenceAndExistingParticipantId()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an nonexistent conference and existing participant id", null, ((string[])(null)));
-#line 17
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 18
-    testRunner.Given("I have an update participant status request for a nonexistent conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 19
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 20
-    testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Update status for an existing conference and nonexistent participant id")]
-        public virtual void UpdateStatusForAnExistingConferenceAndNonexistentParticipantId()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an existing conference and nonexistent participant id", null, ((string[])(null)));
-#line 22
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 23
-    testRunner.Given("I have an update participant status request for a nonexistent participant", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 24
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 25
-    testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Update status for an existing conference, existing participant id and invalid req" +
-            "uest body")]
-        public virtual void UpdateStatusForAnExistingConferenceExistingParticipantIdAndInvalidRequestBody()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an existing conference, existing participant id and invalid req" +
-                    "uest body", null, ((string[])(null)));
-#line 27
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 28
-    testRunner.Given("I have an update participant status request for an negative participant", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 29
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 30
-    testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 31
-    testRunner.And("the error response message should also contain \'Invalid state provided\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Update status for an existing conference, invalid participant id")]
-        public virtual void UpdateStatusForAnExistingConferenceInvalidParticipantId()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update status for an existing conference, invalid participant id", null, ((string[])(null)));
-#line 33
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 34
-    testRunner.Given("I have an update participant status request for a invalid participant", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 35
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 36
-    testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 37
-    testRunner.And("the error response message should also contain \'Please provide a valid participan" +
-                    "tId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Add participant to an existing conference")]
         public virtual void AddParticipantToAnExistingConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add participant to an existing conference", null, ((string[])(null)));
-#line 39
+#line 6
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 40
+#line 7
     testRunner.Given("I have an add participant to a valid conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 41
+#line 8
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 42
+#line 9
     testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -211,14 +93,14 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void AddParticipantToANon_ExistentConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add participant to a non-existent conference", null, ((string[])(null)));
-#line 44
+#line 11
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 45
+#line 12
     testRunner.Given("I have an add participant to a nonexistent conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 46
+#line 13
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 47
+#line 14
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -229,16 +111,16 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void AddParticipantToAnInvalidConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add participant to an invalid conference", null, ((string[])(null)));
-#line 49
+#line 16
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 50
+#line 17
     testRunner.Given("I have an add participant to an invalid conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 51
+#line 18
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 52
+#line 19
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 53
+#line 20
     testRunner.And("the error response message should also contain \'Please provide a valid conference" +
                     "Id\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -250,16 +132,16 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void AddParticipantToAnExistingConferenceWithABadRequestBody()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add participant to an existing conference with a bad request body", null, ((string[])(null)));
-#line 55
+#line 22
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 56
+#line 23
     testRunner.Given("I have an add participant to a conference request with an invalid body", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 57
+#line 24
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 58
+#line 25
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 59
+#line 26
     testRunner.And("the error response message should also contain \'Please provide at least one parti" +
                     "cipant\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -271,14 +153,14 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void RemoveParticipantFromAnExistingConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove participant from an existing conference", null, ((string[])(null)));
-#line 61
+#line 28
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 62
+#line 29
     testRunner.Given("I have an remove participant from a valid conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 63
+#line 30
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 64
+#line 31
     testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -289,16 +171,16 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void RemoveParticipantFromAnInvalidConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove participant from an invalid conference", null, ((string[])(null)));
-#line 66
+#line 33
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 67
+#line 34
     testRunner.Given("I have an remove participant from an invalid conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 68
+#line 35
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 69
+#line 36
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 70
+#line 37
     testRunner.And("the error response message should also contain \'Please provide a valid conference" +
                     "Id\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -310,14 +192,14 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void RemoveParticipantFromANon_ExistentConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove participant from a non-existent conference", null, ((string[])(null)));
-#line 73
+#line 40
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 74
+#line 41
     testRunner.Given("I have an remove participant from a nonexistent conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 75
+#line 42
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 76
+#line 43
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -328,15 +210,15 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void RemoveNon_ExistentParticipantFromAnExistingConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove non-existent participant from an existing conference", null, ((string[])(null)));
-#line 78
+#line 45
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 79
+#line 46
     testRunner.Given("I have a remove participant from a conference request for a nonexistent participa" +
                     "nt", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 80
+#line 47
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 81
+#line 48
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -347,16 +229,16 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void RemoveAnInvalidParticipantFromAnExistingConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove an invalid participant from an existing conference", null, ((string[])(null)));
-#line 83
+#line 50
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 84
+#line 51
     testRunner.Given("I have a remove participant from a conference request for a invalid participant", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 85
+#line 52
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 86
+#line 53
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 87
+#line 54
     testRunner.And("the error response message should also contain \'Please provide a valid participan" +
                     "tId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden

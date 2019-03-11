@@ -32,60 +32,6 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Update the participant status
-        /// </summary>
-        /// <param name="conferenceId">The id of the conference participant belongs to</param>
-        /// <param name="participantId">The id of the participant to update</param>
-        /// <param name="request">New status for participant</param>
-        /// <returns></returns>
-        [HttpPatch("{conferenceId}/participants/{participantId}")]
-        [SwaggerOperation(OperationId = "UpdateParticipantStatus")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateParticipantStatus(Guid conferenceId, Guid participantId,
-            UpdateParticipantStatusRequest request)
-        {
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                return BadRequest(ModelState);
-            }
-
-            if (participantId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(participantId), $"Please provide a valid {nameof(participantId)}");
-                return BadRequest(ModelState);
-            }
-
-            var result = await new UpdateParticipantStatusRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference == null)
-            {
-                return NotFound();
-            }
-
-            var participant = queriedConference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
-            if (participant == null)
-            {
-                return NotFound();
-            }
-
-            var command = new UpdateParticipantStatusCommand(conferenceId, participantId, request.State);
-            await _commandHandler.Handle(command);
-            return NoContent();
-        }
-
-        /// <summary>
         /// Add participants to a hearing
         /// </summary>
         /// <param name="conferenceId">The id of the conference to add participants to</param>

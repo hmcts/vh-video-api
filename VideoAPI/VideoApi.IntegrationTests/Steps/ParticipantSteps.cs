@@ -23,78 +23,7 @@ namespace VideoApi.IntegrationTests.Steps
         public ParticipantSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
         }
-
-        [Given(@"I have an update participant status request for a (.*) conference")]
-        [Given(@"I have an update participant status request for an (.*) conference")]
-        public async Task GivenIHaveAnUpdateParticipantStatusRequest(Scenario scenario)
-        {
-            Guid conferenceId;
-            Guid participantId;
-            UpdateParticipantStatusRequest request;
-            switch (scenario)
-            {
-                case Scenario.Valid:
-                {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    conferenceId = seededConference.Id;
-                    participantId = seededConference.GetParticipants().First().Id;
-                    request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
-                    break;
-                }
-                case Scenario.Nonexistent:
-                    conferenceId = Guid.NewGuid();
-                    participantId = Guid.NewGuid();
-                    request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
-                    break;
-                case Scenario.Invalid:
-                    conferenceId = Guid.Empty;
-                    participantId = Guid.Empty;
-                    request = new UpdateParticipantStatusRequest();
-                    break;
-
-                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
-
-            ApiTestContext.Uri = _endpoints.UpdateParticipantStatus(conferenceId, participantId);
-            ApiTestContext.HttpMethod = HttpMethod.Patch;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }
-
-        [Given(@"I have an update participant status request for a (.*) participant")]
-        [Given(@"I have an update participant status request for an (.*) participant")]
-        public async Task GivenIHaveAnUpdateParticipantStatusRequestForParticipant(Scenario scenario)
-        {
-            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            var conferenceId = seededConference.Id;
-            Guid participantId;
-            UpdateParticipantStatusRequest request;
-            switch (scenario)
-            {
-                case Scenario.Nonexistent:
-                    participantId = Guid.NewGuid();
-                    request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
-                    break;
-                case Scenario.Negative:
-                    participantId = seededConference.GetParticipants().First().Id;
-                    request = new UpdateParticipantStatusRequest();
-                    break;
-                case Scenario.Invalid:
-                    participantId = Guid.Empty;
-                    request = new UpdateParticipantStatusRequest {State = ParticipantState.InHearing};
-                    break;
-                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
-
-            ApiTestContext.Uri = _endpoints.UpdateParticipantStatus(conferenceId, participantId);
-            ApiTestContext.HttpMethod = HttpMethod.Patch;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }
-
+        
         [Given(@"I have an add participant to a (.*) conference request")]
         [Given(@"I have an add participant to an (.*) conference request")]
         public async Task GivenIHaveAnAddParticipantToConferenceRequest(Scenario scenario)
