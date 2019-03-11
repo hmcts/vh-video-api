@@ -96,7 +96,7 @@ namespace VideoApi.UnitTests.Events
                 TimeStampUtc = DateTime.UtcNow
             };
 
-            Assert.ThrowsAsync<VideoHearingOfficeNotFoundException>(() =>
+            Assert.ThrowsAsync<VideoHearingOfficerNotFoundException>(() =>
                 _eventHandler.HandleAsync(callbackEvent));
             
             // Verify messages sent to event hub clients

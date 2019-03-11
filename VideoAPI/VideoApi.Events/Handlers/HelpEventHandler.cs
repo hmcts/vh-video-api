@@ -27,7 +27,7 @@ namespace VideoApi.Events.Handlers
 
             if (vhOfficer == null)
             {
-                throw new VideoHearingOfficeNotFoundException(SourceConference.HearingRefId);
+                throw new VideoHearingOfficerNotFoundException(SourceConference.HearingRefId);
             }
 
             await HubContext.Clients.Group(vhOfficer.Username.ToLowerInvariant())
