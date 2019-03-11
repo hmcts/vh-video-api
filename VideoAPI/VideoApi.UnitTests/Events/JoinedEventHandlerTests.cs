@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Events
             EventHubClientMock.Verify(
                 x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
                     ParticipantState.Available), Times.Exactly(participantCount));
-            
+
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&
@@ -89,7 +89,7 @@ namespace VideoApi.UnitTests.Events
             hearingEventMessage.Should().BeOfType<HearingEventMessage>();
             ((HearingEventMessage) hearingEventMessage).ConferenceStatus.Should().Be(ConferenceState.InSession);
             hearingEventMessage.MessageType.Should().Be(MessageType.Hearing);
-            
+
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&

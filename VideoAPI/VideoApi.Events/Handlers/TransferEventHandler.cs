@@ -41,16 +41,12 @@ namespace VideoApi.Events.Handlers
             if (callbackEvent.TransferFrom == RoomType.WaitingRoom &&
                 (callbackEvent.TransferTo == RoomType.ConsultationRoom1 ||
                  callbackEvent.TransferTo == RoomType.ConsultationRoom2))
-            {
                 return ParticipantState.InConsultation;
-            }
 
             if ((callbackEvent.TransferFrom == RoomType.ConsultationRoom1 ||
                  callbackEvent.TransferFrom == RoomType.ConsultationRoom2) &&
                 callbackEvent.TransferTo == RoomType.WaitingRoom)
-            {
                 return ParticipantState.Available;
-            }
 
             switch (callbackEvent.TransferFrom)
             {

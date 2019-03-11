@@ -23,13 +23,13 @@ namespace VideoApi.UnitTests.Validation
         private BookNewConferenceRequest BuildRequest()
         {
             var participants = Builder<ParticipantRequest>.CreateListOfSize(4)
-                .All().With(x=> x.UserRole = UserRole.Individual).Build().ToList();
+                .All().With(x => x.UserRole = UserRole.Individual).Build().ToList();
             return Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.ScheduledDateTime = DateTime.Now.AddDays(5))
                 .With(x => x.Participants = participants)
                 .Build();
         }
-        
+
         [Test]
         public async Task should_pass_validation()
         {
@@ -39,13 +39,13 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_return_missing_hearing_ref_id_error()
         {
             var request = BuildRequest();
             request.HearingRefId = Guid.Empty;
-           
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
@@ -53,13 +53,13 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoHearingRefIdErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_return_missing_case_type_error()
         {
             var request = BuildRequest();
             request.CaseType = string.Empty;
-           
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
@@ -67,13 +67,13 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseTypeErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_return_missing_case_number_error()
         {
             var request = BuildRequest();
             request.CaseNumber = string.Empty;
-           
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
@@ -81,27 +81,28 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseNumberErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_return_invalid_datetime_error()
         {
             var request = BuildRequest();
             request.ScheduledDateTime = DateTime.MinValue;
-           
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.ScheduleDateTimeInPastErrorMessage)
+            result.Errors.Any(x =>
+                    x.ErrorMessage == BookNewConferenceRequestValidation.ScheduleDateTimeInPastErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_return_missing_participants_error()
         {
             var request = BuildRequest();
             request.Participants = Enumerable.Empty<ParticipantRequest>().ToList();
-           
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
@@ -110,13 +111,13 @@ namespace VideoApi.UnitTests.Validation
                 .Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoParticipantsErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_return_participants_error()
         {
             var request = BuildRequest();
             request.Participants[0].Username = string.Empty;
-           
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();

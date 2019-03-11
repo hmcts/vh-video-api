@@ -10,13 +10,14 @@ namespace VideoApi.UnitTests.Domain.Participants
         [Test]
         public void should_add_participant_status()
         {
-            var participant = new ParticipantBuilder().WithHearingRole(UserRole.Individual).WithCaseTypeGroup("Claimant")
+            var participant = new ParticipantBuilder().WithHearingRole(UserRole.Individual)
+                .WithCaseTypeGroup("Claimant")
                 .Build();
 
             participant.GetCurrentStatus().Should().BeNull();
             var beforeCount = participant.GetParticipantStatuses().Count;
 
-            var participantStatus = ParticipantState.Joining; 
+            var participantStatus = ParticipantState.Joining;
             participant.UpdateParticipantStatus(participantStatus);
             var afterCount = participant.GetParticipantStatuses().Count;
             afterCount.Should().BeGreaterThan(beforeCount);

@@ -1,6 +1,5 @@
 using FluentAssertions;
 using NUnit.Framework;
-using Testing.Common.Helper.Builders;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
 
@@ -18,7 +17,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             conference.GetCurrentStatus().Should().BeNull();
             var beforeCount = conference.GetConferenceStatuses().Count;
 
-            var conferenceState = ConferenceState.InSession; 
+            var conferenceState = ConferenceState.InSession;
             conference.UpdateConferenceStatus(conferenceState);
             var afterCount = conference.GetParticipants().Count;
             afterCount.Should().BeGreaterThan(beforeCount);

@@ -9,7 +9,7 @@ namespace VideoApi.Events.Handlers.Core
     {
         IEventHandler Get(EventType eventType);
     }
-    
+
     public class EventHandlerFactory : IEventHandlerFactory
     {
         private readonly IEnumerable<IEventHandler> _eventHandlers;
@@ -23,10 +23,8 @@ namespace VideoApi.Events.Handlers.Core
         {
             var eventHandler = _eventHandlers.SingleOrDefault(x => x.EventType == eventType);
             if (eventHandler == null)
-            {
                 throw new ArgumentOutOfRangeException(nameof(eventType),
                     $"EventHandler cannot be found for eventType: {eventType.ToString()}");
-            }
             return eventHandler;
         }
     }

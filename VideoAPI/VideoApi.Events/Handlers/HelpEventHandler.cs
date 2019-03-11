@@ -27,10 +27,7 @@ namespace VideoApi.Events.Handlers
             var vhOfficer = SourceConference.GetParticipants()
                 .FirstOrDefault(x => x.UserRole == UserRole.VideoHearingsOfficer);
 
-            if (vhOfficer == null)
-            {
-                throw new VideoHearingOfficerNotFoundException(SourceConference.HearingRefId);
-            }
+            if (vhOfficer == null) throw new VideoHearingOfficerNotFoundException(SourceConference.HearingRefId);
 
             await HubContext.Clients.Group(vhOfficer.Username.ToLowerInvariant())
                 .HelpMessage(SourceConference.HearingRefId, SourceParticipant.DisplayName);

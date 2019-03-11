@@ -24,7 +24,7 @@ namespace VideoApi.Events.Handlers
         {
             var participantState = ParticipantState.Available;
             await PublishParticipantStatusMessage(participantState);
-            
+
             var participantEventMessage = new ParticipantEventMessage
             {
                 HearingRefId = SourceConference.HearingRefId,

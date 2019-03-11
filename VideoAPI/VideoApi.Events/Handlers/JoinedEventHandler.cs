@@ -7,7 +7,6 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
@@ -31,13 +30,10 @@ namespace VideoApi.Events.Handlers
                 new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
             await CommandHandler.Handle(command);
             await PublishParticipantStatusMessage(participantState);
-            
-            if (isJudge)
-            {
-                await PublishLiveEventMessage();
-            }
+
+            if (isJudge) await PublishLiveEventMessage();
         }
-        
+
         private async Task PublishLiveEventMessage()
         {
             var conferenceEvent = ConferenceState.InSession;

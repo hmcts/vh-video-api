@@ -7,7 +7,6 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
@@ -26,16 +25,14 @@ namespace VideoApi.Events.Handlers
         {
             await PublishParticipantDisconnectMessage();
 
-            if (SourceParticipant.UserRole == UserRole.Judge)
-            {
-                await PublishSuspendedEventMessage();
-            }
+            if (SourceParticipant.UserRole == UserRole.Judge) await PublishSuspendedEventMessage();
         }
 
         private async Task PublishParticipantDisconnectMessage()
         {
             var participantState = ParticipantState.Disconnected;
-            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id,participantState);
+            var command =
+                new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
             await CommandHandler.Handle(command);
             await PublishParticipantStatusMessage(participantState);
         }

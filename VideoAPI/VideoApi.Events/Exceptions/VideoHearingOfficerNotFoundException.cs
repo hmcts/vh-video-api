@@ -8,7 +8,6 @@ namespace VideoApi.Events.Exceptions
         public VideoHearingOfficerNotFoundException(Guid hearingRefId) : base(
             $"Video Hearings Officer cannot be found for {hearingRefId}")
         {
-
         }
     }
 }

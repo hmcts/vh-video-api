@@ -11,10 +11,11 @@ namespace VideoApi.Events.Models
         public DateTime TimeStampUtc { get; set; }
         public Guid ConferenceId { get; set; }
         public Guid ParticipantId { get; set; }
-        [EnumDataType(typeof(RoomType))]
-        public RoomType? TransferFrom { get; set; }
-        [EnumDataType(typeof(RoomType))]
-        public RoomType? TransferTo { get; set; }
+
+        [EnumDataType(typeof(RoomType))] public RoomType? TransferFrom { get; set; }
+
+        [EnumDataType(typeof(RoomType))] public RoomType? TransferTo { get; set; }
+
         public string Reason { get; set; }
     }
 }

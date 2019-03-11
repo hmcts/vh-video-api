@@ -9,7 +9,7 @@ namespace VideoApi.Events.Handlers.Core
         EventType EventType { get; }
         Task HandleAsync(CallbackEvent callbackEvent);
     }
-    
+
     public abstract class EventHandler : IEventHandler
     {
         public abstract EventType EventType { get; }

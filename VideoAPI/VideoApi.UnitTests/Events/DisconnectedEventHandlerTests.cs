@@ -8,7 +8,6 @@ using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 
 namespace VideoApi.UnitTests.Events
 {

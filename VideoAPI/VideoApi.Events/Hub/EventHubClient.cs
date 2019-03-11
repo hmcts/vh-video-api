@@ -13,7 +13,7 @@ namespace VideoApi.Events.Hub
         Task ConsultationMessage(Guid hearingId, string requestedBy, string requestedFor, string result);
         Task HelpMessage(Guid hearingId, string participantName);
     }
-    
+
     [Authorize]
     public class EventHub : Hub<IEventHubClient>
     {

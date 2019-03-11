@@ -9,6 +9,8 @@ namespace VideoApi.UnitTests.Stubs
     {
         private readonly ConcurrentQueue<EventMessage> _eventMessages = new ConcurrentQueue<EventMessage>();
 
+        public int Count => _eventMessages.Count;
+
         public Task AddMessageToQueue(EventMessage eventMessage)
         {
             _eventMessages.Enqueue(eventMessage);
@@ -20,7 +22,5 @@ namespace VideoApi.UnitTests.Stubs
             _eventMessages.TryDequeue(out var message);
             return message;
         }
-
-        public int Count => _eventMessages.Count;
     }
 }
