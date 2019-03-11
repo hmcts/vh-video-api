@@ -6,7 +6,7 @@ namespace VideoApi.Domain.Enums
         NotSignedIn = 1,
         UnableToJoin = 2,
         Joining = 3,
-        InWaitingRoom = 4,
+        Available = 4,
         InHearing = 5,
         InConsultation = 6,
         Disconnected = 7

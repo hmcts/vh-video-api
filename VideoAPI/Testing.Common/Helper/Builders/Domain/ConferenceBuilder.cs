@@ -48,7 +48,7 @@ namespace Testing.Common.Helper.Builders.Domain
                 new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), userRole,
                     caseTypeGroup)).Build();
             
-            participant.UpdateParticipantStatus(ParticipantState.InWaitingRoom);
+            participant.UpdateParticipantStatus(ParticipantState.Available);
             _conference.AddParticipant(participant);
 
             return this;
