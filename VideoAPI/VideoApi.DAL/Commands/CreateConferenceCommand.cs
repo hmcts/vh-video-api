@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Domain;
@@ -13,13 +14,15 @@ namespace VideoApi.DAL.Commands
         public DateTime ScheduledDateTime { get; set; }
         public string CaseNumber { get; set; }
         public Guid NewConferenceId { get; set; }
+        public List<Participant> Participants { get; set; }
 
-        public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber)
+        public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber, List<Participant> participants)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
+            Participants = participants;
         }
     }
 
@@ -36,6 +39,10 @@ namespace VideoApi.DAL.Commands
         {
             var conference = new Conference(command.HearingRefId, command.CaseType, command.ScheduledDateTime,
                 command.CaseNumber);
+            foreach (var participant in command.Participants)
+            {
+                conference.AddParticipant(participant);
+            }
             _context.Conferences.Add(conference);
             await _context.SaveChangesAsync();
             command.NewConferenceId = conference.Id;

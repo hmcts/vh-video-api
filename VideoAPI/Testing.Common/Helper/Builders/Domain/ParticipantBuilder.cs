@@ -25,7 +25,7 @@ namespace Testing.Common.Helper.Builders.Domain
             _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
         }
 
-        public ParticipantBuilder WithHearingRole(UserRole userRole)
+        public ParticipantBuilder WithUserRole(UserRole userRole)
         {
             _userRole = userRole;
             return this;

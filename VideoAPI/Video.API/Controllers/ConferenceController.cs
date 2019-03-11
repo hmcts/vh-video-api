@@ -49,20 +49,16 @@ namespace Video.API.Controllers
                 ModelState.AddFluentValidationErrors(result.Errors);
                 return BadRequest(ModelState);
             }
-
-            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
-                request.ScheduledDateTime, request.CaseNumber);
-            await _commandHandler.Handle(createConferenceCommand);
-
-            var conferenceId = createConferenceCommand.NewConferenceId;
+            
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
                         x.CaseTypeGroup))
                 .ToList();
-
-            var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants);
-            await _commandHandler.Handle(addParticipantCommand);
-
+            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
+                request.ScheduledDateTime, request.CaseNumber, participants);
+            await _commandHandler.Handle(createConferenceCommand);
+            
+            var conferenceId = createConferenceCommand.NewConferenceId;
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
