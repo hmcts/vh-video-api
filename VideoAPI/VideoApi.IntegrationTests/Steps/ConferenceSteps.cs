@@ -57,8 +57,8 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveABookANewConferenceRequest(Scenario scenario)
         {
             var request = new BookNewConferenceRequestBuilder().WithJudge()
-                .WithSolicitor("Claimant").WithIndividual("Claimant")
-                .WithSolicitor("Defendant").WithIndividual("Defendant")
+                .WithRepresentative("Claimant").WithIndividual("Claimant")
+                .WithRepresentative("Defendant").WithIndividual("Defendant")
                 .WithVideoHearingsOfficer().Build();
             if (scenario == Scenario.Invalid)
             {

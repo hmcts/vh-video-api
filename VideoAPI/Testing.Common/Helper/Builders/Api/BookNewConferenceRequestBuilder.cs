@@ -32,7 +32,7 @@ namespace Testing.Common.Helper.Builders.Api
             return this;
         }
 
-        public BookNewConferenceRequestBuilder WithSolicitor(string caseTypeGroup = null)
+        public BookNewConferenceRequestBuilder WithRepresentative(string caseTypeGroup = null)
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = Name.FullName())
