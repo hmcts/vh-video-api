@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
@@ -13,8 +14,9 @@ namespace VideoApi.Events.Handlers
 {
     public class HelpEventHandler : EventHandlerBase
     {
-        public HelpEventHandler(IQueryHandler queryHandler, IServiceBusQueueClient serviceBusQueueClient,
-            IHubContext<EventHub, IEventHubClient> hubContext) : base(queryHandler, serviceBusQueueClient, hubContext)
+        public HelpEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
+            IServiceBusQueueClient serviceBusQueueClient, IHubContext<EventHub, IEventHubClient> hubContext) : base(
+            queryHandler, commandHandler, serviceBusQueueClient, hubContext)
         {
         }
 

@@ -7,7 +7,6 @@ using NUnit.Framework;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -18,8 +17,8 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task should_send_available_message_to_participants_and_service_bus_when_participant_joins()
         {
-            _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+            _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -39,12 +38,12 @@ namespace VideoApi.UnitTests.Events
 
             EventHubClientMock.Verify(
                 x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    ParticipantEventStatus.Unavailable), Times.Exactly(participantCount));
+                    ParticipantState.Disconnected), Times.Exactly(participantCount));
 
             ServiceBusQueueClient.Count.Should().Be(1);
             var participantMessage = (ParticipantEventMessage) ServiceBusQueueClient.ReadMessageFromQueue();
             participantMessage.Should().BeOfType<ParticipantEventMessage>();
-            participantMessage.ParticipantEventStatus.Should().Be(ParticipantEventStatus.Unavailable);
+            participantMessage.ParticipantState.Should().Be(ParticipantState.Disconnected);
         }
     }
 }

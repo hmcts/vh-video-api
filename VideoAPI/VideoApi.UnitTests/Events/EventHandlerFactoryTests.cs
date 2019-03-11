@@ -24,13 +24,13 @@ namespace VideoApi.UnitTests.Events
             var eventHandler = eventHandlerFactory.Get(eventType);
             eventHandler.Should().BeOfType(typeOfEventHandler);
         }
-        
+
         [Test]
         public void should_throw_exception_when_event_type_is_not_supported()
         {
             var eventHandlerFactory = new EventHandlerFactory(EventHandlersList);
 
-            Action action = () =>  eventHandlerFactory.Get(EventType.None);
+            Action action = () => eventHandlerFactory.Get(EventType.None);
             action.Should().Throw<ArgumentOutOfRangeException>();
         }
     }

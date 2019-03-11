@@ -1,19 +1,20 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
 {
     public class LeaveEventHandler : EventHandlerBase
     {
-        public LeaveEventHandler(IQueryHandler queryHandler, IServiceBusQueueClient serviceBusQueueClient,
-            IHubContext<EventHub, IEventHubClient> hubContext) : base(queryHandler, serviceBusQueueClient, hubContext)
+        public LeaveEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
+            IServiceBusQueueClient serviceBusQueueClient, IHubContext<EventHub, IEventHubClient> hubContext) : base(
+            queryHandler, commandHandler, serviceBusQueueClient, hubContext)
         {
         }
 
@@ -21,13 +22,14 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            await PublishParticipantStatusMessage(ParticipantEventStatus.Unavailable);
-            
+            var participantState = ParticipantState.Disconnected;
+            await PublishParticipantStatusMessage(participantState);
+
             var participantEventMessage = new ParticipantEventMessage
             {
-                HearingId = SourceConference.HearingRefId,
+                HearingRefId = SourceConference.HearingRefId,
                 ParticipantId = SourceParticipant.ParticipantRefId,
-                ParticipantEventStatus = ParticipantEventStatus.Unavailable
+                ParticipantState = participantState
             };
 
             await ServiceBusQueueClient.AddMessageToQueue(participantEventMessage);

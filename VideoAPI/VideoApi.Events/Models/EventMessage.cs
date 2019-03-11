@@ -5,6 +5,6 @@ namespace VideoApi.Events.Models
 {
     public abstract class EventMessage {
         public abstract MessageType MessageType { get; }
-        public Guid HearingId { get; set; }
+        public Guid HearingRefId { get; set; }
     }
 }

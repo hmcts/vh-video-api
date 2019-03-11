@@ -2,15 +2,14 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.Events.Hub
 {
     public interface IEventHubClient
     {
-        Task ParticipantStatusMessage(string email, ParticipantEventStatus eventStatus);
-        Task HearingStatusMessage(Guid hearingId, HearingEventStatus eventStatus);
+        Task ParticipantStatusMessage(string email, ParticipantState participantState);
+        Task ConferenceStatusMessage(Guid hearingId, ConferenceState conferenceState);
         Task ConsultationMessage(Guid hearingId, string requestedBy, string requestedFor, string result);
         Task HelpMessage(Guid hearingId, string participantName);
     }

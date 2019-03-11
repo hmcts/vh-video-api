@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
@@ -18,8 +19,8 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task should_send_available_message_to_participants_and_service_bus_when_participant_joins()
         {
-            _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+            _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -33,25 +34,29 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = participantForEvent.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
+            var updateStatusCommand = new UpdateParticipantStatusCommand(conference.Id, participantForEvent.Id,
+                ParticipantState.Available);
+            CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
             await _eventHandler.HandleAsync(callbackEvent);
 
             EventHubClientMock.Verify(
                 x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    ParticipantEventStatus.Available), Times.Exactly(participantCount));
-
-            ServiceBusQueueClient.Count.Should().Be(1);
-            var participantMessage = (ParticipantEventMessage) ServiceBusQueueClient.ReadMessageFromQueue();
-            participantMessage.Should().BeOfType<ParticipantEventMessage>();
-            participantMessage.ParticipantEventStatus.Should().Be(ParticipantEventStatus.Available);
+                    ParticipantState.Available), Times.Exactly(participantCount));
+            
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.Available)), Times.Once);
         }
 
         [Test]
         public async Task
             should_send_in_hearing_message_to_participants_and_live_message_to_service_bus_when_judge_joins()
         {
-            _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+            _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
@@ -71,25 +76,25 @@ namespace VideoApi.UnitTests.Events
             // Verify event hub client
             EventHubClientMock.Verify(
                 x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    ParticipantEventStatus.InHearing), Times.Exactly(participantCount));
+                    ParticipantState.InHearing), Times.Exactly(participantCount));
 
             EventHubClientMock.Verify(
-                x => x.HearingStatusMessage(conference.HearingRefId, HearingEventStatus.Live),
+                x => x.ConferenceStatusMessage(conference.HearingRefId, ConferenceState.InSession),
                 Times.Exactly(participantCount));
 
             // Verify service bus
-            ServiceBusQueueClient.Count.Should().Be(2);
-
-            var participantEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
-            participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
-            ((ParticipantEventMessage) participantEventMessage).ParticipantEventStatus.Should()
-                .Be(ParticipantEventStatus.InHearing);
-            participantEventMessage.MessageType.Should().Be(MessageType.Participant);
+            ServiceBusQueueClient.Count.Should().Be(1);
 
             var hearingEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             hearingEventMessage.Should().BeOfType<HearingEventMessage>();
-            ((HearingEventMessage) hearingEventMessage).HearingEventStatus.Should().Be(HearingEventStatus.Live);
+            ((HearingEventMessage) hearingEventMessage).ConferenceStatus.Should().Be(ConferenceState.InSession);
             hearingEventMessage.MessageType.Should().Be(MessageType.Hearing);
+            
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.InHearing)), Times.Once);
         }
     }
 }

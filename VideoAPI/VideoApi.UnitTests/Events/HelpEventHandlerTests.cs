@@ -21,8 +21,8 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task should_send_messages_to_participants_and_service_bus_on_disconnect()
         {
-            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
@@ -41,16 +41,16 @@ namespace VideoApi.UnitTests.Events
             EventHubClientMock.Verify(
                 x => x.HelpMessage(conference.HearingRefId, participantForEvent.DisplayName), Times.Once);
         }
-        
+
         [Test]
         public void should_throw_exception_when_conference_does_not_exist()
         {
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((Conference) null);
-            
-            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+
+            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
@@ -66,7 +66,7 @@ namespace VideoApi.UnitTests.Events
             Assert.ThrowsAsync<ConferenceNotFoundException>(() =>
                 _eventHandler.HandleAsync(callbackEvent));
         }
-        
+
         [Test]
         public void should_throw_exception_when_no_officer_assigned_to_hearing()
         {
@@ -77,13 +77,13 @@ namespace VideoApi.UnitTests.Events
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .Build();
-            
+
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(conferenceWithoutOfficer);
-            
-            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+
+            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
@@ -98,7 +98,7 @@ namespace VideoApi.UnitTests.Events
 
             Assert.ThrowsAsync<VideoHearingOfficerNotFoundException>(() =>
                 _eventHandler.HandleAsync(callbackEvent));
-            
+
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
                 x => x.HelpMessage(conference.HearingRefId, participantForEvent.DisplayName), Times.Never);

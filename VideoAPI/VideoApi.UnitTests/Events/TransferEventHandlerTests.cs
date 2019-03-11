@@ -8,7 +8,6 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -16,17 +15,17 @@ namespace VideoApi.UnitTests.Events
     {
         private TransferEventHandler _eventHandler;
 
-        [TestCase(RoomType.WaitingRoom, RoomType.HearingRoom, ParticipantEventStatus.InHearing)]
-        [TestCase(RoomType.HearingRoom, RoomType.WaitingRoom, ParticipantEventStatus.Available)]
-        [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom1, ParticipantEventStatus.InConsultation)]
-        [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom2, ParticipantEventStatus.InConsultation)]
-        [TestCase(RoomType.ConsultationRoom1, RoomType.WaitingRoom, ParticipantEventStatus.Available)]
-        [TestCase(RoomType.ConsultationRoom2, RoomType.WaitingRoom, ParticipantEventStatus.Available)]
+        [TestCase(RoomType.WaitingRoom, RoomType.HearingRoom, ParticipantState.InHearing)]
+        [TestCase(RoomType.HearingRoom, RoomType.WaitingRoom, ParticipantState.Available)]
+        [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom1, ParticipantState.InConsultation)]
+        [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom2, ParticipantState.InConsultation)]
+        [TestCase(RoomType.ConsultationRoom1, RoomType.WaitingRoom, ParticipantState.Available)]
+        [TestCase(RoomType.ConsultationRoom2, RoomType.WaitingRoom, ParticipantState.Available)]
         public async Task should_send_participant__status_messages_to_clients_and_asb_when_transfer_occurs(
-            RoomType from, RoomType to, ParticipantEventStatus status)
+            RoomType from, RoomType to, ParticipantState status)
         {
-            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -55,14 +54,14 @@ namespace VideoApi.UnitTests.Events
 
             var participantEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
-            ((ParticipantEventMessage) participantEventMessage).ParticipantEventStatus.Should().Be(status);
+            ((ParticipantEventMessage) participantEventMessage).ParticipantState.Should().Be(status);
         }
-        
-        [Test()]
+
+        [Test]
         public void should_throw_exception_when_transfer_cannot_be_mapped_to_participant_status()
         {
-            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -77,14 +76,14 @@ namespace VideoApi.UnitTests.Events
                 TransferTo = RoomType.WaitingRoom,
                 TimeStampUtc = DateTime.UtcNow
             };
-            
+
             Assert.ThrowsAsync<RoomTransferException>(() =>
                 _eventHandler.HandleAsync(callbackEvent));
 
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
                 x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    It.IsAny<ParticipantEventStatus>()), Times.Never);
+                    It.IsAny<ParticipantState>()), Times.Never);
 
             // Verify messages sent to ASB queue
             ServiceBusQueueClient.Count.Should().Be(0);

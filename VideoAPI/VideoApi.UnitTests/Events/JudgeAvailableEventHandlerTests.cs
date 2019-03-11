@@ -7,7 +7,6 @@ using NUnit.Framework;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -18,8 +17,8 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task should_send_available_participant_messages_when_judge_available()
         {
-            _eventHandler = new JudgeAvailableEventHandler(QueryHandlerMock.Object, ServiceBusQueueClient,
-                EventHubContextMock.Object);
+            _eventHandler = new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
             var participantCount = conference.GetParticipants().Count;
@@ -37,14 +36,14 @@ namespace VideoApi.UnitTests.Events
 
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(participantForEvent.Username, ParticipantEventStatus.Available),
+                x => x.ParticipantStatusMessage(participantForEvent.Username, ParticipantState.Available),
                 Times.Exactly(participantCount));
 
             ServiceBusQueueClient.Count.Should().Be(1);
             var participantMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             participantMessage.Should().BeOfType<ParticipantEventMessage>();
-            ((ParticipantEventMessage) participantMessage).ParticipantEventStatus.Should()
-                .Be(ParticipantEventStatus.Available);
+            ((ParticipantEventMessage) participantMessage).ParticipantState.Should()
+                .Be(ParticipantState.Available);
         }
     }
 }

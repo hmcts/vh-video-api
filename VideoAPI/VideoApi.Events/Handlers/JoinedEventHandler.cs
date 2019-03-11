@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.DAL.Commands;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
@@ -12,8 +14,9 @@ namespace VideoApi.Events.Handlers
 {
     public class JoinedEventHandler : EventHandlerBase
     {
-        public JoinedEventHandler(IQueryHandler queryHandler, IServiceBusQueueClient serviceBusQueueClient,
-            IHubContext<EventHub, IEventHubClient> hubContext) : base(queryHandler, serviceBusQueueClient, hubContext)
+        public JoinedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
+            IServiceBusQueueClient serviceBusQueueClient, IHubContext<EventHub, IEventHubClient> hubContext) : base(
+            queryHandler, commandHandler, serviceBusQueueClient, hubContext)
         {
         }
 
@@ -22,18 +25,13 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var isJudge = SourceParticipant.UserRole == UserRole.Judge;
-            var participantStatus = isJudge ? ParticipantEventStatus.InHearing : ParticipantEventStatus.Available;
+            var participantState = isJudge ? ParticipantState.InHearing : ParticipantState.Available;
 
-            await PublishParticipantStatusMessage(participantStatus);
+            var command =
+                new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            await CommandHandler.Handle(command);
+            await PublishParticipantStatusMessage(participantState);
             
-            var participantEventMessage = new ParticipantEventMessage
-            {
-                HearingId = SourceConference.HearingRefId,
-                ParticipantId = SourceParticipant.ParticipantRefId,
-                ParticipantEventStatus = participantStatus
-            };
-            await ServiceBusQueueClient.AddMessageToQueue(participantEventMessage);
-
             if (isJudge)
             {
                 await PublishLiveEventMessage();
@@ -42,13 +40,14 @@ namespace VideoApi.Events.Handlers
         
         private async Task PublishLiveEventMessage()
         {
+            var conferenceEvent = ConferenceState.InSession;
             var hearingEventMessage = new HearingEventMessage
             {
-                HearingId = SourceConference.HearingRefId,
-                HearingEventStatus = HearingEventStatus.Live
+                HearingRefId = SourceConference.HearingRefId,
+                ConferenceStatus = conferenceEvent
             };
 
-            await PublishHearingStatusMessage(HearingEventStatus.Live);
+            await PublishConferenceStatusMessage(conferenceEvent);
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }

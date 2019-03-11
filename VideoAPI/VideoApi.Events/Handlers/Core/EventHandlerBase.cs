@@ -1,8 +1,7 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -10,7 +9,6 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
-using VideoApi.Events.Models.Enums;
 using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers.Core
@@ -18,6 +16,7 @@ namespace VideoApi.Events.Handlers.Core
     public abstract class EventHandlerBase : IEventHandler
     {
         protected readonly IQueryHandler QueryHandler;
+        protected readonly ICommandHandler CommandHandler;
         protected readonly IServiceBusQueueClient ServiceBusQueueClient;
         protected readonly IHubContext<EventHub, IEventHubClient> HubContext;
 
@@ -26,10 +25,11 @@ namespace VideoApi.Events.Handlers.Core
 
         public abstract EventType EventType { get; }
 
-        protected EventHandlerBase(IQueryHandler queryHandler, IServiceBusQueueClient serviceBusQueueClient,
-            IHubContext<EventHub, IEventHubClient> hubContext)
+        protected EventHandlerBase(IQueryHandler queryHandler, ICommandHandler commandHandler,
+            IServiceBusQueueClient serviceBusQueueClient, IHubContext<EventHub, IEventHubClient> hubContext)
         {
             QueryHandler = queryHandler;
+            CommandHandler = commandHandler;
             ServiceBusQueueClient = serviceBusQueueClient;
             HubContext = hubContext;
         }
@@ -53,30 +53,30 @@ namespace VideoApi.Events.Handlers.Core
         }
 
         /// <summary>
-        /// Publish a participant event to all participants in conference
+        /// Publish a participant event to all participants in conference to those connected to the HubContext
         /// </summary>
-        /// <param name="participantEventStatus">Participant status event to publish</param>
+        /// <param name="participantState">Participant status event to publish</param>
         /// <returns></returns>
-        protected async Task PublishParticipantStatusMessage(ParticipantEventStatus participantEventStatus)
+        protected async Task PublishParticipantStatusMessage(ParticipantState participantState)
         {
             foreach (var participant in SourceConference.GetParticipants())
             {
                 await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
-                    .ParticipantStatusMessage(SourceParticipant.Username, participantEventStatus);
+                    .ParticipantStatusMessage(SourceParticipant.Username, participantState);
             }
         }
 
         /// <summary>
-        /// Publish a hearing event to all participants in conference
+        /// Publish a hearing event to all participants in conference to those connected to the HubContext
         /// </summary>
         /// <param name="hearingEventStatus">Hearing status event to publish</param>
         /// <returns></returns>
-        protected async Task PublishHearingStatusMessage(HearingEventStatus hearingEventStatus)
+        protected async Task PublishConferenceStatusMessage(ConferenceState hearingEventStatus)
         {
             foreach (var participant in SourceConference.GetParticipants())
             {
                 await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
-                    .HearingStatusMessage(SourceConference.HearingRefId, hearingEventStatus);
+                    .ConferenceStatusMessage(SourceConference.HearingRefId, hearingEventStatus);
             }
         }
 
