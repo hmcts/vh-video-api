@@ -51,8 +51,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var reason = "Automated";
             var eventType = EventType.Disconnected;
 
-            var command = new SaveEventCommand(externalEventId, eventType, externalTimeStamp, participantId,
-                transferredFrom, transferredTo, reason);
+            var command = new SaveEventCommand(_newConferenceId, externalEventId, eventType, externalTimeStamp,
+                participantId, transferredFrom, transferredTo, reason);
             await _handler.Handle(command);
 
             Event savedEvent;

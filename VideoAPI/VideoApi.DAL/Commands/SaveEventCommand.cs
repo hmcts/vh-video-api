@@ -8,9 +8,11 @@ namespace VideoApi.DAL.Commands
 {
     public class SaveEventCommand : ICommand
     {
-        public SaveEventCommand(string externalEventId, EventType eventType, DateTime externalTimestamp,
+        public SaveEventCommand(Guid conferenceId, string externalEventId, EventType eventType,
+            DateTime externalTimestamp,
             Guid participantId, RoomType? transferredFrom, RoomType? transferredTo, string reason)
         {
+            ConferenceId = conferenceId;
             ExternalEventId = externalEventId;
             EventType = eventType;
             ExternalTimestamp = externalTimestamp;
@@ -19,18 +21,21 @@ namespace VideoApi.DAL.Commands
             TransferredTo = transferredTo;
             Reason = reason;
         }
-        public string ExternalEventId { get; set; }
-        public EventType EventType { get; set; }
-        public DateTime ExternalTimestamp { get; set; }
-        public Guid ParticipantId { get; set; }
-        public RoomType? TransferredFrom { get; set; }
-        public RoomType? TransferredTo { get; set; }
-        public string Reason { get; set; }
+
+        public Guid ConferenceId { get; }
+        public string ExternalEventId { get; }
+        public EventType EventType { get; }
+        public DateTime ExternalTimestamp { get; }
+        public Guid ParticipantId { get; }
+        public RoomType? TransferredFrom { get; }
+        public RoomType? TransferredTo { get; }
+        public string Reason { get; }
     }
 
     public class SaveEventCommandHandler : ICommandHandler<SaveEventCommand>
     {
         private readonly VideoApiDbContext _context;
+
         public SaveEventCommandHandler(VideoApiDbContext context)
         {
             _context = context;
@@ -38,12 +43,13 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(SaveEventCommand command)
         {
-            var @event = new Event(command.ExternalEventId, command.EventType, command.ExternalTimestamp,
+            var @event = new Event(command.ConferenceId, command.ExternalEventId, command.EventType,
+                command.ExternalTimestamp,
                 command.ParticipantId, command.TransferredFrom, command.TransferredTo, command.Reason);
 
             await _context.Events.AddAsync(@event);
-            
-            await _context.SaveChangesAsync(); 
+
+            await _context.SaveChangesAsync();
         }
     }
 }

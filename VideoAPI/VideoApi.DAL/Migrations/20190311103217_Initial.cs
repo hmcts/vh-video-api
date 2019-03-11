@@ -29,6 +29,7 @@ namespace VideoApi.DAL.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ConferenceId = table.Column<Guid>(nullable: false),
                     ExternalEventId = table.Column<string>(nullable: true),
                     EventType = table.Column<int>(nullable: false),
                     ExternalTimestamp = table.Column<DateTime>(nullable: false),

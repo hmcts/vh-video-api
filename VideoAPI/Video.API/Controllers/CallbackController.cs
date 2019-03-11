@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +7,6 @@ using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Queries;
-using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 
@@ -23,14 +18,11 @@ namespace Video.API.Controllers
     [ApiController]
     public class CallbackController : ControllerBase
     {
-        private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IEventHandlerFactory _eventHandlerFactory;
 
-        public CallbackController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IEventHandlerFactory eventHandlerFactory)
+        public CallbackController(ICommandHandler commandHandler, IEventHandlerFactory eventHandlerFactory)
         {
-            _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _eventHandlerFactory = eventHandlerFactory;
         }
@@ -52,32 +44,18 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
             
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(Guid.Parse(request.ConferenceId));
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference == null)
-            {
-                return NotFound();
-            }
-            
             Guid.TryParse(request.ParticipantId, out var participantId);
-            var participant = queriedConference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
-            if (participant == null && request.EventType != EventType.Pause && 
-                request.EventType != EventType.Close && request.EventType != EventType.Help)
-            {
-                return NotFound();
-            }
-
-            var command = new SaveEventCommand(request.EventId, request.EventType, request.TimeStampUtc, participantId,
-                request.TransferFrom, request.TransferTo, request.Reason);
+            Guid.TryParse(request.ConferenceId, out var conferenceId);
             
+            var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,
+                request.TimeStampUtc, participantId, request.TransferFrom, request.TransferTo, request.Reason);
             await _commandHandler.Handle(command);
+          
             var callbackEvent = new CallbackEvent
             {
                 EventId = request.EventId,
                 EventType = request.EventType,
-                ConferenceId = queriedConference.Id,
+                ConferenceId = conferenceId,
                 Reason = request.Reason,
                 TransferTo = request.TransferTo,
                 TransferFrom = request.TransferFrom,

@@ -6,7 +6,7 @@ namespace VideoApi.Domain
 {
     public class Event : Entity<long>
     {
-        public Event(string externalEventId, EventType eventType, DateTime externalTimestamp, Guid participantId,
+        public Event(Guid conferenceId, string externalEventId, EventType eventType, DateTime externalTimestamp, Guid participantId,
             RoomType? transferredFrom, RoomType? transferredTo, string reason)
         {
             ExternalEventId = externalEventId;
@@ -16,9 +16,11 @@ namespace VideoApi.Domain
             TransferredFrom = transferredFrom;
             TransferredTo = transferredTo;
             Reason = reason;
+            ConferenceId = conferenceId;
             Timestamp = DateTime.UtcNow;
         }
 
+        public Guid ConferenceId { get; set; }
         public string ExternalEventId { get; set; }
         public EventType EventType { get; set; }
         public DateTime ExternalTimestamp { get; set; }

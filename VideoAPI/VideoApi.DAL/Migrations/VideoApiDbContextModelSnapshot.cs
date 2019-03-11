@@ -62,6 +62,8 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<Guid>("ConferenceId");
+
                     b.Property<int>("EventType");
 
                     b.Property<string>("ExternalEventId");
