@@ -147,10 +147,21 @@ namespace Video.API.Controllers
                 CaseType = conference.CaseType,
                 CaseNumber = conference.CaseNumber,
                 ScheduledDateTime = conference.ScheduledDateTime,
-                Statuses = MapConferenceStatusToResponse(conference.GetConferenceStatuses()),
+                CurrentStatus = MapCurrentConferenceStatus(conference),
                 Participants = MapParticipantsToResponse(conference.GetParticipants())
             };
             return response;
+        }
+
+        private ConferenceStatusResponse MapCurrentConferenceStatus(Conference conference)
+        {
+            var currentStatus = conference.GetCurrentStatus();
+            if (currentStatus == null) return null;
+            return new ConferenceStatusResponse
+            {
+                ConferenceState = currentStatus.ConferenceState,
+                TimeStamp = currentStatus.TimeStamp
+            };
         }
 
         private List<ParticipantDetailsResponse> MapParticipantsToResponse(IEnumerable<Participant> participants)
@@ -166,7 +177,7 @@ namespace Video.API.Controllers
                     DisplayName = participant.DisplayName,
                     UserRole = participant.UserRole,
                     CaseTypeGroup = participant.CaseTypeGroup,
-                    Statuses = MapParticipantStatusToResponse(participant.GetParticipantStatuses())
+                    CurrentStatus = MapCurrentParticipantStatusToResponse(participant)
                 };
                 response.Add(paResponse);
             }
@@ -174,25 +185,17 @@ namespace Video.API.Controllers
             return response;
         }
 
-        private List<ParticipantStatusResponse> MapParticipantStatusToResponse(
-            IEnumerable<ParticipantStatus> participantStatuses)
+        private ParticipantStatusResponse MapCurrentParticipantStatusToResponse(
+            Participant participant)
         {
-            var statusResponse = participantStatuses.Select(x => new ParticipantStatusResponse
-            {
-                ParticipantState = x.ParticipantState,
-                TimeStamp = x.TimeStamp
-            }).ToList();
-            return statusResponse;
-        }
+            var currentStatus = participant.GetCurrentStatus();
+            if (currentStatus == null) return null;
 
-        private List<ConferenceStatusResponse> MapConferenceStatusToResponse(
-            IEnumerable<ConferenceStatus> conferenceStatuses)
-        {
-            return conferenceStatuses.Select(x => new ConferenceStatusResponse
+            return new ParticipantStatusResponse
             {
-                ConferenceState = x.ConferenceState,
-                TimeStamp = x.TimeStamp
-            }).ToList();
+                ParticipantState = currentStatus.ParticipantState,
+                TimeStamp = currentStatus.TimeStamp
+            };
         }
     }
 }

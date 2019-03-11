@@ -20,11 +20,11 @@ namespace VideoApi.IntegrationTests.Steps
     public sealed class ConferenceSteps : StepsBase
     {
         private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
-        
+
         public ConferenceSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
         }
-        
+
         [Given(@"I have a get details for a conference request with a (.*) conference id")]
         [Given(@"I have a get details for a conference request with an (.*) conference id")]
         public async Task GivenIHaveAGetConferenceDetailsRequest(Scenario scenario)
@@ -48,10 +48,11 @@ namespace VideoApi.IntegrationTests.Steps
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
+
             ApiTestContext.Uri = _endpoints.GetConferenceDetailsById(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
-        
+
         [Given(@"I have a (.*) book a new conference request")]
         [Given(@"I have an (.*) book a new conference request")]
         public void GivenIHaveABookANewConferenceRequest(Scenario scenario)
@@ -68,13 +69,13 @@ namespace VideoApi.IntegrationTests.Steps
                 request.CaseNumber = string.Empty;
                 request.ScheduledDateTime = DateTime.Today.AddDays(-5);
             }
-            
+
             ApiTestContext.Uri = _endpoints.BookNewConference;
             ApiTestContext.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a (.*) update conference status request")]
         [Given(@"I have an (.*) update conference status request")]
         public async Task GivenIHaveAnUpdateConferenceStatusRequest(Scenario scenario)
@@ -102,13 +103,13 @@ namespace VideoApi.IntegrationTests.Steps
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
-            
+
             ApiTestContext.Uri = _endpoints.UpdateConferenceStatus(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Patch;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a invalid update conference status request for an existing conference")]
         public async Task GivenIHaveAnInvalidUpdateConferenceStatusRequestForAnExistentConference()
         {
@@ -138,11 +139,8 @@ namespace VideoApi.IntegrationTests.Steps
             conference.CaseType.Should().NotBeNullOrEmpty();
             conference.CaseNumber.Should().NotBeNullOrEmpty();
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
-            foreach (var status in conference.Statuses)
-            {
-                status.Should().NotBe(ConferenceState.None);
-            }
-            
+            conference.CurrentStatus.Should().NotBe(ConferenceState.None);
+
             foreach (var participant in conference.Participants)
             {
                 participant.Id.Should().NotBeEmpty();
@@ -151,10 +149,7 @@ namespace VideoApi.IntegrationTests.Steps
                 participant.Username.Should().NotBeNullOrEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
-                foreach (var status in participant.Statuses)
-                {
-                    status.Should().NotBe(ParticipantState.None);
-                }
+                participant.CurrentStatus.Should().NotBe(ParticipantState.None);
             }
         }
     }

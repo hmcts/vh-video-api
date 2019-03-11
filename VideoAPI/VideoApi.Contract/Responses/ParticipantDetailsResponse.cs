@@ -12,6 +12,6 @@ namespace VideoApi.Contract.Responses
         public string Username { get; set; }
         public UserRole UserRole { get; set; }
         public string CaseTypeGroup { get; set; }
-        public List<ParticipantStatusResponse> Statuses { get; set; }
+        public ParticipantStatusResponse CurrentStatus { get; set; }
     }
 }
