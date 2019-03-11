@@ -52,7 +52,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var eventType = EventType.Disconnected;
 
             var command = new SaveEventCommand(_newConferenceId, externalEventId, eventType, externalTimeStamp,
-                participantId, transferredFrom, transferredTo, reason);
+                transferredFrom, transferredTo, reason) {ParticipantId = participantId};
             await _handler.Handle(command);
 
             Event savedEvent;

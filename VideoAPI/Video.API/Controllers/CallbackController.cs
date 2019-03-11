@@ -43,14 +43,18 @@ namespace Video.API.Controllers
                 ModelState.AddFluentValidationErrors(result.Errors);
                 return BadRequest(ModelState);
             }
-            
-            Guid.TryParse(request.ParticipantId, out var participantId);
+
             Guid.TryParse(request.ConferenceId, out var conferenceId);
-            
+
             var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,
-                request.TimeStampUtc, participantId, request.TransferFrom, request.TransferTo, request.Reason);
+                request.TimeStampUtc, request.TransferFrom, request.TransferTo, request.Reason);
+            if (Guid.TryParse(request.ParticipantId, out var participantId))
+            {
+                command.ParticipantId = participantId;
+            }
+
             await _commandHandler.Handle(command);
-          
+
             var callbackEvent = new CallbackEvent
             {
                 EventId = request.EventId,
@@ -62,7 +66,7 @@ namespace Video.API.Controllers
                 TimeStampUtc = request.TimeStampUtc,
                 ParticipantId = participantId
             };
-            
+
             await _eventHandlerFactory.Get(request.EventType).HandleAsync(callbackEvent);
             return NoContent();
         }

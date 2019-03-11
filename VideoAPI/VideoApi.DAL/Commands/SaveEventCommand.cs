@@ -9,14 +9,12 @@ namespace VideoApi.DAL.Commands
     public class SaveEventCommand : ICommand
     {
         public SaveEventCommand(Guid conferenceId, string externalEventId, EventType eventType,
-            DateTime externalTimestamp,
-            Guid participantId, RoomType? transferredFrom, RoomType? transferredTo, string reason)
+            DateTime externalTimestamp, RoomType? transferredFrom, RoomType? transferredTo, string reason)
         {
             ConferenceId = conferenceId;
             ExternalEventId = externalEventId;
             EventType = eventType;
             ExternalTimestamp = externalTimestamp;
-            ParticipantId = participantId;
             TransferredFrom = transferredFrom;
             TransferredTo = transferredTo;
             Reason = reason;
@@ -26,7 +24,7 @@ namespace VideoApi.DAL.Commands
         public string ExternalEventId { get; }
         public EventType EventType { get; }
         public DateTime ExternalTimestamp { get; }
-        public Guid ParticipantId { get; }
+        public Guid ParticipantId { get; set; }
         public RoomType? TransferredFrom { get; }
         public RoomType? TransferredTo { get; }
         public string Reason { get; }
@@ -44,8 +42,10 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(SaveEventCommand command)
         {
             var @event = new Event(command.ConferenceId, command.ExternalEventId, command.EventType,
-                command.ExternalTimestamp,
-                command.ParticipantId, command.TransferredFrom, command.TransferredTo, command.Reason);
+                command.ExternalTimestamp, command.TransferredFrom, command.TransferredTo, command.Reason)
+            {
+                ParticipantId = command.ParticipantId
+            };
 
             await _context.Events.AddAsync(@event);
 

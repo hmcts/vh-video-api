@@ -6,13 +6,12 @@ namespace VideoApi.Domain
 {
     public class Event : Entity<long>
     {
-        public Event(Guid conferenceId, string externalEventId, EventType eventType, DateTime externalTimestamp, Guid participantId,
+        public Event(Guid conferenceId, string externalEventId, EventType eventType, DateTime externalTimestamp,
             RoomType? transferredFrom, RoomType? transferredTo, string reason)
         {
             ExternalEventId = externalEventId;
             EventType = eventType;
             ExternalTimestamp = externalTimestamp;
-            ParticipantId = participantId;
             TransferredFrom = transferredFrom;
             TransferredTo = transferredTo;
             Reason = reason;
