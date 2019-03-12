@@ -1,6 +1,5 @@
 ﻿using Video.API;
 using VideoApi.DAL;
-using FizzWare.NBuilder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
@@ -12,7 +11,6 @@ namespace VideoApi.IntegrationTests.Database
     {
         private string _databaseConnectionString;
         protected DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions;
-        protected readonly BuilderSettings BuilderSettings = new BuilderSettings();
         protected TestDataManager TestDataManager;
         
         [OneTimeSetUp]

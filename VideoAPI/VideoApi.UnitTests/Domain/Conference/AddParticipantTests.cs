@@ -1,11 +1,9 @@
 using System;
 using System.Linq;
-using Faker;
-using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
-using Testing.Common.Helper.Builders;
-using VideoApi.Domain;
+using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 
 namespace VideoApi.UnitTests.Domain.Conference
@@ -29,10 +27,10 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void should_not_add_existing_participant_to_hearing()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant("Claimant LIP", "Claimant")
-                .WithParticipant("Solicitor", "Claimant")
-                .WithParticipant("Solicitor LIP", "Defendant")
-                .WithParticipant("Solicitor", "Defendant")
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Individual, "Defendant")
                 .Build();
 
             var beforeCount = conference.GetParticipants().Count;

@@ -1,7 +1,8 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Testing.Common.Helper.Builders;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -20,10 +21,11 @@ namespace VideoApi.IntegrationTests.Helper
         public async Task<Conference> SeedConference()
         {
             var conference = new ConferenceBuilder(true)
-                .WithParticipant("Claimant LIP", "Claimant")
-                .WithParticipant("Solicitor", "Claimant")
-                .WithParticipant("Solicitor LIP", "Defendant")
-                .WithParticipant("Solicitor", "Defendant")
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             
@@ -46,6 +48,16 @@ namespace VideoApi.IntegrationTests.Helper
                     .SingleAsync(x => x.Id == conferenceId);
                 
                 db.Remove(conference);
+                await db.SaveChangesAsync();
+            }
+        }
+        
+        public async Task RemoveEvents()
+        {
+            using (var db = new VideoApiDbContext(_dbContextOptions))
+            {
+                var eventsToDelete = db.Events.Where(x => x.Reason.StartsWith("Automated"));
+                db.Events.RemoveRange(eventsToDelete);
                 await db.SaveChangesAsync();
             }
         }

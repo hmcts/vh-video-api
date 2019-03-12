@@ -12,9 +12,9 @@
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.11.0.8083" />
-    <PackageReference Include="SpecFlow" Version="3.0.150-beta" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.0.150-beta" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.150-beta" />
+    <PackageReference Include="SpecFlow" Version="3.0.169-beta" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.0.169-beta" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.169-beta" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />
@@ -25,9 +25,5 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Contexts" />
-    <Folder Include="Steps" />
   </ItemGroup>
 </Project>

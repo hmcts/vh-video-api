@@ -331,3 +331,4 @@ ASALocalRun/
 
 # SonarQube
 .SonarQube
+.vscode

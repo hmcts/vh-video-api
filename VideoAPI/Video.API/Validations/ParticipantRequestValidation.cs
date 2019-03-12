@@ -9,7 +9,7 @@ namespace Video.API.Validations
         public static readonly string NoNameErrorMessage = "Name is required";
         public static readonly string NoDisplayNameErrorMessage = "DisplayName is required";
         public static readonly string NoUsernameErrorMessage = "Username is required";
-        public static readonly string NoHearingRoleErrorMessage = "HearingRole is required";
+        public static readonly string NoHearingRoleErrorMessage = "UserRole is required";
         public static readonly string NoCaseTypeGroupErrorMessage = "CaseTypeGroup is required";
         
         public ParticipantRequestValidation()
@@ -18,7 +18,7 @@ namespace Video.API.Validations
             RuleFor(x => x.Name).NotEmpty().WithMessage(NoNameErrorMessage);
             RuleFor(x => x.DisplayName).NotEmpty().WithMessage(NoDisplayNameErrorMessage);
             RuleFor(x => x.Username).NotEmpty().WithMessage(NoUsernameErrorMessage);
-            RuleFor(x => x.HearingRole).NotEmpty().WithMessage(NoHearingRoleErrorMessage);
+            RuleFor(x => x.UserRole).NotEmpty().WithMessage(NoHearingRoleErrorMessage);
             RuleFor(x => x.CaseTypeGroup).NotEmpty().WithMessage(NoCaseTypeGroupErrorMessage);
         }
     }
