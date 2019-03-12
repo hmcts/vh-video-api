@@ -8,11 +8,11 @@ namespace VideoApi.DAL.Queries
 {
     public class GetConferenceByIdQuery : IQuery
     {
-        public Guid HearingId { get; set; }
+        public Guid ConferenceId { get; set; }
 
-        public GetConferenceByIdQuery(Guid hearingId)
+        public GetConferenceByIdQuery(Guid conferenceId)
         {
-            HearingId = hearingId;
+            ConferenceId = conferenceId;
         }
     }
     
@@ -30,7 +30,7 @@ namespace VideoApi.DAL.Queries
             return await _context.Conferences
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses").AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == query.HearingId);
+                .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
         }
     }
 }

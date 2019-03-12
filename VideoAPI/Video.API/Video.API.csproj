@@ -27,6 +27,7 @@
     <ProjectReference Include="..\VideoApi.Contract\VideoApi.Contract.csproj" />
     <ProjectReference Include="..\VideoApi.DAL\VideoApi.DAL.csproj" />
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
+    <ProjectReference Include="..\VideoApi.Events\VideoApi.Events.csproj" />
   </ItemGroup>
   
   <ItemGroup>
@@ -38,9 +39,5 @@
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Mappings" />
   </ItemGroup>
 </Project>

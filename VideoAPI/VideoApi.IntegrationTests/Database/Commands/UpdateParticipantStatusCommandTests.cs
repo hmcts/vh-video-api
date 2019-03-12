@@ -30,7 +30,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var participantId = long.MaxValue;
+            var participantId = Guid.NewGuid();
             var state = ParticipantState.InConsultation;
             var command = new UpdateParticipantStatusCommand(conferenceId, participantId, state);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
@@ -42,7 +42,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var participantId = long.MaxValue;
+            var participantId = Guid.NewGuid();
             var state = ParticipantState.InConsultation;
             var command = new UpdateParticipantStatusCommand(_newConferenceId, participantId, state);
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));

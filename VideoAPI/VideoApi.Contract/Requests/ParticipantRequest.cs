@@ -1,4 +1,5 @@
 using System;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Requests
 {
@@ -8,7 +9,7 @@ namespace VideoApi.Contract.Requests
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string Username { get; set; }
-        public string HearingRole { get; set; }
+        public UserRole UserRole { get; set; }
         public string CaseTypeGroup { get; set; }
     }
 }

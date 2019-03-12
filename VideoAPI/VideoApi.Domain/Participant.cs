@@ -6,20 +6,21 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.Domain
 {
-    public class Participant : Entity<long>
+    public class Participant : Entity<Guid>
     {
         private Participant()
         {
+            Id = Guid.NewGuid();
             ParticipantStatuses = new List<ParticipantStatus>();
         }
 
-        public Participant(Guid participantRefId, string name, string displayName, string username, string hearingRole,
+        public Participant(Guid participantRefId, string name, string displayName, string username, UserRole userRole,
             string caseTypeGroup) : this()
         {
             ParticipantRefId = participantRefId;
             DisplayName = displayName;
             Username = username;
-            HearingRole = hearingRole;
+            UserRole = userRole;
             CaseTypeGroup = caseTypeGroup;
             Name = name;
         }
@@ -28,7 +29,7 @@ namespace VideoApi.Domain
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string Username { get; set; }
-        public string HearingRole { get; set; }
+        public UserRole UserRole { get; set; }
         public string CaseTypeGroup { get; set; }
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
 
