@@ -100,7 +100,7 @@ namespace Video.API
             app.UseSwaggerUI(c =>
             {
                 const string url = "/swagger/v1/swagger.json";
-                c.SwaggerEndpoint(url, "Bookings API V1");
+                c.SwaggerEndpoint(url, "Video API V1");
             });
 
             if (env.IsDevelopment())
