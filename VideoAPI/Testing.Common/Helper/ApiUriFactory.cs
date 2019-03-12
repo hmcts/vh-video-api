@@ -19,19 +19,16 @@ namespace Testing.Common.Helper
     public class CallbackEndpoints
     {
         private string ApiRoot => "/callback";
-        public string Event => $"{ApiRoot}/event";
+        public string Event => $"{ApiRoot}/conference";
     }
     
     public class ParticipantsEndpoints
     {
         private string ApiRoot => "/conferences";
 
-        public string UpdateParticipantStatus(Guid conferenceId, long participantId) =>
-            $"{ApiRoot}/{conferenceId}/participants/{participantId}";
-
         public string AddParticipantsToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/participants";
         
-        public string RemoveParticipantFromConference(Guid conferenceId, long participantId) =>
+        public string RemoveParticipantFromConference(Guid conferenceId, Guid participantId) =>
             $"{ApiRoot}/{conferenceId}/participants/{participantId}";
     }
     

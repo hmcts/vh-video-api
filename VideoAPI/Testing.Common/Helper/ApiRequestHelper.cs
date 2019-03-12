@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Testing.Common.Helper
@@ -7,25 +7,25 @@ namespace Testing.Common.Helper
     {
         public static string SerialiseRequestToSnakeCaseJson(object request)
         {
-            var contractResolver = new DefaultContractResolver
+            DefaultContractResolver contractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };
-
+            
             return JsonConvert.SerializeObject(request, new JsonSerializerSettings
             {
                 ContractResolver = contractResolver,
                 Formatting = Formatting.Indented
             });
         }
-
+        
         public static T DeserialiseSnakeCaseJsonToResponse<T>(string response)
         {
             var contractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };
-
+            
             return JsonConvert.DeserializeObject<T>(response, new JsonSerializerSettings
             {
                 ContractResolver = contractResolver,

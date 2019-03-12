@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
+using VideoApi.Domain;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
@@ -27,7 +30,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var caseType = "Civil Money Claims";
             var scheduledDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseNumber = "AutoTest Create Command 1234";
-            var command = new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber);
+            var participant = new ParticipantBuilder(true).Build();
+            var participants = new List<Participant>() {participant};
+
+            var command =
+                new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, participants);
             await _handler.Handle(command);
 
             command.NewConferenceId.Should().NotBeEmpty();

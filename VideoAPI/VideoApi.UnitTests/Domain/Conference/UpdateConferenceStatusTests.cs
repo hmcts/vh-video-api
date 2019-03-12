@@ -1,6 +1,6 @@
 using FluentAssertions;
 using NUnit.Framework;
-using Testing.Common.Helper.Builders;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Domain.Conference
@@ -11,13 +11,13 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void should_add_conference_status()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant("Claimant LIP", "Claimant")
+                .WithParticipant(UserRole.Individual, "Claimant")
                 .Build();
 
             conference.GetCurrentStatus().Should().BeNull();
             var beforeCount = conference.GetConferenceStatuses().Count;
 
-            var conferenceState = ConferenceState.InSession; 
+            var conferenceState = ConferenceState.InSession;
             conference.UpdateConferenceStatus(conferenceState);
             var afterCount = conference.GetParticipants().Count;
             afterCount.Should().BeGreaterThan(beforeCount);

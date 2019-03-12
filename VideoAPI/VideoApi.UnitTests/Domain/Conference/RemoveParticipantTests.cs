@@ -4,8 +4,9 @@ using Faker;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
-using Testing.Common.Helper.Builders;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 
 namespace VideoApi.UnitTests.Domain.Conference
@@ -16,7 +17,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void should_remove_participant_from_hearing()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant("Claimant LIP", "Claimant")
+                .WithParticipant(UserRole.Individual, "Claimant")
                 .Build();
 
             var beforeCount = conference.GetParticipants().Count;
@@ -33,13 +34,13 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void should_not_fail_when_removing_non_existent_participant()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant("Claimant LIP", "Claimant")
+                .WithParticipant(UserRole.Individual, "Claimant")
                 .Build();
 
             var beforeCount = conference.GetParticipants().Count;
             var participant = Builder<Participant>.CreateNew().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), "Solicitor",
-                    "Claimant")).Build();
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(),
+                    UserRole.Representative, "Claimant")).Build();
 
             Action action = () => conference.RemoveParticipant(participant);
 

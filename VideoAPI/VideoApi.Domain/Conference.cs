@@ -11,13 +11,13 @@ namespace VideoApi.Domain
     {
         private Conference()
         {
+            Id = Guid.NewGuid();
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
         }
 
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber) : this()
         {
-            Id = Guid.NewGuid();
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;

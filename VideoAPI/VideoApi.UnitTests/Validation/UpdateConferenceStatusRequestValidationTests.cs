@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Validation
         {
             _validator = new UpdateConferenceStatusRequestValidation();
         }
-        
+
         [Test]
         public async Task should_pass_validation()
         {
@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeTrue();
         }
-        
+
         private UpdateConferenceStatusRequest BuildRequest()
         {
             return Builder<UpdateConferenceStatusRequest>.CreateNew()

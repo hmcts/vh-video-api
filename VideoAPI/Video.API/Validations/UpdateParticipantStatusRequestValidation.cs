@@ -1,5 +1,6 @@
 using FluentValidation;
 using VideoApi.Contract.Requests;
+using VideoApi.Domain.Enums;
 
 namespace Video.API.Validations
 {
@@ -9,7 +10,8 @@ namespace Video.API.Validations
         
         public UpdateParticipantStatusRequestValidation()
         {
-            RuleFor(x => x.State).IsInEnum().WithMessage(InvalidStateErrorMessage);
+            RuleFor(x => x.State).IsInEnum().WithMessage(InvalidStateErrorMessage)
+                .NotEqual(ParticipantState.None).WithMessage(InvalidStateErrorMessage);
         }
     }
 }
