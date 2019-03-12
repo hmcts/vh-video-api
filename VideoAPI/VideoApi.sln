@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi.Common", "VideoApi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4078E3A9-2AB6-4EF8-8904-B26E83CCA081}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoApi.AcceptanceTests", "AcceptanceTests\VideoApi.AcceptanceTests.csproj", "{273E3664-DBE0-4A86-A5F0-CCE5F5307B7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoApi.AcceptanceTests", "VideoApi.AcceptanceTests\VideoApi.AcceptanceTests.csproj", "{273E3664-DBE0-4A86-A5F0-CCE5F5307B7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
