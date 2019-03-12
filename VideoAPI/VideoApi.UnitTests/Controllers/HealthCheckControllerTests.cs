@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Testing.Common.Helper.Builders;
+using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -15,12 +15,13 @@ namespace VideoApi.UnitTests.Controllers
 {
     public class HealthCheckControllerTests
     {
-        protected Mock<IQueryHandler> MockRepository;
-        protected HealthCheckController Controller { get; private set; }
+        private Mock<IQueryHandler> _mockRepository;
+        private HealthCheckController _controller;
+        
         [SetUp]
         public void Setup()
         {
-            MockRepository = new Mock<IQueryHandler>();
+            _mockRepository = new Mock<IQueryHandler>();
         }
 
         [Test]
@@ -30,10 +31,10 @@ namespace VideoApi.UnitTests.Controllers
             var conference = new ConferenceBuilder().Build();
             var query = new GetConferenceByIdQuery(hearingId);
 
-            Controller = new HealthCheckController(MockRepository.Object);
-            MockRepository.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query)).Returns(Task.FromResult(conference));
+            _controller = new HealthCheckController(_mockRepository.Object);
+            _mockRepository.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query)).Returns(Task.FromResult(conference));
 
-            var result = await Controller.Health();
+            var result = await _controller.Health();
             var typedResult = (OkResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
         }
@@ -43,10 +44,10 @@ namespace VideoApi.UnitTests.Controllers
         {
             var hearingId = Guid.NewGuid();
             var query = new GetConferenceByIdQuery(hearingId);
-            Controller = new HealthCheckController(null);
-            MockRepository.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query)).Throws<Exception>();
+            _controller = new HealthCheckController(null);
+            _mockRepository.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query)).Throws<Exception>();
 
-            var result = await Controller.Health();
+            var result = await _controller.Health();
             var typedResult = (ObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
         }
