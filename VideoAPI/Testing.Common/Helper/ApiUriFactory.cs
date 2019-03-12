@@ -26,9 +26,6 @@ namespace Testing.Common.Helper
     {
         private string ApiRoot => "/conferences";
 
-        public string UpdateParticipantStatus(Guid conferenceId, Guid participantId) =>
-            $"{ApiRoot}/{conferenceId}/participants/{participantId}";
-
         public string AddParticipantsToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/participants";
         
         public string RemoveParticipantFromConference(Guid conferenceId, Guid participantId) =>
