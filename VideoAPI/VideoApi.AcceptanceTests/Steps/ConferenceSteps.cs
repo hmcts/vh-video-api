@@ -48,7 +48,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             CreateNewConferenceRequest();
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.IsSuccessful.Should().BeTrue("Conference is created");
+            _context.Response.IsSuccessful.Should().BeTrue("New conference is created");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.NewConferenceId = conference.Id;
@@ -83,7 +83,6 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            _context.NewConferenceId = conference.Id;
             conference.CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(OriginalStatusKey));
         }
 
@@ -92,6 +91,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Json);
             conference.Should().NotBeNull();
+            _context.NewConferenceId = conference.Id;
             AssertConferenceDetailsResponse.ForConference(conference);
         }
 
