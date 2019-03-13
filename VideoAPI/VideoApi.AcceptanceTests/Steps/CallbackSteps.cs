@@ -45,13 +45,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the status is updated")]
         public void ThenTheStatusIsUpdated()
         {
-            //var endpoints = new ApiUriFactory().ConferenceEndpoints;
-            //_context.Request = _context.Get(endpoints.GetConferenceDetailsById(_context.NewConferenceId));
-            //_context.Response = _context.Client().Execute(_context.Request);
-            //_context.Response.IsSuccessful.Should().BeTrue();
-            //var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
-            //conference.Should().NotBeNull();
-            //conference.CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(PreviousStateKey));
+            var endpoints = new ApiUriFactory().ConferenceEndpoints;
+            _context.Request = _context.Get(endpoints.GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
+            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            conference.Should().NotBeNull();
+            conference.CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(PreviousStateKey));
         }
     }
 }
