@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
+using Testing.Common.Assertions;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
@@ -129,28 +130,9 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
-            AssertConferenceDetailsResponse(conference);
-        }
-
-        private void AssertConferenceDetailsResponse(ConferenceDetailsResponse conference)
-        {
             conference.Should().NotBeNull();
             ApiTestContext.NewConferenceId = conference.Id;
-            conference.CaseType.Should().NotBeNullOrEmpty();
-            conference.CaseNumber.Should().NotBeNullOrEmpty();
-            conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
-            conference.CurrentStatus.Should().NotBe(ConferenceState.None);
-
-            foreach (var participant in conference.Participants)
-            {
-                participant.Id.Should().NotBeEmpty();
-                participant.Name.Should().NotBeNullOrEmpty();
-                participant.DisplayName.Should().NotBeNullOrEmpty();
-                participant.Username.Should().NotBeNullOrEmpty();
-                participant.UserRole.Should().NotBe(UserRole.None);
-                participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
-                participant.CurrentStatus.Should().NotBe(ParticipantState.None);
-            }
+            AssertConferenceDetailsResponse.ForConference(conference);
         }
     }
 }

@@ -10,7 +10,15 @@ Scenario: Create a new conference
     And the conference details should be retrieved
 
 Scenario: Get conference details
-    Given I have a get details for a conference request with a valid conference id
+    Given I have a conference
+	And I have a get details for a conference request with a valid conference id
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And the conference details should be retrieved
+
+Scenario: Update conference details
+    Given I have a conference
+    And I have a valid update conference status request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True	
+	And the conference details have been updated

@@ -1,6 +1,9 @@
+using System;
 using RestSharp;
 using Testing.Common.Configuration;
 using Testing.Common.Helper;
+using VideoApi.Contract.Responses;
+using VideoApi.Domain;
 
 namespace VideoApi.AcceptanceTests.Contexts
 {
@@ -12,6 +15,8 @@ namespace VideoApi.AcceptanceTests.Contexts
         public string BaseUrl { get; set; }
         public string Json { get; set; }
         public TestSettings TestSettings { get; set; }
+        public Guid NewConferenceId { get; set; }
+        public ConferenceDetailsResponse NewConference { get; set; }
 
         public RestClient Client()
         {
