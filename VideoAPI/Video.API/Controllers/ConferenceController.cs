@@ -11,6 +11,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -137,6 +138,37 @@ namespace Video.API.Controllers
             
             var response = MapConferenceToResponse(queriedConference);
             return Ok(response);
+        }
+        
+        /// <summary>
+        /// Remove an existing conference
+        /// </summary>
+        /// <param name="conferenceId">The hearing id</param>
+        /// <returns></returns>
+        [HttpDelete("{conferenceId}")]
+        [SwaggerOperation(OperationId = "RemoveConference")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> RemoveHearing(Guid conferenceId)
+        {
+            if (conferenceId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
+                return BadRequest(ModelState);
+            }
+            
+            var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
+            try
+            {
+                await _commandHandler.Handle(removeConferenceCommand);
+            }
+            catch (ConferenceNotFoundException)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
         
         private ConferenceDetailsResponse MapConferenceToResponse(Conference conference)
