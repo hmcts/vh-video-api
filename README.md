@@ -3,9 +3,13 @@
 ## Running Sonar Analysis
 
 ``` bash
-dotnet sonarscanner begin /k:"vh-video-api" /d:sonar.cs.opencover.reportsPaths="VideoAPI/Artifacts/Coverage/coverage.opencover.xml" /d:sonar.coverage.exclusions="Video.API/Program.cs,Video.API/Startup.cs,Video.API/Extensions/**,Video.API/Swagger/**,Video.API/ConfigureServicesExtensions.cs,**/Testing.Common/**,**/Testing.Common/Helper/,**/Testing.Common/Helper/Builders/Api,Testing.Common/Helper/Builders/Domain,VideoApi.Common/**,VideoApi.DAL/Mappings/**,VideoApi.DAL/SeedData/**,VideoApi.DAL/VideoApiDbContext.cs,VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,VideoApi.DAL/Migrations/**,VideoApi.Domain/Ddd/**,VideoApi.Domain/Validations/**" /d:sonar.cpd.exclusions="VideoApi.DAL/Migrations/**" /d:sonar.verbose=true
+dotnet sonarscanner begin /k:"vh-video-api" /d:sonar.cs.opencover.reportsPaths="VideoAPI/Artifacts/Coverage/coverage.opencover.xml" /d:sonar.coverage.exclusions="Video.API/Program.cs,Video.API/Startup.cs,Video.API/Extensions/**,Video.API/Swagger/**,**/Video.API/ConfigureServicesExtensions.cs,**/Testing.Common/**,**/Testing.Common/Helper/,Helper/Builders/Api,Helper/Builders/Domain,VideoApi.Common/**,VideoApi.DAL/Mappings/**,VideoApi.DAL/SeedData/**,VideoApi.DAL/VideoApiDbContext.cs,VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,VideoApi.DAL/Migrations/**,VideoApi.Domain/Ddd/**,VideoApi.Domain/Validations/**" /d:sonar.cpd.exclusions="VideoApi.DAL/Migrations/**" /d:sonar.verbose=true
 dotnet build VideoAPI/VideoApi.sln
 dotnet sonarscanner end
+
+mono ~/Repos/sonar-scanner-msbuild-4.6.0.1930-net46/SonarQube.Scanner.MSBuild.exe begin /k:"vh-video-api" /d:sonar.cs.opencover.reportsPaths="VideoAPI/Artifacts/Coverage/coverage.opencover.xml" /d:sonar.coverage.exclusions="Video.API/Program.cs,Video.API/Startup.cs,Video.API/Extensions/**,Video.API/Swagger/**,Video.API/ConfigureServicesExtensions.cs,**/Testing.Common/**,**/Testing.Common/Helper/,**/Testing.Common/Helper/Builders/Api,Testing.Common/Helper/Builders/Domain,VideoApi.Common/**,VideoApi.DAL/Mappings/**,VideoApi.DAL/SeedData/**,VideoApi.DAL/VideoApiDbContext.cs,VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,VideoApi.DAL/Migrations/**,VideoApi.Domain/Ddd/**,VideoApi.Domain/Validations/**" /d:sonar.cpd.exclusions="VideoApi.DAL/Migrations/**" /d:sonar.verbose=true
+dotnet build VideoAPI/VideoApi.sln
+mono ~/Repos/sonar-scanner-msbuild-4.6.0.1930-net46/SonarQube.Scanner.MSBuild.exe end
 
 ```
 
