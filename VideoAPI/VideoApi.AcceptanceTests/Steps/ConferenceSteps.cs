@@ -48,7 +48,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             CreateNewConferenceRequest();
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.IsSuccessful.Should().BeTrue();
+            _context.Response.IsSuccessful.Should().BeTrue("Conference is created");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.NewConferenceId = conference.Id;
@@ -80,9 +80,10 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.IsSuccessful.Should().BeTrue();
+            _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
+            _context.NewConferenceId = conference.Id;
             conference.CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(OriginalStatusKey));
         }
 
@@ -100,15 +101,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        }
-
-        [AfterFeature("NewConference")]
-        public static void RemoveConference(TestContext context, ConferenceEndpoints endpoints)
-        {
-            if (context.NewConferenceId == Guid.Empty) return;
-            context.Request = context.Delete(endpoints.RemoveConference(context.NewConferenceId));
-            context.Response = context.Client().Execute(context.Request);
-            context.Response.IsSuccessful.Should().BeTrue();
-        }
+            _context.NewConferenceId = Guid.Empty;
+        }        
     }
 }

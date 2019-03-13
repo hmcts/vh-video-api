@@ -1,5 +1,4 @@
 ﻿using TechTalk.SpecFlow;
-using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
 
 namespace VideoApi.AcceptanceTests.Steps

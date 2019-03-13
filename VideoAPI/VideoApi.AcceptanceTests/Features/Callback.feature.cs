@@ -18,25 +18,21 @@ namespace VideoApi.AcceptanceTests.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Healthcheck")]
-    [NUnit.Framework.CategoryAttribute("VIH-3806")]
-    [NUnit.Framework.CategoryAttribute("health")]
-    public partial class HealthcheckFeature
+    [NUnit.Framework.DescriptionAttribute("Callback")]
+    public partial class CallbackFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "HealthCheck.feature"
+#line 1 "Callback.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Healthcheck", "\tIn order to assess the status of the service\r\n\tAs an api service\r\n\tI want to be " +
-                    "able to request the health of the video api", ProgrammingLanguage.CSharp, new string[] {
-                        "VIH-3806",
-                        "health"});
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Callback", "  In order to keep VH data up to date\r\n  As an API service\r\n  I want to handle ex" +
+                    "ternal events", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -72,6 +68,28 @@ namespace VideoApi.AcceptanceTests.Features
         public virtual void ScenarioCleanup()
         {
             testRunner.CollectScenarioErrors();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Should accept and process a conference event request")]
+        public virtual void ShouldAcceptAndProcessAConferenceEventRequest()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should accept and process a conference event request", null, ((string[])(null)));
+#line 6
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 7
+ testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 8
+    testRunner.And("I have a valid conference event request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 9
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 10
+    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 11
+ testRunner.And("the status is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
         }
     }
 }
