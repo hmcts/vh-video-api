@@ -28,6 +28,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid conference event request")]
         public void GivenIHaveAValidConferenceEventRequest()
         {
+            // ReSharper disable once ConstantNullCoalescingCondition - null is a valid state for this list
             _scenarioContext.Add(PreviousStateKey, _context.NewConference.CurrentStatus ?? null);
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = _context.NewConferenceId.ToString())

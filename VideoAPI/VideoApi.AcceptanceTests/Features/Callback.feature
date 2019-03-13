@@ -3,7 +3,7 @@
   As an API service
   I want to handle external events
 
-Scenario: Should accept and process a conference event request
+Scenario: Add conference event
 	Given I have a conference
     And I have a valid conference event request
     When I send the request to the endpoint
