@@ -183,6 +183,7 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.NewConferenceId = conference.Id;
             conference.CaseType.Should().NotBeNullOrEmpty();
             conference.CaseNumber.Should().NotBeNullOrEmpty();
+            conference.CaseName.Should().NotBeNullOrEmpty();
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.CurrentStatus.Should().NotBe(ConferenceState.None);
 
