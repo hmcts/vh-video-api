@@ -4,7 +4,7 @@ variables:
   apiDirectory: 'VideoAPI/Video.API'
   sonarCloudExtraProperties: |
     sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
-    sonar.coverage.exclusions="**/Testing.Common/Helper/Builders/Domain/"
+    sonar.coverage.exclusions="**/Testing.Common/Helper/Builders/Domain/**"
     sonar.cpd.exclusions="**/VideoApi.DAL/Migrations/**"
     sonar.verbose=true
   coverletCoverageExclusions: '[*]Video.API.Extensions.*,[Video.API]Video.API.ConfigureServicesExtensions,[Video.API]Video.API.Startup,[Video.API]Video.API.Program,[*]Video.API.Swagger.*,[VideoApi.*Tests?]*,[*]VideoApi.DAL.SeedData.*,[*]VideoApi.DAL.Migrations.*,[*]VideoApi.DAL.Mappings.*,[*]VideoApi.Domain.Ddd.*,[*]VideoApi.Domain.Validations.*,[VideoApi.DAL]VideoApi.DAL.VideoApiDbContext,[VideoApi.DAL]VideoApi.DAL.DesignTimeHearingsContextFactory,[*]VideoApi.Common.*,[*]Testing.Common.*'
