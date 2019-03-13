@@ -170,7 +170,31 @@ namespace Video.API.Controllers
 
             return NoContent();
         }
-        
+
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="hearingRefId">Hearing ID</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpGet("hearing/{hearingRefId}")]
+        [SwaggerOperation(OperationId = "GetConferencesByHearingRefId")]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesByHearingRefId(Guid hearingRefId)
+        {
+            if (hearingRefId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(hearingRefId), $"Please provide a valid {nameof(hearingRefId)}");
+                return BadRequest(ModelState);
+            }
+
+            var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
+            var conferences = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+
+            var response = MapConferenceToResponse(conferences);
+            return Ok(response);
+        }
+
         private ConferenceDetailsResponse MapConferenceToResponse(Conference conference)
         {
             var response = new ConferenceDetailsResponse
