@@ -1,11 +1,18 @@
 ﻿Feature: Participants
-	In order to avoid silly mistakes
-	As a math idiot
-	I want to be told the sum of two numbers
+  In order to manage participants in a conference
+  As an API service
+  I want to create, update and retrieve participant data
 
-@mytag
-Scenario: Add two numbers
-	Given I have entered 50 into the calculator
-	And I have entered 70 into the calculator
-	When I press add
-	Then the result should be 120 on the screen
+  Scenario: Add participant
+    Given I have a conference
+    And I have an add participant to a valid conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+	And the participant is added
+
+Scenario: Remove participant
+    Given I have a conference
+    And I have an remove participant from a valid conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+	And the participant is removed

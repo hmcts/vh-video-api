@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
@@ -68,6 +69,12 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Patch(_endpoints.UpdateConferenceStatus(_context.NewConferenceId), request);
         }
 
+        [Given(@"I have a valid delete conference request")]
+        public void GivenIHaveAValidDeleteConferenceRequest()
+        {
+            _context.Request = _context.Delete(_endpoints.RemoveConference(_context.NewConferenceId));
+        }
+
         [Then(@"the conference details have been updated")]
         public void ThenICanSeeTheConferenceDetailsHaveBeenUpdated()
         {
@@ -87,13 +94,21 @@ namespace VideoApi.AcceptanceTests.Steps
             AssertConferenceDetailsResponse.ForConference(conference);
         }
 
-        [AfterFeature("NewConference")]
-        public static void RemoveConference(TestContext context)
+        [Then(@"the conference should be removed")]
+        public void ThenTheConferenceShouldBeRemoved()
         {
-            if (context.NewConferenceId != Guid.Empty)
-            {
-                // cleanup 
-            }
+            _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [AfterFeature("NewConference")]
+        public static void RemoveConference(TestContext context, ConferenceEndpoints endpoints)
+        {
+            if (context.NewConferenceId == Guid.Empty) return;
+            context.Request = context.Delete(endpoints.RemoveConference(context.NewConferenceId));
+            context.Response = context.Client().Execute(context.Request);
+            context.Response.IsSuccessful.Should().BeTrue();
         }
     }
 }

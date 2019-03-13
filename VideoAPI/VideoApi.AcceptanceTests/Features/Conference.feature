@@ -1,9 +1,9 @@
 ﻿Feature: Conference
 	In order to manage conferences
 	As an api service
-	I want to be able to create, update and retrieve conference data
+	I want to be able to create, retrieve, update and delete conferences
 
-Scenario: Create a new conference
+Scenario: Create conference
     Given I have a valid book a new conference request
     When I send the request to the endpoint
     Then the response should have the status Created and success status True
@@ -22,3 +22,10 @@ Scenario: Update conference details
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True	
 	And the conference details have been updated
+
+Scenario: Delete conference
+    Given I have a conference
+    And I have a valid delete conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the conference should be removed

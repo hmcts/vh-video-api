@@ -126,15 +126,7 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.HttpMethod = HttpMethod.Patch;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }
-
-        [Then(@"the conference details should be retrieved")]
-        public async Task ThenAConferenceDetailsShouldBeRetrieved()
-        {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
-            AssertConferenceDetailsResponse(conference);
-        }
+        }      
         
         [Given(@"I have a (.*) remove conference request")]
         [Given(@"I have an (.*) remove conference request")]
@@ -163,7 +155,17 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.Uri = _endpoints.RemoveConference(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Delete;
         }
-        
+
+        [Then(@"the conference details should be retrieved")]
+        public async Task ThenAConferenceDetailsShouldBeRetrieved()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
+            conference.Should().NotBeNull();
+            ApiTestContext.NewConferenceId = conference.Id;
+            AssertConferenceDetailsResponse.ForConference(conference);
+        }
+
         [Then(@"the conference should be removed")]
         public async Task ThenTheHearingShouldBeRemoved()
         {
@@ -173,16 +175,8 @@ namespace VideoApi.IntegrationTests.Steps
                 removedConference =
                     await db.Conferences.SingleOrDefaultAsync(x => x.Id == ApiTestContext.NewConferenceId);
             }
-
             removedConference.Should().BeNull();
             ApiTestContext.NewConferenceId = Guid.Empty;
-        }
-
-        private void AssertConferenceDetailsResponse(ConferenceDetailsResponse conference)
-        {
-            conference.Should().NotBeNull();
-            ApiTestContext.NewConferenceId = conference.Id;
-            AssertConferenceDetailsResponse.ForConference(conference);
         }
     }
 }
