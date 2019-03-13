@@ -51,7 +51,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            conference.CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(PreviousStateKey));
+            conference.Participants.First().CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(PreviousStateKey));
         }
     }
 }
