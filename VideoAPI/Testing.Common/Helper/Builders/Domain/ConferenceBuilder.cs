@@ -67,11 +67,11 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public ConferenceBuilder WithVirtualCourt()
         {
-            var adminUri = "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var judgeUri = "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var adminUri = $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var judgeUri = $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
             var participantUri =
-                "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var pexipNode = "join.poc.hearings.hmcts.net";
+                $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var pexipNode = $"join.poc.hearings.hmcts.net";
             _conference.UpdateVirtualCourt(adminUri, judgeUri, participantUri, pexipNode);
             return this;
         }

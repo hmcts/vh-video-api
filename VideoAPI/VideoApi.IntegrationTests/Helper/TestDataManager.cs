@@ -28,7 +28,12 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
-            
+
+            return await SeedConference(conference);
+        }
+        
+        public async Task<Conference> SeedConference(Conference conference)
+        {
             using (var db = new VideoApiDbContext(_dbContextOptions))
             {
                 await db.Conferences.AddAsync(conference);

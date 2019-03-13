@@ -182,6 +182,14 @@ namespace Video.API.Controllers
                 CurrentStatus = MapCurrentConferenceStatus(conference),
                 Participants = MapParticipantsToResponse(conference.GetParticipants())
             };
+
+            if (conference.VirtualCourt == null) return response;
+            
+            var virtualCourt = conference.VirtualCourt;
+            response.AdminUri = virtualCourt.AdminUri;
+            response.JudgeUri = virtualCourt.JudgeUri;
+            response.ParticipantUri = virtualCourt.ParticipantUri;
+            response.PexipNode = virtualCourt.PexipNode;
             return response;
         }
 
