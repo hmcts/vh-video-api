@@ -19,6 +19,7 @@ namespace Testing.Common.Helper.Builders.Domain
             {
                 _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
+                _builderSettings.DisablePropertyNamingFor<VirtualCourt, long>(x => x.Id);
             }
             
             var hearingRefId = Guid.NewGuid();
@@ -61,6 +62,17 @@ namespace Testing.Common.Helper.Builders.Domain
                 _conference.AddParticipant(participant);
             }
 
+            return this;
+        }
+
+        public ConferenceBuilder WithVirtualCourt()
+        {
+            var adminUri = "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var judgeUri = "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var participantUri =
+                "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var pexipNode = "join.poc.hearings.hmcts.net";
+            _conference.UpdateVirtualCourt(adminUri, judgeUri, participantUri, pexipNode);
             return this;
         }
 

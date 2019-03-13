@@ -29,9 +29,31 @@ namespace VideoApi.Domain
         public string CaseType { get; protected set; }
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
+        public virtual VirtualCourt VirtualCourt { get; private set; }
         protected virtual IList<Participant> Participants { get; set; }
         protected virtual IList<ConferenceStatus> ConferenceStatuses { get; set; }
+        
+        public void UpdateVirtualCourt(string adminUri, string judgeUri, string participantUri, string pexipNode)
+        {
+            if (VirtualCourt == null)
+            {
+                VirtualCourt = new VirtualCourt(adminUri, judgeUri, participantUri, pexipNode);
+            }
+            else
+            {
+                VirtualCourt.AdminUri = adminUri;
+                VirtualCourt.JudgeUri = judgeUri;
+                VirtualCourt.ParticipantUri = participantUri;
+                VirtualCourt.PexipNode = pexipNode;
+            }
+            
+        }
 
+        public VirtualCourt GetVirtualCourt()
+        {
+            return VirtualCourt;
+        }
+        
         public void AddParticipant(Participant participant)
         {
             if (DoesParticipantExist(participant.Username))
