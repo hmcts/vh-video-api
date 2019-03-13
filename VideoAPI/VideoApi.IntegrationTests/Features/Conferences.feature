@@ -57,3 +57,20 @@ Feature: Conferences
     Given I have a nonexistent update conference status request
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
+
+  Scenario: Remove an existing conference
+    Given I have a valid remove conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the conference should be removed
+
+  Scenario: Remove an invalid conference
+    Given I have an invalid remove conference request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'Please provide a valid conferenceId'
+
+  Scenario: Remove an non-existant conference
+    Given I have a nonexistent remove conference request
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
