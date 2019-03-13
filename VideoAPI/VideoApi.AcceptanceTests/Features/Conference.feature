@@ -1,11 +1,16 @@
 ﻿Feature: Conference
-	In order to avoid silly mistakes
-	As a math idiot
-	I want to be told the sum of two numbers
+	In order to manage conferences
+	As an api service
+	I want to be able to create, update and retrieve conference data
 
-@mytag
-Scenario: Add two numbers
-	Given I have entered 50 into the calculator
-	And I have entered 70 into the calculator
-	When I press add
-	Then the result should be 120 on the screen
+Scenario: Create a new conference
+    Given I have a valid book a new conference request
+    When I send the request to the endpoint
+    Then the response should have the status Created and success status True
+    And the conference details should be retrieved
+
+Scenario: Get conference details
+    Given I have a get details for a conference request with a valid conference id
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the conference details should be retrieved
