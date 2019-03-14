@@ -47,6 +47,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
             }
+
+            conference.GetCurrentStatus().Should().NotBeNull();
+            conference.GetConferenceStatuses().Should().NotBeNullOrEmpty();
         }
         
         [TearDown]
