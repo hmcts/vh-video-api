@@ -33,7 +33,7 @@ namespace Video.API
 
             serviceCollection.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "Bookings API", Version = "v1"});
+                c.SwaggerDoc("v1", new Info {Title = "Video API", Version = "v1"});
                 c.IncludeXmlComments(xmlPath);
                 c.IncludeXmlComments(contractsXmlPath);
                 c.EnableAnnotations();
