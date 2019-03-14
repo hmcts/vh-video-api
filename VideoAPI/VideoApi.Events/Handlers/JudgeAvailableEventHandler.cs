@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
@@ -23,6 +24,11 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantState = ParticipantState.Available;
+            
+            var command =
+                new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            await CommandHandler.Handle(command);
+            
             await PublishParticipantStatusMessage(participantState);
 
             var participantEventMessage = new ParticipantEventMessage

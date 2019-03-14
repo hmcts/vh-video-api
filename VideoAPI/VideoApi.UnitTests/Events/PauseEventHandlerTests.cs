@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
@@ -40,6 +41,11 @@ namespace VideoApi.UnitTests.Events
             var eventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             eventMessage.Should().BeOfType<HearingEventMessage>();
             ((HearingEventMessage) eventMessage).ConferenceStatus.Should().Be(ConferenceState.Paused);
+            
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ConferenceState == ConferenceState.Paused)), Times.Once);
         }
     }
 }
