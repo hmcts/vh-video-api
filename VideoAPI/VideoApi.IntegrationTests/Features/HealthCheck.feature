@@ -3,8 +3,8 @@
   As an API service
   I want to check the Api health
 
-  Scenario: check the Api Health to ensure that end points are up and running
-    Given I make a call to the healthcheck endpoint
+  Scenario: Get the health of the video api
+    Given I have a get health request
     When I send the request to the endpoint
     Then the response should have the status ok and success status True
 

@@ -71,15 +71,15 @@ namespace VideoApi.IntegrationTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("check the Api Health to ensure that end points are up and running")]
-        public virtual void CheckTheApiHealthToEnsureThatEndPointsAreUpAndRunning()
+        [NUnit.Framework.DescriptionAttribute("Get the health of the video api")]
+        public virtual void GetTheHealthOfTheVideoApi()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("check the Api Health to ensure that end points are up and running", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get the health of the video api", null, ((string[])(null)));
 #line 6
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
-    testRunner.Given("I make a call to the healthcheck endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a get health request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 8
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 9
