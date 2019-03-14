@@ -25,8 +25,8 @@ namespace VideoApi.AcceptanceTests.Steps
             _scenarioContext = scenarioContext;
         }
 
-        [Given(@"I have a valid conference event request")]
-        public void GivenIHaveAValidConferenceEventRequest()
+        [Given(@"I have a valid conference event request for event type (.*)")]
+        public void GivenIHaveAValidConferenceEventRequest(EventType eventType)
         {
             // ReSharper disable once ConstantNullCoalescingCondition - null is a valid state for this list
             _scenarioContext.Add(PreviousStateKey, _context.NewConference.CurrentStatus ?? null);
@@ -34,7 +34,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.ConferenceId = _context.NewConferenceId.ToString())
                 .With(x => x.ParticipantId = _context.NewConference.Participants.First().Id.ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
-                .With(x => x.EventType = EventType.Transfer)
+                .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
                 .With(x => x.Reason = "Automated")

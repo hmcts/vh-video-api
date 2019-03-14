@@ -81,7 +81,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 7
  testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 8
-    testRunner.And("I have a valid conference event request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.And("I have a valid conference event request for event type Transfer", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 9
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 10
