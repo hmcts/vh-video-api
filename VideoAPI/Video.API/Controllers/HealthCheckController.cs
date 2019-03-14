@@ -22,7 +22,7 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        ///     Run a health check of the service
+        /// Check Service Health
         /// </summary>
         /// <returns>Error if fails, otherwise OK status</returns>
         [HttpGet("health")]
