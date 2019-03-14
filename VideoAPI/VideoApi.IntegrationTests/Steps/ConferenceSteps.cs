@@ -4,12 +4,15 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
@@ -130,6 +133,48 @@ namespace VideoApi.IntegrationTests.Steps
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
             AssertConferenceDetailsResponse(conference);
+        }
+        
+        [Given(@"I have a (.*) remove conference request")]
+        [Given(@"I have an (.*) remove conference request")]
+        public async Task GivenIHaveAValidRemoveHearingRequest(Scenario scenario)
+        {
+            Guid conferenceId;
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                {
+                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+                    ApiTestContext.NewConferenceId = seededConference.Id;
+                    conferenceId = seededConference.Id;
+                    break;
+                }
+                case Scenario.Nonexistent:
+                    conferenceId = Guid.NewGuid();
+                    break;
+                case Scenario.Invalid:
+                    conferenceId = Guid.Empty;
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            ApiTestContext.Uri = _endpoints.RemoveConference(conferenceId);
+            ApiTestContext.HttpMethod = HttpMethod.Delete;
+        }
+        
+        [Then(@"the conference should be removed")]
+        public async Task ThenTheHearingShouldBeRemoved()
+        {
+            Conference removedConference;
+            using (var db = new VideoApiDbContext(ApiTestContext.VideoBookingsDbContextOptions))
+            {
+                removedConference =
+                    await db.Conferences.SingleOrDefaultAsync(x => x.Id == ApiTestContext.NewConferenceId);
+            }
+
+            removedConference.Should().BeNull();
+            ApiTestContext.NewConferenceId = Guid.Empty;
         }
 
         private void AssertConferenceDetailsResponse(ConferenceDetailsResponse conference)

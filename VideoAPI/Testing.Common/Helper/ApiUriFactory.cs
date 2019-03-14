@@ -40,6 +40,7 @@ namespace Testing.Common.Helper
         public string BookNewConference => $"{ApiRoot}";
         public string UpdateConferenceStatus(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
         public string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
+        public string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
     }
 
     public class HealthCheckEndpoints
