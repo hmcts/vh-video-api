@@ -33,8 +33,8 @@ namespace VideoApi.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Healthcheck", "\tIn order to assess the status of the service\n\tAs an api service\n\tI want to be ab" +
-                    "le to request the health of the video api", ProgrammingLanguage.CSharp, new string[] {
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Healthcheck", "\tIn order to assess the status of the service\r\n\tAs an api service\r\n\tI want to be " +
+                    "able to request the health of the video api", ProgrammingLanguage.CSharp, new string[] {
                         "VIH-3806",
                         "health"});
             testRunner.OnFeatureStart(featureInfo);

@@ -3,6 +3,24 @@ Feature: Conferences
   As an API service
   I want to create, update and retrieve conference data
 
+  Scenario: Get conference details by username
+	Given I have a get details for a conference request by username with a valid username
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the summary of conference details should be retrieved
+
+  Scenario: Conference details not retrieved with a non-existent username
+	Given I have a get details for a conference request by username with a nonexistent username
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+	And an empty list is retrieved
+
+  Scenario: Conference details not retrieved with an invalid username
+    Given I have a get details for a conference request by username with an invalid username
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should contain 'Please provide a valid username'
+
   Scenario: Create a new conference
     Given I have a valid book a new conference request
     When I send the request to the endpoint
