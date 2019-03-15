@@ -3,7 +3,6 @@ Feature: Conferences
   As an API service
   I want to create, update and retrieve conference data
 
-
   Scenario: Create a new conference
     Given I have a valid book a new conference request
     When I send the request to the endpoint

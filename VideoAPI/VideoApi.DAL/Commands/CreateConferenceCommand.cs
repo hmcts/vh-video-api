@@ -13,15 +13,18 @@ namespace VideoApi.DAL.Commands
         public string CaseType { get; set; }
         public DateTime ScheduledDateTime { get; set; }
         public string CaseNumber { get; set; }
+        public string CaseName { get; set; }
         public Guid NewConferenceId { get; set; }
         public List<Participant> Participants { get; set; }
 
-        public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber, List<Participant> participants)
+        public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
+            string caseNumber, string caseName, List<Participant> participants)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
+            CaseName = caseName;
             Participants = participants;
         }
     }
@@ -38,7 +41,7 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(CreateConferenceCommand command)
         {
             var conference = new Conference(command.HearingRefId, command.CaseType, command.ScheduledDateTime,
-                command.CaseNumber);
+                command.CaseNumber,command.CaseName);
             foreach (var participant in command.Participants)
             {
                 conference.AddParticipant(participant);
