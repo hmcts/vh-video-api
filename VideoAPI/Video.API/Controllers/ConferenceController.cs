@@ -176,11 +176,11 @@ namespace Video.API.Controllers
         /// </summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
-        [HttpGet("hearing/{hearingRefId}")]
-        [SwaggerOperation(OperationId = "GetConferencesByHearingRefId")]
+        [HttpGet("hearings/{hearingRefId}")]
+        [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesByHearingRefId(Guid hearingRefId)
+        public async Task<IActionResult> GetConferenceByHearingRefId(Guid hearingRefId)
         {
             if (hearingRefId == Guid.Empty)
             {
@@ -189,9 +189,14 @@ namespace Video.API.Controllers
             }
 
             var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
-            var conferences = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
-            var response = MapConferenceToResponse(conferences);
+            if (conference == null)
+            {
+                return NotFound();
+            }
+            
+            var response = MapConferenceToResponse(conference);
             return Ok(response);
         }
 
