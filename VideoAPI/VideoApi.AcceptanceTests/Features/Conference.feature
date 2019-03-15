@@ -3,6 +3,13 @@
 	As an api service
 	I want to be able to create, retrieve, update and delete conferences
 
+Scenario: Get conference details by username
+    Given I have a conference
+	And I have a get details for a conference request by username with a valid username
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the summary of conference details should be retrieved
+
 Scenario: Create conference
     Given I have a valid book a new conference request
     When I send the request to the endpoint
