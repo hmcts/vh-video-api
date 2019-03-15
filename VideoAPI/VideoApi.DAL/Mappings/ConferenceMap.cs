@@ -15,6 +15,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.CaseType);
             builder.Property(x => x.ScheduledDateTime);
             builder.Property(x => x.CaseNumber);
+            builder.Property(x => x.CaseName);
 
             builder.HasMany<Participant>("Participants");
             builder.HasMany<ConferenceStatus>("ConferenceStatuses");

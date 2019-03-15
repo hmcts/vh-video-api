@@ -33,6 +33,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             conference.CaseType.Should().Be(seededConference.CaseType);
             conference.CaseNumber.Should().Be(seededConference.CaseNumber);
+            conference.CaseName.Should().Be(seededConference.CaseName);
             conference.ScheduledDateTime.Should().Be(seededConference.ScheduledDateTime);
             conference.HearingRefId.Should().Be(seededConference.HearingRefId);
 

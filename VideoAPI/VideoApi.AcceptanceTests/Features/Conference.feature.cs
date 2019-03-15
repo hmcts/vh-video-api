@@ -31,8 +31,8 @@ namespace VideoApi.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Conference", "\tIn order to manage conferences\r\n\tAs an api service\r\n\tI want to be able to create" +
-                    ", retrieve, update and delete conferences", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Conference", "\tIn order to manage conferences\n\tAs an api service\n\tI want to be able to create, " +
+                    "retrieve, update and delete conferences", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

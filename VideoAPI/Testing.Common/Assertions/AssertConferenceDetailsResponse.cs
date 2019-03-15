@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using FluentAssertions;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
@@ -18,6 +16,7 @@ namespace Testing.Common.Assertions
             conference.Should().NotBeNull();
             conference.CaseType.Should().NotBeNullOrEmpty();
             conference.CaseNumber.Should().NotBeNullOrEmpty();
+            conference.CaseName.Should().NotBeNullOrEmpty();
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.CurrentStatus.Should().NotBe(ConferenceState.None);
 

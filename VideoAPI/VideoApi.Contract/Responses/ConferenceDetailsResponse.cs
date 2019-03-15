@@ -9,6 +9,7 @@ namespace VideoApi.Contract.Responses
         public DateTime ScheduledDateTime { get; set; }
         public string CaseType { get; set; }
         public string CaseNumber { get; set; }
+        public string CaseName { get; set; }
         public ConferenceStatusResponse CurrentStatus { get; set; }
         public List<ParticipantDetailsResponse> Participants { get; set; }
     }

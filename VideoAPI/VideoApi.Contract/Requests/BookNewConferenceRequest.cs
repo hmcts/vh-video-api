@@ -9,6 +9,7 @@ namespace VideoApi.Contract.Requests
         public string CaseType { get; set; }
         public DateTime ScheduledDateTime { get; set; }
         public string CaseNumber { get; set; }
+        public string CaseName { get; set; }
         public List<ParticipantRequest> Participants { get; set; }
     }
 }
