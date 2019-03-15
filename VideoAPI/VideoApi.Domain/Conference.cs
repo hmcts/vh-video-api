@@ -31,6 +31,7 @@ namespace VideoApi.Domain
         public string CaseType { get; protected set; }
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
+        public string CaseName { get; protected set; }
         public virtual IList<Participant> Participants { get; private set; }
         protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
 
