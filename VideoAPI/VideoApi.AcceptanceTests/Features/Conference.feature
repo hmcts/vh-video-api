@@ -36,3 +36,10 @@ Scenario: Delete conference
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
     And the conference should be removed
+
+Scenario: Get conference details by hearing id
+    Given I have a conference
+	And I have a get details for a conference request by hearing id with a valid username
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the conference details should be retrieved
