@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -27,6 +29,34 @@ namespace VideoApi.IntegrationTests.Steps
 
         public ConferenceSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
+        }
+
+        [Given(@"I have a get details for a conference request by username with a (.*) username")]
+        [Given(@"I have a get details for a conference request by username with an (.*) username")]
+        public async Task GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername(Scenario scenario)
+        {
+            string username;
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                {
+                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+                    ApiTestContext.NewConferenceId = seededConference.Id;
+                    username = seededConference.Participants.First().Username;
+                    break;
+                }
+                case Scenario.Nonexistent:
+                    username = Internet.Email();
+                    break;
+                case Scenario.Invalid:
+                    username = "invalidemail";
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            ApiTestContext.Uri = _endpoints.GetConferenceDetailsByUsername(username);
+            ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 
         [Given(@"I have a get details for a conference request with a (.*) conference id")]
@@ -194,6 +224,19 @@ namespace VideoApi.IntegrationTests.Steps
             AssertConferenceDetailsResponse.ForConference(conference);
         }
 
+        [Then(@"the summary of conference details should be retrieved")]
+        public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
+            conferences.Should().NotBeNull();
+            ApiTestContext.NewConferenceId = conferences.First().Id;
+            foreach (var conference in conferences)
+            {
+                AssertConferenceSummaryResponse.ForConference(conference);
+            }
+        }
+
         [Then(@"the conference should be removed")]
         public async Task ThenTheHearingShouldBeRemoved()
         {
@@ -206,5 +249,14 @@ namespace VideoApi.IntegrationTests.Steps
             removedConference.Should().BeNull();
             ApiTestContext.NewConferenceId = Guid.Empty;
         }
+
+        [Then(@"an empty list is retrieved")]
+        public async Task ThenAnEmptyListIsRetrieved()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
+            conferences.Should().BeEmpty();
+        }
+
     }
 }

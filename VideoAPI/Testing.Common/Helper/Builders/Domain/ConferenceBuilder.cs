@@ -43,10 +43,14 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup)
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null)
         {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                username = Internet.Email();
+            }
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), userRole,
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), username, userRole,
                     caseTypeGroup)).Build();
             
             participant.UpdateParticipantStatus(ParticipantState.Available);

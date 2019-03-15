@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -8,6 +10,7 @@ using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.AcceptanceTests.Steps
@@ -24,6 +27,12 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context = injectedContext;
             _scenarioContext = scenarioContext;
+        }
+
+        [Given(@"I have a get details for a conference request by username with a valid username")]
+        public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername()
+        {
+            _context.Request = _context.Get(_endpoints.GetConferenceDetailsByUsername(_context.NewConference.Participants.First().Username));
         }
 
         [Given(@"I have a valid book a new conference request")]
@@ -93,6 +102,18 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.Should().NotBeNull();
             _context.NewConferenceId = conference.Id;
             AssertConferenceDetailsResponse.ForConference(conference);
+        }
+
+        [Then(@"the summary of conference details should be retrieved")]
+        public void ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
+        {
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
+            conferences.Should().NotBeNull();
+            _context.NewConferenceId = conferences.First().Id;
+            foreach (var conference in conferences)
+            {
+                AssertConferenceSummaryResponse.ForConference(conference);
+            }
         }
 
         [Then(@"the conference should be removed")]

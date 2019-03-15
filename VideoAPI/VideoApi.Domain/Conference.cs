@@ -32,8 +32,8 @@ namespace VideoApi.Domain
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
         public string CaseName { get; protected set; }
-        protected virtual IList<Participant> Participants { get; set; }
-        protected virtual IList<ConferenceStatus> ConferenceStatuses { get; set; }
+        public virtual IList<Participant> Participants { get; private set; }
+        protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
 
         public void AddParticipant(Participant participant)
         {
@@ -56,7 +56,7 @@ namespace VideoApi.Domain
             Participants.Remove(existingParticipant);
         }
 
-        private bool DoesParticipantExist(string username)
+        public bool DoesParticipantExist(string username)
         {
             return Participants.Any(x => x.Username == username);
         }

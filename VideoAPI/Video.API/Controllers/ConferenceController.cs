@@ -172,6 +172,30 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
+        /// Get non-closed conferences for a participant by their username
+        /// </summary>
+        /// <param name="username">person username</param>
+        /// <returns>Hearing details</returns>
+        [HttpGet(Name = "GetConferencesForUsername")]
+        [SwaggerOperation(OperationId = "GetConferencesForUsername")]
+        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesForUsername([FromQuery] string username)
+        {
+            if (!username.IsValidEmail())
+            {
+                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
+                return BadRequest(ModelState);
+            }
+
+            var query = new GetConferencesByUsernameQuery(username);
+            var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
+
+            var response = conferences.Select(MapConferenceToSummaryResponse);
+            return Ok(response);
+        }
+        
+        /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
         /// <param name="hearingRefId">Hearing ID</param>
@@ -199,7 +223,18 @@ namespace Video.API.Controllers
             var response = MapConferenceToResponse(conference);
             return Ok(response);
         }
-
+        
+        private ConferenceSummaryResponse MapConferenceToSummaryResponse(Conference conference)
+        {
+            return new ConferenceSummaryResponse
+            {
+                Id = conference.Id,
+                CaseType = conference.CaseType,
+                CaseNumber = conference.CaseType,
+                ScheduledDateTime = conference.ScheduledDateTime
+            };
+        }
+        
         private ConferenceDetailsResponse MapConferenceToResponse(Conference conference)
         {
             var response = new ConferenceDetailsResponse
