@@ -218,5 +218,14 @@ namespace VideoApi.IntegrationTests.Steps
             removedConference.Should().BeNull();
             ApiTestContext.NewConferenceId = Guid.Empty;
         }
+
+        [Then(@"an empty list is retrieved")]
+        public async Task ThenAnEmptyListIsRetrieved()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
+            conferences.Should().BeEmpty();
+        }
+
     }
 }

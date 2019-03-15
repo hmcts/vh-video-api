@@ -12,7 +12,8 @@ Feature: Conferences
   Scenario: Conference details not retrieved with a non-existent username
 	Given I have a get details for a conference request by username with a nonexistent username
     When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
+    Then the response should have the status OK and success status True
+	And an empty list is retrieved
 
   Scenario: Create a new conference
     Given I have a valid book a new conference request
