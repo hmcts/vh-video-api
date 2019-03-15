@@ -39,7 +39,7 @@ namespace Testing.Common.Helper
         private string ApiRoot => "conferences";
         public string BookNewConference => $"{ApiRoot}";
         public string UpdateConferenceStatus(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
-        public string GetConferenceDetailsByUsername => $"{ApiRoot}";
+        public string GetConferenceDetailsByUsername(string username) => $"{ApiRoot}/?username={username}";           
         public string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
         public string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
     }
