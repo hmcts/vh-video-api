@@ -73,6 +73,24 @@ namespace VideoApi.AcceptanceTests.Features
         {
             testRunner.CollectScenarioErrors();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get the health of the user api")]
+        public virtual void GetTheHealthOfTheUserApi()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get the health of the user api", null, ((string[])(null)));
+#line 7
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 8
+ testRunner.Given("I have a get health request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 9
+ testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 10
+ testRunner.Then("the response should have the status OK and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

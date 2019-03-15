@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -46,10 +47,10 @@ namespace VideoApi.AcceptanceTests.Hooks
         [BeforeTestRun]
         public static void CheckHealth(TestContext context)
         {
-            //var endpoint = new ApiUriFactory().HealthCheckEndpoints;
-            //context.Request = context.Get(endpoint.CheckServiceHealth());
-            //context.Response = context.Client().Execute(context.Request);
-            //context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var endpoint = new ApiUriFactory().HealthCheckEndpoints;
+            context.Request = context.Get(endpoint.CheckServiceHealth());
+            context.Response = context.Client().Execute(context.Request);
+            context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [AfterScenario]
@@ -59,6 +60,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Request = context.Delete(endpoints.RemoveConference(context.NewConferenceId));
             context.Response = context.Client().Execute(context.Request);
             context.Response.IsSuccessful.Should().BeTrue("New conference is deleted after the test");
+            context.NewConferenceId = Guid.Empty;
         }
     }
 }
