@@ -178,5 +178,26 @@ namespace VideoApi.IntegrationTests.Steps
             removedConference.Should().BeNull();
             ApiTestContext.NewConferenceId = Guid.Empty;
         }
+
+        private void AssertConferenceDetailsResponse(ConferenceDetailsResponse conference)
+        {
+            conference.Should().NotBeNull();
+            ApiTestContext.NewConferenceId = conference.Id;
+            conference.CaseType.Should().NotBeNullOrEmpty();
+            conference.CaseNumber.Should().NotBeNullOrEmpty();
+            conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
+            conference.CurrentStatus.Should().NotBe(ConferenceState.None);
+
+            foreach (var participant in conference.Participants)
+            {
+                participant.Id.Should().NotBeEmpty();
+                participant.Name.Should().NotBeNullOrEmpty();
+                participant.DisplayName.Should().NotBeNullOrEmpty();
+                participant.Username.Should().NotBeNullOrEmpty();
+                participant.UserRole.Should().NotBe(UserRole.None);
+                participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
+                participant.CurrentStatus.Should().NotBe(ParticipantState.None);
+            }
+        }
     }
 }
