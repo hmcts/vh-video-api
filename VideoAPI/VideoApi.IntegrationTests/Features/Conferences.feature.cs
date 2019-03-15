@@ -376,6 +376,65 @@ namespace VideoApi.IntegrationTests.Features
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get details for an existing conference by hearing ref id")]
+        public virtual void GetDetailsForAnExistingConferenceByHearingRefId()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get details for an existing conference by hearing ref id", null, ((string[])(null)));
+#line 96
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 97
+    testRunner.Given("I have a get details for a conference request with a valid hearing ref id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 98
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 99
+    testRunner.Then("the response should have the status OK and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 100
+    testRunner.And("the conference details should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get details for an invalid conference by hearing ref id")]
+        public virtual void GetDetailsForAnInvalidConferenceByHearingRefId()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get details for an invalid conference by hearing ref id", null, ((string[])(null)));
+#line 102
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 103
+    testRunner.Given("I have a get details for a conference request with an invalid hearing ref id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 104
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 105
+    testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 106
+    testRunner.And("the error response message should also contain \'Please provide a valid hearingRef" +
+                    "Id\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get details for a non-existent conference by hearing ref id")]
+        public virtual void GetDetailsForANon_ExistentConferenceByHearingRefId()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get details for a non-existent conference by hearing ref id", null, ((string[])(null)));
+#line 108
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 109
+    testRunner.Given("I have a get details for a conference request with a nonexistent hearing ref id", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 110
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 111
+    testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

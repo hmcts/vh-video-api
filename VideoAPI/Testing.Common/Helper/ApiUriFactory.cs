@@ -41,6 +41,7 @@ namespace Testing.Common.Helper
         public string UpdateConferenceStatus(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
         public string GetConferenceDetailsByUsername(string username) => $"{ApiRoot}/?username={username}";           
         public string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
+        public string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
         public string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
     }
 

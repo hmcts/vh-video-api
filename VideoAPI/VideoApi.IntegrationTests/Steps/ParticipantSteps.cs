@@ -125,6 +125,7 @@ namespace VideoApi.IntegrationTests.Steps
             var seededConference = await ApiTestContext.TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             var conferenceId = seededConference.Id;
+            ApiTestContext.NewConferenceId = seededConference.Id;
             Guid participantId;
             switch (scenario)
             {

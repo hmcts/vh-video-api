@@ -10,7 +10,6 @@ using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.AcceptanceTests.Steps
@@ -43,11 +42,13 @@ namespace VideoApi.AcceptanceTests.Steps
 
         private void CreateNewConferenceRequest()
         {
+            _context.NewHearingRefId = Guid.NewGuid();
             var request = new BookNewConferenceRequestBuilder()
                 .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
                 .WithVideoHearingsOfficer()
+                .WithHearingRefId(_context.NewHearingRefId)
                 .Build();
             _context.Request = _context.Post(_endpoints.BookNewConference, request);
         }
@@ -82,6 +83,12 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidDeleteConferenceRequest()
         {
             _context.Request = _context.Delete(_endpoints.RemoveConference(_context.NewConferenceId));
+        }
+
+        [Given(@"I have a get details for a conference request by hearing id with a valid username")]
+        public void GivenIHaveAGetDetailsForAConferenceRequestByHearingIdWithAValidUsername()
+        {
+            _context.Request = _context.Get(_endpoints.GetConferenceByHearingRefId(_context.NewHearingRefId));
         }
 
         [Then(@"the conference details have been updated")]

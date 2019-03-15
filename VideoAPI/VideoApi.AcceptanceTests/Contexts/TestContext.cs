@@ -16,6 +16,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public string Json { get; set; }
         public TestSettings TestSettings { get; set; }
         public Guid NewConferenceId { get; set; }
+        public Guid NewHearingRefId { get; set; }
         public ConferenceDetailsResponse NewConference { get; set; }
 
         public RestClient Client()

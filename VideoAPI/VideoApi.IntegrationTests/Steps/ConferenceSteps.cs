@@ -86,6 +86,34 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.Uri = _endpoints.GetConferenceDetailsById(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
+        
+        [Given(@"I have a get details for a conference request with a (.*) hearing ref id")]
+        [Given(@"I have a get details for a conference request with an (.*) hearing ref id")]
+        public async Task GivenIHaveAGetConferenceDetailsByHearingRefIdRequest(Scenario scenario)
+        {
+            Guid hearingRefId;
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                {
+                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+                    ApiTestContext.NewConferenceId = seededConference.Id;
+                    hearingRefId = seededConference.HearingRefId;
+                    break;
+                }
+                case Scenario.Nonexistent:
+                    hearingRefId = Guid.NewGuid();
+                    break;
+                case Scenario.Invalid:
+                    hearingRefId = Guid.Empty;
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            ApiTestContext.Uri = _endpoints.GetConferenceByHearingRefId(hearingRefId);
+            ApiTestContext.HttpMethod = HttpMethod.Get;
+        }
 
         [Given(@"I have a (.*) book a new conference request")]
         [Given(@"I have an (.*) book a new conference request")]

@@ -92,3 +92,20 @@ Feature: Conferences
     Given I have a nonexistent remove conference request
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
+
+  Scenario: Get details for an existing conference by hearing ref id 
+    Given I have a get details for a conference request with a valid hearing ref id
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the conference details should be retrieved
+
+  Scenario: Get details for an invalid conference by hearing ref id
+    Given I have a get details for a conference request with an invalid hearing ref id
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'Please provide a valid hearingRefId'
+
+  Scenario: Get details for a non-existent conference by hearing ref id
+    Given I have a get details for a conference request with a nonexistent hearing ref id
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False

@@ -170,7 +170,7 @@ namespace Video.API.Controllers
 
             return NoContent();
         }
-        
+
         /// <summary>
         /// Get non-closed conferences for a participant by their username
         /// </summary>
@@ -194,7 +194,36 @@ namespace Video.API.Controllers
             var response = conferences.Select(MapConferenceToSummaryResponse);
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="hearingRefId">Hearing ID</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpGet("hearings/{hearingRefId}")]
+        [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferenceByHearingRefId(Guid hearingRefId)
+        {
+            if (hearingRefId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(hearingRefId), $"Please provide a valid {nameof(hearingRefId)}");
+                return BadRequest(ModelState);
+            }
 
+            var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
+            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+
+            if (conference == null)
+            {
+                return NotFound();
+            }
+            
+            var response = MapConferenceToResponse(conference);
+            return Ok(response);
+        }
+        
         private ConferenceSummaryResponse MapConferenceToSummaryResponse(Conference conference)
         {
             return new ConferenceSummaryResponse
