@@ -24,28 +24,32 @@ namespace VideoApi.IntegrationTests.Steps
         {
         }
 
+        [Given(@"I have a valid conference event request for event type (.*)")]
+        public async Task GivenIHaveAnConferenceEventRequestForAnEventType(EventType eventType)
+        {
+            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            ApiTestContext.NewConferenceId = seededConference.Id;
+            var request = BuildRequest(eventType, seededConference);                   
+            ApiTestContext.Uri = _endpoints.Event;
+            ApiTestContext.HttpMethod = HttpMethod.Post;
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
         [Given(@"I have a (.*) conference event request")]
         [Given(@"I have an (.*) conference event request")]
-        public async Task GivenIHaveAnConferenceEventRequest(Scenario scenario)
+        public void GivenIHaveAnConferenceEventRequest(Scenario scenario)
         {
             ConferenceEventRequest request;
             switch (scenario)
-            {
-                case Scenario.Valid:
-                {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    request = BuildRequest(seededConference);
-                    break;
-                }
+            {               
                 case Scenario.Nonexistent:
-                    request = BuildRequest();
+                    request = BuildRequest(EventType.Transfer);
                     break;
                 case Scenario.Invalid:
                     request = BuildInvalidRequest();
                     break;
-
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
@@ -56,13 +60,12 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"I have a room transfer event request for a nonexistent participant")]
-        [Given(@"I have an (.*) conference event request")]
         public async Task GivenIRoomTransferEventRequestForNonExistentParticipant()
         {
             var seededConference = await ApiTestContext.TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             ApiTestContext.NewConferenceId = seededConference.Id;
-            var request = BuildRequest(seededConference);
+            var request = BuildRequest(EventType.Transfer, seededConference);
             request.ParticipantId = Guid.NewGuid().ToString();
 
             ApiTestContext.Uri = _endpoints.Event;
@@ -71,13 +74,13 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
-        private ConferenceEventRequest BuildRequest(Conference conference = null)
+        private ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null)
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = Guid.NewGuid().ToString())
                 .With(x => x.ParticipantId = Guid.NewGuid().ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
-                .With(x => x.EventType = EventType.Transfer)
+                .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
                 .With(x => x.Reason = "Automated")

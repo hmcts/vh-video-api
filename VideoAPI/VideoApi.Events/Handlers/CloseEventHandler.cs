@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
@@ -25,6 +26,10 @@ namespace VideoApi.Events.Handlers
             var conferenceState = ConferenceState.Closed;
             await PublishConferenceStatusMessage(conferenceState);
 
+            var command =
+                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            await CommandHandler.Handle(command);
+            
             var hearingEventMessage = new HearingEventMessage
             {
                 HearingRefId = SourceConference.HearingRefId,

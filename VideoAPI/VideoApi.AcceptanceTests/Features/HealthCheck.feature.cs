@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace VideoApi.IntegrationTests.Features
+namespace VideoApi.AcceptanceTests.Features
 {
     using TechTalk.SpecFlow;
     
@@ -19,6 +19,8 @@ namespace VideoApi.IntegrationTests.Features
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("Healthcheck")]
+    [NUnit.Framework.CategoryAttribute("VIH-3806")]
+    [NUnit.Framework.CategoryAttribute("health")]
     public partial class HealthcheckFeature
     {
         
@@ -31,8 +33,10 @@ namespace VideoApi.IntegrationTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Healthcheck", "  In order to keep VH data up to date\n  As an API service\n  I want to check the A" +
-                    "pi health", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Healthcheck", "\tIn order to assess the status of the service\n\tAs an api service\n\tI want to be ab" +
+                    "le to request the health of the video api", ProgrammingLanguage.CSharp, new string[] {
+                        "VIH-3806",
+                        "health"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -71,19 +75,19 @@ namespace VideoApi.IntegrationTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Get the health of the video api")]
-        public virtual void GetTheHealthOfTheVideoApi()
+        [NUnit.Framework.DescriptionAttribute("Get the health of the user api")]
+        public virtual void GetTheHealthOfTheUserApi()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get the health of the video api", null, ((string[])(null)));
-#line 6
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get the health of the user api", null, ((string[])(null)));
 #line 7
-    testRunner.Given("I have a get health request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
 #line 8
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("I have a get health request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 9
-    testRunner.Then("the response should have the status ok and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 10
+ testRunner.Then("the response should have the status OK and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

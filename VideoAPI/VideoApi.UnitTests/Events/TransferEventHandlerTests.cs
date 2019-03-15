@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers;
@@ -55,6 +56,12 @@ namespace VideoApi.UnitTests.Events
             var participantEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
             ((ParticipantEventMessage) participantEventMessage).ParticipantState.Should().Be(status);
+            
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == status)), Times.Once);
         }
 
         [Test]
@@ -87,6 +94,12 @@ namespace VideoApi.UnitTests.Events
 
             // Verify messages sent to ASB queue
             ServiceBusQueueClient.Count.Should().Be(0);
+            
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == It.IsAny<ParticipantState>())), Times.Never);
         }
     }
 }

@@ -12,12 +12,13 @@ variables:
     "AzureAd/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
     "Testing/TestClientId":"$(vh-admin-web-appid)",
     "Testing/TestClientSecret":"$(vh-admin-web-key)",
-    "ServiceBusQueue/QueueName":"$(servicebusqueue-queuename)",
-    "ServiceBusQueue/ConnectionString":"$(servicebusqueue-connectionstring)"
+    "ServiceBusQueue/ConnectionString":"$(AzureServiceBusConnectionStringSend)"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests
   secretsFilter: 'vh-admin-web-appid,vh-admin-web-key,tenantid,vh-video-api-identifieruris' # filters out secrets returned from key vault
+  infraKeyVaultName: 'vhcoreinfradev'
+  infraSecretsFilter: 'vh-core-infra-AppInsightsKey,VhVideoDatabaseConnectionString,AzureServiceBusConnectionStringSend'
 
 # GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
 resources:
@@ -25,7 +26,7 @@ resources:
   - repository: azureDevOpsTemplates
     type: github
     name: hmcts/azure-devops-templates
-    ref: refs/heads/master # ref name to use, defaults to 'refs/heads/master'
+    ref: refs/heads/feature/read-from-infra-keyvault  # ref name to use, defaults to 'refs/heads/master'
     endpoint: 'GitHubDevOps'
 
 trigger:
@@ -43,4 +44,6 @@ jobs:
     apiDirectory: $(apiDirectory)
     dalWorkingDirectory: $(dalWorkingDirectory)
     keyVaultName: $(keyVaultName)
-    secretsFilter: $(secretsFilter)
+    secretsFilter: $(secretsFilter),
+    infraKeyVaultName: $(infraKeyVaultName)
+    infraSecretsFilter: $(infraSecretsFilter)
