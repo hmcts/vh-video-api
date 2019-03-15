@@ -86,7 +86,7 @@ namespace Testing.Common.Helper.Builders.Api
             return this;
         }
 
-        public BookNewConferenceRequestBuilder WithHearingRedId(Guid hearingRefId)
+        public BookNewConferenceRequestBuilder WithHearingRefId(Guid hearingRefId)
         {
             _bookNewConferenceRequest.HearingRefId = hearingRefId;
             return this;
