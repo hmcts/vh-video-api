@@ -16,13 +16,15 @@ namespace VideoApi.Domain
             ConferenceStatuses = new List<ConferenceStatus>();
         }
 
-        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber) : this()
+        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
+            string caseName) : this()
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
-            
+            CaseName = caseName;
+
         }
 
         public Guid HearingRefId { get; protected set; }

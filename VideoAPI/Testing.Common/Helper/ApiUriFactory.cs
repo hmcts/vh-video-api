@@ -7,24 +7,26 @@ namespace Testing.Common.Helper
         public CallbackEndpoints CallbackEndpoints { get; }
         public ParticipantsEndpoints ParticipantsEndpoints { get; }
         public ConferenceEndpoints ConferenceEndpoints { get; }
-        
+        public HealthCheckEndpoints HealthCheckEndpoints { get; set; }
+
         public ApiUriFactory()
         {
             ParticipantsEndpoints = new ParticipantsEndpoints();
             ConferenceEndpoints = new ConferenceEndpoints();
             CallbackEndpoints = new CallbackEndpoints();
+            HealthCheckEndpoints = new HealthCheckEndpoints();
         }
     }
     
     public class CallbackEndpoints
     {
-        private string ApiRoot => "/callback";
+        private string ApiRoot => "callback";
         public string Event => $"{ApiRoot}/conference";
     }
     
     public class ParticipantsEndpoints
     {
-        private string ApiRoot => "/conferences";
+        private string ApiRoot => "conferences";
 
         public string AddParticipantsToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/participants";
         
@@ -34,10 +36,20 @@ namespace Testing.Common.Helper
     
     public class ConferenceEndpoints
     {
-        private string ApiRoot => "/conferences";
+        private string ApiRoot => "conferences";
         public string BookNewConference => $"{ApiRoot}";
         public string UpdateConferenceStatus(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
         public string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
         public string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
+    }
+
+    public class HealthCheckEndpoints
+    {
+        private string ApiRoot => "/healthcheck";
+
+        public string CheckServiceHealth()
+        {
+            return $"{ApiRoot}/health";
+        }
     }
 }

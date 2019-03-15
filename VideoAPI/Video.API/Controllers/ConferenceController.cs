@@ -56,7 +56,7 @@ namespace Video.API.Controllers
                         x.CaseTypeGroup))
                 .ToList();
             var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
-                request.ScheduledDateTime, request.CaseNumber, participants);
+                request.ScheduledDateTime, request.CaseNumber, request.CaseName,participants);
             await _commandHandler.Handle(createConferenceCommand);
             
             var conferenceId = createConferenceCommand.NewConferenceId;
@@ -213,6 +213,7 @@ namespace Video.API.Controllers
                 Id = conference.Id,
                 CaseType = conference.CaseType,
                 CaseNumber = conference.CaseNumber,
+                CaseName = conference.CaseName,
                 ScheduledDateTime = conference.ScheduledDateTime,
                 CurrentStatus = MapCurrentConferenceStatus(conference),
                 Participants = MapParticipantsToResponse(conference.GetParticipants())

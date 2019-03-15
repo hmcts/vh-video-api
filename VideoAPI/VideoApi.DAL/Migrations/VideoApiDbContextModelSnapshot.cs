@@ -24,6 +24,8 @@ namespace VideoApi.DAL.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CaseName");
+
                     b.Property<string>("CaseNumber");
 
                     b.Property<string>("CaseType");

@@ -135,14 +135,22 @@ namespace VideoApi.IntegrationTests.Features
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Should accept and process a conference event request")]
-        public virtual void ShouldAcceptAndProcessAConferenceEventRequest()
+        [NUnit.Framework.TestCaseAttribute("Joined", null)]
+        [NUnit.Framework.TestCaseAttribute("Disconnected", null)]
+        [NUnit.Framework.TestCaseAttribute("Transfer", null)]
+        [NUnit.Framework.TestCaseAttribute("Help", null)]
+        [NUnit.Framework.TestCaseAttribute("Pause", null)]
+        [NUnit.Framework.TestCaseAttribute("Close", null)]
+        [NUnit.Framework.TestCaseAttribute("Leave", null)]
+        [NUnit.Framework.TestCaseAttribute("JudgeAvailable", null)]
+        public virtual void ShouldAcceptAndProcessAConferenceEventRequest(string eventType, string[] exampleTags)
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should accept and process a conference event request", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should accept and process a conference event request", null, exampleTags);
 #line 25
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 26
-    testRunner.Given("I have a valid conference event request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given(string.Format("I have a valid conference event request for event type {0}", eventType), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 27
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 28

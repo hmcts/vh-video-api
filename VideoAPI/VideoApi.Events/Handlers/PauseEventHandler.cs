@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
@@ -22,12 +23,16 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var hearingState = ConferenceState.Paused;
-            await PublishConferenceStatusMessage(hearingState);
+            var conferenceState = ConferenceState.Paused;
+            var command =
+                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            await CommandHandler.Handle(command);
+            
+            await PublishConferenceStatusMessage(conferenceState);
             var hearingEventMessage = new HearingEventMessage
             {
                 HearingRefId = SourceConference.HearingRefId,
-                ConferenceStatus = hearingState
+                ConferenceStatus = conferenceState
             };
 
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);

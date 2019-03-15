@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
@@ -44,6 +45,12 @@ namespace VideoApi.UnitTests.Events
             var participantMessage = (ParticipantEventMessage) ServiceBusQueueClient.ReadMessageFromQueue();
             participantMessage.Should().BeOfType<ParticipantEventMessage>();
             participantMessage.ParticipantState.Should().Be(ParticipantState.Disconnected);
+            
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.Disconnected)), Times.Once);
         }
     }
 }

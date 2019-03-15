@@ -25,7 +25,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseType = "Civil Money Claims";
             var caseNumber = "Test12345";
-            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber);
+            var caseName = "Auto vs Manual";
+            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName);
         }
         
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
