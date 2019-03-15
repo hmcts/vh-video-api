@@ -49,6 +49,9 @@ namespace VideoApi.IntegrationTests.Steps
                 case Scenario.Nonexistent:
                     username = Internet.Email();
                     break;
+                case Scenario.Invalid:
+                    username = "invalidemail";
+                    break;
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
