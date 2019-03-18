@@ -231,6 +231,7 @@ namespace Video.API.Controllers
                 Id = conference.Id,
                 CaseType = conference.CaseType,
                 CaseNumber = conference.CaseType,
+                CaseName = conference.CaseName,
                 ScheduledDateTime = conference.ScheduledDateTime
             };
         }
