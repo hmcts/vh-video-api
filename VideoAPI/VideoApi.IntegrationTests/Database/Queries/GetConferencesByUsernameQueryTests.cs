@@ -17,6 +17,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private Guid _newConferenceId3;
         private Guid _newConferenceId4;
         private Guid _newConferenceId5;
+        private Guid _newConferenceId6;
 
         [SetUp]
         public void Setup()
@@ -28,6 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _newConferenceId3 = Guid.Empty;
             _newConferenceId4 = Guid.Empty;
             _newConferenceId5 = Guid.Empty;
+            _newConferenceId6 = Guid.Empty;
         }
 
         [Test]
@@ -68,12 +70,19 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
             _newConferenceId5 = conference5.Id;
+            
+            var conference6 = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .Build();
+            _newConferenceId6 = conference6.Id;
 
             await TestDataManager.SeedConference(conference1);
             await TestDataManager.SeedConference(conference2);
             await TestDataManager.SeedConference(conference3);
             await TestDataManager.SeedConference(conference4);
             await TestDataManager.SeedConference(conference5);
+            await TestDataManager.SeedConference(conference6);
 
             var conferences = await _handler.Handle(new GetConferencesByUsernameQuery(username));
 
@@ -90,6 +99,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.RemoveConference(_newConferenceId3);
             await TestDataManager.RemoveConference(_newConferenceId4);
             await TestDataManager.RemoveConference(_newConferenceId5);
+            await TestDataManager.RemoveConference(_newConferenceId6);
         }
     }
 }
