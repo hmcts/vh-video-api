@@ -35,6 +35,7 @@ namespace VideoApi.DAL.Queries
                 .Where(x =>
                     x.Participants.Any(y => y.Username == query.Username)
                 )
+                .OrderBy(x => x.ScheduledDateTime)
                 .AsNoTracking()
                 .ToListAsync();
 

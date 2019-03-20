@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Extensions;
+using Video.API.Mappings;
 using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -64,7 +65,8 @@ namespace Video.API.Controllers
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            var response = MapConferenceToResponse(queriedConference);
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(queriedConference);
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
         }
 
@@ -135,8 +137,8 @@ namespace Video.API.Controllers
             {
                 return NotFound();
             }
-            
-            var response = MapConferenceToResponse(queriedConference);
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(queriedConference);
             return Ok(response);
         }
         
@@ -191,7 +193,8 @@ namespace Video.API.Controllers
             var query = new GetConferencesByUsernameQuery(username);
             var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
 
-            var response = conferences.Select(MapConferenceToSummaryResponse);
+            var mapper = new ConferenceToSummaryResponseMapper();
+            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
             return Ok(response);
         }
         
@@ -220,80 +223,10 @@ namespace Video.API.Controllers
                 return NotFound();
             }
             
-            var response = MapConferenceToResponse(conference);
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(conference);
             return Ok(response);
         }
         
-        private ConferenceSummaryResponse MapConferenceToSummaryResponse(Conference conference)
-        {
-            return new ConferenceSummaryResponse
-            {
-                Id = conference.Id,
-                CaseType = conference.CaseType,
-                CaseNumber = conference.CaseType,
-                CaseName = conference.CaseName,
-                ScheduledDateTime = conference.ScheduledDateTime
-            };
-        }
-        
-        private ConferenceDetailsResponse MapConferenceToResponse(Conference conference)
-        {
-            var response = new ConferenceDetailsResponse
-            {
-                Id = conference.Id,
-                CaseType = conference.CaseType,
-                CaseNumber = conference.CaseNumber,
-                CaseName = conference.CaseName,
-                ScheduledDateTime = conference.ScheduledDateTime,
-                CurrentStatus = MapCurrentConferenceStatus(conference),
-                Participants = MapParticipantsToResponse(conference.GetParticipants())
-            };
-            return response;
-        }
-
-        private ConferenceStatusResponse MapCurrentConferenceStatus(Conference conference)
-        {
-            var currentStatus = conference.GetCurrentStatus();
-            if (currentStatus == null) return null;
-            return new ConferenceStatusResponse
-            {
-                ConferenceState = currentStatus.ConferenceState,
-                TimeStamp = currentStatus.TimeStamp
-            };
-        }
-
-        private List<ParticipantDetailsResponse> MapParticipantsToResponse(IEnumerable<Participant> participants)
-        {
-            var response = new List<ParticipantDetailsResponse>();
-            foreach (var participant in participants)
-            {
-                var paResponse = new ParticipantDetailsResponse
-                {
-                    Id = participant.Id,
-                    Name = participant.Name,
-                    Username = participant.Username,
-                    DisplayName = participant.DisplayName,
-                    UserRole = participant.UserRole,
-                    CaseTypeGroup = participant.CaseTypeGroup,
-                    CurrentStatus = MapCurrentParticipantStatusToResponse(participant)
-                };
-                response.Add(paResponse);
-            }
-
-            return response;
-        }
-
-        private ParticipantStatusResponse MapCurrentParticipantStatusToResponse(
-            Participant participant)
-        {
-            var currentStatus = participant.GetCurrentStatus();
-            if (currentStatus == null) return null;
-
-            return new ParticipantStatusResponse
-            {
-                ParticipantState = currentStatus.ParticipantState,
-                TimeStamp = currentStatus.TimeStamp
-            };
-        }
     }
 }
