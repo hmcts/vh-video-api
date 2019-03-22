@@ -30,17 +30,24 @@ namespace Video.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwagger();
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+                builder =>
+                {
+                    builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowCredentials();
+                }));
+            
+            
             services.AddJsonOptions();
             RegisterSettings(services);
-
             services.AddCustomTypes();
-
             RegisterAuth(services);
-
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddCors();
-
+            
             services.AddDbContextPool<VideoApiDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("VhVideoApi")));
         }
@@ -115,11 +122,7 @@ namespace Video.API
             }
 
             app.UseAuthentication();
-            app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowCredentials()
-                .AllowAnyHeader());
+            app.UseCors("CorsPolicy");
 
             app.UseMiddleware<LogResponseBodyMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
