@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Video.API.Extensions;
 using VideoApi.Common.Configuration;
 using VideoApi.DAL;
@@ -75,9 +76,16 @@ namespace Video.API
             }).AddJwtBearer(options =>
             {
                 options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
-                options.TokenValidationParameters.ValidateLifetime = true;
-                options.Audience = securitySettings.VhVideoApiResourceId;
-                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateLifetime = true,
+                    ValidAudiences = new[]
+                        {
+                            securitySettings.VhVideoApiResourceId 
+                            ,securitySettings.VhVideoWebClientId
+                        }
+                };
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
@@ -135,7 +143,8 @@ namespace Video.API
                 routes.MapHub<EventHub>(path,
                     options =>
                     {
-                        options.Transports = HttpTransportType.ServerSentEvents | HttpTransportType.LongPolling;
+                        options.Transports = HttpTransportType.ServerSentEvents | HttpTransportType.LongPolling |
+                                             HttpTransportType.WebSockets;
                     });
             });
         }
