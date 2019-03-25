@@ -17,14 +17,14 @@ namespace VideoApi.Domain
         }
 
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
-            string caseName) : this()
+            string caseName, int scheduledDuration) : this()
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
             CaseName = caseName;
-
+            ScheduledDuration = scheduledDuration;
         }
 
         public Guid HearingRefId { get; protected set; }
@@ -32,6 +32,7 @@ namespace VideoApi.Domain
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
         public string CaseName { get; protected set; }
+        public int ScheduledDuration { get; set; }
         public virtual IList<Participant> Participants { get; private set; }
         protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
 
