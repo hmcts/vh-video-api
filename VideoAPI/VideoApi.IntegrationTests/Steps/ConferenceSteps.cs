@@ -129,6 +129,7 @@ namespace VideoApi.IntegrationTests.Steps
                 request.HearingRefId = Guid.Empty;
                 request.CaseType = string.Empty;
                 request.CaseNumber = string.Empty;
+                request.ScheduledDuration = 0;
                 request.ScheduledDateTime = DateTime.Today.AddDays(-5);
             }
 
@@ -234,6 +235,10 @@ namespace VideoApi.IntegrationTests.Steps
             foreach (var conference in conferences)
             {
                 AssertConferenceSummaryResponse.ForConference(conference);
+                foreach (var participant in conference.Participants)
+                {
+                    AssertParticipantSummaryResponse.ForParticipant(participant);
+                }
             }
         }
 
