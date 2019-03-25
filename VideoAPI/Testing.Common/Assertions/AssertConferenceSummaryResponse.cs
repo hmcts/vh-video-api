@@ -5,12 +5,8 @@ using VideoApi.Domain.Enums;
 
 namespace Testing.Common.Assertions
 {
-    public class AssertConferenceSummaryResponse
+    public static class AssertConferenceSummaryResponse
     {
-        protected AssertConferenceSummaryResponse()
-        {
-        }
-
         public static void ForConference(ConferenceSummaryResponse conference)
         {
             conference.Should().NotBeNull();

@@ -120,6 +120,10 @@ namespace VideoApi.AcceptanceTests.Steps
             foreach (var conference in conferences)
             {
                 AssertConferenceSummaryResponse.ForConference(conference);
+                foreach (var participant in conference.Participants)
+                {
+                    AssertParticipantSummaryResponse.ForParticipant(participant);
+                }
             }
         }
 
