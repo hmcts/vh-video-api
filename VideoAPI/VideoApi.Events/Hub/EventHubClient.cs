@@ -14,7 +14,7 @@ namespace VideoApi.Events.Hub
         Task HelpMessage(Guid conferenceId, string participantName);
     }
 
-    [Authorize]
+    [Authorize(Policy = "EventHubUser")]
     public class EventHub : Hub<IEventHubClient>
     {
         public override async Task OnConnectedAsync()

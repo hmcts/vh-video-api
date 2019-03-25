@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
@@ -61,12 +62,6 @@ namespace Video.API
 
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
-            var policy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-
-            serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
-
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
 
             serviceCollection.AddAuthentication(options =>
@@ -80,12 +75,10 @@ namespace Video.API
                 {
                     ClockSkew = TimeSpan.Zero,
                     ValidateLifetime = true,
-                    ValidAudiences = new[]
-                        {
-                            securitySettings.VhVideoApiResourceId 
-                            ,securitySettings.VhVideoWebClientId
-                        }
+                    ValidAudience = securitySettings.VhVideoApiResourceId
                 };
+            }).AddJwtBearer("EventHubUser", options =>
+            {
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
@@ -102,12 +95,20 @@ namespace Video.API
                         return Task.CompletedTask;
                     }
                 };
+                options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateLifetime = true,
+                    ValidAudience = securitySettings.VhVideoWebClientId
+                };
             });
 
-            serviceCollection.AddAuthorization();
+            serviceCollection.AddAuthorization(AddPolicies);
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.RunLatestMigrations();
@@ -147,6 +148,18 @@ namespace Video.API
                                              HttpTransportType.WebSockets;
                     });
             });
+        }
+
+        private static void AddPolicies(AuthorizationOptions options)
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
+            options.AddPolicy("EventHubUser", new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("EventHubUser")
+                .Build());
         }
     }
 }
