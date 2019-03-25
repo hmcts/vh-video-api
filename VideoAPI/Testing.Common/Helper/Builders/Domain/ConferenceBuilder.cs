@@ -26,7 +26,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var caseType = "Civil Money Claims";
             var caseNumber = "Test12345";
             var caseName = "Auto vs Manual";
-            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName);
+            var scheduledDuration = 120;
+            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, scheduledDuration);
         }
         
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
