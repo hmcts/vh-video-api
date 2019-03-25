@@ -34,6 +34,7 @@ Feature: Conferences
     And the error response message should also contain 'HearingRefId is required'
     And the error response message should also contain 'CaseType is required'
     And the error response message should also contain 'CaseNumber is required'
+	And the error response message should also contain 'ScheduledDuration is required'
     And the error response message should also contain 'ScheduledDateTime cannot be in the past'
     And the error response message should also contain 'Please provide at least one participant'
 

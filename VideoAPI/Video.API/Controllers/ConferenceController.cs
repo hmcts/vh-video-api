@@ -57,7 +57,7 @@ namespace Video.API.Controllers
                         x.CaseTypeGroup))
                 .ToList();
             var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
-                request.ScheduledDateTime, request.CaseNumber, request.CaseName,participants);
+                request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
             await _commandHandler.Handle(createConferenceCommand);
             
             var conferenceId = createConferenceCommand.NewConferenceId;

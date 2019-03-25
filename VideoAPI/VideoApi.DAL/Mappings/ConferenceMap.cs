@@ -16,6 +16,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.ScheduledDateTime);
             builder.Property(x => x.CaseNumber);
             builder.Property(x => x.CaseName);
+            builder.Property(x => x.ScheduledDuration);
 
             builder.HasMany<Participant>("Participants").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<ConferenceStatus>("ConferenceStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);

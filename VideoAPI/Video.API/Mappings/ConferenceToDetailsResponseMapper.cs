@@ -14,6 +14,7 @@ namespace Video.API.Mappings
                 CaseNumber = conference.CaseNumber,
                 CaseName = conference.CaseName,
                 ScheduledDateTime = conference.ScheduledDateTime,
+                ScheduledDuration = conference.ScheduledDuration,
                 CurrentStatus = new ConferenceStatusToResponseMapper().MapCurrentConferenceStatus(conference),
                 Participants =
                     new ParticipantToDetailsResponseMapper().MapParticipantsToResponse(conference.GetParticipants())
