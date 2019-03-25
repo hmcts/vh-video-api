@@ -129,6 +129,7 @@ namespace VideoApi.IntegrationTests.Steps
                 request.HearingRefId = Guid.Empty;
                 request.CaseType = string.Empty;
                 request.CaseNumber = string.Empty;
+                request.ScheduledDuration = 0;
                 request.ScheduledDateTime = DateTime.Today.AddDays(-5);
             }
 

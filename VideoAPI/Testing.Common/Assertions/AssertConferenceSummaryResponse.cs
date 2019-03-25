@@ -17,6 +17,7 @@ namespace Testing.Common.Assertions
             conference.CaseType.Should().NotBeNullOrEmpty();
             conference.CaseNumber.Should().NotBeNullOrEmpty();
             conference.CaseName.Should().NotBeNullOrEmpty();
+            conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.Id.Should().NotBeEmpty();
         }

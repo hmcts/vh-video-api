@@ -19,13 +19,14 @@ namespace VideoApi.DAL.Commands
         public List<Participant> Participants { get; set; }
 
         public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
-            string caseNumber, string caseName, List<Participant> participants)
+            string caseNumber, string caseName, int scheduledDuration, List<Participant> participants)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
             CaseName = caseName;
+            ScheduledDuration = scheduledDuration;
             Participants = participants;
         }
     }

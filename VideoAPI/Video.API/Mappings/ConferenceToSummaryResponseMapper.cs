@@ -13,7 +13,8 @@ namespace Video.API.Mappings
                 CaseType = conference.CaseType,
                 CaseNumber = conference.CaseNumber,
                 CaseName = conference.CaseName,
-                ScheduledDateTime = conference.ScheduledDateTime
+                ScheduledDateTime = conference.ScheduledDateTime,
+                ScheduledDuration= conference.ScheduledDuration,
             };
         }
     }
