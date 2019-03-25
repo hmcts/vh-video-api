@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyModel;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Video.API.Swagger;
+using Video.API.Validations;
 using VideoApi.Common;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
@@ -23,17 +25,23 @@ namespace Video.API
 {
     public static class ConfigureServicesExtensions
     {
-        public static IServiceCollection AddSwagger(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
+            services
+                .AddMvc()
+                .AddFluentValidation(fv =>
+                    fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
+            
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
             var contractsXmlFile = $"{typeof(BookNewConferenceRequest).Assembly.GetName().Name}.xml";
             var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, contractsXmlFile);
 
-            serviceCollection.AddSwaggerGen(c =>
+            services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info {Title = "Video API", Version = "v1"});
+                c.AddFluentValidationRules();
                 c.IncludeXmlComments(xmlPath);
                 c.IncludeXmlComments(contractsXmlPath);
                 c.EnableAnnotations();
@@ -48,9 +56,10 @@ namespace Video.API
                     {"Bearer", Enumerable.Empty<string>()},
                 });
                 c.OperationFilter<AuthResponsesOperationFilter>();
+                c.SchemaFilter<EnumSchemaFilter>();
             });
 
-            return serviceCollection;
+            return services;
         }
 
         public static IServiceCollection AddCustomTypes(this IServiceCollection services)
