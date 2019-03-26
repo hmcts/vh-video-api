@@ -36,7 +36,7 @@ namespace VideoApi.Domain
         public int ScheduledDuration { get; set; }
         public virtual IList<Participant> Participants { get; private set; }
         protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
-        
+
         public void UpdateVirtualCourt(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
             if (VirtualCourt == null)
@@ -50,14 +50,13 @@ namespace VideoApi.Domain
                 VirtualCourt.ParticipantUri = participantUri;
                 VirtualCourt.PexipNode = pexipNode;
             }
-            
         }
 
         public VirtualCourt GetVirtualCourt()
         {
             return VirtualCourt;
         }
-        
+
         public void AddParticipant(Participant participant)
         {
             if (DoesParticipantExist(participant.Username))
@@ -74,7 +73,7 @@ namespace VideoApi.Domain
             {
                 throw new DomainRuleException(nameof(participant), "Participant does not exist in conference");
             }
-            
+
             var existingParticipant = Participants.Single(x => x.Username == participant.Username);
             Participants.Remove(existingParticipant);
         }

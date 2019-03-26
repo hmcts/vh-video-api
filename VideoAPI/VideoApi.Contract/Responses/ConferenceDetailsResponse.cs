@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace VideoApi.Contract.Responses
 {
+    /// <summary>
+    /// Detailed information for a conference
+    /// </summary>
     public class ConferenceDetailsResponse
     {
         public Guid Id { get; set; }
@@ -13,5 +16,6 @@ namespace VideoApi.Contract.Responses
         public int ScheduledDuration { get; set; }
         public ConferenceStatusResponse CurrentStatus { get; set; }
         public List<ParticipantDetailsResponse> Participants { get; set; }
+        public VirtualCourtResponse VirtualCourt { get; set; }
     }
 }

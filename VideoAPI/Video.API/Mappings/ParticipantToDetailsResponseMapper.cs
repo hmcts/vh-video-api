@@ -28,4 +28,20 @@ namespace Video.API.Mappings
             return response;
         }
     }
+
+    public class VirtualCourtToResponseMapper
+    {
+        public VirtualCourtResponse MapVirtualCourtToResponse(VirtualCourt virtualCourt)
+        {
+            if (virtualCourt == null) return null;
+
+            return new VirtualCourtResponse
+            {
+                AdminUri = virtualCourt.AdminUri,
+                JudgeUri = virtualCourt.JudgeUri,
+                ParticipantUri = virtualCourt.ParticipantUri,
+                PexipNode = virtualCourt.PexipNode
+            };
+        }
+    }
 }

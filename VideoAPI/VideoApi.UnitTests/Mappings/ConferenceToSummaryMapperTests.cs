@@ -25,6 +25,7 @@ namespace VideoApi.UnitTests.Mappings
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
+                .Excluding(x => x.VirtualCourt)
             );
             response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus().ConferenceState);
         }
