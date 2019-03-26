@@ -33,7 +33,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_get_conference_details_by_id()
+        public async Task should_get_conference_for_username()
         {
             var username = "knownuser@email.com";
             var conference1 = new ConferenceBuilder(true)
@@ -87,7 +87,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var conferences = await _handler.Handle(new GetConferencesByUsernameQuery(username));
 
             conferences.Should().NotBeEmpty();
-            conferences.Count.Should().Be(3);
+            conferences.Count.Should().Be(4);
         }
 
         [TearDown]
