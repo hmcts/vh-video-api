@@ -16,7 +16,6 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 
@@ -138,54 +137,6 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-
-        [Given(@"I have a (.*) update conference status request")]
-        [Given(@"I have an (.*) update conference status request")]
-        public async Task GivenIHaveAnUpdateConferenceStatusRequest(Scenario scenario)
-        {
-            Guid conferenceId;
-            UpdateConferenceStatusRequest request;
-            switch (scenario)
-            {
-                case Scenario.Valid:
-                {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    conferenceId = seededConference.Id;
-                    request = new UpdateConferenceStatusRequest {State = ConferenceState.Paused};
-                    break;
-                }
-                case Scenario.Nonexistent:
-                    conferenceId = Guid.NewGuid();
-                    request = new UpdateConferenceStatusRequest {State = ConferenceState.Paused};
-                    break;
-                case Scenario.Invalid:
-                    conferenceId = Guid.Empty;
-                    request = new UpdateConferenceStatusRequest();
-                    break;
-                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
-
-            ApiTestContext.Uri = _endpoints.UpdateConferenceStatus(conferenceId);
-            ApiTestContext.HttpMethod = HttpMethod.Patch;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }
-
-        [Given(@"I have a invalid update conference status request for an existing conference")]
-        public async Task GivenIHaveAnInvalidUpdateConferenceStatusRequestForAnExistentConference()
-        {
-            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            ApiTestContext.NewConferenceId = seededConference.Id;
-            var conferenceId = seededConference.Id;
-            var request = new UpdateConferenceStatusRequest();
-            ApiTestContext.Uri = _endpoints.UpdateConferenceStatus(conferenceId);
-            ApiTestContext.HttpMethod = HttpMethod.Patch;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }      
         
         [Given(@"I have a (.*) remove conference request")]
         [Given(@"I have an (.*) remove conference request")]
