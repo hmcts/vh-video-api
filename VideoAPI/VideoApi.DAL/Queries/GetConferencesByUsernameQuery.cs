@@ -33,7 +33,7 @@ namespace VideoApi.DAL.Queries
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses").AsNoTracking()
                 .Where(x =>
-                    x.Participants.Any(y => y.Username == query.Username)
+                    x.Participants.Any(y => y.Username.ToLowerInvariant().Trim() == query.Username.ToLowerInvariant().Trim())
                 )
                 .OrderBy(x => x.ScheduledDateTime)
                 .AsNoTracking()

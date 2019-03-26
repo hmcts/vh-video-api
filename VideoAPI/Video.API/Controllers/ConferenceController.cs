@@ -71,47 +71,6 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Update the conference status
-        /// </summary>
-        /// <param name="conferenceId">The id of the conference to update</param>
-        /// <param name="request">New status for the conference</param>
-        /// <returns></returns>
-        [HttpPatch("{conferenceId}")]
-        [SwaggerOperation(OperationId = "UpdateConferenceStatus")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateConferenceStatus(Guid conferenceId,
-            UpdateConferenceStatusRequest request)
-        {
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                return BadRequest(ModelState);
-            }
-            
-            var result = await new UpdateConferenceStatusRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-            
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference == null)
-            {
-                return NotFound();
-            }
-            
-            var command = new UpdateConferenceStatusCommand(conferenceId, request.State);
-            await _commandHandler.Handle(command);
-            return NoContent();
-        }
-
-        /// <summary>
         /// Get the details of a conference
         /// </summary>
         /// <param name="conferenceId">Id of the conference</param>

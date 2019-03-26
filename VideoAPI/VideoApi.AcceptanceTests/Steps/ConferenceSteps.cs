@@ -72,13 +72,6 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
         }
 
-        [Given(@"I have a valid update conference status request")]
-        public void GivenIHaveAValidUpdateConferenceStatusRequest()
-        {
-            var request = new UpdateConferenceStatusRequest {State = ConferenceState.Paused};
-            _context.Request = _context.Patch(_endpoints.UpdateConferenceStatus(_context.NewConferenceId), request);
-        }
-
         [Given(@"I have a valid delete conference request")]
         public void GivenIHaveAValidDeleteConferenceRequest()
         {
