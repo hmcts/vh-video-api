@@ -134,6 +134,42 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("ParticipantStatus");
                 });
 
+            modelBuilder.Entity("VideoApi.Domain.Conference", b =>
+                {
+                    b.OwnsOne("VideoApi.Domain.VirtualCourt", "VirtualCourt", b1 =>
+                        {
+                            b1.Property<long>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                            b1.Property<string>("AdminUri")
+                                .IsRequired();
+
+                            b1.Property<Guid>("ConferenceId");
+
+                            b1.Property<string>("JudgeUri")
+                                .IsRequired();
+
+                            b1.Property<string>("ParticipantUri")
+                                .IsRequired();
+
+                            b1.Property<string>("PexipNode")
+                                .IsRequired();
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ConferenceId")
+                                .IsUnique();
+
+                            b1.ToTable("VirtualCourt");
+
+                            b1.HasOne("VideoApi.Domain.Conference")
+                                .WithOne("VirtualCourt")
+                                .HasForeignKey("VideoApi.Domain.VirtualCourt", "ConferenceId")
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
+                });
+
             modelBuilder.Entity("VideoApi.Domain.ConferenceStatus", b =>
                 {
                     b.HasOne("VideoApi.Domain.Conference")

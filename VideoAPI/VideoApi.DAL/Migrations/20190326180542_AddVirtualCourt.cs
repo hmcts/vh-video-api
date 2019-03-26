@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VideoApi.DAL.Migrations
@@ -7,11 +8,6 @@ namespace VideoApi.DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<long>(
-                name: "VirtualCourtId",
-                table: "Conference",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "VirtualCourt",
                 columns: table => new
@@ -21,43 +17,31 @@ namespace VideoApi.DAL.Migrations
                     AdminUri = table.Column<string>(nullable: false),
                     JudgeUri = table.Column<string>(nullable: false),
                     ParticipantUri = table.Column<string>(nullable: false),
-                    PexipNode = table.Column<string>(nullable: false)
+                    PexipNode = table.Column<string>(nullable: false),
+                    ConferenceId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_VirtualCourt", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VirtualCourt_Conference_ConferenceId",
+                        column: x => x.ConferenceId,
+                        principalTable: "Conference",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Conference_VirtualCourtId",
-                table: "Conference",
-                column: "VirtualCourtId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Conference_VirtualCourt_VirtualCourtId",
-                table: "Conference",
-                column: "VirtualCourtId",
-                principalTable: "VirtualCourt",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                name: "IX_VirtualCourt_ConferenceId",
+                table: "VirtualCourt",
+                column: "ConferenceId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Conference_VirtualCourt_VirtualCourtId",
-                table: "Conference");
-
             migrationBuilder.DropTable(
                 name: "VirtualCourt");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Conference_VirtualCourtId",
-                table: "Conference");
-
-            migrationBuilder.DropColumn(
-                name: "VirtualCourtId",
-                table: "Conference");
         }
     }
 }

@@ -20,6 +20,7 @@ namespace VideoApi.DAL.Mappings
 
             builder.HasMany<Participant>("Participants").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<ConferenceStatus>("ConferenceStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.OwnsOne(x => x.VirtualCourt);
         }
     }
 }
