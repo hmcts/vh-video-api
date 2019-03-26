@@ -24,6 +24,8 @@ namespace VideoApi.DAL.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CaseName");
+
                     b.Property<string>("CaseNumber");
 
                     b.Property<string>("CaseType");
@@ -32,11 +34,9 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<DateTime>("ScheduledDateTime");
 
-                    b.Property<long?>("VirtualCourtId");
+                    b.Property<int>("ScheduledDuration");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("VirtualCourtId");
 
                     b.ToTable("Conference");
                 });
@@ -134,55 +134,28 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("ParticipantStatus");
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.VirtualCourt", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AdminUri")
-                        .IsRequired();
-
-                    b.Property<string>("JudgeUri")
-                        .IsRequired();
-
-                    b.Property<string>("ParticipantUri")
-                        .IsRequired();
-
-                    b.Property<string>("PexipNode")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VirtualCourt");
-                });
-
-            modelBuilder.Entity("VideoApi.Domain.Conference", b =>
-                {
-                    b.HasOne("VideoApi.Domain.VirtualCourt", "VirtualCourt")
-                        .WithMany()
-                        .HasForeignKey("VirtualCourtId");
-                });
-
             modelBuilder.Entity("VideoApi.Domain.ConferenceStatus", b =>
                 {
                     b.HasOne("VideoApi.Domain.Conference")
                         .WithMany("ConferenceStatuses")
-                        .HasForeignKey("ConferenceId");
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
                 {
                     b.HasOne("VideoApi.Domain.Conference")
                         .WithMany("Participants")
-                        .HasForeignKey("ConferenceId");
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("VideoApi.Domain.ParticipantStatus", b =>
                 {
                     b.HasOne("VideoApi.Domain.Participant")
                         .WithMany("ParticipantStatuses")
-                        .HasForeignKey("ParticipantId");
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

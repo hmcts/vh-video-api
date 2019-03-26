@@ -26,6 +26,7 @@ namespace VideoApi.UnitTests.Validation
                 .All().With(x => x.UserRole = UserRole.Individual).Build().ToList();
             return Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.ScheduledDateTime = DateTime.Now.AddDays(5))
+                .With(x => x.ScheduledDuration = 120)
                 .With(x => x.Participants = participants)
                 .Build();
         }

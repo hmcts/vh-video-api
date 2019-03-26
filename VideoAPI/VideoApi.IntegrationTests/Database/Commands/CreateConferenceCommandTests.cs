@@ -30,11 +30,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var caseType = "Civil Money Claims";
             var scheduledDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseNumber = "AutoTest Create Command 1234";
+            var caseName = "AutoTest vs Manual Test";
+            var scheduledDuration = 120;
             var participant = new ParticipantBuilder(true).Build();
             var participants = new List<Participant>() {participant};
 
             var command =
-                new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, participants);
+                new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
+                    scheduledDuration, participants);
             await _handler.Handle(command);
 
             command.NewConferenceId.Should().NotBeEmpty();

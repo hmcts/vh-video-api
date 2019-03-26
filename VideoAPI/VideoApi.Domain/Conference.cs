@@ -16,22 +16,26 @@ namespace VideoApi.Domain
             ConferenceStatuses = new List<ConferenceStatus>();
         }
 
-        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber) : this()
+        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
+            string caseName, int scheduledDuration) : this()
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
-            
+            CaseName = caseName;
+            ScheduledDuration = scheduledDuration;
         }
 
         public Guid HearingRefId { get; protected set; }
         public string CaseType { get; protected set; }
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
+        public string CaseName { get; protected set; }
         public virtual VirtualCourt VirtualCourt { get; private set; }
-        protected virtual IList<Participant> Participants { get; set; }
-        protected virtual IList<ConferenceStatus> ConferenceStatuses { get; set; }
+        public int ScheduledDuration { get; set; }
+        public virtual IList<Participant> Participants { get; private set; }
+        protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
         
         public void UpdateVirtualCourt(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
@@ -75,7 +79,7 @@ namespace VideoApi.Domain
             Participants.Remove(existingParticipant);
         }
 
-        private bool DoesParticipantExist(string username)
+        public bool DoesParticipantExist(string username)
         {
             return Participants.Any(x => x.Username == username);
         }

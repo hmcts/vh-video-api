@@ -26,7 +26,9 @@ namespace Testing.Common.Helper.Builders.Domain
             var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseType = "Civil Money Claims";
             var caseNumber = "Test12345";
-            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber);
+            var caseName = "Auto vs Manual";
+            var scheduledDuration = 120;
+            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, scheduledDuration);
         }
         
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
@@ -43,10 +45,14 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup)
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null)
         {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                username = Internet.Email();
+            }
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), userRole,
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), username, userRole,
                     caseTypeGroup)).Build();
             
             participant.UpdateParticipantStatus(ParticipantState.Available);

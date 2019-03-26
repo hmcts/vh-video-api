@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Extensions;
+using Video.API.Mappings;
 using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -56,7 +57,7 @@ namespace Video.API.Controllers
                         x.CaseTypeGroup))
                 .ToList();
             var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
-                request.ScheduledDateTime, request.CaseNumber, participants);
+                request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
             await _commandHandler.Handle(createConferenceCommand);
             
             var conferenceId = createConferenceCommand.NewConferenceId;
@@ -64,49 +65,9 @@ namespace Video.API.Controllers
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            var response = MapConferenceToResponse(queriedConference);
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(queriedConference);
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
-        }
-
-        /// <summary>
-        /// Update the conference status
-        /// </summary>
-        /// <param name="conferenceId">The id of the conference to update</param>
-        /// <param name="request">New status for the conference</param>
-        /// <returns></returns>
-        [HttpPatch("{conferenceId}")]
-        [SwaggerOperation(OperationId = "UpdateConferenceStatus")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateConferenceStatus(Guid conferenceId,
-            UpdateConferenceStatusRequest request)
-        {
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                return BadRequest(ModelState);
-            }
-            
-            var result = await new UpdateConferenceStatusRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-            
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference == null)
-            {
-                return NotFound();
-            }
-            
-            var command = new UpdateConferenceStatusCommand(conferenceId, request.State);
-            await _commandHandler.Handle(command);
-            return NoContent();
         }
 
         /// <summary>
@@ -135,8 +96,8 @@ namespace Video.API.Controllers
             {
                 return NotFound();
             }
-            
-            var response = MapConferenceToResponse(queriedConference);
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(queriedConference);
             return Ok(response);
         }
         
@@ -170,72 +131,61 @@ namespace Video.API.Controllers
 
             return NoContent();
         }
-        
-        private ConferenceDetailsResponse MapConferenceToResponse(Conference conference)
-        {
-            var response = new ConferenceDetailsResponse
-            {
-                Id = conference.Id,
-                CaseType = conference.CaseType,
-                CaseNumber = conference.CaseNumber,
-                ScheduledDateTime = conference.ScheduledDateTime,
-                CurrentStatus = MapCurrentConferenceStatus(conference),
-                Participants = MapParticipantsToResponse(conference.GetParticipants())
-            };
 
-            if (conference.VirtualCourt == null) return response;
-            
-            var virtualCourt = conference.VirtualCourt;
-            response.AdminUri = virtualCourt.AdminUri;
-            response.JudgeUri = virtualCourt.JudgeUri;
-            response.ParticipantUri = virtualCourt.ParticipantUri;
-            response.PexipNode = virtualCourt.PexipNode;
-            return response;
-        }
-
-        private ConferenceStatusResponse MapCurrentConferenceStatus(Conference conference)
+        /// <summary>
+        /// Get non-closed conferences for a participant by their username
+        /// </summary>
+        /// <param name="username">person username</param>
+        /// <returns>Hearing details</returns>
+        [HttpGet(Name = "GetConferencesForUsername")]
+        [SwaggerOperation(OperationId = "GetConferencesForUsername")]
+        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesForUsername([FromQuery] string username)
         {
-            var currentStatus = conference.GetCurrentStatus();
-            if (currentStatus == null) return null;
-            return new ConferenceStatusResponse
+            if (!username.IsValidEmail())
             {
-                ConferenceState = currentStatus.ConferenceState,
-                TimeStamp = currentStatus.TimeStamp
-            };
-        }
-
-        private List<ParticipantDetailsResponse> MapParticipantsToResponse(IEnumerable<Participant> participants)
-        {
-            var response = new List<ParticipantDetailsResponse>();
-            foreach (var participant in participants)
-            {
-                var paResponse = new ParticipantDetailsResponse
-                {
-                    Id = participant.Id,
-                    Name = participant.Name,
-                    Username = participant.Username,
-                    DisplayName = participant.DisplayName,
-                    UserRole = participant.UserRole,
-                    CaseTypeGroup = participant.CaseTypeGroup,
-                    CurrentStatus = MapCurrentParticipantStatusToResponse(participant)
-                };
-                response.Add(paResponse);
+                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
+                return BadRequest(ModelState);
             }
 
-            return response;
-        }
+            var query = new GetConferencesByUsernameQuery(username);
+            var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
 
-        private ParticipantStatusResponse MapCurrentParticipantStatusToResponse(
-            Participant participant)
+            var mapper = new ConferenceToSummaryResponseMapper();
+            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            return Ok(response);
+        }
+        
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="hearingRefId">Hearing ID</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpGet("hearings/{hearingRefId}")]
+        [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferenceByHearingRefId(Guid hearingRefId)
         {
-            var currentStatus = participant.GetCurrentStatus();
-            if (currentStatus == null) return null;
-
-            return new ParticipantStatusResponse
+            if (hearingRefId == Guid.Empty)
             {
-                ParticipantState = currentStatus.ParticipantState,
-                TimeStamp = currentStatus.TimeStamp
-            };
+                ModelState.AddModelError(nameof(hearingRefId), $"Please provide a valid {nameof(hearingRefId)}");
+                return BadRequest(ModelState);
+            }
+
+            var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
+            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+
+            if (conference == null)
+            {
+                return NotFound();
+            }
+            
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(conference);
+            return Ok(response);
         }
+        
     }
 }

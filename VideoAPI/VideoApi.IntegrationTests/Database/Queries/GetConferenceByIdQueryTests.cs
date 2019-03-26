@@ -33,6 +33,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             conference.CaseType.Should().Be(seededConference.CaseType);
             conference.CaseNumber.Should().Be(seededConference.CaseNumber);
+            conference.CaseName.Should().Be(seededConference.CaseName);
+            conference.ScheduledDuration.Should().Be(seededConference.ScheduledDuration);
             conference.ScheduledDateTime.Should().Be(seededConference.ScheduledDateTime);
             conference.HearingRefId.Should().Be(seededConference.HearingRefId);
 
@@ -47,6 +49,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
             }
+
+            conference.GetCurrentStatus().Should().NotBeNull();
+            conference.GetConferenceStatuses().Should().NotBeNullOrEmpty();
         }
         
         [TearDown]

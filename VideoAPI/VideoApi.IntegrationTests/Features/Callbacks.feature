@@ -22,7 +22,17 @@ Feature: Callbacks
     And the error response message should also contain 'EventId is required'
     And the error response message should also contain 'EventType is required'
 
-  Scenario: Should accept and process a conference event request
-    Given I have a valid conference event request
+  Scenario Outline: Should accept and process a conference event request
+    Given I have a valid conference event request for event type <EventType>
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
+	Examples: 
+    | EventType		 |
+	| Joined		 |
+    | Disconnected	 |
+    | Transfer		 |
+    | Help			 |
+    | Pause			 |
+    | Close			 |
+    | Leave			 |
+    | JudgeAvailable |

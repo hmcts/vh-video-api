@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL;
@@ -18,6 +19,7 @@ namespace VideoApi.IntegrationTests.Contexts
         public HttpMethod HttpMethod { get; set; }
         public StringContent StringContent { get; set; }
         public HttpContent HttpContent { get; set; }
+        public HttpRequest HttRequest { get; set; }
         public Guid NewConferenceId { get; set; }
         public HttpResponseMessage ResponseMessage { get; set; }
     }
