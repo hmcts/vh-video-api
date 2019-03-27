@@ -24,7 +24,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRefId = Guid.NewGuid();
             var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseType = "Civil Money Claims";
-            var caseNumber = "Test12345";
+            var caseNumber = $"Test{Guid.NewGuid():N}";
             var caseName = "Auto vs Manual";
             var scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, scheduledDuration);

@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi.AcceptanceTests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoApi.Services", "VideoApi.Services\VideoApi.Services.csproj", "{507F3581-97F9-4192-9DEF-BE894B8E638D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoApi.Services.Generator", "VideoApi.Services.Generator\VideoApi.Services.Generator.csproj", "{7CE3EB5E-BB10-421C-95F3-E214875194A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{507F3581-97F9-4192-9DEF-BE894B8E638D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{507F3581-97F9-4192-9DEF-BE894B8E638D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{507F3581-97F9-4192-9DEF-BE894B8E638D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CE3EB5E-BB10-421C-95F3-E214875194A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CE3EB5E-BB10-421C-95F3-E214875194A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CE3EB5E-BB10-421C-95F3-E214875194A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CE3EB5E-BB10-421C-95F3-E214875194A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

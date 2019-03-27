@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Queries;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.IntegrationTests.Database.Queries
@@ -84,9 +87,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
 
+            var expectedConferences = new List<Conference> {conference2, conference3, conference4};
             var conferences = await _handler.Handle(new GetConferencesByUsernameQuery(username));
 
             conferences.Should().NotBeEmpty();
+            conferences.Select(x => x.Id).Should().BeEquivalentTo(expectedConferences.Select(x => x.Id));
             conferences.Count.Should().Be(3);
         }
 

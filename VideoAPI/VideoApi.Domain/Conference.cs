@@ -9,17 +9,14 @@ namespace VideoApi.Domain
 {
     public class Conference : Entity<Guid>
     {
-        private Conference()
+        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
+            string caseName, int scheduledDuration)
         {
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
             MeetingRoom = new MeetingRoom();
-        }
-
-        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
-            string caseName, int scheduledDuration) : this()
-        {
+            
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
@@ -36,7 +33,7 @@ namespace VideoApi.Domain
         protected virtual MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
         public virtual IList<Participant> Participants { get; private set; }
-        protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
+        public virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {

@@ -285,10 +285,10 @@ namespace VideoApi.IntegrationTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Remove an non-existant conference")]
-        public virtual void RemoveAnNon_ExistantConference()
+        [NUnit.Framework.DescriptionAttribute("Remove an non-existent conference")]
+        public virtual void RemoveAnNon_ExistentConference()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove an non-existant conference", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove an non-existent conference", null, ((string[])(null)));
 #line 70
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

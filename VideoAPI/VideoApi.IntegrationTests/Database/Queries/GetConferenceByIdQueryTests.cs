@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
             }
 
-            conference.GetCurrentStatus().Should().NotBeNull();
+            conference.GetCurrentStatus().Should().BeEquivalentTo(seededConference.GetCurrentStatus());
             conference.GetConferenceStatuses().Should().NotBeNullOrEmpty();
         }
         

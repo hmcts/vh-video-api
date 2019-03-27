@@ -67,7 +67,7 @@ Feature: Conferences
     Then the response should have the status BadRequest and success status False
     And the error response message should also contain 'Please provide a valid conferenceId'
 
-  Scenario: Remove an non-existant conference
+  Scenario: Remove an non-existent conference
     Given I have a nonexistent remove conference request
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False

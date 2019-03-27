@@ -31,6 +31,12 @@ namespace Testing.Common.Assertions
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
                 participant.CurrentStatus.Should().NotBe(ParticipantState.None);
             }
+
+            conference.MeetingRoom.Should().NotBeNull();
+            conference.MeetingRoom.AdminUri.Should().NotBeNull();
+            conference.MeetingRoom.JudgeUri.Should().NotBeNull();
+            conference.MeetingRoom.ParticipantUri.Should().NotBeNull();
+            conference.MeetingRoom.PexipNode.Should().NotBeNull();
         }
     }
 }

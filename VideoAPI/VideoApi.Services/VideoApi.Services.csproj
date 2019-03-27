@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
+      <ProjectReference Include="..\VideoApi.Services.Generator\VideoApi.Services.Generator.csproj" />
     </ItemGroup>
 
 </Project>

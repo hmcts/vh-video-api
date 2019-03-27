@@ -16,6 +16,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Services;
 
 namespace Video.API.Controllers
 {
@@ -27,11 +28,14 @@ namespace Video.API.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
+        private readonly IVideoPlatformService _videoPlatformService;
 
-        public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler)
+        public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
+            IVideoPlatformService videoPlatformService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
+            _videoPlatformService = videoPlatformService;
         }
 
         /// <summary>
@@ -52,15 +56,9 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
             
-            var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
-                        x.CaseTypeGroup))
-                .ToList();
-            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
-                request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
-            await _commandHandler.Handle(createConferenceCommand);
+            var conferenceId = await CreateConference(request);
+            await BookKinlyMeetingRoom(conferenceId);
             
-            var conferenceId = createConferenceCommand.NewConferenceId;
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
@@ -68,6 +66,26 @@ namespace Video.API.Controllers
             var mapper = new ConferenceToDetailsResponseMapper();
             var response = mapper.MapConferenceToResponse(queriedConference);
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
+        }
+
+        private async Task BookKinlyMeetingRoom(Guid conferenceId)
+        {
+           var meetingRoom = await _videoPlatformService.BookVirtualCourtroom(conferenceId);
+           var command = new UpdateMeetingRoomCommand(conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri,
+               meetingRoom.ParticipantUri, meetingRoom.PexipNode);
+           await _commandHandler.Handle(command);
+        }
+
+        private async Task<Guid> CreateConference(BookNewConferenceRequest request)
+        {
+            var participants = request.Participants.Select(x =>
+                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
+                        x.CaseTypeGroup))
+                .ToList();
+            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
+                request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
+            await _commandHandler.Handle(createConferenceCommand);
+            return createConferenceCommand.NewConferenceId;
         }
 
         /// <summary>

@@ -2,12 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,10 +40,10 @@ namespace Video.API
                         .AllowCredentials();
                 }));
             
-            
             services.AddJsonOptions();
             RegisterSettings(services);
-            services.AddCustomTypes();
+            bool.TryParse(Configuration["UseStub"], out var useStub);
+            services.AddCustomTypes(useStub);
             RegisterAuth(services);
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -58,6 +56,7 @@ namespace Video.API
         {
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceBusSettings>(options => Configuration.Bind("ServiceBusQueue", options));
+            services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)
