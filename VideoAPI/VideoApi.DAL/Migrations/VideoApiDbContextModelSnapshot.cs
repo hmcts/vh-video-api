@@ -136,36 +136,29 @@ namespace VideoApi.DAL.Migrations
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
-                    b.OwnsOne("VideoApi.Domain.VirtualCourt", "VirtualCourt", b1 =>
+                    b.OwnsOne("VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
                         {
-                            b1.Property<long>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                            b1.Property<string>("AdminUri")
-                                .IsRequired();
-
                             b1.Property<Guid>("ConferenceId");
 
+                            b1.Property<string>("AdminUri")
+                                .HasColumnName("AdminUri");
+
                             b1.Property<string>("JudgeUri")
-                                .IsRequired();
+                                .HasColumnName("JudgeUri");
 
                             b1.Property<string>("ParticipantUri")
-                                .IsRequired();
+                                .HasColumnName("ParticipantUri");
 
                             b1.Property<string>("PexipNode")
-                                .IsRequired();
+                                .HasColumnName("PexipNode");
 
-                            b1.HasKey("Id");
+                            b1.HasKey("ConferenceId");
 
-                            b1.HasIndex("ConferenceId")
-                                .IsUnique();
-
-                            b1.ToTable("VirtualCourt");
+                            b1.ToTable("Conference");
 
                             b1.HasOne("VideoApi.Domain.Conference")
-                                .WithOne("VirtualCourt")
-                                .HasForeignKey("VideoApi.Domain.VirtualCourt", "ConferenceId")
+                                .WithOne("MeetingRoom")
+                                .HasForeignKey("VideoApi.Domain.MeetingRoom", "ConferenceId")
                                 .OnDelete(DeleteBehavior.Cascade);
                         });
                 });

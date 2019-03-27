@@ -1,9 +1,9 @@
 namespace VideoApi.Contract.Responses
 {
     /// <summary>
-    /// Represents the virtual court information
+    /// Represents the meeting room
     /// </summary>
-    public class VirtualCourtResponse
+    public class MeetingRoomResponse
     {
         /// <summary>
         /// The iFrame uri for the video hearings officer

@@ -6,9 +6,9 @@ using VideoApi.DAL.Exceptions;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateVirtualCourtCommand : ICommand
+    public class UpdateMeetingRoomCommand : ICommand
     {
-        public UpdateVirtualCourtCommand(Guid conferenceId, string adminUri, string judgeUri, string participantUri,
+        public UpdateMeetingRoomCommand(Guid conferenceId, string adminUri, string judgeUri, string participantUri,
             string pexipNode)
         {
             ConferenceId = conferenceId;
@@ -25,26 +25,25 @@ namespace VideoApi.DAL.Commands
         public string PexipNode { get; set; }
     }
 
-    public class UpdateVirtualCourtCommandHandler : ICommandHandler<UpdateVirtualCourtCommand>
+    public class UpdateMeetingRoomHandler : ICommandHandler<UpdateMeetingRoomCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public UpdateVirtualCourtCommandHandler(VideoApiDbContext context)
+        public UpdateMeetingRoomHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(UpdateVirtualCourtCommand command)
+        public async Task Handle(UpdateMeetingRoomCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.VirtualCourt)
-                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
+            var conference = await _context.Conferences.SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.UpdateVirtualCourt(command.AdminUri, command.JudgeUri, command.ParticipantUri,
+            conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri,
                 command.PexipNode);
             await _context.SaveChangesAsync();
         }

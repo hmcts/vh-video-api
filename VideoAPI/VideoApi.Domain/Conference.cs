@@ -14,6 +14,7 @@ namespace VideoApi.Domain
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
+            MeetingRoom = new MeetingRoom();
         }
 
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
@@ -32,29 +33,19 @@ namespace VideoApi.Domain
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
         public string CaseName { get; protected set; }
-        public virtual VirtualCourt VirtualCourt { get; private set; }
+        protected virtual MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
         public virtual IList<Participant> Participants { get; private set; }
         protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
 
-        public void UpdateVirtualCourt(string adminUri, string judgeUri, string participantUri, string pexipNode)
+        public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
-            if (VirtualCourt == null)
-            {
-                VirtualCourt = new VirtualCourt(adminUri, judgeUri, participantUri, pexipNode);
-            }
-            else
-            {
-                VirtualCourt.AdminUri = adminUri;
-                VirtualCourt.JudgeUri = judgeUri;
-                VirtualCourt.ParticipantUri = participantUri;
-                VirtualCourt.PexipNode = pexipNode;
-            }
+            MeetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
         }
 
-        public VirtualCourt GetVirtualCourt()
+        public MeetingRoom GetMeetingRoom()
         {
-            return VirtualCourt;
+            return MeetingRoom.IsSet() ? MeetingRoom : null;
         }
 
         public void AddParticipant(Participant participant)

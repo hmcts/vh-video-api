@@ -5,6 +5,6 @@ namespace VideoApi.Services
 {
     public interface IVideoPlatformService
     {
-        VirtualCourt BookVirtualCourtroom(Guid conferenceId);
+        MeetingRoom BookVirtualCourtroom(Guid conferenceId);
     }
 }

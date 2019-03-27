@@ -1,10 +1,12 @@
-using VideoApi.Domain.Ddd;
-
 namespace VideoApi.Domain
 {
-    public class VirtualCourt : Entity<long>
+    public class MeetingRoom
     {
-        public VirtualCourt(string adminUri, string judgeUri, string participantUri, string pexipNode)
+        internal MeetingRoom()
+        {
+        }
+        
+        public MeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
             AdminUri = adminUri;
             JudgeUri = judgeUri;
@@ -16,5 +18,10 @@ namespace VideoApi.Domain
         public string JudgeUri { get; set; }
         public string ParticipantUri { get; set; }
         public string PexipNode { get; set; }
+
+        public bool IsSet()
+        {
+            return AdminUri != null && JudgeUri != null && ParticipantUri != null && PexipNode != null;
+        }
     }
 }

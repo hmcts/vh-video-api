@@ -11,9 +11,9 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
-    public class UpdateVirtualCourtCommandTests : DatabaseTestsBase
+    public class UpdateMeetingRoomCommandTests : DatabaseTestsBase
     {
-        private UpdateVirtualCourtCommandHandler _handler;
+        private UpdateMeetingRoomHandler _handler;
         private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         private Guid _newConferenceId;
         
@@ -21,7 +21,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new UpdateVirtualCourtCommandHandler(context);
+            _handler = new UpdateMeetingRoomHandler(context);
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
@@ -45,11 +45,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
             await _handler.Handle(command);
             
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-            updatedConference.VirtualCourt.Should().NotBeNull();
-            updatedConference.VirtualCourt.AdminUri.Should().Be(command.AdminUri);
-            updatedConference.VirtualCourt.JudgeUri.Should().Be(command.JudgeUri);
-            updatedConference.VirtualCourt.ParticipantUri.Should().Be(command.ParticipantUri);
-            updatedConference.VirtualCourt.PexipNode.Should().Be(command.PexipNode);
+            var updatedRoom = updatedConference.GetMeetingRoom();
+            updatedRoom.Should().NotBeNull();
+            updatedRoom.AdminUri.Should().Be(command.AdminUri);
+            updatedRoom.JudgeUri.Should().Be(command.JudgeUri);
+            updatedRoom.ParticipantUri.Should().Be(command.ParticipantUri);
+            updatedRoom.PexipNode.Should().Be(command.PexipNode);
         }
         
         [Test]
@@ -57,7 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var conferenceWithVirtualCourt = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithVirtualCourt().Build();
+                .WithMeetingRoom().Build();
             var seededConference = await TestDataManager.SeedConference(conferenceWithVirtualCourt);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
@@ -65,21 +66,22 @@ namespace VideoApi.IntegrationTests.Database.Commands
             await _handler.Handle(command);
             
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-            updatedConference.VirtualCourt.Should().NotBeNull();
-            updatedConference.VirtualCourt.AdminUri.Should().Be(command.AdminUri);
-            updatedConference.VirtualCourt.JudgeUri.Should().Be(command.JudgeUri);
-            updatedConference.VirtualCourt.ParticipantUri.Should().Be(command.ParticipantUri);
-            updatedConference.VirtualCourt.PexipNode.Should().Be(command.PexipNode);
+            var updatedRoom = updatedConference.GetMeetingRoom();
+            updatedRoom.Should().NotBeNull();
+            updatedRoom.AdminUri.Should().Be(command.AdminUri);
+            updatedRoom.JudgeUri.Should().Be(command.JudgeUri);
+            updatedRoom.ParticipantUri.Should().Be(command.ParticipantUri);
+            updatedRoom.PexipNode.Should().Be(command.PexipNode);
         }
 
-        private UpdateVirtualCourtCommand BuildCommand(Guid conferenceId)
+        private UpdateMeetingRoomCommand BuildCommand(Guid conferenceId)
         {
             var adminUri = "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
             var judgeUri = "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
             var participantUri =
                 "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
             var pexipNode = "testjoin.poc.hearings.hmcts.net";
-            return new UpdateVirtualCourtCommand(conferenceId, adminUri, judgeUri, participantUri, pexipNode);
+            return new UpdateMeetingRoomCommand(conferenceId, adminUri, judgeUri, participantUri, pexipNode);
         }
         
         [TearDown]
