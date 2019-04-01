@@ -29,18 +29,13 @@ namespace VideoApi.DAL.Queries
 
         public async Task<List<Conference>> Handle(GetConferencesByUsernameQuery query)
         {
-            var conferences = await _context.Conferences
+            query.Username = query.Username.ToLower().Trim();
+            return await _context.Conferences
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses").AsNoTracking()
-                .Where(x =>
-                    x.Participants.Any(y => y.Username.ToLowerInvariant().Trim() == query.Username.ToLowerInvariant().Trim())
-                )
-                .OrderBy(x => x.ScheduledDateTime)
-                .AsNoTracking()
+                .Where(x => x.Participants.Any(p => p.Username == query.Username) 
+                            && x.GetCurrentStatus() != ConferenceState.Closed)
                 .ToListAsync();
-
-            return conferences.Where(x => x.GetCurrentStatus() == null ||
-                                          x.GetCurrentStatus().ConferenceState != ConferenceState.Closed).ToList();
         }
     }
 }

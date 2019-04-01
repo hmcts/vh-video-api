@@ -36,6 +36,8 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<int>("ScheduledDuration");
 
+                    b.Property<int>("State");
+
                     b.HasKey("Id");
 
                     b.ToTable("Conference");
@@ -132,6 +134,35 @@ namespace VideoApi.DAL.Migrations
                     b.HasIndex("ParticipantId");
 
                     b.ToTable("ParticipantStatus");
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.Conference", b =>
+                {
+                    b.OwnsOne("VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
+                        {
+                            b1.Property<Guid>("ConferenceId");
+
+                            b1.Property<string>("AdminUri")
+                                .HasColumnName("AdminUri");
+
+                            b1.Property<string>("JudgeUri")
+                                .HasColumnName("JudgeUri");
+
+                            b1.Property<string>("ParticipantUri")
+                                .HasColumnName("ParticipantUri");
+
+                            b1.Property<string>("PexipNode")
+                                .HasColumnName("PexipNode");
+
+                            b1.HasKey("ConferenceId");
+
+                            b1.ToTable("Conference");
+
+                            b1.HasOne("VideoApi.Domain.Conference")
+                                .WithOne("MeetingRoom")
+                                .HasForeignKey("VideoApi.Domain.MeetingRoom", "ConferenceId")
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
                 });
 
             modelBuilder.Entity("VideoApi.Domain.ConferenceStatus", b =>

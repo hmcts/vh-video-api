@@ -1,12 +1,26 @@
+using System;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 
 namespace VideoApi.UnitTests.Domain.Conference
 {
     public class UpdateConferenceStatusTests
     {
+        [Test]
+        public void should_throw_exception_when_updating_with_invalid_state()
+        {
+            var conference = new ConferenceBuilder()
+                .Build();
+            
+            Action action = () => conference.UpdateConferenceStatus(ConferenceState.NotStarted);
+            action.Should().Throw<DomainRuleException>().And.ValidationFailures
+                .Any(x => x.Message == "Cannot set conference status to 'none'").Should().BeTrue();
+        }
+        
         [Test]
         public void should_add_conference_status()
         {
@@ -14,7 +28,7 @@ namespace VideoApi.UnitTests.Domain.Conference
                 .WithParticipant(UserRole.Individual, "Claimant")
                 .Build();
 
-            conference.GetCurrentStatus().Should().BeNull();
+            conference.GetCurrentStatus().Should().Be(ConferenceState.NotStarted);
             var beforeCount = conference.GetConferenceStatuses().Count;
 
             var conferenceState = ConferenceState.InSession;
@@ -22,7 +36,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             var afterCount = conference.GetParticipants().Count;
             afterCount.Should().BeGreaterThan(beforeCount);
 
-            conference.GetCurrentStatus().ConferenceState.Should().Be(conferenceState);
+            conference.GetCurrentStatus().Should().Be(conferenceState);
         }
     }
 }

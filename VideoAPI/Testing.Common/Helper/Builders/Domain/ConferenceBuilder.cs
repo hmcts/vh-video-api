@@ -12,7 +12,7 @@ namespace Testing.Common.Helper.Builders.Domain
         private readonly Conference _conference;
         private readonly BuilderSettings _builderSettings;
 
-        public ConferenceBuilder(bool ignoreId = false)
+        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null)
         {
             _builderSettings = new BuilderSettings();
             if (ignoreId)
@@ -21,10 +21,10 @@ namespace Testing.Common.Helper.Builders.Domain
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
             }
             
-            var hearingRefId = Guid.NewGuid();
+            var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
             var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseType = "Civil Money Claims";
-            var caseNumber = "Test12345";
+            var caseNumber = $"Test{Guid.NewGuid():N}";
             var caseName = "Auto vs Manual";
             var scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, scheduledDuration);
@@ -67,6 +67,17 @@ namespace Testing.Common.Helper.Builders.Domain
                 _conference.AddParticipant(participant);
             }
 
+            return this;
+        }
+
+        public ConferenceBuilder WithMeetingRoom()
+        {
+            var adminUri = $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var judgeUri = $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var participantUri =
+                $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
+            var pexipNode = $"join.poc.hearings.hmcts.net";
+            _conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
             return this;
         }
 

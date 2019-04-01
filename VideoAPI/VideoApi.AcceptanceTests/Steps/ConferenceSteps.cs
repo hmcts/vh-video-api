@@ -8,9 +8,7 @@ using Testing.Common.Assertions;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
-using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -63,7 +61,7 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.Should().NotBeNull();
             _context.NewConferenceId = conference.Id;
             _context.NewConference = conference;
-            _scenarioContext.Add(OriginalStatusKey, conference.CurrentStatus ?? null);
+            _scenarioContext.Add(OriginalStatusKey, conference.CurrentStatus);
         }
 
         [Given(@"I have a get details for a conference request with a valid conference id")]

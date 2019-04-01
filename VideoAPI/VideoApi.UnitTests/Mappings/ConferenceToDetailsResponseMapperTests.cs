@@ -24,11 +24,10 @@ namespace VideoApi.UnitTests.Mappings
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
+                .Excluding(x => x.ConferenceStatuses)
             );
 
-            response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus(), options => options
-                .Excluding(x => x.Id)
-            );
+            response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus());
             
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options

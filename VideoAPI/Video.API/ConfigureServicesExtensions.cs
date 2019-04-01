@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Video.API.Swagger;
 using Video.API.Validations;
 using VideoApi.Common;
+using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
@@ -20,6 +24,8 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.ServiceBus;
+using VideoApi.Services;
+using VideoApi.Services.Kinly;
 
 namespace Video.API
 {
@@ -62,7 +68,7 @@ namespace Video.API
             return services;
         }
 
-        public static IServiceCollection AddCustomTypes(this IServiceCollection services)
+        public static IServiceCollection AddCustomTypes(this IServiceCollection services, bool useStub)
         {
             services.AddMemoryCache();
             
@@ -82,6 +88,19 @@ namespace Video.API
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);
+
+            if (useStub)
+            {
+                services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+            }
+            else
+            {
+                services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
+                var container = services.BuildServiceProvider();
+                var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
+                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>().AddTypedClient(httpClient =>
+                    BuildKinlyClient(httpClient, servicesConfiguration));
+            }
             
             services.AddSignalR()
                 .AddJsonProtocol(options =>
@@ -94,7 +113,13 @@ namespace Video.API
             
             return services;
         }
-        
+
+        private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient,
+            ServicesConfiguration servicesConfiguration)
+        {
+            return new KinlyApiClient(httpClient) {BaseUrl = servicesConfiguration.KinlyApiUrl};
+        }
+
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
         {
             var eventHandlers = GetAllTypesOf<IEventHandler>();

@@ -2,7 +2,7 @@ namespace VideoApi.Domain.Enums
 {
     public enum ConferenceState
     {
-        None = 0,
+        NotStarted = 0,
         InSession = 1,
         Paused = 2,
         Suspended = 3,

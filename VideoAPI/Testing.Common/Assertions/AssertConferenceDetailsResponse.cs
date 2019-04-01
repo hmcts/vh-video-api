@@ -19,7 +19,7 @@ namespace Testing.Common.Assertions
             conference.CaseName.Should().NotBeNullOrEmpty();
             conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
-            conference.CurrentStatus.Should().NotBe(ConferenceState.None);
+            conference.CurrentStatus.Should().NotBeNull();
 
             foreach (var participant in conference.Participants)
             {
@@ -31,6 +31,12 @@ namespace Testing.Common.Assertions
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
                 participant.CurrentStatus.Should().NotBe(ParticipantState.None);
             }
+
+            conference.MeetingRoom.Should().NotBeNull();
+            conference.MeetingRoom.AdminUri.Should().NotBeNull();
+            conference.MeetingRoom.JudgeUri.Should().NotBeNull();
+            conference.MeetingRoom.ParticipantUri.Should().NotBeNull();
+            conference.MeetingRoom.PexipNode.Should().NotBeNull();
         }
     }
 }

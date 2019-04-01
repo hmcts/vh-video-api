@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Mappings
 {
@@ -17,9 +18,14 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.CaseNumber);
             builder.Property(x => x.CaseName);
             builder.Property(x => x.ScheduledDuration);
+            builder.Property<ConferenceState>("State");
 
             builder.HasMany<Participant>("Participants").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<ConferenceStatus>("ConferenceStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.AdminUri).HasColumnName("AdminUri");
+            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.JudgeUri).HasColumnName("JudgeUri");
+            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.ParticipantUri).HasColumnName("ParticipantUri");
+            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.PexipNode).HasColumnName("PexipNode");
         }
     }
 }

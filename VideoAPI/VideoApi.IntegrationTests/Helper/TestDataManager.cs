@@ -27,6 +27,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
+                .WithMeetingRoom()
                 .Build();
 
             return await SeedConference(conference);

@@ -28,8 +28,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid conference event request for event type (.*)")]
         public void GivenIHaveAValidConferenceEventRequest(EventType eventType)
         {
-            // ReSharper disable once ConstantNullCoalescingCondition - null is a valid state for this list
-            _scenarioContext.Add(PreviousStateKey, _context.NewConference.CurrentStatus ?? null);
+            _scenarioContext.Add(PreviousStateKey, _context.NewConference.CurrentStatus);
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = _context.NewConferenceId.ToString())
                 .With(x => x.ParticipantId = _context.NewConference.Participants.First().Id.ToString())
@@ -51,7 +50,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            conference.Participants.First().CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(PreviousStateKey));
+            conference.Participants.First().CurrentStatus.Should().NotBe(_scenarioContext.Get<ConferenceState>(PreviousStateKey));
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -25,8 +24,9 @@ namespace VideoApi.UnitTests.Mappings
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
+                .Excluding(x => x.ConferenceStatuses)
             );
-            response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus().ConferenceState);
+            response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus());
         }
     }
 }

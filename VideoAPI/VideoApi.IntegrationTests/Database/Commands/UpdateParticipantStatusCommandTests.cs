@@ -16,7 +16,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         private UpdateParticipantStatusCommandHandler _handler;
         private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         private Guid _newConferenceId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
-        
+
         [Test]
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
@@ -35,7 +35,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateParticipantStatusCommand(conferenceId, participantId, state);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
-        
+
         [Test]
         public async Task should_throw_participant_not_found_exception_when_participant_does_not_exist()
         {
@@ -47,7 +47,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateParticipantStatusCommand(_newConferenceId, participantId, state);
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
-        
+
         [Test]
         public async Task should_update_conference_status()
         {
@@ -59,7 +59,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var beforeCount = participant.GetParticipantStatuses().Count;
             var beforeState = participant.GetCurrentStatus();
-            
+
             var command = new UpdateParticipantStatusCommand(_newConferenceId, participant.Id, state);
             await _handler.Handle(command);
 
@@ -74,7 +74,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterState.ParticipantState.Should().Be(state);
         }
 
-        
+
         [TearDown]
         public async Task TearDown()
         {
@@ -84,5 +84,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 await TestDataManager.RemoveConference(_newConferenceId);
             }
         }
+
     }
 }

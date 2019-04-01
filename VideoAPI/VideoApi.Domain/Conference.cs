@@ -9,16 +9,14 @@ namespace VideoApi.Domain
 {
     public class Conference : Entity<Guid>
     {
-        private Conference()
+        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
+            string caseName, int scheduledDuration)
         {
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
-        }
-
-        public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
-            string caseName, int scheduledDuration) : this()
-        {
+            MeetingRoom = new MeetingRoom();
+            
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
@@ -32,9 +30,21 @@ namespace VideoApi.Domain
         public DateTime ScheduledDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
         public string CaseName { get; protected set; }
+        protected virtual MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
+        protected ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; private set; }
-        protected virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
+        public virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
+
+        public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
+        {
+            MeetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
+        }
+
+        public MeetingRoom GetMeetingRoom()
+        {
+            return MeetingRoom.IsSet() ? MeetingRoom : null;
+        }
 
         public void AddParticipant(Participant participant)
         {
@@ -52,7 +62,7 @@ namespace VideoApi.Domain
             {
                 throw new DomainRuleException(nameof(participant), "Participant does not exist in conference");
             }
-            
+
             var existingParticipant = Participants.Single(x => x.Username == participant.Username);
             Participants.Remove(existingParticipant);
         }
@@ -69,6 +79,12 @@ namespace VideoApi.Domain
 
         public void UpdateConferenceStatus(ConferenceState status)
         {
+            if (status == ConferenceState.NotStarted)
+            {
+                throw new DomainRuleException(nameof(status), "Cannot set conference status to 'none'");
+            }
+
+            State = status;
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
 
@@ -77,9 +93,14 @@ namespace VideoApi.Domain
             return ConferenceStatuses;
         }
 
-        public ConferenceStatus GetCurrentStatus()
+        public ConferenceState GetCurrentStatus()
         {
-            return ConferenceStatuses.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+            return State;
+        }
+
+        public bool IsClosed()
+        {
+            return State == ConferenceState.Closed;
         }
     }
 }

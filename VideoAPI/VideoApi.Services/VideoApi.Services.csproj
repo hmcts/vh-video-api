@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
+      <ProjectReference Include="..\VideoApi.Services.Generator\VideoApi.Services.Generator.csproj" />
+    </ItemGroup>
+
+</Project>
