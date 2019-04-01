@@ -13,7 +13,7 @@ variables:
     "AzureAd/VhVideoWebClientId":"$(vh-video-web-appid)",
     "Testing/TestClientId":"$(vh-admin-web-appid)",
     "Testing/TestClientSecret":"$(vh-admin-web-key)",
-    "ServiceBusQueue/ConnectionString":"$(AzureServiceBusConnectionStringSend)"
+    "ServiceBusQueue/ConnectionString":"$(AzureServiceBusConnectionStringSend)",
     "Services/KinlyApiUrl":"$(KinlyApiUrl)"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
