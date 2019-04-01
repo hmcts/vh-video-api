@@ -26,6 +26,13 @@ Feature: Conferences
     When I send the request to the endpoint
     Then the response should have the status Created and success status True
     And the conference details should be retrieved
+    
+  Scenario: Create a new conference twice
+    Given I have a valid book a new conference request
+    When I send the request to the endpoint
+    And I save the conference details
+    And I send the request to the endpoint
+    Then the response should be the same
 
   Scenario: Fail to book a conference with invalid request
     Given I have an invalid book a new conference request

@@ -78,6 +78,11 @@ namespace VideoApi.Domain
 
         public void UpdateConferenceStatus(ConferenceState status)
         {
+            if (status == ConferenceState.None)
+            {
+                throw new DomainRuleException(nameof(status), "Cannot set conference status to 'none'");
+            }
+
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
 
@@ -89,6 +94,14 @@ namespace VideoApi.Domain
         public ConferenceStatus GetCurrentStatus()
         {
             return ConferenceStatuses.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+        }
+
+        public bool IsActive()
+        {
+            var currentStatus = GetCurrentStatus();
+            if (currentStatus == null) return false;
+
+            return currentStatus.ConferenceState != ConferenceState.Closed;
         }
     }
 }

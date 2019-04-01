@@ -24,10 +24,12 @@ namespace VideoApi.IntegrationTests.Steps
     [Binding]
     public sealed class ConferenceSteps : StepsBase
     {
+        private readonly ConferenceTestContext _conferenceTestContext;
         private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
 
-        public ConferenceSteps(ApiTestContext apiTestContext) : base(apiTestContext)
+        public ConferenceSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(apiTestContext)
         {
+            _conferenceTestContext = conferenceTestContext;
         }
 
         [Given(@"I have a get details for a conference request by username with a (.*) username")]
@@ -212,6 +214,24 @@ namespace VideoApi.IntegrationTests.Steps
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
             var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
             conferences.Should().BeEmpty();
+        }
+
+        [When(@"I save the conference details")]
+        public async Task WhenISaveTheConferenceDetails()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
+            conference.Should().NotBeNull();
+            _conferenceTestContext.ConferenceDetails = conference;
+        }
+        
+        [Then(@"the response should be the same")]
+        public async Task ThenTheResponseShouldBeTheSame()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
+            conference.Should().NotBeNull();
+            conference.Should().BeEquivalentTo(_conferenceTestContext.ConferenceDetails);
         }
 
     }

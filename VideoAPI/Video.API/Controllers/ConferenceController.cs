@@ -74,8 +74,7 @@ namespace Video.API.Controllers
             MeetingRoom meetingRoom;
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId);
-               
+                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId);            
             }
             catch (DoubleBookingException)
             {
@@ -91,6 +90,11 @@ namespace Video.API.Controllers
 
         private async Task<Guid> CreateConference(BookNewConferenceRequest request)
         {
+            var existingConference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
+                new GetConferenceByHearingRefIdQuery(request.HearingRefId));
+
+            if (existingConference != null && existingConference.IsActive()) return existingConference.Id;
+            
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
                         x.CaseTypeGroup))
@@ -99,6 +103,7 @@ namespace Video.API.Controllers
                 request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
             await _commandHandler.Handle(createConferenceCommand);
             return createConferenceCommand.NewConferenceId;
+
         }
 
         /// <summary>
