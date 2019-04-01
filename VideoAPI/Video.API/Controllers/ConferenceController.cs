@@ -17,6 +17,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services;
+using VideoApi.Services.Exceptions;
 
 namespace Video.API.Controllers
 {
@@ -70,10 +71,22 @@ namespace Video.API.Controllers
 
         private async Task BookKinlyMeetingRoom(Guid conferenceId)
         {
-           var meetingRoom = await _videoPlatformService.BookVirtualCourtroom(conferenceId);
-           var command = new UpdateMeetingRoomCommand(conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri,
-               meetingRoom.ParticipantUri, meetingRoom.PexipNode);
-           await _commandHandler.Handle(command);
+            MeetingRoom meetingRoom;
+            try
+            {
+                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId);
+               
+            }
+            catch (DoubleBookingException)
+            {
+                meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+            }
+
+            if (meetingRoom == null) return;
+            
+            var command = new UpdateMeetingRoomCommand(conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri,
+                meetingRoom.ParticipantUri, meetingRoom.PexipNode);
+            await _commandHandler.Handle(command);
         }
 
         private async Task<Guid> CreateConference(BookNewConferenceRequest request)

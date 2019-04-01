@@ -41,6 +41,9 @@
             "schema": {
               "$ref": "#/definitions/hearing"
             }
+          },
+          "409": {
+            "description": "Meeting room already exists"
           }
         }
       },
@@ -109,6 +112,9 @@
             "schema": {
               "$ref": "#/definitions/hearing"
             }
+          },
+          "404": {
+            "description": "Hearing does not exist"
           }
         }
       },

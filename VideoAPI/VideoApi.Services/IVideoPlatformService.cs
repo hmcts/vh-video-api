@@ -6,6 +6,7 @@ namespace VideoApi.Services
 {
     public interface IVideoPlatformService
     {
-        Task<MeetingRoom> BookVirtualCourtroom(Guid conferenceId);
+        Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId);
+        Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
     }
 }

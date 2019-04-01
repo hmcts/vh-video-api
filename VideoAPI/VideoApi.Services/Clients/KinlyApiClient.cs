@@ -206,6 +206,12 @@ namespace VideoApi.Services.Kinly
                             }
                         }
                         else
+                        if (status_ == "409") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new KinlyApiException("Meeting room already exists", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
