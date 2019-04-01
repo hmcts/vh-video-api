@@ -222,6 +222,7 @@ namespace VideoApi.IntegrationTests.Steps
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
             conference.Should().NotBeNull();
+            ApiTestContext.NewConferenceId = conference.Id;
             _conferenceTestContext.ConferenceDetails = conference;
         }
         

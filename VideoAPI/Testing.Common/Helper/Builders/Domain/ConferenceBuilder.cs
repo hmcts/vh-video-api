@@ -12,7 +12,7 @@ namespace Testing.Common.Helper.Builders.Domain
         private readonly Conference _conference;
         private readonly BuilderSettings _builderSettings;
 
-        public ConferenceBuilder(bool ignoreId = false)
+        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null)
         {
             _builderSettings = new BuilderSettings();
             if (ignoreId)
@@ -21,7 +21,7 @@ namespace Testing.Common.Helper.Builders.Domain
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
             }
             
-            var hearingRefId = Guid.NewGuid();
+            var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
             var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             var caseType = "Civil Money Claims";
             var caseNumber = $"Test{Guid.NewGuid():N}";

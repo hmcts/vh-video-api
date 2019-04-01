@@ -93,7 +93,7 @@ namespace Video.API.Controllers
             var existingConference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
                 new GetConferenceByHearingRefIdQuery(request.HearingRefId));
 
-            if (existingConference != null && existingConference.IsActive()) return existingConference.Id;
+            if (existingConference != null && !existingConference.IsClosed()) return existingConference.Id;
             
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,

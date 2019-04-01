@@ -14,6 +14,7 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder()
         {
             _bookNewConferenceRequest = Builder<BookNewConferenceRequest>.CreateNew()
+                .With(x => x.HearingRefId = Guid.NewGuid())
                 .With(x => x.ScheduledDateTime = DateTime.Today.AddDays(5).AddHours(10).AddMinutes(30))
                 .With(x => x.ScheduledDuration = 120)
                 .With(x => x.Participants = new List<ParticipantRequest>())

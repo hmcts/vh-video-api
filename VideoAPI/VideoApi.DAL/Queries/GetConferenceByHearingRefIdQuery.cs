@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
@@ -30,7 +32,9 @@ namespace VideoApi.DAL.Queries
         {
             return await _context.Conferences
                 .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses").AsNoTracking()
+                .Include("ConferenceStatuses")
+                .Where(x => x.GetCurrentStatus() != ConferenceState.Closed)
+                .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.HearingRefId == query.HearingRefId);
         }
     }

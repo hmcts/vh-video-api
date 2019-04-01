@@ -32,6 +32,7 @@ namespace VideoApi.Domain
         public string CaseName { get; protected set; }
         protected virtual MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
+        protected ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; private set; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
 
@@ -78,11 +79,12 @@ namespace VideoApi.Domain
 
         public void UpdateConferenceStatus(ConferenceState status)
         {
-            if (status == ConferenceState.None)
+            if (status == ConferenceState.NotStarted)
             {
                 throw new DomainRuleException(nameof(status), "Cannot set conference status to 'none'");
             }
 
+            State = status;
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
 
@@ -91,17 +93,14 @@ namespace VideoApi.Domain
             return ConferenceStatuses;
         }
 
-        public ConferenceStatus GetCurrentStatus()
+        public ConferenceState GetCurrentStatus()
         {
-            return ConferenceStatuses.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+            return State;
         }
 
-        public bool IsActive()
+        public bool IsClosed()
         {
-            var currentStatus = GetCurrentStatus();
-            if (currentStatus == null) return false;
-
-            return currentStatus.ConferenceState != ConferenceState.Closed;
+            return State == ConferenceState.Closed;
         }
     }
 }

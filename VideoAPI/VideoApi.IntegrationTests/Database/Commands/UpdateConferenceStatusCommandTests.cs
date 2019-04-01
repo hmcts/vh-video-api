@@ -40,7 +40,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var state = ConferenceState.Paused;
+            const ConferenceState state = ConferenceState.Paused;
 
             var beforeCount = seededConference.GetConferenceStatuses().Count;
             var beforeState = seededConference.GetCurrentStatus();
@@ -54,7 +54,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             afterCount.Should().BeGreaterThan(beforeCount);
             afterState.Should().NotBe(beforeState);
-            afterState.ConferenceState.Should().Be(state);
+            afterState.Should().Be(state);
         }
 
         
