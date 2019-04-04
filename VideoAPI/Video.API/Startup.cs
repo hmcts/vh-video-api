@@ -135,8 +135,6 @@ namespace Video.API
             app.UseMiddleware<LogResponseBodyMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
-            app.UseMvc();
-
             app.UseSignalR(routes =>
             {
                 const string path = "/eventhub";
@@ -147,6 +145,8 @@ namespace Video.API
                                              HttpTransportType.WebSockets;
                     });
             });
+            
+            app.UseMvc();
         }
 
         private static void AddPolicies(AuthorizationOptions options)
