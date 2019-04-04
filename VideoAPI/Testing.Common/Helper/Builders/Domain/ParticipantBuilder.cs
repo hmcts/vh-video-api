@@ -39,8 +39,10 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public Participant Build()
         {
+            var name = Name.FullName();
+            
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), _userRole,
+                new Participant(Guid.NewGuid(), name, name, Internet.Email(), _userRole,
                     _caseTypeGroup)).Build();
             return participant;
         }

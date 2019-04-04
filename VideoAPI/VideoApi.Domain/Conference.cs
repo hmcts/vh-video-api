@@ -32,7 +32,7 @@ namespace VideoApi.Domain
         public string CaseName { get; protected set; }
         protected virtual MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
-        protected ConferenceState State { get; private set; }
+        public ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; private set; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
 

@@ -9,6 +9,7 @@ namespace Testing.Common.Assertions
         {
             participant.Should().NotBeNull();
             participant.Username.Should().NotBeNullOrEmpty();
+            participant.UserRole.Should().NotBeNull();
         }
     }
 }
