@@ -35,6 +35,7 @@ namespace VideoApi.DAL.Queries
                 .Include("ConferenceStatuses").AsNoTracking()
                 .Where(x => x.Participants.Any(p => p.Username == query.Username) 
                             && x.State != ConferenceState.Closed)
+                .OrderBy(x => x.ScheduledDateTime)
                 .ToListAsync();
         }
     }
