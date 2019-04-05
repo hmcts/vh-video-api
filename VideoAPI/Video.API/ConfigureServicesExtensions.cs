@@ -6,11 +6,12 @@ using System.Net.Http;
 using System.Reflection;
 using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Video.API.Swagger;
@@ -102,11 +103,18 @@ namespace Video.API
                     BuildKinlyClient(httpClient, servicesConfiguration));
             }
             
+            var contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            };
+            
             services.AddSignalR()
                 .AddJsonProtocol(options =>
                 {
-                    options.PayloadSerializerSettings.ContractResolver =
-                        new DefaultContractResolver();
+                    options.PayloadSerializerSettings.ContractResolver = contractResolver;
+                    options.PayloadSerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    options.PayloadSerializerSettings.Converters.Add(
+                        new StringEnumConverter());
                 }).AddHubOptions<EventHub>(options => { options.EnableDetailedErrors = true; });
             
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
@@ -181,10 +189,10 @@ namespace Video.API
             serviceCollection.AddMvc()
                 .AddJsonOptions(options => {
                     options.SerializerSettings.ContractResolver = contractResolver;
-                    options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 })
                 .AddJsonOptions(options =>
-                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter()));
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             return serviceCollection;
         }
