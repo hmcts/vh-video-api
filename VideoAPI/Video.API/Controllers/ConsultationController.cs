@@ -10,6 +10,7 @@ using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -54,33 +55,23 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
             
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-            
-            if (conference == null)
+            Conference conference;
+            try
+            {
+                conference = await ValidateAndSaveConsultationRequest(request.ConferenceId, request.RequestedBy,
+                    request.RequestedFor);
+            }
+            catch (ConferenceNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (ParticipantNotFoundException)
             {
                 return NotFound();
             }
             
-            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
-            if (requestedBy == null)
-            {
-                return NotFound();
-            }
-            var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
-            if (requestedFor == null)
-            {
-                return NotFound();
-            }
-
-            var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
-                DateTime.UtcNow, null, null, $"Consultation with {requestedFor.DisplayName}")
-            {
-                ParticipantId = requestedBy.Id
-            };
-            await _commandHandler.Handle(command);
-            
+            var requestedFor = conference.GetParticipants().Single(x => x.Id == request.RequestedFor);
+            var requestedBy = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
             await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
                 .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
                     string.Empty);
@@ -106,32 +97,23 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
             
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-            
-            if (conference == null)
+            Conference conference;
+            try
+            {
+                conference = await ValidateAndSaveConsultationRequest(request.ConferenceId, request.RequestedBy,
+                    request.RequestedFor);
+            }
+            catch (ConferenceNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (ParticipantNotFoundException)
             {
                 return NotFound();
             }
             
-            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
-            if (requestedBy == null)
-            {
-                return NotFound();
-            }
-            var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
-            if (requestedFor == null)
-            {
-                return NotFound();
-            }
-
-            var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
-                DateTime.UtcNow, null, null, $"Consultation with {requestedFor.DisplayName}")
-            {
-                ParticipantId = requestedBy.Id
-            };
-            await _commandHandler.Handle(command);
+            var requestedFor = conference.GetParticipants().Single(x => x.Id == request.RequestedFor);
+            var requestedBy = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
             
             await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
                 .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
@@ -145,6 +127,38 @@ namespace Video.API.Controllers
             }
 
             return NoContent();
+        }
+
+        private async Task<Conference> ValidateAndSaveConsultationRequest(Guid conferenceId, Guid requestedById, Guid requestedForId)
+        {
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            
+            if (conference == null)
+            {
+                throw new ConferenceNotFoundException(conferenceId);
+            }
+            
+            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == requestedById);
+            if (requestedBy == null)
+            {
+                throw new ParticipantNotFoundException(requestedById);
+            }
+            var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == requestedForId);
+            if (requestedFor == null)
+            {
+                throw new ParticipantNotFoundException(requestedForId);
+            }
+
+            var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
+                DateTime.UtcNow, null, null, $"Consultation with {requestedFor.DisplayName}")
+            {
+                ParticipantId = requestedBy.Id
+            };
+            await _commandHandler.Handle(command);
+
+            return conference;
         }
         
     }
