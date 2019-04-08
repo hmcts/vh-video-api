@@ -56,6 +56,13 @@ namespace Video.API.Controllers
                 ModelState.AddFluentValidationErrors(result.Errors);
                 return BadRequest(ModelState);
             }
+
+            foreach (var participant in request.Participants)
+            {
+                participant.Username = participant.Username.ToLower().Trim();
+                participant.Name = participant.Name.Trim();
+                participant.DisplayName = participant.DisplayName.Trim();
+            }
             
             var conferenceId = await CreateConference(request);
             await BookKinlyMeetingRoom(conferenceId);
@@ -185,7 +192,7 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var query = new GetConferencesByUsernameQuery(username);
+            var query = new GetConferencesByUsernameQuery(username.ToLower().Trim());
             var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
 
             var mapper = new ConferenceToSummaryResponseMapper();

@@ -68,7 +68,7 @@ namespace Video.API.Controllers
             }
 
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
+                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(), x.Username.ToLower().Trim(), x.UserRole,
                         x.CaseTypeGroup))
                 .ToList();
 
