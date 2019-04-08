@@ -9,7 +9,7 @@ namespace VideoApi.Contract.Requests
     public class ConsultationResultRequest
     {
         /// <summary>
-        /// The virtual courtoom UUID
+        /// The conference UUID
         /// </summary>
         public Guid ConferenceId { get; set; }
         

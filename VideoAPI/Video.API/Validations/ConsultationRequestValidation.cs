@@ -1,4 +1,3 @@
-using System;
 using FluentValidation;
 using VideoApi.Contract.Requests;
 
@@ -12,9 +11,9 @@ namespace Video.API.Validations
 
         public ConsultationRequestValidation()
         {
-            RuleFor(x => x.ConferenceId).NotEqual(Guid.Empty).WithMessage(NoConferenceIdErrorMessage);
-            RuleFor(x => x.RequestedBy).NotEqual(Guid.Empty).WithMessage(NoRequestedByIdErrorMessage);
-            RuleFor(x => x.RequestedFor).NotEqual(Guid.Empty).WithMessage(NoRequestedForIdErrorMessage);
+            RuleFor(x => x.ConferenceId).NotEmpty().WithMessage(NoConferenceIdErrorMessage);
+            RuleFor(x => x.RequestedBy).NotEmpty().WithMessage(NoRequestedByIdErrorMessage);
+            RuleFor(x => x.RequestedFor).NotEmpty().WithMessage(NoRequestedForIdErrorMessage);
         }
     }
 }
