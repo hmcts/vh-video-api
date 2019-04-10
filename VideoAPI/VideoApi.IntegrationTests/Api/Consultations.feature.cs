@@ -124,6 +124,12 @@ namespace VideoApi.IntegrationTests.Api
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 21
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 22
+    testRunner.And("the error response message should also contain \'RequestedBy is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 23
+    testRunner.And("the error response message should also contain \'RequestedFor is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 24
+    testRunner.And("the error response message should also contain \'ConferenceId is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -133,16 +139,16 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RaisePrivateConsultationRequestWhenUserRequestedByDoesNotExist()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Raise private consultation request when user requested by does not exist", null, ((string[])(null)));
-#line 23
+#line 26
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 24
-    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 25
-    testRunner.And("I have a raise consultation request with an invalid requestedBy", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 26
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 27
+    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 28
+    testRunner.And("I have a raise consultation request with an invalid requestedBy", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 29
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 30
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -153,16 +159,16 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RaisePrivateConsultationRequestWhenUserRequestedForDoesNotExist()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Raise private consultation request when user requested for does not exist", null, ((string[])(null)));
-#line 29
+#line 32
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 30
-    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 31
-    testRunner.And("I have a raise consultation request with an invalid requestedFor", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 32
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 33
+    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 34
+    testRunner.And("I have a raise consultation request with an invalid requestedFor", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 35
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 36
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -173,16 +179,16 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void SuccessfullyRespondToAPrivateConsultationRequest()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Successfully respond to a private consultation request", null, ((string[])(null)));
-#line 38
+#line 41
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 39
-    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 40
-    testRunner.And("I have a valid respond consultation request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 41
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 42
+    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 43
+    testRunner.And("I have a valid respond consultation request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 44
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 45
     testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -193,16 +199,16 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RespondToPrivateConsultationRequestAgainstNon_ExistentConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Respond to private consultation request against non-existent conference", null, ((string[])(null)));
-#line 44
+#line 47
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 45
-    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 46
-    testRunner.And("I have a nonexistent respond consultation request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 47
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 48
+    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 49
+    testRunner.And("I have a nonexistent respond consultation request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 50
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 51
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -213,15 +219,23 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RespondToAPrivateConsultationRequestThatFailsValidation()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Respond to a private consultation request that fails validation", null, ((string[])(null)));
-#line 50
+#line 53
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 51
+#line 54
     testRunner.Given("I have an invalid respond consultation request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 52
+#line 55
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 53
+#line 56
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 57
+    testRunner.And("the error response message should also contain \'RequestedBy is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 58
+    testRunner.And("the error response message should also contain \'RequestedFor is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 59
+    testRunner.And("the error response message should also contain \'ConferenceId is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 60
+    testRunner.And("the error response message should also contain \'Answer to request is required\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -231,16 +245,16 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RespondToPrivateConsultationRequestWhenUserRequestedByDoesNotExist()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Respond to private consultation request when user requested by does not exist", null, ((string[])(null)));
-#line 55
+#line 62
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 56
+#line 63
     testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 57
+#line 64
     testRunner.And("I have a respond consultation request with an invalid requestedBy", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 58
+#line 65
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 59
+#line 66
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -251,16 +265,16 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RespondToPrivateConsultationRequestWhenUserRequestedForDoesNotExist()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Respond to private consultation request when user requested for does not exist", null, ((string[])(null)));
-#line 61
+#line 68
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 62
+#line 69
     testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 63
+#line 70
     testRunner.And("I have a respond consultation request with an invalid requestedFor", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 64
+#line 71
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 65
+#line 72
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

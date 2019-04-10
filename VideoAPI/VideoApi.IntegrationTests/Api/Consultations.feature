@@ -19,6 +19,9 @@ Feature: Consultations
     Given I have an invalid raise consultation request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'RequestedBy is required'
+    And the error response message should also contain 'RequestedFor is required'
+    And the error response message should also contain 'ConferenceId is required'
 
   Scenario: Raise private consultation request when user requested by does not exist
     Given I have a conference
@@ -51,6 +54,10 @@ Feature: Consultations
     Given I have an invalid respond consultation request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'RequestedBy is required'
+    And the error response message should also contain 'RequestedFor is required'
+    And the error response message should also contain 'ConferenceId is required'
+    And the error response message should also contain 'Answer to request is required'
 
   Scenario: Respond to private consultation request when user requested by does not exist
     Given I have a conference
