@@ -10,6 +10,11 @@ namespace VideoApi.Contract.Responses
         public string Username { get; set; }
         
         /// <summary>
+        /// The participant display name
+        /// </summary>
+        public string DisplayName { get; set; }
+        
+        /// <summary>
         /// The current participant status
         /// </summary>
         public ParticipantState Status { get; set; }
