@@ -59,8 +59,7 @@ namespace Testing.Common.Helper
     public class ConsultationEndpoints
     {private string ApiRoot => "/consultations";
 
-        public string RaiseConsultationRequest =>   $"{ApiRoot}/request";
-        public string AnswerConsultationRequest =>   $"{ApiRoot}/respond";
+        public string HandleConsultationRequest =>   $"{ApiRoot}";
         
     }
 }

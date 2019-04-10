@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace VideoApi.Contract.Requests
 {
@@ -21,5 +22,27 @@ namespace VideoApi.Contract.Requests
         /// Requestee's UUID
         /// </summary>
         public Guid RequestedFor { get; set; }
+        
+        /// <summary>
+        /// Response to a consultation request (i.e. 'Accepted or Rejected')
+        /// </summary>
+        [EnumDataType(typeof(ConsultationAnswer))]
+        public ConsultationAnswer? Answer { get; set; }
+    }
+    
+    public enum ConsultationAnswer
+    {
+        /// <summary>
+        /// Default when no answer has been provided
+        /// </summary>
+        None,
+        /// <summary>
+        /// Accept a consultation request
+        /// </summary>
+        Accepted,
+        /// <summary>
+        /// Reject a consultation request
+        /// </summary>
+        Rejected
     }
 }

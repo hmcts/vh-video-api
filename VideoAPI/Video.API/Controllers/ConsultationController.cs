@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
-using Video.API.Extensions;
-using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -36,119 +33,37 @@ namespace Video.API.Controllers
             _commandHandler = commandHandler;
             _hubContext = hubContext;
         }
-        
+
         /// <summary>
-        /// Raise a private consultation request with another participant
+        /// Raise or answer to a private consultation request with another participant
         /// </summary>
-        /// <param name="request">Details of participants to put into a private consultation</param>
+        /// <param name="request">Private consultation request with or without an answer</param>
         /// <returns></returns>
-        [HttpPost("request")]
-        [SwaggerOperation(OperationId = "RaiseConsultationRequest")]
+        [HttpPost]
+        [SwaggerOperation(OperationId = "HandleConsultationRequest")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RaiseConsultationRequest(ConsultationRequest request)
+        public async Task<IActionResult> HandleConsultationRequest(ConsultationRequest request)
         {
-            var result = await new ConsultationRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-            
-            Conference conference;
-            try
-            {
-                conference = await ValidateAndSaveConsultationRequest(request.ConferenceId, request.RequestedBy,
-                    request.RequestedFor);
-            }
-            catch (ConferenceNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (ParticipantNotFoundException)
-            {
-                return NotFound();
-            }
-            
-            var requestedFor = conference.GetParticipants().Single(x => x.Id == request.RequestedFor);
-            var requestedBy = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
-            await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
-                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
-                    string.Empty);
-
-            return NoContent();
-        }
-        
-        /// <summary>
-        /// Provide an answer to a private consultation request with another participant
-        /// </summary>
-        /// <param name="request">Details of the PC request with the requestee's answer</param>
-        /// <returns></returns>
-        [HttpPost("respond")]
-        [SwaggerOperation(OperationId = "AnswerConsultationRequest")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AnswerConsultationRequest(ConsultationResultRequest request)
-        { 
-            var result = await new ConsultationResultRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-            
-            Conference conference;
-            try
-            {
-                conference = await ValidateAndSaveConsultationRequest(request.ConferenceId, request.RequestedBy,
-                    request.RequestedFor);
-            }
-            catch (ConferenceNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (ParticipantNotFoundException)
-            {
-                return NotFound();
-            }
-            
-            var requestedFor = conference.GetParticipants().Single(x => x.Id == request.RequestedFor);
-            var requestedBy = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
-            
-            await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
-                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
-                    request.Answer.ToString());
-            
-            if (request.Answer == ConsultationRequestAnswer.Accepted)
-            {
-                var admin = conference.Participants.Single(x => x.UserRole == UserRole.VideoHearingsOfficer);
-                await _hubContext.Clients.Group(admin.Username.ToLowerInvariant()).ConsultationMessage(conference.Id,
-                    requestedBy.Username, requestedFor.Username, request.Answer.ToString());
-            }
-
-            return NoContent();
-        }
-
-        private async Task<Conference> ValidateAndSaveConsultationRequest(Guid conferenceId, Guid requestedById, Guid requestedForId)
-        {
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-            
+
             if (conference == null)
             {
-                throw new ConferenceNotFoundException(conferenceId);
+                return NotFound();
             }
-            
-            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == requestedById);
+
+            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
             if (requestedBy == null)
             {
-                throw new ParticipantNotFoundException(requestedById);
+                return NotFound();
             }
-            var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == requestedForId);
+
+            var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
             if (requestedFor == null)
             {
-                throw new ParticipantNotFoundException(requestedForId);
+                return NotFound();
             }
 
             var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
@@ -158,8 +73,22 @@ namespace Video.API.Controllers
             };
             await _commandHandler.Handle(command);
 
-            return conference;
+            var admin = conference.Participants.Single(x => x.UserRole == UserRole.VideoHearingsOfficer);
+            switch (request.Answer)
+            {
+                case null:
+                    await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
+                        .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
+                            string.Empty);
+                    break;
+                case ConsultationAnswer.Accepted:
+                    await _hubContext.Clients.Group(admin.Username.ToLowerInvariant()).ConsultationMessage(
+                        conference.Id,
+                        requestedBy.Username, requestedFor.Username, request.Answer.ToString());
+                    break;
+            }
+
+            return NoContent();
         }
-        
     }
 }

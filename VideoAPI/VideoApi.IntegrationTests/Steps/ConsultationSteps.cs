@@ -16,17 +16,18 @@ namespace VideoApi.IntegrationTests.Steps
     {
         private readonly ConferenceTestContext _conferenceTestContext;
         private readonly ConsultationEndpoints _endpoints = new ApiUriFactory().ConsultationEndpoints;
-        
-        public ConsultationSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(apiTestContext)
+
+        public ConsultationSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(
+            apiTestContext)
         {
             _conferenceTestContext = conferenceTestContext;
         }
-        
+
         [Given(@"I have a (.*) raise consultation request")]
         [Given(@"I have an (.*) raise consultation request")]
         public void GivenIHaveARaiseConsultationRequest(Scenario scenario)
         {
-            var request = SetupRaiseConsultationRequest();
+            var request = SetupConsultationRequest(false);
             switch (scenario)
             {
                 case Scenario.Valid: break;
@@ -45,16 +46,13 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.RaiseConsultationRequest;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            SerialiseRequest(request);
         }
 
         [Given(@"I have a raise consultation request with an invalid (.*)")]
         public void GivenIHaveARaiseConsultationRequestWithAnInvalidParticipant(string participant)
         {
-            var request = SetupRaiseConsultationRequest();
+            var request = SetupConsultationRequest(false);
             switch (participant)
             {
                 case "requestedBy":
@@ -68,17 +66,14 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(participant), participant, null);
             }
 
-            ApiTestContext.Uri = _endpoints.RaiseConsultationRequest;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            SerialiseRequest(request);
         }
 
         [Given(@"I have a (.*) respond consultation request")]
         [Given(@"I have an (.*) respond consultation request")]
         public void GivenIHaveARespondConsultationRequest(Scenario scenario)
         {
-            var request = SetupReplyConsultationRequest();
+            var request = SetupConsultationRequest(true);
             switch (scenario)
             {
                 case Scenario.Valid: break;
@@ -87,7 +82,7 @@ namespace VideoApi.IntegrationTests.Steps
                     request.ConferenceId = Guid.Empty;
                     request.RequestedFor = Guid.Empty;
                     request.RequestedBy = Guid.Empty;
-                    request.Answer = ConsultationRequestAnswer.None;
+                    request.Answer = ConsultationAnswer.None;
                     break;
                 }
                 case Scenario.Nonexistent:
@@ -98,68 +93,57 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.AnswerConsultationRequest;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            SerialiseRequest(request);
         }
 
         [Given(@"I have a respond consultation request with an invalid (.*)")]
         public void GivenIHaveARespondConsultationRequestWithAnInvalidParticipant(string participant)
         {
-            var request = SetupReplyConsultationRequest();
+            var request = SetupConsultationRequest(true);
             switch (participant)
             {
                 case "requestedBy":
                     request.RequestedBy = Guid.NewGuid();
                     break;
-                
+
                 case "requestedFor":
                     request.RequestedFor = Guid.NewGuid();
                     break;
-                
+
                 default: throw new ArgumentOutOfRangeException(nameof(participant), participant, null);
             }
-            
-            ApiTestContext.Uri = _endpoints.AnswerConsultationRequest;
+
+            SerialiseRequest(request);
+        }
+
+        private void SerialiseRequest(ConsultationRequest request)
+        {
+            ApiTestContext.Uri = _endpoints.HandleConsultationRequest;
             ApiTestContext.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
-        private ConsultationRequest SetupRaiseConsultationRequest()
+        private ConsultationRequest SetupConsultationRequest(bool withAnswer)
         {
-            var raiseConsultationRequest = new ConsultationRequest();
+            var request = new ConsultationRequest();
             var seededConference = _conferenceTestContext.SeededConference;
-            
-            if (seededConference == null) return raiseConsultationRequest;
-            
+
+            if (seededConference == null) return request;
+
             var participants = seededConference.GetParticipants().Where(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
 
-            raiseConsultationRequest.ConferenceId = seededConference.Id;
-            raiseConsultationRequest. RequestedBy = participants[0].Id;
-            raiseConsultationRequest.RequestedFor = participants[1].Id;
+            request.ConferenceId = seededConference.Id;
+            request.RequestedBy = participants[0].Id;
+            request.RequestedFor = participants[1].Id;
 
-            return raiseConsultationRequest;
-        }
-        
-        private ConsultationResultRequest SetupReplyConsultationRequest()
-        {
-            var replyConsultationRequest = new ConsultationResultRequest();
-            var seededConference = _conferenceTestContext.SeededConference;
-            
-            if (seededConference == null) return replyConsultationRequest;
-            
-            var participants = seededConference.GetParticipants().Where(x =>
-                x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
+            if (withAnswer)
+            {
+                request.Answer = ConsultationAnswer.Accepted;
+            }
 
-            replyConsultationRequest.ConferenceId = seededConference.Id;
-            replyConsultationRequest.RequestedBy = participants[0].Id;
-            replyConsultationRequest.RequestedFor = participants[1].Id;
-            replyConsultationRequest.Answer = ConsultationRequestAnswer.Accepted;
-            
-            return replyConsultationRequest;
+            return request;
         }
     }
 }

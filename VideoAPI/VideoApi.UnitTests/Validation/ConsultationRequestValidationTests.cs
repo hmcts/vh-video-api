@@ -66,6 +66,19 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoRequestedForIdErrorMessage)
                 .Should().BeTrue();
         }
+        
+        [Test]
+        public async Task should_fail_validation_when_answer_is_invalid()
+        {
+            var request = BuildRequest();
+            request.Answer = ConsultationAnswer.None;
+            
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoAnswerErrorMessage)
+                .Should().BeTrue();
+        }
 
         private ConsultationRequest BuildRequest()
         {
@@ -73,7 +86,8 @@ namespace VideoApi.UnitTests.Validation
             {
                 ConferenceId = Guid.NewGuid(),
                 RequestedBy = Guid.NewGuid(),
-                RequestedFor = Guid.NewGuid()
+                RequestedFor = Guid.NewGuid(),
+                Answer = null
             };
         }
     }
