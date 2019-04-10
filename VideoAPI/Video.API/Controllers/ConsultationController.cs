@@ -73,22 +73,40 @@ namespace Video.API.Controllers
             };
             await _commandHandler.Handle(command);
 
-            var admin = conference.Participants.Single(x => x.UserRole == UserRole.VideoHearingsOfficer);
-            switch (request.Answer)
+            var isRequest = !request.Answer.HasValue;
+            if (isRequest)
             {
-                case null:
-                    await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
-                        .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
-                            string.Empty);
-                    break;
-                case ConsultationAnswer.Accepted:
-                    await _hubContext.Clients.Group(admin.Username.ToLowerInvariant()).ConsultationMessage(
-                        conference.Id,
-                        requestedBy.Username, requestedFor.Username, request.Answer.ToString());
-                    break;
+                await NotifyRequesteeOfConsultationRequest(conference, requestedBy, requestedFor);
+            }
+            else
+            {
+                await NotifyRequesterOfConsultationResponse(conference, requestedBy, requestedFor,
+                    request.Answer.Value);
             }
 
             return NoContent();
+        }
+
+        private async Task NotifyRequesteeOfConsultationRequest(Conference conference, Participant requestedBy,
+            Participant requestedFor)
+        {
+            await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
+                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
+                    string.Empty);
+        }
+        
+        private async Task NotifyRequesterOfConsultationResponse(Conference conference, Participant requestedBy,
+            Participant requestedFor, ConsultationAnswer answer)
+        {
+            await _hubContext.Clients.Group(requestedBy.Username.ToLowerInvariant())
+                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username, answer.ToString());
+            
+            if (answer == ConsultationAnswer.Accepted)
+            {
+                await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
+                    .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
+                        answer.ToString());
+            }
         }
     }
 }
