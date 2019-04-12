@@ -56,6 +56,13 @@ namespace Video.API.Controllers
                 ModelState.AddFluentValidationErrors(result.Errors);
                 return BadRequest(ModelState);
             }
+
+            foreach (var participant in request.Participants)
+            {
+                participant.Username = participant.Username.ToLower().Trim();
+                participant.Name = participant.Name.Trim();
+                participant.DisplayName = participant.DisplayName.Trim();
+            }
             
             var conferenceId = await CreateConference(request);
             await BookKinlyMeetingRoom(conferenceId);
@@ -140,14 +147,14 @@ namespace Video.API.Controllers
         /// <summary>
         /// Remove an existing conference
         /// </summary>
-        /// <param name="conferenceId">The hearing id</param>
+        /// <param name="conferenceId">The conference id</param>
         /// <returns></returns>
         [HttpDelete("{conferenceId}")]
         [SwaggerOperation(OperationId = "RemoveConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> RemoveHearing(Guid conferenceId)
+        public async Task<IActionResult> RemoveConference(Guid conferenceId)
         {
             if (conferenceId == Guid.Empty)
             {
@@ -172,7 +179,7 @@ namespace Video.API.Controllers
         /// Get non-closed conferences for a participant by their username
         /// </summary>
         /// <param name="username">person username</param>
-        /// <returns>Hearing details</returns>
+        /// <returns>Conference details</returns>
         [HttpGet(Name = "GetConferencesForUsername")]
         [SwaggerOperation(OperationId = "GetConferencesForUsername")]
         [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
@@ -185,7 +192,7 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var query = new GetConferencesByUsernameQuery(username);
+            var query = new GetConferencesByUsernameQuery(username.ToLower().Trim());
             var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
 
             var mapper = new ConferenceToSummaryResponseMapper();

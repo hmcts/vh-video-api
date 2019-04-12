@@ -11,7 +11,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 
-namespace VideoApi.UnitTests.Controllers.HealthChecksController
+namespace VideoApi.UnitTests.Controllers.HealthChecks
 {
     public class HealthTests
     {

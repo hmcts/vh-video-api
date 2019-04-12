@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace VideoApi.IntegrationTests.Features
+namespace VideoApi.IntegrationTests.Api
 {
     using TechTalk.SpecFlow;
     

@@ -32,7 +32,7 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Add participants to a hearing
+        /// Add participants to a conference
         /// </summary>
         /// <param name="conferenceId">The id of the conference to add participants to</param>
         /// <param name="request">Details of the participant</param>
@@ -68,7 +68,7 @@ namespace Video.API.Controllers
             }
 
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
+                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(), x.Username.ToLower().Trim(), x.UserRole,
                         x.CaseTypeGroup))
                 .ToList();
 
@@ -79,7 +79,7 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Remove participants from a hearing
+        /// Remove participants from a conference
         /// </summary>
         /// <param name="conferenceId">The id of the conference to remove participants from</param>
         /// <param name="participantId">The id of the participant to remove</param>

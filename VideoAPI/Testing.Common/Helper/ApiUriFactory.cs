@@ -7,7 +7,8 @@ namespace Testing.Common.Helper
         public CallbackEndpoints CallbackEndpoints { get; }
         public ParticipantsEndpoints ParticipantsEndpoints { get; }
         public ConferenceEndpoints ConferenceEndpoints { get; }
-        public HealthCheckEndpoints HealthCheckEndpoints { get; set; }
+        public HealthCheckEndpoints HealthCheckEndpoints { get; }
+        public ConsultationEndpoints ConsultationEndpoints { get; }
 
         public ApiUriFactory()
         {
@@ -15,6 +16,7 @@ namespace Testing.Common.Helper
             ConferenceEndpoints = new ConferenceEndpoints();
             CallbackEndpoints = new CallbackEndpoints();
             HealthCheckEndpoints = new HealthCheckEndpoints();
+            ConsultationEndpoints = new ConsultationEndpoints();
         }
     }
     
@@ -52,5 +54,12 @@ namespace Testing.Common.Helper
         {
             return $"{ApiRoot}/health";
         }
+    }
+
+    public class ConsultationEndpoints
+    {private string ApiRoot => "/consultations";
+
+        public string HandleConsultationRequest =>   $"{ApiRoot}";
+        
     }
 }

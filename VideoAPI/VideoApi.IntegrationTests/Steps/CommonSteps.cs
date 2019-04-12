@@ -13,10 +13,22 @@ namespace VideoApi.IntegrationTests.Steps
     public sealed class CommonSteps : StepsBase
     {
         private readonly ApiTestContext _apiTestContext;
+        private readonly ConferenceTestContext _conferenceTestContext;
 
-        public CommonSteps(ApiTestContext apiTestContext) : base(apiTestContext)
+        public CommonSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(
+            apiTestContext)
         {
             _apiTestContext = apiTestContext;
+            _conferenceTestContext = conferenceTestContext;
+        }
+
+        [Given(@"I have a conference")]
+        public async Task GivenIHaveAConference()
+        {
+            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            ApiTestContext.NewConferenceId = seededConference.Id;
+            _conferenceTestContext.SeededConference = seededConference;
         }
         
         [When(@"I send the request to the endpoint")]

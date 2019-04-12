@@ -15,6 +15,7 @@ namespace Video.API.Mappings
             return new ParticipantSummaryResponse
             {
                 Username = participant.Username,
+                DisplayName = participant.DisplayName,
                 Status = participantStatus,
                 UserRole = participant.UserRole
             };
