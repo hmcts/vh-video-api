@@ -73,21 +73,27 @@ namespace Video.API.Controllers
             };
             await _commandHandler.Handle(command);
 
-            var isRequest = !request.Answer.HasValue;
-            if (isRequest)
+            var requestRaised = !request.Answer.HasValue;
+            if (requestRaised)
             {
-                await NotifyRequesteeOfConsultationRequest(conference, requestedBy, requestedFor);
+                await NotifyConsultationRequest(conference, requestedBy, requestedFor);
             }
             else
             {
-                await NotifyRequesterOfConsultationResponse(conference, requestedBy, requestedFor,
+                await NotifyConsultationResponse(conference, requestedBy, requestedFor,
                     request.Answer.Value);
             }
 
             return NoContent();
         }
 
-        private async Task NotifyRequesteeOfConsultationRequest(Conference conference, Participant requestedBy,
+        /// <summary>
+        /// This method raises a notification to the requestee informing them of an incoming consultation request
+        /// </summary>
+        /// <param name="conference">The conference Id</param>
+        /// <param name="requestedBy">The participant raising the consultation request</param>
+        /// <param name="requestedFor">The participant with whom the consultation is being requested with</param>
+        private async Task NotifyConsultationRequest(Conference conference, Participant requestedBy,
             Participant requestedFor)
         {
             await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
@@ -95,7 +101,14 @@ namespace Video.API.Controllers
                     string.Empty);
         }
         
-        private async Task NotifyRequesterOfConsultationResponse(Conference conference, Participant requestedBy,
+        /// <summary>
+        /// This method raises a notification to the requester informing them the response to their consultation request.
+        /// </summary>
+        /// <param name="conference">The conference Id</param>
+        /// <param name="requestedBy">The participant raising the consultation request</param>
+        /// <param name="requestedFor">The participant with whom the consultation is being requested with</param>
+        /// /// <param name="answer">The answer to the request (i.e. Accepted or Rejected)</param>
+        private async Task NotifyConsultationResponse(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
             await _hubContext.Clients.Group(requestedBy.Username.ToLowerInvariant())
@@ -103,7 +116,8 @@ namespace Video.API.Controllers
             
             if (answer == ConsultationAnswer.Accepted)
             {
-                await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
+                var admin = conference.GetParticipants().Single(x => x.UserRole == UserRole.VideoHearingsOfficer);
+                await _hubContext.Clients.Group(admin.Username.ToLowerInvariant())
                     .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
                         answer.ToString());
             }
