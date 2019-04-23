@@ -123,6 +123,44 @@ namespace VideoApi.IntegrationTests.Api
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get pending alerts for a conference")]
+        public virtual void GetPendingAlertsForAConference()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get pending alerts for a conference", null, ((string[])(null)));
+#line 21
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 22
+    testRunner.Given("I have a valid get pending alerts request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 23
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 24
+    testRunner.Then("the response should have the status Ok and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 25
+    testRunner.And("the list of alerts should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Unable to get alerts for a conference that does not exist")]
+        public virtual void UnableToGetAlertsForAConferenceThatDoesNotExist()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to get alerts for a conference that does not exist", null, ((string[])(null)));
+#line 27
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 28
+    testRunner.Given("I have a nonexistent get pending alerts request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 29
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 30
+    testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

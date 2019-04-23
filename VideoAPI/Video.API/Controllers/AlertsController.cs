@@ -1,18 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Extensions;
+using Video.API.Mappings;
 using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
+using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace Video.API.Controllers
@@ -63,7 +67,19 @@ namespace Video.API.Controllers
         [ProducesResponseType(typeof(List<AlertResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetPendingAlerts(Guid conferenceId)
         {
-            throw new NotImplementedException();
+            var query = new GetIncompleteAlertsForConferenceQuery(conferenceId);
+            try
+            {
+                var alerts = await _queryHandler.Handle<GetIncompleteAlertsForConferenceQuery, List<Alert>>(query);
+                var mapper = new AlertToResponseMapper();
+                var response = alerts.Select(mapper.MapAlertToResponse);
+                return Ok(response);
+            }
+            catch (ConferenceNotFoundException)
+            {
+                return NotFound();
+            }
+
         }
     }
 }
