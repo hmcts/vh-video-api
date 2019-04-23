@@ -59,6 +59,12 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
+        
+        public ConferenceBuilder WithAlert(string body, AlertType type)
+        {
+            _conference.AddAlert(type, body);
+            return this;
+        }
 
         public ConferenceBuilder WithParticipants(IEnumerable<Participant> participants)
         {
