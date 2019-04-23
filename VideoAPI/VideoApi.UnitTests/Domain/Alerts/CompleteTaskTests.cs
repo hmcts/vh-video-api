@@ -6,7 +6,7 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Domain.Alerts
 {
-    public class CompleteTestTests
+    public class CompleteTaskTests
     {
         [Test]
         public void should_not_be_completed_by_default()

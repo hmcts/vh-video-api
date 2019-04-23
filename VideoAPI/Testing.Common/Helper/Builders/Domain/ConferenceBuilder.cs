@@ -19,6 +19,7 @@ namespace Testing.Common.Helper.Builders.Domain
             {
                 _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
+                _builderSettings.DisablePropertyNamingFor<Alert, long>(x => x.Id);
             }
             
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
