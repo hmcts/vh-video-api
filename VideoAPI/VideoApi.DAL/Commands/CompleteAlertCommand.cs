@@ -47,7 +47,7 @@ namespace VideoApi.DAL.Commands
                 throw new AlertNotFoundException(command.ConferenceId, command.AlertId);
             }
             
-            alert.CompleteTask(command.UpdatedBy);
+            alert.CompleteTask(command.UpdatedBy.Trim());
             await _context.SaveChangesAsync();
         }
     }

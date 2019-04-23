@@ -56,7 +56,7 @@ namespace VideoApi.IntegrationTests.Steps
             }
             
             ApiTestContext.Uri = _endpoints.AddAlertToConference(conferenceId);
-            ApiTestContext.HttpMethod = HttpMethod.Put;
+            ApiTestContext.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }

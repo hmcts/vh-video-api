@@ -35,7 +35,7 @@ namespace Video.API.Controllers
             _commandHandler = commandHandler;
         }
         
-        [HttpPut("{conferenceId}/alerts")]
+        [HttpPost("{conferenceId}/alerts")]
         [SwaggerOperation(OperationId = "AddAlertToConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
