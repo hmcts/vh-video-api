@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.SignalR;
@@ -34,11 +35,6 @@ namespace Video.API
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
-            services
-                .AddMvc()
-                .AddFluentValidation(fv =>
-                    fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
-            
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
@@ -118,7 +114,7 @@ namespace Video.API
                 }).AddHubOptions<EventHub>(options => { options.EnableDetailedErrors = true; });
             
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
-            
+
             return services;
         }
 

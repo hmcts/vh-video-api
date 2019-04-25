@@ -5,9 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Video.API.Extensions;
 using Video.API.Mappings;
-using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -22,7 +20,7 @@ namespace Video.API.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("conferences")]
-    public class AlertsController : Controller
+    public class AlertsController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
@@ -40,13 +38,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAlertToConference(Guid conferenceId, [FromBody] AddAlertRequest request)
         {
-            var result = await new AddAlertRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-
             var command = new AddAlertCommand(conferenceId, request.Body, request.Type.GetValueOrDefault());
             try
             {

@@ -5,8 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Video.API.Extensions;
-using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -45,19 +43,6 @@ namespace Video.API.Controllers
         public async Task<IActionResult> AddParticipantsToConference(Guid conferenceId,
             AddParticipantsToConferenceRequest request)
         {
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                return BadRequest(ModelState);
-            }
-
-            var result = await new AddParticipantsToConferenceRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
@@ -91,18 +76,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveParticipantFromConference(Guid conferenceId, Guid participantId)
         {
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                return BadRequest(ModelState);
-            }
-
-            if (participantId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(participantId), $"Please provide a valid {nameof(participantId)}");
-                return BadRequest(ModelState);
-            }
-
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
