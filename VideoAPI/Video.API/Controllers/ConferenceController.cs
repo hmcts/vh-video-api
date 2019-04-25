@@ -50,13 +50,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConference(BookNewConferenceRequest request)
         {
-            var result = await new BookNewConferenceRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-
             foreach (var participant in request.Participants)
             {
                 participant.Username = participant.Username.ToLower().Trim();
@@ -125,12 +118,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsById(Guid conferenceId)
         {
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                return BadRequest(ModelState);
-            }
-            
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
@@ -156,12 +143,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveConference(Guid conferenceId)
         {
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                return BadRequest(ModelState);
-            }
-            
             var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
             try
             {
@@ -211,12 +192,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefId(Guid hearingRefId)
         {
-            if (hearingRefId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(hearingRefId), $"Please provide a valid {nameof(hearingRefId)}");
-                return BadRequest(ModelState);
-            }
-
             var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
             var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
