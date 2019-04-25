@@ -22,7 +22,7 @@ namespace Video.API.ValidationMiddleware
             foreach (var property in context.ActionDescriptor.Parameters)
             {
                 var valuePair = context.ActionArguments.SingleOrDefault(x => x.Key == property.Name);
-                if (property.BindingInfo.BindingSource == BindingSource.Body)
+                if (property.BindingInfo?.BindingSource == BindingSource.Body)
                 {
                     var validationFailures = _requestModelValidatorService.Validate(property.ParameterType, valuePair.Value);
                     context.ModelState.AddFluentValidationErrors(validationFailures);
