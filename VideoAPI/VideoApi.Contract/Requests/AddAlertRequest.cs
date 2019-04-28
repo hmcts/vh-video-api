@@ -1,3 +1,4 @@
+using System;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Requests
@@ -13,15 +14,10 @@ namespace VideoApi.Contract.Requests
         /// The alert body/message
         /// </summary>
         public string Body { get; set; }
-        
+
         /// <summary>
         /// The username of the person updating the alert
         /// </summary>
         public string UpdatedBy { get; set; }
-        
-        /// <summary>
-        /// The alert identifier to update
-        /// </summary>
-        public long? AlertId { get; set; }
     }
 }

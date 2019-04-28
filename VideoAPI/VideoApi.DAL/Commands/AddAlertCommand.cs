@@ -12,7 +12,7 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; }
         public string Body { get; }
         public AlertType AlertType { get; }
-        
+
         public AddAlertCommand(Guid conferenceId, string body, AlertType alertType)
         {
             ConferenceId = conferenceId;

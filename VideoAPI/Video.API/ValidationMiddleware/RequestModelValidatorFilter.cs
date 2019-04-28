@@ -27,13 +27,10 @@ namespace Video.API.ValidationMiddleware
                     var validationFailures = _requestModelValidatorService.Validate(property.ParameterType, valuePair.Value);
                     context.ModelState.AddFluentValidationErrors(validationFailures);
                 }
-                else
+                else if (valuePair.Value.Equals(GetDefaultValue(property.ParameterType)))
                 {
-                    if (valuePair.Value.Equals(GetDefaultValue(property.ParameterType)))
-                    {
-                        context.ModelState.AddModelError(valuePair.Key, $"Please provide a valid {valuePair.Key}");
+                    context.ModelState.AddModelError(valuePair.Key, $"Please provide a valid {valuePair.Key}");
 
-                    }
                 }
             }
 

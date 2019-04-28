@@ -55,36 +55,7 @@ namespace VideoApi.UnitTests.Validation
                 .Any(x => x.ErrorMessage == AddAlertRequestValidation.NoBodyErrorMessage)
                 .Should().BeTrue();
         }
-        
-        [Test]
-        public async Task should_return_missing_username_when_alert_id_is_provided()
-        {
-            var request = BuildRequest();
-            request.AlertId = 1;
-            request.UpdatedBy = string.Empty;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors
-                .Any(x => x.ErrorMessage == AddAlertRequestValidation.NoUsernameErrorMessage)
-                .Should().BeTrue();
-        }
-        
-        [Test]
-        public async Task should_return_missing_username_when_alert_id_is_provided_and_invalid_email()
-        {
-            var request = BuildRequest();
-            request.AlertId = 1;
-            request.UpdatedBy = "foo";
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors
-                .Any(x => x.ErrorMessage == AddAlertRequestValidation.NoUsernameErrorMessage)
-                .Should().BeTrue();
-        }
+       
         
         private AddAlertRequest BuildRequest()
         {

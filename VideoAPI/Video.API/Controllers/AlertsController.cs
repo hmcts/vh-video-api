@@ -14,6 +14,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace Video.API.Controllers
 {
@@ -70,5 +71,26 @@ namespace Video.API.Controllers
             }
 
         }
+
+        [HttpPatch("{conferenceId}/alerts/{alertid}")]
+        [SwaggerOperation(OperationId = "UpdateAlertStatus")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateAlertStatus(Guid conferenceId, long alertId, [FromBody] UpdateAlertRequest updateAlertRequest)
+        {
+            var command = new UpdateAlertCommand(conferenceId, alertId, updateAlertRequest.UpdatedBy);
+            try
+            {
+                await _commandHandler.Handle(command);
+            }
+            catch (AlertNotFoundException)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+
     }
 }

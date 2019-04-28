@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -98,12 +99,51 @@ namespace VideoApi.IntegrationTests.Steps
                 alert.Type.Should().BeOfType<AlertType>();
             }
         }
-        
+
+        [Given(@"I have a (.*) update alert request")]
+        [Given(@"I have an (.*) update alert request")]
+        public async Task GivenIHaveAUpdateAlertRequest(Scenario scenario)
+        {
+            var seededConference = await SeedConferenceWithAlerts();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            ApiTestContext.NewConferenceId = seededConference.Id;
+
+            var conferenceId = seededConference.Id;
+            long alertId;
+            var request = new UpdateAlertRequest
+            {
+                UpdatedBy = seededConference.Participants
+                    .First(x => x.UserRole == UserRole.Individual).Username
+            };
+
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                    var alert = seededConference.Alerts.First(x => x.Type == AlertType.Participant);
+                    alertId = alert.Id;
+                    break;
+                case Scenario.Invalid:
+                    alertId = 0;
+                    break;
+                case Scenario.Nonexistent:
+                    alertId = 111111;
+                    conferenceId = Guid.NewGuid();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            ApiTestContext.Uri = _endpoints.UpdateAlertStatus(conferenceId, alertId);
+            ApiTestContext.HttpMethod = HttpMethod.Patch;
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
         private async Task<Conference> SeedConferenceWithAlerts()
         {
             const string body = "Automated Test Complete Alert";
             const string updatedBy = "test@automated.com";
-            
+
             var judgeAlertDone = new Alert(body, AlertType.Judge);
             judgeAlertDone.CompleteTask(updatedBy);
             var participantAlertDone = new Alert(body, AlertType.Participant);

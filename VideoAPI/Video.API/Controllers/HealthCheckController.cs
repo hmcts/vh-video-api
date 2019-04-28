@@ -12,7 +12,7 @@ namespace Video.API.Controllers
     [Produces("application/json")]
     [Route("HealthCheck")]
     [ApiController]
-    public class HealthCheckController : Controller
+    public class HealthCheckController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
 

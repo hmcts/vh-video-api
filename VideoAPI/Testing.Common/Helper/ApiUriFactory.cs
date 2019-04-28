@@ -72,5 +72,6 @@ namespace Testing.Common.Helper
 
         public string GetPendingAlerts(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/alerts";
         public string AddAlertToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/alerts";
+        public string UpdateAlertStatus(Guid conferenceId, long alertId) => $"{ApiRoot}/{conferenceId}/alerts/{alertId}";
     }
 }
