@@ -28,41 +28,6 @@ namespace VideoApi.IntegrationTests.Steps
         {
         }
 
-        //[Given(@"I have a (.*) add task to conference request")]
-        //[Given(@"I have an (.*) add task to conference request")]
-        //public async System.Threading.Tasks.Task GivenIHaveAnAddTaskRequest(Scenario scenario)
-        //{
-        //    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-        //    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-        //    ApiTestContext.NewConferenceId = seededConference.Id;
-            
-        //    var conferenceId = seededConference.Id;
-        //    var request = new AddTaskRequest();
-        //    switch (scenario)
-        //    {
-        //        case Scenario.Valid:
-        //            request.Body = "Automated API Test";
-        //            request.Type = TaskType.Hearing;
-        //            break;
-        //        case Scenario.Invalid:
-        //            request.Body = string.Empty;
-        //            request.Type = null;
-        //            break;
-        //        case Scenario.Nonexistent:
-        //            request.Body = "Automated API Test";
-        //            request.Type = TaskType.Hearing;
-        //            conferenceId = Guid.NewGuid();
-        //            break;
-        //        default:
-        //            throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-        //    }
-            
-        //    ApiTestContext.Uri = _endpoints.AddTaskToConference(conferenceId);
-        //    ApiTestContext.HttpMethod = HttpMethod.Post;
-        //    var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-        //    ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        //}
-
         [Given(@"I have a (.*) get pending tasks request")]
         [Given(@"I have an (.*) get pending tasks request")]
         public async System.Threading.Tasks.Task GivenIHaveAGetPendingTasksRequest(Scenario scenario)
