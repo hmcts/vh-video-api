@@ -7,6 +7,7 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {

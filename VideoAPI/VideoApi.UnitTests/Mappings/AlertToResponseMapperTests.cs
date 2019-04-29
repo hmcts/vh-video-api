@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void should_map_all_properties()
         {
-            var alert = Builder<Alert>.CreateNew().WithFactory(() => new Alert("Automated Test", AlertType.Hearing))
+            var alert = Builder<Task>.CreateNew().WithFactory(() => new Task("Automated Test", TaskType.Hearing))
                 .Build();
             var response = _mapper.MapAlertToResponse(alert);
             response.Should().BeEquivalentTo(alert, options => options

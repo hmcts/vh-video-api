@@ -31,9 +31,9 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(UpdateAlertCommand command)
         {
-            var alert = await _context.Conferences.Include(x => x.Alerts)
+            var alert = await _context.Conferences.Include(x => x.Tasks)
                 .Where(x => x.Id == command.ConferenceId)
-                .SelectMany(x => x.Alerts)
+                .SelectMany(x => x.Tasks)
                 .SingleOrDefaultAsync(x => x.Id == command.AlertId);
 
             if (alert == null)

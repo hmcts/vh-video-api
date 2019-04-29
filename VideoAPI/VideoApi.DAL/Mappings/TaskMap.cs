@@ -4,11 +4,11 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Mappings
 {
-    public class AlertMap : IEntityTypeConfiguration<Alert>
+    public class TaskMap : IEntityTypeConfiguration<Task>
     {
-        public void Configure(EntityTypeBuilder<Alert> builder)
+        public void Configure(EntityTypeBuilder<Task> builder)
         {
-            builder.ToTable(nameof(Alert));
+            builder.ToTable(nameof(Task));
             
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Body);

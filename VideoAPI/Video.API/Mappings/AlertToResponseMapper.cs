@@ -5,13 +5,13 @@ namespace Video.API.Mappings
 {
     public class AlertToResponseMapper
     {
-        public AlertResponse MapAlertToResponse(Alert alert)
+        public TaskResponse MapAlertToResponse(Task task)
         {
-            return new AlertResponse()
+            return new TaskResponse()
             {
-                Id = alert.Id,
-                Body = alert.Body,
-                Type = alert.Type
+                Id = task.Id,
+                Body = task.Body,
+                Type = task.Type
             };
         }
     }

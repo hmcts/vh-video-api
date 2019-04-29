@@ -9,65 +9,67 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = VideoApi.Domain.Task;
+using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetIncompleteAlertsForConferenceQueryTests : DatabaseTestsBase
+    public class GetIncompleteTasksForConferenceQueryTests : DatabaseTestsBase
     {
-        private GetIncompleteAlertsForConferenceQueryHandler _handler;
+        private GetIncompleteTasksForConferenceQueryHandler _handler;
         private Guid _newConferenceId;
         
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetIncompleteAlertsForConferenceQueryHandler(context);
+            _handler = new GetIncompleteTasksForConferenceQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
         [Test]
-        public async Task should_retrieve_alerts_with_todo_status()
+        public async System.Threading.Tasks.Task should_retrieve_alerts_with_todo_status()
         {
-            const string body = "Automated Test Complete Alert";
+            const string body = "Automated Test Complete Task";
             const string updatedBy = "test@automated.com";
             
-            var judgeAlertDone = new Alert(body, AlertType.Judge);
+            var judgeAlertDone = new Task(body, TaskType.Judge);
             judgeAlertDone.CompleteTask(updatedBy);
-            var participantAlertDone = new Alert(body, AlertType.Participant);
+            var participantAlertDone = new Task(body, TaskType.Participant);
             participantAlertDone.CompleteTask(updatedBy);
-            var hearingAlertDone = new Alert(body, AlertType.Hearing);
+            var hearingAlertDone = new Task(body, TaskType.Hearing);
             hearingAlertDone.CompleteTask(updatedBy);
             
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
                 .Build();
             
-            conference.AddAlert(AlertType.Judge, body);
-            conference.AddAlert(AlertType.Participant, body);
-            conference.AddAlert(AlertType.Hearing, body);
-            conference.AddAlert(AlertType.Participant, body);
+            conference.AddTask(TaskType.Judge, body);
+            conference.AddTask(TaskType.Participant, body);
+            conference.AddTask(TaskType.Hearing, body);
+            conference.AddTask(TaskType.Participant, body);
 
-            conference.GetAlerts()[0].CompleteTask(updatedBy);
+            conference.GetTasks()[0].CompleteTask(updatedBy);
             
             var seededConference = await TestDataManager.SeedConference(conference);
             _newConferenceId = seededConference.Id;
            
 
-            var query = new GetIncompleteAlertsForConferenceQuery(_newConferenceId);
+            var query = new GetIncompleteTasksForConferenceQuery(_newConferenceId);
             var results = await _handler.Handle(query);
-            results.Any(x => x.Status == AlertStatus.Done).Should().BeFalse();
+            results.Any(x => x.Status == TaskStatus.Done).Should().BeFalse();
         }
         
         [Test]
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var query = new GetIncompleteAlertsForConferenceQuery(conferenceId);
+            var query = new GetIncompleteTasksForConferenceQuery(conferenceId);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(query));
         }
         
         [TearDown]
-        public async Task TearDown()
+        public async System.Threading.Tasks.Task TearDown()
         {
             if (_newConferenceId != Guid.Empty)
             {

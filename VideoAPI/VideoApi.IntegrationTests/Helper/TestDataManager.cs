@@ -6,6 +6,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Helper
 {

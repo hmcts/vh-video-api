@@ -1,6 +1,6 @@
 namespace VideoApi.Domain.Enums
 {
-    public enum AlertType
+    public enum TaskType
     {
         Hearing = 0,
         Judge = 1,

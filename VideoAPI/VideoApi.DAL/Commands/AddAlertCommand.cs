@@ -11,13 +11,13 @@ namespace VideoApi.DAL.Commands
     {
         public Guid ConferenceId { get; }
         public string Body { get; }
-        public AlertType AlertType { get; }
+        public TaskType TaskType { get; }
 
-        public AddAlertCommand(Guid conferenceId, string body, AlertType alertType)
+        public AddAlertCommand(Guid conferenceId, string body, TaskType taskType)
         {
             ConferenceId = conferenceId;
             Body = body;
-            AlertType = alertType;
+            TaskType = taskType;
         }
     }
 
@@ -32,7 +32,7 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AddAlertCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Alerts)
+            var conference = await _context.Conferences.Include(x => x.Tasks)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -40,7 +40,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
             
-            conference.AddAlert(command.AlertType, command.Body);
+            conference.AddTask(command.TaskType, command.Body);
 
             await _context.SaveChangesAsync();
         }

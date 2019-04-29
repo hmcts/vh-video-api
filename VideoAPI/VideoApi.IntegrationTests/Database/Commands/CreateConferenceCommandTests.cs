@@ -7,6 +7,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {

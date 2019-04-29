@@ -11,19 +11,19 @@ namespace VideoApi.UnitTests.Domain.Alerts
         [Test]
         public void should_not_be_completed_by_default()
         {
-            var alert = new Alert("Something happened", AlertType.Participant);
-            alert.Status.Should().Be(AlertStatus.ToDo);
+            var alert = new Task("Something happened", TaskType.Participant);
+            alert.Status.Should().Be(TaskStatus.ToDo);
             alert.Updated.Should().BeNull();
         }
         
         [Test]
         public void should_update_status_to_done()
         {
-            var alert = new Alert("Something happened", AlertType.Participant);
+            var alert = new Task("Something happened", TaskType.Participant);
             const string user = "Test User";
             
             alert.CompleteTask(user);
-            alert.Status.Should().Be(AlertStatus.Done);
+            alert.Status.Should().Be(TaskStatus.Done);
             alert.UpdatedBy.Should().Be(user);
             alert.Updated.Should().NotBeNull();
         }

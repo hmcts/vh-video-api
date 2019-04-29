@@ -7,12 +7,14 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = VideoApi.Domain.Task;
+using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetIncompleteAlertsForConferenceQuery : IQuery
+    public class GetIncompleteTasksForConferenceQuery : IQuery
     {
-        public GetIncompleteAlertsForConferenceQuery(Guid conferenceId)
+        public GetIncompleteTasksForConferenceQuery(Guid conferenceId)
         {
             ConferenceId = conferenceId;
         }
@@ -21,18 +23,18 @@ namespace VideoApi.DAL.Queries
     }
 
     public class
-        GetIncompleteAlertsForConferenceQueryHandler : IQueryHandler<GetIncompleteAlertsForConferenceQuery, List<Alert>>
+        GetIncompleteTasksForConferenceQueryHandler : IQueryHandler<GetIncompleteTasksForConferenceQuery, List<Task>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetIncompleteAlertsForConferenceQueryHandler(VideoApiDbContext context)
+        public GetIncompleteTasksForConferenceQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Alert>> Handle(GetIncompleteAlertsForConferenceQuery query)
+        public async Task<List<Task>> Handle(GetIncompleteTasksForConferenceQuery query)
         {
-            var conference = await _context.Conferences.Include(x => x.Alerts)
+            var conference = await _context.Conferences.Include(x => x.Tasks)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
             
@@ -41,7 +43,7 @@ namespace VideoApi.DAL.Queries
                 throw new ConferenceNotFoundException(query.ConferenceId);
             }
 
-            var alerts = conference.GetAlerts().Where(x => x.Status == AlertStatus.ToDo).ToList();
+            var alerts = conference.GetTasks().Where(x => x.Status == TaskStatus.ToDo).ToList();
             return alerts;
         }
     }

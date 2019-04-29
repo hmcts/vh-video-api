@@ -18,21 +18,21 @@ namespace VideoApi.IntegrationTests.Api
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Alerts")]
-    public partial class AlertsFeature
+    [NUnit.Framework.DescriptionAttribute("Tasks")]
+    public partial class TasksFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "Alerts.feature"
+#line 1 "Tasks.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Alerts", "  In order to track alerts to be actions\r\n  As an API service\r\n  I want to raise " +
-                    "new alerts and retrieve pending alerts", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Tasks", "  In order to track tasks to be actions\r\n  As an API service\r\n  I want to create " +
+                    "new tasks and retrieve pending tasks", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -71,15 +71,15 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Successfully add an alert to a conference")]
-        public virtual void SuccessfullyAddAnAlertToAConference()
+        [NUnit.Framework.DescriptionAttribute("Successfully add an task to a conference")]
+        public virtual void SuccessfullyAddAnTaskToAConference()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Successfully add an alert to a conference", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Successfully add an task to a conference", null, ((string[])(null)));
 #line 6
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
-    testRunner.Given("I have a valid add alert to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a valid add task to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 8
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 9
@@ -89,15 +89,15 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Unable to add an alert to a conference that does not exist")]
-        public virtual void UnableToAddAnAlertToAConferenceThatDoesNotExist()
+        [NUnit.Framework.DescriptionAttribute("Unable to add an task to a conference that does not exist")]
+        public virtual void UnableToAddAnTaskToAConferenceThatDoesNotExist()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to add an alert to a conference that does not exist", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to add an task to a conference that does not exist", null, ((string[])(null)));
 #line 11
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 12
-    testRunner.Given("I have a nonexistent add alert to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a nonexistent add task to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 13
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 14
@@ -107,15 +107,15 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Unable to add an alert to a conference with invalid details")]
-        public virtual void UnableToAddAnAlertToAConferenceWithInvalidDetails()
+        [NUnit.Framework.DescriptionAttribute("Unable to add an task to a conference with invalid details")]
+        public virtual void UnableToAddAnTaskToAConferenceWithInvalidDetails()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to add an alert to a conference with invalid details", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to add an task to a conference with invalid details", null, ((string[])(null)));
 #line 16
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 17
-    testRunner.Given("I have an invalid add alert to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have an invalid add task to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 18
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 19
@@ -125,35 +125,35 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Get pending alerts for a conference")]
-        public virtual void GetPendingAlertsForAConference()
+        [NUnit.Framework.DescriptionAttribute("Get pending tasks for a conference")]
+        public virtual void GetPendingTasksForAConference()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get pending alerts for a conference", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get pending tasks for a conference", null, ((string[])(null)));
 #line 21
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 22
-    testRunner.Given("I have a valid get pending alerts request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a valid get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 23
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 24
     testRunner.Then("the response should have the status Ok and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 25
-    testRunner.And("the list of alerts should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.And("the list of tasks should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Unable to get alerts for a conference that does not exist")]
-        public virtual void UnableToGetAlertsForAConferenceThatDoesNotExist()
+        [NUnit.Framework.DescriptionAttribute("Unable to get tasks for a conference that does not exist")]
+        public virtual void UnableToGetTasksForAConferenceThatDoesNotExist()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to get alerts for a conference that does not exist", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to get tasks for a conference that does not exist", null, ((string[])(null)));
 #line 27
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 28
-    testRunner.Given("I have a nonexistent get pending alerts request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a nonexistent get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 29
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 30
@@ -163,15 +163,15 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Sucessfully update alert status")]
-        public virtual void SucessfullyUpdateAlertStatus()
+        [NUnit.Framework.DescriptionAttribute("Sucessfully update task status")]
+        public virtual void SucessfullyUpdateTaskStatus()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sucessfully update alert status", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sucessfully update task status", null, ((string[])(null)));
 #line 32
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 33
-    testRunner.Given("I have a valid update alert request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a valid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 34
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 35
@@ -181,15 +181,15 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Unable to update status of an alert")]
-        public virtual void UnableToUpdateStatusOfAnAlert()
+        [NUnit.Framework.DescriptionAttribute("Unable to update status of an task")]
+        public virtual void UnableToUpdateStatusOfAnTask()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an alert", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an task", null, ((string[])(null)));
 #line 37
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 38
-    testRunner.Given("I have a nonexistent update alert request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a nonexistent update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 39
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 40
@@ -199,15 +199,15 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Unable to update status of an alert with invalid details")]
-        public virtual void UnableToUpdateStatusOfAnAlertWithInvalidDetails()
+        [NUnit.Framework.DescriptionAttribute("Unable to update status of an task with invalid details")]
+        public virtual void UnableToUpdateStatusOfAnTaskWithInvalidDetails()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an alert with invalid details", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an task with invalid details", null, ((string[])(null)));
 #line 42
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 43
-    testRunner.Given("I have an invalid update alert request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have an invalid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 44
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 45

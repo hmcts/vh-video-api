@@ -30,7 +30,7 @@ namespace VideoApi.DAL.Queries
             return await _context.Conferences
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses")
-                .Include(x => x.Alerts).AsNoTracking()
+                .Include(x => x.Tasks).AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
         }
     }

@@ -31,8 +31,8 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Consultations", "  In order to manage private consultations\n  As an API service\n  I want to raise " +
-                    "and respond to private consultations", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Consultations", "  In order to manage private consultations\r\n  As an API service\r\n  I want to rais" +
+                    "e and respond to private consultations", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

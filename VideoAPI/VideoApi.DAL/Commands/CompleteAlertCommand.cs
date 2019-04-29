@@ -21,18 +21,18 @@ namespace VideoApi.DAL.Commands
         }
     }
     
-    public class CompleteAlertCommandHandler : ICommandHandler<CompleteAlertCommand>
+    public class CompleteTaskCommandHandler : ICommandHandler<CompleteAlertCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public CompleteAlertCommandHandler(VideoApiDbContext context)
+        public CompleteTaskCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
         public async Task Handle(CompleteAlertCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Alerts)
+            var conference = await _context.Conferences.Include(x => x.Tasks)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
             
             if (conference == null)
@@ -40,7 +40,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var alert = conference.GetAlerts().FirstOrDefault(x => x.Id == command.AlertId);
+            var alert = conference.GetTasks().FirstOrDefault(x => x.Id == command.AlertId);
 
             if (alert == null)
             {

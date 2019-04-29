@@ -11,7 +11,7 @@ namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
     [Migration("20190423124552_AddAlerts")]
-    partial class AddAlerts
+    partial class AddTasks
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace VideoApi.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("VideoApi.Domain.Alert", b =>
+            modelBuilder.Entity("VideoApi.Domain.Task", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasIndex("ConferenceId");
 
-                    b.ToTable("Alert");
+                    b.ToTable("Task");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
@@ -165,10 +165,10 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("ParticipantStatus");
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.Alert", b =>
+            modelBuilder.Entity("VideoApi.Domain.Task", b =>
                 {
                     b.HasOne("VideoApi.Domain.Conference")
-                        .WithMany("Alerts")
+                        .WithMany("Tasks")
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

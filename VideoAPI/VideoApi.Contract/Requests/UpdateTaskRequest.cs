@@ -1,6 +1,6 @@
 namespace VideoApi.Contract.Requests
 {
-    public class UpdateAlertRequest
+    public class UpdateTaskRequest
     {
         /// <summary>
         /// The username of the person updating the alert

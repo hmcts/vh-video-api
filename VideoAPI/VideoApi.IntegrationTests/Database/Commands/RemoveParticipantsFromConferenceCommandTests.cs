@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {

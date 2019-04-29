@@ -3,7 +3,7 @@ using VideoApi.Contract.Requests;
 
 namespace Video.API.Validations
 {
-    public class UpdateAlertRequestValidation : AbstractValidator<UpdateAlertRequest>
+    public class UpdateAlertRequestValidation : AbstractValidator<UpdateTaskRequest>
     {
         public static readonly string NoUsernameErrorMessage =
             "Please provide the username of the person updating the alert";

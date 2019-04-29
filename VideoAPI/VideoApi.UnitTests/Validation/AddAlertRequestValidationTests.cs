@@ -62,7 +62,7 @@ namespace VideoApi.UnitTests.Validation
             return new AddAlertRequest
             {
                 Body = "Automated Test",
-                Type = AlertType.Judge
+                Type = TaskType.Judge
             };
         }
     }

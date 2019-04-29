@@ -20,7 +20,7 @@ namespace VideoApi.UnitTests.Validation
         [Test]
         public async Task should_pass_validation()
         {
-            var request = new UpdateAlertRequest
+            var request = new UpdateTaskRequest
             {
                 UpdatedBy = "foo@foo.com"
             };
@@ -34,7 +34,7 @@ namespace VideoApi.UnitTests.Validation
         [Test]
         public async Task should_return_missing_username()
         {
-            var request = new UpdateAlertRequest
+            var request = new UpdateTaskRequest
             {
             };
 

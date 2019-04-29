@@ -6,7 +6,7 @@ namespace VideoApi.DAL.Exceptions
     public class AlertNotFoundException : Exception
     {
         public AlertNotFoundException(Guid conferenceId, long alertId) : base(
-            $"Alert '{alertId}' not found in Conference {conferenceId} does not exist")
+            $"Task '{alertId}' not found in Conference {conferenceId} does not exist")
         {
         }
     }

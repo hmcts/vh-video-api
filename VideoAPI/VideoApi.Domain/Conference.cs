@@ -15,7 +15,7 @@ namespace VideoApi.Domain
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
-            Alerts = new List<Alert>();
+            Tasks = new List<Task>();
             MeetingRoom = new MeetingRoom();
             
             HearingRefId = hearingRefId;
@@ -36,7 +36,7 @@ namespace VideoApi.Domain
         public ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; private set; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
-        public virtual IList<Alert> Alerts { get; private set; }
+        public virtual IList<Task> Tasks { get; private set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
@@ -90,15 +90,15 @@ namespace VideoApi.Domain
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
         
-        public void AddAlert(AlertType alertType, string message)
+        public void AddTask(TaskType taskType, string message)
         {
-            var alert = new Alert(message, alertType);
-            Alerts.Add(alert);
+            var alert = new Task(message, taskType);
+            Tasks.Add(alert);
         }
 
-        public IList<Alert> GetAlerts()
+        public IList<Task> GetTasks()
         {
-            return Alerts;
+            return Tasks;
         }
 
         public IList<ConferenceStatus> GetConferenceStatuses()

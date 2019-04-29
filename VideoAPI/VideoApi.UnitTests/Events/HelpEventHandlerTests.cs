@@ -11,6 +11,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Events
 {

@@ -1,6 +1,6 @@
 namespace VideoApi.Domain.Enums
 {
-    public enum AlertStatus
+    public enum TaskStatus
     {
         ToDo = 0,
         Done = 1

@@ -8,6 +8,8 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
+using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
@@ -24,29 +26,29 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = Guid.Empty;
         }
 
-        [TestCase(AlertType.Judge)]
-        [TestCase(AlertType.Hearing)]
-        [TestCase(AlertType.Participant)]
-        public async Task should_add_an_alert(AlertType alertType)
+        [TestCase(TaskType.Judge)]
+        [TestCase(TaskType.Hearing)]
+        [TestCase(TaskType.Participant)]
+        public async Task should_add_an_alert(TaskType taskType)
         {
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceId = seededConference.Id;
-            const string body = "Automated Test Add Alert";
+            const string body = "Automated Test Add Task";
 
-            var command = new AddAlertCommand(_newConferenceId, body, alertType);
+            var command = new AddAlertCommand(_newConferenceId, body, taskType);
             await _handler.Handle(command);
 
             Conference conference;
             using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                conference = await db.Conferences.Include(x => x.Alerts)
+                conference = await db.Conferences.Include(x => x.Tasks)
                     .SingleAsync(x => x.Id == command.ConferenceId);
             }
 
-            var savedAlert = conference.GetAlerts().First(x => x.Body == body && x.Type == alertType);
+            var savedAlert = conference.GetTasks().First(x => x.Body == body && x.Type == taskType);
 
             savedAlert.Should().NotBeNull();
-            savedAlert.Status.Should().Be(AlertStatus.ToDo);
+            savedAlert.Status.Should().Be(TaskStatus.ToDo);
             savedAlert.Updated.Should().BeNull();
             savedAlert.UpdatedBy.Should().BeNull();
         }

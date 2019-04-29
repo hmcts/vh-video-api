@@ -7,6 +7,7 @@ using VideoApi.DAL;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {

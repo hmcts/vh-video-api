@@ -8,6 +8,7 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {

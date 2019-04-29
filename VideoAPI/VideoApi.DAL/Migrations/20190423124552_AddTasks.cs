@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VideoApi.DAL.Migrations
 {
-    public partial class AddAlerts : Migration
+    public partial class AddTasks : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Alert",
+                name: "Task",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -35,14 +35,14 @@ namespace VideoApi.DAL.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Alert_ConferenceId",
-                table: "Alert",
+                table: "Task",
                 column: "ConferenceId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Alert");
+                name: "Task");
         }
     }
 }
