@@ -7,12 +7,12 @@ using VideoApi.DAL.Exceptions;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateAlertCommand : ICommand
+    public class UpdateTaskCommand : ICommand
     {
         public Guid ConferenceId { get; }
         public long AlertId { get; }
         public string UpdatedBy { get; set; }
-        public UpdateAlertCommand(Guid conferenceId, long alertId, string updatedBy)
+        public UpdateTaskCommand(Guid conferenceId, long alertId, string updatedBy)
         {
             ConferenceId = conferenceId;
             AlertId = alertId;
@@ -20,16 +20,16 @@ namespace VideoApi.DAL.Commands
         }
     }
 
-    public class UpdateAlertCommandHandler : ICommandHandler<UpdateAlertCommand>
+    public class UpdateTaskCommandHandler : ICommandHandler<UpdateTaskCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public UpdateAlertCommandHandler(VideoApiDbContext context)
+        public UpdateTaskCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(UpdateAlertCommand command)
+        public async Task Handle(UpdateTaskCommand command)
         {
             var alert = await _context.Conferences.Include(x => x.Tasks)
                 .Where(x => x.Id == command.ConferenceId)

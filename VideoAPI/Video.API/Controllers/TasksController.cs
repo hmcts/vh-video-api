@@ -40,9 +40,9 @@ namespace Video.API.Controllers
             var query = new GetIncompleteTasksForConferenceQuery(conferenceId);
             try
             {
-                var alerts = await _queryHandler.Handle<GetIncompleteTasksForConferenceQuery, List<Task>>(query);
-                var mapper = new AlertToResponseMapper();
-                var response = alerts.Select(mapper.MapAlertToResponse);
+                var tasks = await _queryHandler.Handle<GetIncompleteTasksForConferenceQuery, List<Task>>(query);
+                var mapper = new TaskToResponseMapper();
+                var response = tasks.Select(mapper.MapTaskToResponse);
                 return Ok(response);
             }
             catch (ConferenceNotFoundException)
@@ -59,7 +59,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateTaskStatus(Guid conferenceId, long taskId, [FromBody] UpdateTaskRequest updateTaskRequest)
         {
-            var command = new UpdateAlertCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
+            var command = new UpdateTaskCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
             try
             {
                 await _commandHandler.Handle(command);

@@ -92,8 +92,8 @@ namespace VideoApi.Domain
         
         public void AddTask(TaskType taskType, string message)
         {
-            var alert = new Task(message, taskType);
-            Tasks.Add(alert);
+            var task = new Task(message, taskType);
+            Tasks.Add(task);
         }
 
         public IList<Task> GetTasks()

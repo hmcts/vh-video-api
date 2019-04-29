@@ -52,7 +52,7 @@ namespace Video.API
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
 
             services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddAlertRequestValidation>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
 
             services.AddDbContextPool<VideoApiDbContext>(options =>

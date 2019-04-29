@@ -9,12 +9,12 @@ namespace VideoApi.UnitTests.Validation
 {
     public class UpdateAlertRequestValidationTests
     {
-        private UpdateAlertRequestValidation _validator;
+        private UpdateTaskRequestValidation _validator;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _validator = new UpdateAlertRequestValidation();
+            _validator = new UpdateTaskRequestValidation();
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors
-                .Any(x => x.ErrorMessage == UpdateAlertRequestValidation.NoUsernameErrorMessage)
+                .Any(x => x.ErrorMessage == UpdateTaskRequestValidation.NoUsernameErrorMessage)
                 .Should().BeTrue();
         }
     }
