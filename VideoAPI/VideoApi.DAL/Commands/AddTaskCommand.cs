@@ -7,13 +7,13 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
 {
-    public class AddAlertCommand : ICommand
+    public class AddTaskCommand : ICommand
     {
         public Guid ConferenceId { get; }
         public string Body { get; }
         public TaskType TaskType { get; }
 
-        public AddAlertCommand(Guid conferenceId, string body, TaskType taskType)
+        public AddTaskCommand(Guid conferenceId, string body, TaskType taskType)
         {
             ConferenceId = conferenceId;
             Body = body;
@@ -21,16 +21,16 @@ namespace VideoApi.DAL.Commands
         }
     }
 
-    public class AddAlertCommandHandler : ICommandHandler<AddAlertCommand>
+    public class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public AddAlertCommandHandler(VideoApiDbContext context)
+        public AddTaskCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(AddAlertCommand command)
+        public async Task Handle(AddTaskCommand command)
         {
             var conference = await _context.Conferences.Include(x => x.Tasks)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);

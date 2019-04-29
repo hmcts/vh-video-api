@@ -71,74 +71,20 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Successfully add an task to a conference")]
-        public virtual void SuccessfullyAddAnTaskToAConference()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Successfully add an task to a conference", null, ((string[])(null)));
-#line 6
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 7
-    testRunner.Given("I have a valid add task to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 8
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 9
-    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Unable to add an task to a conference that does not exist")]
-        public virtual void UnableToAddAnTaskToAConferenceThatDoesNotExist()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to add an task to a conference that does not exist", null, ((string[])(null)));
-#line 11
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 12
-    testRunner.Given("I have a nonexistent add task to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 13
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 14
-    testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Unable to add an task to a conference with invalid details")]
-        public virtual void UnableToAddAnTaskToAConferenceWithInvalidDetails()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to add an task to a conference with invalid details", null, ((string[])(null)));
-#line 16
-  this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 17
-    testRunner.Given("I have an invalid add task to conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 18
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 19
-    testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Get pending tasks for a conference")]
         public virtual void GetPendingTasksForAConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get pending tasks for a conference", null, ((string[])(null)));
-#line 21
+#line 6
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 22
+#line 7
     testRunner.Given("I have a valid get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 23
+#line 8
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 24
+#line 9
     testRunner.Then("the response should have the status Ok and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 25
+#line 10
     testRunner.And("the list of tasks should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -149,14 +95,14 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void UnableToGetTasksForAConferenceThatDoesNotExist()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to get tasks for a conference that does not exist", null, ((string[])(null)));
-#line 27
+#line 12
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 28
+#line 13
     testRunner.Given("I have a nonexistent get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 29
+#line 14
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 30
+#line 15
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -167,14 +113,14 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void SucessfullyUpdateTaskStatus()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sucessfully update task status", null, ((string[])(null)));
-#line 32
+#line 17
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 33
+#line 18
     testRunner.Given("I have a valid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 34
+#line 19
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 35
+#line 20
     testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -185,14 +131,14 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void UnableToUpdateStatusOfAnTask()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an task", null, ((string[])(null)));
-#line 37
+#line 22
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 38
+#line 23
     testRunner.Given("I have a nonexistent update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 39
+#line 24
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 40
+#line 25
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -203,14 +149,14 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void UnableToUpdateStatusOfAnTaskWithInvalidDetails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an task with invalid details", null, ((string[])(null)));
-#line 42
+#line 27
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 43
+#line 28
     testRunner.Given("I have an invalid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 44
+#line 29
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 45
+#line 30
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

@@ -25,7 +25,7 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participant = SourceConference.Participants.Single(x => x.Id == SourceParticipant.Id);
-            var command = new AddAlertCommand(SourceConference.Id, participant.Name, TaskType.Participant);
+            var command = new AddTaskCommand(SourceConference.Id, participant.Name, TaskType.Participant);
             await CommandHandler.Handle(command);
         }
     }

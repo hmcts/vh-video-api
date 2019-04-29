@@ -15,14 +15,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class AddAlertCommandTests : DatabaseTestsBase
     {
-        private AddAlertCommandHandler _handler;
+        private AddTaskCommandHandler _handler;
         private Guid _newConferenceId;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new AddAlertCommandHandler(context);
+            _handler = new AddTaskCommandHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
@@ -35,7 +35,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             const string body = "Automated Test Add Task";
 
-            var command = new AddAlertCommand(_newConferenceId, body, taskType);
+            var command = new AddTaskCommand(_newConferenceId, body, taskType);
             await _handler.Handle(command);
 
             Conference conference;
