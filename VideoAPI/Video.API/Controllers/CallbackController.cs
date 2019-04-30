@@ -2,8 +2,6 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Video.API.Extensions;
-using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -37,13 +35,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostEvents(ConferenceEventRequest request)
         {
-            var result = await new ConferenceEventRequestValidation().ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-
             Guid.TryParse(request.ConferenceId, out var conferenceId);
 
             var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,

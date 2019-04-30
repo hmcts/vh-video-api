@@ -36,3 +36,4 @@ Feature: Callbacks
     | Close			 |
     | Leave			 |
     | JudgeAvailable |
+	| MediaPermissionDenied |

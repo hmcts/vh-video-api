@@ -18,6 +18,7 @@ using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {

@@ -5,6 +5,7 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {

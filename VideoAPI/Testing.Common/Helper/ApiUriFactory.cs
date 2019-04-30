@@ -9,6 +9,7 @@ namespace Testing.Common.Helper
         public ConferenceEndpoints ConferenceEndpoints { get; }
         public HealthCheckEndpoints HealthCheckEndpoints { get; }
         public ConsultationEndpoints ConsultationEndpoints { get; }
+        public TaskEndpoints TaskEndpoints { get; }
 
         public ApiUriFactory()
         {
@@ -17,6 +18,7 @@ namespace Testing.Common.Helper
             CallbackEndpoints = new CallbackEndpoints();
             HealthCheckEndpoints = new HealthCheckEndpoints();
             ConsultationEndpoints = new ConsultationEndpoints();
+            TaskEndpoints = new TaskEndpoints();
         }
     }
     
@@ -57,9 +59,18 @@ namespace Testing.Common.Helper
     }
 
     public class ConsultationEndpoints
-    {private string ApiRoot => "/consultations";
+    {
+        private string ApiRoot => "consultations";
 
         public string HandleConsultationRequest =>   $"{ApiRoot}";
         
+    }
+
+    public class TaskEndpoints
+    {
+        private string ApiRoot => "conferences";
+
+        public string GetPendingTasks(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/tasks";
+        public string UpdateTaskStatus(Guid conferenceId, long taskId) => $"{ApiRoot}/{conferenceId}/tasks/{taskId}";
     }
 }

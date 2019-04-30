@@ -15,7 +15,7 @@ namespace VideoApi.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -136,6 +136,35 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("ParticipantStatus");
                 });
 
+            modelBuilder.Entity("VideoApi.Domain.Task", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Body");
+
+                    b.Property<Guid?>("ConferenceId");
+
+                    b.Property<DateTime>("Created");
+
+                    b.Property<Guid>("OriginId");
+
+                    b.Property<int>("Status");
+
+                    b.Property<int>("Type");
+
+                    b.Property<DateTime?>("Updated");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.ToTable("Task");
+                });
+
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
                     b.OwnsOne("VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
@@ -186,6 +215,14 @@ namespace VideoApi.DAL.Migrations
                     b.HasOne("VideoApi.Domain.Participant")
                         .WithMany("ParticipantStatuses")
                         .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.Task", b =>
+                {
+                    b.HasOne("VideoApi.Domain.Conference")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

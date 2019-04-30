@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Video.API.Extensions;
+using Video.API.ValidationMiddleware;
+using Video.API.Validations;
 using VideoApi.Common.Configuration;
 using VideoApi.DAL;
 using VideoApi.Events.Hub;
@@ -45,9 +49,12 @@ namespace Video.API
             bool.TryParse(Configuration["UseStub"], out var useStub);
             services.AddCustomTypes(useStub);
             RegisterAuth(services);
-            
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+            services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
+
+            services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
+            services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
+
             services.AddDbContextPool<VideoApiDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("VhVideoApi")));
         }

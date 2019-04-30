@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Domain;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {

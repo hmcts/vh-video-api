@@ -10,6 +10,7 @@ using Video.API.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.HealthChecks
 {

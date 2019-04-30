@@ -13,6 +13,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Hub;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {

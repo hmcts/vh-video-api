@@ -11,6 +11,7 @@ namespace VideoApi.Domain.Enums
         Close,
         Leave,
         Consultation,
-        JudgeAvailable
+        JudgeAvailable,
+        MediaPermissionDenied
     }
 }

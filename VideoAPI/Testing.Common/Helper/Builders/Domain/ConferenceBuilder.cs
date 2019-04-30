@@ -19,6 +19,7 @@ namespace Testing.Common.Helper.Builders.Domain
             {
                 _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
+                _builderSettings.DisablePropertyNamingFor<Task, long>(x => x.Id);
             }
             
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
@@ -57,6 +58,12 @@ namespace Testing.Common.Helper.Builders.Domain
             participant.UpdateParticipantStatus(ParticipantState.Available);
             _conference.AddParticipant(participant);
 
+            return this;
+        }
+        
+        public ConferenceBuilder WithAlert(string body, TaskType type)
+        {
+            _conference.AddTask(type, body);
             return this;
         }
 

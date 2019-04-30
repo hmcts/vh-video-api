@@ -10,6 +10,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
 using VideoApi.Events.ServiceBus;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers.Core
 {

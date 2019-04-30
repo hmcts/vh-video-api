@@ -31,8 +31,8 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Callbacks", "  In order to keep VH data up to date\n  As an API service\n  I want to handle exte" +
-                    "rnal events", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Callbacks", "  In order to keep VH data up to date\r\n  As an API service\r\n  I want to handle ex" +
+                    "ternal events", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -143,6 +143,7 @@ namespace VideoApi.IntegrationTests.Api
         [NUnit.Framework.TestCaseAttribute("Close", null)]
         [NUnit.Framework.TestCaseAttribute("Leave", null)]
         [NUnit.Framework.TestCaseAttribute("JudgeAvailable", null)]
+        [NUnit.Framework.TestCaseAttribute("MediaPermissionDenied", null)]
         public virtual void ShouldAcceptAndProcessAConferenceEventRequest(string eventType, string[] exampleTags)
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should accept and process a conference event request", null, exampleTags);
