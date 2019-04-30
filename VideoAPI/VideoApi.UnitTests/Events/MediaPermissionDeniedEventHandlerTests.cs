@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
@@ -33,6 +34,14 @@ namespace VideoApi.UnitTests.Events
                 ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
+
+            var tasks = new List<VideoApi.Domain.Task>
+            {
+                new VideoApi.Domain.Task("Test", TaskType.Participant) {OriginId = Guid.NewGuid()}
+            };
+
+            QueryHandlerMock.Setup(x => x.Handle<GetIncompleteTasksForConferenceQuery, List<VideoApi.Domain.Task>>(
+                It.IsAny<GetIncompleteTasksForConferenceQuery>())).ReturnsAsync(tasks);
 
             await _eventHandler.HandleAsync(callbackEvent);
             CommandHandlerMock.Verify(x => x.Handle<AddTaskCommand>(It.IsAny<AddTaskCommand>()), Times.Once);
