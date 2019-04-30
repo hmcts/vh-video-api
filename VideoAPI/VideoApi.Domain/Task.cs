@@ -6,6 +6,9 @@ namespace VideoApi.Domain
 {
     public class Task : Entity<long>
     {
+        /// <summary>
+        /// Origin - entity on which this task creation is based on
+        /// </summary>
         public Guid OriginId { get; set; }
         public string Body { get; set; }
         public TaskType Type { get; set; }

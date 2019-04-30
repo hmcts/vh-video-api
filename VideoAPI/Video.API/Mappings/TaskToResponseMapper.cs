@@ -11,7 +11,9 @@ namespace Video.API.Mappings
             {
                 Id = task.Id,
                 Body = task.Body,
-                Type = task.Type
+                Type = task.Type,
+                OriginId = task.OriginId,
+                Created = task.Created
             };
         }
     }
