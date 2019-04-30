@@ -8,7 +8,7 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Mappings
 {
-    public class AlertToResponseMapperTests
+    public class TaskToResponseMapperTests
     {
         private readonly TaskToResponseMapper _mapper = new TaskToResponseMapper();
 

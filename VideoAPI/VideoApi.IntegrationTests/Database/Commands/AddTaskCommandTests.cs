@@ -13,7 +13,7 @@ using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
-    public class AddAlertCommandTests : DatabaseTestsBase
+    public class AddTaskCommandTests : DatabaseTestsBase
     {
         private AddTaskCommandHandler _handler;
         private Guid _newConferenceId;
@@ -29,7 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [TestCase(TaskType.Judge)]
         [TestCase(TaskType.Hearing)]
         [TestCase(TaskType.Participant)]
-        public async Task should_add_an_alert(TaskType taskType)
+        public async Task should_add_an_task(TaskType taskType)
         {
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceId = seededConference.Id;

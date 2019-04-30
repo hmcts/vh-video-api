@@ -64,7 +64,7 @@ namespace Video.API.Controllers
             {
                 await _commandHandler.Handle(command);
             }
-            catch (AlertNotFoundException)
+            catch (TaskNotFoundException)
             {
                 return NotFound();
             }

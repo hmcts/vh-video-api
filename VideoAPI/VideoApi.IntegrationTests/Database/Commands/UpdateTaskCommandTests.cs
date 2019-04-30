@@ -15,16 +15,16 @@ using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
-    public class CompleteTaskCommandTests : DatabaseTestsBase
+    public class UpdateTaskCommandTests : DatabaseTestsBase
     {
-        private CompleteTaskCommandHandler _handler;
+        private UpdateTaskCommandHandler _handler;
         private Guid _newConferenceId;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new CompleteTaskCommandHandler(context);
+            _handler = new UpdateTaskCommandHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
@@ -43,7 +43,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var task = seededConference.GetTasks().First();
 
-            var command = new CompleteAlertCommand(_newConferenceId, task.Id, updatedBy);
+            var command = new UpdateTaskCommand(_newConferenceId, task.Id, updatedBy);
             await _handler.Handle(command);
             
             Conference conference;
@@ -65,8 +65,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void should_throw_conference_not_found_exception()
         {
             const string updatedBy = "test@automated.com";
-            var command = new CompleteAlertCommand(Guid.NewGuid(),9999, updatedBy);
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
+            var command = new UpdateTaskCommand(Guid.NewGuid(),9999, updatedBy);
+            Assert.ThrowsAsync<TaskNotFoundException>(() => _handler.Handle(command));
         }
         
         [Test]
@@ -81,8 +81,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var seededConference = await TestDataManager.SeedConference(conferenceWithAlert);
             _newConferenceId = seededConference.Id;
 
-            var command = new CompleteAlertCommand(_newConferenceId, 9999, updatedBy);
-            Assert.ThrowsAsync<AlertNotFoundException>(() => _handler.Handle(command));
+            var command = new UpdateTaskCommand(_newConferenceId, 9999, updatedBy);
+            Assert.ThrowsAsync<TaskNotFoundException>(() => _handler.Handle(command));
         }
 
         [TearDown]

@@ -7,7 +7,7 @@ using VideoApi.Contract.Requests;
 
 namespace VideoApi.UnitTests.Validation
 {
-    public class UpdateAlertRequestValidationTests
+    public class UpdateTaskRequestValidationTests
     {
         private UpdateTaskRequestValidation _validator;
 

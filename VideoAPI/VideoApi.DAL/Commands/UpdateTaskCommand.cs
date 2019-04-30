@@ -10,12 +10,12 @@ namespace VideoApi.DAL.Commands
     public class UpdateTaskCommand : ICommand
     {
         public Guid ConferenceId { get; }
-        public long AlertId { get; }
+        public long TaskId { get; }
         public string UpdatedBy { get; set; }
-        public UpdateTaskCommand(Guid conferenceId, long alertId, string updatedBy)
+        public UpdateTaskCommand(Guid conferenceId, long taskId, string updatedBy)
         {
             ConferenceId = conferenceId;
-            AlertId = alertId;
+            TaskId = taskId;
             UpdatedBy = updatedBy;
         }
     }
@@ -31,17 +31,17 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(UpdateTaskCommand command)
         {
-            var alert = await _context.Conferences.Include(x => x.Tasks)
+            var task = await _context.Conferences.Include(x => x.Tasks)
                 .Where(x => x.Id == command.ConferenceId)
                 .SelectMany(x => x.Tasks)
-                .SingleOrDefaultAsync(x => x.Id == command.AlertId);
+                .SingleOrDefaultAsync(x => x.Id == command.TaskId);
 
-            if (alert == null)
+            if (task == null)
             {
-                throw new AlertNotFoundException(command.ConferenceId, command.AlertId);
+                throw new TaskNotFoundException(command.ConferenceId, command.TaskId);
             }
 
-            alert.CompleteTask(command.UpdatedBy);
+            task.CompleteTask(command.UpdatedBy);
             await _context.SaveChangesAsync();
         }
     }
