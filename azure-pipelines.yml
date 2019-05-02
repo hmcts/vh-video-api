@@ -14,7 +14,8 @@ variables:
     "Testing/TestClientId":"$(vh-admin-web-appid)",
     "Testing/TestClientSecret":"$(vh-admin-web-key)",
     "ServiceBusQueue/ConnectionString":"$(AzureServiceBusConnectionStringSend)",
-    "Services/KinlyApiUrl":"$(KinlyApiUrl)"
+    "Services/KinlyApiUrl":"$(KinlyApiUrl)",
+    "Services/CallbackUri":"$(CallbackUri)"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests
