@@ -10,12 +10,17 @@ namespace Testing.Common.Helper.Builders.Api
     public class BookNewConferenceRequestBuilder
     {
         private readonly BookNewConferenceRequest _bookNewConferenceRequest;
-        
+
         public BookNewConferenceRequestBuilder()
         {
+            var fromRandomNumber = new Random();
+
             _bookNewConferenceRequest = Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.HearingRefId = Guid.NewGuid())
+                .With(x => x.CaseType = "Civil Money Claims")
                 .With(x => x.ScheduledDateTime = DateTime.Today.AddDays(5).AddHours(10).AddMinutes(30))
+                .With(x => x.CaseNumber = $"{GenerateRandom.CaseNumber(fromRandomNumber)}") 
+                .With(x => x.CaseName = $"Automated Test Hearing {GenerateRandom.Letters(fromRandomNumber)}")
                 .With(x => x.ScheduledDuration = 120)
                 .With(x => x.Participants = new List<ParticipantRequest>())
                 .Build();

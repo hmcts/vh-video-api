@@ -4,6 +4,7 @@ using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Events.Models;
 
 namespace VideoApi.AcceptanceTests.Contexts
 {
@@ -17,6 +18,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public TestSettings TestSettings { get; set; }
         public Guid NewConferenceId { get; set; }
         public Guid NewHearingRefId { get; set; }
+        public CallbackEvent CallbackEvent { get; set; }
         public ConferenceDetailsResponse NewConference { get; set; }
 
         public RestClient Client()
