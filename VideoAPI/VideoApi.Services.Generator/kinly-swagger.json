@@ -197,28 +197,27 @@
     "createHearingParams": {
       "type": "object",
       "required": [
-        "virtual_courtroom_id"
+        "virtual_courtroom_id",
+        "callback_uri"
       ],
       "properties": {
         "virtual_courtroom_id": {
           "type": "string",
           "description": "Unique hearing ID"
+        },
+        "callback_uri": {
+          "type": "string",
+          "description": "Callback uri"
         }
       }
     },
     "hearing": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/createHearingParams"
-        },
-        {
+      "type": "object",
           "properties": {
             "uris": {
               "$ref": "#/definitions/uris"
             }
           }
-        }
-      ]
     },
     "uris": {
       "type": "object",

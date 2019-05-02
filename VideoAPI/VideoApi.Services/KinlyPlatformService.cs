@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using VideoApi.Common.Configuration;
 using VideoApi.Domain;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
@@ -10,10 +12,12 @@ namespace VideoApi.Services
     public class KinlyPlatformService : IVideoPlatformService
     {
         private readonly IKinlyApiClient _kinlyApiClient;
+        private readonly IOptions<ServicesConfiguration> _servicesConfigOptions;
 
-        public KinlyPlatformService(IKinlyApiClient kinlyApiClient)
+        public KinlyPlatformService(IKinlyApiClient kinlyApiClient, IOptions<ServicesConfiguration> servicesConfigOptions)
         {
             _kinlyApiClient = kinlyApiClient;
+            _servicesConfigOptions = servicesConfigOptions;
         }
 
 
@@ -23,7 +27,8 @@ namespace VideoApi.Services
             {
                 var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
                 {
-                    Virtual_courtroom_id = conferenceId.ToString()
+                    Virtual_courtroom_id = conferenceId.ToString(),
+                    Callback_uri = _servicesConfigOptions.Value.CallbackUri
                 });
 
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Judge, response.Uris.Participant,
