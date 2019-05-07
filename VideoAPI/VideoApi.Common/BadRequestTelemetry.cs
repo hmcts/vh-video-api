@@ -19,15 +19,24 @@ namespace VideoApi.Common
 
         public void Initialize(ITelemetry telemetry)
         {
-            if (!(telemetry is RequestTelemetry requestTelemetry)) return;
+            telemetry.Context.Cloud.RoleName = "vh-video-api";
+            
+            if (!(telemetry is RequestTelemetry requestTelemetry))
+            {
+                return;
+            }
 
             if (!IsReadableBadRequest(requestTelemetry))
+            {
                 return;
+            }
 
             // Check response body
             var responseBody = (string) _httpContextAccessor.HttpContext.Items["responseBody"];
             if (responseBody != null)
+            {
                 requestTelemetry.Properties.Add("responseBody", responseBody);
+            }
         }
 
         private bool IsReadableBadRequest(RequestTelemetry telemetry)
