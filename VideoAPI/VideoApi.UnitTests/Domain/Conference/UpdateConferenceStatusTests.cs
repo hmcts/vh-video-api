@@ -31,12 +31,11 @@ namespace VideoApi.UnitTests.Domain.Conference
             conference.GetCurrentStatus().Should().Be(ConferenceState.NotStarted);
             var beforeCount = conference.GetConferenceStatuses().Count;
 
-            var conferenceState = ConferenceState.InSession;
-            conference.UpdateConferenceStatus(conferenceState);
+            conference.UpdateConferenceStatus(ConferenceState.InSession);
             var afterCount = conference.GetParticipants().Count;
             afterCount.Should().BeGreaterThan(beforeCount);
 
-            conference.GetCurrentStatus().Should().Be(conferenceState);
+            conference.GetCurrentStatus().Should().Be(ConferenceState.InSession);
         }
     }
 }

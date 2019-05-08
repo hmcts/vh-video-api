@@ -4,5 +4,7 @@ namespace VideoApi.Common.Configuration
     {
         public string KinlyApiUrl { get; set; }
         public string CallbackUri { get; set; }
+        public string PexipNode { get; set; }
+        public string ConferenceUsername { get; set; }
     }
 }

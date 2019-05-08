@@ -30,9 +30,11 @@ namespace VideoApi.AcceptanceTests.Hooks
             var azureAdConfigurationOptions =
                 Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
             var testSettingsOptions = Options.Create(configRoot.GetSection("Testing").Get<TestSettings>());
+            var serviceSettingsOptions = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>());
 
             var azureAdConfiguration = azureAdConfigurationOptions.Value;
             context.TestSettings = testSettingsOptions.Value;
+            context.ServicesConfiguration = serviceSettingsOptions.Value;
 
             context.BearerToken = new AzureTokenProvider(azureAdConfigurationOptions).GetClientAccessToken(
                 context.TestSettings.TestClientId, context.TestSettings.TestClientSecret,

@@ -23,13 +23,6 @@ Scenario: Get conference details
     Then the response should have the status OK and success status True
     And the conference details should be retrieved
 
-Scenario: Update conference details
-    Given I have a conference
-    And I have a valid update conference status request
-    When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True	
-	And the conference details have been updated
-
 Scenario: Delete conference
     Given I have a conference
     And I have a valid delete conference request
