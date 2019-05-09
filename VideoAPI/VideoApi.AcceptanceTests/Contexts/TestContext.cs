@@ -20,6 +20,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public Guid NewConferenceId { get; set; }
         public Guid NewHearingRefId { get; set; }
         public ConferenceDetailsResponse NewConference { get; set; }
+        public long NewTaskId { get; set; }
 
         public RestClient Client()
         {

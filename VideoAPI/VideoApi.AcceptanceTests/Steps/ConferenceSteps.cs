@@ -9,7 +9,6 @@ using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -48,9 +47,6 @@ namespace VideoApi.AcceptanceTests.Steps
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
                 .WithVideoHearingsOfficer()
                 .WithHearingRefId(_context.NewHearingRefId)
-                .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom(_context.ServicesConfiguration.PexipNode, _context.ServicesConfiguration.ConferenceUsername)
-                .WithTasks()
                 .Build();
             _context.Request = _context.Post(_endpoints.BookNewConference, request);
         }

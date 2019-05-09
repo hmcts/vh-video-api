@@ -3,16 +3,23 @@
   As an API service
   I want to handle tasks
 
-Scenario: Get Tasks
+Scenario: Get Pending Tasks
 	Given I have a conference
-	And I have a valid get tasks request
+	And The conference has a pending task
+	And I have a valid get pending tasks request
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
-	And the task is retrieved
+	And the pending tasks are retrieved
 
 Scenario: Update Task
 	Given I have a conference
-	And I have a valid update task request
+	And The conference has a pending task
+	And I have a valid get pending tasks request
+	When I send the request to the endpoint
+	Then the pending tasks are retrieved
+	Given I have a valid update task request
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
-	And the task is updated
+	Given I have a valid get pending tasks request
+	When I send the request to the endpoint
+	Then the task is updated

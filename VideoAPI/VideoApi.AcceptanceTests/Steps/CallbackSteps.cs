@@ -15,20 +15,16 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class CallbackSteps : BaseSteps
     {
         private readonly TestContext _context;
-        private readonly ScenarioContext _scenarioContext;
         private readonly CallbackEndpoints _endpoints = new ApiUriFactory().CallbackEndpoints;
-        private const string PreviousStateKey = "PreviousState";
 
-        public CallbackSteps(TestContext injectedContext, ScenarioContext scenarioContext)
+        public CallbackSteps(TestContext injectedContext)
         {
             _context = injectedContext;
-            _scenarioContext = scenarioContext;
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
         public void GivenIHaveAValidConferenceEventRequest(EventType eventType)
         {
-            _scenarioContext.Add(PreviousStateKey, _context.NewConference.CurrentStatus);
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = _context.NewConferenceId.ToString())
                 .With(x => x.ParticipantId = _context.NewConference.Participants.First().Id.ToString())
@@ -50,7 +46,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            conference.Participants.First().CurrentStatus.Should().NotBe(_scenarioContext.Get<ConferenceState>(PreviousStateKey));
+            conference.Participants.First().CurrentStatus.ParticipantState.Should().Be(ParticipantState.InConsultation);
         }
     }
 }

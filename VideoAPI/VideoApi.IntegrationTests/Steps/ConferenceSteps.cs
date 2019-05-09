@@ -127,7 +127,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
                 .WithVideoHearingsOfficer()
-                .WithMeetingRoom(_apiTestContext.Services.PexipNode, _apiTestContext.Services.ConferenceUsername).Build();
+                .Build();
             if (scenario == Scenario.Invalid)
             {
                 request.Participants = new List<ParticipantRequest>();

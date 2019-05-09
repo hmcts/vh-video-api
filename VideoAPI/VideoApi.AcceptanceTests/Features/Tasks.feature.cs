@@ -71,23 +71,25 @@ namespace VideoApi.AcceptanceTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Get Tasks")]
-        public virtual void GetTasks()
+        [NUnit.Framework.DescriptionAttribute("Get Pending Tasks")]
+        public virtual void GetPendingTasks()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Tasks", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Pending Tasks", null, ((string[])(null)));
 #line 6
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
  testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 8
- testRunner.And("I have a valid get tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("The conference has a pending task", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 9
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("I have a valid get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10
-    testRunner.Then("the response should have the status Ok and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 11
- testRunner.And("the task is retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+    testRunner.Then("the response should have the status Ok and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 12
+ testRunner.And("the pending tasks are retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -97,19 +99,31 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void UpdateTask()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update Task", null, ((string[])(null)));
-#line 13
+#line 14
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 14
- testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 15
- testRunner.And("I have a valid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 16
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("The conference has a pending task", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 17
-    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("I have a valid get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 18
- testRunner.And("the task is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 19
+ testRunner.Then("the pending tasks are retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 20
+ testRunner.Given("I have a valid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 21
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 22
+    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 23
+ testRunner.Given("I have a valid get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 24
+ testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 25
+ testRunner.Then("the task is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
