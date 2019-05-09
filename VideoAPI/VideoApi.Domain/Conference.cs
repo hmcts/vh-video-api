@@ -7,7 +7,7 @@ using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
-    public sealed class Conference : Entity<Guid>
+    public class Conference : Entity<Guid>
     {
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
             string caseName, int scheduledDuration)
@@ -17,7 +17,7 @@ namespace VideoApi.Domain
             ConferenceStatuses = new List<ConferenceStatus>();
             Tasks = new List<Task>();
             MeetingRoom = new MeetingRoom();
-            
+
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
@@ -26,17 +26,17 @@ namespace VideoApi.Domain
             ScheduledDuration = scheduledDuration;
         }
 
-        public Guid HearingRefId { get; }
-        public string CaseType { get; }
-        public DateTime ScheduledDateTime { get; }
-        public string CaseNumber { get; }
-        public string CaseName { get; }
-        private MeetingRoom MeetingRoom { get; set; }
+        public Guid HearingRefId { get; protected set; }
+        public string CaseType { get; protected set; }
+        public DateTime ScheduledDateTime { get; protected set; }
+        public string CaseNumber { get; protected set; }
+        public string CaseName { get; protected set; }
+        protected virtual MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
         public ConferenceState State { get; private set; }
-        public IList<Participant> Participants { get; private set; }
-        public IList<ConferenceStatus> ConferenceStatuses { get; private set; }
-        public IList<Task> Tasks { get; private set; }
+        public virtual IList<Participant> Participants { get; private set; }
+        public virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
+        public virtual IList<Task> Tasks { get; private set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
@@ -89,7 +89,7 @@ namespace VideoApi.Domain
             State = status;
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
-        
+
         public void AddTask(TaskType taskType, string message)
         {
             var task = new Task(message, taskType);
