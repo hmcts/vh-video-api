@@ -58,7 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var conferenceWithVirtualCourt = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithMeetingRoom().Build();
+                .WithMeetingRoom("https://poc.node.com", "user@email.com").Build();
             var seededConference = await TestDataManager.SeedConference(conferenceWithVirtualCourt);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
@@ -76,11 +76,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
         private UpdateMeetingRoomCommand BuildCommand(Guid conferenceId)
         {
-            var adminUri = "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var judgeUri = "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var participantUri =
-                "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var pexipNode = "testjoin.poc.hearings.hmcts.net";
+            const string adminUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string judgeUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string participantUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string pexipNode = "testpoc.node.com";
             return new UpdateMeetingRoomCommand(conferenceId, adminUri, judgeUri, participantUri, pexipNode);
         }
         

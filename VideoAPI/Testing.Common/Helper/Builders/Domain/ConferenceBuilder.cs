@@ -24,10 +24,10 @@ namespace Testing.Common.Helper.Builders.Domain
             
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
             var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
-            var caseType = "Civil Money Claims";
+            const string caseType = "Civil Money Claims";
             var caseNumber = $"Test{Guid.NewGuid():N}";
-            var caseName = "Auto vs Manual";
-            var scheduledDuration = 120;
+            const string caseName = "Auto vs Manual";
+            const int scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, scheduledDuration);
         }
         
@@ -77,13 +77,11 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithMeetingRoom()
+        public ConferenceBuilder WithMeetingRoom(string pexipNode, string conferenceUsername)
         {
-            var adminUri = $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var judgeUri = $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var participantUri =
-                $"https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var pexipNode = $"join.poc.hearings.hmcts.net";
+            var adminUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
+            var judgeUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
+            var participantUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             _conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
             return this;
         }

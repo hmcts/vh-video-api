@@ -3,19 +3,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Common.Configuration;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.IntegrationTests.Contexts;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Helper
 {
     public class TestDataManager
     {
+        private readonly ServicesConfiguration _services;
         private readonly DbContextOptions<VideoApiDbContext> _dbContextOptions;
         
-        public TestDataManager(DbContextOptions<VideoApiDbContext> dbContextOptions)
+        public TestDataManager(ServicesConfiguration services, DbContextOptions<VideoApiDbContext> dbContextOptions)
         {
+            _services = services;
             _dbContextOptions = dbContextOptions;
         }
 
@@ -28,7 +32,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom()
+                .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
                 .Build();
 
             return await SeedConference(conference);

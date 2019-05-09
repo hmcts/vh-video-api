@@ -3,6 +3,7 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using VideoApi.Common.Configuration;
 using VideoApi.DAL;
 using VideoApi.IntegrationTests.Helper;
 
@@ -12,6 +13,7 @@ namespace VideoApi.IntegrationTests.Contexts
     {
         public DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions { get; set; }
         public TestDataManager TestDataManager { get; set; }
+        public ServicesConfiguration Services { get; set; }
         public TestServer Server { get; set; }
         public string DbString { get; set; }
         public string BearerToken { get; set; }

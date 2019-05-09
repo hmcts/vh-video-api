@@ -16,14 +16,13 @@ namespace VideoApi.UnitTests.Domain.Conference
         [Test]
         public void should_update_existing_room_details()
         {
-            var conference = new ConferenceBuilder().WithMeetingRoom().Build();
+            var conference = new ConferenceBuilder().WithMeetingRoom("poc.node.com", "user@email.com").Build();
             conference.GetMeetingRoom().Should().NotBeNull();
             
-            var adminUri = "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var judgeUri = "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var participantUri =
-                "https://testjoin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var pexipNode = "testjoin.poc.hearings.hmcts.net";
+            const string adminUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string judgeUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string participantUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string pexipNode = "testpoc.node.com";
             conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
             
             conference.GetMeetingRoom().Should().NotBeNull();
@@ -40,11 +39,10 @@ namespace VideoApi.UnitTests.Domain.Conference
             var conference = new ConferenceBuilder().Build();
             conference.GetMeetingRoom().Should().BeNull();
             
-            var adminUri = "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var judgeUri = "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var participantUri =
-                "https://join.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var pexipNode = "join.poc.hearings.hmcts.net";
+            const string adminUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string judgeUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string participantUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string pexipNode = "poc.node.com";
             conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
 
             conference.GetMeetingRoom().Should().NotBeNull();

@@ -42,12 +42,13 @@ namespace VideoApi.IntegrationTests.Hooks
                 .AddUserSecrets<Startup>().Build();
 
             apiTestContext.DbString = configuration.GetConnectionString("VhVideoApi");
+            apiTestContext.Services = Options.Create(configuration.GetSection("Services").Get<ServicesConfiguration>()).Value;
 
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(apiTestContext.DbString);
             apiTestContext.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            apiTestContext.TestDataManager = new TestDataManager(apiTestContext.VideoBookingsDbContextOptions);
+            apiTestContext.TestDataManager = new TestDataManager(apiTestContext.Services, apiTestContext.VideoBookingsDbContextOptions);
         }
 
         private static void GetClientAccessTokenForApi(ApiTestContext apiTestContext)
