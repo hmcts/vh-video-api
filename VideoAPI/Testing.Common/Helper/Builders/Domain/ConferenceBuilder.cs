@@ -93,7 +93,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState)
         {
-            _conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState));
+            _conference.UpdateConferenceStatus(conferenceState);
             return this;
         }
     }
