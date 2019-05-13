@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
@@ -33,6 +34,7 @@ namespace Video.API.Controllers
         [HttpPost("conference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> PostEvents(ConferenceEventRequest request)
         {
             Guid.TryParse(request.ConferenceId, out var conferenceId);
