@@ -30,8 +30,12 @@ namespace Video.API.Controllers
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
         }
-        
-       
+
+        /// <summary>
+        /// Get pending tasks
+        /// </summary>
+        /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
+        /// <returns></returns>
         [HttpGet("{conferenceId}/tasks")]
         [SwaggerOperation(OperationId = "GetPendingTasks")]
         [ProducesResponseType(typeof(List<TaskResponse>), (int) HttpStatusCode.OK)]
@@ -52,6 +56,12 @@ namespace Video.API.Controllers
 
         }
 
+        /// <summary>
+        /// Update existing tasks
+        /// </summary>
+        /// <param name="conferenceId">The id of the conference to update</param>
+        /// <param name="taskId">The id of the task to update</param>
+        /// <returns></returns>
         [HttpPatch("{conferenceId}/tasks/{taskid}")]
         [SwaggerOperation(OperationId = "UpdateTaskStatus")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]

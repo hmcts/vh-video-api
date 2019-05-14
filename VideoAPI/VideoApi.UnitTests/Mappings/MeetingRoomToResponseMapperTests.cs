@@ -12,13 +12,10 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void should_map_all_properties()
         {
-            var adminUri =
-                "https://testjoin.admin.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var judgeUri =
-                "https://testjoin.judge.poc.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var participantUri =
-                "https://testjoin.poc.participants.hearings.hmcts.net/viju/#/?conference=ola@hearings.hmcts.net&output=embed";
-            var pexipNode = "testjoin.node.poc.hearings.hmcts.net";
+            const string adminUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string judgeUri = "https://judgetestpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string participantUri = "https://participantstestpoc.node.com/viju/#/?conference=user@email.com&output=embed";
+            const string pexipNode = "testjoin.node.com";
 
             var meetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
 

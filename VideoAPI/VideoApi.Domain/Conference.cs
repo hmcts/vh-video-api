@@ -17,7 +17,7 @@ namespace VideoApi.Domain
             ConferenceStatuses = new List<ConferenceStatus>();
             Tasks = new List<Task>();
             MeetingRoom = new MeetingRoom();
-            
+
             HearingRefId = hearingRefId;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
@@ -89,7 +89,7 @@ namespace VideoApi.Domain
             State = status;
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
-        
+
         public void AddTask(TaskType taskType, string message)
         {
             var task = new Task(message, taskType);

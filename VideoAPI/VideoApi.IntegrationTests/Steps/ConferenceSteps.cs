@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -26,10 +25,12 @@ namespace VideoApi.IntegrationTests.Steps
     public sealed class ConferenceSteps : StepsBase
     {
         private readonly ConferenceTestContext _conferenceTestContext;
+        private readonly ApiTestContext _apiTestContext;
         private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
 
         public ConferenceSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(apiTestContext)
         {
+            _apiTestContext = apiTestContext;
             _conferenceTestContext = conferenceTestContext;
         }
 
@@ -121,10 +122,12 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) book a new conference request")]
         public void GivenIHaveABookANewConferenceRequest(Scenario scenario)
         {
-            var request = new BookNewConferenceRequestBuilder().WithJudge()
+            var request = new BookNewConferenceRequestBuilder()
+                .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
-                .WithVideoHearingsOfficer().Build();
+                .WithVideoHearingsOfficer()
+                .Build();
             if (scenario == Scenario.Invalid)
             {
                 request.Participants = new List<ParticipantRequest>();
