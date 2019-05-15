@@ -14,6 +14,7 @@ namespace VideoApi.Contract.Responses
         public int ScheduledDuration { get; set; }
         public ConferenceState Status { get; set; }
         public List<ParticipantSummaryResponse> Participants { get; set; }
+        public int PendingTasks { get; set; }
 
     }
 }

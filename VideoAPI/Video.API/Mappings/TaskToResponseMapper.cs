@@ -7,13 +7,16 @@ namespace Video.API.Mappings
     {
         public TaskResponse MapTaskToResponse(Task task)
         {
-            return new TaskResponse()
+            return new TaskResponse
             {
                 Id = task.Id,
                 Body = task.Body,
                 Type = task.Type,
+                Status = task.Status,
                 OriginId = task.OriginId,
-                Created = task.Created
+                Created = task.Created,
+                Updated = task.Updated,
+                UpdatedBy = task.UpdatedBy
             };
         }
     }

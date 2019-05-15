@@ -16,6 +16,7 @@ namespace Testing.Common.Assertions
             conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.Id.Should().NotBeEmpty();
+            conference.PendingTasks.Should().BeGreaterThan(0);
         }
     }
 }

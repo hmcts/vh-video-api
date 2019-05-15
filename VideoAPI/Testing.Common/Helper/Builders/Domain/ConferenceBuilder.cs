@@ -61,7 +61,7 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
         
-        public ConferenceBuilder WithAlert(string body, TaskType type)
+        public ConferenceBuilder WithTask(string body, TaskType type)
         {
             _conference.AddTask(type, body);
             return this;

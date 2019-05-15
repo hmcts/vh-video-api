@@ -44,7 +44,7 @@ namespace VideoApi.UnitTests.Events
                 It.IsAny<GetTasksForConferenceQuery>())).ReturnsAsync(tasks);
 
             await _eventHandler.HandleAsync(callbackEvent);
-            CommandHandlerMock.Verify(x => x.Handle<AddTaskCommand>(It.IsAny<AddTaskCommand>()), Times.Once);
+            CommandHandlerMock.Verify(x => x.Handle(It.IsAny<AddTaskCommand>()), Times.Once);
         }
 
         [Test]
