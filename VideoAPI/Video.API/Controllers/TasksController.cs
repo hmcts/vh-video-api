@@ -32,19 +32,19 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Get pending tasks
+        /// Get tasks for a conference
         /// </summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns></returns>
         [HttpGet("{conferenceId}/tasks")]
-        [SwaggerOperation(OperationId = "GetPendingTasks")]
+        [SwaggerOperation(OperationId = "GetTasksForConference")]
         [ProducesResponseType(typeof(List<TaskResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetPendingTasks(Guid conferenceId)
+        public async Task<IActionResult> GetTasksForConference(Guid conferenceId)
         {
-            var query = new GetIncompleteTasksForConferenceQuery(conferenceId);
+            var query = new GetTasksForConferenceQuery(conferenceId);
             try
             {
-                var tasks = await _queryHandler.Handle<GetIncompleteTasksForConferenceQuery, List<Task>>(query);
+                var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
                 var mapper = new TaskToResponseMapper();
                 var response = tasks.Select(mapper.MapTaskToResponse);
                 return Ok(response);

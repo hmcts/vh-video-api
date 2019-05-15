@@ -47,7 +47,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get pending tasks request")]
         public void GivenIHaveAValidGetTasksRequest()
         {
-            _context.Request = _context.Get(_endpoints.GetPendingTasks(_context.NewConferenceId));
+            _context.Request = _context.Get(_endpoints.GetTasks(_context.NewConferenceId));
         }
 
         [Given(@"I have a valid update task request")]

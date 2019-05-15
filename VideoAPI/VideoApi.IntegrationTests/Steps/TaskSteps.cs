@@ -28,9 +28,9 @@ namespace VideoApi.IntegrationTests.Steps
         {
         }
 
-        [Given(@"I have a (.*) get pending tasks request")]
-        [Given(@"I have an (.*) get pending tasks request")]
-        public async System.Threading.Tasks.Task GivenIHaveAGetPendingTasksRequest(Scenario scenario)
+        [Given(@"I have a (.*) get tasks request")]
+        [Given(@"I have an (.*) get tasks request")]
+        public async System.Threading.Tasks.Task GivenIHaveAGetTasksRequest(Scenario scenario)
         {
             Guid conferenceId;
             switch (scenario)
@@ -48,7 +48,7 @@ namespace VideoApi.IntegrationTests.Steps
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
             
-            ApiTestContext.Uri = _endpoints.GetPendingTasks(conferenceId);
+            ApiTestContext.Uri = _endpoints.GetTasks(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 

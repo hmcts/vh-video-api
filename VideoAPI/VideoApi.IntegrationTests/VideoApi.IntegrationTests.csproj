@@ -26,4 +26,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Api\*.feature" />
+    <Content Include="Api\*.feature.cs" />
+  </ItemGroup>
 </Project>

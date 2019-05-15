@@ -27,8 +27,8 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var query = new GetIncompleteTasksForConferenceQuery(SourceConference.Id);
-            var tasks = await QueryHandler.Handle<GetIncompleteTasksForConferenceQuery, List<Domain.Task>>(query);
+            var query = new GetTasksForConferenceQuery(SourceConference.Id);
+            var tasks = await QueryHandler.Handle<GetTasksForConferenceQuery, List<Domain.Task>>(query);
             var task = tasks.SingleOrDefault(x => x.Type == TaskType.Participant && x.OriginId == SourceParticipant.Id);
 
             if (task == null)

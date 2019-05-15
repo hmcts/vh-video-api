@@ -31,8 +31,8 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Tasks", "  In order to track tasks to be actions\r\n  As an API service\r\n  I want to create " +
-                    "new tasks and retrieve pending tasks", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Tasks", "  In order to track tasks to be actions\n  As an API service\n  I want to create ne" +
+                    "w tasks and retrieve pending tasks", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -71,15 +71,15 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Get pending tasks for a conference")]
-        public virtual void GetPendingTasksForAConference()
+        [NUnit.Framework.DescriptionAttribute("Get tasks for a conference")]
+        public virtual void GetTasksForAConference()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get pending tasks for a conference", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get tasks for a conference", null, ((string[])(null)));
 #line 6
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
-    testRunner.Given("I have a valid get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a valid get tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 8
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 9
@@ -99,7 +99,7 @@ namespace VideoApi.IntegrationTests.Api
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 13
-    testRunner.Given("I have a nonexistent get pending tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+    testRunner.Given("I have a nonexistent get tasks request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 14
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 15
@@ -109,10 +109,10 @@ namespace VideoApi.IntegrationTests.Api
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Sucessfully update task status")]
-        public virtual void SucessfullyUpdateTaskStatus()
+        [NUnit.Framework.DescriptionAttribute("Successfully update task status")]
+        public virtual void SuccessfullyUpdateTaskStatus()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sucessfully update task status", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Successfully update task status", null, ((string[])(null)));
 #line 17
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

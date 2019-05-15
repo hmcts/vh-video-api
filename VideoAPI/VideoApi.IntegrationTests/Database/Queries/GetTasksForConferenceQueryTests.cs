@@ -1,34 +1,30 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = VideoApi.Domain.Task;
-using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetIncompleteTasksForConferenceQueryTests : DatabaseTestsBase
+    public class GetTasksForConferenceQueryTests : DatabaseTestsBase
     {
-        private GetIncompleteTasksForConferenceQueryHandler _handler;
+        private GetTasksForConferenceQueryHandler _handler;
         private Guid _newConferenceId;
         
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetIncompleteTasksForConferenceQueryHandler(context);
+            _handler = new GetTasksForConferenceQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
         [Test]
-        public async System.Threading.Tasks.Task should_retrieve_alerts_with_todo_status()
+        public async System.Threading.Tasks.Task should_retrieve_all_alerts()
         {
             const string body = "Automated Test Complete Task";
             const string updatedBy = "test@automated.com";
@@ -55,16 +51,16 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _newConferenceId = seededConference.Id;
            
 
-            var query = new GetIncompleteTasksForConferenceQuery(_newConferenceId);
+            var query = new GetTasksForConferenceQuery(_newConferenceId);
             var results = await _handler.Handle(query);
-            results.Any(x => x.Status == TaskStatus.Done).Should().BeFalse();
+            results.Count.Should().Be(conference.GetTasks().Count);
         }
         
         [Test]
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var query = new GetIncompleteTasksForConferenceQuery(conferenceId);
+            var query = new GetTasksForConferenceQuery(conferenceId);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(query));
         }
         

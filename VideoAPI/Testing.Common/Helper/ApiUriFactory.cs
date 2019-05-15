@@ -70,7 +70,7 @@ namespace Testing.Common.Helper
     {
         private string ApiRoot => "conferences";
 
-        public string GetPendingTasks(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/tasks";
+        public string GetTasks(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/tasks";
         public string UpdateTaskStatus(Guid conferenceId, long taskId) => $"{ApiRoot}/{conferenceId}/tasks/{taskId}";
     }
 }
