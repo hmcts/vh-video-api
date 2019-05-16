@@ -45,6 +45,12 @@ namespace VideoApi.Events.Handlers
                 HearingRefId = SourceConference.HearingRefId,
                 ConferenceStatus = conferenceState
             };
+            var updateConferenceStatusCommand =
+                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            var addSuspendedTask = new AddTaskCommand(SourceConference.Id, "Hearing is suspended", TaskType.Hearing);
+
+            await CommandHandler.Handle(updateConferenceStatusCommand);
+            await CommandHandler.Handle(addSuspendedTask);
 
             await PublishConferenceStatusMessage(conferenceState);
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
