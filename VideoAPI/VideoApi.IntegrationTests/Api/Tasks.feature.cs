@@ -121,7 +121,9 @@ namespace VideoApi.IntegrationTests.Api
 #line 19
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 20
-    testRunner.Then("the response should have the status NoContent and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then("the response should have the status Ok and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 21
+    testRunner.And("the task should be retrieved with updated details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -131,14 +133,14 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void UnableToUpdateStatusOfAnTask()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an task", null, ((string[])(null)));
-#line 22
+#line 23
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 23
-    testRunner.Given("I have a nonexistent update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 24
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.Given("I have a nonexistent update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 25
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 26
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -149,14 +151,14 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void UnableToUpdateStatusOfAnTaskWithInvalidDetails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unable to update status of an task with invalid details", null, ((string[])(null)));
-#line 27
+#line 28
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 28
-    testRunner.Given("I have an invalid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 29
-    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+    testRunner.Given("I have an invalid update task request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 30
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 31
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

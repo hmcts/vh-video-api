@@ -17,7 +17,8 @@
   Scenario: Successfully update task status
     Given I have a valid update task request
     When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
+    Then the response should have the status Ok and success status True
+    And the task should be retrieved with updated details
 
   Scenario: Unable to update status of an task 
     Given I have a nonexistent update task request
