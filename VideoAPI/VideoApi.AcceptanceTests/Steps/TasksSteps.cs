@@ -44,7 +44,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().Be(true);
         }
 
-        [Given(@"I have a valid get pending tasks request")]
+        [Given(@"I have a valid get tasks request")]
         public void GivenIHaveAValidGetTasksRequest()
         {
             _context.Request = _context.Get(_endpoints.GetTasks(_context.NewConferenceId));
@@ -57,7 +57,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Patch(_endpoints.UpdateTaskStatus(_context.NewConferenceId, _context.NewTaskId), request);
         }
 
-        [Then(@"the pending tasks are retrieved")]
+        [Then(@"the tasks are retrieved")]
         public void ThenTheTaskIsRetrieved()
         {
             var tasks = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(_context.Response.Content);
@@ -72,8 +72,10 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the task is updated")]
         public void ThenTheStatusIsUpdated()
         {
-            var tasks = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(_context.Response.Content);
-            tasks.Count.Should().Be(0);
+            var task = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<TaskResponse>(_context.Response.Content);
+            task.Updated.HasValue.Should().BeTrue();
+            task.UpdatedBy.Should().Be(UpdatedBy);
+            task.Status.Should().Be(TaskStatus.Done);
         }
     }
 }
