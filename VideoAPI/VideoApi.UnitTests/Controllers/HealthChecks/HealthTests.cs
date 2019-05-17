@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -16,9 +15,9 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
 {
     public class HealthTests
     {
-        private Mock<IQueryHandler> _mockQueryHandler;
         private HealthCheckController _controller;
-        
+        private Mock<IQueryHandler> _mockQueryHandler;
+
         [SetUp]
         public void Setup()
         {
@@ -33,11 +32,12 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             var query = new GetConferenceByIdQuery(hearingId);
 
             _controller = new HealthCheckController(_mockQueryHandler.Object);
-            _mockQueryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query)).Returns(Task.FromResult(conference));
+            _mockQueryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query))
+                .Returns(Task.FromResult(conference));
 
             var result = await _controller.Health();
-            var typedResult = (OkResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            var typedResult = (OkResult) result;
+            typedResult.StatusCode.Should().Be((int) HttpStatusCode.OK);
         }
 
         [Test]
@@ -49,8 +49,8 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             _mockQueryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query)).Throws<Exception>();
 
             var result = await _controller.Health();
-            var typedResult = (ObjectResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            var typedResult = (ObjectResult) result;
+            typedResult.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
         }
     }
 }

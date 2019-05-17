@@ -12,19 +12,19 @@ namespace VideoApi.UnitTests.Domain.Conference
             var conference = new ConferenceBuilder().Build();
             conference.GetMeetingRoom().Should().BeNull();
         }
-        
+
         [Test]
         public void should_update_existing_room_details()
         {
             var conference = new ConferenceBuilder().WithMeetingRoom("poc.node.com", "user@email.com").Build();
             conference.GetMeetingRoom().Should().NotBeNull();
-            
+
             const string adminUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string judgeUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string participantUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string pexipNode = "testpoc.node.com";
             conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
-            
+
             conference.GetMeetingRoom().Should().NotBeNull();
             var meetingRoom = conference.GetMeetingRoom();
             meetingRoom.AdminUri.Should().Be(adminUri);
@@ -32,13 +32,13 @@ namespace VideoApi.UnitTests.Domain.Conference
             meetingRoom.ParticipantUri.Should().Be(participantUri);
             meetingRoom.PexipNode.Should().Be(pexipNode);
         }
-        
+
         [Test]
         public void should_add_room_details()
         {
             var conference = new ConferenceBuilder().Build();
             conference.GetMeetingRoom().Should().BeNull();
-            
+
             const string adminUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string judgeUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string participantUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";

@@ -34,9 +34,7 @@ namespace VideoApi.UnitTests.Validation
         [Test]
         public async Task should_return_missing_username()
         {
-            var request = new UpdateTaskRequest
-            {
-            };
+            var request = new UpdateTaskRequest();
 
             var result = await _validator.ValidateAsync(request);
 

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;

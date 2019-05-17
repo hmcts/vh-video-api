@@ -15,12 +15,12 @@ namespace VideoApi.UnitTests.Domain.Conference
         {
             var conference = new ConferenceBuilder()
                 .Build();
-            
+
             Action action = () => conference.UpdateConferenceStatus(ConferenceState.NotStarted);
             action.Should().Throw<DomainRuleException>().And.ValidationFailures
                 .Any(x => x.Message == "Cannot set conference status to 'none'").Should().BeTrue();
         }
-        
+
         [Test]
         public void should_add_conference_status()
         {

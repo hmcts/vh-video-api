@@ -14,13 +14,13 @@ namespace VideoApi.UnitTests.Domain.Tasks
             alert.Status.Should().Be(TaskStatus.ToDo);
             alert.Updated.Should().BeNull();
         }
-        
+
         [Test]
         public void should_update_status_to_done()
         {
             var alert = new Task("Something happened", TaskType.Participant);
             const string user = "Test User";
-            
+
             alert.CompleteTask(user);
             alert.Status.Should().Be(TaskStatus.Done);
             alert.UpdatedBy.Should().Be(user);

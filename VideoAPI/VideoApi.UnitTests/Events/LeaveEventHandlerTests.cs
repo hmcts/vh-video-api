@@ -45,7 +45,7 @@ namespace VideoApi.UnitTests.Events
             var participantMessage = (ParticipantEventMessage) ServiceBusQueueClient.ReadMessageFromQueue();
             participantMessage.Should().BeOfType<ParticipantEventMessage>();
             participantMessage.ParticipantState.Should().Be(ParticipantState.Disconnected);
-            
+
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&

@@ -45,7 +45,7 @@ namespace VideoApi.UnitTests.Events
             participantMessage.Should().BeOfType<ParticipantEventMessage>();
             ((ParticipantEventMessage) participantMessage).ParticipantState.Should()
                 .Be(ParticipantState.Available);
-            
+
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&
