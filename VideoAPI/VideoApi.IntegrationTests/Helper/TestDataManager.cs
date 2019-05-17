@@ -33,6 +33,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
+                .WithTask("Suspended", TaskType.Hearing)
                 .Build();
 
             return await SeedConference(conference);

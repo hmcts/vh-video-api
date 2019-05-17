@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -18,6 +19,9 @@ namespace VideoApi.UnitTests.Mappings
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithParticipants(3)
+                .WithTask("Test1", TaskType.Hearing)
+                .WithTask("Test2", TaskType.Participant)
+                .WithTask("Test3", TaskType.Judge)
                 .Build();
 
             var response = _mapper.MapConferenceToSummaryResponse(conference);
@@ -29,6 +33,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.Tasks)
             );
             response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus());
+            response.PendingTasks.Should().Be(conference.GetTasks().Count(x => x.Status == TaskStatus.ToDo));
         }
     }
 }

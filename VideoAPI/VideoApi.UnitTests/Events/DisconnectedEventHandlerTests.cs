@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Events
             var updateStatusCommand = new UpdateParticipantStatusCommand(conference.Id, participantForEvent.Id,
                 ParticipantState.Disconnected);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
-            
+
             await _eventHandler.HandleAsync(callbackEvent);
 
             // Verify messages sent to event hub clients
@@ -68,16 +68,18 @@ namespace VideoApi.UnitTests.Events
                 ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
-            var updateParticipantStatusCommand = new UpdateParticipantStatusCommand(conference.Id, participantForEvent.Id,
+            var updateParticipantStatusCommand = new UpdateParticipantStatusCommand(conference.Id,
+                participantForEvent.Id,
                 ParticipantState.Disconnected);
             CommandHandlerMock.Setup(x => x.Handle(updateParticipantStatusCommand));
 
-            var updateConferenceStatusCommand = new UpdateConferenceStatusCommand(conference.Id, ConferenceState.Suspended);
+            var updateConferenceStatusCommand =
+                new UpdateConferenceStatusCommand(conference.Id, ConferenceState.Suspended);
             CommandHandlerMock.Setup(x => x.Handle(updateConferenceStatusCommand));
 
             var addHearingTaskCommand = new AddTaskCommand(conference.Id, "Hearing is suspended", TaskType.Hearing);
             CommandHandlerMock.Setup(x => x.Handle(addHearingTaskCommand));
-            
+
             await _eventHandler.HandleAsync(callbackEvent);
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
@@ -94,14 +96,14 @@ namespace VideoApi.UnitTests.Events
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
                     command.ParticipantState == ParticipantState.Disconnected)), Times.Once);
-            
+
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command => 
+                x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.ConferenceState == ConferenceState.Suspended)), Times.Once);
-            
+
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<AddTaskCommand>(command => 
+                x => x.Handle(It.Is<AddTaskCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.TaskType == TaskType.Hearing)), Times.Once);
 

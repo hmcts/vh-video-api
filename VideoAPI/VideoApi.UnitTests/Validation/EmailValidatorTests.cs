@@ -13,14 +13,14 @@ namespace VideoApi.UnitTests.Validation
             var email = Internet.Email();
             email.IsValidEmail().Should().BeTrue();
         }
-        
+
         [Test]
         public void should_fail_validation_when_empty()
         {
             var email = string.Empty;
             email.IsValidEmail().Should().BeFalse();
         }
-        
+
         [Test]
         public void should_fail_validation_when_format_is_invalid()
         {

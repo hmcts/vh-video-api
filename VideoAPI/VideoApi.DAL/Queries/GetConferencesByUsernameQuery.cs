@@ -32,7 +32,8 @@ namespace VideoApi.DAL.Queries
             query.Username = query.Username.ToLower().Trim();
             return await _context.Conferences
                 .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses").AsNoTracking()
+                .Include("ConferenceStatuses")
+                .Include("Tasks").AsNoTracking()
                 .Where(x => x.Participants.Any(p => p.Username == query.Username) 
                             && x.State != ConferenceState.Closed)
                 .OrderBy(x => x.ScheduledDateTime)

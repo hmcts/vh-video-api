@@ -12,9 +12,9 @@ using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetIncompleteTasksForConferenceQuery : IQuery
+    public class GetTasksForConferenceQuery : IQuery
     {
-        public GetIncompleteTasksForConferenceQuery(Guid conferenceId)
+        public GetTasksForConferenceQuery(Guid conferenceId)
         {
             ConferenceId = conferenceId;
         }
@@ -22,17 +22,16 @@ namespace VideoApi.DAL.Queries
         public Guid ConferenceId { get; }
     }
 
-    public class
-        GetIncompleteTasksForConferenceQueryHandler : IQueryHandler<GetIncompleteTasksForConferenceQuery, List<Task>>
+    public class GetTasksForConferenceQueryHandler : IQueryHandler<GetTasksForConferenceQuery, List<Task>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetIncompleteTasksForConferenceQueryHandler(VideoApiDbContext context)
+        public GetTasksForConferenceQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Task>> Handle(GetIncompleteTasksForConferenceQuery query)
+        public async Task<List<Task>> Handle(GetTasksForConferenceQuery query)
         {
             var conference = await _context.Conferences.Include(x => x.Tasks)
                 .AsNoTracking()
@@ -43,8 +42,7 @@ namespace VideoApi.DAL.Queries
                 throw new ConferenceNotFoundException(query.ConferenceId);
             }
 
-            var alerts = conference.GetTasks().Where(x => x.Status == TaskStatus.ToDo).ToList();
-            return alerts;
+            return conference.GetTasks().ToList();
         }
     }
 }

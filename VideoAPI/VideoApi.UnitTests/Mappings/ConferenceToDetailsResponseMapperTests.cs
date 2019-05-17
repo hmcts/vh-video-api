@@ -30,7 +30,7 @@ namespace VideoApi.UnitTests.Mappings
             );
 
             response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus());
-            
+
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options
                 .Excluding(x => x.ParticipantRefId)

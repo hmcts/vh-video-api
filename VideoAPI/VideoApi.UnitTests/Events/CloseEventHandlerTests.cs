@@ -41,7 +41,7 @@ namespace VideoApi.UnitTests.Events
             var eventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
             eventMessage.Should().BeOfType<HearingEventMessage>();
             ((HearingEventMessage) eventMessage).ConferenceStatus.Should().Be(ConferenceState.Closed);
-            
+
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&

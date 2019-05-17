@@ -1,6 +1,7 @@
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace Video.API.Mappings
 {
@@ -21,6 +22,7 @@ namespace Video.API.Mappings
                 ScheduledDateTime = conference.ScheduledDateTime,
                 ScheduledDuration= conference.ScheduledDuration,
                 Status = conference.GetCurrentStatus(),
+                PendingTasks = conference.GetTasks().Count(x => x.Status == TaskStatus.ToDo),
                 Participants = participants
             };
         }       

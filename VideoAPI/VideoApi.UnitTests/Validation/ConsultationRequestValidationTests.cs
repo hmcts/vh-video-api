@@ -11,13 +11,13 @@ namespace VideoApi.UnitTests.Validation
     public class ConsultationRequestValidationTests
     {
         private ConsultationRequestValidation _validator;
-        
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _validator = new ConsultationRequestValidation();
         }
-        
+
         [Test]
         public async Task should_pass_validation()
         {
@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_fail_validation_when_conference_is_empty()
         {
@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoConferenceIdErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_fail_validation_when_requested_by_is_empty()
         {
@@ -53,26 +53,26 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoRequestedByIdErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_fail_validation_when_requested_for_is_empty()
         {
             var request = BuildRequest();
             request.RequestedFor = Guid.Empty;
-            
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
             result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoRequestedForIdErrorMessage)
                 .Should().BeTrue();
         }
-        
+
         [Test]
         public async Task should_fail_validation_when_answer_is_invalid()
         {
             var request = BuildRequest();
             request.Answer = ConsultationAnswer.None;
-            
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();

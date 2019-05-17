@@ -40,11 +40,11 @@ namespace VideoApi.UnitTests.Events
                 new VideoApi.Domain.Task("Test", TaskType.Participant) {OriginId = Guid.NewGuid()}
             };
 
-            QueryHandlerMock.Setup(x => x.Handle<GetIncompleteTasksForConferenceQuery, List<VideoApi.Domain.Task>>(
-                It.IsAny<GetIncompleteTasksForConferenceQuery>())).ReturnsAsync(tasks);
+            QueryHandlerMock.Setup(x => x.Handle<GetTasksForConferenceQuery, List<VideoApi.Domain.Task>>(
+                It.IsAny<GetTasksForConferenceQuery>())).ReturnsAsync(tasks);
 
             await _eventHandler.HandleAsync(callbackEvent);
-            CommandHandlerMock.Verify(x => x.Handle<AddTaskCommand>(It.IsAny<AddTaskCommand>()), Times.Once);
+            CommandHandlerMock.Verify(x => x.Handle(It.IsAny<AddTaskCommand>()), Times.Once);
         }
 
         [Test]

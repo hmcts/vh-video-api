@@ -32,19 +32,19 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Get pending tasks
+        /// Get tasks for a conference
         /// </summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns></returns>
         [HttpGet("{conferenceId}/tasks")]
-        [SwaggerOperation(OperationId = "GetPendingTasks")]
+        [SwaggerOperation(OperationId = "GetTasksForConference")]
         [ProducesResponseType(typeof(List<TaskResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetPendingTasks(Guid conferenceId)
+        public async Task<IActionResult> GetTasksForConference(Guid conferenceId)
         {
-            var query = new GetIncompleteTasksForConferenceQuery(conferenceId);
+            var query = new GetTasksForConferenceQuery(conferenceId);
             try
             {
-                var tasks = await _queryHandler.Handle<GetIncompleteTasksForConferenceQuery, List<Task>>(query);
+                var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
                 var mapper = new TaskToResponseMapper();
                 var response = tasks.Select(mapper.MapTaskToResponse);
                 return Ok(response);
@@ -62,25 +62,29 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">The id of the conference to update</param>
         /// <param name="taskId">The id of the task to update</param>
         /// <returns></returns>
-        [HttpPatch("{conferenceId}/tasks/{taskid}")]
+        [HttpPatch("{conferenceId}/tasks/{taskId}")]
         [SwaggerOperation(OperationId = "UpdateTaskStatus")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateTaskStatus(Guid conferenceId, long taskId, [FromBody] UpdateTaskRequest updateTaskRequest)
+        [ProducesResponseType(typeof(TaskResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateTaskStatus(Guid conferenceId, long taskId,
+            [FromBody] UpdateTaskRequest updateTaskRequest)
         {
             var command = new UpdateTaskCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
+            
             try
             {
                 await _commandHandler.Handle(command);
+                var query = new GetTasksForConferenceQuery(conferenceId);
+                var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
+                var task = tasks.Single(x => x.Id == taskId);
+                var response = new TaskToResponseMapper().MapTaskToResponse(task);
+                return Ok(response);
             }
             catch (TaskNotFoundException)
             {
                 return NotFound();
             }
-
-            return NoContent();
         }
-
     }
 }

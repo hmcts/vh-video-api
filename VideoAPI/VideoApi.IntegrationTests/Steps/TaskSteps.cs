@@ -22,21 +22,27 @@ namespace VideoApi.IntegrationTests.Steps
     [Binding]
     public class TaskSteps : StepsBase
     {
+        private readonly ConferenceTestContext _conferenceTestContext;
+        private readonly TaskTestContext _taskTestContext;
         private readonly TaskEndpoints _endpoints = new ApiUriFactory().TaskEndpoints;
-        
-        public TaskSteps(ApiTestContext apiTestContext) : base(apiTestContext)
+
+        public TaskSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext,
+            TaskTestContext taskTestContext) : base(apiTestContext)
         {
+            _conferenceTestContext = conferenceTestContext;
+            _taskTestContext = taskTestContext;
         }
 
-        [Given(@"I have a (.*) get pending tasks request")]
-        [Given(@"I have an (.*) get pending tasks request")]
-        public async System.Threading.Tasks.Task GivenIHaveAGetPendingTasksRequest(Scenario scenario)
+        [Given(@"I have a (.*) get tasks request")]
+        [Given(@"I have an (.*) get tasks request")]
+        public async System.Threading.Tasks.Task GivenIHaveAGetTasksRequest(Scenario scenario)
         {
             Guid conferenceId;
             switch (scenario)
             {
                 case Scenario.Valid:
                     var seededConference = await SeedConferenceWithTasks();
+                    _conferenceTestContext.SeededConference = seededConference;
                     TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
                     ApiTestContext.NewConferenceId = seededConference.Id;
                     conferenceId = seededConference.Id;
@@ -48,7 +54,7 @@ namespace VideoApi.IntegrationTests.Steps
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
             
-            ApiTestContext.Uri = _endpoints.GetPendingTasks(conferenceId);
+            ApiTestContext.Uri = _endpoints.GetTasks(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 
@@ -65,12 +71,24 @@ namespace VideoApi.IntegrationTests.Steps
                 task.Type.Should().BeOfType<TaskType>();
             }
         }
+        
+        [Then(@"the task should be retrieved with updated details")]
+        public async System.Threading.Tasks.Task ThenTheTaskShouldBeRetrievedWithUpdatedDetails()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var updatedTask = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<TaskResponse>(json);
+            updatedTask.Should().NotBeNull();
+            updatedTask.Updated.Should().NotBeNull();
+            updatedTask.UpdatedBy.Should().Be(_taskTestContext.UpdateTaskRequest.UpdatedBy);
+            updatedTask.Id.Should().Be(_taskTestContext.TaskToUpdate.Id);
+        }
 
         [Given(@"I have a (.*) update task request")]
         [Given(@"I have an (.*) update task request")]
         public async System.Threading.Tasks.Task GivenIHaveAUpdateTaskRequest(Scenario scenario)
         {
             var seededConference = await SeedConferenceWithTasks();
+            _conferenceTestContext.SeededConference = seededConference;
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             ApiTestContext.NewConferenceId = seededConference.Id;
 
@@ -81,11 +99,12 @@ namespace VideoApi.IntegrationTests.Steps
                 UpdatedBy = seededConference.Participants
                     .First(x => x.UserRole == UserRole.Individual).Username
             };
-
+            _taskTestContext.UpdateTaskRequest = request;
             switch (scenario)
             {
                 case Scenario.Valid:
                     var task = seededConference.Tasks.First(x => x.Type == TaskType.Participant);
+                    _taskTestContext.TaskToUpdate = task;
                     taskId = task.Id;
                     break;
                 case Scenario.Invalid:

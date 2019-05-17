@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Domain.Conference
                 .WithConferenceStatus(state).Build();
             conference.IsClosed().Should().Be(isClosed);
         }
-        
+
         [Test]
         public void should_not_be_closed_by_default()
         {

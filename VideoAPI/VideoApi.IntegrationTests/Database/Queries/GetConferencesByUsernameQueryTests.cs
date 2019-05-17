@@ -51,6 +51,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
+                .WithTask("Test Task", TaskType.Hearing)
                 .Build();
             _newConferenceId2 = conference2.Id;
 
@@ -65,6 +66,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
+                .WithTask("Test Task", TaskType.Judge)
                 .Build();
             _newConferenceId4 = conference4.Id;
             
@@ -72,12 +74,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
+                .WithTask("Test Task", TaskType.Participant)
                 .Build();
             _newConferenceId5 = conference5.Id;
             
             var conference6 = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
+                .WithTask("Test Task", TaskType.Participant)
                 .Build();
             _newConferenceId6 = conference6.Id;
 
