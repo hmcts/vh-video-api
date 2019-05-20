@@ -35,7 +35,7 @@ namespace VideoApi.Events.Handlers
 
             if (task == null)
             {
-                var command = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Camera blocked",
+                var command = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Media blocked",
                     TaskType.Participant);
                 await CommandHandler.Handle(command);
             }
