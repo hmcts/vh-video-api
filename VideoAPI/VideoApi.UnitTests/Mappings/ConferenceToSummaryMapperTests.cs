@@ -18,10 +18,11 @@ namespace VideoApi.UnitTests.Mappings
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithConferenceStatus(ConferenceState.Closed)
+                .WithParticipant(UserRole.Judge, "Judge")
                 .WithParticipants(3)
-                .WithTask("Test1", TaskType.Hearing)
-                .WithTask("Test2", TaskType.Participant)
-                .WithTask("Test3", TaskType.Judge)
+                .WithHearingTask("Test1", TaskType.Hearing)
+                .WithParticipantTask("Test2", TaskType.Participant)
+                .WithJudgeTask("Test3", TaskType.Judge)
                 .Build();
 
             var response = _mapper.MapConferenceToSummaryResponse(conference);

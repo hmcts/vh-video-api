@@ -38,6 +38,7 @@ namespace VideoApi.IntegrationTests.Steps
                     request.RequestedBy = Guid.Empty;
                     break;
                 }
+
                 case Scenario.Nonexistent:
                 {
                     request.ConferenceId = Guid.NewGuid();
@@ -85,6 +86,7 @@ namespace VideoApi.IntegrationTests.Steps
                     request.Answer = ConsultationAnswer.None;
                     break;
                 }
+
                 case Scenario.Nonexistent:
                 {
                     request.ConferenceId = Guid.NewGuid();

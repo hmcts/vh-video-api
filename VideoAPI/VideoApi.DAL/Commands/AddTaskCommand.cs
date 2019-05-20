@@ -10,12 +10,14 @@ namespace VideoApi.DAL.Commands
     public class AddTaskCommand : ICommand
     {
         public Guid ConferenceId { get; }
+        public Guid OriginId { get; }
         public string Body { get; }
         public TaskType TaskType { get; }
 
-        public AddTaskCommand(Guid conferenceId, string body, TaskType taskType)
+        public AddTaskCommand(Guid conferenceId, Guid originId, string body, TaskType taskType)
         {
             ConferenceId = conferenceId;
+            OriginId = originId;
             Body = body;
             TaskType = taskType;
         }
@@ -39,8 +41,8 @@ namespace VideoApi.DAL.Commands
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
-            
-            conference.AddTask(command.TaskType, command.Body);
+
+            conference.AddTask(command.OriginId, command.TaskType, command.Body);
 
             await _context.SaveChangesAsync();
         }

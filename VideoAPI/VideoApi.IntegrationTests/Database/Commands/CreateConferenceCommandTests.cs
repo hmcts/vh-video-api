@@ -15,7 +15,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
     {
         private CreateConferenceCommandHandler _handler;
         private Guid _newConferenceId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             command.NewConferenceId.Should().NotBeEmpty();
             _newConferenceId = command.NewConferenceId;
         }
-        
+
         [TearDown]
         public async Task TearDown()
         {

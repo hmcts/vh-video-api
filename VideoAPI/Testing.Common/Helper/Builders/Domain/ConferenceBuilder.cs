@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Faker;
 using FizzWare.NBuilder;
+using FluentAssertions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
@@ -61,9 +63,29 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
         
-        public ConferenceBuilder WithTask(string body, TaskType type)
+        public ConferenceBuilder WithJudgeTask(string body, TaskType type)
         {
-            _conference.AddTask(type, body);
+            var judge = _conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
+            judge.Should().NotBeNull("Conference does not have a judge");
+
+            _conference.AddTask(judge.Id, type, body);
+            return this;
+        }
+        
+        public ConferenceBuilder WithParticipantTask(string body, TaskType type)
+        {
+            var individual = _conference.GetParticipants().First(x =>
+                x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative);
+            individual.Should().NotBeNull("Conference does not have an individual");
+            _conference.AddTask(individual.Id, type, body);
+            return this;
+        }
+
+
+        
+        public ConferenceBuilder WithHearingTask(string body, TaskType type)
+        {
+            _conference.AddTask(_conference.Id, type, body);
             return this;
         }
 

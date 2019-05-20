@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Domain;
@@ -10,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Tasks
         [Test]
         public void should_not_be_completed_by_default()
         {
-            var alert = new Task("Something happened", TaskType.Participant);
+            var alert = new Task(Guid.NewGuid(), "Something happened", TaskType.Participant);
             alert.Status.Should().Be(TaskStatus.ToDo);
             alert.Updated.Should().BeNull();
         }
@@ -18,7 +19,7 @@ namespace VideoApi.UnitTests.Domain.Tasks
         [Test]
         public void should_update_status_to_done()
         {
-            var alert = new Task("Something happened", TaskType.Participant);
+            var alert = new Task(Guid.NewGuid(), "Something happened", TaskType.Participant);
             const string user = "Test User";
 
             alert.CompleteTask(user);

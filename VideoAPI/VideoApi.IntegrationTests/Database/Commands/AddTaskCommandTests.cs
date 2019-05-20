@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -35,7 +34,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             const string body = "Automated Test Add Task";
 
-            var command = new AddTaskCommand(_newConferenceId, body, taskType);
+            var command = CreateTaskCommand(seededConference, body, taskType);
             await _handler.Handle(command);
 
             Conference conference;
@@ -51,6 +50,25 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedAlert.Status.Should().Be(TaskStatus.ToDo);
             savedAlert.Updated.Should().BeNull();
             savedAlert.UpdatedBy.Should().BeNull();
+        }
+
+        private AddTaskCommand CreateTaskCommand(Conference conference, string body, TaskType taskType)
+        {
+            if (taskType == TaskType.Hearing)
+            {
+                return new AddTaskCommand(conference.Id, conference.Id, body, taskType);
+            }
+
+            if (taskType == TaskType.Judge)
+            {
+                var participant = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
+                return new AddTaskCommand(_newConferenceId, participant.Id, body, taskType);
+            }
+            else
+            {
+                var participant = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
+                return new AddTaskCommand(_newConferenceId, participant.Id, body, taskType);
+            }
         }
 
         [TearDown]

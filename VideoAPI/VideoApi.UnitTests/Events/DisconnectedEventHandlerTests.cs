@@ -77,7 +77,7 @@ namespace VideoApi.UnitTests.Events
                 new UpdateConferenceStatusCommand(conference.Id, ConferenceState.Suspended);
             CommandHandlerMock.Setup(x => x.Handle(updateConferenceStatusCommand));
 
-            var addHearingTaskCommand = new AddTaskCommand(conference.Id, "Hearing is suspended", TaskType.Hearing);
+            var addHearingTaskCommand = new AddTaskCommand(conference.Id, conference.Id, "Suspended", TaskType.Hearing);
             CommandHandlerMock.Setup(x => x.Handle(addHearingTaskCommand));
 
             await _eventHandler.HandleAsync(callbackEvent);

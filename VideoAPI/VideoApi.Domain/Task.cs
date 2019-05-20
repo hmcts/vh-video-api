@@ -17,8 +17,9 @@ namespace VideoApi.Domain
         public DateTime? Updated { get; set; }
         public string UpdatedBy { get; private set; }
         
-        public Task(string body, TaskType type)
+        public Task(Guid originId, string body, TaskType type)
         {
+            OriginId = originId;
             Body = body;
             Type = type;
             Status = TaskStatus.ToDo;

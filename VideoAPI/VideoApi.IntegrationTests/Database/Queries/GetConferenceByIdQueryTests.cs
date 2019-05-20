@@ -12,7 +12,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
     {
         private GetConferenceByIdQueryHandler _handler;
         private Guid _newConferenceId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -20,7 +20,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _handler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
-        
+
         [Test]
         public async Task should_get_conference_details_by_id()
         {
@@ -28,7 +28,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             var conference = await _handler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-            
+
             conference.Should().NotBeNull();
 
             conference.CaseType.Should().Be(seededConference.CaseType);
@@ -53,7 +53,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conference.GetCurrentStatus().Should().BeEquivalentTo(seededConference.GetCurrentStatus());
             conference.GetConferenceStatuses().Should().NotBeNullOrEmpty();
         }
-        
+
         [TearDown]
         public async Task TearDown()
         {

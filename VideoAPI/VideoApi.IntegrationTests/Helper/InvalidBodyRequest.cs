@@ -14,7 +14,7 @@ namespace VideoApi.IntegrationTests.Helper
         public InvalidRequest BuildRequest()
         {
             return Builder<InvalidRequest>.CreateNew()
-                .With(x => x.AString = "ABC")          
+                .With(x => x.AString = "ABC")
                 .Build();
         }
     }

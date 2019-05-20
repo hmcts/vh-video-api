@@ -90,9 +90,9 @@ namespace VideoApi.Domain
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
 
-        public void AddTask(TaskType taskType, string message)
+        public void AddTask(Guid originId,TaskType taskType, string message)
         {
-            var task = new Task(message, taskType);
+            var task = new Task(originId, message, taskType);
             Tasks.Add(task);
         }
 

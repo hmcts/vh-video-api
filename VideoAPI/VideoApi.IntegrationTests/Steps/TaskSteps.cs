@@ -53,7 +53,7 @@ namespace VideoApi.IntegrationTests.Steps
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
-            
+
             ApiTestContext.Uri = _endpoints.GetTasks(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Steps
                 task.Type.Should().BeOfType<TaskType>();
             }
         }
-        
+
         [Then(@"the task should be retrieved with updated details")]
         public async System.Threading.Tasks.Task ThenTheTaskShouldBeRetrievedWithUpdatedDetails()
         {
@@ -129,26 +129,29 @@ namespace VideoApi.IntegrationTests.Steps
             const string body = "Automated Test Complete Task";
             const string updatedBy = "test@automated.com";
 
-            var judgeTaskDone = new Task(body, TaskType.Judge);
-            judgeTaskDone.CompleteTask(updatedBy);
-            var participantTaskDone = new Task(body, TaskType.Participant);
-            participantTaskDone.CompleteTask(updatedBy);
-            var hearingTaskDone = new Task(body, TaskType.Hearing);
-            hearingTaskDone.CompleteTask(updatedBy);
-            
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Judge, "Judge")
                 .Build();
-            
-            conference.AddTask(TaskType.Judge, body);
-            conference.AddTask(TaskType.Participant, body);
-            conference.AddTask(TaskType.Hearing, body);
-            conference.AddTask(TaskType.Participant, body);
+
+            var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
+            var individual = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
+
+            var judgeTaskDone = new Task(judge.Id, body, TaskType.Judge);
+            judgeTaskDone.CompleteTask(updatedBy);
+            var participantTaskDone = new Task(individual.Id, body, TaskType.Participant);
+            participantTaskDone.CompleteTask(updatedBy);
+            var hearingTaskDone = new Task(conference.Id, body, TaskType.Hearing);
+            hearingTaskDone.CompleteTask(updatedBy);
+
+            conference.AddTask(judge.Id, TaskType.Judge, body);
+            conference.AddTask(individual.Id, TaskType.Participant, body);
+            conference.AddTask(conference.Id, TaskType.Hearing, body);
+            conference.AddTask(individual.Id, TaskType.Participant, body);
 
             conference.GetTasks()[0].CompleteTask(updatedBy);
-            
+
             return await ApiTestContext.TestDataManager.SeedConference(conference);
         }
-        
     }
 }

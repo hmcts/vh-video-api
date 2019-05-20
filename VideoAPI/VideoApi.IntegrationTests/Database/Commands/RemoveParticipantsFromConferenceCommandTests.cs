@@ -27,7 +27,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
-        
+
         [Test]
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new RemoveParticipantsFromConferenceCommand(conferenceId, participants);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
-        
+
         [Test]
         public async Task should_remove_participant_from_conference()
         {
@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participants = new List<Participant> {participantToRemove};
             var command = new RemoveParticipantsFromConferenceCommand(_newConferenceId, participants);
             await _handler.Handle(command);
-            
+
             var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var confParticipants = conference.GetParticipants();
             confParticipants.Any(x => x.Username == participantToRemove.Username).Should().BeFalse();
@@ -58,7 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterCount.Should().BeLessThan(beforeCount);
         }
 
-        
+
         [TearDown]
         public async Task TearDown()
         {

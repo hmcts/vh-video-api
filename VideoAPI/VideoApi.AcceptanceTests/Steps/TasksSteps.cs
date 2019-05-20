@@ -65,7 +65,7 @@ namespace VideoApi.AcceptanceTests.Steps
             tasks.First().Id.Should().BeGreaterThan(-1);
             tasks.First().Created.Should().BeBefore(DateTime.Now);
             tasks.First().Type.Should().Be(TaskType.Participant);
-            tasks.First().Body.Should().Contain(_context.NewConference.Participants.First().Name);
+            tasks.First().Body.Should().Contain("Media blocked");
             _context.NewTaskId = tasks.First().Id;
         }
 

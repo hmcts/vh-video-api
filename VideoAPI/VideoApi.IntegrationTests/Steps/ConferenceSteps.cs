@@ -28,7 +28,8 @@ namespace VideoApi.IntegrationTests.Steps
         private readonly ApiTestContext _apiTestContext;
         private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
 
-        public ConferenceSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(apiTestContext)
+        public ConferenceSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(
+            apiTestContext)
         {
             _apiTestContext = apiTestContext;
             _conferenceTestContext = conferenceTestContext;
@@ -49,6 +50,7 @@ namespace VideoApi.IntegrationTests.Steps
                     username = seededConference.Participants.First().Username;
                     break;
                 }
+
                 case Scenario.Nonexistent:
                     username = Internet.Email();
                     break;
@@ -77,6 +79,7 @@ namespace VideoApi.IntegrationTests.Steps
                     conferenceId = seededConference.Id;
                     break;
                 }
+
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
                     break;
@@ -89,7 +92,7 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.Uri = _endpoints.GetConferenceDetailsById(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
-        
+
         [Given(@"I have a get details for a conference request with a (.*) hearing ref id")]
         [Given(@"I have a get details for a conference request with an (.*) hearing ref id")]
         public async Task GivenIHaveAGetConferenceDetailsByHearingRefIdRequest(Scenario scenario)
@@ -105,6 +108,7 @@ namespace VideoApi.IntegrationTests.Steps
                     hearingRefId = seededConference.HearingRefId;
                     break;
                 }
+
                 case Scenario.Nonexistent:
                     hearingRefId = Guid.NewGuid();
                     break;
@@ -143,7 +147,7 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a (.*) remove conference request")]
         [Given(@"I have an (.*) remove conference request")]
         public async Task GivenIHaveAValidRemoveHearingRequest(Scenario scenario)
@@ -159,6 +163,7 @@ namespace VideoApi.IntegrationTests.Steps
                     conferenceId = seededConference.Id;
                     break;
                 }
+
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
                     break;
@@ -186,7 +191,8 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
+            var conferences =
+                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
             conferences.Should().NotBeNull();
             ApiTestContext.NewConferenceId = conferences.First().Id;
             foreach (var conference in conferences)
@@ -208,6 +214,7 @@ namespace VideoApi.IntegrationTests.Steps
                 removedConference =
                     await db.Conferences.SingleOrDefaultAsync(x => x.Id == ApiTestContext.NewConferenceId);
             }
+
             removedConference.Should().BeNull();
             ApiTestContext.NewConferenceId = Guid.Empty;
         }
@@ -216,7 +223,8 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenAnEmptyListIsRetrieved()
         {
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
+            var conferences =
+                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
             conferences.Should().BeEmpty();
         }
 
@@ -229,7 +237,7 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.NewConferenceId = conference.Id;
             _conferenceTestContext.ConferenceDetails = conference;
         }
-        
+
         [Then(@"the response should be the same")]
         public async Task ThenTheResponseShouldBeTheSame()
         {
@@ -238,6 +246,5 @@ namespace VideoApi.IntegrationTests.Steps
             conference.Should().NotBeNull();
             conference.Should().BeEquivalentTo(_conferenceTestContext.ConferenceDetails);
         }
-
     }
 }

@@ -30,7 +30,7 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.NewConferenceId = seededConference.Id;
             _conferenceTestContext.SeededConference = seededConference;
         }
-        
+
         [When(@"I send the request to the endpoint")]
         [When(@"I send the same request twice")]
         public async Task WhenISendTheRequestToTheEndpoint()
@@ -38,12 +38,24 @@ namespace VideoApi.IntegrationTests.Steps
             _apiTestContext.ResponseMessage = new HttpResponseMessage();
             switch (_apiTestContext.HttpMethod.Method)
             {
-                case "GET": _apiTestContext.ResponseMessage = await SendGetRequestAsync(_apiTestContext); break;
-                case "POST": _apiTestContext.ResponseMessage = await SendPostRequestAsync(_apiTestContext); break;
-                case "PATCH": _apiTestContext.ResponseMessage = await SendPatchRequestAsync(_apiTestContext); break;
-                case "PUT": _apiTestContext.ResponseMessage = await SendPutRequestAsync(_apiTestContext); break;
-                case "DELETE": _apiTestContext.ResponseMessage = await SendDeleteRequestAsync(_apiTestContext); break;
-                default: throw new ArgumentOutOfRangeException(_apiTestContext.HttpMethod.ToString(), _apiTestContext.HttpMethod.ToString(), null);
+                case "GET":
+                    _apiTestContext.ResponseMessage = await SendGetRequestAsync(_apiTestContext);
+                    break;
+                case "POST":
+                    _apiTestContext.ResponseMessage = await SendPostRequestAsync(_apiTestContext);
+                    break;
+                case "PATCH":
+                    _apiTestContext.ResponseMessage = await SendPatchRequestAsync(_apiTestContext);
+                    break;
+                case "PUT":
+                    _apiTestContext.ResponseMessage = await SendPutRequestAsync(_apiTestContext);
+                    break;
+                case "DELETE":
+                    _apiTestContext.ResponseMessage = await SendDeleteRequestAsync(_apiTestContext);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(_apiTestContext.HttpMethod.ToString(),
+                        _apiTestContext.HttpMethod.ToString(), null);
             }
         }
 

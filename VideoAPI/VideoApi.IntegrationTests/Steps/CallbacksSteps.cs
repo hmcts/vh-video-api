@@ -31,7 +31,7 @@ namespace VideoApi.IntegrationTests.Steps
             var seededConference = await ApiTestContext.TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             ApiTestContext.NewConferenceId = seededConference.Id;
-            var request = BuildRequest(eventType, seededConference);                   
+            var request = BuildRequest(eventType, seededConference);
             ApiTestContext.Uri = _endpoints.Event;
             ApiTestContext.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             ConferenceEventRequest request;
             switch (scenario)
-            {               
+            {
                 case Scenario.Nonexistent:
                     request = BuildRequest(EventType.Transfer);
                     break;
