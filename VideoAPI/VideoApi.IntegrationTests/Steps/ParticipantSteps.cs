@@ -23,7 +23,7 @@ namespace VideoApi.IntegrationTests.Steps
         public ParticipantSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
         }
-        
+
         [Given(@"I have an add participant to a (.*) conference request")]
         [Given(@"I have an add participant to an (.*) conference request")]
         public async Task GivenIHaveAnAddParticipantToConferenceRequest(Scenario scenario)
@@ -39,18 +39,28 @@ namespace VideoApi.IntegrationTests.Steps
                     ApiTestContext.NewConferenceId = seededConference.Id;
                     conferenceId = seededConference.Id;
                     request = new AddParticipantsToConferenceRequest
-                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}};
+                    {
+                        Participants = new List<ParticipantRequest>
+                            {new ParticipantRequestBuilder(UserRole.Individual).Build()}
+                    };
                     break;
                 }
+
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
                     request = new AddParticipantsToConferenceRequest
-                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}};
+                    {
+                        Participants = new List<ParticipantRequest>
+                            {new ParticipantRequestBuilder(UserRole.Individual).Build()}
+                    };
                     break;
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
                     request = new AddParticipantsToConferenceRequest
-                        {Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}};
+                    {
+                        Participants = new List<ParticipantRequest>
+                            {new ParticipantRequestBuilder(UserRole.Individual).Build()}
+                    };
                     break;
 
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
@@ -102,6 +112,7 @@ namespace VideoApi.IntegrationTests.Steps
                     participantId = seededConference.GetParticipants().First().Id;
                     break;
                 }
+
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
                     participantId = Guid.NewGuid();

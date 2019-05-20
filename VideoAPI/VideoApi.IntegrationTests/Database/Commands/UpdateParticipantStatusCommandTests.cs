@@ -84,6 +84,5 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 await TestDataManager.RemoveConference(_newConferenceId);
             }
         }
-
     }
 }

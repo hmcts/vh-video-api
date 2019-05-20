@@ -16,7 +16,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private GetConferenceByHearingRefIdQueryHandler _handler;
         private Guid _newConferenceId1;
         private Guid _newConferenceId2;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -25,19 +25,19 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _newConferenceId1 = Guid.Empty;
             _newConferenceId2 = Guid.Empty;
         }
-        
+
         [Test]
         public async Task should_get_conference_details_by_hearing_ref_id()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId1 = seededConference.Id;
-            
+
             var conference = await _handler.Handle(new GetConferenceByHearingRefIdQuery(seededConference.HearingRefId));
-            
+
             AssertConference(conference, seededConference);
         }
-        
+
         [Test]
         public async Task should_get_non_closed_conference()
         {
@@ -55,12 +55,12 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             _newConferenceId2 = conference2.Id;
-            
+
             await TestDataManager.SeedConference(conference1);
             await TestDataManager.SeedConference(conference2);
-            
+
             var conference = await _handler.Handle(new GetConferenceByHearingRefIdQuery(knownHearingRefId));
-            
+
             AssertConference(conference, conference2);
         }
 
@@ -86,12 +86,12 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
             }
         }
-        
+
         [TearDown]
         public async Task TearDown()
         {
             await TestDataManager.RemoveConference(_newConferenceId1);
-            
+
             if (_newConferenceId2 != Guid.Empty)
             {
                 await TestDataManager.RemoveConference(_newConferenceId2);

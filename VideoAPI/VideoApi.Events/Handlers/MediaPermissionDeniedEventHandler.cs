@@ -12,6 +12,7 @@ using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
 using VideoApi.Events.ServiceBus;
+using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.Events.Handlers
 {
@@ -29,12 +30,13 @@ namespace VideoApi.Events.Handlers
         {
             var query = new GetTasksForConferenceQuery(SourceConference.Id);
             var tasks = await QueryHandler.Handle<GetTasksForConferenceQuery, List<Domain.Task>>(query);
-            var task = tasks.SingleOrDefault(x => x.Type == TaskType.Participant && x.OriginId == SourceParticipant.Id);
+            var task = tasks.SingleOrDefault(x =>
+                x.Type == TaskType.Participant && x.OriginId == SourceParticipant.Id && x.Status != TaskStatus.ToDo);
 
             if (task == null)
             {
-                var participant = SourceConference.Participants.Single(x => x.Id == SourceParticipant.Id);
-                var command = new AddTaskCommand(SourceConference.Id, participant.Name, TaskType.Participant);
+                var command = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Camera blocked",
+                    TaskType.Participant);
                 await CommandHandler.Handle(command);
             }
         }

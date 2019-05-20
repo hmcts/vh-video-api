@@ -16,7 +16,7 @@ namespace VideoApi.IntegrationTests.Helper
     {
         private readonly ServicesConfiguration _services;
         private readonly DbContextOptions<VideoApiDbContext> _dbContextOptions;
-        
+
         public TestDataManager(ServicesConfiguration services, DbContextOptions<VideoApiDbContext> dbContextOptions)
         {
             _services = services;
@@ -33,12 +33,12 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
-                .WithTask("Suspended", TaskType.Hearing)
+                .WithHearingTask("Suspended", TaskType.Hearing)
                 .Build();
 
             return await SeedConference(conference);
         }
-        
+
         public async Task<Conference> SeedConference(Conference conference)
         {
             using (var db = new VideoApiDbContext(_dbContextOptions))
@@ -58,12 +58,12 @@ namespace VideoApi.IntegrationTests.Helper
                     .Include("Participants.ParticipantStatuses")
                     .Include("ConferenceStatuses")
                     .SingleAsync(x => x.Id == conferenceId);
-                
+
                 db.Remove(conference);
                 await db.SaveChangesAsync();
             }
         }
-        
+
         public async Task RemoveEvents()
         {
             using (var db = new VideoApiDbContext(_dbContextOptions))

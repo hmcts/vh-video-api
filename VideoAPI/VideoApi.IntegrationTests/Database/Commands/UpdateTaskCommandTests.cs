@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -37,7 +36,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string updatedBy = "test@automated.com";
             var conferenceWithAlert = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithTask(body, taskType)
+                .WithParticipantTask(body, taskType)
                 .Build();
             var seededConference = await TestDataManager.SeedConference(conferenceWithAlert);
             _newConferenceId = seededConference.Id;
@@ -45,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var command = new UpdateTaskCommand(_newConferenceId, task.Id, updatedBy);
             await _handler.Handle(command);
-            
+
             Conference conference;
             using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
@@ -59,16 +58,16 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedAlert.Updated.Should().NotBeNull();
             updatedAlert.UpdatedBy.Should().Be(updatedBy);
         }
-        
-        
+
+
         [Test]
         public void should_throw_conference_not_found_exception()
         {
             const string updatedBy = "test@automated.com";
-            var command = new UpdateTaskCommand(Guid.NewGuid(),9999, updatedBy);
+            var command = new UpdateTaskCommand(Guid.NewGuid(), 9999, updatedBy);
             Assert.ThrowsAsync<TaskNotFoundException>(() => _handler.Handle(command));
         }
-        
+
         [Test]
         public async Task should_throw_task_not_found_exception()
         {
@@ -76,7 +75,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string updatedBy = "test@automated.com";
             var conferenceWithAlert = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithTask(body, TaskType.Judge)
+                .WithParticipantTask(body, TaskType.Participant)
                 .Build();
             var seededConference = await TestDataManager.SeedConference(conferenceWithAlert);
             _newConferenceId = seededConference.Id;

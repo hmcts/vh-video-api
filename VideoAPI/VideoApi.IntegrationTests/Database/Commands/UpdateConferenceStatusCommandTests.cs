@@ -15,7 +15,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         private UpdateConferenceStatusCommandHandler _handler;
         private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         private Guid _newConferenceId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -24,7 +24,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
-        
+
         [Test]
         public void should_throw_exception_when_conference_does_not_exist()
         {
@@ -33,7 +33,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateConferenceStatusCommand(conferenceId, state);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
-        
+
         [Test]
         public async Task should_update_conference_status()
         {
@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var beforeCount = seededConference.GetConferenceStatuses().Count;
             var beforeState = seededConference.GetCurrentStatus();
-            
+
             var command = new UpdateConferenceStatusCommand(_newConferenceId, state);
             await _handler.Handle(command);
 
@@ -57,7 +57,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterState.Should().Be(state);
         }
 
-        
+
         [TearDown]
         public async Task TearDown()
         {

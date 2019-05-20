@@ -36,14 +36,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             await TestDataManager.RemoveEvents();
         }
-        
+
         [Test]
         public async Task should_save_event()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            
+
             var externalEventId = "AutomatedEventTestIdSuccessfulSave";
             var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
             var participantId = seededConference.GetParticipants().First().Id;

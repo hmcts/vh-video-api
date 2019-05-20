@@ -15,7 +15,7 @@ namespace VideoApi.IntegrationTests.Database
         private ServicesConfiguration _services;
         protected DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions;
         protected TestDataManager TestDataManager;
-        
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -23,7 +23,7 @@ namespace VideoApi.IntegrationTests.Database
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Startup>();
-            
+
             var configRoot = configRootBuilder.Build();
             _databaseConnectionString = configRoot.GetConnectionString("VhVideoApi");
             _services = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
@@ -33,10 +33,10 @@ namespace VideoApi.IntegrationTests.Database
             dbContextOptionsBuilder.UseSqlServer(_databaseConnectionString);
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
             VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            
+
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             context.Database.Migrate();
-            
+
             TestDataManager = new TestDataManager(_services, VideoBookingsDbContextOptions);
         }
     }

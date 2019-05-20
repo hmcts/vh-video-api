@@ -36,13 +36,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             var beforeCount = seededConference.GetParticipants().Count;
-            
+
             var participant = new ParticipantBuilder(true).Build();
             var participants = new List<Participant>() {participant};
             var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants);
-            
+
             await _handler.Handle(command);
-            
+
             var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var confParticipants = conference.GetParticipants();
             confParticipants.Any(x => x.Username == participant.Username).Should().BeTrue();

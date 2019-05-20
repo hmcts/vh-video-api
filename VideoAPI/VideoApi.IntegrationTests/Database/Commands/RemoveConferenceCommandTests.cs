@@ -15,7 +15,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
     {
         private RemoveConferenceCommandHandler _handler;
         private Guid _newConferenceId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -32,7 +32,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new RemoveConferenceCommand(conferenceId);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
-        
+
         [Test]
         public async Task should_remove_conference()
         {
@@ -52,7 +52,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             removedConference.Should().BeNull();
             _newConferenceId = Guid.Empty;
         }
-        
+
         [TearDown]
         public async Task TearDown()
         {

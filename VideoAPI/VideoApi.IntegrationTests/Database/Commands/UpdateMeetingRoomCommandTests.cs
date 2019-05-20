@@ -16,7 +16,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         private UpdateMeetingRoomHandler _handler;
         private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         private Guid _newConferenceId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -25,16 +25,16 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
-        
+
         [Test]
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
             var command = BuildCommand(conferenceId);
-            
+
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
-        
+
         [Test]
         public async Task should_add_conference_virtual_court()
         {
@@ -43,7 +43,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var command = BuildCommand(_newConferenceId);
             await _handler.Handle(command);
-            
+
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var updatedRoom = updatedConference.GetMeetingRoom();
             updatedRoom.Should().NotBeNull();
@@ -52,7 +52,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedRoom.ParticipantUri.Should().Be(command.ParticipantUri);
             updatedRoom.PexipNode.Should().Be(command.PexipNode);
         }
-        
+
         [Test]
         public async Task should_update_conference_virtual_court()
         {
@@ -64,7 +64,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var command = BuildCommand(_newConferenceId);
             await _handler.Handle(command);
-            
+
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var updatedRoom = updatedConference.GetMeetingRoom();
             updatedRoom.Should().NotBeNull();
@@ -82,7 +82,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string pexipNode = "testpoc.node.com";
             return new UpdateMeetingRoomCommand(conferenceId, adminUri, judgeUri, participantUri, pexipNode);
         }
-        
+
         [TearDown]
         public async Task TearDown()
         {
