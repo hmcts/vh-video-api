@@ -64,6 +64,7 @@ namespace VideoApi.IntegrationTests.Steps
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
             var tasks = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(json);
             tasks.Should().NotBeNullOrEmpty();
+            tasks.Should().BeInDescendingOrder(x => x.Created);
             foreach (var task in tasks)
             {
                 task.Id.Should().BeGreaterThan(0);
