@@ -59,6 +59,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var query = new GetTasksForConferenceQuery(_newConferenceId);
             var results = await _handler.Handle(query);
             results.Count.Should().Be(conference.GetTasks().Count);
+            results.Should().BeInDescendingOrder(x => x.Created);
         }
 
         [Test]
