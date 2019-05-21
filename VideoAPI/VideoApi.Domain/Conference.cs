@@ -98,7 +98,7 @@ namespace VideoApi.Domain
 
         public IList<Task> GetTasks()
         {
-            return Tasks;
+            return Tasks.OrderByDescending(x => x.Created).ToList();
         }
 
         public IList<ConferenceStatus> GetConferenceStatuses()
