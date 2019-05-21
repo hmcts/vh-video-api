@@ -48,6 +48,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.ParticipantRefId.Should().NotBeEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
+                if (participant.UserRole == UserRole.Representative)
+                {
+                    participant.Representee.Should().NotBeNullOrEmpty();
+                }
             }
 
             conference.GetCurrentStatus().Should().BeEquivalentTo(seededConference.GetCurrentStatus());

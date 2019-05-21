@@ -23,6 +23,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.UserRole)
                 .Excluding(x => x.Id)
                 .Excluding(x => x.CaseTypeGroup)
+                .Excluding(x => x.Representee)
             );
             response.Status.Should().BeEquivalentTo(participant.GetCurrentStatus().ParticipantState);
         }

@@ -45,6 +45,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Username = Internet.Email())
                 .With(x => x.DisplayName = Internet.UserName())
                 .With(x => x.UserRole = UserRole.Representative)
+                .With(x => x.Representee = "Person")
                 .Build();
 
             if (!string.IsNullOrWhiteSpace(caseTypeGroup))
