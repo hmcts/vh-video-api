@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Video.API.Extensions;
 using Video.API.Mappings;
 using Video.API.Validations;
 using VideoApi.Contract.Requests;
@@ -205,6 +204,5 @@ namespace Video.API.Controllers
             var response = mapper.MapConferenceToResponse(conference);
             return Ok(response);
         }
-        
     }
 }

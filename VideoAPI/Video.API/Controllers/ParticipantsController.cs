@@ -5,12 +5,15 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Video.API.Mappings;
 using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Services;
 
 namespace Video.API.Controllers
 {
@@ -22,11 +25,14 @@ namespace Video.API.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
+        private readonly IVideoPlatformService _videoPlatformService;
 
-        public ParticipantsController(ICommandHandler commandHandler, IQueryHandler queryHandler)
+        public ParticipantsController(ICommandHandler commandHandler, IQueryHandler queryHandler,
+            IVideoPlatformService videoPlatformService)
         {
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
+            _videoPlatformService = videoPlatformService;
         }
 
         /// <summary>
@@ -53,7 +59,8 @@ namespace Video.API.Controllers
             }
 
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(), x.Username.ToLower().Trim(), x.UserRole,
+                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(),
+                        x.Username.ToLower().Trim(), x.UserRole,
                         x.CaseTypeGroup))
                 .ToList();
 
@@ -95,6 +102,22 @@ namespace Video.API.Controllers
             var command = new RemoveParticipantsFromConferenceCommand(conferenceId, participants);
             await _commandHandler.Handle(command);
             return NoContent();
+        }
+
+        [HttpGet("{conferenceId}/testcall/{participantId}/result")]
+        [SwaggerOperation(OperationId = "GetTestCallResultForParticipant")]
+        [ProducesResponseType(typeof(TestCallScoreResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetTestCallResultForParticipant(Guid conferenceId, Guid participantId)
+        {
+            var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
+            if (testCallResult == null)
+            {
+                return NotFound();
+            }
+
+            var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
+            return Ok(response);
         }
     }
 }

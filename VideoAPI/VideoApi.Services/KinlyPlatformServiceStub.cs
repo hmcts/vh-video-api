@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
@@ -29,6 +31,16 @@ namespace VideoApi.Services
         public Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId)
         {
             return Task.FromResult(Create());
+        }
+
+        public Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
+        {
+            var testCall = new TestCallResult
+            {
+                Passed = true,
+                Score = TestScore.Good
+            };
+            return Task.FromResult(testCall);
         }
 
         private static MeetingRoom Create()
