@@ -1,8 +1,8 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 
 namespace VideoApi.UnitTests.Domain.Participants
 {

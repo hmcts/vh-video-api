@@ -1,7 +1,7 @@
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 
-namespace VideoApi.Domain.Validations
+namespace VideoApi.Domain
 {
     public class TestCallResult : Entity<long>
     {

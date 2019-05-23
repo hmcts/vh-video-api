@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -8,9 +7,11 @@ using Video.API.Controllers;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 using VideoApi.Services;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Participant
 {

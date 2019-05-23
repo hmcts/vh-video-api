@@ -12,6 +12,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
         private UserRole _userRole;
         private string _caseTypeGroup;
+        private TestCallResult _testCallResult;
 
         public ParticipantBuilder(bool ignoreId = false)
         {
@@ -36,6 +37,12 @@ namespace Testing.Common.Helper.Builders.Domain
             _caseTypeGroup = caseTypeGroup;
             return this;
         }
+        
+        public ParticipantBuilder WithSelfTestScore(bool passed, TestScore score)
+        {
+            _testCallResult = new TestCallResult(passed, score);
+            return this;
+        }
 
         public Participant Build()
         {
@@ -44,6 +51,12 @@ namespace Testing.Common.Helper.Builders.Domain
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), name, name, Internet.Email(), _userRole,
                     _caseTypeGroup)).Build();
+
+            if (_testCallResult != null)
+            {
+                participant.UpdateTestCallResult(_testCallResult.Passed, _testCallResult.Score);
+            }
+            
             return participant;
         }
     }
