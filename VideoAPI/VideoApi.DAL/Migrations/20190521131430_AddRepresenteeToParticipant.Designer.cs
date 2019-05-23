@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideoApi.DAL;
 
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    partial class VideoApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190521131430_AddRepresenteeToParticipant")]
+    partial class AddRepresenteeToParticipant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,8 +110,6 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<string>("Representee");
 
-                    b.Property<long?>("TestCallResultId");
-
                     b.Property<int>("UserRole");
 
                     b.Property<string>("Username");
@@ -167,21 +167,6 @@ namespace VideoApi.DAL.Migrations
                     b.HasIndex("ConferenceId");
 
                     b.ToTable("Task");
-                });
-
-            modelBuilder.Entity("VideoApi.Domain.Validations.TestCallResult", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Passed");
-
-                    b.Property<int>("Score");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TestCallResult");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>

@@ -60,8 +60,11 @@ namespace Video.API.Controllers
 
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(),
-                        x.Username.ToLower().Trim(), x.UserRole,
-                        x.CaseTypeGroup))
+                        x.Username.ToLowerInvariant().Trim(), x.UserRole,
+                        x.CaseTypeGroup)
+                    {
+                        Representee = x.Representee
+                    })
                 .ToList();
 
             var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants);

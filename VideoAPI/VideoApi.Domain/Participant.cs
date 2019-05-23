@@ -32,7 +32,7 @@ namespace VideoApi.Domain
         public string Username { get; set; }
         public UserRole UserRole { get; set; }
         public string CaseTypeGroup { get; set; }
-        
+        public string Representee { get; set; }
         public long? TestCallResultId { get; set; }
         public virtual TestCallResult TestCallResult { get; private set; }
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }

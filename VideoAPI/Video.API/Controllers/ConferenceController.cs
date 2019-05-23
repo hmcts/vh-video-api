@@ -97,7 +97,10 @@ namespace Video.API.Controllers
             
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
-                        x.CaseTypeGroup))
+                        x.CaseTypeGroup)
+                    {
+                        Representee = x.Representee
+                    })
                 .ToList();
             var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
                 request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);

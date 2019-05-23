@@ -28,6 +28,7 @@ namespace VideoApi.IntegrationTests.Helper
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
                 .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.VideoHearingsOfficer, null)

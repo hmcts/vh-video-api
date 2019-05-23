@@ -17,6 +17,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.Username);
             builder.Property(x => x.UserRole);
             builder.Property(x => x.CaseTypeGroup);
+            builder.Property(x => x.Representee);
 
             builder.Property(x => x.TestCallResultId).IsRequired(false);
 
