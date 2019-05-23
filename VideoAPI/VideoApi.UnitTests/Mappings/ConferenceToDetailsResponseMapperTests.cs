@@ -20,7 +20,8 @@ namespace VideoApi.UnitTests.Mappings
                 .WithParticipants(3)
                 .Build();
 
-            var response = _mapper.MapConferenceToResponse(conference);
+            var pexipSelfTestNode = "selttest@pexip.node";
+            var response = _mapper.MapConferenceToResponse(conference, pexipSelfTestNode);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)

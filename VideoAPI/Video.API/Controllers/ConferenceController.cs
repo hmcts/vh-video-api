@@ -69,7 +69,7 @@ namespace Video.API.Controllers
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(queriedConference);
+            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
         }
 
@@ -134,7 +134,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
             var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(queriedConference);
+            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
         
@@ -208,8 +208,7 @@ namespace Video.API.Controllers
             }
             
             var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(conference);
-            response.MeetingRoom.PexipSelfTestNode = _servicesConfiguration.PexipSelfTestNode;
+            var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
     }
