@@ -107,7 +107,7 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("{conferenceId}/testcall/{participantId}/result")]
+        [HttpGet("{conferenceId}/participants/{participantId}/selftestresult")]
         [SwaggerOperation(OperationId = "GetTestCallResultForParticipant")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -121,7 +121,7 @@ namespace Video.API.Controllers
 
             var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
                 testCallResult.Score);
-            _commandHandler.Handle(command);
+            await _commandHandler.Handle(command);
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
         }

@@ -1,4 +1,5 @@
 using System;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -9,7 +10,6 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
 
@@ -36,14 +36,18 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task should_return_okay_with_response()
         {
-            var testResult = new TestCallResult(true, TestScore.Good);
+            var testResult = Builder<TestCallResult>.CreateNew()
+                .WithFactory(() => new TestCallResult(true, TestScore.Good)).Build();
             
             _mockVideoPlatformService
                 .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
                 .Returns(Task.FromResult(testResult));
 
-            
-            _mockCommandHandler.Setup(x => x.Handle(It.IsAny<UpdateSelfTestCallResultCommand>()));
+            var conferenceId = Guid.NewGuid();
+            var participantId = Guid.NewGuid();
+            var command =
+                new UpdateSelfTestCallResultCommand(conferenceId, participantId, testResult.Passed, testResult.Score);
+            _mockCommandHandler.Setup(x => x.Handle(command));
             
             var response = await _controller.GetTestCallResultForParticipant(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
