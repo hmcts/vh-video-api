@@ -19,6 +19,7 @@ namespace Video.API.Mappings
                     DisplayName = participant.DisplayName,
                     UserRole = participant.UserRole,
                     CaseTypeGroup = participant.CaseTypeGroup,
+                    Representee = participant.Representee,
                     CurrentStatus =
                         new ParticipantStatusResponseMapper().MapCurrentParticipantStatusToResponse(participant)
                 };

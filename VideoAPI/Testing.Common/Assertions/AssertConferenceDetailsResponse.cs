@@ -30,6 +30,10 @@ namespace Testing.Common.Assertions
                 participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
                 participant.CurrentStatus.Should().NotBe(ParticipantState.None);
+                if (participant.UserRole == UserRole.Representative)
+                {
+                    participant.Representee.Should().NotBeNullOrEmpty();
+                }
             }
 
             conference.MeetingRoom.Should().NotBeNull();

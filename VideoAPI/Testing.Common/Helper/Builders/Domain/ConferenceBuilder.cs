@@ -56,6 +56,11 @@ namespace Testing.Common.Helper.Builders.Domain
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), username, userRole,
                     caseTypeGroup)).Build();
+
+            if (userRole == UserRole.Representative)
+            {
+                participant.Representee = "Person";
+            }
             
             participant.UpdateParticipantStatus(ParticipantState.Available);
             _conference.AddParticipant(participant);
