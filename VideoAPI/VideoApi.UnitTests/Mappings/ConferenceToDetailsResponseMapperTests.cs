@@ -34,6 +34,8 @@ namespace VideoApi.UnitTests.Mappings
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options
                 .Excluding(x => x.ParticipantRefId)
+                .Excluding(x => x.TestCallResultId)
+                .Excluding(x => x.TestCallResult)
             );
         }
     }

@@ -73,11 +73,7 @@ namespace VideoApi.Services
             try
             {
                 var response = await _kinlyApiClient.GetTestCallAsync(participantId.ToString());
-                return new TestCallResult
-                {
-                    Passed = response.Passed,
-                    Score = (TestScore) response.Score
-                };
+                return new TestCallResult(response.Passed, (TestScore) response.Score);
             }
             catch (KinlyApiException e)
             {

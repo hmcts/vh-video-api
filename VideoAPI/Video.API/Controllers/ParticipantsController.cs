@@ -116,6 +116,9 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
+            var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
+                testCallResult.Score);
+            _commandHandler.Handle(command);
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Mappings;
 using VideoApi.Domain;
 
 namespace Video.API.Mappings
@@ -20,7 +21,8 @@ namespace Video.API.Mappings
                     UserRole = participant.UserRole,
                     CaseTypeGroup = participant.CaseTypeGroup,
                     CurrentStatus =
-                        new ParticipantStatusResponseMapper().MapCurrentParticipantStatusToResponse(participant)
+                        new ParticipantStatusResponseMapper().MapCurrentParticipantStatusToResponse(participant),
+                    SelfTestScore = new TaskCallResultResponseMapper().MapTaskToResponse(participant.TestCallResult)
                 };
                 response.Add(paResponse);
             }

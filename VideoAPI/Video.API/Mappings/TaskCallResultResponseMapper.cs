@@ -5,12 +5,13 @@ namespace Video.API.Mappings
 {
     public class TaskCallResultResponseMapper
     {
-        public TestCallScoreResponse MapTaskToResponse(TestCallResult task)
+        public TestCallScoreResponse MapTaskToResponse(TestCallResult testCallScore)
         {
+            if (testCallScore == null) return null;
             return new TestCallScoreResponse
             {
-                Passed = task.Passed,
-                Score = task.Score
+                Passed = testCallScore.Passed,
+                Score = testCallScore.Score
             };
         }
     }

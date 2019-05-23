@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
@@ -31,8 +32,11 @@ namespace VideoApi.Domain
         public string Username { get; set; }
         public UserRole UserRole { get; set; }
         public string CaseTypeGroup { get; set; }
+        
+        public long? TestCallResultId { get; set; }
+        public virtual TestCallResult TestCallResult { get; private set; }
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
-
+        
         public IList<ParticipantStatus> GetParticipantStatuses()
         {
             return ParticipantStatuses;
@@ -46,6 +50,16 @@ namespace VideoApi.Domain
         public void UpdateParticipantStatus(ParticipantState status)
         {
             ParticipantStatuses.Add(new ParticipantStatus(status));
+        }
+
+        public void UpdateTestCallResult(bool passed, TestScore score)
+        {
+            TestCallResult = new TestCallResult(passed, score);
+        }
+
+        public TestCallResult GetTestCallResult()
+        {
+            return TestCallResult;
         }
     }
 }
