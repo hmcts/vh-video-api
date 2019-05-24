@@ -1,8 +1,10 @@
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Helpers;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -14,12 +16,12 @@ namespace VideoApi.Services
     public class KinlyPlatformService : IVideoPlatformService
     {
         private readonly IKinlyApiClient _kinlyApiClient;
-        private readonly IOptions<ServicesConfiguration> _servicesConfigOptions;
+        private readonly ServicesConfiguration _servicesConfigOptions;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient, IOptions<ServicesConfiguration> servicesConfigOptions)
         {
             _kinlyApiClient = kinlyApiClient;
-            _servicesConfigOptions = servicesConfigOptions;
+            _servicesConfigOptions = servicesConfigOptions.Value;
         }
 
 
@@ -30,7 +32,7 @@ namespace VideoApi.Services
                 var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
-                    Callback_uri = _servicesConfigOptions.Value.CallbackUri
+                    Callback_uri = _servicesConfigOptions.CallbackUri
                 });
 
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Judge, response.Uris.Participant,
@@ -70,20 +72,21 @@ namespace VideoApi.Services
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            try
+            HttpResponseMessage responseMessage;
+            using (var httpClient = new HttpClient())
             {
-                var response = await _kinlyApiClient.GetTestCallAsync(participantId.ToString());
-                return new TestCallResult(response.Passed, (TestScore) response.Score);
+                var requestUri = $"{_servicesConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
+                responseMessage = await httpClient.GetAsync(new Uri(requestUri));
             }
-            catch (KinlyApiException e)
+            
+            if (!responseMessage.IsSuccessStatusCode)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
+                return null;
+            }
 
-                throw;
-            }
+            var content = await responseMessage.Content.ReadAsStringAsync();
+            var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
+            return new TestCallResult(testCall.Passed, (TestScore) testCall.Score);
         }
     }
 }

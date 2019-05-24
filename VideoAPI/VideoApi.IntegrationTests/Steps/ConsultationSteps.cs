@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;

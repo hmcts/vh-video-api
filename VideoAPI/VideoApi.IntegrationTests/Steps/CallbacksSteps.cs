@@ -7,6 +7,7 @@ using FizzWare.NBuilder;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;

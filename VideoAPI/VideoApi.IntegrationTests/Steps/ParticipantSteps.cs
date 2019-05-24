@@ -8,6 +8,7 @@ using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
