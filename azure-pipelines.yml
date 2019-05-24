@@ -15,7 +15,7 @@ variables:
     "Testing/TestClientSecret":"$(vh-admin-web-key)",
     "ServiceBusQueue/ConnectionString":"$(AzureServiceBusConnectionStringSend)",
     "Services/KinlyApiUrl":"$(KinlyApiUrl)",
-    "Services/KinlySelfTestApiUrl":"$(KinlySelfTestApiUrl)"
+    "Services/KinlySelfTestApiUrl":"$(KinlySelfTestApiUrl)",
     "Services/CallbackUri":"$(CallbackUri)",
     "Services/PexipNode":"$(PexipNode)",
     "Services/ConferenceUsername":"$(ConferenceUsername)",
