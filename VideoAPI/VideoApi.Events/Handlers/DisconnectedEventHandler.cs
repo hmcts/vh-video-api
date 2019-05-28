@@ -25,6 +25,7 @@ namespace VideoApi.Events.Handlers
         {
             await PublishParticipantDisconnectMessage();
 
+            await AddSuspendedTask();
             if (SourceParticipant.UserRole == UserRole.Judge) await PublishSuspendedEventMessage();
         }
 
@@ -37,23 +38,27 @@ namespace VideoApi.Events.Handlers
             await PublishParticipantStatusMessage(participantState);
         }
 
+        private async Task AddSuspendedTask()
+        {
+            var addSuspendedTask =
+                new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
+            await CommandHandler.Handle(addSuspendedTask);
+        }
+
         private async Task PublishSuspendedEventMessage()
         {
             var conferenceState = ConferenceState.Suspended;
+            await PublishConferenceStatusMessage(conferenceState);
+            
+            var updateConferenceStatusCommand =
+                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            await CommandHandler.Handle(updateConferenceStatusCommand);
+
             var hearingEventMessage = new HearingEventMessage
             {
                 HearingRefId = SourceConference.HearingRefId,
                 ConferenceStatus = conferenceState
             };
-            var updateConferenceStatusCommand =
-                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
-            var addSuspendedTask =
-                new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
-
-            await CommandHandler.Handle(updateConferenceStatusCommand);
-            await CommandHandler.Handle(addSuspendedTask);
-
-            await PublishConferenceStatusMessage(conferenceState);
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }

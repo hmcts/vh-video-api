@@ -36,6 +36,9 @@ namespace VideoApi.UnitTests.Events
                 ParticipantState.Disconnected);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
+            var addHearingTaskCommand = new AddTaskCommand(conference.Id, conference.Id, "Suspended", TaskType.Hearing);
+            CommandHandlerMock.Setup(x => x.Handle(addHearingTaskCommand));
+            
             await _eventHandler.HandleAsync(callbackEvent);
 
             // Verify messages sent to event hub clients
@@ -48,6 +51,11 @@ namespace VideoApi.UnitTests.Events
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
                     command.ParticipantState == ParticipantState.Disconnected)), Times.Once);
+            
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<AddTaskCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.TaskType == TaskType.Hearing)), Times.Once);
         }
 
         [Test]
