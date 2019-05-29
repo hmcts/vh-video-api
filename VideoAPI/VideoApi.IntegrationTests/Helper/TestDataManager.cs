@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,6 @@ using VideoApi.Common.Configuration;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.IntegrationTests.Contexts;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Helper
@@ -34,7 +34,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
-                .WithHearingTask("Suspended", TaskType.Hearing)
+                .WithHearingTask("Suspended")
                 .Build();
 
             return await SeedConference(conference);
@@ -61,6 +61,20 @@ namespace VideoApi.IntegrationTests.Helper
                     .SingleAsync(x => x.Id == conferenceId);
 
                 db.Remove(conference);
+                await db.SaveChangesAsync();
+            }
+        }
+        
+        public async Task RemoveConferences(List<Guid> conferenceIds)
+        {
+            using (var db = new VideoApiDbContext(_dbContextOptions))
+            {
+                var conferences = await db.Conferences
+                    .Include("Participants.ParticipantStatuses")
+                    .Include("ConferenceStatuses")
+                    .Where(x => conferenceIds.Contains(x.Id)).ToListAsync();
+
+                db.RemoveRange(conferences);
                 await db.SaveChangesAsync();
             }
         }

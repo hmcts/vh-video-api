@@ -160,6 +160,19 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        [HttpGet("today")]
+        [SwaggerOperation(OperationId = "GetConferencesToday")]
+        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetConferencesToday()
+        {
+            var query = new GetConferencesTodayQuery();
+            var conferences = await _queryHandler.Handle<GetConferencesTodayQuery, List<Conference>>(query);
+
+            var mapper = new ConferenceToSummaryResponseMapper();
+            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            return Ok(response);
+        }
+        
         /// <summary>
         /// Get non-closed conferences for a participant by their username
         /// </summary>
