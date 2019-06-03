@@ -36,7 +36,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string updatedBy = "test@automated.com";
             var conferenceWithAlert = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipantTask(body, taskType)
+                .WithTask(body, taskType)
                 .Build();
             var seededConference = await TestDataManager.SeedConference(conferenceWithAlert);
             _newConferenceId = seededConference.Id;
@@ -75,7 +75,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string updatedBy = "test@automated.com";
             var conferenceWithAlert = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipantTask(body, TaskType.Participant)
+                .WithParticipantTask(body)
                 .Build();
             var seededConference = await TestDataManager.SeedConference(conferenceWithAlert);
             _newConferenceId = seededConference.Id;

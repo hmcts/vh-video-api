@@ -14,7 +14,7 @@ namespace Testing.Common.Helper.Builders.Domain
         private readonly Conference _conference;
         private readonly BuilderSettings _builderSettings;
 
-        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null)
+        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null, DateTime? scheduledDateTime = null)
         {
             _builderSettings = new BuilderSettings();
             if (ignoreId)
@@ -25,7 +25,8 @@ namespace Testing.Common.Helper.Builders.Domain
             }
             
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
-            var scheduleDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
+            
+            var scheduleDateTime = scheduledDateTime ?? DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             const string caseType = "Civil Money Claims";
             var caseNumber = $"Test{Guid.NewGuid():N}";
             const string caseName = "Auto vs Manual";
@@ -68,29 +69,35 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
         
-        public ConferenceBuilder WithJudgeTask(string body, TaskType type)
+        public ConferenceBuilder WithJudgeTask(string body)
         {
             var judge = _conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             judge.Should().NotBeNull("Conference does not have a judge");
 
-            _conference.AddTask(judge.Id, type, body);
+            _conference.AddTask(judge.Id, TaskType.Judge, body);
             return this;
         }
         
-        public ConferenceBuilder WithParticipantTask(string body, TaskType type)
+        public ConferenceBuilder WithParticipantTask(string body)
         {
             var individual = _conference.GetParticipants().First(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative);
             individual.Should().NotBeNull("Conference does not have an individual");
-            _conference.AddTask(individual.Id, type, body);
+            _conference.AddTask(individual.Id, TaskType.Participant, body);
             return this;
         }
 
 
         
-        public ConferenceBuilder WithHearingTask(string body, TaskType type)
+        public ConferenceBuilder WithHearingTask(string body)
         {
-            _conference.AddTask(_conference.Id, type, body);
+            _conference.AddTask(_conference.Id, TaskType.Hearing, body);
+            return this;
+        }
+
+        public ConferenceBuilder WithTask(string body, TaskType taskType)
+        {
+            _conference.AddTask(_conference.Id, taskType, body);
             return this;
         }
 

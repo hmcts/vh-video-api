@@ -382,6 +382,28 @@ namespace VideoApi.IntegrationTests.Api
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get conferences for today only")]
+        public virtual void GetConferencesForTodayOnly()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get conferences for today only", null, ((string[])(null)));
+#line 99
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 100
+    testRunner.Given("I have a many conferences", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 101
+    testRunner.And("When I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 102
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 103
+    testRunner.Then("the response should have the status OK and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 104
+    testRunner.And("the summary of conference details should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

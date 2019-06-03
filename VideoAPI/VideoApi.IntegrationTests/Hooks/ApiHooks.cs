@@ -79,13 +79,15 @@ namespace VideoApi.IntegrationTests.Hooks
         }
 
         [AfterScenario]
-        public static async Task AfterApiScenario(ApiTestContext apiTestContext)
+        public static async Task AfterApiScenario(ApiTestContext apiTestContext,
+            ConferenceTestContext conferenceTestContext)
         {
             if (apiTestContext.NewConferenceId != Guid.Empty)
             {
                 TestContext.WriteLine($"Removing test hearing {apiTestContext.NewConferenceId}");
                 await apiTestContext.TestDataManager.RemoveConference(apiTestContext.NewConferenceId);
             }
+            await apiTestContext.TestDataManager.RemoveConferences(conferenceTestContext.SeededConferences);
         }
 
         [AfterFeature]

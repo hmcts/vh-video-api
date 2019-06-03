@@ -95,3 +95,9 @@ Feature: Conferences
     Given I have a get details for a conference request with a nonexistent hearing ref id
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
+  Scenario: Get conferences for today only
+    Given I have a many conferences
+    And When I send the request to the endpoint
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the summary of conference details should be retrieved

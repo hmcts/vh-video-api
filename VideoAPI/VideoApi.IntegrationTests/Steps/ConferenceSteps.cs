@@ -26,13 +26,11 @@ namespace VideoApi.IntegrationTests.Steps
     public sealed class ConferenceSteps : StepsBase
     {
         private readonly ConferenceTestContext _conferenceTestContext;
-        private readonly ApiTestContext _apiTestContext;
         private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
 
         public ConferenceSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(
             apiTestContext)
         {
-            _apiTestContext = apiTestContext;
             _conferenceTestContext = conferenceTestContext;
         }
 
@@ -62,6 +60,13 @@ namespace VideoApi.IntegrationTests.Steps
             }
 
             ApiTestContext.Uri = _endpoints.GetConferenceDetailsByUsername(username);
+            ApiTestContext.HttpMethod = HttpMethod.Get;
+        }
+
+        [Given(@"When I send the request to the endpoint")]
+        public async Task GivenIHaveAGetConferencesTodayRequest()
+        {
+            ApiTestContext.Uri = _endpoints.GetConferencesToday;
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 
@@ -195,7 +200,6 @@ namespace VideoApi.IntegrationTests.Steps
             var conferences =
                 ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
             conferences.Should().NotBeNull();
-            ApiTestContext.NewConferenceId = conferences.First().Id;
             foreach (var conference in conferences)
             {
                 AssertConferenceSummaryResponse.ForConference(conference);
