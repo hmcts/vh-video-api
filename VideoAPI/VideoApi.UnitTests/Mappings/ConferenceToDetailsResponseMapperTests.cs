@@ -20,7 +20,8 @@ namespace VideoApi.UnitTests.Mappings
                 .WithParticipants(3)
                 .Build();
 
-            var response = _mapper.MapConferenceToResponse(conference);
+            var pexipSelfTestNode = "selttest@pexip.node";
+            var response = _mapper.MapConferenceToResponse(conference, pexipSelfTestNode);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
@@ -34,6 +35,8 @@ namespace VideoApi.UnitTests.Mappings
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options
                 .Excluding(x => x.ParticipantRefId)
+                .Excluding(x => x.TestCallResultId)
+                .Excluding(x => x.TestCallResult)
             );
         }
     }

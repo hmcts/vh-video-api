@@ -4,10 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
-using Video.API.Extensions;
 using Video.API.Mappings;
 using Video.API.Validations;
+using VideoApi.Common.Configuration;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -31,13 +32,15 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ServicesConfiguration _servicesConfiguration;
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IVideoPlatformService videoPlatformService)
+            IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _videoPlatformService = videoPlatformService;
+            _servicesConfiguration = servicesConfiguration.Value;
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace Video.API.Controllers
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(queriedConference);
+            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
         }
 
@@ -131,7 +134,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
             var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(queriedConference);
+            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
         
@@ -218,9 +221,8 @@ namespace Video.API.Controllers
             }
             
             var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(conference);
+            var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
-        
     }
 }

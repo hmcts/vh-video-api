@@ -8,6 +8,7 @@ using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
@@ -152,6 +153,24 @@ namespace VideoApi.IntegrationTests.Steps
 
             ApiTestContext.Uri = _endpoints.RemoveParticipantFromConference(conferenceId, participantId);
             ApiTestContext.HttpMethod = HttpMethod.Delete;
+        }
+
+        [Given("I have a (.*) get self test score request")]
+        public void GivenIHaveAGetSelfTestScoreRequest(Scenario scenario)
+        {
+            Guid conferenceId;
+            Guid participantId;
+            switch (scenario)
+            {
+                case Scenario.Nonexistent:
+                    conferenceId = Guid.NewGuid();
+                    participantId = Guid.NewGuid();
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+            
+            ApiTestContext.Uri = _endpoints.GetTestCallResultForParticipant(conferenceId, participantId);
+            ApiTestContext.HttpMethod = HttpMethod.Get;
         }
     }
 }

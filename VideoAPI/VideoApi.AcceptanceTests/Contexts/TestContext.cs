@@ -3,6 +3,7 @@ using RestSharp;
 using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 

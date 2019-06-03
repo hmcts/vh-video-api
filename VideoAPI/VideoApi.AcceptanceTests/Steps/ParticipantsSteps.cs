@@ -5,6 +5,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;

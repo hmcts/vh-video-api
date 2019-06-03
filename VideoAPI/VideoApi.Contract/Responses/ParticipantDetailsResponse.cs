@@ -14,5 +14,6 @@ namespace VideoApi.Contract.Responses
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
         public ParticipantStatusResponse CurrentStatus { get; set; }
+        public TestCallScoreResponse SelfTestScore { get; set; }
     }
 }

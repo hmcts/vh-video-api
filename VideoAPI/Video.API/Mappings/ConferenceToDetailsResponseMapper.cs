@@ -5,7 +5,8 @@ namespace Video.API.Mappings
 {
     public class ConferenceToDetailsResponseMapper
     {
-        public ConferenceDetailsResponse MapConferenceToResponse(Conference conference)
+        public ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
+            string pexipSelfTestNode)
         {
             var response = new ConferenceDetailsResponse
             {
@@ -20,6 +21,11 @@ namespace Video.API.Mappings
                     new ParticipantToDetailsResponseMapper().MapParticipantsToResponse(conference.GetParticipants()),
                 MeetingRoom = new MeetingRoomToResponseMapper().MapVirtualCourtToResponse(conference.GetMeetingRoom())
             };
+
+            if (response.MeetingRoom != null)
+            {
+                response.MeetingRoom.PexipSelfTestNode = pexipSelfTestNode;
+            }
             return response;
         }
     }

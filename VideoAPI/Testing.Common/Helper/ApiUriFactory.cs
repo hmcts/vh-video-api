@@ -36,6 +36,9 @@ namespace Testing.Common.Helper
         
         public string RemoveParticipantFromConference(Guid conferenceId, Guid participantId) =>
             $"{ApiRoot}/{conferenceId}/participants/{participantId}";
+
+        public string GetTestCallResultForParticipant(Guid conferenceId, Guid participantId) =>
+            $"{ApiRoot}/{conferenceId}/participants/{participantId}/selftestresult";
     }
     
     public class ConferenceEndpoints

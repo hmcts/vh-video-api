@@ -37,6 +37,11 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithHearingTask("Suspended")
                 .Build();
 
+            foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))
+            {
+                individual.UpdateTestCallResult(true, TestScore.Okay);
+            }
+            
             return await SeedConference(conference);
         }
 
