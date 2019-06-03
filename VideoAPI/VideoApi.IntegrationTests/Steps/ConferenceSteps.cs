@@ -11,6 +11,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;

@@ -192,14 +192,14 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RemoveParticipantFromANon_ExistentConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove participant from a non-existent conference", null, ((string[])(null)));
-#line 40
+#line 39
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 41
+#line 40
     testRunner.Given("I have an remove participant from a nonexistent conference request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 42
+#line 41
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 43
+#line 42
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -210,15 +210,15 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RemoveNon_ExistentParticipantFromAnExistingConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove non-existent participant from an existing conference", null, ((string[])(null)));
-#line 45
+#line 44
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 46
+#line 45
     testRunner.Given("I have a remove participant from a conference request for a nonexistent participa" +
                     "nt", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 47
+#line 46
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 48
+#line 47
     testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -229,18 +229,36 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void RemoveAnInvalidParticipantFromAnExistingConference()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Remove an invalid participant from an existing conference", null, ((string[])(null)));
-#line 50
+#line 49
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 51
+#line 50
     testRunner.Given("I have a remove participant from a conference request for a invalid participant", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 52
+#line 51
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 53
+#line 52
     testRunner.Then("the response should have the status BadRequest and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 54
+#line 53
     testRunner.And("the error response message should also contain \'Please provide a valid participan" +
                     "tId\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get self test score using invalid identifiers")]
+        public virtual void GetSelfTestScoreUsingInvalidIdentifiers()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get self test score using invalid identifiers", null, ((string[])(null)));
+#line 56
+  this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 57
+    testRunner.Given("I have a nonexistent get self test score request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 58
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 59
+    testRunner.Then("the response should have the status NotFound and success status False", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

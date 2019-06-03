@@ -41,6 +41,7 @@ namespace Testing.Common.Assertions
             conference.MeetingRoom.JudgeUri.Should().NotBeNull();
             conference.MeetingRoom.ParticipantUri.Should().NotBeNull();
             conference.MeetingRoom.PexipNode.Should().NotBeNull();
+            conference.MeetingRoom.PexipSelfTestNode.Should().NotBeNullOrEmpty();
         }
     }
 }

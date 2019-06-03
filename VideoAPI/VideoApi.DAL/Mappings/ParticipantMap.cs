@@ -19,6 +19,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.CaseTypeGroup);
             builder.Property(x => x.Representee);
 
+            builder.Property(x => x.TestCallResultId).IsRequired(false);
+
             builder.HasMany<ParticipantStatus>("ParticipantStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -24,5 +24,10 @@ namespace VideoApi.Contract.Responses
         /// The Pexip node to connect to
         /// </summary>
         public string PexipNode { get; set; }
+        
+        /// <summary>
+        /// The pexip node to connect to for self test
+        /// </summary>
+        public string PexipSelfTestNode { get; set; }
     }
 }
