@@ -24,7 +24,6 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             await PublishParticipantDisconnectMessage();
-
             if (SourceParticipant.UserRole == UserRole.Judge) await PublishSuspendedEventMessage();
         }
 
@@ -34,26 +33,41 @@ namespace VideoApi.Events.Handlers
             var command =
                 new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
             await CommandHandler.Handle(command);
+            await AddDisconnectedTask();
             await PublishParticipantStatusMessage(participantState);
+        }
+
+        private async Task AddDisconnectedTask()
+        {
+            var taskType = SourceParticipant.UserRole == UserRole.Judge ? TaskType.Judge : TaskType.Participant;
+            var disconnected =
+                new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
+            await CommandHandler.Handle(disconnected);
+        }
+
+        private async Task AddSuspendedTask()
+        {
+            var addSuspendedTask =
+                new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
+            await CommandHandler.Handle(addSuspendedTask);
         }
 
         private async Task PublishSuspendedEventMessage()
         {
             var conferenceState = ConferenceState.Suspended;
+            await PublishConferenceStatusMessage(conferenceState);
+            
+            var updateConferenceStatusCommand =
+                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            await CommandHandler.Handle(updateConferenceStatusCommand);
+
+            await AddSuspendedTask();
+            
             var hearingEventMessage = new HearingEventMessage
             {
                 HearingRefId = SourceConference.HearingRefId,
                 ConferenceStatus = conferenceState
             };
-            var updateConferenceStatusCommand =
-                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
-            var addSuspendedTask =
-                new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
-
-            await CommandHandler.Handle(updateConferenceStatusCommand);
-            await CommandHandler.Handle(addSuspendedTask);
-
-            await PublishConferenceStatusMessage(conferenceState);
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }
