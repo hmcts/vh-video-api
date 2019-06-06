@@ -1,10 +1,12 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -16,11 +18,15 @@ namespace VideoApi.Services
     public class KinlyPlatformService : IVideoPlatformService
     {
         private readonly IKinlyApiClient _kinlyApiClient;
+        private readonly ICustomJwtTokenProvider _customJwtTokenProvider;
         private readonly ServicesConfiguration _servicesConfigOptions;
 
-        public KinlyPlatformService(IKinlyApiClient kinlyApiClient, IOptions<ServicesConfiguration> servicesConfigOptions)
+        public KinlyPlatformService(IKinlyApiClient kinlyApiClient, 
+            IOptions<ServicesConfiguration> servicesConfigOptions,
+            ICustomJwtTokenProvider customJwtTokenProvider)
         {
             _kinlyApiClient = kinlyApiClient;
+            _customJwtTokenProvider = customJwtTokenProvider;
             _servicesConfigOptions = servicesConfigOptions.Value;
         }
 
@@ -76,7 +82,16 @@ namespace VideoApi.Services
             using (var httpClient = new HttpClient())
             {
                 var requestUri = $"{_servicesConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
-                responseMessage = await httpClient.GetAsync(new Uri(requestUri));
+                var request = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(requestUri),
+                    Method = HttpMethod.Get,
+                };
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
+                    _customJwtTokenProvider.GenerateToken(participantId.ToString(), 10));
+
+                responseMessage = await httpClient.SendAsync(request);
             }
             
             if (!responseMessage.IsSuccessStatusCode)

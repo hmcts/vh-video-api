@@ -16,6 +16,7 @@ using Video.API.Extensions;
 using Video.API.ValidationMiddleware;
 using Video.API.Validations;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.DAL;
 using VideoApi.Events.Hub;
 
@@ -64,6 +65,8 @@ namespace Video.API
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceBusSettings>(options => Configuration.Bind("ServiceBusQueue", options));
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
+            var customJwtTokenSettings = Configuration.GetSection("CustomJwtTokenSettings").Get<CustomJwtTokenSettings>();
+            services.AddSingleton<ICustomJwtTokenSettings>(customJwtTokenSettings);
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)
