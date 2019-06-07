@@ -7,9 +7,9 @@ namespace VideoApi.Common.Security.CustomToken
 {
     public class CustomJwtTokenHandler : ICustomJwtTokenHandler
     {
-        private readonly ICustomJwtTokenSettings _customJwtTokenSettings;
+        private readonly CustomJwtTokenSettings _customJwtTokenSettings;
 
-        public CustomJwtTokenHandler(ICustomJwtTokenSettings customJwtTokenSettings)
+        public CustomJwtTokenHandler(CustomJwtTokenSettings customJwtTokenSettings)
         {
             _customJwtTokenSettings = customJwtTokenSettings;
         }

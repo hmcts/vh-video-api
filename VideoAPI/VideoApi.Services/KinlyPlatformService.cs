@@ -89,7 +89,7 @@ namespace VideoApi.Services
                 };
 
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
-                    _customJwtTokenProvider.GenerateToken(participantId.ToString(), 10));
+                    _customJwtTokenProvider.GenerateToken(participantId.ToString(), 2));
 
                 responseMessage = await httpClient.SendAsync(request);
             }

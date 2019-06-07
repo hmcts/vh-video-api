@@ -117,7 +117,6 @@ namespace Video.API
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
-            services.AddScoped<ICustomJwtTokenSettings, CustomJwtTokenSettings>();
 
             return services;
         }

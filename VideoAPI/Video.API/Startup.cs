@@ -65,8 +65,8 @@ namespace Video.API
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceBusSettings>(options => Configuration.Bind("ServiceBusQueue", options));
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
-            var customJwtTokenSettings = Configuration.GetSection("CustomJwtTokenSettings").Get<CustomJwtTokenSettings>();
-            services.AddSingleton<ICustomJwtTokenSettings>(customJwtTokenSettings);
+            var customJwtTokenSettings = Configuration.GetSection("CustomJwtToken").Get<CustomJwtTokenSettings>();
+            services.AddSingleton(customJwtTokenSettings);
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)

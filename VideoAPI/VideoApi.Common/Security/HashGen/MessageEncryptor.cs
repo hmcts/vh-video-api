@@ -7,9 +7,9 @@ namespace VideoApi.Common.Security.HashGen
 {
     public class MessageEncryptor
     {
-        private readonly ICustomJwtTokenSettings _customJwtTokenSettings;
+        private readonly CustomJwtTokenSettings _customJwtTokenSettings;
 
-        public MessageEncryptor(ICustomJwtTokenSettings customJwtTokenSettings)
+        public MessageEncryptor(CustomJwtTokenSettings customJwtTokenSettings)
         {
             _customJwtTokenSettings = customJwtTokenSettings;
         }

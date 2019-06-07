@@ -7,17 +7,17 @@ namespace VideoApi.Common.Security.HashGen
 {
     public class HashGenerator
     {
-        private readonly ICustomJwtTokenSettings _customJwtTokenSettings;
+        private readonly CustomJwtTokenSettings _customJwtTokenSettings;
 
-        public HashGenerator(ICustomJwtTokenSettings customJwtTokenSettings)
+        public HashGenerator(CustomJwtTokenSettings customJwtTokenSettings)
         {
             _customJwtTokenSettings = customJwtTokenSettings;
         }
 
-        public string GenerateHash(string participantId)
+        public string GenerateHash(string data)
         {
             var key = Convert.FromBase64String(_customJwtTokenSettings.Secret);
-            var stringToHash = $"{DateTime.UtcNow}{DateTime.UtcNow.AddHours(1)}{participantId}";
+            var stringToHash = $"{DateTime.UtcNow}{DateTime.UtcNow.AddHours(1)}{data}";
 
             var request = Encoding.UTF8.GetBytes(stringToHash);
             using (var hmac = new HMACSHA256(key))
