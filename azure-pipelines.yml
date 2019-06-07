@@ -19,7 +19,8 @@ variables:
     "Services/CallbackUri":"$(CallbackUri)",
     "Services/PexipNode":"$(PexipNode)",
     "Services/ConferenceUsername":"$(ConferenceUsername)",
-    "Services/PexipSelfTestNode":"$(PexipSelfTestNode)"
+    "Services/PexipSelfTestNode":"$(PexipSelfTestNode)",
+    "CustomJwtToken/Secret":"$(Secret)"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests
