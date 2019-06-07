@@ -7,22 +7,22 @@ namespace VideoApi.Common.Security.CustomToken
 {
     public class CustomJwtTokenProvider : ICustomJwtTokenProvider
     {
-        private readonly CustomJwtTokenSettings _customJwtTokenSettings;
+        private readonly CustomTokenSettings _customTokenSettings;
 
-        public CustomJwtTokenProvider(CustomJwtTokenSettings customJwtTokenSettings)
+        public CustomJwtTokenProvider(CustomTokenSettings customTokenSettings)
         {
-            _customJwtTokenSettings = customJwtTokenSettings;
+            _customTokenSettings = customTokenSettings;
         }
 
         public string GenerateToken(string claims, int expiresInMinutes)
         {
-            byte[] key = Convert.FromBase64String(_customJwtTokenSettings.Secret);
+            byte[] key = Convert.FromBase64String(_customTokenSettings.Secret);
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(key);
             SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, claims) }),
-                Audience = _customJwtTokenSettings.Audience,
-                Issuer = _customJwtTokenSettings.Issuer,
+                Audience = _customTokenSettings.Audience,
+                Issuer = _customTokenSettings.Issuer,
                 Expires = DateTime.UtcNow.AddMinutes(expiresInMinutes),
                 SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
             };

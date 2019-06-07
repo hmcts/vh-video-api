@@ -8,12 +8,12 @@ namespace VideoApi.UnitTests.CustomJwtToken
 {
     public class HashGeneratorTests
     {
-        private CustomJwtTokenSettings _customJwtTokenConfigSettings;
+        private CustomTokenSettings _customTokenSettings;
 
         [SetUp]
         public void SetUp()
         {
-            _customJwtTokenConfigSettings = new CustomJwtTokenSettings
+            _customTokenSettings = new CustomTokenSettings
             {
                 Secret = "W2gEmBn2H7b2FCMIQl6l9rggbJU1qR7luIeAf1uuaY+ik6TP5rN0NEsPVg0TGkroiel0SoCQT7w3cbk7hFrBtA=="
             };
@@ -22,7 +22,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         [Test]
         public void should_encrypt()
         {
-            var hashGenerator = new HashGenerator(_customJwtTokenConfigSettings);
+            var hashGenerator = new HashGenerator(_customTokenSettings);
             var id = Guid.NewGuid().ToString("N");
             var computedHash = hashGenerator.GenerateHash(DateTime.UtcNow.AddMinutes(20), id);
             computedHash.Should().NotBeNullOrEmpty();
@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         [Test]
         public void should_fail_authentication()
         {
-            var hashGenerator = new HashGenerator(_customJwtTokenConfigSettings);
+            var hashGenerator = new HashGenerator(_customTokenSettings);
             var id = Guid.NewGuid().ToString("N");
             var computedHash = hashGenerator.GenerateHash(DateTime.UtcNow.AddMinutes(20), id);
 

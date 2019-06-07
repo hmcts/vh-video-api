@@ -7,16 +7,16 @@ namespace VideoApi.Common.Security.HashGen
 {
     public class HashGenerator
     {
-        private readonly CustomJwtTokenSettings _customJwtTokenSettings;
+        private readonly CustomTokenSettings _customTokenSettings;
 
-        public HashGenerator(CustomJwtTokenSettings customJwtTokenSettings)
+        public HashGenerator(CustomTokenSettings customTokenSettings)
         {
-            _customJwtTokenSettings = customJwtTokenSettings;
+            _customTokenSettings = customTokenSettings;
         }
 
         public string GenerateHash(DateTime expiresOnUtc, string data)
         {
-            var key = Convert.FromBase64String(_customJwtTokenSettings.Secret);
+            var key = Convert.FromBase64String(_customTokenSettings.Secret);
             var stringToHash = $"{expiresOnUtc}{data}";
 
             var request = Encoding.UTF8.GetBytes(stringToHash);

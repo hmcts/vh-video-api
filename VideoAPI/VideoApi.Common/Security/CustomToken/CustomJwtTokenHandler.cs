@@ -7,11 +7,11 @@ namespace VideoApi.Common.Security.CustomToken
 {
     public class CustomJwtTokenHandler : ICustomJwtTokenHandler
     {
-        private readonly CustomJwtTokenSettings _customJwtTokenSettings;
+        private readonly CustomTokenSettings _customTokenSettings;
 
-        public CustomJwtTokenHandler(CustomJwtTokenSettings customJwtTokenSettings)
+        public CustomJwtTokenHandler(CustomTokenSettings customTokenSettings)
         {
-            _customJwtTokenSettings = customJwtTokenSettings;
+            _customTokenSettings = customTokenSettings;
         }
 
         public ClaimsPrincipal GetPrincipal(string token)
@@ -28,13 +28,13 @@ namespace VideoApi.Common.Security.CustomToken
                 return null;
             }
 
-            byte[] key = Convert.FromBase64String(_customJwtTokenSettings.Secret);
+            byte[] key = Convert.FromBase64String(_customTokenSettings.Secret);
             var parameters = new TokenValidationParameters()
             {
                 RequireExpirationTime = true,
-                ValidIssuers = new[] {_customJwtTokenSettings.Issuer},
+                ValidIssuers = new[] {_customTokenSettings.Issuer},
                 ValidateIssuer = true,
-                ValidAudiences = new[] { _customJwtTokenSettings.Audience },
+                ValidAudiences = new[] { _customTokenSettings.Audience },
                 ValidateAudience = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key)
 
