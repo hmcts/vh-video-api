@@ -20,6 +20,7 @@ using Video.API.Validations;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -114,6 +115,8 @@ namespace Video.API
                 }).AddHubOptions<EventHub>(options => { options.EnableDetailedErrors = true; });
             
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+            services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
+            services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
 
             return services;
         }

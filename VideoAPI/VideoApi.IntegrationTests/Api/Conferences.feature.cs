@@ -31,8 +31,8 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Conferences", "  In order to manage conferences\n  As an API service\n  I want to create, update a" +
-                    "nd retrieve conference data", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Conferences", "  In order to manage conferences\r\n  As an API service\r\n  I want to create, update" +
+                    " and retrieve conference data", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -388,18 +388,18 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void GetConferencesForTodayOnly()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get conferences for today only", null, ((string[])(null)));
-#line 99
+#line 98
   this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 100
+#line 99
     testRunner.Given("I have a many conferences", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 101
+#line 100
     testRunner.And("When I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 102
+#line 101
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 103
+#line 102
     testRunner.Then("the response should have the status OK and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 104
+#line 103
     testRunner.And("the summary of conference details should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
