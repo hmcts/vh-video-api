@@ -113,7 +113,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetTestCallResultForParticipant(Guid conferenceId, Guid participantId)
         {
-            // Verify that the participant exists????
             var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
             if (testCallResult == null)
             {

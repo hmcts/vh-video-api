@@ -22,8 +22,8 @@ namespace VideoApi.Common.Security.HashGen
             var request = Encoding.UTF8.GetBytes(stringToHash);
             using (var hmac = new HMACSHA256(key))
             {
-                var computeHash = hmac.ComputeHash(request);
-                return Convert.ToBase64String(computeHash);
+                var computedHash = hmac.ComputeHash(request);
+                return Convert.ToBase64String(computedHash);
             }
         }
     }
