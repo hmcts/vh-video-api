@@ -14,10 +14,10 @@ namespace VideoApi.Common.Security.HashGen
             _customJwtTokenSettings = customJwtTokenSettings;
         }
 
-        public string GenerateHash(string data)
+        public string GenerateHash(DateTime expiresOnUtc, string data)
         {
             var key = Convert.FromBase64String(_customJwtTokenSettings.Secret);
-            var stringToHash = $"{DateTime.UtcNow}{DateTime.UtcNow.AddHours(1)}{data}";
+            var stringToHash = $"{expiresOnUtc}{data}";
 
             var request = Encoding.UTF8.GetBytes(stringToHash);
             using (var hmac = new HMACSHA256(key))
