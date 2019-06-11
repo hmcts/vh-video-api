@@ -21,6 +21,7 @@ namespace VideoApi.UnitTests.Events
                 ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
+            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Close,
@@ -33,7 +34,7 @@ namespace VideoApi.UnitTests.Events
 
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(x => x.ConferenceStatusMessage(conference.HearingRefId, ConferenceState.Closed),
-                Times.Exactly(conference.GetParticipants().Count));
+                Times.Exactly(participantCount));
 
             // Verify messages sent to ASB queue
             ServiceBusQueueClient.Count.Should().Be(1);

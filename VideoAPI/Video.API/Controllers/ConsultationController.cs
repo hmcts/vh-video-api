@@ -117,8 +117,7 @@ namespace Video.API.Controllers
             
             if (answer == ConsultationAnswer.Accepted)
             {
-                var admin = conference.GetParticipants().Single(x => x.UserRole == UserRole.VideoHearingsOfficer);
-                await _hubContext.Clients.Group(admin.Username.ToLowerInvariant())
+                await _hubContext.Clients.Group(EventHub.VhOfficersGroupName)
                     .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
                         answer.ToString());
             }

@@ -81,7 +81,6 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Name = Name.FullName())
                 .With(x => x.Username = Internet.Email())
                 .With(x => x.DisplayName = Internet.UserName())
-                .With(x => x.UserRole = UserRole.VideoHearingsOfficer)
                 .Build();
 
             if (!string.IsNullOrWhiteSpace(caseTypeGroup))

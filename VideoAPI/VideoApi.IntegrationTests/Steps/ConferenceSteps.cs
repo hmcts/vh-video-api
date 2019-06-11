@@ -64,7 +64,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"When I send the request to the endpoint")]
-        public async Task GivenIHaveAGetConferencesTodayRequest()
+        public void GivenIHaveAGetConferencesTodayRequest()
         {
             ApiTestContext.Uri = _endpoints.GetConferencesToday;
             ApiTestContext.HttpMethod = HttpMethod.Get;

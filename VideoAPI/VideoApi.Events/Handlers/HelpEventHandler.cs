@@ -1,10 +1,8 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
-using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
@@ -24,13 +22,8 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var vhOfficer = SourceConference.GetParticipants()
-                .FirstOrDefault(x => x.UserRole == UserRole.VideoHearingsOfficer);
-
-            if (vhOfficer == null) throw new VideoHearingOfficerNotFoundException(SourceConference.HearingRefId);
-
-            await HubContext.Clients.Group(vhOfficer.Username.ToLowerInvariant())
-                .HelpMessage(SourceConference.HearingRefId, SourceParticipant.DisplayName);
+            await HubContext.Clients.Group(EventHub.VhOfficersGroupName)
+                .HelpMessage(SourceConference.Id, SourceParticipant.DisplayName);
         }
     }
 }

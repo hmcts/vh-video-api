@@ -6,6 +6,6 @@ namespace VideoApi.Events.Models
     public abstract class EventMessage
     {
         public abstract MessageType MessageType { get; }
-        public Guid HearingRefId { get; set; }
+        public Guid ConferenceId { get; set; }
     }
 }

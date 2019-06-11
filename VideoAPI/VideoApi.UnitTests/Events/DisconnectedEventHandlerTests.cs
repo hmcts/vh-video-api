@@ -22,6 +22,7 @@ namespace VideoApi.UnitTests.Events
                 ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
+            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
             var callbackEvent = new CallbackEvent
             {
@@ -45,7 +46,7 @@ namespace VideoApi.UnitTests.Events
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
                 x => x.ParticipantStatusMessage(participantForEvent.Username, ParticipantState.Disconnected),
-                Times.Exactly(conference.GetParticipants().Count));
+                Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
@@ -80,7 +81,7 @@ namespace VideoApi.UnitTests.Events
                 ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
-            var participantCount = conference.GetParticipants().Count;
+            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             var callbackEvent = new CallbackEvent
             {

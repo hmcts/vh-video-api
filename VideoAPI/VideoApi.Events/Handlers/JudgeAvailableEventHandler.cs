@@ -33,7 +33,7 @@ namespace VideoApi.Events.Handlers
 
             var participantEventMessage = new ParticipantEventMessage
             {
-                HearingRefId = SourceConference.HearingRefId,
+                ConferenceId = SourceConference.Id,
                 ParticipantId = SourceParticipant.ParticipantRefId,
                 ParticipantState = participantState
             };

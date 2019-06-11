@@ -57,7 +57,6 @@ namespace VideoApi.UnitTests.Events
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithParticipant(UserRole.Individual, "Claimant")
                 .WithParticipant(UserRole.Representative, "Claimant")
                 .WithParticipant(UserRole.Individual, "Defendant")
@@ -69,8 +68,12 @@ namespace VideoApi.UnitTests.Events
                 .ReturnsAsync(TestConference);
 
             foreach (var participant in TestConference.GetParticipants())
+            {
                 EventHubContextMock.Setup(x => x.Clients.Group(participant.Username.ToString()))
                     .Returns(EventHubClientMock.Object);
+            }
+            EventHubContextMock.Setup(x => x.Clients.Group(EventHub.VhOfficersGroupName))
+                .Returns(EventHubClientMock.Object);
         }
     }
 }

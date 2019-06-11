@@ -29,6 +29,7 @@ using VideoApi.Events.Hub;
 using VideoApi.Events.ServiceBus;
 using VideoApi.Services;
 using VideoApi.Services.Kinly;
+using VideoWeb.Services.User;
 
 namespace Video.API
 {
@@ -70,10 +71,10 @@ namespace Video.API
         {
             services.AddMemoryCache();
             
+            services.AddScoped<ITokenProvider, AzureTokenProvider>();
+            services.AddTransient<UserApiTokenHandler>();
             services.AddSingleton<ITelemetryInitializer, BadRequestTelemetry>();
             
-            services.AddScoped<ITokenProvider, AzureTokenProvider>();
-
             services.AddScoped<IQueryHandlerFactory, QueryHandlerFactory>();
             services.AddScoped<IQueryHandler, QueryHandler>();
             
@@ -82,11 +83,18 @@ namespace Video.API
             
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
             services.AddScoped<IServiceBusQueueClient, ServiceBusQueueClient>();
-            
+            services.AddScoped<IUserProfileService, AdUserProfileService>();
+
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);
 
+            var container = services.BuildServiceProvider();
+            var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
+            
+            services.AddHttpClient<IUserApiClient, UserApiClient>()
+                .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
+                .AddTypedClient(httpClient => BuildUserApiClient(httpClient, servicesConfiguration));
             if (useStub)
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
@@ -94,8 +102,6 @@ namespace Video.API
             else
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
-                var container = services.BuildServiceProvider();
-                var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
                 services.AddHttpClient<IKinlyApiClient, KinlyApiClient>().AddTypedClient(httpClient =>
                     BuildKinlyClient(httpClient, servicesConfiguration));
             }
@@ -125,6 +131,12 @@ namespace Video.API
             ServicesConfiguration servicesConfiguration)
         {
             return new KinlyApiClient(httpClient) {BaseUrl = servicesConfiguration.KinlyApiUrl};
+        }
+        
+        private static IUserApiClient BuildUserApiClient(HttpClient httpClient,
+            ServicesConfiguration servicesConfiguration)
+        {
+            return new UserApiClient(httpClient) {BaseUrl = servicesConfiguration.UserApiUrl};
         }
 
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
