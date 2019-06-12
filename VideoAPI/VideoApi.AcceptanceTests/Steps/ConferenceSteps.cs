@@ -46,7 +46,6 @@ namespace VideoApi.AcceptanceTests.Steps
                 .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
-                .WithVideoHearingsOfficer()
                 .WithHearingRefId(_context.NewHearingRefId)
                 .Build();
             _context.Request = _context.Post(_endpoints.BookNewConference, request);

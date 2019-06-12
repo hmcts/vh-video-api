@@ -75,23 +75,6 @@ namespace Testing.Common.Helper.Builders.Api
             return this;
         }
         
-        public BookNewConferenceRequestBuilder WithVideoHearingsOfficer(string caseTypeGroup = null)
-        {
-            var participant = Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.Name = Name.FullName())
-                .With(x => x.Username = Internet.Email())
-                .With(x => x.DisplayName = Internet.UserName())
-                .Build();
-
-            if (!string.IsNullOrWhiteSpace(caseTypeGroup))
-            {
-                participant.CaseTypeGroup = caseTypeGroup;
-            }
-            
-            _bookNewConferenceRequest.Participants.Add(participant);
-            return this;
-        }
-
         public BookNewConferenceRequestBuilder WithHearingRefId(Guid hearingRefId)
         {
             _bookNewConferenceRequest.HearingRefId = hearingRefId;

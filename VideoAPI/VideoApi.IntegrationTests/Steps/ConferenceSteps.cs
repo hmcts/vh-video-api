@@ -136,7 +136,6 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
-                .WithVideoHearingsOfficer()
                 .Build();
             if (scenario == Scenario.Invalid)
             {

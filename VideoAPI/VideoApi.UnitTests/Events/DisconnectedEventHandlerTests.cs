@@ -115,7 +115,7 @@ namespace VideoApi.UnitTests.Events
                 Times.Exactly(participantCount));
 
             EventHubClientMock.Verify(
-                x => x.ConferenceStatusMessage(conference.HearingRefId, ConferenceState.Suspended),
+                x => x.ConferenceStatusMessage(conference.Id, ConferenceState.Suspended),
                 Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
