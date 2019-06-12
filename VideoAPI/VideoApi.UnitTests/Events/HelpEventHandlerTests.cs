@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Events
 
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
-                x => x.HelpMessage(conference.HearingRefId, participantForEvent.DisplayName), Times.Once);
+                x => x.HelpMessage(conference.Id, participantForEvent.DisplayName), Times.Once);
         }
 
         [Test]

@@ -79,7 +79,7 @@ namespace VideoApi.UnitTests.Events
                     ParticipantState.InHearing), Times.Exactly(participantCount));
 
             EventHubClientMock.Verify(
-                x => x.ConferenceStatusMessage(conference.HearingRefId, ConferenceState.InSession),
+                x => x.ConferenceStatusMessage(conference.Id, ConferenceState.InSession),
                 Times.Exactly(participantCount));
 
             // Verify service bus

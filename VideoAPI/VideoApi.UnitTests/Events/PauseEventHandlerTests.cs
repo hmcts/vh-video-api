@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Events
             await _eventHandler.HandleAsync(callbackEvent);
 
             // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(x => x.ConferenceStatusMessage(conference.HearingRefId, ConferenceState.Paused),
+            EventHubClientMock.Verify(x => x.ConferenceStatusMessage(conference.Id, ConferenceState.Paused),
                 Times.Exactly(participantCount));
 
             // Verify messages sent to ASB queue
