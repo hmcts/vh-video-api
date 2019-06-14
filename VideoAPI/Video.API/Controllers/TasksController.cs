@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
@@ -24,11 +25,13 @@ namespace Video.API.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
+        private readonly ILogger<TasksController> _logger;
 
-        public TasksController(IQueryHandler queryHandler, ICommandHandler commandHandler)
+        public TasksController(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<TasksController> logger)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
+            _logger = logger;
         }
 
         /// <summary>
@@ -41,6 +44,7 @@ namespace Video.API.Controllers
         [ProducesResponseType(typeof(List<TaskResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetTasksForConference(Guid conferenceId)
         {
+            _logger.LogDebug("GetTasksForConference");
             var query = new GetTasksForConferenceQuery(conferenceId);
             try
             {
@@ -51,9 +55,9 @@ namespace Video.API.Controllers
             }
             catch (ConferenceNotFoundException)
             {
+                _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
             }
-
         }
 
         /// <summary>
@@ -71,6 +75,7 @@ namespace Video.API.Controllers
         public async Task<IActionResult> UpdateTaskStatus(Guid conferenceId, long taskId,
             [FromBody] UpdateTaskRequest updateTaskRequest)
         {
+            _logger.LogDebug("UpdateTaskStatus");
             var command = new UpdateTaskCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
             
             try
@@ -78,12 +83,15 @@ namespace Video.API.Controllers
                 await _commandHandler.Handle(command);
                 var query = new GetTasksForConferenceQuery(conferenceId);
                 var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
+                _logger.LogInformation(
+                    $"Completed task {taskId} in conference {conferenceId} by {updateTaskRequest.UpdatedBy}");
                 var task = tasks.Single(x => x.Id == taskId);
                 var response = new TaskToResponseMapper().MapTaskToResponse(task);
                 return Ok(response);
             }
             catch (TaskNotFoundException)
             {
+                _logger.LogError($"Unable to find task {taskId} in conference {conferenceId}");
                 return NotFound();
             }
         }

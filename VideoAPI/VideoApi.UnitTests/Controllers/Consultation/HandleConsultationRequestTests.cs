@@ -1,5 +1,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -23,6 +24,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         private Mock<IEventHubClient> _eventHubClientMock;
         private Mock<IHubContext<EventHub, IEventHubClient>> _hubContextMock;
         private Mock<IQueryHandler> _queryHandlerMock;
+        private Mock<ILogger<ConsultationController>> _mockLogger;
 
         private Conference _testConference;
 
@@ -33,6 +35,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             _commandHandlerMock = new Mock<ICommandHandler>();
             _hubContextMock = new Mock<IHubContext<EventHub, IEventHubClient>>();
             _eventHubClientMock = new Mock<IEventHubClient>();
+            _mockLogger = new Mock<ILogger<ConsultationController>>();
 
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -51,7 +54,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .Returns(Task.FromResult(default(object)));
 
             _controller = new ConsultationController(_queryHandlerMock.Object, _commandHandlerMock.Object,
-                _hubContextMock.Object);
+                _hubContextMock.Object, _mockLogger.Object);
 
             foreach (var participant in _testConference.GetParticipants())
             {

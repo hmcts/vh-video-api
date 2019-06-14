@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
@@ -26,13 +27,15 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ILogger<ParticipantsController> _logger;
 
         public ParticipantsController(ICommandHandler commandHandler, IQueryHandler queryHandler,
-            IVideoPlatformService videoPlatformService)
+            IVideoPlatformService videoPlatformService, ILogger<ParticipantsController> logger)
         {
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
             _videoPlatformService = videoPlatformService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -49,12 +52,14 @@ namespace Video.API.Controllers
         public async Task<IActionResult> AddParticipantsToConference(Guid conferenceId,
             AddParticipantsToConferenceRequest request)
         {
+            _logger.LogDebug("AddParticipantsToConference");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (queriedConference == null)
             {
+                _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
             }
 
@@ -86,18 +91,21 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveParticipantFromConference(Guid conferenceId, Guid participantId)
         {
+            _logger.LogDebug("RemoveParticipantFromConference");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (queriedConference == null)
             {
+                _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
             }
 
             var participant = queriedConference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
             if (participant == null)
             {
+                _logger.LogError($"Unable to find participant {participantId}");
                 return NotFound();
             }
 
@@ -113,15 +121,19 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetTestCallResultForParticipant(Guid conferenceId, Guid participantId)
         {
+            _logger.LogDebug("GetTestCallResultForParticipant");
             var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
             if (testCallResult == null)
             {
+                _logger.LogError(
+                    $"Unable to find test call result for participant {participantId} in conference {conferenceId}");
                 return NotFound();
             }
 
             var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
                 testCallResult.Score);
             await _commandHandler.Handle(command);
+            _logger.LogDebug("Saving test call result");
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
         }

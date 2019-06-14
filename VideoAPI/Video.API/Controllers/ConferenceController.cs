@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
@@ -32,14 +34,17 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ILogger<ConferenceController> _logger;
         private readonly ServicesConfiguration _servicesConfiguration;
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration)
+            IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
+            ILogger<ConferenceController> logger)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _videoPlatformService = videoPlatformService;
+            _logger = logger;
             _servicesConfiguration = servicesConfiguration.Value;
         }
 
@@ -54,6 +59,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConference(BookNewConferenceRequest request)
         {
+            _logger.LogDebug("BookNewConference");
             foreach (var participant in request.Participants)
             {
                 participant.Username = participant.Username.ToLower().Trim();
@@ -62,7 +68,9 @@ namespace Video.API.Controllers
             }
             
             var conferenceId = await CreateConference(request);
+            _logger.LogDebug("Conference Created");
             await BookKinlyMeetingRoom(conferenceId);
+            _logger.LogDebug("Kinly Room Booked");
             
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
@@ -70,6 +78,7 @@ namespace Video.API.Controllers
 
             var mapper = new ConferenceToDetailsResponseMapper();
             var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            _logger.LogInformation($"Created conference {response.Id} for hearing {request.HearingRefId}");
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
         }
 
@@ -82,6 +91,7 @@ namespace Video.API.Controllers
             }
             catch (DoubleBookingException)
             {
+                _logger.LogWarning($"Kinly Room already booked for conference {conferenceId}");
                 meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             }
 
@@ -125,12 +135,14 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsById(Guid conferenceId)
         {
+            _logger.LogDebug($"GetConferenceDetailsById {conferenceId}");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (queriedConference == null)
             {
+                _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
             }
             var mapper = new ConferenceToDetailsResponseMapper();
@@ -150,6 +162,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveConference(Guid conferenceId)
         {
+            _logger.LogDebug($"RemoveConference {conferenceId}");
             var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
             try
             {
@@ -157,9 +170,11 @@ namespace Video.API.Controllers
             }
             catch (ConferenceNotFoundException)
             {
+                _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
             }
 
+            _logger.LogInformation($"Successfully removed conference {conferenceId}");
             return NoContent();
         }
 
@@ -168,6 +183,7 @@ namespace Video.API.Controllers
         [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetConferencesToday()
         {
+            _logger.LogDebug("GetConferencesToday");
             var query = new GetConferencesTodayQuery();
             var conferences = await _queryHandler.Handle<GetConferencesTodayQuery, List<Conference>>(query);
 
@@ -187,9 +203,11 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesForUsername([FromQuery] string username)
         {
+            _logger.LogDebug($"GetConferencesForUsername {username}");
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
+                _logger.LogError($"Invalid username {username}");
                 return BadRequest(ModelState);
             }
 
@@ -212,11 +230,13 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefId(Guid hearingRefId)
         {
+            _logger.LogDebug($"GetConferenceByHearingRefId {hearingRefId}");
             var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
             var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
             if (conference == null)
             {
+                _logger.LogError($"Unable to find conference with hearing id {hearingRefId}");
                 return NotFound();
             }
             
