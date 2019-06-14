@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
@@ -26,13 +27,15 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IHubContext<EventHub, IEventHubClient> _hubContext;
+        private readonly ILogger<ConsultationController> _logger;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IHubContext<EventHub, IEventHubClient> hubContext)
+            IHubContext<EventHub, IEventHubClient> hubContext, ILogger<ConsultationController> logger)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _hubContext = hubContext;
+            _logger = logger;
         }
 
         /// <summary>
@@ -46,24 +49,28 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> HandleConsultationRequest(ConsultationRequest request)
         {
+            _logger.LogDebug($"HandleConsultationRequest");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (conference == null)
             {
+                _logger.LogError($"Unable to find conference {request.ConferenceId}");
                 return NotFound();
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
             if (requestedBy == null)
             {
+                _logger.LogError($"Unable to find participant request by with id {request.RequestedBy}");
                 return NotFound();
             }
 
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
             if (requestedFor == null)
             {
+                _logger.LogError($"Unable to find participant request for with id {request.RequestedFor}");
                 return NotFound();
             }
 
@@ -77,10 +84,14 @@ namespace Video.API.Controllers
             var requestRaised = !request.Answer.HasValue;
             if (requestRaised)
             {
+                _logger.LogInformation(
+                    $"Raising request between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
                 await NotifyConsultationRequest(conference, requestedBy, requestedFor);
             }
             else
             {
+                _logger.LogInformation(
+                    $"Answered request as {request.Answer.Value} between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
                 await NotifyConsultationResponse(conference, requestedBy, requestedFor,
                     request.Answer.Value);
             }

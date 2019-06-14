@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -19,11 +20,14 @@ namespace Video.API.Controllers
     {
         private readonly ICommandHandler _commandHandler;
         private readonly IEventHandlerFactory _eventHandlerFactory;
+        private readonly ILogger<CallbackController> _logger;
 
-        public CallbackController(ICommandHandler commandHandler, IEventHandlerFactory eventHandlerFactory)
+        public CallbackController(ICommandHandler commandHandler, IEventHandlerFactory eventHandlerFactory,
+            ILogger<CallbackController> logger)
         {
             _commandHandler = commandHandler;
             _eventHandlerFactory = eventHandlerFactory;
+            _logger = logger;
         }
 
         /// <summary>
@@ -37,6 +41,7 @@ namespace Video.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> PostEvents(ConferenceEventRequest request)
         {
+            _logger.LogInformation($"Handling {request.EventType.ToString()} event for conference {request.ConferenceId}");
             Guid.TryParse(request.ConferenceId, out var conferenceId);
 
             var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,

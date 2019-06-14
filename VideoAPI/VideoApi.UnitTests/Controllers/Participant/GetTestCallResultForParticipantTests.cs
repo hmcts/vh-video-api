@@ -2,6 +2,7 @@ using System;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Video.API.Controllers;
@@ -21,6 +22,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         private Mock<IQueryHandler> _mockQueryHandler;
         private Mock<ICommandHandler> _mockCommandHandler;
         private Mock<IVideoPlatformService> _mockVideoPlatformService;
+        private Mock<ILogger<ParticipantsController>> _mockLogger;
         
         [SetUp]
         public void Setup()
@@ -28,9 +30,10 @@ namespace VideoApi.UnitTests.Controllers.Participant
             _mockQueryHandler = new Mock<IQueryHandler>();
             _mockCommandHandler = new Mock<ICommandHandler>();
             _mockVideoPlatformService = new Mock<IVideoPlatformService>();
-
+            _mockLogger = new Mock<ILogger<ParticipantsController>>();
+            
             _controller = new ParticipantsController(_mockCommandHandler.Object, _mockQueryHandler.Object,
-                _mockVideoPlatformService.Object);
+                _mockVideoPlatformService.Object, _mockLogger.Object);
         }
 
         [Test]

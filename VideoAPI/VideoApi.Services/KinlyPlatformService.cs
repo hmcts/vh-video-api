@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
@@ -19,20 +20,24 @@ namespace VideoApi.Services
     {
         private readonly IKinlyApiClient _kinlyApiClient;
         private readonly ICustomJwtTokenProvider _customJwtTokenProvider;
+        private readonly ILogger<KinlyPlatformService> _logger;
         private readonly ServicesConfiguration _servicesConfigOptions;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient, 
             IOptions<ServicesConfiguration> servicesConfigOptions,
-            ICustomJwtTokenProvider customJwtTokenProvider)
+            ICustomJwtTokenProvider customJwtTokenProvider, ILogger<KinlyPlatformService> logger)
         {
             _kinlyApiClient = kinlyApiClient;
             _customJwtTokenProvider = customJwtTokenProvider;
+            _logger = logger;
             _servicesConfigOptions = servicesConfigOptions.Value;
         }
 
 
         public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId)
         {
+            _logger.LogInformation(
+                $"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
             try
             {
                 var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
@@ -78,6 +83,8 @@ namespace VideoApi.Services
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
+            _logger.LogInformation(
+                $"Retrieving test call score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}");
             HttpResponseMessage responseMessage;
             using (var httpClient = new HttpClient())
             {
