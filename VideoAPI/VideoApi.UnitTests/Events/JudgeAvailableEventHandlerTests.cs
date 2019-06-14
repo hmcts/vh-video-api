@@ -22,7 +22,7 @@ namespace VideoApi.UnitTests.Events
                 ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
-            var participantCount = conference.GetParticipants().Count;
+            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             var callbackEvent = new CallbackEvent
             {

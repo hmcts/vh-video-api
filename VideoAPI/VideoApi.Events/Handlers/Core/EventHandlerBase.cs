@@ -57,8 +57,13 @@ namespace VideoApi.Events.Handlers.Core
         protected async Task PublishParticipantStatusMessage(ParticipantState participantState)
         {
             foreach (var participant in SourceConference.GetParticipants())
+            {
                 await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
                     .ParticipantStatusMessage(SourceParticipant.Username, participantState);
+            }
+            
+            await HubContext.Clients.Group(EventHub.VhOfficersGroupName)
+                .ParticipantStatusMessage(SourceParticipant.Username, participantState);
         }
 
         /// <summary>
@@ -69,8 +74,12 @@ namespace VideoApi.Events.Handlers.Core
         protected async Task PublishConferenceStatusMessage(ConferenceState hearingEventStatus)
         {
             foreach (var participant in SourceConference.GetParticipants())
+            {
                 await HubContext.Clients.Group(participant.Username.ToLowerInvariant())
-                    .ConferenceStatusMessage(SourceConference.HearingRefId, hearingEventStatus);
+                    .ConferenceStatusMessage(SourceConference.Id, hearingEventStatus);
+            }
+            await HubContext.Clients.Group(EventHub.VhOfficersGroupName)
+                .ConferenceStatusMessage(SourceConference.Id, hearingEventStatus);
         }
 
         protected abstract Task PublishStatusAsync(CallbackEvent callbackEvent);

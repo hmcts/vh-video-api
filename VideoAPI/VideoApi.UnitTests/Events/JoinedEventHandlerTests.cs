@@ -24,7 +24,7 @@ namespace VideoApi.UnitTests.Events
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            var participantCount = conference.GetParticipants().Count;
+            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
 
             var callbackEvent = new CallbackEvent
             {
@@ -60,7 +60,7 @@ namespace VideoApi.UnitTests.Events
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-            var participantCount = conference.GetParticipants().Count;
+            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
 
             var callbackEvent = new CallbackEvent
             {
@@ -79,7 +79,7 @@ namespace VideoApi.UnitTests.Events
                     ParticipantState.InHearing), Times.Exactly(participantCount));
 
             EventHubClientMock.Verify(
-                x => x.ConferenceStatusMessage(conference.HearingRefId, ConferenceState.InSession),
+                x => x.ConferenceStatusMessage(conference.Id, ConferenceState.InSession),
                 Times.Exactly(participantCount));
 
             // Verify service bus

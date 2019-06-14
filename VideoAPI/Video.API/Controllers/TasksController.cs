@@ -65,6 +65,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <param name="conferenceId">The id of the conference to update</param>
         /// <param name="taskId">The id of the task to update</param>
+        /// <param name="updateTaskRequest">username of who completed the task</param>
         /// <returns></returns>
         [HttpPatch("{conferenceId}/tasks/{taskId}")]
         [SwaggerOperation(OperationId = "UpdateTaskStatus")]

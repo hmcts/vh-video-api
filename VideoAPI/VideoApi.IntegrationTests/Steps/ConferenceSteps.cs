@@ -64,7 +64,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"When I send the request to the endpoint")]
-        public async Task GivenIHaveAGetConferencesTodayRequest()
+        public void GivenIHaveAGetConferencesTodayRequest()
         {
             ApiTestContext.Uri = _endpoints.GetConferencesToday;
             ApiTestContext.HttpMethod = HttpMethod.Get;
@@ -136,7 +136,6 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
-                .WithVideoHearingsOfficer()
                 .Build();
             if (scenario == Scenario.Invalid)
             {

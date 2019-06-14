@@ -65,7 +65,7 @@ namespace VideoApi.Events.Handlers
             
             var hearingEventMessage = new HearingEventMessage
             {
-                HearingRefId = SourceConference.HearingRefId,
+                ConferenceId = SourceConference.Id,
                 ConferenceStatus = conferenceState
             };
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
