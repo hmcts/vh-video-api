@@ -36,7 +36,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithParticipant(UserRole.Individual, "Claimant")
                 .WithParticipant(UserRole.Representative, "Claimant")
                 .WithParticipant(UserRole.Individual, "Defendant")
@@ -55,8 +54,12 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 _hubContextMock.Object);
 
             foreach (var participant in _testConference.GetParticipants())
+            {
                 _hubContextMock.Setup(x => x.Clients.Group(participant.Username.ToString()))
                     .Returns(_eventHubClientMock.Object);
+            }
+            _hubContextMock.Setup(x => x.Clients.Group(EventHub.VhOfficersGroupName))
+                .Returns(_eventHubClientMock.Object);
         }
 
         [Test]
@@ -65,7 +68,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var conferenceId = _testConference.Id;
             var requestedBy = _testConference.GetParticipants()[2];
             var requestedFor = _testConference.GetParticipants()[3];
-            var admin = _testConference.GetParticipants().First(x => x.UserRole == UserRole.VideoHearingsOfficer);
 
             var request = new ConsultationRequest
             {
@@ -77,7 +79,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Never);
             _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Once);
-            _hubContextMock.Verify(x => x.Clients.Group(admin.Username.ToLowerInvariant()), Times.Never);
+            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
 
             _eventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username, string.Empty),
@@ -91,7 +93,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var requestedBy = _testConference.GetParticipants()[2];
             var requestedFor = _testConference.GetParticipants()[3];
             var answer = ConsultationAnswer.Rejected;
-            var admin = _testConference.GetParticipants().First(x => x.UserRole == UserRole.VideoHearingsOfficer);
 
             var request = new ConsultationRequest
             {
@@ -105,7 +106,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
             _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
-            _hubContextMock.Verify(x => x.Clients.Group(admin.Username.ToLowerInvariant()), Times.Never);
+            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
 
             _eventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
@@ -118,7 +119,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var conferenceId = _testConference.Id;
             var requestedBy = _testConference.GetParticipants()[2];
             var requestedFor = _testConference.GetParticipants()[3];
-            var admin = _testConference.GetParticipants().First(x => x.UserRole == UserRole.VideoHearingsOfficer);
 
             var answer = ConsultationAnswer.Accepted;
 
@@ -134,7 +134,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
             _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
-            _hubContextMock.Verify(x => x.Clients.Group(admin.Username.ToLowerInvariant()), Times.Once);
+            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Once);
             _eventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
                     answer.ToString()), Times.Exactly(2));

@@ -39,7 +39,7 @@ namespace VideoApi.Events.Handlers
             var conferenceEvent = ConferenceState.InSession;
             var hearingEventMessage = new HearingEventMessage
             {
-                HearingRefId = SourceConference.HearingRefId,
+                ConferenceId = SourceConference.Id,
                 ConferenceStatus = conferenceEvent
             };
 

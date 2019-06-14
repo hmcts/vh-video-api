@@ -31,7 +31,7 @@ namespace VideoApi.Events.Handlers
             await PublishConferenceStatusMessage(conferenceState);
             var hearingEventMessage = new HearingEventMessage
             {
-                HearingRefId = SourceConference.HearingRefId,
+                ConferenceId = SourceConference.Id,
                 ConferenceStatus = conferenceState
             };
 

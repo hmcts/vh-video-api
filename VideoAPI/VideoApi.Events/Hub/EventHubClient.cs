@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using VideoApi.Domain.Enums;
+using VideoApi.Services;
 
 namespace VideoApi.Events.Hub
 {
@@ -17,16 +18,46 @@ namespace VideoApi.Events.Hub
     [Authorize(Policy = "EventHubUser")]
     public class EventHub : Hub<IEventHubClient>
     {
+        private readonly IUserProfileService _userProfileService;
+        public static string VhOfficersGroupName => "VhOfficers";
+
+        public EventHub(IUserProfileService userProfileService)
+        {
+            _userProfileService = userProfileService;
+        }
         public override async Task OnConnectedAsync()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, Context.UserIdentifier);
+            var isAdmin = await IsVhOfficerAsync(Context.User.Identity.Name);
+            if (isAdmin)
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, VhOfficersGroupName);
+            }
+            else
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, Context.UserIdentifier);
+            }
+
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.UserIdentifier);
+            var isAdmin = await IsVhOfficerAsync(Context.User.Identity.Name);
+            if (isAdmin)
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, VhOfficersGroupName);
+            }
+            else
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.UserIdentifier);
+            }
+            
             await base.OnDisconnectedAsync(exception);
+        }
+
+        private async Task<bool> IsVhOfficerAsync(string username)
+        {
+            return await _userProfileService.IsAdmin(username);
         }
     }
 }

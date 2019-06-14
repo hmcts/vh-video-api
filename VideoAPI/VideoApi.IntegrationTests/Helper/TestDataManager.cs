@@ -31,7 +31,6 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.VideoHearingsOfficer, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
                 .WithHearingTask("Suspended")

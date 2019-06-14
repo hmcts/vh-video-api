@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Events
 
             // Verify messages sent to event hub clients
             EventHubClientMock.Verify(
-                x => x.HelpMessage(conference.HearingRefId, participantForEvent.DisplayName), Times.Once);
+                x => x.HelpMessage(conference.Id, participantForEvent.DisplayName), Times.Once);
         }
 
         [Test]
@@ -65,43 +65,6 @@ namespace VideoApi.UnitTests.Events
 
             Assert.ThrowsAsync<ConferenceNotFoundException>(() =>
                 _eventHandler.HandleAsync(callbackEvent));
-        }
-
-        [Test]
-        public void should_throw_exception_when_no_officer_assigned_to_hearing()
-        {
-            var conferenceWithoutOfficer = new ConferenceBuilder()
-                .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .Build();
-
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(conferenceWithoutOfficer);
-
-            _eventHandler = new HelpEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
-
-            var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First();
-            var callbackEvent = new CallbackEvent
-            {
-                EventType = EventType.Help,
-                EventId = Guid.NewGuid().ToString(),
-                ParticipantId = participantForEvent.Id,
-                ConferenceId = conference.Id,
-                TimeStampUtc = DateTime.UtcNow
-            };
-
-            Assert.ThrowsAsync<VideoHearingOfficerNotFoundException>(() =>
-                _eventHandler.HandleAsync(callbackEvent));
-
-            // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(
-                x => x.HelpMessage(conference.HearingRefId, participantForEvent.DisplayName), Times.Never);
         }
     }
 }
