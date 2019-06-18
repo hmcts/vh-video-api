@@ -26,3 +26,5 @@ Under the unit test project directory
 ``` bash
 dotnet reportgenerator "-reports:../Artifacts/Coverage/coverage.opencover.xml" "-targetDir:../Artifacts/Coverage/Report" -reporttypes:HtmlInline_AzurePipelines
 ```
+
+Test
