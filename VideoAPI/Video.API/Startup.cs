@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -114,6 +115,7 @@ namespace Video.API
             });
 
             serviceCollection.AddAuthorization(AddPolicies);
+            serviceCollection.AddMvc(AddMvcPolicies);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -169,6 +171,13 @@ namespace Video.API
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("EventHubUser")
                 .Build());
+        }
+
+        private static void AddMvcPolicies(MvcOptions options)
+        {
+            options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build()));
         }
     }
 }
