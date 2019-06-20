@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         public void should_encrypt()
         {
             var hashGenerator = new HashGenerator(_customTokenSettings);
-            var id = Guid.NewGuid().ToString("N");
+            var id = Guid.NewGuid().ToString();
             var computedHash = hashGenerator.GenerateHash(DateTime.UtcNow.AddMinutes(20), id);
             computedHash.Should().NotBeNullOrEmpty();
         }
@@ -32,10 +32,10 @@ namespace VideoApi.UnitTests.CustomJwtToken
         public void should_fail_authentication()
         {
             var hashGenerator = new HashGenerator(_customTokenSettings);
-            var id = Guid.NewGuid().ToString("N");
+            var id = Guid.NewGuid().ToString();
             var computedHash = hashGenerator.GenerateHash(DateTime.UtcNow.AddMinutes(20), id);
 
-            var id2 = Guid.NewGuid().ToString("N");
+            var id2 = Guid.NewGuid().ToString();
             var reComputedHash = hashGenerator.GenerateHash(DateTime.UtcNow.AddMinutes(-20), id2);
             reComputedHash.Should().NotBe(computedHash);
         }

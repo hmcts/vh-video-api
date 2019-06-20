@@ -84,7 +84,7 @@ namespace Video.API
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
             services.AddScoped<IServiceBusQueueClient, ServiceBusQueueClient>();
             services.AddScoped<IUserProfileService, AdUserProfileService>();
-
+	        services.AddTransient<KinlyApiTokenDelegatingHandler>();
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);
@@ -102,8 +102,9 @@ namespace Video.API
             else
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
-                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>().AddTypedClient(httpClient =>
-                    BuildKinlyClient(httpClient, servicesConfiguration));
+                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>()
+                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>()
+                    .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration));
             }
             
             var contractResolver = new DefaultContractResolver
