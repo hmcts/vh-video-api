@@ -10,6 +10,7 @@ namespace VideoApi.Contract.Responses
     public class ConferenceDetailsResponse
     {
         public Guid Id { get; set; }
+        public Guid HearingId { get; set; }
         public DateTime ScheduledDateTime { get; set; }
         public string CaseType { get; set; }
         public string CaseNumber { get; set; }
