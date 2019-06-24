@@ -56,6 +56,32 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterState.Should().NotBe(beforeState);
             afterState.Should().Be(state);
         }
+        
+        [Test]
+        public async Task should_update_conference_to_closed()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            const ConferenceState state = ConferenceState.Closed;
+
+            var beforeCount = seededConference.GetConferenceStatuses().Count;
+            var beforeState = seededConference.GetCurrentStatus();
+
+            var command = new UpdateConferenceStatusCommand(_newConferenceId, state);
+            await _handler.Handle(command);
+
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var afterCount = updatedConference.GetConferenceStatuses().Count;
+            var afterState = updatedConference.GetCurrentStatus();
+
+            afterCount.Should().BeGreaterThan(beforeCount);
+            afterState.Should().NotBe(beforeState);
+            afterState.Should().Be(state);
+
+            updatedConference.IsClosed().Should().BeTrue();
+            updatedConference.ClosedDateTime.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
+        }
 
 
         [TearDown]
