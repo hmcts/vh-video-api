@@ -44,6 +44,11 @@ namespace Testing.Common.Assertions
             conference.MeetingRoom.ParticipantUri.Should().NotBeNull();
             conference.MeetingRoom.PexipNode.Should().NotBeNull();
             conference.MeetingRoom.PexipSelfTestNode.Should().NotBeNullOrEmpty();
+
+            if (conference.CurrentStatus == ConferenceState.Closed)
+            {
+                conference.ClosedDateTime.Should().NotBe(DateTime.MinValue);
+            }
         }
     }
 }
