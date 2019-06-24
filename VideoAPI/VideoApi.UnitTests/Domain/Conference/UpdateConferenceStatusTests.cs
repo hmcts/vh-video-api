@@ -24,6 +24,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         [Test]
         public void should_update_close_time_when_updating_status_to_closed()
         {
+            var beforeActionTime = DateTime.UtcNow;
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")
                 .Build();
@@ -32,7 +33,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             conference.ClosedDateTime.Should().BeNull();
             conference.UpdateConferenceStatus(ConferenceState.Closed);
             conference.ClosedDateTime.Should().NotBeNull();
-            conference.ClosedDateTime.Value.Should().BeAfter(DateTime.UtcNow.AddSeconds(-2));
+            conference.ClosedDateTime.Value.Should().BeAfter(beforeActionTime);
             conference.GetCurrentStatus().Should().Be(ConferenceState.Closed);
         }
 

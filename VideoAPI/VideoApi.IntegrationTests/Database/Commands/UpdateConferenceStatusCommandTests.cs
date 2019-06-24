@@ -60,6 +60,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task should_update_conference_to_closed()
         {
+            var beforeActionTime = DateTime.UtcNow;
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
@@ -80,7 +81,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterState.Should().Be(state);
 
             updatedConference.IsClosed().Should().BeTrue();
-            updatedConference.ClosedDateTime.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
+            updatedConference.ClosedDateTime.Should().BeAfter(beforeActionTime);
         }
 
 
