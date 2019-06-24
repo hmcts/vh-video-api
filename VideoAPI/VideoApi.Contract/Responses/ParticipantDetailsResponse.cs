@@ -7,6 +7,7 @@ namespace VideoApi.Contract.Responses
     public class ParticipantDetailsResponse
     {
         public Guid Id { get; set; }
+        public Guid RefId { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string Username { get; set; }

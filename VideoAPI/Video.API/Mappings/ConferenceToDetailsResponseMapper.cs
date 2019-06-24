@@ -11,6 +11,7 @@ namespace Video.API.Mappings
             var response = new ConferenceDetailsResponse
             {
                 Id = conference.Id,
+                HearingId = conference.HearingRefId,
                 CaseType = conference.CaseType,
                 CaseNumber = conference.CaseNumber,
                 CaseName = conference.CaseName,
