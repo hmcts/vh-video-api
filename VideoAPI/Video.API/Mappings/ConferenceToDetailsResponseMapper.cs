@@ -11,10 +11,12 @@ namespace Video.API.Mappings
             var response = new ConferenceDetailsResponse
             {
                 Id = conference.Id,
+                HearingId = conference.HearingRefId,
                 CaseType = conference.CaseType,
                 CaseNumber = conference.CaseNumber,
                 CaseName = conference.CaseName,
                 ScheduledDateTime = conference.ScheduledDateTime,
+                ClosedDateTime = conference.ClosedDateTime,
                 ScheduledDuration = conference.ScheduledDuration,
                 CurrentStatus = conference.GetCurrentStatus(),
                 Participants =

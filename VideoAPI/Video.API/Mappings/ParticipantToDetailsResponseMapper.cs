@@ -15,6 +15,7 @@ namespace Video.API.Mappings
                 var paResponse = new ParticipantDetailsResponse
                 {
                     Id = participant.Id,
+                    RefId = participant.ParticipantRefId,
                     Name = participant.Name,
                     Username = participant.Username,
                     DisplayName = participant.DisplayName,

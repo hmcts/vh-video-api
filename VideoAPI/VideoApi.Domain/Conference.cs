@@ -24,11 +24,13 @@ namespace VideoApi.Domain
             CaseNumber = caseNumber;
             CaseName = caseName;
             ScheduledDuration = scheduledDuration;
+            ClosedDateTime = null;
         }
 
         public Guid HearingRefId { get; protected set; }
         public string CaseType { get; protected set; }
         public DateTime ScheduledDateTime { get; protected set; }
+        public DateTime? ClosedDateTime { get; protected set; }
         public string CaseNumber { get; protected set; }
         public string CaseName { get; protected set; }
         protected virtual MeetingRoom MeetingRoom { get; private set; }
@@ -84,6 +86,11 @@ namespace VideoApi.Domain
             if (status == ConferenceState.NotStarted)
             {
                 throw new DomainRuleException(nameof(status), "Cannot set conference status to 'none'");
+            }
+
+            if (status == ConferenceState.Closed)
+            {
+                ClosedDateTime = DateTime.UtcNow;
             }
 
             State = status;

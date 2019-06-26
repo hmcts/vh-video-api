@@ -14,6 +14,7 @@ namespace Testing.Common.Assertions
         public static void ForConference(ConferenceDetailsResponse conference)
         {
             conference.Should().NotBeNull();
+            conference.HearingId.Should().NotBeEmpty();
             conference.CaseType.Should().NotBeNullOrEmpty();
             conference.CaseNumber.Should().NotBeNullOrEmpty();
             conference.CaseName.Should().NotBeNullOrEmpty();
@@ -25,6 +26,7 @@ namespace Testing.Common.Assertions
             {
                 participant.Id.Should().NotBeEmpty();
                 participant.Name.Should().NotBeNullOrEmpty();
+                participant.RefId.Should().NotBeEmpty();
                 participant.DisplayName.Should().NotBeNullOrEmpty();
                 participant.Username.Should().NotBeNullOrEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
@@ -42,6 +44,11 @@ namespace Testing.Common.Assertions
             conference.MeetingRoom.ParticipantUri.Should().NotBeNull();
             conference.MeetingRoom.PexipNode.Should().NotBeNull();
             conference.MeetingRoom.PexipSelfTestNode.Should().NotBeNullOrEmpty();
+
+            if (conference.CurrentStatus == ConferenceState.Closed)
+            {
+                conference.ClosedDateTime.Should().NotBe(DateTime.MinValue);
+            }
         }
     }
 }

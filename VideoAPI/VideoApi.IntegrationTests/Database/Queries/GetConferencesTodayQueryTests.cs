@@ -101,12 +101,13 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
 
-            var expectedConferences = new List<Conference> {conference2, conference6};
             var conferences = await _handler.Handle(new GetConferencesTodayQuery());
 
             conferences.Should().NotBeEmpty();
-            conferences.Select(x => x.Id).Should().BeEquivalentTo(expectedConferences.Select(x => x.Id));
-            conferences.Count.Should().Be(expectedConferences.Count);
+            foreach (var conference in conferences)
+            {
+                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.UtcNow.DayOfYear);
+            }
         }
     }
 }
