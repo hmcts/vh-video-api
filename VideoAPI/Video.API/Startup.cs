@@ -112,6 +112,16 @@ namespace Video.API
                     ValidateLifetime = true,
                     ValidAudience = securitySettings.VhVideoWebClientId
                 };
+            }).AddJwtBearer("Callback", options =>
+            {
+                var customToken = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
+                options.Audience = customToken.Issuer;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ClockSkew = TimeSpan.Zero,
+                    ValidAudience = customToken.Audience,
+                    ValidateLifetime = true
+                };
             });
 
             serviceCollection.AddAuthorization(AddPolicies);
@@ -170,6 +180,11 @@ namespace Video.API
             options.AddPolicy("EventHubUser", new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("EventHubUser")
+                .Build());
+
+            options.AddPolicy("Callback", new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("Callback")
                 .Build());
         }
 
