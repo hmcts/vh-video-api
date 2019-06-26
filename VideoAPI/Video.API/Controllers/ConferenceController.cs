@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -82,45 +81,29 @@ namespace Video.API.Controllers
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
         }
 
-        private async Task BookKinlyMeetingRoom(Guid conferenceId)
+        /// <summary>
+        /// Updates a conference
+        /// </summary>
+        /// <param name="request">Details of a conference</param>
+        /// <returns>Ok status</returns>
+        [HttpPut]
+        [SwaggerOperation(OperationId = "UpdateConference")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateConference(UpdateConferenceRequest request)
         {
-            MeetingRoom meetingRoom;
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId);            
+                var command = new UpdateConferenceDetailsCommand(request.HearingRefId, request.CaseNumber,
+                    request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime);
+
+                await _commandHandler.Handle(command);
+                return Ok();
             }
-            catch (DoubleBookingException)
+            catch (ConferenceNotFoundException)
             {
-                _logger.LogWarning($"Kinly Room already booked for conference {conferenceId}");
-                meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+                return NotFound();
             }
-
-            if (meetingRoom == null) return;
-            
-            var command = new UpdateMeetingRoomCommand(conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri,
-                meetingRoom.ParticipantUri, meetingRoom.PexipNode);
-            await _commandHandler.Handle(command);
-        }
-
-        private async Task<Guid> CreateConference(BookNewConferenceRequest request)
-        {
-            var existingConference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
-                new GetConferenceByHearingRefIdQuery(request.HearingRefId));
-
-            if (existingConference != null && !existingConference.IsClosed()) return existingConference.Id;
-            
-            var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
-                        x.CaseTypeGroup)
-                    {
-                        Representee = x.Representee
-                    })
-                .ToList();
-            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
-                request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
-            await _commandHandler.Handle(createConferenceCommand);
-            return createConferenceCommand.NewConferenceId;
-
         }
 
         /// <summary>
@@ -149,7 +132,7 @@ namespace Video.API.Controllers
             var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
-        
+
         /// <summary>
         /// Remove an existing conference
         /// </summary>
@@ -191,7 +174,7 @@ namespace Video.API.Controllers
             var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
             return Ok(response);
         }
-        
+
         /// <summary>
         /// Get non-closed conferences for a participant by their username
         /// </summary>
@@ -218,7 +201,7 @@ namespace Video.API.Controllers
             var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
             return Ok(response);
         }
-        
+
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
@@ -243,6 +226,47 @@ namespace Video.API.Controllers
             var mapper = new ConferenceToDetailsResponseMapper();
             var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
+        }
+
+        private async Task BookKinlyMeetingRoom(Guid conferenceId)
+        {
+            MeetingRoom meetingRoom;
+            try
+            {
+                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId);            
+            }
+            catch (DoubleBookingException)
+            {
+                _logger.LogWarning($"Kinly Room already booked for conference {conferenceId}");
+                meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+            }
+
+            if (meetingRoom == null) return;
+            
+            var command = new UpdateMeetingRoomCommand(conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri,
+                meetingRoom.ParticipantUri, meetingRoom.PexipNode);
+            await _commandHandler.Handle(command);
+        }
+
+        private async Task<Guid> CreateConference(BookNewConferenceRequest request)
+        {
+            var existingConference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
+                new GetConferenceByHearingRefIdQuery(request.HearingRefId));
+
+            if (existingConference != null && !existingConference.IsClosed()) return existingConference.Id;
+            
+            var participants = request.Participants.Select(x =>
+                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
+                        x.CaseTypeGroup)
+                    {
+                        Representee = x.Representee
+                    })
+                .ToList();
+            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
+                request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
+            await _commandHandler.Handle(createConferenceCommand);
+            return createConferenceCommand.NewConferenceId;
+
         }
     }
 }

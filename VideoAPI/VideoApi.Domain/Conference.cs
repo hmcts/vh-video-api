@@ -115,5 +115,15 @@ namespace VideoApi.Domain
         {
             return State == ConferenceState.Closed;
         }
+
+        public void UpdateConferenceDetails(string caseType, string caseNumber, string caseName,
+            int scheduledDuration, DateTime scheduledDateTime)
+        {
+            CaseName = caseName;
+            CaseNumber = caseNumber;
+            CaseType = caseType;
+            ScheduledDateTime = scheduledDateTime;
+            ScheduledDuration = scheduledDuration;
+        }
     }
 }
