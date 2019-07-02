@@ -11,6 +11,13 @@ Scenario: Get conference details by username
     Then the response should have the status OK and success status True
     And the summary of conference details should be retrieved
 
+Scenario: Update conference
+    Given I have a conference
+	And I have an update conference request
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the conference details have been updated
+
 Scenario: Create conference
     Given I have a valid book a new conference request
     When I send the request to the endpoint

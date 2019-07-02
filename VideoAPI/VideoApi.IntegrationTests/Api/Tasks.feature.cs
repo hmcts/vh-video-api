@@ -31,8 +31,8 @@ namespace VideoApi.IntegrationTests.Api
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Tasks", "  In order to track tasks to be actions\n  As an API service\n  I want to create ne" +
-                    "w tasks and retrieve pending tasks", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Tasks", "  In order to track tasks to be actions\r\n  As an API service\r\n  I want to create " +
+                    "new tasks and retrieve pending tasks", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

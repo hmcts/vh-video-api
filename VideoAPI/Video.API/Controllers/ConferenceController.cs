@@ -161,6 +161,10 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get todays conferences
+        /// </summary>
+        /// <returns>Conference details</returns>
         [HttpGet("today")]
         [SwaggerOperation(OperationId = "GetConferencesToday")]
         [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
