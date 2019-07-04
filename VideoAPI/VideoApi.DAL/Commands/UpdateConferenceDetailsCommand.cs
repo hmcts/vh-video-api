@@ -38,20 +38,20 @@ namespace VideoApi.DAL.Commands
             _context = context;
         }
 
-        public async Task Handle(UpdateConferenceDetailsCommand detailsCommand)
+        public async Task Handle(UpdateConferenceDetailsCommand command)
         {
             var conference = await _context.Conferences
                 .Include("ConferenceStatuses")
                 .Where(x => x.GetCurrentStatus() != ConferenceState.Closed)
-                .SingleOrDefaultAsync(x => x.HearingRefId == detailsCommand.HearingRefId);
+                .SingleOrDefaultAsync(x => x.HearingRefId == command.HearingRefId);
 
             if (conference == null)
             {
-                throw new ConferenceNotFoundException(detailsCommand.HearingRefId);
+                throw new ConferenceNotFoundException(command.HearingRefId);
             }
 
-            conference.UpdateConferenceDetails(detailsCommand.CaseType, detailsCommand.CaseNumber, detailsCommand.CaseName,
-                detailsCommand.ScheduledDuration, detailsCommand.ScheduledDateTime);
+            conference.UpdateConferenceDetails(command.CaseType, command.CaseNumber, command.CaseName,
+                command.ScheduledDuration, command.ScheduledDateTime);
             await _context.SaveChangesAsync();
         }
     }
