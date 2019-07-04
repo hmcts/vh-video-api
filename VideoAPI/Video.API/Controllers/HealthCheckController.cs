@@ -3,6 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -11,6 +12,7 @@ namespace Video.API.Controllers
 {
     [Produces("application/json")]
     [Route("HealthCheck")]
+    [AllowAnonymous]
     [ApiController]
     public class HealthCheckController : ControllerBase
     {
