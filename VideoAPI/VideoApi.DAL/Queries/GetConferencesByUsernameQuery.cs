@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace VideoApi.DAL.Queries
     public class GetConferencesByUsernameQuery : IQuery
     {
         public string Username { get; set; }
+        public DateTime? Date { get; set; }
 
         public GetConferencesByUsernameQuery(string username)
         {
@@ -30,12 +32,19 @@ namespace VideoApi.DAL.Queries
         public async Task<List<Conference>> Handle(GetConferencesByUsernameQuery query)
         {
             query.Username = query.Username.ToLower().Trim();
-            return await _context.Conferences
+            var efQuery = _context.Conferences
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses")
-                .Include("Tasks").AsNoTracking()
-                .Where(x => x.Participants.Any(p => p.Username == query.Username) 
-                            && x.State != ConferenceState.Closed)
+                .Include("Tasks").AsNoTracking();
+
+            if (query.Date.HasValue)
+            {
+                efQuery = efQuery.Where(x =>
+                    x.ScheduledDateTime > query.Date.Value.Date &&
+                    x.ScheduledDateTime < query.Date.Value.Date.AddDays(1));
+            }
+            return await efQuery
+                .Where(x => x.Participants.Any(p => p.Username == query.Username))
                 .OrderBy(x => x.ScheduledDateTime)
                 .ToListAsync();
         }

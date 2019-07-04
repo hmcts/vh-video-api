@@ -198,7 +198,10 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var query = new GetConferencesByUsernameQuery(username.ToLower().Trim());
+            var query = new GetConferencesByUsernameQuery(username.ToLower().Trim())
+            {
+                Date = DateTime.Today
+            };
             var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
 
             var mapper = new ConferenceToSummaryResponseMapper();
