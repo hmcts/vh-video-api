@@ -9,6 +9,7 @@ using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Helpers;
+using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 
 namespace VideoApi.AcceptanceTests.Steps
@@ -19,7 +20,8 @@ namespace VideoApi.AcceptanceTests.Steps
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
         private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
-        private const string OriginalStatusKey = "originalConferenceStatus";
+        private const string CuurentStatusKey = "CurrentStatus";
+        private const string UpdatedKey = "UpdatedConference";
 
         public ConferenceSteps(TestContext injectedContext, ScenarioContext scenarioContext)
         {
@@ -31,6 +33,24 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername()
         {
             _context.Request = _context.Get(_endpoints.GetConferenceDetailsByUsername(_context.NewConference.Participants.First().Username));
+        }
+
+        [Given(@"I have an update conference request")]
+        public void GivenIHaveAnUpdateConferenceRequest()
+        {
+
+            var request = new UpdateConferenceRequest
+            {
+                CaseName = $"{_context.NewConference.CaseName} UPDATED",
+                CaseNumber = $"{_context.NewConference.CaseNumber} UPDATED",
+                CaseType = "Financial Remedy",
+                HearingRefId = _context.NewHearingRefId,
+                ScheduledDateTime = DateTime.Now.AddDays(1),
+                ScheduledDuration = 12
+            };
+
+            _scenarioContext.Add(UpdatedKey, request);
+            _context.Request = _context.Put(_endpoints.UpdateConference, request);
         }
 
         [Given(@"I have a valid book a new conference request")]
@@ -61,7 +81,7 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.Should().NotBeNull();
             _context.NewConferenceId = conference.Id;
             _context.NewConference = conference;
-            _scenarioContext.Add(OriginalStatusKey, conference.CurrentStatus);
+            _scenarioContext.Add(CuurentStatusKey, conference.CurrentStatus);
         }
 
         [Given(@"I have a get details for a conference request with a valid conference id")]
@@ -90,7 +110,13 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            conference.CurrentStatus.Should().NotBe(_scenarioContext.Get<string>(OriginalStatusKey));
+
+            var expected = _scenarioContext.Get<UpdateConferenceRequest>(UpdatedKey);
+            conference.CaseName.Should().Be(expected.CaseName);
+            conference.CaseNumber.Should().Be(expected.CaseNumber);
+            conference.CaseType.Should().Be(expected.CaseType);
+            conference.ScheduledDateTime.Day.Should().Be(DateTime.Today.AddDays(1).Day);
+            conference.ScheduledDuration.Should().Be(expected.ScheduledDuration);
         }
 
         [Then(@"the conference details should be retrieved")]
@@ -128,3 +154,4 @@ namespace VideoApi.AcceptanceTests.Steps
         }        
     }
 }
+

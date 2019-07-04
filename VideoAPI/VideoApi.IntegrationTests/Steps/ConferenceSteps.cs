@@ -250,5 +250,54 @@ namespace VideoApi.IntegrationTests.Steps
             conference.Should().NotBeNull();
             conference.Should().BeEquivalentTo(_conferenceTestContext.ConferenceDetails);
         }
+
+        [Given(@"I have a (.*) update a conference request")]
+        public async Task GivenIHaveAValidUpdateAConferenceRequest(Scenario scenario)
+        {
+            UpdateConferenceRequest request;
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                {
+                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+                    ApiTestContext.NewConferenceId = seededConference.Id;
+                    var scheduledDateTime = seededConference.ScheduledDateTime.AddDays(1);
+                    request = new UpdateConferenceRequest
+                    {
+                        CaseName = seededConference.CaseName,
+                        ScheduledDateTime = scheduledDateTime,
+                        CaseNumber = seededConference.CaseNumber,
+                        HearingRefId = seededConference.HearingRefId,
+                        ScheduledDuration = seededConference.ScheduledDuration + 10,
+                        CaseType = seededConference.CaseType
+                    };
+                    break;
+                }
+
+                case Scenario.Nonexistent:
+                    request = new UpdateConferenceRequest
+                    {
+                        HearingRefId = Guid.NewGuid(),
+                        CaseName = "CaseName",
+                        ScheduledDateTime = DateTime.Now,
+                        ScheduledDuration = 10,
+                        CaseType = "CaseType",
+                        CaseNumber = "CaseNo"
+                    };
+                    break;
+                case Scenario.Invalid:
+                    request = new UpdateConferenceRequest();
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+
+            ApiTestContext.Uri = _endpoints.UpdateConference;
+            ApiTestContext.HttpMethod = HttpMethod.Put;
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
     }
 }

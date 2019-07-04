@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -82,6 +81,157 @@ namespace Video.API.Controllers
             return CreatedAtAction(nameof(GetConferenceDetailsById), new {conferenceId = response.Id}, response);
         }
 
+        /// <summary>
+        /// Updates a conference
+        /// </summary>
+        /// <param name="request">Details of a conference</param>
+        /// <returns>Ok status</returns>
+        [HttpPut]
+        [SwaggerOperation(OperationId = "UpdateConference")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateConference(UpdateConferenceRequest request)
+        {
+            try
+            {
+                var command = new UpdateConferenceDetailsCommand(request.HearingRefId, request.CaseNumber,
+                    request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime);
+
+                await _commandHandler.Handle(command);
+                return Ok();
+            }
+            catch (ConferenceNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        /// <summary>
+        /// Get the details of a conference
+        /// </summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpGet("{conferenceId}")]
+        [SwaggerOperation(OperationId = "GetConferenceDetailsById")]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferenceDetailsById(Guid conferenceId)
+        {
+            _logger.LogDebug($"GetConferenceDetailsById {conferenceId}");
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (queriedConference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Remove an existing conference
+        /// </summary>
+        /// <param name="conferenceId">The conference id</param>
+        /// <returns></returns>
+        [HttpDelete("{conferenceId}")]
+        [SwaggerOperation(OperationId = "RemoveConference")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> RemoveConference(Guid conferenceId)
+        {
+            _logger.LogDebug($"RemoveConference {conferenceId}");
+            var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
+            try
+            {
+                await _commandHandler.Handle(removeConferenceCommand);
+            }
+            catch (ConferenceNotFoundException)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            _logger.LogInformation($"Successfully removed conference {conferenceId}");
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Get todays conferences
+        /// </summary>
+        /// <returns>Conference details</returns>
+        [HttpGet("today")]
+        [SwaggerOperation(OperationId = "GetConferencesToday")]
+        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetConferencesToday()
+        {
+            _logger.LogDebug("GetConferencesToday");
+            var query = new GetConferencesTodayQuery();
+            var conferences = await _queryHandler.Handle<GetConferencesTodayQuery, List<Conference>>(query);
+
+            var mapper = new ConferenceToSummaryResponseMapper();
+            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get non-closed conferences for a participant by their username
+        /// </summary>
+        /// <param name="username">person username</param>
+        /// <returns>Conference details</returns>
+        [HttpGet(Name = "GetConferencesForUsername")]
+        [SwaggerOperation(OperationId = "GetConferencesForUsername")]
+        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesForUsername([FromQuery] string username)
+        {
+            _logger.LogDebug($"GetConferencesForUsername {username}");
+            if (!username.IsValidEmail())
+            {
+                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
+                _logger.LogError($"Invalid username {username}");
+                return BadRequest(ModelState);
+            }
+
+            var query = new GetConferencesByUsernameQuery(username.ToLower().Trim());
+            var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
+
+            var mapper = new ConferenceToSummaryResponseMapper();
+            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="hearingRefId">Hearing ID</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpGet("hearings/{hearingRefId}")]
+        [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferenceByHearingRefId(Guid hearingRefId)
+        {
+            _logger.LogDebug($"GetConferenceByHearingRefId {hearingRefId}");
+            var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
+            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+
+            if (conference == null)
+            {
+                _logger.LogError($"Unable to find conference with hearing id {hearingRefId}");
+                return NotFound();
+            }
+            
+            var mapper = new ConferenceToDetailsResponseMapper();
+            var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
+            return Ok(response);
+        }
+
         private async Task BookKinlyMeetingRoom(Guid conferenceId)
         {
             MeetingRoom meetingRoom;
@@ -121,128 +271,6 @@ namespace Video.API.Controllers
             await _commandHandler.Handle(createConferenceCommand);
             return createConferenceCommand.NewConferenceId;
 
-        }
-
-        /// <summary>
-        /// Get the details of a conference
-        /// </summary>
-        /// <param name="conferenceId">Id of the conference</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
-        [HttpGet("{conferenceId}")]
-        [SwaggerOperation(OperationId = "GetConferenceDetailsById")]
-        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferenceDetailsById(Guid conferenceId)
-        {
-            _logger.LogDebug($"GetConferenceDetailsById {conferenceId}");
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference == null)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-            var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
-            return Ok(response);
-        }
-        
-        /// <summary>
-        /// Remove an existing conference
-        /// </summary>
-        /// <param name="conferenceId">The conference id</param>
-        /// <returns></returns>
-        [HttpDelete("{conferenceId}")]
-        [SwaggerOperation(OperationId = "RemoveConference")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> RemoveConference(Guid conferenceId)
-        {
-            _logger.LogDebug($"RemoveConference {conferenceId}");
-            var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
-            try
-            {
-                await _commandHandler.Handle(removeConferenceCommand);
-            }
-            catch (ConferenceNotFoundException)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-
-            _logger.LogInformation($"Successfully removed conference {conferenceId}");
-            return NoContent();
-        }
-
-        [HttpGet("today")]
-        [SwaggerOperation(OperationId = "GetConferencesToday")]
-        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesToday()
-        {
-            _logger.LogDebug("GetConferencesToday");
-            var query = new GetConferencesTodayQuery();
-            var conferences = await _queryHandler.Handle<GetConferencesTodayQuery, List<Conference>>(query);
-
-            var mapper = new ConferenceToSummaryResponseMapper();
-            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
-            return Ok(response);
-        }
-        
-        /// <summary>
-        /// Get non-closed conferences for a participant by their username
-        /// </summary>
-        /// <param name="username">person username</param>
-        /// <returns>Conference details</returns>
-        [HttpGet(Name = "GetConferencesForUsername")]
-        [SwaggerOperation(OperationId = "GetConferencesForUsername")]
-        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesForUsername([FromQuery] string username)
-        {
-            _logger.LogDebug($"GetConferencesForUsername {username}");
-            if (!username.IsValidEmail())
-            {
-                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-                _logger.LogError($"Invalid username {username}");
-                return BadRequest(ModelState);
-            }
-
-            var query = new GetConferencesByUsernameQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesByUsernameQuery, List<Conference>>(query);
-
-            var mapper = new ConferenceToSummaryResponseMapper();
-            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
-            return Ok(response);
-        }
-        
-        /// <summary>
-        /// Get conferences by hearing ref id
-        /// </summary>
-        /// <param name="hearingRefId">Hearing ID</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
-        [HttpGet("hearings/{hearingRefId}")]
-        [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
-        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferenceByHearingRefId(Guid hearingRefId)
-        {
-            _logger.LogDebug($"GetConferenceByHearingRefId {hearingRefId}");
-            var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
-            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
-
-            if (conference == null)
-            {
-                _logger.LogError($"Unable to find conference with hearing id {hearingRefId}");
-                return NotFound();
-            }
-            
-            var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
-            return Ok(response);
         }
     }
 }

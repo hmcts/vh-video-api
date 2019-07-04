@@ -36,6 +36,8 @@ namespace Testing.Common.Helper
         
         public string RemoveParticipantFromConference(Guid conferenceId, Guid participantId) =>
             $"{ApiRoot}/{conferenceId}/participants/{participantId}";
+        public string UpdateParticipantFromConference(Guid conferenceId, Guid participantId) =>
+            $"{ApiRoot}/{conferenceId}/participants/{participantId}";
 
         public string GetTestCallResultForParticipant(Guid conferenceId, Guid participantId) =>
             $"{ApiRoot}/{conferenceId}/participants/{participantId}/selftestresult";
@@ -50,6 +52,7 @@ namespace Testing.Common.Helper
         public string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
         public string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
         public string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
+        public string UpdateConference => $"{ApiRoot}";
     }
 
     public class HealthCheckEndpoints
