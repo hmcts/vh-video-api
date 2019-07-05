@@ -181,23 +181,51 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Get conference details by hearing id")]
-        public virtual void GetConferenceDetailsByHearingId()
+        [NUnit.Framework.DescriptionAttribute("Get conference details for todays hearings")]
+        public virtual void GetConferenceDetailsForTodaysHearings()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get conference details by hearing id", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get conference details for todays hearings", null, ((string[])(null)));
 #line 41
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 42
     testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 43
+ testRunner.And("I have another conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 44
+ testRunner.And("I have a conference for tomorrow", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 45
+ testRunner.And("I have a get conferences for today request with a valid date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 46
+    testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 47
+    testRunner.Then("the response should have the status OK and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 48
+    testRunner.And("a list of all todays conference details should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 49
+ testRunner.And("the list should contain only todays hearings", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Get conference details by hearing id")]
+        public virtual void GetConferenceDetailsByHearingId()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get conference details by hearing id", null, ((string[])(null)));
+#line 51
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 52
+    testRunner.Given("I have a conference", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 53
  testRunner.And("I have a get details for a conference request by hearing id with a valid username" +
                     "", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 44
+#line 54
     testRunner.When("I send the request to the endpoint", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 45
+#line 55
     testRunner.Then("the response should have the status OK and success status True", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 46
+#line 56
     testRunner.And("the conference details should be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

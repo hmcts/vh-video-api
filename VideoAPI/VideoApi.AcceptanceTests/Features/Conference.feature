@@ -38,6 +38,16 @@ Scenario: Delete conference
     Then the response should have the status NoContent and success status True
     And the conference should be removed
 
+Scenario: Get conference details for todays hearings
+    Given I have a conference
+	And I have another conference
+	And I have a conference for tomorrow
+	And I have a get conferences for today request with a valid date
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And a list of all todays conference details should be retrieved
+	And the list should contain only todays hearings
+
 Scenario: Get conference details by hearing id
     Given I have a conference
 	And I have a get details for a conference request by hearing id with a valid username

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using RestSharp;
 using Testing.Common.Configuration;
 using Testing.Common.Helper;
@@ -22,6 +23,14 @@ namespace VideoApi.AcceptanceTests.Contexts
         public Guid NewHearingRefId { get; set; }
         public ConferenceDetailsResponse NewConference { get; set; }
         public long NewTaskId { get; set; }
+        public List<ConferenceDetailsResponse> NewConferences { get; set; }
+        public List<Guid> NewConferenceIds { get; set; }
+
+        public TestContext()
+        {
+            NewConferences = new List<ConferenceDetailsResponse>();
+            NewConferenceIds = new List<Guid>();
+        }
 
         public RestClient Client()
         {

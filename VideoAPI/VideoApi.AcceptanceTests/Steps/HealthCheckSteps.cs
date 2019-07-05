@@ -1,4 +1,5 @@
-﻿using TechTalk.SpecFlow;
+﻿using System;
+using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
 
@@ -18,6 +19,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get health request")]
         public void GivenIHaveAGetHealthRequest()
         {
+            _context.NewConferenceId = Guid.Empty;
             _context.Request = _context.Get(_endpoints.CheckServiceHealth());
         }
     }
