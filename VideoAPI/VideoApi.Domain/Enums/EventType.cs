@@ -13,6 +13,7 @@ namespace VideoApi.Domain.Enums
         Consultation,
         JudgeAvailable,
         MediaPermissionDenied,
+        ParticipantJoining
         SelfTestFailed
     }
 }
