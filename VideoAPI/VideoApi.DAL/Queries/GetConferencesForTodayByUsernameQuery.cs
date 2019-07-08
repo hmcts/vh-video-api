@@ -5,44 +5,41 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetConferencesByUsernameQuery : IQuery
+    public class GetConferencesForTodayByUsernameQuery : IQuery
     {
         public string Username { get; set; }
-        public DateTime? Date { get; set; }
 
-        public GetConferencesByUsernameQuery(string username)
+        public GetConferencesForTodayByUsernameQuery(string username)
         {
             Username = username;
         }
     }
 
-    public class GetConferencesByUsernameQueryHandler : IQueryHandler<GetConferencesByUsernameQuery, List<Conference>>
+    public class GetConferencesForTodayByUsernameQueryHandler : IQueryHandler<GetConferencesForTodayByUsernameQuery, List<Conference>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetConferencesByUsernameQueryHandler(VideoApiDbContext context)
+        public GetConferencesForTodayByUsernameQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Conference>> Handle(GetConferencesByUsernameQuery query)
+        public async Task<List<Conference>> Handle(GetConferencesForTodayByUsernameQuery query)
         {
             query.Username = query.Username.ToLower().Trim();
+            var today = DateTime.Today;
+            var tomorrow = DateTime.Today.AddDays(1);
+
             var efQuery = _context.Conferences
                 .Include("Participants.ParticipantStatuses")
+                .Include("Participants.TestCallResult")
                 .Include("ConferenceStatuses")
-                .Include("Tasks").AsNoTracking();
-
-            if (query.Date.HasValue)
-            {
-                efQuery = efQuery.Where(x =>
-                    x.ScheduledDateTime > query.Date.Value.Date &&
-                    x.ScheduledDateTime < query.Date.Value.Date.AddDays(1));
-            }
+                .Include("Tasks").AsNoTracking()
+                .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
+            
             return await efQuery
                 .Where(x => x.Participants.Any(p => p.Username == query.Username))
                 .OrderBy(x => x.ScheduledDateTime)
