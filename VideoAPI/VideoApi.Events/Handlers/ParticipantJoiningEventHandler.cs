@@ -19,7 +19,7 @@ namespace VideoApi.Events.Handlers
         {
         }
 
-        public override EventType EventType => EventType.Joining;
+        public override EventType EventType => EventType.ParticipantJoining;
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {

@@ -16,7 +16,7 @@ namespace VideoApi.UnitTests.Events
         [TestCase(EventType.Help, typeof(HelpEventHandler))]
         [TestCase(EventType.Leave, typeof(LeaveEventHandler))]
         [TestCase(EventType.Transfer, typeof(TransferEventHandler))]
-        [TestCase(EventType.Joining, typeof(ParticipantJoiningEventHandler))]
+        [TestCase(EventType.ParticipantJoining, typeof(ParticipantJoiningEventHandler))]
         public void should_return_instance_of_event_handler_when_factory_get_is_called_with_valid_request(
             EventType eventType, Type typeOfEventHandler)
         {
