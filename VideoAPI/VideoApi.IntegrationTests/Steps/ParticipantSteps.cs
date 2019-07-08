@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -69,6 +70,59 @@ namespace VideoApi.IntegrationTests.Steps
 
             ApiTestContext.Uri = _endpoints.AddParticipantsToConference(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Put;
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
+        [Given(@"I have an update participant to a (.*) conference request")]
+        public async Task GivenIHaveAnUpdateParticipantToConferenceRequest(Scenario scenario)
+        {
+            Guid conferenceId;
+            UpdateParticipantRequest request;
+            Guid participantId = Guid.Empty; 
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                {
+                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+                    ApiTestContext.NewConferenceId = seededConference.Id;
+                    conferenceId = seededConference.Id; 
+                    participantId = seededConference.Participants.First().Id;
+                    request = new UpdateParticipantRequest
+                    {
+                        Fullname = "Mr Test_Fullname",
+                        DisplayName = "Test_Displayname",
+                        Representee = "Test_Representee"
+                    };
+                    break;
+                }
+
+                case Scenario.Nonexistent:
+                    conferenceId = Guid.NewGuid();
+                    participantId = Guid.NewGuid();
+                    request = new UpdateParticipantRequest
+                    {
+                        Fullname = "Mr Test_Fullname",
+                        DisplayName = "Test_Displayname",
+                        Representee = "Test_Representee"
+                    };
+                    break;
+                case Scenario.Invalid:
+                    conferenceId = Guid.Empty;
+                    request = new UpdateParticipantRequest
+                    {
+                        Fullname = "Mr Test_Fullname",
+                        DisplayName = "Test_Displayname",
+                        Representee = "Test_Representee"
+                    };
+                    break;
+
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            ApiTestContext.Uri = _endpoints.UpdateParticipantFromConference(conferenceId, participantId);
+            ApiTestContext.HttpMethod = HttpMethod.Patch;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
