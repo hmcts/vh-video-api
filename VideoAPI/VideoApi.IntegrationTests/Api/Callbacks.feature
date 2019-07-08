@@ -37,4 +37,4 @@ Feature: Callbacks
     | Leave                 |
     | JudgeAvailable        |
     | MediaPermissionDenied |
-    | Joining               |
+    | ParticipantJoining    |
