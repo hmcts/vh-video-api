@@ -4,7 +4,7 @@
 	I want to be able to create, retrieve, update and delete conferences
 
 Scenario: Get conference details by username
-    Given I have a conference
+    Given I have a conference today
     And The conference has a pending task
 	And I have a get details for a conference request by username with a valid username
     When I send the request to the endpoint
