@@ -52,6 +52,8 @@ namespace VideoApi.UnitTests.Events
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
                     EventHubContextMock.Object),
                 new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
+                    EventHubContextMock.Object),
+                new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
                     EventHubContextMock.Object)
             };
 

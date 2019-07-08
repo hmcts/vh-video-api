@@ -144,6 +144,7 @@ namespace VideoApi.IntegrationTests.Api
         [NUnit.Framework.TestCaseAttribute("Leave", null)]
         [NUnit.Framework.TestCaseAttribute("JudgeAvailable", null)]
         [NUnit.Framework.TestCaseAttribute("MediaPermissionDenied", null)]
+        [NUnit.Framework.TestCaseAttribute("ParticipantJoining", null)]
         public virtual void ShouldAcceptAndProcessAConferenceEventRequest(string eventType, string[] exampleTags)
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should accept and process a conference event request", null, exampleTags);
