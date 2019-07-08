@@ -14,14 +14,14 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class MediaProblemEventHandlerTests : EventHandlerTestBase
+    public class SelfTestFailedEventHandlerTests : EventHandlerTestBase
     {
-        private MediaProblemEventHandler _eventHandler;
+        private SelfTestFailedEventHandler _eventHandler;
 
         [Test]
         public async Task should_call_command_handler_with_addtaskcommand_object()
         {
-            _eventHandler = new MediaProblemEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+            _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;
@@ -54,7 +54,7 @@ namespace VideoApi.UnitTests.Events
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((Conference) null);
 
-            _eventHandler = new MediaProblemEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+            _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 ServiceBusQueueClient, EventHubContextMock.Object);
 
             var conference = TestConference;

@@ -53,7 +53,7 @@ namespace VideoApi.UnitTests.Events
                     EventHubContextMock.Object),
                 new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
                     EventHubContextMock.Object),
-                new MediaProblemEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
+                new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
                     EventHubContextMock.Object)
             };
 
