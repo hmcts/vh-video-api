@@ -13,6 +13,6 @@ namespace VideoApi.Domain.Enums
         Consultation,
         JudgeAvailable,
         MediaPermissionDenied,
-        Joining
+        ParticipantJoining
     }
 }
