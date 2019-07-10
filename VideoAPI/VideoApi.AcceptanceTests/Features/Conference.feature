@@ -45,8 +45,7 @@ Scenario: Get conference details for todays hearings
 	And I have a get conferences for today request with a valid date
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And a list of all todays conference details should be retrieved
-	And the list should contain only todays hearings
+    And a list containing only todays hearings conference details should be retrieved
 
 Scenario: Get conference details by hearing id
     Given I have a conference

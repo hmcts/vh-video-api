@@ -157,7 +157,7 @@ namespace VideoApi.AcceptanceTests.Steps
             AssertConferenceDetailsResponse.ForConference(conference);
         }
 
-        [Then(@"a list of all todays conference details should be retrieved")]
+        [Then(@"a list containing only todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
         {
             var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
@@ -188,16 +188,6 @@ namespace VideoApi.AcceptanceTests.Steps
                 {
                     AssertParticipantSummaryResponse.ForParticipant(participant);
                 }
-            }
-        }
-
-        [Then(@"the list should contain only todays hearings")]
-        public void ThenTheListShouldContainOnlyTodaysHearings()
-        {
-            _context.NewConferences.Count.Should().BeGreaterOrEqualTo(2);
-            foreach (var conferenceId in _context.NewConferenceIds)
-            {
-                _context.NewConferences.Any(x => x.Id.Equals(conferenceId)).Should().BeTrue();
             }
         }
 
