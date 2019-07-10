@@ -48,6 +48,36 @@ namespace VideoApi.UnitTests.Events
         }
 
         [Test]
+        public async Task should_not_call_command_handler_with_addtaskcommand_object_if_a_task_exists()
+        {
+            _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient, EventHubContextMock.Object);
+
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First();
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Help,
+                EventId = Guid.NewGuid().ToString(),
+                ParticipantId = participantForEvent.Id,
+                ConferenceId = conference.Id,
+                TimeStampUtc = DateTime.UtcNow,
+                Reason = "Test"
+            };
+
+            var tasks = new List<VideoApi.Domain.Task>
+            {
+                new VideoApi.Domain.Task(participantForEvent.Id, "Test", TaskType.Participant)
+            };
+
+            QueryHandlerMock.Setup(x => x.Handle<GetTasksForConferenceQuery, List<VideoApi.Domain.Task>>(
+                It.IsAny<GetTasksForConferenceQuery>())).ReturnsAsync(tasks);
+
+            await _eventHandler.HandleAsync(callbackEvent);
+            CommandHandlerMock.Verify(x => x.Handle(It.IsAny<AddTaskCommand>()), Times.Never);
+        }
+
+        [Test]
         public void should_throw_exception_when_conference_does_not_exist()
         {
             QueryHandlerMock
