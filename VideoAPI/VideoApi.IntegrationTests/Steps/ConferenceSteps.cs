@@ -144,7 +144,7 @@ namespace VideoApi.IntegrationTests.Steps
                 request.CaseType = string.Empty;
                 request.CaseNumber = string.Empty;
                 request.ScheduledDuration = 0;
-                request.ScheduledDateTime = DateTime.Today.AddDays(-5);
+                request.ScheduledDateTime = DateTime.Now.AddDays(-5);
             }
 
             ApiTestContext.Uri = _endpoints.BookNewConference;

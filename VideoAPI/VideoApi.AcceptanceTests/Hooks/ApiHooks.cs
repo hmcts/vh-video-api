@@ -11,6 +11,7 @@ using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.AcceptanceTests.Helpers;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
+using VideoApi.DAL.Commands;
 
 namespace VideoApi.AcceptanceTests.Hooks
 {
@@ -59,10 +60,28 @@ namespace VideoApi.AcceptanceTests.Hooks
         public static void RemoveConference(TestContext context, ConferenceEndpoints endpoints)
         {
             if (context.NewConferenceId == Guid.Empty) return;
-            context.Request = context.Delete(endpoints.RemoveConference(context.NewConferenceId));
-            context.Response = context.Client().Execute(context.Request);
-            context.Response.IsSuccessful.Should().BeTrue("New conference is deleted after the test");
+            RemoveConference(context, endpoints, context.NewConferenceId);
+        }
+
+        [AfterScenario]
+        public static void RemoveConferences(TestContext context, ConferenceEndpoints endpoints)
+        {
+            if (context.NewConferences.Count <= 0) return;
+            foreach (var conference in context.NewConferences)
+            {
+                if (conference.Id.Equals(context.NewConferenceId)) continue;
+                RemoveConference(context, endpoints, conference.Id);
+            }
+            context.NewConferences.Clear();
+            context.NewConferenceIds.Clear();
             context.NewConferenceId = Guid.Empty;
+        }
+
+        private static void RemoveConference(TestContext context, ConferenceEndpoints endpoints, Guid conferenceId)
+        {
+            context.Request = context.Delete(endpoints.RemoveConference(conferenceId));
+            context.Response = context.Client().Execute(context.Request);
+            context.Response.IsSuccessful.Should().BeTrue("Conference is deleted");
         }
     }
 }
