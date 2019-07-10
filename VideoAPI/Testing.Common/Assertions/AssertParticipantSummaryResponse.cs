@@ -1,5 +1,6 @@
 using FluentAssertions;
 using VideoApi.Contract.Responses;
+using VideoApi.Domain.Enums;
 
 namespace Testing.Common.Assertions
 {
@@ -11,6 +12,10 @@ namespace Testing.Common.Assertions
             participant.Username.Should().NotBeNullOrWhiteSpace();
             participant.UserRole.Should().NotBeNull();
             participant.DisplayName.Should().NotBeNullOrWhiteSpace();
+            if (participant.UserRole == UserRole.Representative)
+            {
+                participant.Representee.Should().NotBeEmpty();
+            }
         }
     }
 }

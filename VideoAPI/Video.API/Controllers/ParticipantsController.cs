@@ -79,6 +79,45 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
+        /// Update participant details
+        /// </summary>
+        /// <param name="conferenceId">Id of conference to look up</param>
+        /// <param name="participantId">Id of participant to remove</param>
+        /// <param name="request">The participant information to update</param>
+        /// <returns></returns>
+        [HttpPatch("{conferenceId}/participants/{participantId}", Name = "UpdateParticipantDetails")]
+        [SwaggerOperation(OperationId = "UpdateParticipantDetails")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateParticipantDetails(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
+        {
+            _logger.LogDebug("UpdateParticipantDetails");
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (queriedConference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            var participant = queriedConference.Participants.SingleOrDefault(x => x.Id == participantId);
+            if (participant == null)
+            {
+                _logger.LogError($"Unable to find participant {participantId}");
+                return NotFound();
+            }
+
+            var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId, request.Fullname,
+                request.DisplayName, request.Representee);
+            await _commandHandler.Handle(updateParticipantDetailsCommand);
+
+            return NoContent();
+        }
+
+        /// <summary>
         /// Remove participants from a conference
         /// </summary>
         /// <param name="conferenceId">The id of the conference to remove participants from</param>

@@ -22,8 +22,6 @@ namespace VideoApi.UnitTests.Validation
 
         private UpdateConferenceRequest BuildRequest()
         {
-            var participants = Builder<ParticipantRequest>.CreateListOfSize(4)
-                .All().With(x => x.UserRole = UserRole.Individual).Build().ToList();
             return Builder<UpdateConferenceRequest>.CreateNew()
                 .With(x => x.ScheduledDateTime = DateTime.Now.AddDays(5))
                 .With(x => x.ScheduledDuration = 120)

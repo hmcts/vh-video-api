@@ -52,8 +52,22 @@ Feature: Participants
     Then the response should have the status BadRequest and success status False
     And the error response message should also contain 'Please provide a valid participantId'
 
-
   Scenario: Get self test score using invalid identifiers
     Given I have a nonexistent get self test score request
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
+
+  Scenario: Update participant to an existing conference
+    Given I have an update participant to a valid conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+
+  Scenario: Update participant to non-existent conference
+    Given I have an update participant to a nonexistent conference request
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
+
+  Scenario: Update participant to invalid conference
+    Given I have an update participant to a invalid conference request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False

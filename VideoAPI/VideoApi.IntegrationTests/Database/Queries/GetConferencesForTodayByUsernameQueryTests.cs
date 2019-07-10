@@ -12,9 +12,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetConferencesByUsernameQueryTests : DatabaseTestsBase
+    public class GetConferencesForTodayByUsernameQueryTests : DatabaseTestsBase
     {
-        private GetConferencesByUsernameQueryHandler _handler;
+        private GetConferencesForTodayByUsernameQueryHandler _handler;
         private Guid _newConferenceId1;
         private Guid _newConferenceId2;
         private Guid _newConferenceId3;
@@ -26,7 +26,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetConferencesByUsernameQueryHandler(context);
+            _handler = new GetConferencesForTodayByUsernameQueryHandler(context);
             _newConferenceId1 = Guid.Empty;
             _newConferenceId2 = Guid.Empty;
             _newConferenceId3 = Guid.Empty;
@@ -69,11 +69,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .Build();
             _newConferenceId4 = conference4.Id;
 
-            var conference5 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant")
+            var conference5 = new ConferenceBuilder(true, null, DateTime.UtcNow.AddDays(-1))
+                .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
-                .WithConferenceStatus(ConferenceState.Suspended)
-                .WithParticipantTask("Test Task")
+                .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             _newConferenceId5 = conference5.Id;
 
@@ -91,12 +90,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
 
-            var expectedConferences = new List<Conference> {conference2, conference3, conference4};
-            var conferences = await _handler.Handle(new GetConferencesByUsernameQuery(username));
+            var expectedConferences = new List<Conference> {conference1, conference2, conference3, conference4};
+            var conferences = await _handler.Handle(new GetConferencesForTodayByUsernameQuery(username));
 
             conferences.Should().NotBeEmpty();
             conferences.Select(x => x.Id).Should().BeEquivalentTo(expectedConferences.Select(x => x.Id));
-            conferences.Count.Should().Be(3);
         }
 
         [TearDown]

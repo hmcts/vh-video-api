@@ -22,6 +22,7 @@ namespace Testing.Common.Helper.Builders.Domain
             _builderSettings = new BuilderSettings();
             if (!ignoreId) return;
             
+            _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.TestCallResultId);
             _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
             _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
         }

@@ -19,6 +19,7 @@ namespace Testing.Common.Helper.Builders.Domain
             _builderSettings = new BuilderSettings();
             if (ignoreId)
             {
+                _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.TestCallResultId);
                 _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<Task, long>(x => x.Id);
@@ -26,7 +27,7 @@ namespace Testing.Common.Helper.Builders.Domain
             
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
             
-            var scheduleDateTime = scheduledDateTime ?? DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
+            var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
             const string caseType = "Civil Money Claims";
             var caseNumber = $"Test{Guid.NewGuid():N}";
             const string caseName = "Auto vs Manual";
