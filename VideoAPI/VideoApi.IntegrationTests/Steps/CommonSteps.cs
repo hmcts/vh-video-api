@@ -31,6 +31,24 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceTestContext.SeededConference = seededConference;
         }
         
+        [Given(@"I have a conference today")]
+        public async Task GivenIHaveAConferenceToday()
+        {
+            var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Defendant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithHearingTask("Suspended")
+                .Build();
+            var seededConference = await ApiTestContext.TestDataManager.SeedConference(conference);
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            ApiTestContext.NewConferenceId = seededConference.Id;
+            _conferenceTestContext.SeededConference = seededConference;
+        }
+        
         [Given(@"I have a many conferences")]
         public async Task GivenIHaveManyConferences()
         {

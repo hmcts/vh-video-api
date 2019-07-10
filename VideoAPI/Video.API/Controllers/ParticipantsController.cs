@@ -82,7 +82,7 @@ namespace Video.API.Controllers
         /// Update participant details
         /// </summary>
         /// <param name="conferenceId">Id of conference to look up</param>
-        /// <param name="participantId">Id of participant to remove</para m>
+        /// <param name="participantId">Id of participant to remove</param>
         /// <param name="request">The participant information to update</param>
         /// <returns></returns>
         [HttpPatch("{conferenceId}/participants/{participantId}", Name = "UpdateParticipantDetails")]

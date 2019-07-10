@@ -23,5 +23,10 @@ namespace VideoApi.Contract.Responses
         /// The participant role in conference
         /// </summary>
         public UserRole UserRole { get; set; }
+        
+        /// <summary>
+        /// The representee (if participant is a representative)
+        /// </summary>
+        public string Representee { get; set; }
     }
 }
