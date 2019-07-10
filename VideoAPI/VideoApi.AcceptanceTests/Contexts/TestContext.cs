@@ -23,12 +23,12 @@ namespace VideoApi.AcceptanceTests.Contexts
         public Guid NewHearingRefId { get; set; }
         public ConferenceDetailsResponse NewConference { get; set; }
         public long NewTaskId { get; set; }
-        public List<ConferenceDetailsResponse> NewConferences { get; set; }
+        public List<ConferenceSummaryResponse> NewConferences { get; set; }
         public List<Guid> NewConferenceIds { get; set; }
 
         public TestContext()
         {
-            NewConferences = new List<ConferenceDetailsResponse>();
+            NewConferences = new List<ConferenceSummaryResponse>();
             NewConferenceIds = new List<Guid>();
         }
 

@@ -160,11 +160,15 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"a list of all todays conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceDetailsResponse>>(_context.Json);
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
-                AssertConferenceDetailsResponse.ForConference(conference);
+                AssertConferenceSummaryResponse.ForConference(conference);
+                foreach (var participant in conference.Participants)
+                {
+                    AssertParticipantSummaryResponse.ForParticipant(participant);
+                }
                 conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);
             }
 
