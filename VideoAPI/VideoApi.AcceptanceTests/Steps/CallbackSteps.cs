@@ -22,7 +22,6 @@ namespace VideoApi.AcceptanceTests.Steps
         public CallbackSteps(TestContext injectedContext)
         {
             _context = injectedContext;
-            GenerateJWTokenForCallback();
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
@@ -37,6 +36,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
                 .With(x => x.Reason = "Automated")
                 .Build();
+            GenerateJwTokenForCallback();
             _context.Request = _context.Post(_endpoints.Event, request);
         }
 
@@ -52,7 +52,7 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.Participants.First().CurrentStatus.ParticipantState.Should().Be(ParticipantState.InConsultation);
         }
 
-        private void GenerateJWTokenForCallback()
+        private void GenerateJwTokenForCallback()
         {
             _context.BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
             {
