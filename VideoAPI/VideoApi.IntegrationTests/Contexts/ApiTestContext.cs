@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.DAL;
 using VideoApi.IntegrationTests.Helper;
 
@@ -24,5 +25,6 @@ namespace VideoApi.IntegrationTests.Contexts
         public HttpRequest HttRequest { get; set; }
         public Guid NewConferenceId { get; set; }
         public HttpResponseMessage ResponseMessage { get; set; }
+        public CustomTokenSettings CustomTokenSettings { get; set; }
     }
 }

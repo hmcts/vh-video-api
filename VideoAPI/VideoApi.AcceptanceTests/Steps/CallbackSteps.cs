@@ -6,6 +6,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
@@ -21,6 +22,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public CallbackSteps(TestContext injectedContext)
         {
             _context = injectedContext;
+            GenerateJWTokenForCallback();
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
@@ -48,6 +50,14 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             conference.Participants.First().CurrentStatus.ParticipantState.Should().Be(ParticipantState.InConsultation);
+        }
+
+        private void GenerateJWTokenForCallback()
+        {
+            _context.BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
+            {
+                Secret = _context.CustomTokenSettings.ThirdPartySecret
+            }).GenerateTokenWithAsciiKey("test", 2);
         }
     }
 }

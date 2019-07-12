@@ -11,6 +11,7 @@ using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.AcceptanceTests.Helpers;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.DAL.Commands;
 
 namespace VideoApi.AcceptanceTests.Hooks
@@ -32,6 +33,7 @@ namespace VideoApi.AcceptanceTests.Hooks
                 Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
             var testSettingsOptions = Options.Create(configRoot.GetSection("Testing").Get<TestSettings>());
             var serviceSettingsOptions = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>());
+            context.CustomTokenSettings = configRoot.GetSection("CustomToken").Get<CustomTokenSettings>();
 
             var azureAdConfiguration = azureAdConfigurationOptions.Value;
             context.TestSettings = testSettingsOptions.Value;

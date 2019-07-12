@@ -24,7 +24,8 @@ variables:
     "Services/PexipSelfTestNode":"$(PexipSelfTestNode)",
     "Services/UserApiUrl":"$(UserApiUrl)",
     "Services/UserApiResourceId":"$(vh-user-api-identifieruris)",
-    "CustomToken/Secret":"$(Secret)"
+    "CustomToken/Secret":"$(Secret)",
+    "CustomToken/ThirdPartySecret":"$(ThirdPartySecret)"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests

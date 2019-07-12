@@ -5,6 +5,7 @@ using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 
@@ -25,6 +26,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public long NewTaskId { get; set; }
         public List<ConferenceSummaryResponse> NewConferences { get; set; }
         public List<Guid> NewConferenceIds { get; set; }
+        public CustomTokenSettings CustomTokenSettings { get; set; }
 
         public TestContext()
         {

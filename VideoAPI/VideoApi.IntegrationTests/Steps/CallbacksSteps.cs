@@ -8,6 +8,7 @@ using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -24,6 +25,7 @@ namespace VideoApi.IntegrationTests.Steps
 
         public CallbacksSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
+            GenerateJWTokenForCallback();
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
@@ -105,6 +107,14 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.Reason = "Automated")
                 .Build();
             return request;
+        }
+
+        private void GenerateJWTokenForCallback()
+        {
+            ApiTestContext.BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
+            {
+                Secret = ApiTestContext.CustomTokenSettings.ThirdPartySecret
+            }).GenerateTokenWithAsciiKey("test", 2);
         }
     }
 }

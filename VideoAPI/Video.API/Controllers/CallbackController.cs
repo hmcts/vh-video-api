@@ -38,7 +38,7 @@ namespace Video.API.Controllers
         [HttpPost("conference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [AllowAnonymous]
+        [Authorize(Policy = "Callback")]
         public async Task<IActionResult> PostEvents(ConferenceEventRequest request)
         {
             _logger.LogInformation($"Handling {request.EventType.ToString()} event for conference {request.ConferenceId}");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -115,12 +116,12 @@ namespace Video.API
             }).AddJwtBearer("Callback", options =>
             {
                 var customToken = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
-                options.Audience = customToken.Issuer;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ClockSkew = TimeSpan.Zero,
-                    ValidAudience = customToken.Audience,
-                    ValidateLifetime = true
+                    RequireSignedTokens = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(customToken.ThirdPartySecret))
                 };
             });
 
