@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Steps
 
         public CallbacksSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
-            GenerateJWTokenForCallback();
+            GenerateJwTokenForCallback();
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
@@ -109,7 +109,7 @@ namespace VideoApi.IntegrationTests.Steps
             return request;
         }
 
-        private void GenerateJWTokenForCallback()
+        private void GenerateJwTokenForCallback()
         {
             ApiTestContext.BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
             {
