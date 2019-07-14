@@ -126,7 +126,6 @@ namespace Video.API
             });
 
             serviceCollection.AddAuthorization(AddPolicies);
-            serviceCollection.AddMvc(AddMvcPolicies);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -187,13 +186,6 @@ namespace Video.API
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("Callback")
                 .Build());
-        }
-
-        private static void AddMvcPolicies(MvcOptions options)
-        {
-            options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser().AddAuthenticationSchemes("default", "Callback")
-                .Build()));
         }
     }
 }
