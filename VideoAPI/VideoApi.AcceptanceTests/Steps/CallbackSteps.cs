@@ -36,13 +36,14 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
                 .With(x => x.Reason = "Automated")
                 .Build();
-            GenerateJwTokenForCallback();
+            _context.SetCustomJwTokenForCallback();
             _context.Request = _context.Post(_endpoints.Event, request);
         }
 
         [Then(@"the status is updated")]
         public void ThenTheStatusIsUpdated()
         {
+            _context.SetDefaultBearerToken();
             var endpoints = new ApiUriFactory().ConferenceEndpoints;
             _context.Request = _context.Get(endpoints.GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
@@ -50,14 +51,6 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             conference.Participants.First().CurrentStatus.ParticipantState.Should().Be(ParticipantState.InConsultation);
-        }
-
-        private void GenerateJwTokenForCallback()
-        {
-            _context.BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
-            {
-                Secret = _context.CustomTokenSettings.ThirdPartySecret
-            }).GenerateTokenWithAsciiKey("test", 2);
         }
     }
 }

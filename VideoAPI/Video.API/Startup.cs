@@ -79,7 +79,7 @@ namespace Video.API
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            }).AddJwtBearer("default", options =>
             {
                 options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -175,7 +175,7 @@ namespace Video.API
         private static void AddPolicies(AuthorizationOptions options)
         {
             options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
+                .RequireAuthenticatedUser().AddAuthenticationSchemes("default")
                 .Build();
 
             options.AddPolicy("EventHubUser", new AuthorizationPolicyBuilder()
@@ -192,7 +192,7 @@ namespace Video.API
         private static void AddMvcPolicies(MvcOptions options)
         {
             options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
+                .RequireAuthenticatedUser().AddAuthenticationSchemes("default", "Callback")
                 .Build()));
         }
     }

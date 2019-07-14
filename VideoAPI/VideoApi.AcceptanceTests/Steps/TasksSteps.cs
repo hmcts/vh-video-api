@@ -39,6 +39,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.WaitingRoom)
                 .With(x => x.Reason = "Automated")
                 .Build();
+            _context.SetCustomJwTokenForCallback();
             _context.Request = _context.Post(_callbackEndpointsndpoints.Event, request);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -48,12 +49,14 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get tasks request")]
         public void GivenIHaveAValidGetTasksRequest()
         {
+            _context.SetDefaultBearerToken();
             _context.Request = _context.Get(_endpoints.GetTasks(_context.NewConferenceId));
         }
 
         [Given(@"I have a valid update task request")]
         public void GivenIHaveAValidUpdateTaskRequest()
         {
+            _context.SetDefaultBearerToken();
             var request = new UpdateTaskRequest {UpdatedBy = UpdatedBy};
             _context.Request = _context.Patch(_endpoints.UpdateTaskStatus(_context.NewConferenceId, _context.NewTaskId), request);
         }

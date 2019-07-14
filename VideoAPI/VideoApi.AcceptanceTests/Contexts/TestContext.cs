@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using RestSharp;
 using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Security;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
@@ -27,6 +29,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public List<ConferenceSummaryResponse> NewConferences { get; set; }
         public List<Guid> NewConferenceIds { get; set; }
         public CustomTokenSettings CustomTokenSettings { get; set; }
+        public IOptions<AzureAdConfiguration> AzureAdConfiguration { get; set; }
 
         public TestContext()
         {
@@ -69,5 +72,21 @@ namespace VideoApi.AcceptanceTests.Contexts
                 ParameterType.RequestBody);
             return request;
         }
+
+        public void SetDefaultBearerToken()
+        {
+            BearerToken = new AzureTokenProvider(AzureAdConfiguration).GetClientAccessToken(
+                TestSettings.TestClientId, TestSettings.TestClientSecret,
+                AzureAdConfiguration.Value.VhVideoApiResourceId);
+        }
+
+        public void SetCustomJwTokenForCallback()
+        {
+            BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
+            {
+                Secret = CustomTokenSettings.ThirdPartySecret
+            }).GenerateTokenWithAsciiKey("test", 2);
+        }
+
     }
 }

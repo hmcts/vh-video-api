@@ -28,20 +28,18 @@ namespace VideoApi.AcceptanceTests.Hooks
                 .AddUserSecrets<Startup>();
 
             var configRoot = configRootBuilder.Build();
-
+            
             var azureAdConfigurationOptions =
                 Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
             var testSettingsOptions = Options.Create(configRoot.GetSection("Testing").Get<TestSettings>());
             var serviceSettingsOptions = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>());
             context.CustomTokenSettings = configRoot.GetSection("CustomToken").Get<CustomTokenSettings>();
 
-            var azureAdConfiguration = azureAdConfigurationOptions.Value;
+            context.AzureAdConfiguration = azureAdConfigurationOptions;
             context.TestSettings = testSettingsOptions.Value;
             context.ServicesConfiguration = serviceSettingsOptions.Value;
 
-            context.BearerToken = new AzureTokenProvider(azureAdConfigurationOptions).GetClientAccessToken(
-                context.TestSettings.TestClientId, context.TestSettings.TestClientSecret,
-                azureAdConfiguration.VhVideoApiResourceId);
+            context.SetDefaultBearerToken();
 
             var apiTestsOptions =
                 Options.Create(configRoot.GetSection("AcceptanceTestSettings").Get<TestConfiguration>());
@@ -81,6 +79,7 @@ namespace VideoApi.AcceptanceTests.Hooks
 
         private static void RemoveConference(TestContext context, ConferenceEndpoints endpoints, Guid conferenceId)
         {
+            context.SetDefaultBearerToken();
             context.Request = context.Delete(endpoints.RemoveConference(conferenceId));
             context.Response = context.Client().Execute(context.Request);
             context.Response.IsSuccessful.Should().BeTrue("Conference is deleted");
