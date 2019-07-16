@@ -36,8 +36,9 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
                 .With(x => x.Reason = "Automated")
                 .Build();
-            _context.SetCustomJwTokenForCallback();
+
             _context.Request = _context.Post(_endpoints.Event, request);
+            _context.SetCustomJwTokenForCallback();
         }
 
         [Then(@"the status is updated")]
