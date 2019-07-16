@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using RestSharp;
 using Testing.Common.Configuration;
@@ -42,6 +43,7 @@ namespace VideoApi.AcceptanceTests.Contexts
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeader("Accept", "application/json");
             client.AddDefaultHeader("Authorization", $"Bearer {BearerToken}");
+            Debug.WriteLine($"bearer token {BearerToken}");
             return client;
         }
 
