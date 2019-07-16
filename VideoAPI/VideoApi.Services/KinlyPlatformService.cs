@@ -89,7 +89,7 @@ namespace VideoApi.Services
             using (var httpClient = new HttpClient())
             {
                 var requestUri = $"{_servicesConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
-                var request = new HttpRequestMessage()
+                var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(requestUri),
                     Method = HttpMethod.Get,
