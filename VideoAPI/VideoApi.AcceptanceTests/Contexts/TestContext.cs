@@ -84,10 +84,11 @@ namespace VideoApi.AcceptanceTests.Contexts
 
         public void SetCustomJwTokenForCallback()
         {
-            BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
+            var generateTokenWithAsciiKey = new CustomJwtTokenProvider(new CustomTokenSettings
             {
                 Secret = CustomTokenSettings.ThirdPartySecret
             }).GenerateTokenWithAsciiKey("test", 2);
+            BearerToken = generateTokenWithAsciiKey;
         }
 
     }
