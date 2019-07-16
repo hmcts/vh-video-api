@@ -126,7 +126,7 @@ namespace Video.API
             });
 
             serviceCollection.AddAuthorization(AddPolicies);
-            //serviceCollection.AddMvc(AddMvcPolicies);
+            serviceCollection.AddMvc(AddMvcPolicies);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
