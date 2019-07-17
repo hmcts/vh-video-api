@@ -21,9 +21,10 @@ namespace VideoApi.Common.Security.CustomToken
             return BuildToken(claims, expiresInMinutes, key);
         }
 
-        public string GenerateTokenWithAsciiKey(string claims, int expiresInMinutes)
+        // This is for acceptance tests only... do not use this anywhere else.
+        public string GenerateTokenForCallbackEndpoint(string claims, int expiresInMinutes)
         {
-            byte[] key = new ASCIIEncoding().GetBytes(_customTokenSettings.Secret);
+            byte[] key = new ASCIIEncoding().GetBytes(_customTokenSettings.ThirdPartySecret);
             return BuildToken(claims, expiresInMinutes, key);
         }
 
