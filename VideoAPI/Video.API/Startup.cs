@@ -74,6 +74,8 @@ namespace Video.API
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
+            var customToken = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
+            var securityKey = new ASCIIEncoding().GetBytes(customToken.ThirdPartySecret);
 
             serviceCollection.AddAuthentication(options =>
                 {
@@ -119,14 +121,11 @@ namespace Video.API
                     };
                 }).AddJwtBearer("Callback", options =>
                 {
-                    var customToken = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        RequireSignedTokens = true,
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        IssuerSigningKey =
-                            new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(customToken.ThirdPartySecret))
+                        IssuerSigningKey = new SymmetricSecurityKey(securityKey)
                     };
                 });
 
