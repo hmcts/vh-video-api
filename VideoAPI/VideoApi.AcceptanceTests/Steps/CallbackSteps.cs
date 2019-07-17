@@ -6,6 +6,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
@@ -35,12 +36,15 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
                 .With(x => x.Reason = "Automated")
                 .Build();
+
             _context.Request = _context.Post(_endpoints.Event, request);
+            _context.SetCustomJwTokenForCallback();
         }
 
         [Then(@"the status is updated")]
         public void ThenTheStatusIsUpdated()
         {
+            _context.SetDefaultBearerToken();
             var endpoints = new ApiUriFactory().ConferenceEndpoints;
             _context.Request = _context.Get(endpoints.GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);

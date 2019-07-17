@@ -12,6 +12,7 @@ using Testing.Common.Configuration;
 using Video.API;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
+using VideoApi.Common.Security.CustomToken;
 using VideoApi.DAL;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
@@ -43,6 +44,7 @@ namespace VideoApi.IntegrationTests.Hooks
             apiTestContext.DbString = configuration.GetConnectionString("VhVideoApi");
             apiTestContext.Services =
                 Options.Create(configuration.GetSection("Services").Get<ServicesConfiguration>()).Value;
+            apiTestContext.CustomTokenSettings = configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
 
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();

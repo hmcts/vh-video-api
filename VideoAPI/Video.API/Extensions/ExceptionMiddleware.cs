@@ -42,6 +42,5 @@ namespace Video.API.Extensions
                    
             return context.Response.WriteAsync(exception.Message);
         }
-
     }
 }
