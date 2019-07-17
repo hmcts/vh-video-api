@@ -75,54 +75,63 @@ namespace Video.API
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
 
-            serviceCollection.AddAuthentication()
+            serviceCollection.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddPolicyScheme(JwtBearerDefaults.AuthenticationScheme, "handler", options =>
+                    options.ForwardDefaultSelector = context =>
+                        context.Request.Path.StartsWithSegments("/callback")
+                            ? "Callback" : "default")
                 .AddJwtBearer("default", options =>
-            {
-                options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
-                options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ClockSkew = TimeSpan.Zero,
-                    ValidateLifetime = true,
-                    ValidAudience = securitySettings.VhVideoApiResourceId
-                };
-            }).AddJwtBearer("EventHubUser", options =>
-            {
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
+                    options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
+                    options.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        var accessToken = context.Request.Query["access_token"];
-                        if (string.IsNullOrEmpty(accessToken)) return Task.CompletedTask;
-
-                        var path = context.HttpContext.Request.Path;
-                        if (path.StartsWithSegments("/eventhub"))
+                        ClockSkew = TimeSpan.Zero,
+                        ValidateLifetime = true,
+                        ValidAudience = securitySettings.VhVideoApiResourceId
+                    };
+                }).AddJwtBearer("EventHubUser", options =>
+                {
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
                         {
-                            context.Token = accessToken;
-                        }
+                            var accessToken = context.Request.Query["access_token"];
+                            if (string.IsNullOrEmpty(accessToken)) return Task.CompletedTask;
 
-                        return Task.CompletedTask;
-                    }
-                };
-                options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
-                options.TokenValidationParameters = new TokenValidationParameters()
+                            var path = context.HttpContext.Request.Path;
+                            if (path.StartsWithSegments("/eventhub"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                    options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ClockSkew = TimeSpan.Zero,
+                        ValidateLifetime = true,
+                        ValidAudience = securitySettings.VhVideoWebClientId
+                    };
+                }).AddJwtBearer("Callback", options =>
                 {
-                    ClockSkew = TimeSpan.Zero,
-                    ValidateLifetime = true,
-                    ValidAudience = securitySettings.VhVideoWebClientId
-                };
-            }).AddJwtBearer("Callback", options =>
-            {
-                var customToken = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    RequireSignedTokens = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(customToken.ThirdPartySecret))
-                };
-            });
+                    var customToken = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        RequireSignedTokens = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(new ASCIIEncoding().GetBytes(customToken.ThirdPartySecret))
+                    };
+                });
 
             serviceCollection.AddAuthorization(AddPolicies);
+            serviceCollection.AddMvc(AddMvcPolicies);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -183,6 +192,12 @@ namespace Video.API
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("Callback")
                 .Build());
+        }
+
+        private static void AddMvcPolicies(MvcOptions options)
+        {
+            options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser().Build()));
         }
 
     }
