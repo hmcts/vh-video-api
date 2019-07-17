@@ -44,6 +44,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
             _context.Response.IsSuccessful.Should().Be(true);
+            _context.SetDefaultBearerToken();
         }
 
         [Given(@"I have a valid get tasks request")]

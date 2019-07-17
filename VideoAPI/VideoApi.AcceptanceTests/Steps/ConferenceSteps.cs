@@ -32,6 +32,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get details for a conference request by username with a valid username")]
         public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername()
         {
+            _context.SetDefaultBearerToken();
             _context.Request = _context.Get(_endpoints.GetConferenceDetailsByUsername(_context.NewConference.Participants.First().Username));
         }
 
