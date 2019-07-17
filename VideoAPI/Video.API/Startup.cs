@@ -75,11 +75,8 @@ namespace Video.API
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
 
-            serviceCollection.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer("default", options =>
+            serviceCollection.AddAuthentication()
+                .AddJwtBearer("default", options =>
             {
                 options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -126,7 +123,6 @@ namespace Video.API
             });
 
             serviceCollection.AddAuthorization(AddPolicies);
-            //serviceCollection.AddMvc(AddMvcPolicies);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -187,13 +183,6 @@ namespace Video.API
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("Callback")
                 .Build());
-        }
-
-        private static void AddMvcPolicies(MvcOptions options)
-        {
-            options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser().AddAuthenticationSchemes("default", "Callback")
-                .Build()));
         }
 
     }

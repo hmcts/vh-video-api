@@ -16,6 +16,7 @@ namespace Video.API.Controllers
     [Produces("application/json")]
     [Route("callback")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Callback")]
     public class CallbackController : ControllerBase
     {
         private readonly ICommandHandler _commandHandler;
@@ -38,7 +39,6 @@ namespace Video.API.Controllers
         [HttpPost("conference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [Authorize(Policy = "Callback")]
         public async Task<IActionResult> PostEvents(ConferenceEventRequest request)
         {
             _logger.LogInformation($"Handling {request.EventType.ToString()} event for conference {request.ConferenceId}");
