@@ -35,10 +35,9 @@ namespace VideoApi.Common.Security.CustomToken
             {
                 Subject = new ClaimsIdentity(new[] {new Claim(ClaimTypes.Name, claims)}),
                 Audience = _customTokenSettings.Audience,
-                //IssuedAt = DateTime.UtcNow.AddMinutes(-1),
                 NotBefore = DateTime.UtcNow.AddMinutes(-1),
                 Issuer = _customTokenSettings.Issuer,
-                Expires =  DateTime.UtcNow.AddMinutes(expiresInMinutes + 20),
+                Expires =  DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
                 SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
             };
 

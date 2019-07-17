@@ -198,6 +198,5 @@ namespace Video.API
             options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser().Build()));
         }
-
     }
 }
