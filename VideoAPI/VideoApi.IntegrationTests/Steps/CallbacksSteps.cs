@@ -111,10 +111,7 @@ namespace VideoApi.IntegrationTests.Steps
 
         private void GenerateJwTokenForCallback()
         {
-            ApiTestContext.BearerToken = new CustomJwtTokenProvider(new CustomTokenSettings
-            {
-                Secret = ApiTestContext.CustomTokenSettings.ThirdPartySecret
-            }).GenerateTokenForCallbackEndpoint("test", 2);
+            ApiTestContext.BearerToken = new CustomJwtTokenProvider(ApiTestContext.CustomTokenSettings).GenerateTokenForCallbackEndpoint("test", 2);
         }
     }
 }
