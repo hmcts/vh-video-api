@@ -254,10 +254,10 @@ namespace Video.API.Controllers
 
         private async Task<Guid> CreateConference(BookNewConferenceRequest request)
         {
-            var existingConference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
-                new GetConferenceByHearingRefIdQuery(request.HearingRefId));
+            var existingConference = await _queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
+                new CheckConferenceOpenQuery(request.ScheduledDateTime, request.CaseNumber, request.CaseName));
 
-            if (existingConference != null && !existingConference.IsClosed()) return existingConference.Id;
+            if (existingConference != null) return existingConference.Id;
             
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
