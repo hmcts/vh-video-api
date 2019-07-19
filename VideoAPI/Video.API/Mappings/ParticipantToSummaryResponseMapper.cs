@@ -17,6 +17,7 @@ namespace Video.API.Mappings
                     ? participant.CaseTypeGroup
                     : string.Empty;
             
+            
             return new ParticipantSummaryResponse
             {
                 Username = participant.Username,
