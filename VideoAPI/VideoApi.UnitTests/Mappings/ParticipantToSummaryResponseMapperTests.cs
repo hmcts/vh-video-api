@@ -28,6 +28,14 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.TestCallResult)
             );
             response.Status.Should().BeEquivalentTo(participant.GetCurrentStatus().ParticipantState);
+            if (participant.UserRole == UserRole.Individual || participant.UserRole == UserRole.Representative)
+            {
+                response.CaseGroup.Should().Be(participant.CaseTypeGroup);
+            }
+            else
+            {
+                response.CaseGroup.Should().BeEmpty();
+            }
         }
     }
 }

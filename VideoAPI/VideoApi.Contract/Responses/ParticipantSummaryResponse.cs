@@ -28,5 +28,10 @@ namespace VideoApi.Contract.Responses
         /// The representee (if participant is a representative)
         /// </summary>
         public string Representee { get; set; }
+        
+        /// <summary>
+        /// The group a participant belongs to
+        /// </summary>
+        public string CaseGroup { get; set; }
     }
 }

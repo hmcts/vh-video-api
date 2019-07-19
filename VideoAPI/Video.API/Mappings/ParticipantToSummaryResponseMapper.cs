@@ -12,13 +12,19 @@ namespace Video.API.Mappings
                 ? participant.GetCurrentStatus().ParticipantState
                 : ParticipantState.None;
 
+            var caseGroup =
+                participant.UserRole == UserRole.Individual || participant.UserRole == UserRole.Representative
+                    ? participant.CaseTypeGroup
+                    : string.Empty;
+            
             return new ParticipantSummaryResponse
             {
                 Username = participant.Username,
                 DisplayName = participant.DisplayName,
                 Status = participantStatus,
                 UserRole = participant.UserRole,
-                Representee = participant.Representee
+                Representee = participant.Representee,
+                CaseGroup = caseGroup
             };
         }
     }
