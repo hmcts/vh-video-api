@@ -43,6 +43,8 @@ namespace VideoApi.Events.Handlers
                 ConferenceStatus = conferenceEvent
             };
 
+            var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
+            await CommandHandler.Handle(command);
             await PublishConferenceStatusMessage(conferenceEvent);
             await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
