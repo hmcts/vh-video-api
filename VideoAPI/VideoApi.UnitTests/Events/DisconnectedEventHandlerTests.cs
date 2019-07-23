@@ -146,13 +146,6 @@ namespace VideoApi.UnitTests.Events
                     command.ConferenceId == conference.Id &&
                     command.OriginId == participantForEvent.Id &&
                     command.TaskType == TaskType.Judge)), Times.Once);
-
-            // Verify messages sent to ASB queue
-            ServiceBusQueueClient.Count.Should().Be(1);
-
-            var hearingEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
-            hearingEventMessage.Should().BeOfType<HearingEventMessage>();
-            ((HearingEventMessage) hearingEventMessage).ConferenceStatus.Should().Be(ConferenceState.Suspended);
         }
     }
 }

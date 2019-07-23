@@ -36,13 +36,6 @@ namespace VideoApi.UnitTests.Events
             EventHubClientMock.Verify(x => x.ConferenceStatusMessage(conference.Id, ConferenceState.Paused),
                 Times.Exactly(participantCount));
 
-            // Verify messages sent to ASB queue
-            ServiceBusQueueClient.Count.Should().Be(1);
-
-            var eventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
-            eventMessage.Should().BeOfType<HearingEventMessage>();
-            ((HearingEventMessage) eventMessage).ConferenceStatus.Should().Be(ConferenceState.Paused);
-
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&

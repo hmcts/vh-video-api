@@ -25,19 +25,10 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
-            var command =
-                new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantStatus);
-            await CommandHandler.Handle(command);
-
-            var participantEventMessage = new ParticipantEventMessage
-            {
-                ConferenceId = SourceConference.Id,
-                ParticipantId = SourceParticipant.ParticipantRefId,
-                ParticipantState = participantStatus
-            };
-
             await PublishParticipantStatusMessage(participantStatus);
-            await ServiceBusQueueClient.AddMessageToQueue(participantEventMessage);
+
+            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantStatus);
+            await CommandHandler.Handle(command);
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
