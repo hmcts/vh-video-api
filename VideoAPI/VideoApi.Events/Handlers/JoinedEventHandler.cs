@@ -26,27 +26,19 @@ namespace VideoApi.Events.Handlers
             var isJudge = SourceParticipant.UserRole == UserRole.Judge;
             var participantState = isJudge ? ParticipantState.InHearing : ParticipantState.Available;
 
-            var command =
-                new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
-            await CommandHandler.Handle(command);
             await PublishParticipantStatusMessage(participantState);
-
             if (isJudge) await PublishLiveEventMessage();
+
+            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            await CommandHandler.Handle(command);
         }
 
         private async Task PublishLiveEventMessage()
         {
             var conferenceEvent = ConferenceState.InSession;
-            var hearingEventMessage = new HearingEventMessage
-            {
-                ConferenceId = SourceConference.Id,
-                ConferenceStatus = conferenceEvent
-            };
-
+            await PublishConferenceStatusMessage(conferenceEvent);
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
             await CommandHandler.Handle(command);
-            await PublishConferenceStatusMessage(conferenceEvent);
-            await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }
 }

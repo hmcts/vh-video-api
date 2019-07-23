@@ -49,13 +49,6 @@ namespace VideoApi.UnitTests.Events
                 x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
                     status), Times.Exactly(participantCount));
 
-            // Verify messages sent to ASB queue
-            ServiceBusQueueClient.Count.Should().Be(1);
-
-            var participantEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
-            participantEventMessage.Should().BeOfType<ParticipantEventMessage>();
-            ((ParticipantEventMessage) participantEventMessage).ParticipantState.Should().Be(status);
-
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&

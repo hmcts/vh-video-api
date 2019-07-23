@@ -30,11 +30,11 @@ namespace VideoApi.Events.Handlers
         private async Task PublishParticipantDisconnectMessage()
         {
             var participantState = ParticipantState.Disconnected;
-            var command =
-                new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            await PublishParticipantStatusMessage(participantState);
+
+            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
             await CommandHandler.Handle(command);
             await AddDisconnectedTask();
-            await PublishParticipantStatusMessage(participantState);
         }
 
         private async Task AddDisconnectedTask()
@@ -62,13 +62,6 @@ namespace VideoApi.Events.Handlers
             await CommandHandler.Handle(updateConferenceStatusCommand);
 
             await AddSuspendedTask();
-            
-            var hearingEventMessage = new HearingEventMessage
-            {
-                ConferenceId = SourceConference.Id,
-                ConferenceStatus = conferenceState
-            };
-            await ServiceBusQueueClient.AddMessageToQueue(hearingEventMessage);
         }
     }
 }

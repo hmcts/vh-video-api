@@ -24,11 +24,11 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantState = ParticipantState.Joining;
+            await PublishParticipantStatusMessage(participantState);
 
             var command = new UpdateParticipantStatusCommand(SourceConference.Id, 
                 SourceParticipant.Id, participantState);
             await CommandHandler.Handle(command);
-            await PublishParticipantStatusMessage(participantState);
         }
     }
 }

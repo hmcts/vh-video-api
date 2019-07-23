@@ -82,14 +82,6 @@ namespace VideoApi.UnitTests.Events
                 x => x.ConferenceStatusMessage(conference.Id, ConferenceState.InSession),
                 Times.Exactly(participantCount));
 
-            // Verify service bus
-            ServiceBusQueueClient.Count.Should().Be(1);
-
-            var hearingEventMessage = ServiceBusQueueClient.ReadMessageFromQueue();
-            hearingEventMessage.Should().BeOfType<HearingEventMessage>();
-            ((HearingEventMessage) hearingEventMessage).ConferenceStatus.Should().Be(ConferenceState.InSession);
-            hearingEventMessage.MessageType.Should().Be(MessageType.Hearing);
-
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&
