@@ -14,6 +14,7 @@ namespace VideoApi.Domain.Enums
         JudgeAvailable,
         MediaPermissionDenied,
         ParticipantJoining,
-        SelfTestFailed
+        SelfTestFailed,
+        Suspend
     }
 }
