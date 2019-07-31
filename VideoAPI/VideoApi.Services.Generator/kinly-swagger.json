@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Virtual Courtroom API",
-    "version": "0.0.2",
+    "version": "0.0.5",
     "description": "API for virtual court hearings"
   },
   "schemes": [
@@ -166,28 +166,35 @@
         }
       }
     },
-    "/testcall/{user_id}": {
-      "get": {
-        "operationId": "getTestCall",
-        "description": "Get testcall result",
+    "/hearing/{virtual_courtroom_id}/transfer": {
+      "post": {
+        "operationId": "transferParticipant",
+        "description": "Transfer a participant between rooms",
         "tags": [
-          "test call"
+          "transfer"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "user_id",
+            "name": "virtual_courtroom_id",
             "type": "string",
             "required": true,
-            "description": "User ID"
+            "description": "Hearing ID"
+          },
+          {
+            "name": "TransferParticipantParams",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/transferParticipantParams"
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Hearing object",
-            "schema": {
-              "$ref": "#/definitions/testcall"
-            }
+          "202": {
+            "description": "Participant transferred"
+          },
+          "400": {
+            "description": "Data is malformed"
           }
         }
       }
@@ -213,11 +220,11 @@
     },
     "hearing": {
       "type": "object",
-          "properties": {
-            "uris": {
-              "$ref": "#/definitions/uris"
-            }
-          }
+      "properties": {
+        "uris": {
+          "$ref": "#/definitions/uris"
+        }
+      }
     },
     "uris": {
       "type": "object",
@@ -265,6 +272,28 @@
         "user_id": {
           "type": "string",
           "description": "User id associated with the score"
+        }
+      }
+    },
+    "transferParticipantParams": {
+      "type": "object",
+      "required": [
+        "part_id",
+        "to",
+        "from"
+      ],
+      "properties": {
+        "part_id": {
+          "type": "string",
+          "description": "Unique participant ID"
+        },
+        "to": {
+          "type": "string",
+          "description": "Room label transfering participant from"
+        },
+        "from": {
+          "type": "string",
+          "description": "Room label transfering participant to"
         }
       }
     }

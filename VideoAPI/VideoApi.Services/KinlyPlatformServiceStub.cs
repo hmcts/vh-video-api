@@ -39,6 +39,11 @@ namespace VideoApi.Services
             return Task.FromResult(testCall);
         }
 
+        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom)
+        {
+            return Task.CompletedTask;
+        }
+
         private static MeetingRoom Create()
         {
             var adminUri = $"https://ext-node02.com/webapp/#/?conference=user@email.com";
