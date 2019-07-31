@@ -33,6 +33,7 @@ namespace VideoApi.Domain
         public UserRole UserRole { get; set; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
+        public RoomType? CurrentRoom { get; set; }
         public long? TestCallResultId { get; set; }
         public virtual TestCallResult TestCallResult { get; private set; }
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
@@ -60,6 +61,11 @@ namespace VideoApi.Domain
         public TestCallResult GetTestCallResult()
         {
             return TestCallResult;
+        }
+
+        public void UpdateCurrentRoom(RoomType? currentRoom)
+        {
+            CurrentRoom = currentRoom;
         }
     }
 }

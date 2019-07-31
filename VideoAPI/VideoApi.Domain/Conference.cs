@@ -132,5 +132,27 @@ namespace VideoApi.Domain
             ScheduledDateTime = scheduledDateTime;
             ScheduledDuration = scheduledDuration;
         }
+
+        public RoomType GetAvailableConsultationRoom()
+        {
+            if (!GetParticipants().Any())
+            {
+                throw new DomainRuleException("No Participants", "This conference has no participants");
+            }
+            
+            var consultationRoom1Occupied = GetParticipants().Any(x => x.CurrentRoom == RoomType.ConsultationRoom1);
+            if (!consultationRoom1Occupied)
+            {
+                return RoomType.ConsultationRoom1;
+            }
+            
+            var consultationRoomOccupied = GetParticipants().Any(x => x.CurrentRoom == RoomType.ConsultationRoom2);
+            if(!consultationRoomOccupied)
+            {
+                return RoomType.ConsultationRoom2;
+            }
+            
+            throw new DomainRuleException("Unavailable room", "No consultation rooms available");
+        }
     }
 }

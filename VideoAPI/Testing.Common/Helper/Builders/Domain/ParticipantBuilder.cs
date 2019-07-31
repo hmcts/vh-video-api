@@ -51,7 +51,9 @@ namespace Testing.Common.Helper.Builders.Domain
             
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), name, name, Internet.Email(), _userRole,
-                    _caseTypeGroup)).Build();
+                    _caseTypeGroup))
+                .With(x => x.CurrentRoom = null)
+                .Build();
 
             if (_testCallResult != null)
             {
