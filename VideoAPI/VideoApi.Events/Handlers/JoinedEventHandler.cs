@@ -25,11 +25,14 @@ namespace VideoApi.Events.Handlers
         {
             var isJudge = SourceParticipant.UserRole == UserRole.Judge;
             var participantState = isJudge ? ParticipantState.InHearing : ParticipantState.Available;
+            var room = isJudge ? RoomType.HearingRoom : RoomType.WaitingRoom;
 
-            await PublishParticipantStatusMessage(participantState);
-            if (isJudge) await PublishLiveEventMessage();
+            await PublishParticipantStatusMessage(participantState).ConfigureAwait(false);
+            if (isJudge) await PublishLiveEventMessage().ConfigureAwait(false);
 
-            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            var command =
+                new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState,
+                    room);
             await CommandHandler.Handle(command);
         }
 

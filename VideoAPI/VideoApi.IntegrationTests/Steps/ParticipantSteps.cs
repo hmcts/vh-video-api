@@ -20,10 +20,12 @@ namespace VideoApi.IntegrationTests.Steps
     [Binding]
     public sealed class ParticipantSteps : StepsBase
     {
+        private readonly ConferenceTestContext _conferenceTestContext;
         private readonly ParticipantsEndpoints _endpoints = new ApiUriFactory().ParticipantsEndpoints;
 
-        public ParticipantSteps(ApiTestContext apiTestContext) : base(apiTestContext)
+        public ParticipantSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(apiTestContext)
         {
+            _conferenceTestContext = conferenceTestContext;
         }
 
         [Given(@"I have an add participant to a (.*) conference request")]
@@ -212,13 +214,12 @@ namespace VideoApi.IntegrationTests.Steps
         [Given("I have a (.*) get self test score request")]
         public void GivenIHaveAGetSelfTestScoreRequest(Scenario scenario)
         {
-            Guid conferenceId;
+            Guid conferenceId = _conferenceTestContext.SeededConference.Id;
             Guid participantId;
             switch (scenario)
             {
                 case Scenario.Nonexistent:
-                    conferenceId = Guid.NewGuid();
-                    participantId = Guid.NewGuid();
+                    participantId = conferenceId;
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }

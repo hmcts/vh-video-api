@@ -53,6 +53,7 @@ Feature: Participants
     And the error response message should also contain 'Please provide a valid participantId'
 
   Scenario: Get self test score using invalid identifiers
+    Given I have a conference
     Given I have a nonexistent get self test score request
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False

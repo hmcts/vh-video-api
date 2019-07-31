@@ -33,8 +33,8 @@ namespace VideoApi.UnitTests.Events
                 Reason = "Unexpected drop",
                 TimeStampUtc = DateTime.UtcNow
             };
-            var updateStatusCommand = new UpdateParticipantStatusCommand(conference.Id, participantForEvent.Id,
-                ParticipantState.Disconnected);
+            var updateStatusCommand = new UpdateParticipantStatusAndRoomCommand(conference.Id, participantForEvent.Id,
+                ParticipantState.Disconnected, null);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
             var addParticipantDisconnectedTask =
@@ -49,10 +49,11 @@ namespace VideoApi.UnitTests.Events
                 Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
-                    command.ParticipantState == ParticipantState.Disconnected)), Times.Once);
+                    command.ParticipantState == ParticipantState.Disconnected &&
+                    command.Room == null)), Times.Once);
             
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<AddTaskCommand>(command =>
@@ -91,9 +92,10 @@ namespace VideoApi.UnitTests.Events
                 ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
-            var updateParticipantStatusCommand = new UpdateParticipantStatusCommand(conference.Id,
+            var updateParticipantStatusCommand = new UpdateParticipantStatusAndRoomCommand(conference.Id,
                 participantForEvent.Id,
-                ParticipantState.Disconnected);
+                ParticipantState.Disconnected,
+                null);
             CommandHandlerMock.Setup(x => x.Handle(updateParticipantStatusCommand));
 
             var updateConferenceStatusCommand =
@@ -119,10 +121,11 @@ namespace VideoApi.UnitTests.Events
                 Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
-                    command.ParticipantState == ParticipantState.Disconnected)), Times.Once);
+                    command.ParticipantState == ParticipantState.Disconnected &&
+                    command.Room == null)), Times.Once);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>

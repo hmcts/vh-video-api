@@ -23,18 +23,20 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            await PublishParticipantDisconnectMessage();
-            if (SourceParticipant.UserRole == UserRole.Judge) await PublishSuspendedEventMessage();
+            await PublishParticipantDisconnectMessage().ConfigureAwait(false);
+            if (SourceParticipant.UserRole == UserRole.Judge) await PublishSuspendedEventMessage().ConfigureAwait(false);
         }
 
         private async Task PublishParticipantDisconnectMessage()
         {
             var participantState = ParticipantState.Disconnected;
-            await PublishParticipantStatusMessage(participantState);
+            await PublishParticipantStatusMessage(participantState).ConfigureAwait(false);
 
-            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
-            await CommandHandler.Handle(command);
-            await AddDisconnectedTask();
+            var command =
+                new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState,
+                    null);
+            await CommandHandler.Handle(command).ConfigureAwait(false);
+            await AddDisconnectedTask().ConfigureAwait(false);
         }
 
         private async Task AddDisconnectedTask()
@@ -42,26 +44,26 @@ namespace VideoApi.Events.Handlers
             var taskType = SourceParticipant.UserRole == UserRole.Judge ? TaskType.Judge : TaskType.Participant;
             var disconnected =
                 new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
-            await CommandHandler.Handle(disconnected);
+            await CommandHandler.Handle(disconnected).ConfigureAwait(false);
         }
 
         private async Task AddSuspendedTask()
         {
             var addSuspendedTask =
                 new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
-            await CommandHandler.Handle(addSuspendedTask);
+            await CommandHandler.Handle(addSuspendedTask).ConfigureAwait(false);
         }
 
         private async Task PublishSuspendedEventMessage()
         {
             var conferenceState = ConferenceState.Suspended;
-            await PublishConferenceStatusMessage(conferenceState);
+            await PublishConferenceStatusMessage(conferenceState).ConfigureAwait(false);
             
             var updateConferenceStatusCommand =
                 new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
-            await CommandHandler.Handle(updateConferenceStatusCommand);
+            await CommandHandler.Handle(updateConferenceStatusCommand).ConfigureAwait(false);
 
-            await AddSuspendedTask();
+            await AddSuspendedTask().ConfigureAwait(false);
         }
     }
 }
