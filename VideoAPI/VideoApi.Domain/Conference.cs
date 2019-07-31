@@ -132,5 +132,15 @@ namespace VideoApi.Domain
             ScheduledDateTime = scheduledDateTime;
             ScheduledDuration = scheduledDuration;
         }
+
+        public Participant GetJudge()
+        {
+            return Participants.SingleOrDefault(x => x.IsJudge());
+        }
+
+        public Participant GetVideoHearingOfficer()
+        {
+            return Participants.SingleOrDefault(x => x.IsVideoHearingOfficer());
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using VideoApi.DAL.Commands;
@@ -29,7 +30,14 @@ namespace VideoApi.Events.Handlers
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
             await CommandHandler.Handle(command);
 
-            var taskCommand = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Hearing suspended", TaskType.Hearing);
+            var reason = "Hearing suspended";
+            if (SourceParticipant == null)
+            {
+                SourceParticipant = SourceConference.GetJudge();
+                reason = "Technical assistance";
+            }
+
+            var taskCommand = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, reason, TaskType.Hearing);
             await CommandHandler.Handle(taskCommand);
         }
     }

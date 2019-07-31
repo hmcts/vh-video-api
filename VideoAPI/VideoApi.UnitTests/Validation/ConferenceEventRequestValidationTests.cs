@@ -125,6 +125,29 @@ namespace VideoApi.UnitTests.Validation
                 .Should().BeTrue();
         }
 
+        [Test]
+        public async Task should_return_valid_for_suspend_event_without_participantid()
+        {
+            var request = BuildRequest();
+            request.EventType = EventType.Suspend;
+            request.ParticipantId = string.Empty;
+
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task should_return_invalid_for_transfer_event_without_participantid()
+        {
+            var request = BuildRequest();
+            request.EventType = EventType.Transfer;
+            request.ParticipantId = string.Empty;
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+        }
+
         private ConferenceEventRequest BuildRequest()
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
