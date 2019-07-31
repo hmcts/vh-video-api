@@ -24,7 +24,7 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantState = SourceParticipant.IsJudge() ? ParticipantState.InHearing : ParticipantState.Available;
-            var room = isJudge ? RoomType.HearingRoom : RoomType.WaitingRoom;
+            var room = SourceParticipant.IsJudge() ? RoomType.HearingRoom : RoomType.WaitingRoom;
 
             await PublishParticipantStatusMessage(participantState).ConfigureAwait(false);
             if (SourceParticipant.IsJudge()) await PublishLiveEventMessage();
