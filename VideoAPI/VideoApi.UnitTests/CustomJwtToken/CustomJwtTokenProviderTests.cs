@@ -15,8 +15,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         [SetUp]
         public void Setup()
         {
-            //Convert.ToBase64String(new HMACSHA256().Key); to generate a new key
-            var secretKey = "W2gEmBn2H7b2FCMIQl6l9rggbJU1qR7luIeAf1uuaY+ik6TP5rN0NEsPVg0TGkroiel0SoCQT7w3cbk7hFrBtA==";
+            var secretKey = "6t8obpbl0iHOSvDpnUImSdZjYEpTcaEWC8SzLO4/X6iOHArHEm/3Ja6NnzaKS6JwE3U/Bjy1LE/bARMqNCN98w==";
             var customTokenSettings = new CustomTokenSettings{ Secret = secretKey, Audience = Audience, Issuer = Issuer};
             _customJwtTokenProvider = new CustomJwtTokenProvider(customTokenSettings);
             _customJwtTokenHandler = new CustomJwtTokenHandler(customTokenSettings);
@@ -48,7 +47,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         }
 
         [Test]
-        public void should_get_principal_when_get_principal_is_called_with_valid_tokne()
+        public void should_get_principal_when_get_principal_is_called_with_valid_token()
         {
             var testUser = "Test User";
             var token = _customJwtTokenProvider.GenerateToken(testUser, 30);
