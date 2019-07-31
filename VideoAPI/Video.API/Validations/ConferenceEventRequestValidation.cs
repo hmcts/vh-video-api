@@ -23,8 +23,8 @@ namespace Video.API.Validations
                 .WithMessage(InvalidConferenceIdFormatErrorMessage);
             
             RuleFor(x => x.EventId).NotEmpty().WithMessage(NoEventIdErrorMessage);
-            RuleFor(x => x.ParticipantId).NotEmpty().WithMessage(NoParticipantIdErrorMessage);
-            RuleFor(x => x.ParticipantId).Must(x => Guid.TryParse(x, out _))
+            RuleFor(x => x.ParticipantId).NotEmpty().When(x => x.EventType != EventType.Suspend).WithMessage(NoParticipantIdErrorMessage);
+            RuleFor(x => x.ParticipantId).Must(x => Guid.TryParse(x, out _)).When(x => x.EventType != EventType.Suspend)
                 .WithMessage(InvalidParticipantIdFormatErrorMessage);
             
             RuleFor(x => x.EventType)

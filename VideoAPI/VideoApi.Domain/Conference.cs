@@ -154,5 +154,15 @@ namespace VideoApi.Domain
             
             throw new DomainRuleException("Unavailable room", "No consultation rooms available");
         }
+        
+        public Participant GetJudge()
+        {
+            return Participants.SingleOrDefault(x => x.IsJudge());
+        }
+
+        public Participant GetVideoHearingOfficer()
+        {
+            return Participants.SingleOrDefault(x => x.IsVideoHearingOfficer());
+        }
     }
 }

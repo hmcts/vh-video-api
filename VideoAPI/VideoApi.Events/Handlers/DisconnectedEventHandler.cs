@@ -41,9 +41,8 @@ namespace VideoApi.Events.Handlers
 
         private async Task AddDisconnectedTask()
         {
-            var taskType = SourceParticipant.UserRole == UserRole.Judge ? TaskType.Judge : TaskType.Participant;
-            var disconnected =
-                new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
+            var taskType = SourceParticipant.IsJudge() ? TaskType.Judge : TaskType.Participant;
+            var disconnected = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
             await CommandHandler.Handle(disconnected).ConfigureAwait(false);
         }
 
