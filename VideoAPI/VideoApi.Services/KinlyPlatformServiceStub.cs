@@ -35,8 +35,6 @@ namespace VideoApi.Services
 
         public Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-//            var testCall = new TestCallResult(true, TestScore.Good);
-//            return Task.FromResult(testCall);
             return Task.FromResult<TestCallResult>(null);
         }
 

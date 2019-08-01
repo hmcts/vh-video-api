@@ -70,6 +70,7 @@ namespace Testing.Common.Helper
         private string ApiRoot => "consultations";
 
         public string HandleConsultationRequest =>   $"{ApiRoot}";
+        public string LeaveConsultationRequest =>   $"{ApiRoot}/leave";
         
     }
 

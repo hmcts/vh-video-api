@@ -112,6 +112,46 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        [HttpPost("leave")]
+        [SwaggerOperation(OperationId = "LeavePrivateConsultation")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> LeavePrivateConsultation(LeaveConsultationRequest request)
+        {
+            _logger.LogDebug($"LeavePrivateConsultation");
+            
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (conference == null)
+            {
+                _logger.LogError($"Unable to find conference {request.ConferenceId}");
+                return NotFound();
+            }
+            
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
+            if (participant == null)
+            {
+                _logger.LogError($"Unable to find participant request by with id {request.ParticipantId}");
+                return NotFound();
+            }
+
+            var currentRoom = participant.CurrentRoom;
+            if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 &&
+                currentRoom != RoomType.ConsultationRoom2))
+            {
+                _logger.LogError($"Participant {request.ParticipantId} is not in a consultation to leave from");
+                ModelState.AddModelError("Room",
+                    "Participant {request.ParticipantId} is not in a consultation room");
+                return BadRequest(ModelState);
+            }
+
+            await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id, currentRoom.Value,
+                RoomType.WaitingRoom);
+            return NoContent();
+        }
+        
         /// <summary>
         /// This method raises a notification to the requestee informing them of an incoming consultation request
         /// </summary>
