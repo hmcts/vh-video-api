@@ -24,11 +24,14 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantState = SourceParticipant.IsJudge() ? ParticipantState.InHearing : ParticipantState.Available;
+            var room = SourceParticipant.IsJudge() ? RoomType.HearingRoom : RoomType.WaitingRoom;
 
-            await PublishParticipantStatusMessage(participantState);
+            await PublishParticipantStatusMessage(participantState).ConfigureAwait(false);
             if (SourceParticipant.IsJudge()) await PublishLiveEventMessage();
 
-            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            var command =
+                new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState,
+                    room);
             await CommandHandler.Handle(command);
         }
 

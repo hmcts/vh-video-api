@@ -43,6 +43,14 @@ Feature: Consultations
     And I have a valid respond consultation request
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
+    
+  Scenario: Successfully respond to a private consultation request but no rooms available
+    Given I have a conference
+    And no consultation rooms are available
+    And I have a valid respond consultation request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'No consultation room available'
 
   Scenario: Respond to private consultation request against non-existent conference
     Given I have a conference

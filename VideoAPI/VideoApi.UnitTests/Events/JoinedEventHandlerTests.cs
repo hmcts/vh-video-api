@@ -34,8 +34,8 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = participantForEvent.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
-            var updateStatusCommand = new UpdateParticipantStatusCommand(conference.Id, participantForEvent.Id,
-                ParticipantState.Available);
+            var updateStatusCommand = new UpdateParticipantStatusAndRoomCommand(conference.Id, participantForEvent.Id,
+                ParticipantState.Available, RoomType.WaitingRoom);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
             await _eventHandler.HandleAsync(callbackEvent);
@@ -45,10 +45,11 @@ namespace VideoApi.UnitTests.Events
                     ParticipantState.Available), Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
-                    command.ParticipantState == ParticipantState.Available)), Times.Once);
+                    command.ParticipantState == ParticipantState.Available &&
+                    command.Room == RoomType.WaitingRoom)), Times.Once);
         }
 
         [Test]
@@ -83,10 +84,11 @@ namespace VideoApi.UnitTests.Events
                 Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
-                    command.ParticipantState == ParticipantState.InHearing)), Times.Once);
+                    command.ParticipantState == ParticipantState.InHearing &&
+                    command.Room == RoomType.HearingRoom)), Times.Once);
         }
     }
 }

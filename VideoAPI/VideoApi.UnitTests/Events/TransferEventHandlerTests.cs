@@ -50,10 +50,11 @@ namespace VideoApi.UnitTests.Events
                     status), Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
-                    command.ParticipantState == status)), Times.Once);
+                    command.ParticipantState == status &&
+                    command.Room == to)), Times.Once);
         }
 
         [Test]

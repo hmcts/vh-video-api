@@ -35,8 +35,14 @@ namespace VideoApi.Services
 
         public Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            var testCall = new TestCallResult(true, TestScore.Good);
-            return Task.FromResult(testCall);
+//            var testCall = new TestCallResult(true, TestScore.Good);
+//            return Task.FromResult(testCall);
+            return Task.FromResult<TestCallResult>(null);
+        }
+
+        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom)
+        {
+            return Task.CompletedTask;
         }
 
         private static MeetingRoom Create()

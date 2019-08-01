@@ -95,21 +95,21 @@ namespace VideoApi.Services.Kinly
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
     
-        /// <param name="user_id">User ID</param>
-        /// <returns>Hearing object</returns>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Testcall> GetTestCallAsync(string user_id);
+        System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams);
     
-        /// <param name="user_id">User ID</param>
-        /// <returns>Hearing object</returns>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        Testcall GetTestCall(string user_id);
+        void TransferParticipant(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <param name="user_id">User ID</param>
-        /// <returns>Hearing object</returns>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Testcall> GetTestCallAsync(string user_id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams, System.Threading.CancellationToken cancellationToken);
     
     }
     
@@ -564,42 +564,44 @@ namespace VideoApi.Services.Kinly
             }
         }
     
-        /// <param name="user_id">User ID</param>
-        /// <returns>Hearing object</returns>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Testcall> GetTestCallAsync(string user_id)
+        public System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams)
         {
-            return GetTestCallAsync(user_id, System.Threading.CancellationToken.None);
+            return TransferParticipantAsync(virtual_courtroom_id, transferParticipantParams, System.Threading.CancellationToken.None);
         }
     
-        /// <param name="user_id">User ID</param>
-        /// <returns>Hearing object</returns>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public Testcall GetTestCall(string user_id)
+        public void TransferParticipant(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams)
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetTestCallAsync(user_id, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            System.Threading.Tasks.Task.Run(async () => await TransferParticipantAsync(virtual_courtroom_id, transferParticipantParams, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <param name="user_id">User ID</param>
-        /// <returns>Hearing object</returns>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<Testcall> GetTestCallAsync(string user_id, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams, System.Threading.CancellationToken cancellationToken)
         {
-            if (user_id == null)
-                throw new System.ArgumentNullException("user_id");
+            if (virtual_courtroom_id == null)
+                throw new System.ArgumentNullException("virtual_courtroom_id");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/testcall/{user_id}");
-            urlBuilder_.Replace("{user_id}", System.Uri.EscapeDataString(ConvertToString(user_id, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearing/{virtual_courtroom_id}/transfer");
+            urlBuilder_.Replace("{virtual_courtroom_id}", System.Uri.EscapeDataString(ConvertToString(virtual_courtroom_id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(transferParticipantParams, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -619,10 +621,15 @@ namespace VideoApi.Services.Kinly
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200") 
+                        if (status_ == "202") 
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Testcall>(response_, headers_).ConfigureAwait(false);
-                            return objectResponse_.Object;
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new KinlyApiException("Data is malformed", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -630,8 +637,6 @@ namespace VideoApi.Services.Kinly
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
                             throw new KinlyApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
-            
-                        return default(Testcall);
                     }
                     finally
                     {
@@ -828,6 +833,33 @@ namespace VideoApi.Services.Kinly
         public static Testcall FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<Testcall>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.20.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class TransferParticipantParams 
+    {
+        /// <summary>Unique participant ID</summary>
+        [Newtonsoft.Json.JsonProperty("part_id", Required = Newtonsoft.Json.Required.Always)]
+        public string Part_id { get; set; }
+    
+        /// <summary>Room label transfering participant from</summary>
+        [Newtonsoft.Json.JsonProperty("to", Required = Newtonsoft.Json.Required.Always)]
+        public string To { get; set; }
+    
+        /// <summary>Room label transfering participant to</summary>
+        [Newtonsoft.Json.JsonProperty("from", Required = Newtonsoft.Json.Required.Always)]
+        public string From { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static TransferParticipantParams FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<TransferParticipantParams>(data);
         }
     
     }

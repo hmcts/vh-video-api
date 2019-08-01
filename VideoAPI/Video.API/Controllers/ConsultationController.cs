@@ -13,7 +13,9 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 using VideoApi.Events.Hub;
+using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -28,14 +30,16 @@ namespace Video.API.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly IHubContext<EventHub, IEventHubClient> _hubContext;
         private readonly ILogger<ConsultationController> _logger;
+        private readonly IVideoPlatformService _videoPlatformService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IHubContext<EventHub, IEventHubClient> hubContext, ILogger<ConsultationController> logger)
+            IHubContext<EventHub, IEventHubClient> hubContext, ILogger<ConsultationController> logger, IVideoPlatformService videoPlatformService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _hubContext = hubContext;
             _logger = logger;
+            _videoPlatformService = videoPlatformService;
         }
 
         /// <summary>
@@ -92,8 +96,17 @@ namespace Video.API.Controllers
             {
                 _logger.LogInformation(
                     $"Answered request as {request.Answer.Value} between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
-                await NotifyConsultationResponse(conference, requestedBy, requestedFor,
-                    request.Answer.Value);
+                try
+                {
+                    await NotifyConsultationResponse(conference, requestedBy, requestedFor,
+                        request.Answer.Value);
+                }
+                catch (DomainRuleException e)
+                {
+                    _logger.LogError(e, $"No consultation room available for conference {conference.Id}");
+                    ModelState.AddModelError("ConsultationRoom", "No consultation room available");
+                    return BadRequest(ModelState);
+                }
             }
 
             return NoContent();
@@ -131,7 +144,21 @@ namespace Video.API.Controllers
                 await _hubContext.Clients.Group(EventHub.VhOfficersGroupName)
                     .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
                         answer.ToString());
+                
+                await StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
+        }
+
+        private async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
+        {
+            var targetRoom = conference.GetAvailableConsultationRoom();
+            _logger.LogInformation(
+                $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
+            await _videoPlatformService.TransferParticipantAsync(conference.Id, requestedBy.Id,
+                requestedBy.CurrentRoom.Value, targetRoom);
+            
+            await _videoPlatformService.TransferParticipantAsync(conference.Id, requestedFor.Id,
+                requestedFor.CurrentRoom.Value, targetRoom);
         }
     }
 }

@@ -10,9 +10,9 @@ using VideoApi.Common.Helpers;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services
 {
@@ -23,7 +23,7 @@ namespace VideoApi.Services
         private readonly ILogger<KinlyPlatformService> _logger;
         private readonly ServicesConfiguration _servicesConfigOptions;
 
-        public KinlyPlatformService(IKinlyApiClient kinlyApiClient, 
+        public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
             IOptions<ServicesConfiguration> servicesConfigOptions,
             ICustomJwtTokenProvider customJwtTokenProvider, ILogger<KinlyPlatformService> logger)
         {
@@ -44,7 +44,7 @@ namespace VideoApi.Services
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
                     Callback_uri = _servicesConfigOptions.CallbackUri
-                });
+                }).ConfigureAwait(false);
 
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Judge, response.Uris.Participant,
                     response.Uris.Pexip_node);
@@ -65,7 +65,7 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _kinlyApiClient.GetHearingAsync(conferenceId.ToString());
+                var response = await _kinlyApiClient.GetHearingAsync(conferenceId.ToString()).ConfigureAwait(false);
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Judge, response.Uris.Participant,
                     response.Uris.Pexip_node);
                 return meetingRoom;
@@ -98,17 +98,33 @@ namespace VideoApi.Services
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
                     _customJwtTokenProvider.GenerateToken(participantId.ToString(), 2));
 
-                responseMessage = await httpClient.SendAsync(request);
+                responseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
             }
-            
+
             if (!responseMessage.IsSuccessStatusCode)
             {
                 return null;
             }
 
-            var content = await responseMessage.Content.ReadAsStringAsync();
+            var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
             return new TestCallResult(testCall.Passed, (TestScore) testCall.Score);
+        }
+
+        public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,
+            RoomType toRoom)
+        {
+            _logger.LogInformation(
+                $"Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}");
+
+            var request = new TransferParticipantParams
+            {
+                From = fromRoom.ToString(),
+                To = toRoom.ToString(),
+                Part_id = participantId.ToString()
+            };
+
+            await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request).ConfigureAwait(false);
         }
     }
 }

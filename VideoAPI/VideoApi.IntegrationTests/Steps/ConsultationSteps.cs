@@ -2,10 +2,13 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
+using VideoApi.DAL;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
@@ -119,6 +122,22 @@ namespace VideoApi.IntegrationTests.Steps
             SerialiseRequest(request);
         }
 
+        [Given("no consultation rooms are available")]
+        public async Task GivenNoConsultationRoomsAreAvailable()
+        {
+            using (var db = new VideoApiDbContext(ApiTestContext.VideoBookingsDbContextOptions))
+            {
+                var conference = await db.Conferences
+                    .Include("Participants")
+                    .SingleAsync(x => x.Id == _conferenceTestContext.SeededConference.Id);
+                
+                conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
+                conference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom2);
+
+                await db.SaveChangesAsync();
+            }
+        }
+        
         private void SerialiseRequest(ConsultationRequest request)
         {
             ApiTestContext.Uri = _endpoints.HandleConsultationRequest;
