@@ -24,7 +24,7 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             await PublishParticipantDisconnectMessage().ConfigureAwait(false);
-            if (SourceParticipant.UserRole == UserRole.Judge) await PublishSuspendedEventMessage().ConfigureAwait(false);
+            if (SourceParticipant.IsJudge()) await PublishSuspendedEventMessage().ConfigureAwait(false);
         }
 
         private async Task PublishParticipantDisconnectMessage()

@@ -135,7 +135,7 @@ namespace VideoApi.Domain
 
         public RoomType GetAvailableConsultationRoom()
         {
-            if (!GetParticipants().Any())
+            if (!Participants.Any())
             {
                 throw new DomainRuleException("No Participants", "This conference has no participants");
             }
