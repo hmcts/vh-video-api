@@ -92,6 +92,12 @@ namespace Video.API.Controllers
                     $"Raising request between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
                 await NotifyConsultationRequest(conference, requestedBy, requestedFor);
             }
+            else if (request.Answer == ConsultationAnswer.Cancelled)
+            {
+                _logger.LogInformation(
+                    $"Cancelled private consultation between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
+                await NotifyConsultationCancelled(conference, requestedBy, requestedFor);
+            }
             else
             {
                 _logger.LogInformation(
@@ -187,6 +193,14 @@ namespace Video.API.Controllers
                 
                 await StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
+        }
+        
+        private async Task NotifyConsultationCancelled(Conference conference, Participant requestedBy,
+            Participant requestedFor)
+        {
+            await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
+                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
+                    ConsultationAnswer.Cancelled.ToString());
         }
 
         private async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)

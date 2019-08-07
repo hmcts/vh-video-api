@@ -159,6 +159,32 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 x.TransferParticipantAsync(conferenceId, requestedFor.Id, requestedFor.CurrentRoom.Value,
                     availableRoom), Times.Once);
         }
+
+        [Test]
+        public async Task should_raise_notification_to_requestee_when_consultation_is_cancelled()
+        {
+            var conferenceId = _testConference.Id;
+            var requestedBy = _testConference.GetParticipants()[2];
+            var requestedFor = _testConference.GetParticipants()[3];
+
+            var request = new ConsultationRequest
+            {
+                ConferenceId = conferenceId,
+                RequestedBy = requestedBy.Id,
+                RequestedFor = requestedFor.Id,
+                Answer = ConsultationAnswer.Cancelled
+            };
+            await _controller.HandleConsultationRequest(request);
+
+            _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Never);
+            _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Once);
+            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
+
+            _eventHubClientMock.Verify(
+                x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
+                    ConsultationAnswer.Cancelled.ToString()),
+                Times.Once);
+        }
         
         [Test]
         public async Task should_return_error_when_consultation_accepted_but_no_room_is_available()

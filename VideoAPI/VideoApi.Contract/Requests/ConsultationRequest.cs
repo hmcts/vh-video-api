@@ -43,6 +43,10 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Reject a consultation request
         /// </summary>
-        Rejected
+        Rejected,
+        /// <summary>
+        /// Cancel a consultation request
+        /// </summary>
+        Cancelled
     }
 }
