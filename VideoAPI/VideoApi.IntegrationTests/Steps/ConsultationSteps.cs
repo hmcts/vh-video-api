@@ -51,7 +51,7 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            SerialiseRequest(request);
+            SerialiseConsultationRequest(request);
         }
 
         [Given(@"I have a raise consultation request with an invalid (.*)")]
@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(participant), participant, null);
             }
 
-            SerialiseRequest(request);
+            SerialiseConsultationRequest(request);
         }
 
         [Given(@"I have a (.*) respond consultation request")]
@@ -99,7 +99,44 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            SerialiseRequest(request);
+            SerialiseConsultationRequest(request);
+        }
+
+        [Given(@"I have an (.*) leave consultation request")]
+        public async Task GivenIHaveALeaveConsultationRequest(Scenario scenario)
+        {
+            var request = await SetupLeaveConsultationRequest(true).ConfigureAwait(false);
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                    break;
+                case Scenario.Invalid:
+                    request.ConferenceId = Guid.Empty;
+                    request.ParticipantId = Guid.Empty;
+                    break;
+                case Scenario.Nonexistent:
+                    request.ConferenceId = Guid.NewGuid();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            SerialiseLeaveConsultationRequest(request);
+        }
+        
+        [Given(@"I have a leave consultation request for a nonexistent participant")]
+        public async Task GivenIHaveALeaveConsultationRequestForANonexistentParticipant()
+        {
+            var request = await SetupLeaveConsultationRequest(true).ConfigureAwait(false);
+            request.ParticipantId = Guid.NewGuid();
+            SerialiseLeaveConsultationRequest(request);
+        }
+        
+        [Given(@"I have a leave consultation request for a participant not in a consultation")]
+        public async Task GivenIHaveALeaveConsultationRequestForAParticipantNotInAConsultation()
+        {
+            var request = await SetupLeaveConsultationRequest(false).ConfigureAwait(false);
+            SerialiseLeaveConsultationRequest(request);
         }
 
         [Given(@"I have a respond consultation request with an invalid (.*)")]
@@ -119,7 +156,7 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(participant), participant, null);
             }
 
-            SerialiseRequest(request);
+            SerialiseConsultationRequest(request);
         }
 
         [Given("no consultation rooms are available")]
@@ -130,17 +167,25 @@ namespace VideoApi.IntegrationTests.Steps
                 var conference = await db.Conferences
                     .Include("Participants")
                     .SingleAsync(x => x.Id == _conferenceTestContext.SeededConference.Id);
-                
+
                 conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
                 conference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom2);
 
                 await db.SaveChangesAsync();
             }
         }
-        
-        private void SerialiseRequest(ConsultationRequest request)
+
+        private void SerialiseConsultationRequest(ConsultationRequest request)
         {
             ApiTestContext.Uri = _endpoints.HandleConsultationRequest;
+            ApiTestContext.HttpMethod = HttpMethod.Post;
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        private void SerialiseLeaveConsultationRequest(LeaveConsultationRequest request)
+        {
+            ApiTestContext.Uri = _endpoints.LeaveConsultationRequest;
             ApiTestContext.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -167,5 +212,43 @@ namespace VideoApi.IntegrationTests.Steps
 
             return request;
         }
+
+        private async Task<LeaveConsultationRequest> SetupLeaveConsultationRequest(bool inConsultationRoom)
+        {
+            var request = new LeaveConsultationRequest();
+
+            var seededConference = _conferenceTestContext.SeededConference;
+
+            if (seededConference == null)
+            {
+                return request;
+            }
+
+            request.ConferenceId = seededConference.Id;
+            request.ParticipantId = seededConference.Participants[0].Id;
+
+            if (!inConsultationRoom)
+            {
+                return request;
+            }
+
+            var participantId = seededConference.Participants[0].Id;
+            using (var db = new VideoApiDbContext(ApiTestContext.VideoBookingsDbContextOptions))
+            {
+                var conference = await db.Conferences
+                    .Include("Participants")
+                    .SingleAsync(x => x.Id == _conferenceTestContext.SeededConference.Id);
+
+                conference.Participants.Single(x => x.Id == participantId)
+                    .UpdateCurrentRoom(RoomType.ConsultationRoom1);
+
+                await db.SaveChangesAsync();
+
+                request.ParticipantId = participantId;
+            }
+
+            return request;
+        }
+
     }
 }
