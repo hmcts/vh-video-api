@@ -131,7 +131,15 @@ namespace Video.API
         private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient,
             ServicesConfiguration servicesConfiguration)
         {
-            return new KinlyApiClient(httpClient) {BaseUrl = servicesConfiguration.KinlyApiUrl};
+            DefaultContractResolver contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            };
+            
+            var client = new KinlyApiClient(httpClient) {BaseUrl = servicesConfiguration.KinlyApiUrl};
+            client.JsonSerializerSettings.ContractResolver = contractResolver;
+            client.JsonSerializerSettings.Formatting = Formatting.Indented;
+            return client;
         }
         
         private static IUserApiClient BuildUserApiClient(HttpClient httpClient,
