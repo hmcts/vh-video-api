@@ -33,7 +33,8 @@ namespace Video.API.Controllers
         private readonly IVideoPlatformService _videoPlatformService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IHubContext<EventHub, IEventHubClient> hubContext, ILogger<ConsultationController> logger, IVideoPlatformService videoPlatformService)
+            IHubContext<EventHub, IEventHubClient> hubContext, ILogger<ConsultationController> logger,
+            IVideoPlatformService videoPlatformService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -125,7 +126,7 @@ namespace Video.API.Controllers
         public async Task<IActionResult> LeavePrivateConsultation(LeaveConsultationRequest request)
         {
             _logger.LogDebug($"LeavePrivateConsultation");
-            
+
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
@@ -135,7 +136,7 @@ namespace Video.API.Controllers
                 _logger.LogError($"Unable to find conference {request.ConferenceId}");
                 return NotFound();
             }
-            
+
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
             if (participant == null)
             {
@@ -145,19 +146,19 @@ namespace Video.API.Controllers
 
             var currentRoom = participant.CurrentRoom;
             if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 &&
-                currentRoom != RoomType.ConsultationRoom2))
+                                          currentRoom != RoomType.ConsultationRoom2))
             {
                 _logger.LogError($"Participant {request.ParticipantId} is not in a consultation to leave from");
                 ModelState.AddModelError("Room",
-                    "Participant {request.ParticipantId} is not in a consultation room");
+                    $"Participant {request.ParticipantId} is not in a consultation room");
                 return BadRequest(ModelState);
             }
 
-            await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id, currentRoom.Value,
-                RoomType.WaitingRoom);
+            await _videoPlatformService.StopPrivateConsultationAsync(conference, currentRoom.Value);
+
             return NoContent();
         }
-        
+
         /// <summary>
         /// This method raises a notification to the requestee informing them of an incoming consultation request
         /// </summary>
@@ -171,7 +172,7 @@ namespace Video.API.Controllers
                 .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
                     string.Empty);
         }
-        
+
         /// <summary>
         /// This method raises a notification to the requester informing them the response to their consultation request.
         /// </summary>
@@ -184,35 +185,25 @@ namespace Video.API.Controllers
         {
             await _hubContext.Clients.Group(requestedBy.Username.ToLowerInvariant())
                 .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username, answer.ToString());
-            
+
             if (answer == ConsultationAnswer.Accepted)
             {
                 await _hubContext.Clients.Group(EventHub.VhOfficersGroupName)
                     .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
                         answer.ToString());
-                
-                await StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
+
+                _logger.LogInformation(
+                    $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
+                await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
         }
-        
+
         private async Task NotifyConsultationCancelled(Conference conference, Participant requestedBy,
             Participant requestedFor)
         {
             await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
                 .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
                     ConsultationAnswer.Cancelled.ToString());
-        }
-
-        private async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
-        {
-            var targetRoom = conference.GetAvailableConsultationRoom();
-            _logger.LogInformation(
-                $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
-            await _videoPlatformService.TransferParticipantAsync(conference.Id, requestedBy.Id,
-                requestedBy.CurrentRoom.Value, targetRoom);
-            
-            await _videoPlatformService.TransferParticipantAsync(conference.Id, requestedFor.Id,
-                requestedFor.CurrentRoom.Value, targetRoom);
         }
     }
 }

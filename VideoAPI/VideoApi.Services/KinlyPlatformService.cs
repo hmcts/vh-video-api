@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -125,6 +126,32 @@ namespace VideoApi.Services
             };
 
             await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request).ConfigureAwait(false);
+        }
+
+        public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
+        {
+            var targetRoom = conference.GetAvailableConsultationRoom();
+            
+            _logger.LogInformation(
+                $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
+            
+            await TransferParticipantAsync(conference.Id, requestedBy.Id,
+                requestedBy.CurrentRoom.Value, targetRoom);
+            
+            await TransferParticipantAsync(conference.Id, requestedFor.Id,
+                requestedFor.CurrentRoom.Value, targetRoom);
+        }
+
+        public async Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
+        {
+            var participants = conference.GetParticipants()
+                .Where(x => x.CurrentRoom.HasValue && x.CurrentRoom == consultationRoom);
+
+            foreach (var participant in participants)
+            {
+                await TransferParticipantAsync(conference.Id, participant.Id, consultationRoom,
+                    RoomType.WaitingRoom);
+            }
         }
     }
 }
