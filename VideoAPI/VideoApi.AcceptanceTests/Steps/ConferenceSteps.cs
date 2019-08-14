@@ -170,10 +170,10 @@ namespace VideoApi.AcceptanceTests.Steps
                 {
                     AssertParticipantSummaryResponse.ForParticipant(participant);
                 }
-                conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);
+                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
             }
 
-            _context.NewConferences = conferences;
+            _context.NewConferences = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
         }
 
         [Then(@"the summary of conference details should be retrieved")]
