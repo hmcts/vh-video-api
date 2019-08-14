@@ -34,8 +34,7 @@ namespace VideoApi.Common.Security.CustomToken
                 RequireExpirationTime = true,
                 ValidIssuers = new[] {_customTokenSettings.Issuer},
                 ValidateIssuer = true,
-                ValidAudiences = new[] { _customTokenSettings.Audience },
-                ValidateAudience = true,
+                ValidateAudience = false,
                 IssuerSigningKey = new SymmetricSecurityKey(key)
 
             };

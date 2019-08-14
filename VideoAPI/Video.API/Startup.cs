@@ -46,6 +46,8 @@ namespace Video.API
                         .SetIsOriginAllowed((host) => true)
                         .AllowCredentials();
                 }));
+
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             
             services.AddJsonOptions();
             RegisterSettings(services);
