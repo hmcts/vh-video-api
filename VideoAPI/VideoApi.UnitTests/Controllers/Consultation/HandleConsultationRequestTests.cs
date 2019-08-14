@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 using VideoApi.Events.Hub;
 using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
@@ -148,16 +148,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
                     answer.ToString()), Times.Exactly(2));
 
-            var availableRoom = _testConference.GetAvailableConsultationRoom();
-
             _videoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, requestedBy.Id, requestedBy.CurrentRoom.Value,
-                        availableRoom),
-                Times.Once);
-
-            _videoPlatformServiceMock.Verify(x =>
-                x.TransferParticipantAsync(conferenceId, requestedFor.Id, requestedFor.CurrentRoom.Value,
-                    availableRoom), Times.Once);
+                x.StartPrivateConsultationAsync(_testConference, requestedBy, requestedFor), Times.Once);
+            _videoPlatformServiceMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -192,6 +185,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var conferenceId = _testConference.Id;
             var requestedBy = _testConference.GetParticipants()[2];
             var requestedFor = _testConference.GetParticipants()[3];
+
+            _videoPlatformServiceMock
+                .Setup(x => x.StartPrivateConsultationAsync(_testConference, requestedBy, requestedFor))
+                .ThrowsAsync(new DomainRuleException("Unavailable room", "No consultation rooms available"));
             
             // make sure no rooms are available
             _testConference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom1);
@@ -218,16 +215,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             _eventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
                     answer.ToString()), Times.Exactly(2));
-
-
+            
             _videoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, requestedBy.Id, requestedBy.CurrentRoom.Value,
-                        It.IsAny<RoomType>()),
-                Times.Never);
-
-            _videoPlatformServiceMock.Verify(x =>
-                x.TransferParticipantAsync(conferenceId, requestedFor.Id, requestedFor.CurrentRoom.Value,
-                    It.IsAny<RoomType>()), Times.Never);
+                x.StartPrivateConsultationAsync(_testConference, requestedBy, requestedFor), Times.Once);
+            _videoPlatformServiceMock.VerifyNoOtherCalls();
         }
     }
 }

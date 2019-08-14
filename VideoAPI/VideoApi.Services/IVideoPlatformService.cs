@@ -12,5 +12,22 @@ namespace VideoApi.Services
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId);
         Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);
+        
+        /// <summary>
+        /// Move two participants into a single consultation room
+        /// </summary>
+        /// <param name="conference">Conference</param>
+        /// <param name="requestedBy">First participant</param>
+        /// <param name="requestedFor">Second participant</param>
+        /// <returns></returns>
+        Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor);
+        
+        /// <summary>
+        /// Returns participants in a given room to waiting room
+        /// </summary>
+        /// <param name="conference"></param>
+        /// <param name="consultationRoom"></param>
+        /// <returns></returns>
+        Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom);
     }
 }

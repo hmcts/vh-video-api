@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
@@ -39,6 +38,16 @@ namespace VideoApi.Services
         }
 
         public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
         {
             return Task.CompletedTask;
         }
