@@ -22,6 +22,8 @@ namespace VideoApi.UnitTests.Events
         [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom2, ParticipantState.InConsultation)]
         [TestCase(RoomType.ConsultationRoom1, RoomType.WaitingRoom, ParticipantState.Available)]
         [TestCase(RoomType.ConsultationRoom2, RoomType.WaitingRoom, ParticipantState.Available)]
+        [TestCase(RoomType.ConsultationRoom1, RoomType.HearingRoom, ParticipantState.InHearing)]
+        [TestCase(RoomType.ConsultationRoom2, RoomType.HearingRoom, ParticipantState.InHearing)]
         public async Task should_send_participant__status_messages_to_clients_and_asb_when_transfer_occurs(
             RoomType from, RoomType to, ParticipantState status)
         {

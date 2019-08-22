@@ -45,6 +45,11 @@ namespace VideoApi.Events.Handlers
                 callbackEvent.TransferTo == RoomType.WaitingRoom)
                 return ParticipantState.Available;
 
+            if ((callbackEvent.TransferFrom == RoomType.ConsultationRoom1 ||
+                 callbackEvent.TransferFrom == RoomType.ConsultationRoom2) &&
+                callbackEvent.TransferTo == RoomType.HearingRoom)
+                return ParticipantState.InHearing;
+
             switch (callbackEvent.TransferFrom)
             {
                 case RoomType.WaitingRoom when callbackEvent.TransferTo == RoomType.HearingRoom:
