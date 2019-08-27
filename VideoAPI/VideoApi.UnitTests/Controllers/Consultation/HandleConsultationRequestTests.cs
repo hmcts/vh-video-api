@@ -1,82 +1,24 @@
 using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using Testing.Common.Helper.Builders.Domain;
-using Video.API.Controllers;
 using VideoApi.Contract.Requests;
-using VideoApi.DAL.Commands;
-using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Queries;
-using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 using VideoApi.Events.Hub;
-using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
-    public class HandleConsultationRequestTests
+    public class HandleConsultationRequestTests : ConsultationControllerTestBase
     {
-        private Mock<ICommandHandler> _commandHandlerMock;
-        private ConsultationController _controller;
-        private Mock<IEventHubClient> _eventHubClientMock;
-        private Mock<IHubContext<EventHub, IEventHubClient>> _hubContextMock;
-        private Mock<IQueryHandler> _queryHandlerMock;
-        private Mock<ILogger<ConsultationController>> _mockLogger;
-        private Mock<IVideoPlatformService> _videoPlatformServiceMock;
-
-        private Conference _testConference;
-
-        [SetUp]
-        public void Setup()
-        {
-            _queryHandlerMock = new Mock<IQueryHandler>();
-            _commandHandlerMock = new Mock<ICommandHandler>();
-            _hubContextMock = new Mock<IHubContext<EventHub, IEventHubClient>>();
-            _eventHubClientMock = new Mock<IEventHubClient>();
-            _mockLogger = new Mock<ILogger<ConsultationController>>();
-            _videoPlatformServiceMock = new Mock<IVideoPlatformService>();
-
-            _testConference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .Build();
-
-            _queryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(_testConference);
-
-            _commandHandlerMock
-                .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
-                .Returns(Task.FromResult(default(object)));
-
-            _controller = new ConsultationController(_queryHandlerMock.Object, _commandHandlerMock.Object,
-                _hubContextMock.Object, _mockLogger.Object, _videoPlatformServiceMock.Object);
-
-            foreach (var participant in _testConference.GetParticipants())
-            {
-                _hubContextMock.Setup(x => x.Clients.Group(participant.Username.ToString()))
-                    .Returns(_eventHubClientMock.Object);
-            }
-            _hubContextMock.Setup(x => x.Clients.Group(EventHub.VhOfficersGroupName))
-                .Returns(_eventHubClientMock.Object);
-        }
-
         [Test]
         public async Task should_raise_notification_to_requestee_when_consultation_is_requested()
         {
-            var conferenceId = _testConference.Id;
-            var requestedBy = _testConference.GetParticipants()[2];
-            var requestedFor = _testConference.GetParticipants()[3];
+            var conferenceId = TestConference.Id;
+            var requestedBy = TestConference.GetParticipants()[2];
+            var requestedFor = TestConference.GetParticipants()[3];
 
             var request = new ConsultationRequest
             {
@@ -84,13 +26,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 RequestedBy = requestedBy.Id,
                 RequestedFor = requestedFor.Id
             };
-            await _controller.HandleConsultationRequest(request);
+            await Controller.HandleConsultationRequest(request);
 
-            _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Never);
-            _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Once);
-            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Once);
+            HubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
 
-            _eventHubClientMock.Verify(
+            EventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username, string.Empty),
                 Times.Once);
         }
@@ -98,9 +40,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_raise_notification_to_requester_consultation_is_rejected()
         {
-            var conferenceId = _testConference.Id;
-            var requestedBy = _testConference.GetParticipants()[2];
-            var requestedFor = _testConference.GetParticipants()[3];
+            var conferenceId = TestConference.Id;
+            var requestedBy = TestConference.GetParticipants()[2];
+            var requestedFor = TestConference.GetParticipants()[3];
             var answer = ConsultationAnswer.Rejected;
 
             var request = new ConsultationRequest
@@ -111,13 +53,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            await _controller.HandleConsultationRequest(request);
+            await Controller.HandleConsultationRequest(request);
 
-            _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
-            _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
-            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
+            HubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
 
-            _eventHubClientMock.Verify(
+            EventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
                     answer.ToString()), Times.Once);
         }
@@ -125,9 +67,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_raise_notification_to_requester_and_admin_when_consultation_is_accepted()
         {
-            var conferenceId = _testConference.Id;
-            var requestedBy = _testConference.GetParticipants()[2];
-            var requestedFor = _testConference.GetParticipants()[3];
+            var conferenceId = TestConference.Id;
+            var requestedBy = TestConference.GetParticipants()[2];
+            var requestedFor = TestConference.GetParticipants()[3];
             
             var answer = ConsultationAnswer.Accepted;
 
@@ -139,26 +81,26 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            await _controller.HandleConsultationRequest(request);
+            await Controller.HandleConsultationRequest(request);
 
-            _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
-            _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
-            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Once);
-            _eventHubClientMock.Verify(
+            HubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
+            HubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Once);
+            EventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
                     answer.ToString()), Times.Exactly(2));
 
-            _videoPlatformServiceMock.Verify(x =>
-                x.StartPrivateConsultationAsync(_testConference, requestedBy, requestedFor), Times.Once);
-            _videoPlatformServiceMock.VerifyNoOtherCalls();
+            VideoPlatformServiceMock.Verify(x =>
+                x.StartPrivateConsultationAsync(TestConference, requestedBy, requestedFor), Times.Once);
+            VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
 
         [Test]
         public async Task should_raise_notification_to_requestee_when_consultation_is_cancelled()
         {
-            var conferenceId = _testConference.Id;
-            var requestedBy = _testConference.GetParticipants()[2];
-            var requestedFor = _testConference.GetParticipants()[3];
+            var conferenceId = TestConference.Id;
+            var requestedBy = TestConference.GetParticipants()[2];
+            var requestedFor = TestConference.GetParticipants()[3];
 
             var request = new ConsultationRequest
             {
@@ -167,13 +109,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 RequestedFor = requestedFor.Id,
                 Answer = ConsultationAnswer.Cancelled
             };
-            await _controller.HandleConsultationRequest(request);
+            await Controller.HandleConsultationRequest(request);
 
-            _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Never);
-            _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Once);
-            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Once);
+            HubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Never);
 
-            _eventHubClientMock.Verify(
+            EventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
                     ConsultationAnswer.Cancelled.ToString()),
                 Times.Once);
@@ -182,17 +124,17 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_error_when_consultation_accepted_but_no_room_is_available()
         {
-            var conferenceId = _testConference.Id;
-            var requestedBy = _testConference.GetParticipants()[2];
-            var requestedFor = _testConference.GetParticipants()[3];
+            var conferenceId = TestConference.Id;
+            var requestedBy = TestConference.GetParticipants()[2];
+            var requestedFor = TestConference.GetParticipants()[3];
 
-            _videoPlatformServiceMock
-                .Setup(x => x.StartPrivateConsultationAsync(_testConference, requestedBy, requestedFor))
+            VideoPlatformServiceMock
+                .Setup(x => x.StartPrivateConsultationAsync(TestConference, requestedBy, requestedFor))
                 .ThrowsAsync(new DomainRuleException("Unavailable room", "No consultation rooms available"));
             
             // make sure no rooms are available
-            _testConference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom1);
-            _testConference.Participants[4].UpdateCurrentRoom(RoomType.ConsultationRoom2);
+            TestConference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom1);
+            TestConference.Participants[4].UpdateCurrentRoom(RoomType.ConsultationRoom2);
 
             var answer = ConsultationAnswer.Accepted;
 
@@ -204,21 +146,21 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await _controller.HandleConsultationRequest(request);
+            var result = await Controller.HandleConsultationRequest(request);
             var typedResult = (ObjectResult) result;
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.BadRequest);
 
 
-            _hubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
-            _hubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
-            _hubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Once);
-            _eventHubClientMock.Verify(
+            HubContextMock.Verify(x => x.Clients.Group(requestedBy.Username.ToLowerInvariant()), Times.Once);
+            HubContextMock.Verify(x => x.Clients.Group(requestedFor.Username.ToLowerInvariant()), Times.Never);
+            HubContextMock.Verify(x => x.Clients.Group(EventHub.VhOfficersGroupName), Times.Once);
+            EventHubClientMock.Verify(
                 x => x.ConsultationMessage(conferenceId, requestedBy.Username, requestedFor.Username,
                     answer.ToString()), Times.Exactly(2));
             
-            _videoPlatformServiceMock.Verify(x =>
-                x.StartPrivateConsultationAsync(_testConference, requestedBy, requestedFor), Times.Once);
-            _videoPlatformServiceMock.VerifyNoOtherCalls();
+            VideoPlatformServiceMock.Verify(x =>
+                x.StartPrivateConsultationAsync(TestConference, requestedBy, requestedFor), Times.Once);
+            VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
     }
 }

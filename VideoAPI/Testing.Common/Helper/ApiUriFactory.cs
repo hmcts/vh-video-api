@@ -71,6 +71,7 @@ namespace Testing.Common.Helper
 
         public string HandleConsultationRequest =>   $"{ApiRoot}";
         public string LeaveConsultationRequest =>   $"{ApiRoot}/leave";
+        public string RespondToAdminConsultationRequest =>   $"{ApiRoot}/vhofficer/respond";
         
     }
 

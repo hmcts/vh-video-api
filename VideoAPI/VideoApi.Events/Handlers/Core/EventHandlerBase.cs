@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;

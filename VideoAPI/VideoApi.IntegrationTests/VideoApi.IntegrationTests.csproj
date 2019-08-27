@@ -29,5 +29,9 @@
   <ItemGroup>
     <Content Include="Api\*.feature" />
     <Content Include="Api\*.feature.cs" />
+    <Content Include="Api\Consultations\AdminConsultations.feature" />
+    <Content Include="Api\Consultations\LeavePrivateConsultation.feature" />
+    <Content Include="Api\Consultations\RaisePrivateConsultation.feature" />
+    <Content Include="Api\Consultations\RespondToPrivateConsultation.feature" />
   </ItemGroup>
 </Project>

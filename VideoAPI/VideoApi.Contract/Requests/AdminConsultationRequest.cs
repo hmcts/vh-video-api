@@ -1,12 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Requests
 {
     /// <summary>
     /// Request a private consultation with another participant
     /// </summary>
-    public class ConsultationRequest
+    public class AdminConsultationRequest
     {
         /// <summary>
         /// The conference UUID
@@ -14,39 +15,19 @@ namespace VideoApi.Contract.Requests
         public Guid ConferenceId { get; set; }
         
         /// <summary>
-        /// Requestor's UUID
+        /// UUID of participant VH Officer attempted to call
         /// </summary>
-        public Guid RequestedBy { get; set; }
+        public Guid ParticipantId { get; set; }
         
         /// <summary>
-        /// Requestee's UUID
+        /// Consultation Room to use
         /// </summary>
-        public Guid RequestedFor { get; set; }
+        public RoomType ConsultationRoom { get; set; }
         
         /// <summary>
         /// Response to a consultation request (i.e. 'Accepted or Rejected')
         /// </summary>
         [EnumDataType(typeof(ConsultationAnswer))]
         public ConsultationAnswer? Answer { get; set; }
-    }
-
-    public enum ConsultationAnswer
-    {
-        /// <summary>
-        /// Default when no answer has been provided
-        /// </summary>
-        None,
-        /// <summary>
-        /// Accept a consultation request
-        /// </summary>
-        Accepted,
-        /// <summary>
-        /// Reject a consultation request
-        /// </summary>
-        Rejected,
-        /// <summary>
-        /// Cancel a consultation request
-        /// </summary>
-        Cancelled
     }
 }
