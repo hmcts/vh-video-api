@@ -122,6 +122,7 @@ namespace Video.API.Controllers
         [HttpPost("leave")]
         [SwaggerOperation(OperationId = "LeavePrivateConsultation")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeavePrivateConsultation(LeaveConsultationRequest request)
         {
@@ -159,6 +160,44 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        [HttpPost("vhofficer/respond")]
+        [SwaggerOperation(OperationId = "RespondToAdminConsultationRequest")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RespondToAdminConsultationRequest(AdminConsultationRequest request)
+        {
+            _logger.LogDebug($"RespondToAdminConsultationRequest");
+            
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (conference == null)
+            {
+                _logger.LogError($"Unable to find conference {request.ConferenceId}");
+                return NotFound();
+            }
+
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
+            if (participant == null)
+            {
+                _logger.LogError($"Unable to find participant request by with id {request.ParticipantId}");
+                return NotFound();
+            }
+
+            if (request.Answer.Value == ConsultationAnswer.Accepted)
+            {
+                await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id,
+                    participant.CurrentRoom.Value, request.ConsultationRoom);
+                await _hubContext.Clients.Group(participant.Username.ToLowerInvariant()).AdminConsultationMessage
+                (conference.Id, request.ConsultationRoom, participant.Username.ToLowerInvariant(),
+                    ConsultationAnswer.Accepted);
+            }
+
+            return NoContent();
+        }
+        
         /// <summary>
         /// This method raises a notification to the requestee informing them of an incoming consultation request
         /// </summary>

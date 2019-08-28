@@ -174,10 +174,55 @@ namespace VideoApi.IntegrationTests.Steps
                 await db.SaveChangesAsync();
             }
         }
+        
+        [Given(@"I have a (.*) respond to admin consultation request")]
+        [Given(@"I have an (.*) respond to admin consultation request")]
+        public void GivenIHaveARespondToAdminConsultationRequest(Scenario scenario)
+        {
+            var request = SetupRespondToAdminConsultationRequest();
+            switch (scenario)
+            {
+                case Scenario.Valid: break;
+                case Scenario.Invalid:
+                {
+                    request.ConferenceId = Guid.Empty;
+                    request.Answer = ConsultationAnswer.None;
+                    request.ParticipantId = Guid.Empty;
+                    request.ConsultationRoom = RoomType.HearingRoom;
+                    break;
+                }
+
+                case Scenario.Nonexistent:
+                {
+                    request.ConferenceId = Guid.NewGuid();
+                }
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            SerialiseRespondToAdminConsultationRequest(request);
+        }
+
+        [Given(@"I have a respond to admin consultation request with a non-existent participant")]
+        public void GivenIHaveARespondToAdminConsultationRequestWithNonExistentParticipant()
+        {
+            var request = SetupRespondToAdminConsultationRequest();
+            request.ParticipantId = Guid.NewGuid();
+
+            SerialiseRespondToAdminConsultationRequest(request);
+        }
 
         private void SerialiseConsultationRequest(ConsultationRequest request)
         {
             ApiTestContext.Uri = _endpoints.HandleConsultationRequest;
+            ApiTestContext.HttpMethod = HttpMethod.Post;
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        private void SerialiseRespondToAdminConsultationRequest(AdminConsultationRequest request)
+        {
+            ApiTestContext.Uri = _endpoints.RespondToAdminConsultationRequest;
             ApiTestContext.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -246,6 +291,28 @@ namespace VideoApi.IntegrationTests.Steps
 
                 request.ParticipantId = participantId;
             }
+
+            return request;
+        }
+
+        private AdminConsultationRequest SetupRespondToAdminConsultationRequest()
+        {
+            var request = new AdminConsultationRequest();
+
+            var seededConference = _conferenceTestContext.SeededConference;
+
+            if (seededConference == null)
+            {
+                return request;
+            }
+
+            var participants = seededConference.GetParticipants().Where(x =>
+                x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
+
+            request.ConferenceId = seededConference.Id;
+            request.ParticipantId = participants[0].Id;
+            request.Answer = ConsultationAnswer.Accepted;
+            request.ConsultationRoom = RoomType.ConsultationRoom1;
 
             return request;
         }

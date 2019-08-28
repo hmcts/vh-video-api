@@ -15,6 +15,7 @@ namespace VideoApi.Domain.Enums
         MediaPermissionDenied,
         ParticipantJoining,
         SelfTestFailed,
-        Suspend
+        Suspend,
+        VhoCall
     }
 }

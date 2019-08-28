@@ -58,7 +58,9 @@ namespace VideoApi.UnitTests.Events
                 new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
                     EventHubContextMock.Object),
                 new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient,
-                    EventHubContextMock.Object)
+                    EventHubContextMock.Object),
+                new VhOfficerCallEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                    ServiceBusQueueClient, EventHubContextMock.Object)
             };
 
             TestConference = new ConferenceBuilder()
