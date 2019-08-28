@@ -190,6 +190,9 @@ namespace Video.API.Controllers
             {
                 await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id,
                     participant.CurrentRoom.Value, request.ConsultationRoom);
+                await _hubContext.Clients.Group(participant.Username.ToLowerInvariant()).AdminConsultationMessage
+                (conference.Id, request.ConsultationRoom, participant.Username.ToLowerInvariant(),
+                    ConsultationAnswer.Accepted);
             }
 
             return NoContent();

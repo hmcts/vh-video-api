@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
 using VideoApi.Services;
 
@@ -12,7 +13,9 @@ namespace VideoApi.Events.Hub
         Task ParticipantStatusMessage(string email, ParticipantState participantState);
         Task ConferenceStatusMessage(Guid conferenceId, ConferenceState conferenceState);
         Task ConsultationMessage(Guid conferenceId, string requestedBy, string requestedFor, string result);
-        Task AdminConsultationMessage(Guid conferenceId, RoomType room, string requestedFor);
+
+        Task AdminConsultationMessage(Guid conferenceId, RoomType room, string requestedFor,
+            ConsultationAnswer? answer = null);
         Task HelpMessage(Guid conferenceId, string participantName);
     }
 

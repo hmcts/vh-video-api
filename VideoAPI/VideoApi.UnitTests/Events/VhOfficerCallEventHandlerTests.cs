@@ -66,7 +66,7 @@ namespace VideoApi.UnitTests.Events
 
             EventHubClientMock.Verify(x =>
                     x.AdminConsultationMessage(conference.Id, transferTo.Value,
-                        participantForEvent.Username.ToLowerInvariant()),
+                        participantForEvent.Username.ToLowerInvariant(), null),
                 Times.Once);
         }
     }
