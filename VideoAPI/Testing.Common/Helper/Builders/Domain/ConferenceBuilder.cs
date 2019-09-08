@@ -53,10 +53,10 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                username = $"Automation_{Internet.Email()}";
+                username = Internet.Email();
             }
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), $"Automation_{Name.FullName()}", $"Automation_{Name.First()}", username, userRole,
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), username, userRole,
                     caseTypeGroup)).Build();
 
             if (userRole == UserRole.Representative)
