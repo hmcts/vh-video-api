@@ -9,7 +9,6 @@ using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
@@ -93,9 +92,9 @@ namespace VideoApi.IntegrationTests.Steps
                     participantId = seededConference.Participants.First().Id;
                     request = new UpdateParticipantRequest
                     {
-                        Fullname = "Mr Test_Fullname",
-                        DisplayName = "Test_Displayname",
-                        Representee = "Test_Representee"
+                        Fullname = "Automation_Mr Test_Fullname",
+                        DisplayName = "Automation_Test_Displayname",
+                        Representee = "Automation_Test_Representee"
                     };
                     break;
                 }
@@ -105,18 +104,18 @@ namespace VideoApi.IntegrationTests.Steps
                     participantId = Guid.NewGuid();
                     request = new UpdateParticipantRequest
                     {
-                        Fullname = "Mr Test_Fullname",
-                        DisplayName = "Test_Displayname",
-                        Representee = "Test_Representee"
+                        Fullname = "Automation_Mr Test_Fullname",
+                        DisplayName = "Automation_Test_Displayname",
+                        Representee = "Automation_Test_Representee"
                     };
                     break;
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
                     request = new UpdateParticipantRequest
                     {
-                        Fullname = "Mr Test_Fullname",
-                        DisplayName = "Test_Displayname",
-                        Representee = "Test_Representee"
+                        Fullname = "Automation_Mr Test_Fullname",
+                        DisplayName = "Automation_Test_Displayname",
+                        Representee = "Automation_Test_Representee"
                     };
                     break;
 

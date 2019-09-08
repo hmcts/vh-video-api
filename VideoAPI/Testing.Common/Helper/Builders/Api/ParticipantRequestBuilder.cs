@@ -12,9 +12,9 @@ namespace Testing.Common.Helper.Builders.Api
         public ParticipantRequestBuilder(UserRole userRole)
         {
             _participantRequest = Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.Name = Name.FullName())
-                .With(x => x.Username = Internet.Email())
-                .With(x => x.DisplayName = Internet.UserName())
+                .With(x => x.Name = $"Automation_{Name.FullName()}")
+                .With(x => x.Username = $"Automation_{Internet.Email()}")
+                .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = userRole)
                 .Build();
         }

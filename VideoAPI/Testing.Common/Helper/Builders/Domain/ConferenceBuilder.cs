@@ -29,8 +29,8 @@ namespace Testing.Common.Helper.Builders.Domain
             
             var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
             const string caseType = "Civil Money Claims";
-            var caseNumber = $"Test{Guid.NewGuid():N}";
-            const string caseName = "Auto vs Manual";
+            var caseNumber = $"{GenerateRandom.CaseNumber(new Random())}";
+            const string caseName = "Video Api Integration Test";
             const int scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, scheduledDuration);
         }
@@ -53,10 +53,10 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                username = Internet.Email();
+                username = $"Automation_{Internet.Email()}";
             }
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), username, userRole,
+                new Participant(Guid.NewGuid(), $"Automation_{Name.FullName()}", $"Automation_{Name.First()}", username, userRole,
                     caseTypeGroup)).Build();
 
             if (userRole == UserRole.Representative)
