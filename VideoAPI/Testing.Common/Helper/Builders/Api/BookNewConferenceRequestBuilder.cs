@@ -19,7 +19,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.CaseType = "Civil Money Claims")
                 .With(x => x.ScheduledDateTime = DateTime.Now)
                 .With(x => x.CaseNumber = $"{GenerateRandom.CaseNumber(fromRandomNumber)}")
-                .With(x => x.CaseName = $"Automated Test Hearing {GenerateRandom.Letters(fromRandomNumber)}")
+                .With(x => x.CaseName = $"Video Api Automated Test {GenerateRandom.Letters(fromRandomNumber)}")
                 .With(x => x.ScheduledDuration = 120)
                 .With(x => x.Participants = new List<ParticipantRequest>())
                 .Build();
@@ -28,9 +28,9 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithJudge()
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.Name = $"Automation {Name.FullName()}")
+                .With(x => x.Name = $"Automation_{Name.FullName()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
-                .With(x => x.DisplayName = $"Automation {Internet.UserName()}")
+                .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Judge)
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .Build();
@@ -42,9 +42,9 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithRepresentative(string caseTypeGroup = null)
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.Name = $"Automation {Name.FullName()}")
+                .With(x => x.Name = $"Automation_{Name.FullName()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
-                .With(x => x.DisplayName = $"Automation {Internet.UserName()}")
+                .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.Representee = "Person")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
@@ -62,9 +62,9 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithIndividual(string caseTypeGroup = null)
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.Name = $"Automation {Name.FullName()}")
+                .With(x => x.Name = $"Automation_{Name.FullName()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
-                .With(x => x.DisplayName = $"Automation {Internet.UserName()}")
+                .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Individual)
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .Build();

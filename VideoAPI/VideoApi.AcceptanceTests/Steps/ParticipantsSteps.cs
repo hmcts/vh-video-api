@@ -51,7 +51,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue();
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            var exists = conference.Participants.Any(participant => participant.Username == _scenarioContext.Get<string>(ParticipantUsernameKey));
+            var exists = conference.Participants.Any(participant => participant.Username.ToLower().Equals(_scenarioContext.Get<string>(ParticipantUsernameKey).ToLower()));
             if (state.Equals("added"))
             {
                 exists.Should().BeTrue();

@@ -38,7 +38,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [Test]
         public async Task should_get_conference_for_username()
         {
-            var username = "knownuser@email.com";
+            var username = "Automation_knownuser@email.com";
             var conference1 = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
