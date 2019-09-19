@@ -10,9 +10,7 @@ using Video.API;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.AcceptanceTests.Helpers;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security;
 using VideoApi.Common.Security.CustomToken;
-using VideoApi.DAL.Commands;
 
 namespace VideoApi.AcceptanceTests.Hooks
 {
@@ -66,11 +64,11 @@ namespace VideoApi.AcceptanceTests.Hooks
         [AfterScenario]
         public static void RemoveConferences(TestContext context, ConferenceEndpoints endpoints)
         {
-            if (context.NewConferences.Count <= 0) return;
-            foreach (var conference in context.NewConferences)
+            if (context.NewConferenceIds.Count <= 0) return;
+            foreach (var id in context.NewConferenceIds)
             {
-                if (conference.Id.Equals(context.NewConferenceId)) continue;
-                RemoveConference(context, endpoints, conference.Id);
+                if (id.Equals(context.NewConferenceId)) continue;
+                RemoveConference(context, endpoints, id);
             }
             context.NewConferences.Clear();
             context.NewConferenceIds.Clear();

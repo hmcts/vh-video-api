@@ -42,8 +42,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             conference.Should().NotBeNull();
             conference.Id.Should().Be(seededConference.Id);
+            _newConferenceId = seededConference.Id;
         }
-        
+
         [TearDown]
         public async Task TearDown()
         {
