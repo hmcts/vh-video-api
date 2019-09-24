@@ -7,7 +7,6 @@ namespace VideoApi.Contract.Responses
     public class ConferenceSummaryResponse
     {
         public Guid Id { get; set; }
-        public Guid HearingId { get; set; }
         public DateTime ScheduledDateTime { get; set; }
         public DateTime? ClosedDateTime { get; set; }
         public string CaseType { get; set; }
