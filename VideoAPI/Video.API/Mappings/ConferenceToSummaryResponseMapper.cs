@@ -16,7 +16,6 @@ namespace Video.API.Mappings
             return new ConferenceSummaryResponse
             {
                 Id = conference.Id,
-                HearingId = conference.HearingRefId,
                 CaseType = conference.CaseType,
                 CaseNumber = conference.CaseNumber,
                 CaseName = conference.CaseName,
