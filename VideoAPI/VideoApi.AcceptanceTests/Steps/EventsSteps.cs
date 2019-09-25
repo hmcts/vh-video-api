@@ -16,7 +16,7 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class CallbackSteps : BaseSteps
     {
         private readonly TestContext _context;
-        private readonly CallbackEndpoints _endpoints = new ApiUriFactory().CallbackEndpoints;
+        private readonly EventsEndpoints _endpoints = new ApiUriFactory().EventsEndpoints;
 
         public CallbackSteps(TestContext injectedContext)
         {

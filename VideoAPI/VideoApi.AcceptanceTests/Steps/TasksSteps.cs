@@ -19,7 +19,7 @@ namespace VideoApi.AcceptanceTests.Steps
     {
         private readonly TestContext _context;
         private readonly TaskEndpoints _endpoints = new ApiUriFactory().TaskEndpoints;
-        private readonly CallbackEndpoints _callbackEndpointsndpoints = new ApiUriFactory().CallbackEndpoints;
+        private readonly EventsEndpoints _eventsEndpointsndpoints = new ApiUriFactory().EventsEndpoints;
         private const string UpdatedBy = "AutomationUpdateUser";
 
         public Tasksteps(TestContext injectedContext)
@@ -40,7 +40,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.Reason = "Automated")
                 .Build();
             _context.SetCustomJwTokenForCallback();
-            _context.Request = _context.Post(_callbackEndpointsndpoints.Event, request);
+            _context.Request = _context.Post(_eventsEndpointsndpoints.Event, request);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
             _context.Response.IsSuccessful.Should().Be(true);

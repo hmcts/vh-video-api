@@ -21,7 +21,7 @@ namespace VideoApi.IntegrationTests.Steps
     [Binding]
     public class CallbacksSteps : StepsBase
     {
-        private readonly CallbackEndpoints _endpoints = new ApiUriFactory().CallbackEndpoints;
+        private readonly EventsEndpoints _endpoints = new ApiUriFactory().EventsEndpoints;
 
         public CallbacksSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
