@@ -84,7 +84,7 @@ namespace Video.API.Controllers
 
             try
             {
-                await NotifyConsultationResponse(conference, requestedBy, requestedFor,
+                await InitiateStartConsultation(conference, requestedBy, requestedFor,
                     request.Answer.Value);
             }
             catch (DomainRuleException e)
@@ -173,14 +173,7 @@ namespace Video.API.Controllers
             return NoContent();
         }
         
-        /// <summary>
-        /// This method raises a notification to the requester informing them the response to their consultation request.
-        /// </summary>
-        /// <param name="conference">The conference Id</param>
-        /// <param name="requestedBy">The participant raising the consultation request</param>
-        /// <param name="requestedFor">The participant with whom the consultation is being requested with</param>
-        /// /// <param name="answer">The answer to the request (i.e. Accepted or Rejected)</param>
-        private async Task NotifyConsultationResponse(Conference conference, Participant requestedBy,
+        private async Task InitiateStartConsultation(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
             if (answer == ConsultationAnswer.Accepted)

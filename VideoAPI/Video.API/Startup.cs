@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -73,9 +72,6 @@ namespace Video.API
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
-            var customToken = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
-            var securityKey = new ASCIIEncoding().GetBytes(customToken.ThirdPartySecret);
-
             serviceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
