@@ -1,12 +1,10 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
-using VideoApi.Events.Hub;
 using VideoApi.Events.Models;
 using VideoApi.Events.ServiceBus;
 
@@ -15,8 +13,8 @@ namespace VideoApi.Events.Handlers
     public class TransferEventHandler : EventHandlerBase
     {
         public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient, IHubContext<EventHub, IEventHubClient> hubContext) : base(
-            queryHandler, commandHandler, serviceBusQueueClient, hubContext)
+            IServiceBusQueueClient serviceBusQueueClient) : base(
+            queryHandler, commandHandler, serviceBusQueueClient)
         {
         }
 
@@ -25,7 +23,6 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
-            await PublishParticipantStatusMessage(participantStatus).ConfigureAwait(false);
 
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,

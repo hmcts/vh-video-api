@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +24,6 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
-using VideoApi.Events.Hub;
 using VideoApi.Events.ServiceBus;
 using VideoApi.Services;
 using VideoApi.Services.Kinly;
@@ -107,21 +105,6 @@ namespace Video.API
                     .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration));
             }
             
-            var contractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            };
-            
-            services.AddSignalR()
-                .AddJsonProtocol(options =>
-                {
-                    options.PayloadSerializerSettings.ContractResolver = contractResolver;
-                    options.PayloadSerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                    options.PayloadSerializerSettings.Converters.Add(
-                        new StringEnumConverter());
-                }).AddHubOptions<EventHub>(options => { options.EnableDetailedErrors = true; });
-            
-            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
 

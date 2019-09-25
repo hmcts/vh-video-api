@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Events
         public async Task should_send_available_message_to_participants_and_service_bus_when_participant_joins()
         {
             _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -36,10 +36,6 @@ namespace VideoApi.UnitTests.Events
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
-
-            EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    ParticipantState.Disconnected), Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>

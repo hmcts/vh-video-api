@@ -22,7 +22,7 @@ namespace VideoApi.UnitTests.Events
         public async Task should_call_command_handler_with_addtaskcommand_object()
         {
             _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
@@ -51,7 +51,7 @@ namespace VideoApi.UnitTests.Events
         public async Task should_not_call_command_handler_with_addtaskcommand_object_if_a_task_exists()
         {
             _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
@@ -85,7 +85,7 @@ namespace VideoApi.UnitTests.Events
                 .ReturnsAsync((Conference) null);
 
             _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();

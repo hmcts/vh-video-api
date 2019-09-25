@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +18,6 @@ using Video.API.Validations;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.DAL;
-using VideoApi.Events.Hub;
 
 namespace Video.API
 {
@@ -83,11 +80,8 @@ namespace Video.API
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddPolicyScheme(JwtBearerDefaults.AuthenticationScheme, "handler", options =>
-                    options.ForwardDefaultSelector = context =>
-                        context.Request.Path.StartsWithSegments("/callback")
-                            ? "Callback" : "default")
-                .AddJwtBearer("default", options =>
+                })
+                .AddJwtBearer(options =>
                 {
                     options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
                     options.TokenValidationParameters = new TokenValidationParameters()
@@ -95,39 +89,6 @@ namespace Video.API
                         ClockSkew = TimeSpan.Zero,
                         ValidateLifetime = true,
                         ValidAudience = securitySettings.VhVideoApiResourceId
-                    };
-                }).AddJwtBearer("EventHubUser", options =>
-                {
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            var accessToken = context.Request.Query["access_token"];
-                            if (string.IsNullOrEmpty(accessToken)) return Task.CompletedTask;
-
-                            var path = context.HttpContext.Request.Path;
-                            if (path.StartsWithSegments("/eventhub"))
-                            {
-                                context.Token = accessToken;
-                            }
-
-                            return Task.CompletedTask;
-                        }
-                    };
-                    options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ClockSkew = TimeSpan.Zero,
-                        ValidateLifetime = true,
-                        ValidAudience = securitySettings.VhVideoWebClientId
-                    };
-                }).AddJwtBearer("Callback", options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(securityKey)
                     };
                 });
 
@@ -165,34 +126,13 @@ namespace Video.API
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseMvc();
-
-            app.UseSignalR(routes =>
-            {
-                const string path = "/eventhub";
-                routes.MapHub<EventHub>(path,
-                    options =>
-                    {
-                        options.Transports = HttpTransportType.ServerSentEvents | HttpTransportType.LongPolling |
-                                             HttpTransportType.WebSockets;
-                    });
-            });
         }
 
         private static void AddPolicies(AuthorizationOptions options)
         {
             options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser().AddAuthenticationSchemes("default")
+                .RequireAuthenticatedUser()
                 .Build();
-
-            options.AddPolicy("EventHubUser", new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .AddAuthenticationSchemes("EventHubUser")
-                .Build());
-
-            options.AddPolicy("Callback", new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .AddAuthenticationSchemes("Callback")
-                .Build());
         }
 
         private static void AddMvcPolicies(MvcOptions options)
