@@ -84,8 +84,8 @@ namespace Video.API.Controllers
 
             try
             {
-                await InitiateStartConsultation(conference, requestedBy, requestedFor,
-                    request.Answer.Value);
+             await InitiateStartConsultation(conference, requestedBy, requestedFor,
+                    request.Answer.GetValueOrDefault());
             }
             catch (DomainRuleException e)
             {
