@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using FluentValidation;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Options;
@@ -15,7 +13,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Video.API.Swagger;
-using Video.API.Validations;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
@@ -27,7 +24,6 @@ using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.ServiceBus;
 using VideoApi.Services;
 using VideoApi.Services.Kinly;
-using VideoWeb.Services.User;
 
 namespace Video.API
 {
@@ -81,7 +77,6 @@ namespace Video.API
             
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
             services.AddScoped<IServiceBusQueueClient, ServiceBusQueueClient>();
-            services.AddScoped<IUserProfileService, AdUserProfileService>();
 	        services.AddTransient<KinlyApiTokenDelegatingHandler>();
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
@@ -90,9 +85,6 @@ namespace Video.API
             var container = services.BuildServiceProvider();
             var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
             
-            services.AddHttpClient<IUserApiClient, UserApiClient>()
-                .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
-                .AddTypedClient(httpClient => BuildUserApiClient(httpClient, servicesConfiguration));
             if (useStub)
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
@@ -123,12 +115,6 @@ namespace Video.API
             client.JsonSerializerSettings.ContractResolver = contractResolver;
             client.JsonSerializerSettings.Formatting = Formatting.Indented;
             return client;
-        }
-        
-        private static IUserApiClient BuildUserApiClient(HttpClient httpClient,
-            ServicesConfiguration servicesConfiguration)
-        {
-            return new UserApiClient(httpClient) {BaseUrl = servicesConfiguration.UserApiUrl};
         }
 
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
