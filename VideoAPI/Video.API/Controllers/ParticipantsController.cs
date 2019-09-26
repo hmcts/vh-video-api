@@ -176,5 +176,23 @@ namespace Video.API.Controllers
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
         }
+
+        [HttpGet("independentselftestresult")]
+        [SwaggerOperation(OperationId = "GetIndependentTestCallResult")]
+        [ProducesResponseType(typeof(TestCallScoreResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetIndependentTestCallResult(Guid participantId)
+        {
+            _logger.LogDebug("GetIndependentTestCallResult");
+            var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
+            if (testCallResult == null)
+            {
+                _logger.LogError(
+                    $"Unable to find test call result for participant {participantId}");
+                return NotFound();
+            }
+            var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
+            return Ok(response);
+        }
     }
 }
