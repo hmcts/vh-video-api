@@ -39,7 +39,6 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.WaitingRoom)
                 .With(x => x.Reason = "Automated")
                 .Build();
-            _context.SetCustomJwTokenForCallback();
             _context.Request = _context.Post(_eventsEndpointsndpoints.Event, request);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);

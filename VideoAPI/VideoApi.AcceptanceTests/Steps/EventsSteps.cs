@@ -37,7 +37,6 @@ namespace VideoApi.AcceptanceTests.Steps
                 .Build();
 
             _context.Request = _context.Post(_endpoints.Event, request);
-            _context.SetCustomJwTokenForCallback();
         }
 
         [Then(@"the status is updated")]
