@@ -82,11 +82,5 @@ namespace VideoApi.AcceptanceTests.Contexts
                 AzureAdConfiguration.Value.VhVideoApiResourceId);
         }
 
-        public void SetCustomJwTokenForCallback()
-        {
-            var generateTokenWithAsciiKey = new CustomJwtTokenProvider(CustomTokenSettings).GenerateTokenForCallbackEndpoint("test", 2);
-            BearerToken = generateTokenWithAsciiKey;
-        }
-
     }
 }

@@ -1,9 +1,9 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -14,17 +14,16 @@ namespace Video.API.Controllers
 {
     [Consumes("application/json")]
     [Produces("application/json")]
-    [Route("callback")]
+    [Route("events")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Callback")]
-    public class CallbackController : ControllerBase
+    public class VideoEventsController : ControllerBase
     {
         private readonly ICommandHandler _commandHandler;
         private readonly IEventHandlerFactory _eventHandlerFactory;
-        private readonly ILogger<CallbackController> _logger;
+        private readonly ILogger<VideoEventsController> _logger;
 
-        public CallbackController(ICommandHandler commandHandler, IEventHandlerFactory eventHandlerFactory,
-            ILogger<CallbackController> logger)
+        public VideoEventsController(ICommandHandler commandHandler, IEventHandlerFactory eventHandlerFactory,
+            ILogger<VideoEventsController> logger)
         {
             _commandHandler = commandHandler;
             _eventHandlerFactory = eventHandlerFactory;
@@ -36,10 +35,11 @@ namespace Video.API.Controllers
         /// </summary>
         /// <param name="request">Details of the event</param>
         /// <returns>NoContent if event is handled as expected</returns>
-        [HttpPost("conference")]
+        [HttpPost]
+        [SwaggerOperation(OperationId = "RaiseVideoEvent")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> PostEvents(ConferenceEventRequest request)
+        public async Task<IActionResult> PostEvent(ConferenceEventRequest request)
         {
             _logger.LogInformation($"Handling {request.EventType.ToString()} event for conference {request.ConferenceId}");
             Guid.TryParse(request.ConferenceId, out var conferenceId);
