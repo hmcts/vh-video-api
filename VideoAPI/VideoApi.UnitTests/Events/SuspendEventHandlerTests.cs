@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Events
         public async Task should_send_messages_to_participants_on_suspended()
         {
             _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
@@ -32,10 +32,6 @@ namespace VideoApi.UnitTests.Events
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
-
-            // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(x => x.ConferenceStatusMessage(conference.Id, ConferenceState.Suspended),
-                Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
@@ -52,7 +48,7 @@ namespace VideoApi.UnitTests.Events
         public async Task should_send_messages_to_participants_on_suspended_for_technical_assistance()
         {
             _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
@@ -65,10 +61,6 @@ namespace VideoApi.UnitTests.Events
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
-
-            // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(x => x.ConferenceStatusMessage(conference.Id, ConferenceState.Suspended),
-                Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>

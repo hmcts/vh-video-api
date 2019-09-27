@@ -16,7 +16,6 @@
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="2.1.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.10.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="7.14.0.8411" />

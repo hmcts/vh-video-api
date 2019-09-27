@@ -4,7 +4,7 @@ namespace Testing.Common.Helper
 {
     public class ApiUriFactory
     {
-        public CallbackEndpoints CallbackEndpoints { get; }
+        public EventsEndpoints EventsEndpoints { get; }
         public ParticipantsEndpoints ParticipantsEndpoints { get; }
         public ConferenceEndpoints ConferenceEndpoints { get; }
         public HealthCheckEndpoints HealthCheckEndpoints { get; }
@@ -15,17 +15,16 @@ namespace Testing.Common.Helper
         {
             ParticipantsEndpoints = new ParticipantsEndpoints();
             ConferenceEndpoints = new ConferenceEndpoints();
-            CallbackEndpoints = new CallbackEndpoints();
+            EventsEndpoints = new EventsEndpoints();
             HealthCheckEndpoints = new HealthCheckEndpoints();
             ConsultationEndpoints = new ConsultationEndpoints();
             TaskEndpoints = new TaskEndpoints();
         }
     }
     
-    public class CallbackEndpoints
+    public class EventsEndpoints
     {
-        private string ApiRoot => "callback";
-        public string Event => $"{ApiRoot}/conference";
+        public string Event => "events";
     }
     
     public class ParticipantsEndpoints

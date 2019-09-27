@@ -16,7 +16,7 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class CallbackSteps : BaseSteps
     {
         private readonly TestContext _context;
-        private readonly CallbackEndpoints _endpoints = new ApiUriFactory().CallbackEndpoints;
+        private readonly EventsEndpoints _endpoints = new ApiUriFactory().EventsEndpoints;
 
         public CallbackSteps(TestContext injectedContext)
         {
@@ -37,7 +37,6 @@ namespace VideoApi.AcceptanceTests.Steps
                 .Build();
 
             _context.Request = _context.Post(_endpoints.Event, request);
-            _context.SetCustomJwTokenForCallback();
         }
 
         [Then(@"the status is updated")]

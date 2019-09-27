@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Contract.Requests;
@@ -14,7 +13,6 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
-using VideoApi.Events.Hub;
 using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
 
@@ -28,17 +26,15 @@ namespace Video.API.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
-        private readonly IHubContext<EventHub, IEventHubClient> _hubContext;
         private readonly ILogger<ConsultationController> _logger;
         private readonly IVideoPlatformService _videoPlatformService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IHubContext<EventHub, IEventHubClient> hubContext, ILogger<ConsultationController> logger,
+            ILogger<ConsultationController> logger,
             IVideoPlatformService videoPlatformService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
-            _hubContext = hubContext;
             _logger = logger;
             _videoPlatformService = videoPlatformService;
         }
@@ -86,34 +82,16 @@ namespace Video.API.Controllers
             };
             await _commandHandler.Handle(command);
 
-            var requestRaised = !request.Answer.HasValue;
-            if (requestRaised)
+            try
             {
-                _logger.LogInformation(
-                    $"Raising request between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
-                await NotifyConsultationRequest(conference, requestedBy, requestedFor);
+             await InitiateStartConsultation(conference, requestedBy, requestedFor,
+                    request.Answer.GetValueOrDefault());
             }
-            else if (request.Answer == ConsultationAnswer.Cancelled)
+            catch (DomainRuleException e)
             {
-                _logger.LogInformation(
-                    $"Cancelled private consultation between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
-                await NotifyConsultationCancelled(conference, requestedBy, requestedFor);
-            }
-            else
-            {
-                _logger.LogInformation(
-                    $"Answered request as {request.Answer.Value} between {requestedBy.Username} and {requestedFor.Username} in conference {conference.Id}");
-                try
-                {
-                    await NotifyConsultationResponse(conference, requestedBy, requestedFor,
-                        request.Answer.Value);
-                }
-                catch (DomainRuleException e)
-                {
-                    _logger.LogError(e, $"No consultation room available for conference {conference.Id}");
-                    ModelState.AddModelError("ConsultationRoom", "No consultation room available");
-                    return BadRequest(ModelState);
-                }
+                _logger.LogError(e, $"No consultation room available for conference {conference.Id}");
+                ModelState.AddModelError("ConsultationRoom", "No consultation room available");
+                return BadRequest(ModelState);
             }
 
             return NoContent();
@@ -190,59 +168,20 @@ namespace Video.API.Controllers
             {
                 await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id,
                     participant.CurrentRoom.Value, request.ConsultationRoom);
-                await _hubContext.Clients.Group(participant.Username.ToLowerInvariant()).AdminConsultationMessage
-                (conference.Id, request.ConsultationRoom, participant.Username.ToLowerInvariant(),
-                    ConsultationAnswer.Accepted);
             }
 
             return NoContent();
         }
         
-        /// <summary>
-        /// This method raises a notification to the requestee informing them of an incoming consultation request
-        /// </summary>
-        /// <param name="conference">The conference Id</param>
-        /// <param name="requestedBy">The participant raising the consultation request</param>
-        /// <param name="requestedFor">The participant with whom the consultation is being requested with</param>
-        private async Task NotifyConsultationRequest(Conference conference, Participant requestedBy,
-            Participant requestedFor)
-        {
-            await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
-                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
-                    string.Empty);
-        }
-
-        /// <summary>
-        /// This method raises a notification to the requester informing them the response to their consultation request.
-        /// </summary>
-        /// <param name="conference">The conference Id</param>
-        /// <param name="requestedBy">The participant raising the consultation request</param>
-        /// <param name="requestedFor">The participant with whom the consultation is being requested with</param>
-        /// /// <param name="answer">The answer to the request (i.e. Accepted or Rejected)</param>
-        private async Task NotifyConsultationResponse(Conference conference, Participant requestedBy,
+        private async Task InitiateStartConsultation(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
-            await _hubContext.Clients.Group(requestedBy.Username.ToLowerInvariant())
-                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username, answer.ToString());
-
             if (answer == ConsultationAnswer.Accepted)
             {
-                await _hubContext.Clients.Group(EventHub.VhOfficersGroupName)
-                    .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
-                        answer.ToString());
-
                 _logger.LogInformation(
                     $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
-        }
-
-        private async Task NotifyConsultationCancelled(Conference conference, Participant requestedBy,
-            Participant requestedFor)
-        {
-            await _hubContext.Clients.Group(requestedFor.Username.ToLowerInvariant())
-                .ConsultationMessage(conference.Id, requestedBy.Username, requestedFor.Username,
-                    ConsultationAnswer.Cancelled.ToString());
         }
     }
 }

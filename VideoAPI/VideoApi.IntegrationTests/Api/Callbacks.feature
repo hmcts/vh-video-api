@@ -31,7 +31,6 @@ Feature: Callbacks
     | Joined                |
     | Disconnected          |
     | Transfer              |
-    | Help                  |
     | Pause                 |
     | Close                 |
     | Leave                 |

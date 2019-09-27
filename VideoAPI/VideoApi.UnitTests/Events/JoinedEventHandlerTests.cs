@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Events
         public async Task should_send_available_message_to_participants_and_service_bus_when_participant_joins()
         {
             _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -38,10 +38,6 @@ namespace VideoApi.UnitTests.Events
 
             await _eventHandler.HandleAsync(callbackEvent);
 
-            EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    ParticipantState.Available), Times.Exactly(participantCount));
-
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
                     command.ConferenceId == conference.Id &&
@@ -55,7 +51,7 @@ namespace VideoApi.UnitTests.Events
             should_send_in_hearing_message_to_participants_and_live_message_to_service_bus_when_judge_joins()
         {
             _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
@@ -71,15 +67,6 @@ namespace VideoApi.UnitTests.Events
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
-
-            // Verify event hub client
-            EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    ParticipantState.InHearing), Times.Exactly(participantCount));
-
-            EventHubClientMock.Verify(
-                x => x.ConferenceStatusMessage(conference.Id, ConferenceState.InSession),
-                Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>

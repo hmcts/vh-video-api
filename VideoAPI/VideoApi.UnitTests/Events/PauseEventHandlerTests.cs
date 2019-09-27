@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Events
         public async Task should_send_messages_to_participants_and_service_bus_on_pause()
         {
             _eventHandler = new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
@@ -31,10 +31,6 @@ namespace VideoApi.UnitTests.Events
             };
 
             await _eventHandler.HandleAsync(callbackEvent);
-
-            // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(x => x.ConferenceStatusMessage(conference.Id, ConferenceState.Paused),
-                Times.Exactly(participantCount));
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
