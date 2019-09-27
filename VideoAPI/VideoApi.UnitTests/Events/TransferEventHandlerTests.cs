@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Events
             RoomType from, RoomType to, ParticipantState status)
         {
             _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -46,11 +46,6 @@ namespace VideoApi.UnitTests.Events
             };
             await _eventHandler.HandleAsync(callbackEvent);
 
-            // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    status), Times.Exactly(participantCount));
-
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
                     command.ConferenceId == conference.Id &&
@@ -63,7 +58,7 @@ namespace VideoApi.UnitTests.Events
         public void should_throw_exception_when_transfer_cannot_be_mapped_to_participant_status()
         {
             _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, EventHubContextMock.Object);
+                ServiceBusQueueClient);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -81,11 +76,6 @@ namespace VideoApi.UnitTests.Events
 
             Assert.ThrowsAsync<RoomTransferException>(() =>
                 _eventHandler.HandleAsync(callbackEvent));
-
-            // Verify messages sent to event hub clients
-            EventHubClientMock.Verify(
-                x => x.ParticipantStatusMessage(_eventHandler.SourceParticipant.Username,
-                    It.IsAny<ParticipantState>()), Times.Never);
 
             // Verify messages sent to ASB queue
             ServiceBusQueueClient.Count.Should().Be(0);

@@ -21,11 +21,10 @@ namespace VideoApi.IntegrationTests.Steps
     [Binding]
     public class CallbacksSteps : StepsBase
     {
-        private readonly CallbackEndpoints _endpoints = new ApiUriFactory().CallbackEndpoints;
+        private readonly EventsEndpoints _endpoints = new ApiUriFactory().EventsEndpoints;
 
         public CallbacksSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
-            GenerateJwTokenForCallback();
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
@@ -107,11 +106,6 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.Reason = "Automated")
                 .Build();
             return request;
-        }
-
-        private void GenerateJwTokenForCallback()
-        {
-            ApiTestContext.BearerToken = new CustomJwtTokenProvider(ApiTestContext.CustomTokenSettings).GenerateTokenForCallbackEndpoint("test", 2);
         }
     }
 }
