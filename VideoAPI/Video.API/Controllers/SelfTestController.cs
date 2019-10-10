@@ -1,26 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
-using Video.API.Validations;
 using VideoApi.Common.Configuration;
-using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.DAL.Commands;
-using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
-using VideoApi.DAL.Queries;
-using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain;
-using VideoApi.Services;
-using VideoApi.Services.Exceptions;
-using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
 {
