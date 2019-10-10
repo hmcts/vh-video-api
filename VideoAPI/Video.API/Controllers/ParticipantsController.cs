@@ -154,6 +154,12 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get the test call result for a participant
+        /// </summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
+        /// <returns></returns>
         [HttpGet("{conferenceId}/participants/{participantId}/selftestresult")]
         [SwaggerOperation(OperationId = "GetTestCallResultForParticipant")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int) HttpStatusCode.OK)]
@@ -177,6 +183,11 @@ namespace Video.API.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Retrieves the independent self test result without saving it
+        /// </summary>
+        /// <param name="participantId">The id of the participant</param>
+        /// <returns></returns>
         [HttpGet("independentselftestresult")]
         [SwaggerOperation(OperationId = "GetIndependentTestCallResult")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int)HttpStatusCode.OK)]

@@ -42,6 +42,32 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Delete(_endpoints.RemoveParticipantFromConference(_context.NewConferenceId, _context.NewConference.Participants.Last().Id));
         }
 
+        [Given(@"I have an update participant details request")]
+        public void GivenIHaveAnUpdateParticipantRequest()
+        {
+            var participant = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual);
+            var request = new UpdateParticipantRequest()
+            {
+                Fullname = $"Updated {participant.Name}",
+                DisplayName = $"Updated {participant.DisplayName}",
+                Representee = $"Updated {participant.Representee}"
+            };
+            _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
+            _context.Request = _context.Patch(_endpoints.UpdateParticipantFromConference(_context.NewConferenceId, participant.Id), request);
+        }
+
+        [Given(@"I have a get test score result request")]
+        public void GivenIHaveAGetTestScoreResultRequest()
+        {
+            //_context.Request = _context.Get(_endpoints.GetTestCallResultForParticipant())
+        }
+
+        [Given(@"I have a get independent test score result request")]
+        public void GivenIHaveAGetIndependentTestScoreResultRequest()
+        {
+            ScenarioContext.Current.Pending();
+        }
+
         [Then(@"the participant is (.*)")]
         public void ThenTheParticipantIsAdded(string state)
         {
@@ -55,11 +81,26 @@ namespace VideoApi.AcceptanceTests.Steps
             if (state.Equals("added"))
             {
                 exists.Should().BeTrue();
-            }
-            if (state.Equals("removed"))
+            } 
+            else if (state.Equals("removed"))
             {
                 exists.Should().BeFalse();
+            } 
+            else if (state.Equals("updated"))
+            {
+                var participant = conference.Participants.First(x =>
+                    x.Username.Equals(_scenarioContext.Get<string>(ParticipantUsernameKey)));
+
+                participant.Name.Should().Contain("Updated");
+                participant.DisplayName.Should().Contain("Updated");
+                participant.Representee.Should().Contain("Updated");
             }
+        }
+
+        [Then(@"the score should be good")]
+        public void ThenTheScoreShouldBeGood()
+        {
+            ScenarioContext.Current.Pending();
         }
     }
 }
