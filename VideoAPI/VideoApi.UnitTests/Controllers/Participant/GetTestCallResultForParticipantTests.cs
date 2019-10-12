@@ -55,8 +55,6 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var response = await _controller.GetTestCallResultForParticipant(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
-            
-            _mockCommandHandler.Verify(x => x.Handle(It.IsAny<UpdateSelfTestCallResultCommand>()), Times.Once);
         }
 
         [Test]
@@ -71,6 +69,24 @@ namespace VideoApi.UnitTests.Controllers.Participant
             typedResult.Should().NotBeNull();
 
             _mockCommandHandler.Verify(x => x.Handle(It.IsAny<UpdateSelfTestCallResultCommand>()), Times.Never);
+        }
+
+        [Test]
+        public async Task should_update_test_score_to_database()
+        {
+            var testResult = Builder<TestCallResult>.CreateNew()
+                .WithFactory(() => new TestCallResult(true, TestScore.Good)).Build();
+
+            _mockVideoPlatformService
+                .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
+                .Returns(Task.FromResult(testResult));
+
+            var conferenceId = Guid.NewGuid();
+            var participantId = Guid.NewGuid();
+
+            var response = await _controller.UpdateSelfTestScore(Guid.NewGuid(), Guid.NewGuid(), testResult);
+            var typedResult = (OkResult)response;
+            typedResult.Should().NotBeNull();
         }
     }
 }

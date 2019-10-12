@@ -11,6 +11,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -175,10 +176,6 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
-                testCallResult.Score);
-            await _commandHandler.Handle(command);
-            _logger.LogDebug("Saving test call result");
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
         }
@@ -204,6 +201,34 @@ namespace Video.API.Controllers
             }
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Updates the test result score for a participant
+        /// </summary>
+        /// <param name="conferenceId">The conference id</param>
+        /// <param name="participantId">The participant id</param>
+        /// <param name="testCallResult">The self test score</param>
+        /// <returns></returns>
+        [HttpPost("{conferenceId}/participants/{participantId}/updatescore", Name = "UpdateSelfTestScore")]
+        [SwaggerOperation(OperationId = "UpdateSelfTestScore")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateSelfTestScore(Guid conferenceId,
+            Guid participantId, TestCallResult testCallResult)
+        {
+            try
+            {
+                _logger.LogDebug("Saving test call result");
+                var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
+                    testCallResult.Score);
+                await _commandHandler.Handle(command);
+                return Ok();
+            }
+            catch (ConferenceNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }
