@@ -17,7 +17,7 @@ namespace Testing.Common.Helper.Builders.Api
             _bookNewConferenceRequest = Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.HearingRefId = Guid.NewGuid())
                 .With(x => x.CaseType = "Civil Money Claims")
-                .With(x => x.ScheduledDateTime = DateTime.Now)
+                .With(x => x.ScheduledDateTime = DateTime.Now.ToLocalTime().AddMinutes(2))
                 .With(x => x.CaseNumber = $"{GenerateRandom.CaseNumber(fromRandomNumber)}")
                 .With(x => x.CaseName = $"Video Api Automated Test {GenerateRandom.Letters(fromRandomNumber)}")
                 .With(x => x.ScheduledDuration = 120)

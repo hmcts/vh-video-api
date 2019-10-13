@@ -26,13 +26,22 @@ Scenario: Update participant
 
 Scenario: Get test score result
     Given I have a conference
+	And the participant has a self test score
 	And I have a get test score result request
 	When I send the request to the endpoint
 	Then the response should have the status NoContent and success status True
 	And the score should be good
 
 Scenario: Get independent test score result
+	Given I have a conference
+	And the participant has a self test score
 	And I have a get independent test score result request
 	When I send the request to the endpoint
 	Then the response should have the status NoContent and success status True
 	And the score should be good
+
+Scenario: Update self test score result
+	Given I have a conference
+	And I have an update self test score result request
+	When I send the request to the endpoint
+	Then the response should have the status NoContent and success status True
