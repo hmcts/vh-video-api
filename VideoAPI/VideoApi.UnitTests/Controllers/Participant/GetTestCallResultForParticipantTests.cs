@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Video.API.Controllers;
+using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -74,18 +75,13 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task should_update_test_score_to_database()
         {
-            var testResult = Builder<TestCallResult>.CreateNew()
-                .WithFactory(() => new TestCallResult(true, TestScore.Good)).Build();
-
-            _mockVideoPlatformService
-                .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
-                .Returns(Task.FromResult(testResult));
+            var testResult = new UpdateSelfTestScoreRequest() {  Passed = true, Score = TestScore.Good};
 
             var conferenceId = Guid.NewGuid();
             var participantId = Guid.NewGuid();
 
             var response = await _controller.UpdateSelfTestScore(Guid.NewGuid(), Guid.NewGuid(), testResult);
-            var typedResult = (OkResult)response;
+            var typedResult = (NoContentResult)response;
             typedResult.Should().NotBeNull();
         }
     }

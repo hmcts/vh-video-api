@@ -15,6 +15,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Services;
 
 namespace Video.API.Controllers
@@ -208,22 +209,22 @@ namespace Video.API.Controllers
         /// </summary>
         /// <param name="conferenceId">The conference id</param>
         /// <param name="participantId">The participant id</param>
-        /// <param name="testCallResult">The self test score</param>
+        /// <param name="updateSelfTestScoreRequest">The self test score</param>
         /// <returns></returns>
         [HttpPost("{conferenceId}/participants/{participantId}/updatescore", Name = "UpdateSelfTestScore")]
         [SwaggerOperation(OperationId = "UpdateSelfTestScore")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateSelfTestScore(Guid conferenceId,
-            Guid participantId, TestCallResult testCallResult)
+            Guid participantId, [FromBody] UpdateSelfTestScoreRequest updateSelfTestScoreRequest)
         {
             try
             {
                 _logger.LogDebug("Saving test call result");
-                var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
-                    testCallResult.Score);
+                var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, updateSelfTestScoreRequest.Passed,
+                    updateSelfTestScoreRequest.Score);
                 await _commandHandler.Handle(command);
-                return Ok();
+                return NoContent();
             }
             catch (ConferenceNotFoundException)
             {
