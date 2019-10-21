@@ -102,7 +102,7 @@ namespace VideoApi.Services
                 responseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
             }
 
-            if (!responseMessage.IsSuccessStatusCode)
+            if (responseMessage.StatusCode == HttpStatusCode.NotFound)
             {
                 return null;
             }
