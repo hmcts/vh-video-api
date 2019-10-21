@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -65,9 +66,8 @@ namespace VideoApi.AcceptanceTests.Hooks
         public static void RemoveConferences(TestContext context, ConferenceEndpoints endpoints)
         {
             if (context.NewConferenceIds.Count <= 0) return;
-            foreach (var id in context.NewConferenceIds)
+            foreach (var id in context.NewConferenceIds.Where(id => !id.Equals(context.NewConferenceId)))
             {
-                if (id.Equals(context.NewConferenceId)) continue;
                 RemoveConference(context, endpoints, id);
             }
             context.NewConferences.Clear();

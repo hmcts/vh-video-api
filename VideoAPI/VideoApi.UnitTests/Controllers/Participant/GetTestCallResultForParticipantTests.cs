@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Video.API.Controllers;
+using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -55,8 +56,6 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var response = await _controller.GetTestCallResultForParticipant(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
-            
-            _mockCommandHandler.Verify(x => x.Handle(It.IsAny<UpdateSelfTestCallResultCommand>()), Times.Once);
         }
 
         [Test]

@@ -154,6 +154,12 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get the test call result for a participant
+        /// </summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
+        /// <returns></returns>
         [HttpGet("{conferenceId}/participants/{participantId}/selftestresult")]
         [SwaggerOperation(OperationId = "GetTestCallResultForParticipant")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int) HttpStatusCode.OK)]
@@ -173,6 +179,29 @@ namespace Video.API.Controllers
                 testCallResult.Score);
             await _commandHandler.Handle(command);
             _logger.LogDebug("Saving test call result");
+            var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Retrieves the independent self test result without saving it
+        /// </summary>
+        /// <param name="participantId">The id of the participant</param>
+        /// <returns></returns>
+        [HttpGet("independentselftestresult")]
+        [SwaggerOperation(OperationId = "GetIndependentTestCallResult")]
+        [ProducesResponseType(typeof(TestCallScoreResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetIndependentTestCallResult(Guid participantId)
+        {
+            _logger.LogDebug("GetIndependentTestCallResult");
+            var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
+            if (testCallResult == null)
+            {
+                _logger.LogError(
+                    $"Unable to find test call result for participant {participantId}");
+                return NotFound();
+            }
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
         }
