@@ -64,7 +64,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             GivenIHaveAnUpdateSelfTestScoreResultRequest();
             _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _commonSteps.ThenTheResponseShouldHaveTheStatusAndSuccessStatus(HttpStatusCode.OK, true);
+            _commonSteps.ThenTheResponseShouldHaveTheStatusAndSuccessStatus(HttpStatusCode.NoContent, true);
         }
 
         [Given(@"I have an update self test score result request")]
@@ -74,21 +74,6 @@ namespace VideoApi.AcceptanceTests.Steps
             var request = new TestScoreResultRequest() { Score = TestScore.Good, Passed = true };
             _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
             _context.Request = _context.Post(_endpoints.UpdateParticipantSelfTestScore(_context.NewConferenceId, participant.Id), request);
-        }
-
-        [Given(@"I have a get test score result request")]
-        public void GivenIHaveAGetTestScoreResultRequest()
-        {
-            var participant = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual);
-            _context.Request = _context.Get(_endpoints.GetTestCallResultForParticipant(_context.NewConferenceId, participant.Id));
-        }
-
-        [Given(@"I have a get independent test score result request")]
-        public void GivenIHaveAGetIndependentTestScoreResultRequest()
-        {
-            var participant = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual);
-            _context.Request = _context.Get(_endpoints.GetIndependentTestCallResultForParticipant);
-            _context.Request.AddQueryParameter("participantId", participant.Id.ToString());
         }
 
         [Then(@"the participant is (.*)")]
