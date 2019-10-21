@@ -71,18 +71,5 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             _mockCommandHandler.Verify(x => x.Handle(It.IsAny<UpdateSelfTestCallResultCommand>()), Times.Never);
         }
-
-        [Test]
-        public async Task should_update_test_score_to_database()
-        {
-            var testResult = new UpdateSelfTestScoreRequest() {  Passed = true, Score = TestScore.Good};
-
-            var conferenceId = Guid.NewGuid();
-            var participantId = Guid.NewGuid();
-
-            var response = await _controller.UpdateSelfTestScore(Guid.NewGuid(), Guid.NewGuid(), testResult);
-            var typedResult = (NoContentResult)response;
-            typedResult.Should().NotBeNull();
-        }
     }
 }
