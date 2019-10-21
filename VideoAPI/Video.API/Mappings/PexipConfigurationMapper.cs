@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using VideoApi.Common.Configuration;
+﻿using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
 
 namespace Video.API.Mappings

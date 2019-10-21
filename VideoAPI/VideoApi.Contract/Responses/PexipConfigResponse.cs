@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VideoApi.Contract.Responses
+﻿namespace VideoApi.Contract.Responses
 {
     public class PexipConfigResponse
     {
