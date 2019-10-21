@@ -32,7 +32,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
-                .With(x => x.TransferTo = RoomType.ConsultationRoom1)
+                .With(x => x.TransferTo = RoomType.WaitingRoom)
                 .With(x => x.Reason = "Automated")
                 .Build();
 
@@ -49,7 +49,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
             var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            conference.Participants.First().CurrentStatus.ParticipantState.Should().Be(ParticipantState.InConsultation);
+            conference.Participants.First().CurrentStatus.ParticipantState.Should().Be(ParticipantState.Available);
         }
     }
 }
