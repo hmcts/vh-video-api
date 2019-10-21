@@ -59,23 +59,6 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Patch(_endpoints.UpdateParticipantFromConference(_context.NewConferenceId, participant.Id), request);
         }
 
-        [Given(@"the participant has a self test score")]
-        public void GivenTheParticipantHasASelfTestScore()
-        {
-            GivenIHaveAnUpdateSelfTestScoreResultRequest();
-            _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _commonSteps.ThenTheResponseShouldHaveTheStatusAndSuccessStatus(HttpStatusCode.NoContent, true);
-        }
-
-        [Given(@"I have an update self test score result request")]
-        public void GivenIHaveAnUpdateSelfTestScoreResultRequest()
-        {
-            var participant = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual);
-            var request = new TestScoreResultRequest() { Score = TestScore.Good, Passed = true };
-            _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
-            _context.Request = _context.Post(_endpoints.UpdateParticipantSelfTestScore(_context.NewConferenceId, participant.Id), request);
-        }
-
         [Then(@"the participant is (.*)")]
         public void ThenTheParticipantIsAdded(string state)
         {
@@ -103,14 +86,6 @@ namespace VideoApi.AcceptanceTests.Steps
                 participant.DisplayName.Should().Contain("Updated");
                 participant.Representee.Should().Contain("Updated");
             }
-        }
-
-        [Then(@"the score should be good")]
-        public void ThenTheScoreShouldBeGood()
-        {
-            var result = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<TestCallScoreResponse>(_context.Response.Content);
-            result.Score.Should().Be(TestScore.Good);
-            result.Passed.Should().BeTrue();
         }
     }
 }

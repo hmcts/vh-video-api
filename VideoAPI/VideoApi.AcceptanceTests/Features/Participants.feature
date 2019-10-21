@@ -23,9 +23,3 @@ Scenario: Update participant
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 	And the participant is updated
-
-Scenario: Update self test score result
-	Given I have a conference
-	And I have an update self test score result request
-	When I send the request to the endpoint
-	Then the response should have the status NoContent and success status True
