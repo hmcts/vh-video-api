@@ -34,6 +34,7 @@ namespace VideoApi.Common.Security.CustomToken
             SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] {new Claim(ClaimTypes.Name, claims)}),
+                IssuedAt = DateTime.UtcNow.AddMinutes(-1),
                 NotBefore = DateTime.UtcNow.AddMinutes(-1),
                 Issuer = _customTokenSettings.Issuer,
                 Expires =  DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
