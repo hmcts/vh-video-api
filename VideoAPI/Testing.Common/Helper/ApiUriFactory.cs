@@ -40,6 +40,11 @@ namespace Testing.Common.Helper
 
         public string GetTestCallResultForParticipant(Guid conferenceId, Guid participantId) =>
             $"{ApiRoot}/{conferenceId}/participants/{participantId}/selftestresult";
+
+        public string GetIndependentTestCallResultForParticipant => $"{ApiRoot}/independentselftestresult";
+
+        public string UpdateParticipantSelfTestScore(Guid conferenceId, Guid participantId) => 
+            $"{ApiRoot}/{conferenceId}/participants/{participantId}/updatescore";
     }
     
     public class ConferenceEndpoints

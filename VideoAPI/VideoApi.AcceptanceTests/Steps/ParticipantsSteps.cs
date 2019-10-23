@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
@@ -18,12 +19,14 @@ namespace VideoApi.AcceptanceTests.Steps
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
         private readonly ParticipantsEndpoints _endpoints = new ApiUriFactory().ParticipantsEndpoints;
+        private readonly CommonSteps _commonSteps;
         private const string ParticipantUsernameKey = "ParticipantUsername";
 
-        public ParticipantsSteps(TestContext injectedContext, ScenarioContext scenarioContext)
+        public ParticipantsSteps(TestContext injectedContext, ScenarioContext scenarioContext, CommonSteps commonSteps)
         {
             _context = injectedContext;
             _scenarioContext = scenarioContext;
+            _commonSteps = commonSteps;
         }
 
         [Given(@"I have an add participant to a valid conference request")]
@@ -42,6 +45,20 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Delete(_endpoints.RemoveParticipantFromConference(_context.NewConferenceId, _context.NewConference.Participants.Last().Id));
         }
 
+        [Given(@"I have an update participant details request")]
+        public void GivenIHaveAnUpdateParticipantRequest()
+        {
+            var participant = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual);
+            var request = new UpdateParticipantRequest()
+            {
+                Fullname = $"Updated {participant.Name}",
+                DisplayName = $"Updated {participant.DisplayName}",
+                Representee = $"Updated {participant.Representee}"
+            };
+            _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
+            _context.Request = _context.Patch(_endpoints.UpdateParticipantFromConference(_context.NewConferenceId, participant.Id), request);
+        }
+
         [Then(@"the participant is (.*)")]
         public void ThenTheParticipantIsAdded(string state)
         {
@@ -55,10 +72,19 @@ namespace VideoApi.AcceptanceTests.Steps
             if (state.Equals("added"))
             {
                 exists.Should().BeTrue();
-            }
-            if (state.Equals("removed"))
+            } 
+            else if (state.Equals("removed"))
             {
                 exists.Should().BeFalse();
+            } 
+            else if (state.Equals("updated"))
+            {
+                var participant = conference.Participants.First(x =>
+                    x.Username.Equals(_scenarioContext.Get<string>(ParticipantUsernameKey)));
+
+                participant.Name.Should().Contain("Updated");
+                participant.DisplayName.Should().Contain("Updated");
+                participant.Representee.Should().Contain("Updated");
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -31,8 +32,8 @@ namespace VideoApi.AcceptanceTests.Hooks
                 Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
             var testSettingsOptions = Options.Create(configRoot.GetSection("Testing").Get<TestSettings>());
             var serviceSettingsOptions = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>());
+            
             context.CustomTokenSettings = configRoot.GetSection("CustomToken").Get<CustomTokenSettings>();
-
             context.AzureAdConfiguration = azureAdConfigurationOptions;
             context.TestSettings = testSettingsOptions.Value;
             context.ServicesConfiguration = serviceSettingsOptions.Value;
@@ -43,6 +44,46 @@ namespace VideoApi.AcceptanceTests.Hooks
                 Options.Create(configRoot.GetSection("AcceptanceTestSettings").Get<TestConfiguration>());
             var apiTestSettings = apiTestsOptions.Value;
             context.BaseUrl = apiTestSettings.VideoApiBaseUrl;
+            context.BaseUrl.Should().NotBeNullOrEmpty();
+
+            VerifyCustomSecretsAreSet(context.CustomTokenSettings);
+            VerifyAzureSecretsAreSet(context.AzureAdConfiguration.Value);
+            VerifyTestSecretsAreSet(context.TestSettings);
+            VerifyServicesSecretsAreSet(context.ServicesConfiguration);
+        }
+
+        private static void VerifyCustomSecretsAreSet(CustomTokenSettings customTokenSettings)
+        {
+            customTokenSettings.Secret.Should().NotBeNullOrEmpty();
+            customTokenSettings.ThirdPartySecret.Should().NotBeNullOrEmpty();
+        }
+
+        private static void VerifyAzureSecretsAreSet(AzureAdConfiguration azureAdConfiguration)
+        {
+            azureAdConfiguration.Authority.Should().NotBeNullOrEmpty();
+            azureAdConfiguration.ClientId.Should().NotBeNullOrEmpty();
+            azureAdConfiguration.ClientSecret.Should().NotBeNullOrEmpty();
+            azureAdConfiguration.TenantId.Should().NotBeNullOrEmpty();
+            azureAdConfiguration.VhVideoApiResourceId.Should().NotBeNullOrEmpty();
+            azureAdConfiguration.VhVideoWebClientId.Should().NotBeNullOrEmpty();
+        }
+
+        private static void VerifyTestSecretsAreSet(TestSettings testSettings)
+        {
+            testSettings.TestClientId.Should().NotBeNullOrEmpty();
+            testSettings.TestClientSecret.Should().NotBeNullOrEmpty();
+        }
+
+        private static void VerifyServicesSecretsAreSet(ServicesConfiguration servicesConfiguration)
+        {
+            servicesConfiguration.CallbackUri.Should().NotBeNullOrEmpty();
+            servicesConfiguration.ConferenceUsername.Should().NotBeNullOrEmpty();
+            servicesConfiguration.KinlyApiUrl.Should().NotBeNullOrEmpty();
+            servicesConfiguration.KinlySelfTestApiUrl.Should().NotBeNullOrEmpty();
+            servicesConfiguration.PexipNode.Should().NotBeNullOrEmpty();
+            servicesConfiguration.PexipSelfTestNode.Should().NotBeNullOrEmpty();
+            servicesConfiguration.UserApiResourceId.Should().NotBeNullOrEmpty();
+            servicesConfiguration.UserApiUrl.Should().NotBeNullOrEmpty();
         }
 
         [BeforeTestRun]
@@ -65,9 +106,8 @@ namespace VideoApi.AcceptanceTests.Hooks
         public static void RemoveConferences(TestContext context, ConferenceEndpoints endpoints)
         {
             if (context.NewConferenceIds.Count <= 0) return;
-            foreach (var id in context.NewConferenceIds)
+            foreach (var id in context.NewConferenceIds.Where(id => !id.Equals(context.NewConferenceId)))
             {
-                if (id.Equals(context.NewConferenceId)) continue;
                 RemoveConference(context, endpoints, id);
             }
             context.NewConferences.Clear();

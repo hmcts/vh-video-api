@@ -57,13 +57,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid book a new conference request")]
         public void GivenIHaveAValidBookANewConferenceRequest()
         {
-            CreateNewConferenceRequest(DateTime.Now);
+            CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2));
         }
 
         [Given(@"I have a conference")]
         public void GivenIHaveAConference()
         {
-            CreateConference(DateTime.Now);
+            CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2));
         }
 
         [Given(@"I have another conference")]
