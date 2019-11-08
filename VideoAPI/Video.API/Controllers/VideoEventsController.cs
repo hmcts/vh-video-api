@@ -50,7 +50,12 @@ namespace Video.API.Controllers
             {
                 command.ParticipantId = participantId;
             }
-
+            _logger.LogError($"EVENT: { request.EventType.ToString() } | " +
+                $"Participant ID: { request.ParticipantId } | " +
+                $"Reason: { request.Reason } | " +
+                $"External Timestamp: { request.TimeStampUtc.ToString("yyyy-MM-dd HH:mm:ss.fffffff") } | " +
+                $"Timestamp: { (DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss.fffffff") } | " +
+                $"Conference ID: { request.ConferenceId } ");
             await _commandHandler.Handle(command);
 
             var callbackEvent = new CallbackEvent
