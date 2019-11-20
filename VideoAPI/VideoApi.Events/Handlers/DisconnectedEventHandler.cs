@@ -32,7 +32,10 @@ namespace VideoApi.Events.Handlers
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState,
                     null);
             await CommandHandler.Handle(command).ConfigureAwait(false);
-            await AddDisconnectedTask().ConfigureAwait(false);
+            if (SourceConference.State != ConferenceState.Closed)
+            {
+                await AddDisconnectedTask().ConfigureAwait(false);
+            }            
         }
 
         private async Task AddDisconnectedTask()
