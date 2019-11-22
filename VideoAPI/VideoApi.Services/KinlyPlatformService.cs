@@ -91,7 +91,7 @@ namespace VideoApi.Services
                 .Handle<Exception>()
                 .OrResult<HttpResponseMessage>(r => r == null)
                 .RetryAsync(2, (ex, retryCount) => {
-                    Console.WriteLine($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying {retryCount}");
+                    _logger.LogError($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying {retryCount}");
                 });
 
             HttpResponseMessage responseMessage;
