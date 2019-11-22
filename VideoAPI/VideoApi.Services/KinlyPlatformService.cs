@@ -14,6 +14,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
+using Polly;
 
 namespace VideoApi.Services
 {
@@ -86,6 +87,13 @@ namespace VideoApi.Services
         {
             _logger.LogInformation(
                 $"Retrieving test call score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}");
+            var policy = Policy
+                .Handle<Exception>()
+                .OrResult<HttpResponseMessage>(r => r == null)
+                .RetryAsync(2, (ex, retryCount) => {
+                    Console.WriteLine($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying {retryCount}");
+                });
+
             HttpResponseMessage responseMessage;
             using (var httpClient = new HttpClient())
             {
@@ -99,7 +107,7 @@ namespace VideoApi.Services
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
                     _customJwtTokenProvider.GenerateToken(participantId.ToString(), 2));
 
-                responseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
+                responseMessage = await policy.ExecuteAsync(() => httpClient.SendAsync(request)).ConfigureAwait(false);
             }
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
