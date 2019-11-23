@@ -85,15 +85,22 @@ namespace VideoApi.Services
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            _logger.LogInformation(
-                $"Retrieving test call score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}");
             var policy = Policy
                 .Handle<Exception>()
-                .OrResult<HttpResponseMessage>(r => r == null)
-                .RetryAsync(2, (ex, retryCount) => {
-                    _logger.LogError($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying {retryCount}");
+                .OrResult<TestCallResult>(r => r == null)
+                .RetryAsync(3, (ex, retryCount) => {
+                    _logger.LogError($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryCount}");
                 });
 
+            return await policy
+                .ExecuteAsync(async () => await GetSelfTestCallScore(participantId))
+                .ConfigureAwait(false);
+        }
+
+        public async Task<TestCallResult> GetSelfTestCallScore(Guid participantId)
+        {
+            _logger.LogInformation(
+                $"Retrieving test call score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}");
             HttpResponseMessage responseMessage;
             using (var httpClient = new HttpClient())
             {
@@ -107,7 +114,7 @@ namespace VideoApi.Services
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
                     _customJwtTokenProvider.GenerateToken(participantId.ToString(), 2));
 
-                responseMessage = await policy.ExecuteAsync(() => httpClient.SendAsync(request)).ConfigureAwait(false);
+                responseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
             }
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
@@ -117,7 +124,7 @@ namespace VideoApi.Services
 
             var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
-            return new TestCallResult(testCall.Passed, (TestScore) testCall.Score);
+            return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
         }
 
         public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,
