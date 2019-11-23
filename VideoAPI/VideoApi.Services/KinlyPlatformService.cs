@@ -119,11 +119,13 @@ namespace VideoApi.Services
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
             {
+                _logger.LogError($" { responseMessage.StatusCode } : Failed to retrieve self test score for participant {participantId} ");
                 return null;
             }
 
             var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
+            _logger.LogError($"Successfully retrieved self test score for participant { participantId } with score { testCall.Score } ");
             return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
         }
 
