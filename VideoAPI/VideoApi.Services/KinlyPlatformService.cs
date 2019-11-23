@@ -85,11 +85,15 @@ namespace VideoApi.Services
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
+            var maxRetryAttempts = 6;
+            var pauseBetweenFailures = TimeSpan.FromSeconds(5);
+
             var policy = Policy
                 .Handle<Exception>()
                 .OrResult<TestCallResult>(r => r == null)
-                .RetryAsync(3, (ex, retryCount) => {
-                    _logger.LogError($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryCount}");
+                .WaitAndRetryAsync(maxRetryAttempts, x => pauseBetweenFailures, (ex, ts, retryAttempt, context) =>
+                {
+                    _logger.LogError($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt { retryAttempt }");
                 });
 
             return await policy
@@ -125,7 +129,7 @@ namespace VideoApi.Services
 
             var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
-            _logger.LogError($"Successfully retrieved self test score for participant { participantId } with score { testCall.Score } ");
+            _logger.LogError($" { responseMessage.StatusCode } : Successfully retrieved self test score for participant {participantId} ");
             return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
         }
 
