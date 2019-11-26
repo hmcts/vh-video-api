@@ -14,6 +14,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
+using Polly;
 
 namespace VideoApi.Services
 {
@@ -84,6 +85,24 @@ namespace VideoApi.Services
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
+            var maxRetryAttempts = 6;
+            var pauseBetweenFailures = TimeSpan.FromSeconds(5);
+
+            var policy = Policy
+                .Handle<Exception>()
+                .OrResult<TestCallResult>(r => r == null)
+                .WaitAndRetryAsync(maxRetryAttempts, x => pauseBetweenFailures, (ex, ts, retryAttempt, context) =>
+                {
+                    _logger.LogError($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt { retryAttempt }");
+                });
+
+            return await policy
+                .ExecuteAsync(async () => await GetSelfTestCallScore(participantId))
+                .ConfigureAwait(false);
+        }
+
+        public async Task<TestCallResult> GetSelfTestCallScore(Guid participantId)
+        {
             _logger.LogInformation(
                 $"Retrieving test call score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}");
             HttpResponseMessage responseMessage;
@@ -104,12 +123,14 @@ namespace VideoApi.Services
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
             {
+                _logger.LogError($" { responseMessage.StatusCode } : Failed to retrieve self test score for participant {participantId} ");
                 return null;
             }
 
             var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
-            return new TestCallResult(testCall.Passed, (TestScore) testCall.Score);
+            _logger.LogError($" { responseMessage.StatusCode } : Successfully retrieved self test score for participant {participantId} ");
+            return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
         }
 
         public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,
