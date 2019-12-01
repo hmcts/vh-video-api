@@ -85,7 +85,7 @@ namespace VideoApi.Services
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            var maxRetryAttempts = 6;
+            var maxRetryAttempts = 2;
             var pauseBetweenFailures = TimeSpan.FromSeconds(5);
 
             var policy = Policy
