@@ -55,6 +55,8 @@ namespace Video.API.Controllers
                 $"Reason: { request.Reason } | " +
                 $"External Timestamp: { request.TimeStampUtc.ToString("yyyy-MM-dd HH:mm:ss.fffffff") } | " +
                 $"Timestamp: { (DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss.fffffff") } | " +
+                $"TransferFrom: { request.TransferFrom } | " +
+                $"TransferTo: { request.TransferTo } | " +
                 $"Conference ID: { request.ConferenceId } ");
             await _commandHandler.Handle(command);
 
