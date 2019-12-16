@@ -231,6 +231,27 @@ namespace Video.API.Controllers
             var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'
+        /// </summary>
+        /// <param name="scheduledDate">The conference scheduled date time</param>
+        /// <returns>Conference summary details</returns>
+        [HttpGet("fromdate")]
+        [SwaggerOperation(OperationId = "GetOpenConferencesByScheduledDate")]
+        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetOpenConferencesByScheduledDate([FromQuery] DateTime scheduledDate)
+        {
+            _logger.LogDebug("GetOpenConferencesByScheduledDate");
+            
+            var query = new GetOpenConferencesByDateTimeQuery(scheduledDate);
+            var conferences = await _queryHandler.Handle<GetOpenConferencesByDateTimeQuery, List<Conference>>(query);
+
+            var mapper = new ConferenceToSummaryResponseMapper();
+            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            
+            return Ok(response);
+        }
 
         private async Task BookKinlyMeetingRoom(Guid conferenceId)
         {
