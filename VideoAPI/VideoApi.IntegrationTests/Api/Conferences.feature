@@ -117,3 +117,10 @@ Feature: Conferences
     Given I have a nonexistent update a conference request
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
+
+  Scenario: Get Open Conferences By Scheduled Date
+    Given I have a many conferences
+    And I send the request to the get open conferences endpoint for date 2001-10-01
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And an empty list is retrieved

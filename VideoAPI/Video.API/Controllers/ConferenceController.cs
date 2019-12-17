@@ -33,8 +33,8 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IVideoPlatformService _videoPlatformService;
-        private readonly ILogger<ConferenceController> _logger;
         private readonly ServicesConfiguration _servicesConfiguration;
+        private readonly ILogger<ConferenceController> _logger;
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
@@ -43,8 +43,8 @@ namespace Video.API.Controllers
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _videoPlatformService = videoPlatformService;
-            _logger = logger;
             _servicesConfiguration = servicesConfiguration.Value;
+            _logger = logger;
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'
         /// </summary>
-        /// <param name="scheduledDate">The conference scheduled date time</param>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
         /// <returns>Conference summary details</returns>
         [HttpGet("fromdate")]
         [SwaggerOperation(OperationId = "GetOpenConferencesByScheduledDate")]

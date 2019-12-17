@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,13 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAGetConferencesTodayRequest()
         {
             ApiTestContext.Uri = _endpoints.GetConferencesToday;
+            ApiTestContext.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I send the request to the get open conferences endpoint for date (.*)")]
+        public void GivenIHaveAGetOpenConferencesRequest(string scheduledDate)
+        {
+            ApiTestContext.Uri = _endpoints.GetOpenConferencesByScheduledDate(scheduledDate);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 
@@ -195,9 +203,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the summary of conference details should be retrieved")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conferences =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
+            var conferences = await GetConferenceSummaryResponses();
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -207,6 +213,12 @@ namespace VideoApi.IntegrationTests.Steps
                     AssertParticipantSummaryResponse.ForParticipant(participant);
                 }
             }
+        }
+
+        private async Task<List<ConferenceSummaryResponse>> GetConferenceSummaryResponses()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
         }
 
         [Then(@"the conference should be removed")]
