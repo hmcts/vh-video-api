@@ -17,6 +17,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
@@ -193,8 +194,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the conference details should be retrieved")]
         public async Task ThenAConferenceDetailsShouldBeRetrieved()
         {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
+            var conference = await GetResponses<ConferenceDetailsResponse>();
             conference.Should().NotBeNull();
             ApiTestContext.NewConferenceId = conference.Id;
             AssertConferenceDetailsResponse.ForConference(conference);
@@ -203,7 +203,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the summary of conference details should be retrieved")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await GetConferenceSummaryResponses();
+            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -213,12 +213,6 @@ namespace VideoApi.IntegrationTests.Steps
                     AssertParticipantSummaryResponse.ForParticipant(participant);
                 }
             }
-        }
-
-        private async Task<List<ConferenceSummaryResponse>> GetConferenceSummaryResponses()
-        {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
         }
 
         [Then(@"the conference should be removed")]
@@ -238,17 +232,22 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"an empty list is retrieved")]
         public async Task ThenAnEmptyListIsRetrieved()
         {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conferences =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(json);
+            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
             conferences.Should().BeEmpty();
+        }
+        
+        [Then(@"the responses list should not contain closed conferences")]
+        public async Task ThenTheResponsesListShouldNotContainClosedConferences()
+        {
+            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
+            conferences.Should().NotBeEmpty();
+            conferences.Should().OnlyContain(response => response.Status != ConferenceState.Closed);
         }
 
         [When(@"I save the conference details")]
         public async Task WhenISaveTheConferenceDetails()
         {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
+            var conference = await GetResponses<ConferenceDetailsResponse>();
             conference.Should().NotBeNull();
             ApiTestContext.NewConferenceId = conference.Id;
             _conferenceTestContext.ConferenceDetails = conference;
@@ -257,8 +256,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the response should be the same")]
         public async Task ThenTheResponseShouldBeTheSame()
         {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(json);
+            var conference = await GetResponses<ConferenceDetailsResponse>();
             conference.Should().NotBeNull();
             conference.Should().BeEquivalentTo(_conferenceTestContext.ConferenceDetails);
         }
@@ -311,5 +309,10 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
+        private async Task<T> GetResponses<T>()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<T>(json);
+        }
     }
 }

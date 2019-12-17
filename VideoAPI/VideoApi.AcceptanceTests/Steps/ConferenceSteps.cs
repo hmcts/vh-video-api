@@ -11,6 +11,7 @@ using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -125,6 +126,12 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.Request = _context.Get(_endpoints.GetConferencesToday);
         }
+        
+        [Given(@"I have a get conferences by scheduled date request for date (.*)")]
+        public void GivenIHaveAGetConferencesByScheduledDateRequest(string scheduledDate)
+        {
+            _context.Request = _context.Get(_endpoints.GetOpenConferencesByScheduledDate(scheduledDate));
+        }
 
         [Given(@"I have a get details for a conference request by hearing id with a valid username")]
         public void GivenIHaveAGetDetailsForAConferenceRequestByHearingIdWithAValidUsername()
@@ -171,6 +178,25 @@ namespace VideoApi.AcceptanceTests.Steps
                     AssertParticipantSummaryResponse.ForParticipant(participant);
                 }
                 conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
+            }
+
+            _context.NewConferences = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
+        }
+        
+        [Then(@"a list containing non closed state hearings conference details should be retrieved")]
+        public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
+        {
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
+            conferences.Should().NotBeNull();
+            foreach (var conference in conferences)
+            {
+                AssertConferenceSummaryResponse.ForConference(conference);
+                foreach (var participant in conference.Participants)
+                {
+                    AssertParticipantSummaryResponse.ForParticipant(participant);
+                }
+
+                conference.Status.Should().NotBe(ConferenceState.Closed);
             }
 
             _context.NewConferences = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
