@@ -74,39 +74,31 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConference(DateTime.Now);
             _context.NewConferenceIds.Add(_context.NewConferenceId);
         }
+        
+        [Given(@"I close the last created conference")]
+        public void GivenICloseTheLastCreatedConference()
+        {
+            var conferenceId = _context.NewConferenceIds.LastOrDefault();
+            
+            if (conferenceId == Guid.Empty)
+            {
+                throw new Exception("Could not get id of the last conference created");
+            }
+            
+            UpdateConferenceStateToClosed(conferenceId);
+            
+            _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
+            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            conference.CurrentStatus.Should().Be(ConferenceState.Closed);
+        }
 
         [Given(@"I have a conference for tomorrow")]
         public void GivenIHaveAConferenceForTomorrow()
         {
             CreateConference(DateTime.Today.AddDays(1));
             _context.NewConferenceIds.Add(_context.NewConferenceId);
-        }
-
-        private void CreateConference(DateTime date)
-        {
-            CreateNewConferenceRequest(date);
-            _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.IsSuccessful.Should().BeTrue("New conference is created");
-            var conference =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
-            conference.Should().NotBeNull();
-            _context.NewConferenceId = conference.Id;
-            _context.NewConference = conference;
-            if (!_scenarioContext.ContainsKey(CurrentStatusKey))
-                _scenarioContext.Add(CurrentStatusKey, conference.CurrentStatus);
-        }
-
-        private void CreateNewConferenceRequest(DateTime date)
-        {
-            _context.NewHearingRefId = Guid.NewGuid();
-            var request = new BookNewConferenceRequestBuilder()
-                .WithJudge()
-                .WithRepresentative("Claimant").WithIndividual("Claimant")
-                .WithRepresentative("Defendant").WithIndividual("Defendant")
-                .WithHearingRefId(_context.NewHearingRefId)
-                .WithDate(date)
-                .Build();
-            _context.Request = _context.Post(_endpoints.BookNewConference, request);
         }
 
         [Given(@"I have a get details for a conference request with a valid conference id")]
@@ -225,7 +217,41 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             _context.NewConferenceId = Guid.Empty;
-        }        
+        }
+        
+        private void CreateConference(DateTime date)
+        {
+            CreateNewConferenceRequest(date);
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.IsSuccessful.Should().BeTrue("New conference is created");
+            var conference =
+                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            conference.Should().NotBeNull();
+            _context.NewConferenceId = conference.Id;
+            _context.NewConference = conference;
+            if (!_scenarioContext.ContainsKey(CurrentStatusKey))
+                _scenarioContext.Add(CurrentStatusKey, conference.CurrentStatus);
+        }
+
+        private void UpdateConferenceStateToClosed(Guid conferenceId)
+        {
+            _context.Request = _context.Put(_endpoints.CloseConference(conferenceId), new object());
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.IsSuccessful.Should().BeTrue("Conference is closed");
+        }
+
+        private void CreateNewConferenceRequest(DateTime date)
+        {
+            _context.NewHearingRefId = Guid.NewGuid();
+            var request = new BookNewConferenceRequestBuilder()
+                .WithJudge()
+                .WithRepresentative("Claimant").WithIndividual("Claimant")
+                .WithRepresentative("Defendant").WithIndividual("Defendant")
+                .WithHearingRefId(_context.NewHearingRefId)
+                .WithDate(date)
+                .Build();
+            _context.Request = _context.Post(_endpoints.BookNewConference, request);
+        }
     }
 }
 

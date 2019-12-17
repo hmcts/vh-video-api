@@ -96,6 +96,14 @@ namespace VideoApi.Domain
             State = status;
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
+        
+        public void CloseConference()
+        {
+            ClosedDateTime = DateTime.UtcNow;
+
+            State = ConferenceState.Closed;
+            ConferenceStatuses.Add(new ConferenceStatus(ConferenceState.Closed));
+        }
 
         public void AddTask(Guid originId,TaskType taskType, string message)
         {

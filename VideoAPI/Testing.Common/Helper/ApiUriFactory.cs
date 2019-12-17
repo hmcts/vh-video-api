@@ -58,6 +58,7 @@ namespace Testing.Common.Helper
         public string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
         public string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
         public string UpdateConference => $"{ApiRoot}";
+        public string CloseConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/close";
     }
 
     public class HealthCheckEndpoints

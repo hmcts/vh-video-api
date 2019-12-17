@@ -58,6 +58,7 @@ Scenario: Get conference details by hearing id
     Given I have a conference
     And I have another conference
     And I have a conference for tomorrow
+    And I close the last created conference
     And I have a get conferences by scheduled date request for date 9999-01-01
     When I send the request to the endpoint
     Then the response should have the status OK and success status True

@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Video.API.Controllers;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -79,6 +80,53 @@ namespace VideoApi.UnitTests.Controllers
             Assert.AreEqual(resultValue.ElementAt(0).CaseNumber, conferences.ElementAt(0).CaseNumber);
             Assert.AreEqual(resultValue.ElementAt(0).ScheduledDateTime, conferences.ElementAt(0).ScheduledDateTime);
             Assert.AreEqual(resultValue.ElementAt(0).ScheduledDuration, conferences.ElementAt(0).ScheduledDuration);
+        }
+
+        [Test]
+        public async Task CloseConference_Returns_BadRequest_When_Default_Guid_ConferenceId()
+        {
+            var result = await _conferenceController.CloseConference(default);
+            
+            result.Should().NotBeNull();
+            result.Should()
+                .BeAssignableTo<BadRequestObjectResult>().Subject.Value.Should()
+                .NotBeNull().And
+                .BeAssignableTo<SerializableError>();
+        }
+        
+        [Test]
+        public async Task CloseConference_Returns_BadRequest_When_Conference_Not_Found()
+        {
+            var conferenceId = Guid.NewGuid();
+            
+            _queryHandler
+                .Setup(x => 
+                    x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync((Conference) null);
+            
+            var result = await _conferenceController.CloseConference(conferenceId);
+            
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<BadRequestResult>();
+        }
+        
+        [Test]
+        public async Task CloseConference_Returns_NoContent_Success()
+        {
+            var conferenceId = Guid.NewGuid();
+            
+            _queryHandler
+                .Setup(x => 
+                    x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(new Conference(conferenceId, string.Empty, DateTime.Now, string.Empty, string.Empty, 1));
+            _commandHandler
+                .Setup(x => x.Handle(It.IsAny<CloseConferenceCommand>()))
+                .Returns(Task.CompletedTask);
+            
+            var result = await _conferenceController.CloseConference(conferenceId);
+            
+            result.Should().NotBeNull();
+            result.Should().BeAssignableTo<NoContentResult>();
         }
     }
 }
