@@ -33,8 +33,8 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IVideoPlatformService _videoPlatformService;
-        private readonly ILogger<ConferenceController> _logger;
         private readonly ServicesConfiguration _servicesConfiguration;
+        private readonly ILogger<ConferenceController> _logger;
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
@@ -43,8 +43,8 @@ namespace Video.API.Controllers
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _videoPlatformService = videoPlatformService;
-            _logger = logger;
             _servicesConfiguration = servicesConfiguration.Value;
+            _logger = logger;
         }
 
         /// <summary>
@@ -119,15 +119,16 @@ namespace Video.API.Controllers
         public async Task<IActionResult> GetConferenceDetailsById(Guid conferenceId)
         {
             _logger.LogDebug($"GetConferenceDetailsById {conferenceId}");
+            
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (queriedConference == null)
             {
                 _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
             }
+            
             var mapper = new ConferenceToDetailsResponseMapper();
             var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
@@ -230,6 +231,62 @@ namespace Video.API.Controllers
             var mapper = new ConferenceToDetailsResponseMapper();
             var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
+        }
+        
+        /// <summary>
+        /// Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'
+        /// </summary>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
+        /// <returns>Conference summary details</returns>
+        [HttpGet("fromdate")]
+        [SwaggerOperation(OperationId = "GetOpenConferencesByScheduledDate")]
+        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetOpenConferencesByScheduledDate([FromQuery] DateTime scheduledDate)
+        {
+            _logger.LogDebug("GetOpenConferencesByScheduledDate");
+            
+            var query = new GetOpenConferencesByDateTimeQuery(scheduledDate);
+            var conferences = await _queryHandler.Handle<GetOpenConferencesByDateTimeQuery, List<Conference>>(query);
+
+            var mapper = new ConferenceToSummaryResponseMapper();
+            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            
+            return Ok(response);
+        }
+        
+        /// <summary>
+        /// Close a conference, set its state to closed
+        /// </summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>No Content status</returns>
+        [HttpPut("{conferenceId}/close")]
+        [SwaggerOperation(OperationId = "CloseConference")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CloseConference(Guid conferenceId)
+        {
+            if (conferenceId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
+                _logger.LogError($"Invalid conferenceId: {conferenceId}");
+                    
+                return BadRequest(ModelState);
+            }
+                
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+                
+            if (conference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return BadRequest();
+            }
+                
+            var command = new CloseConferenceCommand(conferenceId);
+                
+            await _commandHandler.Handle(command);
+                
+            return NoContent();
         }
 
         private async Task BookKinlyMeetingRoom(Guid conferenceId)

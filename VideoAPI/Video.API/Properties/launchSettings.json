@@ -3,7 +3,7 @@
     "profiles": {
         "VideoApi": {
             "commandName": "Project",
-            "launchBrowser": true,
+            "launchBrowser": false,
             "launchUrl": "swagger/",
             "applicationUrl": "https://localhost:59390;http://localhost:59391",
             "environmentVariables": {
