@@ -54,7 +54,7 @@ Scenario: Get conference details by hearing id
     Then the response should have the status OK and success status True
     And the conference details should be retrieved
 
-  Scenario: Get Open Conferences By Scheduled Date
+  Scenario: Get open conferences by scheduled date
     Given I have a conference
     And I have another conference
     And I have a conference for tomorrow
@@ -63,3 +63,13 @@ Scenario: Get conference details by hearing id
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And a list containing non closed state hearings conference details should be retrieved
+
+  Scenario: Close all conferences
+    Given I have a conference
+    And I have another conference
+    And I have a conference for tomorrow
+    And I close all conferences
+    And I have a get conferences by scheduled date request for date 9999-01-01
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And an empty list should be retrieved

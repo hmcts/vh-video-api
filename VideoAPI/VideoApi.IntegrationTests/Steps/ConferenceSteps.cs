@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Faker;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
@@ -77,6 +79,18 @@ namespace VideoApi.IntegrationTests.Steps
         {
             ApiTestContext.Uri = _endpoints.GetOpenConferencesByScheduledDate(scheduledDate);
             ApiTestContext.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I send the request to close all conferences")]
+        public async Task GivenIHaveAGetOpenConferencesRequest()
+        {
+            foreach (var conferenceId in _conferenceTestContext.SeededConferences)
+            {
+                ApiTestContext.Uri = _endpoints.CloseConference(conferenceId);
+                ApiTestContext.ResponseMessage = await SendPutRequestAsync(ApiTestContext);
+                ApiTestContext.ResponseMessage.StatusCode.Should().Be(HttpStatusCode.NoContent);
+                ApiTestContext.ResponseMessage.IsSuccessStatusCode.Should().Be(true);
+            }
         }
 
         [Given(@"I have a get details for a conference request with a (.*) conference id")]
