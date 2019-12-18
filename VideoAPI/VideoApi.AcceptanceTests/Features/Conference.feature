@@ -72,4 +72,4 @@ Scenario: Get conference details by hearing id
     And I have a get conferences by scheduled date request for date 9999-01-01
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And an empty list should be retrieved
+    And a list not containing the closed hearings should be retrieved

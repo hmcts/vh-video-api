@@ -202,11 +202,11 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.NewConferences = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
         }
         
-        [Then(@"an empty list should be retrieved")]
-        public void ThenAnEmptyListShouldBeRetrieved()
+        [Then(@"a list not containing the closed hearings should be retrieved")]
+        public void ThenAListNotContainingTheClosedHearingsShouldBeRetrieved()
         {
             var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
-            conferences.Should().BeEmpty();
+            conferences.Select(x => x.Id).Should().NotContain(_context.NewConferenceIds);
         }
 
         [Then(@"the summary of conference details should be retrieved")]
