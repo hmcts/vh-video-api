@@ -24,7 +24,8 @@ namespace Video.API.Mappings
                 ScheduledDuration= conference.ScheduledDuration,
                 Status = conference.GetCurrentStatus(),
                 PendingTasks = conference.GetTasks().Count(x => x.Status == TaskStatus.ToDo),
-                Participants = participants
+                Participants = participants,
+                HearingRefId = conference.HearingRefId
             };
         }       
     }

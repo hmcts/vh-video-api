@@ -29,5 +29,12 @@ namespace VideoApi.Services
         /// <param name="consultationRoom"></param>
         /// <returns></returns>
         Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom);
+
+        /// <summary>
+        /// Delete virtual court room
+        /// </summary>
+        /// <param name="virtualCourtroomId">Hearing ID</param>
+        /// <returns></returns>
+        Task DeleteVirtualCourtRoomAsync(string virtualCourtroomId);
     }
 }
