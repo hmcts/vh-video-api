@@ -14,18 +14,18 @@ namespace VideoApi.UnitTests.Controllers
 {
 
     [TestFixture]
-    public class VirtualCurtRoomControllerTest
+    public class VirtualCourtRoomControllerTest
     {
         private readonly Mock<IVideoPlatformService> _videoPlatformService;
         private readonly Mock<ILogger<ConferenceController>> _logger;
-        private readonly VirtualCurtRoomController _virtualCurtRoomController;
+        private readonly VirtualCourtRoomController _virtualCurtRoomController;
 
-        public VirtualCurtRoomControllerTest()
+        public VirtualCourtRoomControllerTest()
         {
             _videoPlatformService = new Mock<IVideoPlatformService>();
             _logger = new Mock<ILogger<ConferenceController>>();
 
-            _virtualCurtRoomController = new VirtualCurtRoomController
+            _virtualCurtRoomController = new VirtualCourtRoomController
             (
                  _videoPlatformService.Object,
                 _logger.Object

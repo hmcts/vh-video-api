@@ -13,12 +13,12 @@ namespace Video.API.Controllers
     [Produces("application/json")]
     [Route("virtualCourtRooms")]
     [ApiController]
-    public class VirtualCurtRoomController : ControllerBase
+    public class VirtualCourtRoomController : ControllerBase
     {
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly ILogger<ConferenceController> _logger;
 
-        public VirtualCurtRoomController(IVideoPlatformService videoPlatformService,
+        public VirtualCourtRoomController(IVideoPlatformService videoPlatformService,
             ILogger<ConferenceController> logger)
         {
             _videoPlatformService = videoPlatformService;
