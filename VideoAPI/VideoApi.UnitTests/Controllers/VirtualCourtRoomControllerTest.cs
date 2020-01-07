@@ -18,14 +18,14 @@ namespace VideoApi.UnitTests.Controllers
     {
         private readonly Mock<IVideoPlatformService> _videoPlatformService;
         private readonly Mock<ILogger<ConferenceController>> _logger;
-        private readonly VirtualCourtRoomController _virtualCurtRoomController;
+        private readonly VirtualCourtRoomController _virtualCourtRoomController;
 
         public VirtualCourtRoomControllerTest()
         {
             _videoPlatformService = new Mock<IVideoPlatformService>();
             _logger = new Mock<ILogger<ConferenceController>>();
 
-            _virtualCurtRoomController = new VirtualCourtRoomController
+            _virtualCourtRoomController = new VirtualCourtRoomController
             (
                  _videoPlatformService.Object,
                 _logger.Object
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Controllers
 
             _videoPlatformService.Setup(x => x.DeleteVirtualCourtRoomAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
 
-            var result = await _virtualCurtRoomController.RemoveVirtualCourtRoom(hearingRefId);
+            var result = await _virtualCourtRoomController.RemoveVirtualCourtRoom(hearingRefId);
 
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<NoContentResult>();
@@ -52,7 +52,7 @@ namespace VideoApi.UnitTests.Controllers
 
             _videoPlatformService.Setup(x => x.DeleteVirtualCourtRoomAsync(It.IsAny<string>())).Throws(new KinlyApiException("Error", 500, "", new Dictionary<string, IEnumerable<string>>(), new Exception()));
 
-            var result = await _virtualCurtRoomController.RemoveVirtualCourtRoom(hearingRefId);
+            var result = await _virtualCourtRoomController.RemoveVirtualCourtRoom(hearingRefId);
 
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<BadRequestResult>();
@@ -65,7 +65,7 @@ namespace VideoApi.UnitTests.Controllers
 
             _videoPlatformService.Setup(x => x.DeleteVirtualCourtRoomAsync(It.IsAny<string>())).Throws(new KinlyApiException("Error", 404, "", new Dictionary<string, IEnumerable<string>>(), new Exception()));
 
-            var result = await _virtualCurtRoomController.RemoveVirtualCourtRoom(hearingRefId);
+            var result = await _virtualCourtRoomController.RemoveVirtualCourtRoom(hearingRefId);
 
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<NotFoundResult>();

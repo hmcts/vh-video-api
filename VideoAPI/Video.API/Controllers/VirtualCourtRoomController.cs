@@ -52,6 +52,7 @@ namespace Video.API.Controllers
                 }
                 else
                 {
+                    _logger.LogError($"Error to remove virtual court room Id {virtualCourtRoomId}, {e.Message}");
                     return BadRequest();
                 }
             }
