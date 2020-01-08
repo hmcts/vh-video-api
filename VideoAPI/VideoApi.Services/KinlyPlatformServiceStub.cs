@@ -16,12 +16,12 @@ namespace VideoApi.Services
         {
             _bookedGuids = new List<Guid>();
         }
-        
+
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId)
         {
-            if(_bookedGuids.Contains(conferenceId))
+            if (_bookedGuids.Contains(conferenceId))
                 throw new DoubleBookingException(conferenceId, "Meeting room already exists");
-            
+
             var meetingRoom = Create();
             _bookedGuids.Add(conferenceId);
             return Task.FromResult(meetingRoom);
@@ -48,6 +48,11 @@ namespace VideoApi.Services
         }
 
         public Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteVirtualCourtRoomAsync(string virtualCourtroomId)
         {
             return Task.CompletedTask;
         }

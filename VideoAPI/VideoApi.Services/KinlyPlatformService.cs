@@ -54,7 +54,7 @@ namespace VideoApi.Services
             }
             catch (KinlyApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.Conflict)
+                if (e.StatusCode == (int)HttpStatusCode.Conflict)
                 {
                     throw new DoubleBookingException(conferenceId, e.Message);
                 }
@@ -74,7 +74,7 @@ namespace VideoApi.Services
             }
             catch (KinlyApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -152,13 +152,13 @@ namespace VideoApi.Services
         public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
         {
             var targetRoom = conference.GetAvailableConsultationRoom();
-            
+
             _logger.LogInformation(
                 $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
-            
+
             await TransferParticipantAsync(conference.Id, requestedBy.Id,
                 requestedBy.CurrentRoom.Value, targetRoom);
-            
+
             await TransferParticipantAsync(conference.Id, requestedFor.Id,
                 requestedFor.CurrentRoom.Value, targetRoom);
         }
@@ -173,6 +173,11 @@ namespace VideoApi.Services
                 await TransferParticipantAsync(conference.Id, participant.Id, consultationRoom,
                     RoomType.WaitingRoom);
             }
+        }
+
+        public async Task DeleteVirtualCourtRoomAsync(string virtualCourtroomId)
+        {
+            await _kinlyApiClient.DeleteHearingAsync(virtualCourtroomId).ConfigureAwait(false);
         }
     }
 }
