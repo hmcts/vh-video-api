@@ -27,17 +27,18 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task should_save_new_conference()
         {
             var hearingRefId = Guid.NewGuid();
-            var caseType = "Civil Money Claims";
+            const string caseType = "Civil Money Claims";
             var scheduledDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
-            var caseNumber = "AutoTest Create Command 1234";
-            var caseName = "AutoTest vs Manual Test";
-            var scheduledDuration = 120;
+            const string caseNumber = "AutoTest Create Command 1234";
+            const string caseName = "AutoTest vs Manual Test";
+            const int scheduledDuration = 120;
             var participant = new ParticipantBuilder(true).Build();
-            var participants = new List<Participant>() {participant};
+            var participants = new List<Participant> {participant};
+            const string hearingVenueName = "MyVenue";
 
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
-                    scheduledDuration, participants);
+                    scheduledDuration, participants, hearingVenueName);
             await _handler.Handle(command);
 
             command.NewConferenceId.Should().NotBeEmpty();

@@ -48,7 +48,8 @@ namespace VideoApi.AcceptanceTests.Steps
                 CaseType = "Financial Remedy",
                 HearingRefId = _context.NewHearingRefId,
                 ScheduledDateTime = DateTime.Now.AddDays(1),
-                ScheduledDuration = 12
+                ScheduledDuration = 12,
+                HearingVenueName = "MyVenue"
             };
 
             _scenarioContext.Add(UpdatedKey, request);
@@ -154,6 +155,7 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.CaseType.Should().Be(expected.CaseType);
             conference.ScheduledDateTime.Day.Should().Be(DateTime.Today.AddDays(1).Day);
             conference.ScheduledDuration.Should().Be(expected.ScheduledDuration);
+            conference.HearingVenueName.Should().Be(expected.HearingVenueName);
         }
 
         [Then(@"the conference details should be retrieved")]

@@ -28,7 +28,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void should_throw_exception_when_conference_does_not_exist()
         {
             var hearingRefId = Guid.NewGuid();
-            var command = new UpdateConferenceDetailsCommand(hearingRefId, "caseNo", "caseType", "caseName", 10, DateTime.Today);
+            var command = new UpdateConferenceDetailsCommand(hearingRefId, "caseNo", "caseType", 
+                "caseName", 10, DateTime.Today, "MyVenue");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -42,7 +43,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var duration = seededConference.ScheduledDuration + 10;
             var scheduledDateTime = seededConference.ScheduledDateTime.AddDays(1);
             var command = new UpdateConferenceDetailsCommand(hearingRefId, seededConference.CaseNumber,
-                seededConference.CaseType, seededConference.CaseName, duration, scheduledDateTime);
+                seededConference.CaseType, seededConference.CaseName, duration, 
+                scheduledDateTime, "MyVenue");
 
             await _handler.Handle(command);
             var conference = _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id)).Result;
