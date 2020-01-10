@@ -52,7 +52,8 @@ namespace VideoApi.UnitTests.Controllers
             var scheduledDate = DateTime.Now;
             var conferences = new List<Conference>
             {
-                new Conference(Guid.NewGuid(), "casetype", scheduledDate, "123", "casename", 60)
+                new Conference(Guid.NewGuid(), "casetype", scheduledDate, "123", 
+                    "casename", 60, "MyVenue")
             };
             
             _queryHandler
@@ -118,7 +119,8 @@ namespace VideoApi.UnitTests.Controllers
             _queryHandler
                 .Setup(x => 
                     x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(new Conference(conferenceId, string.Empty, DateTime.Now, string.Empty, string.Empty, 1));
+                .ReturnsAsync(new Conference(conferenceId, string.Empty, DateTime.Now, string.Empty, 
+                    string.Empty, 1, "MyVenue"));
             _commandHandler
                 .Setup(x => x.Handle(It.IsAny<CloseConferenceCommand>()))
                 .Returns(Task.CompletedTask);

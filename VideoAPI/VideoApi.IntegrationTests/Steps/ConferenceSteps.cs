@@ -250,6 +250,13 @@ namespace VideoApi.IntegrationTests.Steps
             conferences.Should().BeEmpty();
         }
         
+        [Then(@"a list without the closed conferences is retrieved")]
+        public async Task ThenAListWithoutTheClosedConferencesIsRetrieved()
+        {
+            var conferencesIds = (await GetResponses<List<ConferenceSummaryResponse>>()).Select(x => x.Id);
+            conferencesIds.Should().NotContain(_conferenceTestContext.SeededConferences);
+        }
+        
         [Then(@"the responses list should not contain closed conferences")]
         public async Task ThenTheResponsesListShouldNotContainClosedConferences()
         {

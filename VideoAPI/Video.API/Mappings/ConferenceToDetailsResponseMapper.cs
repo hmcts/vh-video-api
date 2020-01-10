@@ -21,13 +21,15 @@ namespace Video.API.Mappings
                 CurrentStatus = conference.GetCurrentStatus(),
                 Participants =
                     new ParticipantToDetailsResponseMapper().MapParticipantsToResponse(conference.GetParticipants()),
-                MeetingRoom = new MeetingRoomToResponseMapper().MapVirtualCourtToResponse(conference.GetMeetingRoom())
+                MeetingRoom = new MeetingRoomToResponseMapper().MapVirtualCourtToResponse(conference.GetMeetingRoom()),
+                HearingVenueName = conference.HearingVenueName
             };
 
             if (response.MeetingRoom != null)
             {
                 response.MeetingRoom.PexipSelfTestNode = pexipSelfTestNode;
             }
+            
             return response;
         }
     }

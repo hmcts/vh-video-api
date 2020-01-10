@@ -64,5 +64,7 @@ namespace VideoApi.Contract.Responses
         /// </summary>
         public MeetingRoomResponse MeetingRoom { get; set; }
         
+        public string HearingVenueName { get; set;  }
+        
     }
 }

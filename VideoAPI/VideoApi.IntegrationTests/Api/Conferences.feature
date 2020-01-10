@@ -130,4 +130,4 @@ Feature: Conferences
     And I send the request to close all conferences
     And I send the request to the get open conferences endpoint for date 9999-01-01
     When I send the request to the endpoint
-    Then an empty list is retrieved
+    Then a list without the closed conferences is retrieved

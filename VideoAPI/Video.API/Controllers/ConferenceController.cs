@@ -95,9 +95,11 @@ namespace Video.API.Controllers
             try
             {
                 var command = new UpdateConferenceDetailsCommand(request.HearingRefId, request.CaseNumber,
-                    request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime);
+                    request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime,
+                    request.HearingVenueName);
 
                 await _commandHandler.Handle(command);
+                
                 return Ok();
             }
             catch (ConferenceNotFoundException)
@@ -323,9 +325,15 @@ namespace Video.API.Controllers
                         Representee = x.Representee
                     })
                 .ToList();
-            var createConferenceCommand = new CreateConferenceCommand(request.HearingRefId, request.CaseType,
-                request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.ScheduledDuration, participants);
+            
+            var createConferenceCommand = new CreateConferenceCommand
+            (
+                request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber, 
+                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName
+            );
+            
             await _commandHandler.Handle(createConferenceCommand);
+            
             return createConferenceCommand.NewConferenceId;
 
         }

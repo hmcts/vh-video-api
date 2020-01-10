@@ -10,7 +10,7 @@ namespace VideoApi.Domain
     public class Conference : Entity<Guid>
     {
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
-            string caseName, int scheduledDuration)
+            string caseName, int scheduledDuration, string hearingVenueName)
         {
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
@@ -25,20 +25,22 @@ namespace VideoApi.Domain
             CaseName = caseName;
             ScheduledDuration = scheduledDuration;
             ClosedDateTime = null;
+            HearingVenueName = hearingVenueName;
         }
 
-        public Guid HearingRefId { get; protected set; }
-        public string CaseType { get; protected set; }
-        public DateTime ScheduledDateTime { get; protected set; }
-        public DateTime? ClosedDateTime { get; protected set; }
-        public string CaseNumber { get; protected set; }
-        public string CaseName { get; protected set; }
+        public Guid HearingRefId { get; private set; }
+        public string CaseType { get; private set; }
+        public DateTime ScheduledDateTime { get; private set; }
+        public DateTime? ClosedDateTime { get; private set; }
+        public string CaseNumber { get; private set; }
+        public string CaseName { get; private set; }
         protected virtual MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
         public ConferenceState State { get; private set; }
-        public virtual IList<Participant> Participants { get; private set; }
-        public virtual IList<ConferenceStatus> ConferenceStatuses { get; private set; }
-        public virtual IList<Task> Tasks { get; private set; }
+        public virtual IList<Participant> Participants { get; }
+        public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
+        public virtual IList<Task> Tasks { get; }
+        public string HearingVenueName { get; private set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
@@ -132,13 +134,14 @@ namespace VideoApi.Domain
         }
 
         public void UpdateConferenceDetails(string caseType, string caseNumber, string caseName,
-            int scheduledDuration, DateTime scheduledDateTime)
+            int scheduledDuration, DateTime scheduledDateTime, string hearingVenueName)
         {
             CaseName = caseName;
             CaseNumber = caseNumber;
             CaseType = caseType;
             ScheduledDateTime = scheduledDateTime;
             ScheduledDuration = scheduledDuration;
+            HearingVenueName = hearingVenueName;
         }
 
         public RoomType GetAvailableConsultationRoom()

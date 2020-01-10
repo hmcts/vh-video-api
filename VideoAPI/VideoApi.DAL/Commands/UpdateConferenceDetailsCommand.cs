@@ -16,9 +16,10 @@ namespace VideoApi.DAL.Commands
         public string CaseNumber { get; }
         public string CaseName { get; }
         public int ScheduledDuration { get; }
+        public string HearingVenueName { get; }
 
-        public UpdateConferenceDetailsCommand(Guid hearingRefId, string caseNumber, string caseType, 
-            string caseName, int duration, DateTime scheduledDateTime)
+        public UpdateConferenceDetailsCommand(Guid hearingRefId, string caseNumber, string caseType,
+            string caseName, int duration, DateTime scheduledDateTime, string hearingVenueName)
         {
             HearingRefId = hearingRefId;
             CaseNumber = caseNumber;
@@ -26,6 +27,7 @@ namespace VideoApi.DAL.Commands
             CaseName = caseName;
             ScheduledDuration = duration;
             ScheduledDateTime = scheduledDateTime;
+            HearingVenueName = hearingVenueName;
         }
     }
 
@@ -51,7 +53,8 @@ namespace VideoApi.DAL.Commands
             }
 
             conference.UpdateConferenceDetails(command.CaseType, command.CaseNumber, command.CaseName,
-                command.ScheduledDuration, command.ScheduledDateTime);
+                command.ScheduledDuration, command.ScheduledDateTime, command.HearingVenueName);
+            
             await _context.SaveChangesAsync();
         }
     }

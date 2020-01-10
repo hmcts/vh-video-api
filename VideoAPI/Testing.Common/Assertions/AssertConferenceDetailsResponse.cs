@@ -20,6 +20,7 @@ namespace Testing.Common.Assertions
             conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.CurrentStatus.Should().NotBeNull();
+            conference.HearingVenueName.Should().NotBeNull();
 
             foreach (var participant in conference.Participants)
             {

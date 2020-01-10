@@ -32,7 +32,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var caseNumber = $"{GenerateRandom.CaseNumber(new Random())}";
             const string caseName = "Video Api Integration Test";
             const int scheduledDuration = 120;
-            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, scheduledDuration);
+            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, 
+                scheduledDuration, "MyVenue");
         }
         
         public ConferenceBuilder WithParticipants(int numberOfParticipants)

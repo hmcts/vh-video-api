@@ -10,5 +10,6 @@ namespace VideoApi.Contract.Requests
         public string CaseNumber { get; set; }
         public string CaseName { get; set; }
         public int ScheduledDuration { get; set; }
+        public string HearingVenueName { get; set; }
     }
 }
