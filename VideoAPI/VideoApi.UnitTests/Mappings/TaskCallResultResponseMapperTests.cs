@@ -3,7 +3,6 @@ using NUnit.Framework;
 using Video.API.Mappings;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 
 namespace VideoApi.UnitTests.Mappings
 {

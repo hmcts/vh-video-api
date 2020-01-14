@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using Task = VideoApi.Domain.Task;
-using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.DAL.Queries
 {

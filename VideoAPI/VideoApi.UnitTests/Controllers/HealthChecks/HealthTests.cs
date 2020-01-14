@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Net;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -12,7 +11,6 @@ using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
 

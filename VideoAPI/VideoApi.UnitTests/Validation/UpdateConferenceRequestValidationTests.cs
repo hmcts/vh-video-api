@@ -6,7 +6,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using Video.API.Validations;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Validation
 {

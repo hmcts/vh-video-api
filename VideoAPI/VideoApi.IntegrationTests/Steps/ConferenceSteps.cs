@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Faker;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using TechTalk.SpecFlow;

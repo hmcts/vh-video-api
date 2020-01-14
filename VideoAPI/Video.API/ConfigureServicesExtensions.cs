@@ -8,6 +8,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -37,27 +38,25 @@ namespace Video.API
             var contractsXmlFile = $"{typeof(BookNewConferenceRequest).Assembly.GetName().Name}.xml";
             var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, contractsXmlFile);
 
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "Video API", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Video API", Version = "v1"});
                 c.AddFluentValidationRules();
                 c.IncludeXmlComments(xmlPath);
                 c.IncludeXmlComments(contractsXmlPath);
                 c.EnableAnnotations();
-                c.AddSecurityDefinition("Bearer",
-                    new ApiKeyScheme
-                    {
-                        In = "header", Description = "Please enter JWT with Bearer into field", Name = "Authorization",
-                        Type = "apiKey"
-                    });
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
-                    {"Bearer", Enumerable.Empty<string>()},
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.OAuth2
                 });
                 c.OperationFilter<AuthResponsesOperationFilter>();
-                c.SchemaFilter<EnumSchemaFilter>();
             });
-
+            services.AddSwaggerGenNewtonsoftSupport();
             return services;
         }
 
@@ -92,9 +91,9 @@ namespace Video.API
             else
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
-                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>()
-                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>()
-                    .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration));
+                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>(httpClient =>
+                        BuildKinlyClient(httpClient, servicesConfiguration))
+                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
             }
             
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
@@ -176,12 +175,12 @@ namespace Video.API
             };
 
             serviceCollection.AddMvc()
-                .AddJsonOptions(options => {
+                .AddNewtonsoftJson(options =>
+                {
                     options.SerializerSettings.ContractResolver = contractResolver;
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                })
-                .AddJsonOptions(options =>
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                });
 
             return serviceCollection;
         }

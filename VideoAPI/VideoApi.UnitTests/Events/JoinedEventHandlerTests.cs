@@ -22,8 +22,7 @@ namespace VideoApi.UnitTests.Events
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
-
+            
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Joined,
@@ -55,8 +54,7 @@ namespace VideoApi.UnitTests.Events
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
-
+            
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Joined,
