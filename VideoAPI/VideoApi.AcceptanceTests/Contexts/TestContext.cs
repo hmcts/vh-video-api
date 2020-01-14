@@ -4,13 +4,11 @@ using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using RestSharp;
 using Testing.Common.Configuration;
-using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain;
 
 namespace VideoApi.AcceptanceTests.Contexts
 {

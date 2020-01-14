@@ -43,7 +43,9 @@ namespace VideoApi.DAL.Commands
             foreach (var participant in command.Participants)
             {
                 conference.AddParticipant(participant);
+                _context.Entry(participant).State = EntityState.Added;
             }
+            
             await _context.SaveChangesAsync();
         }
     }

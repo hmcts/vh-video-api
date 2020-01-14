@@ -33,7 +33,7 @@ namespace VideoApi.DAL.Queries
             return await _context.Conferences
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses")
-                .Where(x => x.GetCurrentStatus() != ConferenceState.Closed)
+                .Where(x => x.State != ConferenceState.Closed)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.HearingRefId == query.HearingRefId);
         }

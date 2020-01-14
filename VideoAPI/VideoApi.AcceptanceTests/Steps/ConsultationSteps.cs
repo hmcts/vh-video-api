@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using FluentAssertions;
-using TechTalk.SpecFlow;
-using Testing.Common.Assertions;
+﻿using TechTalk.SpecFlow;
 using Testing.Common.Helper;
-using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
-using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.AcceptanceTests.Steps
