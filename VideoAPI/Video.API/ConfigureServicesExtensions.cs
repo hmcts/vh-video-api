@@ -52,7 +52,7 @@ namespace Video.API
                     In = ParameterLocation.Header,
                     Description = "Please enter JWT with Bearer into field",
                     Name = "Authorization",
-                    Type = SecuritySchemeType.OAuth2
+                    Type = SecuritySchemeType.ApiKey
                 });
                 c.OperationFilter<AuthResponsesOperationFilter>();
             });
