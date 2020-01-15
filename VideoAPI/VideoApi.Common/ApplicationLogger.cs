@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Newtonsoft.Json;
 
 namespace VideoApi.Common
@@ -12,7 +13,13 @@ namespace VideoApi.Common
     /// </summary>
     public static class ApplicationLogger
     {
-        private static readonly TelemetryClient TelemetryClient = new TelemetryClient();
+        private static readonly TelemetryClient TelemetryClient = InitTelemetryClient();
+        
+        private static TelemetryClient InitTelemetryClient() {
+            var config = TelemetryConfiguration.CreateDefault();
+            var client = new TelemetryClient(config);
+            return client;
+        }
 
         public static void Trace(string traceCategory, string eventTitle, string information)
         {
