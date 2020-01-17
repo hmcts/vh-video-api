@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace Video.API
@@ -16,10 +17,11 @@ namespace Video.API
 
         private static IHostBuilder CreateWebHostBuilder(string[] args)
         {
-           return Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { 
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder => {
+                    webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+                    webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseKestrel(x => x.AddServerHeader = false);
                 });
         }
     }
