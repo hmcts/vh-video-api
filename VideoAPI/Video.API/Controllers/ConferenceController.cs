@@ -241,17 +241,17 @@ namespace Video.API.Controllers
         /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
         /// <returns>Conference summary details</returns>
         [HttpGet("fromdate")]
-        [SwaggerOperation(OperationId = "GetOpenConferencesByScheduledDate")]
-        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetOpenConferencesByScheduledDate([FromQuery] DateTime scheduledDate)
+        [SwaggerOperation(OperationId = "GetExpiredOpenConferences")]
+        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetExpiredOpenConferences([FromQuery] DateTime scheduledDate)
         {
-            _logger.LogDebug("GetOpenConferencesByScheduledDate");
+            _logger.LogDebug("GetExpiredOpenConferences");
             
-            var query = new GetOpenConferencesByDateTimeQuery(scheduledDate);
-            var conferences = await _queryHandler.Handle<GetOpenConferencesByDateTimeQuery, List<Conference>>(query);
+            var query = new GetExpiredUnclosedConferencesQuery();
+            var conferences = await _queryHandler.Handle<GetExpiredUnclosedConferencesQuery, List<Conference>>(query);
 
-            var mapper = new ConferenceToSummaryResponseMapper();
-            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            var mapper = new ConferenceToExpiredConferenceMapper();
+            var response = conferences.Select(mapper.MapConferenceToExpiredResponse);
             
             return Ok(response);
         }

@@ -49,7 +49,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var today = DateTime.Today.AddHours(10);
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
-            var yesterday = DateTime.Today.AddDays(1).AddHours(10);
+            var yesterday = DateTime.Today.AddDays(-1).AddHours(10);
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
