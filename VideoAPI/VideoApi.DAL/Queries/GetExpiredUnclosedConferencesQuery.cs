@@ -28,13 +28,8 @@ namespace VideoApi.DAL.Queries
         public async Task<List<Conference>> Handle(GetExpiredUnclosedConferencesQuery query)
         {
             return await _context.Conferences
-                .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses")
-                .Include("Tasks").AsNoTracking()
                 .Where(x => x.ScheduledDateTime.AddHours(14) <= DateTime.UtcNow
                             && x.State < ConferenceState.Closed)
-                // .Where(x => x.ScheduledDateTime <= query.ScheduledDateTime
-                //     && x.State < ConferenceState.Closed)
                 .OrderBy(x => x.ScheduledDateTime)
                 .AsNoTracking()
                 .ToListAsync();
