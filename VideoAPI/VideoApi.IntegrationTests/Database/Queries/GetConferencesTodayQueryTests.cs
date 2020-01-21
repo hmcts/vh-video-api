@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
@@ -52,7 +49,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var today = DateTime.Today.AddHours(10);
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
-            var yesterday = DateTime.Today.AddDays(1).AddHours(10);
+            var yesterday = DateTime.Today.AddDays(-1).AddHours(10);
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)

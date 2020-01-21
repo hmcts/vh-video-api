@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Microsoft.AspNetCore.SignalR;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;

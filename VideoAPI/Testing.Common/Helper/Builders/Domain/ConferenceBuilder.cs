@@ -49,6 +49,16 @@ namespace Testing.Common.Helper.Builders.Domain
             
             return this;
         }
+        
+        public ConferenceBuilder WithParticipants(IEnumerable<Participant> participants)
+        {
+            foreach (var participant in participants)
+            {
+                _conference.AddParticipant(participant);
+            }
+
+            return this;
+        }
 
         public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null)
         {
@@ -100,16 +110,6 @@ namespace Testing.Common.Helper.Builders.Domain
         public ConferenceBuilder WithTask(string body, TaskType taskType)
         {
             _conference.AddTask(_conference.Id, taskType, body);
-            return this;
-        }
-
-        public ConferenceBuilder WithParticipants(IEnumerable<Participant> participants)
-        {
-            foreach (var participant in participants)
-            {
-                _conference.AddParticipant(participant);
-            }
-
             return this;
         }
 

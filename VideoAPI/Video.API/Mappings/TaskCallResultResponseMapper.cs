@@ -1,6 +1,5 @@
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
-using VideoApi.Domain.Validations;
 
 namespace Video.API.Mappings
 {

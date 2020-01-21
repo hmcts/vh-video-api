@@ -44,7 +44,7 @@ namespace VideoApi.DAL.Commands
         {
             var conference = await _context.Conferences
                 .Include("ConferenceStatuses")
-                .Where(x => x.GetCurrentStatus() != ConferenceState.Closed)
+                .Where(x => x.State != ConferenceState.Closed)
                 .SingleOrDefaultAsync(x => x.HearingRefId == command.HearingRefId);
 
             if (conference == null)

@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using VideoApi.DAL.Commands;
@@ -21,7 +20,7 @@ namespace VideoApi.UnitTests.Events
                 ServiceBusQueueClient);
 
             var conference = TestConference;
-            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
+            
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Pause,

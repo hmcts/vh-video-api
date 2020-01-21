@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using VideoApi.Contract.Responses;
-using VideoApi.DAL.Mappings;
 using VideoApi.Domain;
 
 namespace Video.API.Mappings

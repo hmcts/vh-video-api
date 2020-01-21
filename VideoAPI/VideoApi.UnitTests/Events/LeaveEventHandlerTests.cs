@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using VideoApi.DAL.Commands;
@@ -23,8 +22,7 @@ namespace VideoApi.UnitTests.Events
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
-
+            
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Leave,

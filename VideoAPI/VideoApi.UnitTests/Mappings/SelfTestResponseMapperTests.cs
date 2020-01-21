@@ -1,8 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Video.API.Mappings;
 using VideoApi.Common.Configuration;
 

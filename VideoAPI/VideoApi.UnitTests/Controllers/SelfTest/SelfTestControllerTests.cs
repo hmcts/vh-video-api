@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using System.Net;
-using System.Threading.Tasks;
 using Video.API.Controllers;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
@@ -16,7 +15,6 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
     {
         private SelfTestController _controller;
         private Mock<ILogger<SelfTestController>> _mockLogger;
-        // private Mock<IOptions<ServicesConfiguration>> _servicesConfiguration;
         private ServicesConfiguration _servicesConfiguration;
 
 

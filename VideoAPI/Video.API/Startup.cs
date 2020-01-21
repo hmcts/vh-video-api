@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Video.API.Extensions;
 using Video.API.ValidationMiddleware;
@@ -32,6 +33,8 @@ namespace Video.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers()
+                .AddNewtonsoftJson();
             services.AddSwagger();
             services.AddCors(options => options.AddPolicy("CorsPolicy",
                 builder =>
@@ -52,7 +55,7 @@ namespace Video.API
             RegisterAuth(services);
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
 
-            services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
 
@@ -94,7 +97,7 @@ namespace Video.API
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.RunLatestMigrations();
 
@@ -115,13 +118,18 @@ namespace Video.API
                 app.UseHttpsRedirection();
             }
 
+            app.UseRouting();
+            
+            app.UseAuthorization();
+            
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
+            
+            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
+            
 
             app.UseMiddleware<LogResponseBodyMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
-
-            app.UseMvc();
         }
 
         private static void AddPolicies(AuthorizationOptions options)

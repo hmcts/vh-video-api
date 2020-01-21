@@ -4,7 +4,7 @@
         "VideoApi": {
             "commandName": "Project",
             "launchBrowser": false,
-            "launchUrl": "swagger/",
+            "launchUrl": "swagger",
             "applicationUrl": "https://localhost:59390;http://localhost:59391",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development"

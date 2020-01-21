@@ -32,7 +32,9 @@ namespace VideoApi.DAL.Queries
 
         public async Task<Conference> Handle(CheckConferenceOpenQuery query)
         {
-            return await _context.Conferences.SingleOrDefaultAsync(x =>
+            return await _context.Conferences
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x =>
                 x.ScheduledDateTime == query.ScheduledDateTime
                 && x.CaseName == query.CaseName
                 && x.CaseNumber == query.CaseNumber

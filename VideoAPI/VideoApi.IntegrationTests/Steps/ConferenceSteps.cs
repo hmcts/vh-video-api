@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Faker;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
@@ -253,16 +252,15 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"a list without the closed conferences is retrieved")]
         public async Task ThenAListWithoutTheClosedConferencesIsRetrieved()
         {
-            var conferencesIds = (await GetResponses<List<ConferenceSummaryResponse>>()).Select(x => x.Id);
+            var conferencesIds = (await GetResponses<List<ExpiredConferencesResponse>>()).Select(x => x.Id);
             conferencesIds.Should().NotContain(_conferenceTestContext.SeededConferences);
         }
         
         [Then(@"the responses list should not contain closed conferences")]
         public async Task ThenTheResponsesListShouldNotContainClosedConferences()
         {
-            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
+            var conferences = await GetResponses<List<ExpiredConferencesResponse>>();
             conferences.Should().NotBeEmpty();
-            conferences.Should().OnlyContain(response => response.Status != ConferenceState.Closed);
         }
 
         [When(@"I save the conference details")]

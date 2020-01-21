@@ -66,3 +66,4 @@ jobs:
     secretsFilter: $(secretsFilter),
     infraKeyVaultName: $(infraKeyVaultName)
     infraSecretsFilter: $(infraSecretsFilter)
+    dotNetCoreVersion: '3.1.100'

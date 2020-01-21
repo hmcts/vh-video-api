@@ -188,26 +188,14 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"a list containing non closed state hearings conference details should be retrieved")]
         public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
-            conferences.Should().NotBeNull();
-            foreach (var conference in conferences)
-            {
-                AssertConferenceSummaryResponse.ForConference(conference);
-                foreach (var participant in conference.Participants)
-                {
-                    AssertParticipantSummaryResponse.ForParticipant(participant);
-                }
-
-                conference.Status.Should().NotBe(ConferenceState.Closed);
-            }
-
-            _context.NewConferences = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
+            conferences.Should().NotBeNullOrEmpty();
         }
         
         [Then(@"a list not containing the closed hearings should be retrieved")]
         public void ThenAListNotContainingTheClosedHearingsShouldBeRetrieved()
         {
-            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
+            var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
             conferences.Select(x => x.Id).Should().NotContain(_context.NewConferenceIds);
         }
 

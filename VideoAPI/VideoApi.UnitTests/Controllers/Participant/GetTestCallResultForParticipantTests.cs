@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Video.API.Controllers;
-using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;

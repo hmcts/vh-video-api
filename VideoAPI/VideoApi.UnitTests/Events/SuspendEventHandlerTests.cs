@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Events
                 ServiceBusQueueClient);
 
             var conference = TestConference;
-            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
+            
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Pause,
@@ -51,7 +51,7 @@ namespace VideoApi.UnitTests.Events
                 ServiceBusQueueClient);
 
             var conference = TestConference;
-            var participantCount = conference.GetParticipants().Count + 1; // plus one for admin
+            
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Pause,
