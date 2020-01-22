@@ -52,7 +52,7 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
-        public Task DeleteVirtualCourtRoomAsync(string virtualCourtroomId)
+        public Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
         {
             return Task.CompletedTask;
         }

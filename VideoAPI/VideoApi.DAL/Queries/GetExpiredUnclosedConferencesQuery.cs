@@ -11,9 +11,6 @@ namespace VideoApi.DAL.Queries
 {
     public class GetExpiredUnclosedConferencesQuery : IQuery
     {
-        public GetExpiredUnclosedConferencesQuery()
-        {
-        }
     }
 
     public class GetExpiredUnclosedConferencesHandler : IQueryHandler<GetExpiredUnclosedConferencesQuery, List<Conference>>

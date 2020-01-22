@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;

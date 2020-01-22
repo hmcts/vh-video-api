@@ -34,7 +34,6 @@ namespace VideoApi.Events.Handlers
 
         private async Task PublishLiveEventMessage()
         {
-            var conferenceEvent = ConferenceState.InSession;
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
             await CommandHandler.Handle(command);
         }

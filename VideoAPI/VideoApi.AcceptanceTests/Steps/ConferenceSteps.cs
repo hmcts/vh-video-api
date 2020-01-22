@@ -109,6 +109,13 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConference(DateTime.Today.AddDays(1));
             _context.NewConferenceIds.Add(_context.NewConferenceId);
         }
+        
+        [Given(@"I have a conference for yesterday")]
+        public void GivenIHaveAConferenceForYesterday()
+        {
+            CreateConference(DateTime.Today.AddDays(-1));
+            _context.NewConferenceIds.Add(_context.NewConferenceId);
+        }
 
         [Given(@"I have a get details for a conference request with a valid conference id")]
         public void GivenIHaveAGetDetailsForAConferenceRequestWithAValidConferenceId()
@@ -128,10 +135,10 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(_endpoints.GetConferencesToday);
         }
 
-        [Given(@"I have a get conferences by scheduled date request for date (.*)")]
-        public void GivenIHaveAGetConferencesByScheduledDateRequest(string scheduledDate)
+        [Given(@"I have a get expired conferences request")]
+        public void GivenIHaveAGetExpiredConferencesRequest()
         {
-            _context.Request = _context.Get(_endpoints.GetOpenConferencesByScheduledDate(scheduledDate));
+            _context.Request = _context.Get(_endpoints.GetExpiredOpenConferences);
         }
 
         [Given(@"I have a get details for a conference request by hearing id with a valid username")]
@@ -185,11 +192,11 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.NewConferences = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
         }
 
-        [Then(@"a list containing non closed state hearings conference details should be retrieved")]
+        [Then(@"I have an empty list of expired conferences")]
         public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
         {
             var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
-            conferences.Should().NotBeNullOrEmpty();
+            conferences.Should().NotContain(x => x.CurrentStatus == ConferenceState.Closed);
         }
         
         [Then(@"a list not containing the closed hearings should be retrieved")]

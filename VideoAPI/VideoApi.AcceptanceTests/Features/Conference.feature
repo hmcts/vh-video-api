@@ -54,22 +54,21 @@ Scenario: Get conference details by hearing id
     Then the response should have the status OK and success status True
     And the conference details should be retrieved
 
-  Scenario: Get open conferences by scheduled date
+  Scenario: Get expired conferences
     Given I have a conference
     And I have another conference
-    And I have a conference for tomorrow
     And I close the last created conference
-    And I have a get conferences by scheduled date request for date 9999-01-01
+    And I have a get expired conferences request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And a list containing non closed state hearings conference details should be retrieved
+    And I have an empty list of expired conferences
 
   Scenario: Close all conferences
     Given I have a conference
     And I have another conference
     And I have a conference for tomorrow
     And I close all conferences
-    And I have a get conferences by scheduled date request for date 9999-01-01
+    And I have a get expired conferences request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And a list not containing the closed hearings should be retrieved
