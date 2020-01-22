@@ -18,7 +18,6 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
@@ -73,10 +72,10 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
         
-        [Given(@"I send the request to the get open conferences endpoint for date (.*)")]
-        public void GivenIHaveAGetOpenConferencesRequest(string scheduledDate)
+        [Given(@"I send the request to the get expired conferences endpoint")]
+        public void GivenIHaveAGetExpiredConferencesRequest()
         {
-            ApiTestContext.Uri = _endpoints.GetOpenConferencesByScheduledDate(scheduledDate);
+            ApiTestContext.Uri = _endpoints.GetExpiredOpenConferences;
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
         

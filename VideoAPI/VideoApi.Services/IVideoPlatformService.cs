@@ -33,8 +33,8 @@ namespace VideoApi.Services
         /// <summary>
         /// Delete virtual court room
         /// </summary>
-        /// <param name="virtualCourtroomId">Hearing ID</param>
+        /// <param name="conferenceId">Conference Id</param>
         /// <returns></returns>
-        Task DeleteVirtualCourtRoomAsync(string virtualCourtroomId);
+        Task DeleteVirtualCourtRoomAsync(Guid conferenceId);
     }
 }

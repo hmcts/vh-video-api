@@ -175,9 +175,9 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task DeleteVirtualCourtRoomAsync(string virtualCourtroomId)
+        public async Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
         {
-            await _kinlyApiClient.DeleteHearingAsync(virtualCourtroomId).ConfigureAwait(false);
+            await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString()).ConfigureAwait(false);
         }
     }
 }

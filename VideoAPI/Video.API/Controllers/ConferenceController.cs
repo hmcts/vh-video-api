@@ -153,6 +153,7 @@ namespace Video.API.Controllers
             try
             {
                 await _commandHandler.Handle(removeConferenceCommand);
+                await SafelyRemoveCourtRoom(conferenceId);
             }
             catch (ConferenceNotFoundException)
             {
@@ -236,14 +237,14 @@ namespace Video.API.Controllers
         }
         
         /// <summary>
-        /// Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'
+        /// Get list of expired conferences 
         /// </summary>
-        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
         /// <returns>Conference summary details</returns>
-        [HttpGet("fromdate")]
+        
+        [HttpGet("expired")]
         [SwaggerOperation(OperationId = "GetExpiredOpenConferences")]
         [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetExpiredOpenConferences([FromQuery] DateTime scheduledDate)
+        public async Task<IActionResult> GetExpiredOpenConferences()
         {
             _logger.LogDebug("GetExpiredOpenConferences");
             
@@ -287,8 +288,17 @@ namespace Video.API.Controllers
             var command = new CloseConferenceCommand(conferenceId);
                 
             await _commandHandler.Handle(command);
-                
+            await SafelyRemoveCourtRoom(conferenceId);
             return NoContent();
+        }
+
+        private async Task SafelyRemoveCourtRoom(Guid conferenceId)
+        {
+            var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+            if (meetingRoom != null)
+            {
+                await _videoPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
+            }
         }
 
         private async Task BookKinlyMeetingRoom(Guid conferenceId)
@@ -335,7 +345,6 @@ namespace Video.API.Controllers
             await _commandHandler.Handle(createConferenceCommand);
             
             return createConferenceCommand.NewConferenceId;
-
         }
     }
 }
