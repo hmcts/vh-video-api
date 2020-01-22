@@ -196,7 +196,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
         {
             var conferences = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
-            conferences.Should().BeEmpty();
+            conferences.Should().NotContain(x => x.CurrentStatus == ConferenceState.Closed);
         }
         
         [Then(@"a list not containing the closed hearings should be retrieved")]

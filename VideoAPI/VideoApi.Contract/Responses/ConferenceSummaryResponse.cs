@@ -19,10 +19,4 @@ namespace VideoApi.Contract.Responses
         public Guid HearingRefId { get; set; }
         public string HearingVenueName { get; set;  }
     }
-
-    public class ExpiredConferencesResponse
-    {
-        public Guid Id { get; set; }
-        public Guid HearingRefId { get; set; }
-    }
 }
