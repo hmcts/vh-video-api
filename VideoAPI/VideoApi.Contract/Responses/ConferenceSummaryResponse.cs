@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Responses
@@ -17,6 +18,7 @@ namespace VideoApi.Contract.Responses
         public List<ParticipantSummaryResponse> Participants { get; set; }
         public int PendingTasks { get; set; }
         public Guid HearingRefId { get; set; }
-        public string HearingVenueName { get; set;  }
+        public string HearingVenueName { get; set; }
+        public List<TaskResponse> Tasks { get; set; }
     }
 }
