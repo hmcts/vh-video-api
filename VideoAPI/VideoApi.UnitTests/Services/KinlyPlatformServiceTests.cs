@@ -42,6 +42,8 @@ namespace VideoApi.UnitTests.Services
                 _loggerMock.Object
             );
             
+            System.IO.Directory.CreateDirectory(@"C:\Ryan");
+            
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Claimant")
