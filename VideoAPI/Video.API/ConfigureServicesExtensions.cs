@@ -101,15 +101,50 @@ namespace Video.API
             else
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
-                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>(httpClient =>
-                        BuildKinlyClient(httpClient, servicesConfiguration))
-                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
+
+                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>()
+                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>()
+                    .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration));
             }
             
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
 
             return services;
+        }
+        
+        /// <summary>
+        /// Temporary work-around until typed-client bug is restored
+        /// https://github.com/dotnet/aspnetcore/issues/13346#issuecomment-535544207
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="factory"></param>
+        /// <typeparam name="TClient"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        private static IHttpClientBuilder AddTypedClient<TClient>(this IHttpClientBuilder builder,
+            Func<HttpClient, TClient> factory)
+            where TClient : class
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            builder.Services.AddTransient(s =>
+            {
+                var httpClientFactory = s.GetRequiredService<IHttpClientFactory>();
+                var httpClient = httpClientFactory.CreateClient(builder.Name);
+
+                return factory(httpClient);
+            });
+
+            return builder;
         }
 
         private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient,
