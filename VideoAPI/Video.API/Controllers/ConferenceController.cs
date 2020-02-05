@@ -292,6 +292,34 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Get all the chat messages for a conference
+        /// </summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Chat messages</returns>
+        [HttpGet("{conferenceId}/messages")]
+        [SwaggerOperation(OperationId = "GetMessages")]
+        [ProducesResponseType(typeof(List<MessageResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetMessages(Guid conferenceId)
+        {
+            _logger.LogDebug("GetMessages");
+            var query = new GetMessagesForConferenceQuery(conferenceId);
+            try
+            {
+                var messages = await _queryHandler.Handle<GetMessagesForConferenceQuery, List<Message>>(query);
+                var mapper = new MessageToResponseMapper();
+                var response = messages.Select(mapper.MapMessageToResponse);
+                return Ok(response);
+            }
+            catch (ConferenceNotFoundException)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+        }
+
         private async Task SafelyRemoveCourtRoom(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
