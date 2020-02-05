@@ -16,6 +16,7 @@ namespace VideoApi.Domain.Enums
         ParticipantJoining,
         SelfTestFailed,
         Suspend,
-        VhoCall
+        VhoCall,
+        JudgeUnavailable
     }
 }
