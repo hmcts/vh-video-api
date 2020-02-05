@@ -41,6 +41,8 @@ namespace VideoApi.DAL
                     }
                 }
             }
+            modelBuilder.Entity<Message>()
+                .HasIndex(m => m.TimeStamp);
         }
         
         public override int SaveChanges()

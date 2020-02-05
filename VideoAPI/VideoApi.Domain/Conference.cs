@@ -40,6 +40,7 @@ namespace VideoApi.Domain
         public virtual IList<Participant> Participants { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
         public virtual IList<Task> Tasks { get; }
+        public virtual IList<Message> Messages { get; }
         public string HearingVenueName { get; private set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
