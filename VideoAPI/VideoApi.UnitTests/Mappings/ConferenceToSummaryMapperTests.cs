@@ -31,6 +31,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.Participants)
                 .Excluding(x => x.ConferenceStatuses)
                 .Excluding(x => x.State)
+                .Excluding(x => x.Messages)
             );
             response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus());
             response.PendingTasks.Should().Be(conference.GetTasks().Count(x => x.Status == TaskStatus.ToDo));

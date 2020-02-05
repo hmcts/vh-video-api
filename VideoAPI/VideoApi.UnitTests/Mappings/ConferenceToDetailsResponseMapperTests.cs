@@ -28,6 +28,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.ConferenceStatuses)
                 .Excluding(x => x.State)
                 .Excluding(x => x.Tasks)
+                .Excluding(x => x.Messages)
             );
 
             response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus());
