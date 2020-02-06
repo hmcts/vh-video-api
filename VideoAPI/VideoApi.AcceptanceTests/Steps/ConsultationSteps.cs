@@ -20,9 +20,9 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid request private consultation request")]
         public void GivenIHaveAValidRequestPrivateConsultationRequest()
         {
-
             var individual = _context.NewConference.Participants.Find(x => x.UserRole.Equals(UserRole.Individual)).Id;
-            var representative = _context.NewConference.Participants.Find(x => x.UserRole.Equals(UserRole.Representative)).Id;
+            var representative = _context.NewConference.Participants
+                .Find(x => x.UserRole.Equals(UserRole.Representative)).Id;
 
             var request = new ConsultationRequest()
             {
@@ -33,6 +33,5 @@ namespace VideoApi.AcceptanceTests.Steps
             };
             _context.Request = _context.Post(_endpoints.HandleConsultationRequest, request);
         }
-
     }
 }
