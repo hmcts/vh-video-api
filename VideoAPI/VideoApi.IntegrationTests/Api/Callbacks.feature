@@ -35,5 +35,6 @@ Feature: Callbacks
     | Close                 |
     | Leave                 |
     | JudgeAvailable        |
+    | JudgeUnavailable      |
     | MediaPermissionDenied |
     | ParticipantJoining    |
