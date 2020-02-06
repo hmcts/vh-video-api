@@ -16,6 +16,7 @@ namespace VideoApi.Domain
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
             Tasks = new List<Task>();
+            Messages = new List<Message>();
             MeetingRoom = new MeetingRoom();
 
             HearingRefId = hearingRefId;
@@ -175,6 +176,16 @@ namespace VideoApi.Domain
         public Participant GetVideoHearingOfficer()
         {
             return Participants.SingleOrDefault(x => x.IsVideoHearingOfficer());
+        }
+
+        public IList<Message> GetMessages()
+        {
+            return Messages.OrderByDescending(x => x.TimeStamp).ToList();
+        }
+        public void AddMessage(string from, string to, string messageText)
+        {
+            var message = new Message(from, to, messageText);
+            Messages.Add(message);
         }
     }
 }

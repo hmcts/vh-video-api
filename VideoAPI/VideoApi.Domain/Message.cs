@@ -5,8 +5,11 @@ namespace VideoApi.Domain
 {
     public class Message : Entity<long>
     {
-        public Message()
+        public Message(string from, string to, string messageText)
         {
+            From = from;
+            To = to;
+            MessageText = messageText;
             TimeStamp = DateTime.UtcNow;
         }
         public string From { get; set; }

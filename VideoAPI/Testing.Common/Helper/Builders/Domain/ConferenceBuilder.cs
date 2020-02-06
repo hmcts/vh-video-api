@@ -132,5 +132,18 @@ namespace Testing.Common.Helper.Builders.Domain
             _conference.UpdateConferenceStatus(conferenceState);
             return this;
         }
+
+        public ConferenceBuilder WithMessages(int numberOfMessages)
+        {
+            var messages = new Builder(_builderSettings).CreateListOfSize<Message>(numberOfMessages).All().WithFactory(() =>
+                new Message(Internet.Email(), Internet.Email(), Internet.DomainWord())).Build();
+
+            foreach (var message in messages)
+            {
+                _conference.AddMessage(message.From, message.To, message.MessageText);
+            }
+
+            return this;
+        }
     }
 }
