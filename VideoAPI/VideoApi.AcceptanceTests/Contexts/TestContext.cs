@@ -45,7 +45,10 @@ namespace VideoApi.AcceptanceTests.Contexts
             return client;
         }
 
-        public RestRequest Get(string path) => new RestRequest(path, Method.GET);
+        public RestRequest Get(string path)
+        {
+            return new RestRequest(path, Method.GET);
+        }
 
         public RestRequest Post(string path, object requestBody)
         {
@@ -55,7 +58,10 @@ namespace VideoApi.AcceptanceTests.Contexts
             return request;
         }
 
-        public RestRequest Delete(string path) => new RestRequest(path, Method.DELETE);
+        public RestRequest Delete(string path)
+        {
+            return new RestRequest(path, Method.DELETE);
+        }
 
         public RestRequest Put(string path, object requestBody)
         {
@@ -79,6 +85,5 @@ namespace VideoApi.AcceptanceTests.Contexts
                 TestSettings.TestClientId, TestSettings.TestClientSecret,
                 AzureAdConfiguration.Value.VhVideoApiResourceId);
         }
-
     }
 }

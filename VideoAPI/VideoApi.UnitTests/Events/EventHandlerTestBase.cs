@@ -36,6 +36,9 @@ namespace VideoApi.UnitTests.Events
                 new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                     ServiceBusQueueClient),
+                new JudgeUnavailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                    ServiceBusQueueClient),
+
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
