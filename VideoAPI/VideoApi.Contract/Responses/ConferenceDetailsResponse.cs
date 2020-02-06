@@ -67,7 +67,7 @@ namespace VideoApi.Contract.Responses
         public string HearingVenueName { get; set;  }
 
         /// <summary>
-        /// List of participants in conference
+        /// List of chat messages
         /// </summary>
         public List<MessageResponse> Messages { get; set; }
 
