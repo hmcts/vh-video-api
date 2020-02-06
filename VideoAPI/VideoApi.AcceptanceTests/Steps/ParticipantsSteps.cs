@@ -32,7 +32,9 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAnAddParticipantToAValidConferenceRequest()
         {
             var request = new AddParticipantsToConferenceRequest
-                { Participants = new List<ParticipantRequest> { new ParticipantRequestBuilder(UserRole.Individual).Build() } };
+            {
+                Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}
+            };
             _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
             _context.Request = _context.Put(_endpoints.AddParticipantsToConference(_context.NewConferenceId), request);
         }
@@ -41,7 +43,8 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAnRemoveParticipantFromAValidConferenceRequest()
         {
             _scenarioContext.Add(ParticipantUsernameKey, _context.NewConference.Participants.Last().DisplayName);
-            _context.Request = _context.Delete(_endpoints.RemoveParticipantFromConference(_context.NewConferenceId, _context.NewConference.Participants.Last().Id));
+            _context.Request = _context.Delete(_endpoints.RemoveParticipantFromConference(_context.NewConferenceId,
+                _context.NewConference.Participants.Last().Id));
         }
 
         [Given(@"I have an update participant details request")]
@@ -55,7 +58,9 @@ namespace VideoApi.AcceptanceTests.Steps
                 Representee = $"Updated {participant.Representee}"
             };
             _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
-            _context.Request = _context.Patch(_endpoints.UpdateParticipantFromConference(_context.NewConferenceId, participant.Id), request);
+            _context.Request =
+                _context.Patch(_endpoints.UpdateParticipantFromConference(_context.NewConferenceId, participant.Id),
+                    request);
         }
 
         [Then(@"the participant is (.*)")]
@@ -65,17 +70,20 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(endpoints.GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
-            var conference = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference =
+                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
+                    _context.Response.Content);
             conference.Should().NotBeNull();
-            var exists = conference.Participants.Any(participant => participant.Username.ToLower().Equals(_scenarioContext.Get<string>(ParticipantUsernameKey).ToLower()));
+            var exists = conference.Participants.Any(participant =>
+                participant.Username.ToLower().Equals(_scenarioContext.Get<string>(ParticipantUsernameKey).ToLower()));
             if (state.Equals("added"))
             {
                 exists.Should().BeTrue();
-            } 
+            }
             else if (state.Equals("removed"))
             {
                 exists.Should().BeFalse();
-            } 
+            }
             else if (state.Equals("updated"))
             {
                 var participant = conference.Participants.First(x =>

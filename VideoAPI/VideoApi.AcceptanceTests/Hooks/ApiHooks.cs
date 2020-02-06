@@ -27,12 +27,12 @@ namespace VideoApi.AcceptanceTests.Hooks
                 .AddUserSecrets<Startup>();
 
             var configRoot = configRootBuilder.Build();
-            
+
             var azureAdConfigurationOptions =
                 Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
             var testSettingsOptions = Options.Create(configRoot.GetSection("Testing").Get<TestSettings>());
             var serviceSettingsOptions = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>());
-            
+
             context.CustomTokenSettings = configRoot.GetSection("CustomToken").Get<CustomTokenSettings>();
             context.AzureAdConfiguration = azureAdConfigurationOptions;
             context.TestSettings = testSettingsOptions.Value;
@@ -107,9 +107,7 @@ namespace VideoApi.AcceptanceTests.Hooks
         {
             if (context.NewConferenceIds.Count <= 0) return;
             foreach (var id in context.NewConferenceIds.Where(id => !id.Equals(context.NewConferenceId)))
-            {
                 RemoveConference(context, endpoints, id);
-            }
             context.NewConferences.Clear();
             context.NewConferenceIds.Clear();
             context.NewConferenceId = Guid.Empty;
