@@ -13,11 +13,11 @@ namespace VideoApi.DAL.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    From = table.Column<string>(nullable: true),
-                    To = table.Column<string>(nullable: true),
-                    MessageText = table.Column<string>(nullable: true),
+                    From = table.Column<string>(nullable: false),
+                    To = table.Column<string>(nullable: false),
+                    MessageText = table.Column<string>(nullable: false),
                     TimeStamp = table.Column<DateTime>(nullable: false),
-                    ConferenceId = table.Column<Guid>(nullable: true)
+                    ConferenceId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {

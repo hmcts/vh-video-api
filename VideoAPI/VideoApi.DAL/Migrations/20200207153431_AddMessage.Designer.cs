@@ -10,7 +10,7 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    [Migration("20200205131422_AddMessage")]
+    [Migration("20200207153431_AddMessage")]
     partial class AddMessage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,19 +128,22 @@ namespace VideoApi.DAL.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<Guid?>("ConferenceId")
+                    b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("From")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageText")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("To")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -321,7 +324,8 @@ namespace VideoApi.DAL.Migrations
                     b.HasOne("VideoApi.Domain.Conference", null)
                         .WithMany("Messages")
                         .HasForeignKey("ConferenceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
