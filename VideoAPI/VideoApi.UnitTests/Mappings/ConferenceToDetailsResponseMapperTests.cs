@@ -1,7 +1,9 @@
 using FluentAssertions;
+using FluentAssertions.Equivalency;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Mappings;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Mappings
@@ -29,7 +31,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.ConferenceStatuses)
                 .Excluding(x => x.State)
                 .Excluding(x => x.Tasks)
-            );
+                .Excluding(x => ExcludeIdFromMessage(x))
+             );
 
             response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus());
 
@@ -40,6 +43,18 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.TestCallResult)
                 .Excluding(x => x.CurrentRoom)
             );
+        }
+
+        bool ExcludeIdFromMessage1(IMemberInfo member)
+        {
+            return member.SelectedMemberInfo.DeclaringType.Equals(typeof(Message)) &&
+                member.SelectedMemberInfo.Name == "Id";
+        }
+
+        bool ExcludeIdFromMessage(IMemberInfo member)
+        {
+            bool test = member.SelectedMemberPath.Contains(nameof(Message)) && member.SelectedMemberInfo.Name.Contains("Id");
+            return test;
         }
     }
 }

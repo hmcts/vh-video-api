@@ -187,5 +187,10 @@ namespace VideoApi.Domain
             var message = new Message(from, to, messageText);
             Messages.Add(message);
         }
+
+        public void ClearMessages()
+        {
+            Messages.Clear();
+        }
     }
 }

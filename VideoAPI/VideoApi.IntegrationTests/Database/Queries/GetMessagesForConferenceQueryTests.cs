@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Faker;
 using FluentAssertions;
@@ -8,7 +8,6 @@ using VideoApi.DAL;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain.Enums;
-using Task = VideoApi.Domain.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {

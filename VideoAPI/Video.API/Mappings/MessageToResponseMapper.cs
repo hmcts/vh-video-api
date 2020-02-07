@@ -1,4 +1,4 @@
-﻿using VideoApi.Contract.Responses;
+using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 
 namespace Video.API.Mappings
@@ -9,7 +9,6 @@ namespace Video.API.Mappings
         {
             return new MessageResponse
             {
-                Id = message.Id,
                 From = message.From,
                 To = message.To,
                 MessageText = message.MessageText,
