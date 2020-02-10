@@ -16,6 +16,7 @@ namespace VideoApi.Domain
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
             Tasks = new List<Task>();
+            Messages = new List<Message>();
             MeetingRoom = new MeetingRoom();
 
             HearingRefId = hearingRefId;
@@ -40,6 +41,7 @@ namespace VideoApi.Domain
         public virtual IList<Participant> Participants { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
         public virtual IList<Task> Tasks { get; }
+        public virtual IList<Message> Messages { get; }
         public string HearingVenueName { get; private set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
@@ -174,6 +176,21 @@ namespace VideoApi.Domain
         public Participant GetVideoHearingOfficer()
         {
             return Participants.SingleOrDefault(x => x.IsVideoHearingOfficer());
+        }
+
+        public IList<Message> GetMessages()
+        {
+            return Messages.OrderByDescending(x => x.TimeStamp).ToList();
+        }
+        public void AddMessage(string from, string to, string messageText)
+        {
+            var message = new Message(from, to, messageText);
+            Messages.Add(message);
+        }
+
+        public void ClearMessages()
+        {
+            Messages.Clear();
         }
     }
 }
