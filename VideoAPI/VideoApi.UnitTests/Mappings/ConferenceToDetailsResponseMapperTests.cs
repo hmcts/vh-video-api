@@ -45,16 +45,10 @@ namespace VideoApi.UnitTests.Mappings
             );
         }
 
-        bool ExcludeIdFromMessage1(IMemberInfo member)
-        {
-            return member.SelectedMemberInfo.DeclaringType.Equals(typeof(Message)) &&
-                member.SelectedMemberInfo.Name == "Id";
-        }
-
+        
         bool ExcludeIdFromMessage(IMemberInfo member)
         {
-            bool test = member.SelectedMemberPath.Contains(nameof(Message)) && member.SelectedMemberInfo.Name.Contains("Id");
-            return test;
+            return member.SelectedMemberPath.Contains(nameof(Message)) && member.SelectedMemberInfo.Name.Contains("Id");
         }
     }
 }
