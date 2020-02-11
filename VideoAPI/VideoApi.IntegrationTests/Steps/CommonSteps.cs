@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
+using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
@@ -145,6 +146,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             ApiTestContext.ResponseMessage.StatusCode.Should().Be(statusCode);
             ApiTestContext.ResponseMessage.IsSuccessStatusCode.Should().Be(isSuccess);
+            ZAP.Scan(ApiTestContext.RequestUrl);
             TestContext.WriteLine($"Status Code: {ApiTestContext.ResponseMessage.StatusCode}");
         }
 
@@ -155,6 +157,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var messageString = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
             messageString.Should().Contain(errorMessage);
+            ZAP.Scan(ApiTestContext.RequestUrl);
         }
     }
 }
