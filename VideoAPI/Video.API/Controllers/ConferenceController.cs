@@ -320,7 +320,35 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task SafelyRemoveCourtRoom(Guid conferenceId)
+        /// <summary>
+        /// Saves chat message exchanged between participants
+        /// </summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <param name="request">Details of the chat message</param>
+        /// <returns>OK if the message is saved successfully</returns>
+        [HttpPost("{conferenceId}/message")]
+        [SwaggerOperation(OperationId = "SaveMessage")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SaveMessage(Guid conferenceId, AddMessageRequest request)
+        {
+            _logger.LogInformation($"Saving chat message from {request.From} to {request.To} for conference {conferenceId}");
+            
+            try
+            {
+                var command = new AddMessageCommand(conferenceId, request.From, request.To, request.MessageText);
+                await _commandHandler.Handle(command);
+
+                return Ok("Message saved");
+            }
+            catch (ConferenceNotFoundException)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+        }
+    
+    private async Task SafelyRemoveCourtRoom(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             if (meetingRoom != null)
