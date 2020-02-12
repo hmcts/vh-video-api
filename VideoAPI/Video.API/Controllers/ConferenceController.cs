@@ -291,64 +291,8 @@ namespace Video.API.Controllers
             await SafelyRemoveCourtRoom(conferenceId);
             return NoContent();
         }
-
-        /// <summary>
-        /// Get all the chat messages for a conference
-        /// </summary>
-        /// <param name="conferenceId">Id of the conference</param>
-        /// <returns>Chat messages</returns>
-        [HttpGet("{conferenceId}/messages")]
-        [SwaggerOperation(OperationId = "GetMessages")]
-        [ProducesResponseType(typeof(List<MessageResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetMessages(Guid conferenceId)
-        {
-            _logger.LogDebug("GetMessages");
-            var query = new GetMessagesForConferenceQuery(conferenceId);
-            try
-            {
-                var messages = await _queryHandler.Handle<GetMessagesForConferenceQuery, List<Message>>(query);
-                var mapper = new MessageToResponseMapper();
-                var response = messages.Select(mapper.MapMessageToResponse);
-                return Ok(response);
-            }
-            catch (ConferenceNotFoundException)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-        }
-
-        /// <summary>
-        /// Saves chat message exchanged between participants
-        /// </summary>
-        /// <param name="conferenceId">Id of the conference</param>
-        /// <param name="request">Details of the chat message</param>
-        /// <returns>OK if the message is saved successfully</returns>
-        [HttpPost("{conferenceId}/message")]
-        [SwaggerOperation(OperationId = "SaveMessage")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SaveMessage(Guid conferenceId, AddMessageRequest request)
-        {
-            _logger.LogInformation($"Saving chat message from {request.From} to {request.To} for conference {conferenceId}");
-            
-            try
-            {
-                var command = new AddMessageCommand(conferenceId, request.From, request.To, request.MessageText);
-                await _commandHandler.Handle(command);
-
-                return Ok("Message saved");
-            }
-            catch (ConferenceNotFoundException)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-        }
     
-    private async Task SafelyRemoveCourtRoom(Guid conferenceId)
+        private async Task SafelyRemoveCourtRoom(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             if (meetingRoom != null)
