@@ -38,7 +38,7 @@ Configure or note the port under which ZAP is run from Tools > options > Local P
 Install Certificate by going to Tools>Options>Dynamic SSL Certificate. Click Generate and then click Save.
 Save the certificate in the desired location. Open your browser and install the Certificate to your browser (Firefox, Chrome, IE) accordingly
 
-Update ZAPConfiguration parameters on User Secrets with the values observed above ApiAddress, ApiPort, ApiKey
+Update ZAPConfiguration parameters on with the values observed above ApiAddress, ApiPort, ApiKey (User Secrets)
 
 Update WorkingDirectory with location under which ZAP.exe is installed
 

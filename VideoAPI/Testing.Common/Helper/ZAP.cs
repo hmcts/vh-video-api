@@ -19,6 +19,7 @@ namespace Testing.Common.Helper
             get
             {
                 return new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json")
                     .AddUserSecrets("9AECE566-336D-4D16-88FA-7A76C27321CD")
                     .Build()
                     .GetSection("ZAPConfiguration")
@@ -67,7 +68,6 @@ namespace Testing.Common.Helper
                 }
                 catch
                 {
-                    //Seems like ZAP did not start yet, Sleeping for 2 seconds;
                     Thread.Sleep(2000);
                 } 
             }
@@ -104,7 +104,6 @@ namespace Testing.Common.Helper
             {
                 Sleep(1000);
                 spiderProgress = int.Parse(((ApiResponseElement)_api.spider.status(scanid)).Value);
-                //Console.WriteLine("Spider progress: {0}%", spiderProgress);
                 if (spiderProgress >= 100)
                     break;
             }
@@ -126,11 +125,9 @@ namespace Testing.Common.Helper
             {
                 Sleep(5000);
                 activeScannerprogress = int.Parse(((ApiResponseElement)_api.ascan.status(activeScanId)).Value);
-                //Console.WriteLine("Active scanner progress: {0}%", activeScannerprogress);
                 if (activeScannerprogress >= 100)
                     break;
             }
-            Console.WriteLine("Active scanner complete");
         }
 
 
@@ -139,7 +136,6 @@ namespace Testing.Common.Helper
             do
             {
                 Thread.Sleep(milliseconds);
-                //Console.WriteLine("...zz" + Environment.NewLine);
                 milliseconds = milliseconds - 2000;
             } while (milliseconds > 2000);
         }
