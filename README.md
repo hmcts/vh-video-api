@@ -26,3 +26,23 @@ Under the unit test project directory
 ``` bash
 dotnet reportgenerator "-reports:../Artifacts/Coverage/coverage.opencover.xml" "-targetDir:../Artifacts/Coverage/Report" -reporttypes:HtmlInline_AzurePipelines
 ```
+
+## Running ZAP Security Testing
+
+Download and Install ZAP from https://www.zaproxy.org/download/
+
+Configure or note the ZAP API Key from Tools > options > API > API Key field
+
+Configure or note the port under which ZAP is run from Tools > options > Local Proxies > Port 
+
+Install Certificate by going to Tools>Options>Dynamic SSL Certificate. Click Generate and then click Save.
+Save the certificate in the desired location. Open your browser and install the Certificate to your browser (Firefox, Chrome, IE) accordingly
+
+Update ZAPConfiguration parameters on User Secrets with the values observed above ApiAddress, ApiPort, ApiKey
+
+Update WorkingDirectory with location under which ZAP.exe is installed
+
+To turn on\off ZAP security passive scan Set RunZAP - true\false
+
+To turn on\off ZAP security scans individually such as Spider\AjaxSpider\ActiveScan set respective parameters RunSpider\RunAjaxSpider\RunActiveScan - true\false
+
