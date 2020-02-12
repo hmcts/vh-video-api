@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Responses

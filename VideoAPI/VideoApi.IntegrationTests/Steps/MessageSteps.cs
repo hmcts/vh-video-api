@@ -32,7 +32,6 @@ namespace VideoApi.IntegrationTests.Steps
         public async System.Threading.Tasks.Task GivenIHaveAConferenceWithMessages(Scenario scenario)
         {
             Guid conferenceId;
-            Guid hearingRefId;
             switch (scenario)
             {
                 case Scenario.Valid:
