@@ -75,7 +75,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SaveMessage(Guid conferenceId, AddMessageRequest request)
         {
-            _logger.LogInformation($"Saving chat message from {request.From} to {request.To} for conference {conferenceId}");
+            _logger.LogInformation($"Saving chat message for conference {conferenceId}");
 
             try
             {
