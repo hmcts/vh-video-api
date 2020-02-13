@@ -8,6 +8,7 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
@@ -30,8 +31,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceId = seededConference.Id;
 
-            var from = Internet.Email();
-            var to = Internet.Email();
+            var participants = seededConference.Participants;
+            var from = participants.First(x => x.UserRole == UserRole.Judge).Username;
+            var to = participants.First(x => x.UserRole == UserRole.Individual).Username;
             var messageText = Internet.DomainWord();
 
             var command = new AddMessageCommand(_newConferenceId, from, to, messageText);
@@ -59,6 +61,20 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var command = new AddMessageCommand(Guid.NewGuid(), Internet.Email(), Internet.Email(), Internet.DomainWord());
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task should_throw_participant_not_found_exception_when_participant_does_not_exist()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            _newConferenceId = seededConference.Id;
+
+            var from = Internet.Email();
+            var to = Internet.Email();
+            var messageText = Internet.DomainWord();
+
+            var command = new AddMessageCommand(_newConferenceId, from, to, messageText);
+            Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
         [TearDown]
