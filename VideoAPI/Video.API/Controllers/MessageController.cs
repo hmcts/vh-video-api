@@ -69,9 +69,9 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">Id of the conference</param>
         /// <param name="request">Details of the chat message</param>
         /// <returns>OK if the message is saved successfully</returns>
-        [HttpPost("{conferenceId}/message")]
+        [HttpPost("{conferenceId}/messages")]
         [SwaggerOperation(OperationId = "SaveMessage")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SaveMessage(Guid conferenceId, AddMessageRequest request)
         {
@@ -88,6 +88,11 @@ namespace Video.API.Controllers
             {
                 _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
+            }
+            catch (ParticipantNotFoundException)
+            {
+                _logger.LogError($"One of the participant does not exist in the conference {conferenceId}");
+                return BadRequest();
             }
         }
     }

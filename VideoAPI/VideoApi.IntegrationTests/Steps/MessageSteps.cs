@@ -5,11 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Helpers;
+using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -32,7 +34,6 @@ namespace VideoApi.IntegrationTests.Steps
         public async System.Threading.Tasks.Task GivenIHaveAConferenceWithMessages(Scenario scenario)
         {
             Guid conferenceId;
-            Guid hearingRefId;
             switch (scenario)
             {
                 case Scenario.Valid:
@@ -67,6 +68,49 @@ namespace VideoApi.IntegrationTests.Steps
             }
         }
 
+        [Given(@"I have a (.*) conference with (.*) participants save message request")]
+        [Given(@"I have an (.*) conference with (.*) participants save message request")]
+        public async System.Threading.Tasks.Task GivenIHaveASaveMessageRequest(Scenario conferenceScenario, Scenario particpiantScenario)
+        {
+            Guid conferenceId;
+            string from = Internet.Email();
+            string to = Internet.Email();
+            switch (conferenceScenario)
+            {
+                case Scenario.Valid:
+                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+                    var judge = seededConference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
+                    if(particpiantScenario == Scenario.Valid)
+                    {
+                        var particpiants = seededConference.Participants;
+                        from = particpiants.First(x => x.UserRole == UserRole.Judge).Username;
+                        to = particpiants.First(x => x.UserRole == UserRole.Individual).Username;
+                    }
+                   
+                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+                    ApiTestContext.NewConferenceId = seededConference.Id;
+                    conferenceId = seededConference.Id;
+                    break;
+                case Scenario.Nonexistent:
+                    conferenceId = Guid.NewGuid();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(conferenceScenario), conferenceScenario, null);
+            }
+
+            ApiTestContext.Uri = _endpoints.SaveMessage(conferenceId);
+            ApiTestContext.HttpMethod = HttpMethod.Post;
+            var request = new AddMessageRequest
+            {
+                From = from,
+                To = to,
+                MessageText = Internet.DomainWord()
+            };
+            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
+
         private async Task<Conference> SeedConferenceWithMessages()
         {
             var conference = new ConferenceBuilder(true)
@@ -80,16 +124,5 @@ namespace VideoApi.IntegrationTests.Steps
             conference.AddMessage(participantUsername, judge.Username, Internet.DomainWord());
             return await ApiTestContext.TestDataManager.SeedConference(conference);
         }
-
-        //public async Task<Conference> SeedConferenceWithMessages(int count)
-        //{
-        //    var conference = await SeedConference();
-        //    for (int i = 0; i < count; i++)
-        //    {
-        //        conference.AddMessage(Internet.Email(), Internet.Email(), $"Message {i + 1}");
-        //    }
-
-        //    return await SeedConference(conference);
-        //}
     }
 }
