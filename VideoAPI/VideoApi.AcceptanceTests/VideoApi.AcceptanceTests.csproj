@@ -1,21 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
-    <IsPackable>false</IsPackable>
+      <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.10.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="nunit" Version="3.11.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="RestSharp" Version="106.10.1" />
-    <PackageReference Include="SpecFlow" Version="3.1.76" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.1.76" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.76" />
+    <PackageReference Include="SpecFlow" Version="3.1.82" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.1.82" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.82" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,10 +38,9 @@
     <Content Include="Features\*.feature.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Features\Events.feature.cs">
-      <DependentUpon>Events.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
+    <ItemGroup>
+        <Compile Update="Features\Events.feature.cs">
+            <DependentUpon>Events.feature</DependentUpon>
+        </Compile>
+    </ItemGroup>
 </Project>
