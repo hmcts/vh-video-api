@@ -17,4 +17,4 @@ Scenario: Create chat messages
   Given I have a conference
   And I have a create chat messages request
   When I send the request to the endpoint
-  Then the response should have the status Created and success status True
+  Then the response should have the status OK and success status True

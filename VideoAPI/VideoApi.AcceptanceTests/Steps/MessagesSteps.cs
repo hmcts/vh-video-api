@@ -8,14 +8,15 @@ using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
     public class MessagesSteps : BaseSteps
     {
-        private const string PersonAEmail = "PersonA@email.com";
-        private const string PersonBEmail = "PersonB@email.com";
+        private readonly string _personAEmail;
+        private readonly string _personBEmail;
         private const string Message = "A message";
         private readonly TestContext _context;
         private readonly MessageEndpoints _endpoints = new ApiUriFactory().MessageEndpoints;
@@ -23,6 +24,8 @@ namespace VideoApi.AcceptanceTests.Steps
         public MessagesSteps(TestContext injectedContext)
         {
             _context = injectedContext;
+            _personAEmail = _context.NewConference.Participants.First(x => x.UserRole.Equals(UserRole.Judge)).Username;
+            _personBEmail = _context.NewConference.Participants.First(x => x.UserRole.Equals(UserRole.Individual)).Username;
         }
 
         [Given(@"the conference has existing messages")]
@@ -42,8 +45,8 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var request = new AddMessageRequest()
             {
-                From = PersonAEmail,
-                To = PersonBEmail,
+                From = _personAEmail,
+                To = _personBEmail,
                 MessageText = Message
             };
             _context.Request = _context.Post(_endpoints.SaveMessage(_context.NewConferenceId), request);
@@ -53,8 +56,8 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenTheChatMessagesRetrieved()
         {
             var messages = GetMessages();
-            messages.First().From.Should().Be(PersonAEmail);
-            messages.First().To.Should().Be(PersonBEmail);
+            messages.First().From.Should().Be(_personAEmail);
+            messages.First().To.Should().Be(_personBEmail);
             messages.First().MessageText.Should().Be(Message);
         }
 
@@ -62,7 +65,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             GivenIHaveAGetChatMessagesRequest();
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
             return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<MessageResponse>>(_context.Response.Content);
         }
 
@@ -70,7 +73,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             GivenIHaveACreateChatMessagesRequest();
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }
 }

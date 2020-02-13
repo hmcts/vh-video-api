@@ -33,14 +33,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Features\*.feature" />
-    <Content Include="Features\*.feature.cs" />
-  </ItemGroup>
-
-    <ItemGroup>
-        <Compile Update="Features\Events.feature.cs">
-            <DependentUpon>Events.feature</DependentUpon>
-        </Compile>
-    </ItemGroup>
 </Project>
