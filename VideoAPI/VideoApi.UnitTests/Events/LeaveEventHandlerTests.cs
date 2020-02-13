@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Events
         private LeaveEventHandler _eventHandler;
 
         [Test]
-        public async Task should_send_available_message_to_participants_and_service_bus_when_participant_joins()
+        public async Task should_send_disconnected_message_to_participants_and_service_bus_when_participant_leave()
         {
             _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 ServiceBusQueueClient);
@@ -40,6 +40,34 @@ namespace VideoApi.UnitTests.Events
                     command.ConferenceId == conference.Id &&
                     command.ParticipantId == participantForEvent.Id &&
                     command.ParticipantState == ParticipantState.Disconnected)), Times.Once);
+        }
+
+        [Test]
+        public async Task should_send_not_signed_in_message_to_participant_and_service_bus_when_judge_leave()
+        {
+            _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
+                ServiceBusQueueClient);
+
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
+
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Leave,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
+                TimeStampUtc = DateTime.UtcNow,
+                Reason = "Automated"
+            };
+
+            await _eventHandler.HandleAsync(callbackEvent);
+
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.NotSignedIn)), Times.Once);
         }
     }
 }
