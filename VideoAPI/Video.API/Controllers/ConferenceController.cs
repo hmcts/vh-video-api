@@ -291,7 +291,7 @@ namespace Video.API.Controllers
             await SafelyRemoveCourtRoom(conferenceId);
             return NoContent();
         }
-
+    
         private async Task SafelyRemoveCourtRoom(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);

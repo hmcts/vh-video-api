@@ -34,12 +34,18 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(AddMessageCommand command)
         {
             var conference = await _context.Conferences
+                                    .Include(x => x.Participants)
                                     .Include(x => x.Messages)
                                     .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
+            }
+
+            if(!conference.DoesParticipantExist(command.From) && !conference.DoesParticipantExist(command.To))
+            {
+                throw new ParticipantNotFoundException(Guid.Empty);
             }
 
             conference.AddMessage(command.From, command.To, command.MessageText);
