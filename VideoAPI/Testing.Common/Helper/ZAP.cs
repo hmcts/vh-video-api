@@ -72,7 +72,7 @@ namespace Testing.Common.Helper
                 } 
             }
 
-            throw new Exception(string.Format("Waited for {0} minute(s), however could not access the API successfully, hence could not verify if ZAP started successfully or not", minutesToWait));
+            throw new Exception($"Waited for {minutesToWait} minute(s), however could not access the API successfully, hence could not verify if ZAP started successfully or not");
         }
 
         public static void Scan(string url)
@@ -99,18 +99,15 @@ namespace Testing.Common.Helper
 
         private static void PollTheSpiderTillCompletion(string scanid)
         {
-            int spiderProgress;
             while (true)
             {
-                Sleep(1000);
-                spiderProgress = int.Parse(((ApiResponseElement)_api.spider.status(scanid)).Value);
-                if (spiderProgress >= 100)
+                Thread.Sleep(1000);
+                var responseStatus = int.TryParse(((ApiResponseElement)_api.spider.status(scanid)).Value, out var spiderProgress);
+                if (!responseStatus || spiderProgress >= 100)
                     break;
             }
-
-            Console.WriteLine("Spider complete");
-            Sleep(10000);
         }
+
         private static void StartActiveScanning(string target)
         {
             _apiResponse = _api.ascan.scan(target, "", "", "", "", "", "");
@@ -118,35 +115,30 @@ namespace Testing.Common.Helper
             string activeScanId = ((ApiResponseElement)_apiResponse).Value;
             PollTheActiveScannerTillCompletion(activeScanId);
         }
+
         private static void PollTheActiveScannerTillCompletion(string activeScanId)
         {
-            int activeScannerprogress;
             while (true)
             {
-                Sleep(5000);
-                activeScannerprogress = int.Parse(((ApiResponseElement)_api.ascan.status(activeScanId)).Value);
-                if (activeScannerprogress >= 100)
+                Thread.Sleep(5000);
+                var responseStatus = int.TryParse(((ApiResponseElement)_api.ascan.status(activeScanId)).Value, out var activeScannerprogress);
+                if (!responseStatus || activeScannerprogress >= 100)
                     break;
             }
-        }
-
-
-        private static void Sleep(int milliseconds)
-        {
-            do
-            {
-                Thread.Sleep(milliseconds);
-                milliseconds = milliseconds - 2000;
-            } while (milliseconds > 2000);
         }
 
         public static void ReportAndShutDown(string reportFileName)
         {
             if (!ZapConfiguration.RunZap) return;
-
-            WriteHtmlReport(reportFileName);
-            WriteXmlReport(reportFileName);
-            ShutdownZAP();
+            try
+            {
+                WriteHtmlReport(reportFileName);
+                WriteXmlReport(reportFileName);
+            }
+            finally
+            {
+                ShutdownZAP();
+            }
         }
 
         private static void WriteHtmlReport(string reportFileName)

@@ -7,7 +7,6 @@ namespace VideoApi.AcceptanceTests
     [SetUpFixture]
     public class TestSetupFixture
     { 
-
         [OneTimeTearDown]
         public void ZapReport()
         {
