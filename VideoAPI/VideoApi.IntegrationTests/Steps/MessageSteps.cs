@@ -82,9 +82,9 @@ namespace VideoApi.IntegrationTests.Steps
                     var judge = seededConference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
                     if(particpiantScenario == Scenario.Valid)
                     {
-                        var particpiants = seededConference.Participants;
-                        from = particpiants.First(x => x.UserRole == UserRole.Judge).Username;
-                        to = particpiants.First(x => x.UserRole == UserRole.Individual).Username;
+                        var participants = seededConference.Participants;
+                        from = participants.First(x => x.UserRole == UserRole.Judge).Username;
+                        to = participants.First(x => x.UserRole == UserRole.Individual).Username;
                     }
                    
                     TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");

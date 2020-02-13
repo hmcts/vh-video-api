@@ -91,7 +91,8 @@ namespace Video.API.Controllers
             catch (ParticipantNotFoundException)
             {
                 _logger.LogError($"One of the participant does not exist in the conference {conferenceId}");
-                return BadRequest();
+                ModelState.AddModelError(nameof(conferenceId), $"Please provide the valid username of the participant or admin user in the conference {conferenceId}");
+                return BadRequest(ModelState);
             }
         }
     }
