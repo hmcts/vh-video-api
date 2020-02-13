@@ -43,7 +43,6 @@ namespace Video.API.Controllers
         [HttpGet("{conferenceId}/messages")]
         [SwaggerOperation(OperationId = "GetMessages")]
         [ProducesResponseType(typeof(List<MessageResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetMessages(Guid conferenceId)
         {
