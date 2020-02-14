@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using RestSharp;
 using Testing.Common.Configuration;
+using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
@@ -40,6 +41,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestClient Client()
         {
             var client = new RestClient(BaseUrl);
+            client.Proxy = ZAP.WebProxy;
             client.AddDefaultHeader("Accept", "application/json");
             client.AddDefaultHeader("Authorization", $"Bearer {BearerToken}");
             Debug.WriteLine($"bearer token {BearerToken}");
@@ -53,7 +55,7 @@ namespace VideoApi.AcceptanceTests.Contexts
 
         public RestRequest Post(string path, object requestBody)
         {
-            var request = new RestRequest(path, Method.POST);
+            var request = new RestRequest(path, Method.POST);            
             request.AddParameter("Application/json", ApiRequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
                 ParameterType.RequestBody);
             return request;

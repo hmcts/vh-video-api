@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using FluentAssertions;
@@ -21,6 +21,8 @@ namespace VideoApi.AcceptanceTests.Hooks
         [BeforeTestRun]
         public static void OneTimeSetup(TestContext context)
         {
+            ZAP.StartZAPDaemon();
+
             var configRootBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()

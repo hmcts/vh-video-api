@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.1" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="NBuilder" Version="6.1.0" />
+    <PackageReference Include="OWASPZAPDotNetAPI" Version="2.8.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VideoApi.Contract\VideoApi.Contract.csproj" />
