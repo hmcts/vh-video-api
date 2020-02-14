@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Mappings
 {
@@ -21,6 +22,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.CurrentRoom);
 
             builder.Property(x => x.TestCallResultId).IsRequired(false);
+            builder.Property(x => x.State).HasDefaultValue(ParticipantState.NotSignedIn);
 
             builder.HasMany<ParticipantStatus>("ParticipantStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
         }

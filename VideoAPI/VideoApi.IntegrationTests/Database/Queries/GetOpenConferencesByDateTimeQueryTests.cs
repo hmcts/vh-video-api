@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -80,7 +82,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference4);
 
             var conferences = await _handler.Handle(new GetExpiredUnclosedConferencesQuery());
-            conferences.Count.Should().Be(1);
+            var confIds = conferences.Select(x => x.Id).ToList();
+            confIds.Should().Contain(conference1.Id);
+            var notExpectedConferences = new List<Guid>{conference2.Id, conference3.Id, conference4.Id};
+            confIds.Should().NotContain(notExpectedConferences);
         }
     }
 }

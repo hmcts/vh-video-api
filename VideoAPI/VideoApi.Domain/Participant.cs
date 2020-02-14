@@ -36,6 +36,7 @@ namespace VideoApi.Domain
         public long? TestCallResultId { get; set; }
         public virtual TestCallResult TestCallResult { get; private set; }
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
+        public ParticipantState State { get; set; }
         
         public IList<ParticipantStatus> GetParticipantStatuses()
         {
@@ -44,11 +45,12 @@ namespace VideoApi.Domain
 
         public ParticipantStatus GetCurrentStatus()
         {
-            return ParticipantStatuses.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+            return new ParticipantStatus(State);
         }
 
         public void UpdateParticipantStatus(ParticipantState status)
         {
+            State = status;
             ParticipantStatuses.Add(new ParticipantStatus(status));
         }
 

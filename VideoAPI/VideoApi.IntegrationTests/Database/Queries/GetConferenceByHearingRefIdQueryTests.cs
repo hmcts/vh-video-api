@@ -60,10 +60,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var conference = await _handler.Handle(new GetConferenceByHearingRefIdQuery(knownHearingRefId));
 
-            AssertConference(conference, conference2);
+            AssertConference(conference, conference2, true);
         }
 
-        private void AssertConference(Conference actual, Conference expected)
+        private void AssertConference(Conference actual, Conference expected, bool ignoreParticipants = false)
         {
             actual.Should().NotBeNull();
 
@@ -73,6 +73,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
             actual.ScheduledDateTime.Should().Be(expected.ScheduledDateTime);
             actual.HearingRefId.Should().Be(expected.HearingRefId);
 
+            if (ignoreParticipants) return;
+            
             var participants = actual.GetParticipants();
             participants.Should().NotBeNullOrEmpty();
             foreach (var participant in participants)
