@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.CustomToken;
@@ -36,22 +37,41 @@ namespace VideoApi.IntegrationTests.Contexts
         {
             get
             {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("IntegrationTestSettings").Get<TestConfiguration>();
+                return ConfigurationRoot.GetSection("IntegrationTestSettings").Get<TestConfiguration>();
             }
         }
 
+        private ZAPConfiguration ZapConfiguration
+        {
+            get
+            {
+                return ConfigurationRoot.GetSection("ZAPConfiguration").Get<ZAPConfiguration>();
+            }
+        }
+
+        private IConfigurationRoot ConfigurationRoot => new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
         public HttpClient CreateClient()
         {
-            var handler = new HttpClientHandler
+            HttpClient client;
+            if (ZapConfiguration.RunZap)
             {
-                Proxy = ZAP.WebProxy,
-                UseProxy = true,
-            };
+                var handler = new HttpClientHandler
+                {
+                    Proxy = ZAP.WebProxy,
+                    UseProxy = true,
+                };
 
-            var client = new HttpClient(handler)
+                client = new HttpClient(handler)
+                {
+                    BaseAddress = new System.Uri(TestConfiguration.VideoApiBaseUrl)
+                };
+            }
+            else
             {
-                BaseAddress = new System.Uri(TestConfiguration.VideoApiBaseUrl)
-            };
+                client = Server.CreateClient();
+            }
+            
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.BearerToken}");
             return client;
         }
