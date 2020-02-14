@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using Task = VideoApi.Domain.Task;
 
 namespace VideoApi.DAL.Queries
 {
