@@ -8,16 +8,14 @@ namespace VideoApi.DAL.Commands
 {
     public class AddMessageCommand : ICommand
     {
-        public AddMessageCommand(Guid conferenceId, string from, string to, string messageText)
+        public AddMessageCommand(Guid conferenceId, string from, string messageText)
         {
             ConferenceId = conferenceId;
             From = from;
-            To = to;
             MessageText = messageText;
         }
 
         public string From { get; set; }
-        public string To { get; set; }
         public string MessageText { get; set; }
         public Guid ConferenceId { get; }
     }
@@ -34,6 +32,7 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(AddMessageCommand command)
         {
             var conference = await _context.Conferences
+                                    .Include(x => x.Participants)
                                     .Include(x => x.Messages)
                                     .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
@@ -42,7 +41,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.AddMessage(command.From, command.To, command.MessageText);
+            conference.AddMessage(command.From, command.MessageText);
             await _context.SaveChangesAsync();
         }
     }

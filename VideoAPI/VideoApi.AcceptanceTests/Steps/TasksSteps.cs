@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -15,14 +15,14 @@ using VideoApi.Domain.Enums;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class Tasksteps : BaseSteps
+    public sealed class TaskSteps : BaseSteps
     {
         private readonly TestContext _context;
         private readonly TaskEndpoints _endpoints = new ApiUriFactory().TaskEndpoints;
-        private readonly EventsEndpoints _eventsEndpointsndpoints = new ApiUriFactory().EventsEndpoints;
+        private readonly EventsEndpoints _eventsEndpoints = new ApiUriFactory().EventsEndpoints;
         private const string UpdatedBy = "AutomationUpdateUser";
 
-        public Tasksteps(TestContext injectedContext)
+        public TaskSteps(TestContext injectedContext)
         {
             _context = injectedContext;
         }
@@ -39,7 +39,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.WaitingRoom)
                 .With(x => x.Reason = "Automated")
                 .Build();
-            _context.Request = _context.Post(_eventsEndpointsndpoints.Event, request);
+            _context.Request = _context.Post(_eventsEndpoints.Event, request);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
             _context.Response.IsSuccessful.Should().Be(true);

@@ -182,9 +182,9 @@ namespace VideoApi.Domain
         {
             return Messages.OrderByDescending(x => x.TimeStamp).ToList();
         }
-        public void AddMessage(string from, string to, string messageText)
+        public void AddMessage(string from, string messageText)
         {
-            var message = new Message(from, to, messageText);
+            var message = new Message(from, messageText);
             Messages.Add(message);
         }
 

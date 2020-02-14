@@ -84,8 +84,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var conferences = await _handler.Handle(new GetExpiredUnclosedConferencesQuery());
             var confIds = conferences.Select(x => x.Id).ToList();
             confIds.Should().Contain(conference1.Id);
+            
             var notExpectedConferences = new List<Guid>{conference2.Id, conference3.Id, conference4.Id};
-            confIds.Should().NotContain(notExpectedConferences);
+            confIds.Should()
+                .NotContain(notExpectedConferences);
         }
     }
 }

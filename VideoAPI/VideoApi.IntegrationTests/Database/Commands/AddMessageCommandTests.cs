@@ -8,6 +8,8 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
@@ -25,16 +27,16 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async System.Threading.Tasks.Task should_add_a_message()
+        public async Task should_add_a_message()
         {
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceId = seededConference.Id;
 
-            var from = Internet.Email();
-            var to = Internet.Email();
+            var participants = seededConference.Participants;
+            var from = participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
             var messageText = Internet.DomainWord();
 
-            var command = new AddMessageCommand(_newConferenceId, from, to, messageText);
+            var command = new AddMessageCommand(_newConferenceId, from, messageText);
             await _handler.Handle(command);
 
             Conference conference;
@@ -49,7 +51,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             message.Should().NotBeNull();
             message.From.Should().Be(from);
-            message.To.Should().Be(to);
             message.MessageText.Should().Be(messageText);
             message.TimeStamp.Should().BeBefore(DateTime.UtcNow);
         }
@@ -57,7 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
-            var command = new AddMessageCommand(Guid.NewGuid(), Internet.Email(), Internet.Email(), Internet.DomainWord());
+            var command = new AddMessageCommand(Guid.NewGuid(), "Display Name", "Test message");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 

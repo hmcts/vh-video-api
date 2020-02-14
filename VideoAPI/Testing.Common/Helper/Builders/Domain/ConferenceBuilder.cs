@@ -99,7 +99,6 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-
         
         public ConferenceBuilder WithHearingTask(string body)
         {
@@ -136,11 +135,11 @@ namespace Testing.Common.Helper.Builders.Domain
         public ConferenceBuilder WithMessages(int numberOfMessages)
         {
             var messages = new Builder(_builderSettings).CreateListOfSize<Message>(numberOfMessages).All().WithFactory(() =>
-                new Message(Internet.Email(), Internet.Email(), Internet.DomainWord())).Build();
+                new Message("Username", "Test Message")).Build();
 
             foreach (var message in messages)
             {
-                _conference.AddMessage(message.From, message.To, message.MessageText);
+                _conference.AddMessage(message.From, message.MessageText);
             }
 
             return this;
