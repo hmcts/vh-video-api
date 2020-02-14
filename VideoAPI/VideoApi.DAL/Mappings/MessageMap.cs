@@ -12,7 +12,7 @@ namespace VideoApi.DAL.Mappings
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.From).IsRequired();
-            builder.Property(x => x.To).IsRequired();
+            builder.Property(x => x.To).IsRequired(false);
             builder.Property(x => x.MessageText).IsRequired();
             builder.Property(x => x.TimeStamp);
         }

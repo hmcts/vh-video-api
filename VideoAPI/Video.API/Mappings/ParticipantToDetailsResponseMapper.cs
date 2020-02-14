@@ -21,8 +21,7 @@ namespace Video.API.Mappings
                     UserRole = participant.UserRole,
                     CaseTypeGroup = participant.CaseTypeGroup,
                     Representee = participant.Representee,
-                    CurrentStatus =
-                        new ParticipantStatusResponseMapper().MapCurrentParticipantStatusToResponse(participant),
+                    CurrentStatus = participant.State,
                     SelfTestScore = new TaskCallResultResponseMapper().MapTaskToResponse(participant.TestCallResult)
                 };
                 response.Add(paResponse);

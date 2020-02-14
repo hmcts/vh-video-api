@@ -63,36 +63,34 @@ namespace VideoApi.IntegrationTests.Steps
             foreach (var message in messages)
             {
                 message.From.Should().NotBeNullOrWhiteSpace();
-                message.To.Should().NotBeNullOrWhiteSpace();
                 message.MessageText.Should().NotBeNullOrWhiteSpace();
             }
         }
 
         [Given(@"I have a (.*) conference with (.*) participants save message request")]
         [Given(@"I have an (.*) conference with (.*) participants save message request")]
-        public async System.Threading.Tasks.Task GivenIHaveASaveMessageRequest(Scenario conferenceScenario, Scenario particpiantScenario)
+        public async System.Threading.Tasks.Task GivenIHaveASaveMessageRequest(Scenario conferenceScenario,
+            Scenario participantScenario)
         {
             Guid conferenceId;
-            string from = Internet.Email();
-            string to = Internet.Email();
+            var from = string.Empty;
             switch (conferenceScenario)
             {
                 case Scenario.Valid:
                     var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    var judge = seededConference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-                    if(particpiantScenario == Scenario.Valid)
+                    if (participantScenario == Scenario.Valid)
                     {
                         var participants = seededConference.Participants;
-                        from = participants.First(x => x.UserRole == UserRole.Judge).Username;
-                        to = participants.First(x => x.UserRole == UserRole.Individual).Username;
+                        from = participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
                     }
-                   
+
                     TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
                     ApiTestContext.NewConferenceId = seededConference.Id;
                     conferenceId = seededConference.Id;
                     break;
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
+                    from = "non-existentuser";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(conferenceScenario), conferenceScenario, null);
@@ -103,7 +101,6 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new AddMessageRequest
             {
                 From = from,
-                To = to,
                 MessageText = Internet.DomainWord()
             };
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
@@ -119,9 +116,8 @@ namespace VideoApi.IntegrationTests.Steps
                 .Build();
 
             var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-            var participantUsername = Internet.Email();
-            conference.AddMessage(judge.Username, participantUsername, Internet.DomainWord());
-            conference.AddMessage(participantUsername, judge.Username, Internet.DomainWord());
+            conference.AddMessage(judge.DisplayName, "test message from Judge");
+            conference.AddMessage("VH Officer ", "test message from VHO");
             return await ApiTestContext.TestDataManager.SeedConference(conference);
         }
     }

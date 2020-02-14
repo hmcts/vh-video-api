@@ -40,7 +40,7 @@ namespace VideoApi.Domain
         public ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
-        public virtual IList<Task> Tasks { get; }
+        public virtual IList<Task> Tasks { get; set; }
         public virtual IList<Message> Messages { get; }
         public string HearingVenueName { get; private set; }
 
@@ -182,9 +182,9 @@ namespace VideoApi.Domain
         {
             return Messages.OrderByDescending(x => x.TimeStamp).ToList();
         }
-        public void AddMessage(string from, string to, string messageText)
+        public void AddMessage(string from, string messageText)
         {
-            var message = new Message(from, to, messageText);
+            var message = new Message(from, messageText);
             Messages.Add(message);
         }
 

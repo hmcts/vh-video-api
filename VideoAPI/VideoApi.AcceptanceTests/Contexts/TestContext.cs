@@ -30,6 +30,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public List<Guid> NewConferenceIds { get; set; }
         public CustomTokenSettings CustomTokenSettings { get; set; }
         public IOptions<AzureAdConfiguration> AzureAdConfiguration { get; set; }
+        public Guid ParticipantId { get; set; }
 
         public TestContext()
         {
