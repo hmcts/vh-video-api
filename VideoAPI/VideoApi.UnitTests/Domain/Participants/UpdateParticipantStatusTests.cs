@@ -13,8 +13,7 @@ namespace VideoApi.UnitTests.Domain.Participants
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
                 .WithCaseTypeGroup("Claimant")
                 .Build();
-
-            participant.GetCurrentStatus().Should().BeNull();
+            
             var beforeCount = participant.GetParticipantStatuses().Count;
 
             var participantStatus = ParticipantState.Joining;

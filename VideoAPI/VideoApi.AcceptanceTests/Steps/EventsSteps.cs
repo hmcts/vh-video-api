@@ -23,12 +23,26 @@ namespace VideoApi.AcceptanceTests.Steps
             _context = injectedContext;
         }
 
+        [Given(@"I have a valid conference event request for event type (.*) for a Judge")]
+        public void GivenIHaveAValidConferenceEventRequestForAJudge(EventType eventType)
+        {
+            var participant = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Judge);
+            CreateConferenceEventRequest(participant, eventType);
+        }
+        
         [Given(@"I have a valid conference event request for event type (.*)")]
         public void GivenIHaveAValidConferenceEventRequest(EventType eventType)
         {
+            var participant = _context.NewConference.Participants.First(x => x.UserRole != UserRole.Judge);
+            CreateConferenceEventRequest(participant, eventType);
+        }
+
+        private void CreateConferenceEventRequest(ParticipantDetailsResponse participant, EventType eventType)
+        {
+            _context.ParticipantId = participant.Id;
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = _context.NewConferenceId.ToString())
-                .With(x => x.ParticipantId = _context.NewConference.Participants.First().Id.ToString())
+                .With(x => x.ParticipantId = participant.Id.ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
@@ -51,7 +65,15 @@ namespace VideoApi.AcceptanceTests.Steps
                 ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
                     _context.Response.Content);
             conference.Should().NotBeNull();
-            conference.Participants.First().CurrentStatus.ParticipantState.Should().Be(ParticipantState.Available);
+            var participant = conference.Participants.First(x => x.Id == _context.ParticipantId);
+            if (participant.UserRole == UserRole.Judge)
+            {
+                participant.CurrentStatus.Should().Be(ParticipantState.InHearing);
+            }
+            else
+            {
+                participant.CurrentStatus.Should().Be(ParticipantState.Available);
+            }
         }
     }
 }

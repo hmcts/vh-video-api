@@ -27,7 +27,9 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.TestCallResultId)
                 .Excluding(x => x.TestCallResult)
                 .Excluding(x => x.CurrentRoom)
+                .Excluding(x => x.State)
             );
+            response.Status.Should().BeEquivalentTo(participant.State);
             response.Status.Should().BeEquivalentTo(participant.GetCurrentStatus().ParticipantState);
             if (participant.UserRole == UserRole.Individual || participant.UserRole == UserRole.Representative)
             {

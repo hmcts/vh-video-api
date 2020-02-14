@@ -34,9 +34,7 @@ namespace VideoApi.DAL.Queries
             var tomorrow = DateTime.Today.AddDays(1);
 
             var efQuery = _context.Conferences
-                .Include("Participants.ParticipantStatuses")
                 .Include("Participants.TestCallResult")
-                .Include("ConferenceStatuses")
                 .Include("Tasks").AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
             

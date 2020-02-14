@@ -90,7 +90,8 @@ namespace VideoApi.IntegrationTests.Steps
             if (conference == null) return request;
 
             request.ConferenceId = conference.Id.ToString();
-            request.ParticipantId = conference.GetParticipants().First().Id.ToString();
+            var participant = conference.GetParticipants().First();
+            request.ParticipantId = participant.Id.ToString();
             return request;
         }
 

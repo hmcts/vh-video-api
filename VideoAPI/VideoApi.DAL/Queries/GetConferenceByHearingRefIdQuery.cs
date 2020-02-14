@@ -31,8 +31,7 @@ namespace VideoApi.DAL.Queries
         public async Task<Conference> Handle(GetConferenceByHearingRefIdQuery query)
         {
             return await _context.Conferences
-                .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses")
+                .Include(x => x.Participants)
                 .Where(x => x.State != ConferenceState.Closed)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.HearingRefId == query.HearingRefId);

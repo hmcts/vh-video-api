@@ -49,7 +49,7 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// The current participant status
         /// </summary>
-        public ParticipantStatusResponse CurrentStatus { get; set; }
+        public ParticipantState CurrentStatus { get; set; }
         
         /// <summary>
         /// The self test results (if self-test completed)

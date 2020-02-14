@@ -42,6 +42,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.TestCallResultId)
                 .Excluding(x => x.TestCallResult)
                 .Excluding(x => x.CurrentRoom)
+                .Excluding(x => x.State)
             );
         }
 
