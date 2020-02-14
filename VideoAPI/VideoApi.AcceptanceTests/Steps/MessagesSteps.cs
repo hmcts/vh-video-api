@@ -15,8 +15,7 @@ namespace VideoApi.AcceptanceTests.Steps
     [Binding]
     public class MessagesSteps : BaseSteps
     {
-        private readonly string _personAEmail;
-        private readonly string _personBEmail;
+        private readonly string _fromUsername;
         private const string Message = "A message";
         private readonly TestContext _context;
         private readonly MessageEndpoints _endpoints = new ApiUriFactory().MessageEndpoints;
@@ -24,8 +23,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public MessagesSteps(TestContext injectedContext)
         {
             _context = injectedContext;
-            _personAEmail = _context.NewConference.Participants.First(x => x.UserRole.Equals(UserRole.Judge)).Username;
-            _personBEmail = _context.NewConference.Participants.First(x => x.UserRole.Equals(UserRole.Individual)).Username;
+            _fromUsername = _context.NewConference.Participants.First(x => x.UserRole.Equals(UserRole.Judge)).DisplayName;
         }
 
         [Given(@"the conference has existing messages")]
@@ -45,8 +43,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var request = new AddMessageRequest()
             {
-                From = _personAEmail,
-                To = _personBEmail,
+                From = _fromUsername,
                 MessageText = Message
             };
             _context.Request = _context.Post(_endpoints.SaveMessage(_context.NewConferenceId), request);
@@ -55,10 +52,9 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the chat messages are retrieved")]
         public void ThenTheChatMessagesRetrieved()
         {
-            var messages = GetMessages();
-            messages.First().From.Should().Be(_personAEmail);
-            messages.First().To.Should().Be(_personBEmail);
-            messages.First().MessageText.Should().Be(Message);
+            var message = GetMessages().First();
+            message.From.Should().Be(_fromUsername);
+            message.MessageText.Should().Be(Message);
         }
 
         private IEnumerable<MessageResponse> GetMessages()

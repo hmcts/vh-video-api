@@ -1,4 +1,3 @@
-using Faker;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Linq;
@@ -14,10 +13,9 @@ namespace VideoApi.UnitTests.Domain.Conference
             var conference = new ConferenceBuilder().Build();
             var beforeCount = conference.GetMessages().Count;
 
-            var from = Internet.Email();
-            var to = Internet.Email();
-            var messageText = Internet.DomainWord();
-            conference.AddMessage(from, to, messageText);
+            var from = "Display name";
+            var messageText = "test message";
+            conference.AddMessage(from, messageText);
 
             //Act
             var messages = conference.GetMessages();
@@ -27,7 +25,6 @@ namespace VideoApi.UnitTests.Domain.Conference
             afterCount.Should().BeGreaterThan(beforeCount);
             var messageSaved = messages.First();
             messageSaved.From.Should().Be(from);
-            messageSaved.To.Should().Be(to);
             messageSaved.MessageText.Should().Be(messageText);
         }
     }

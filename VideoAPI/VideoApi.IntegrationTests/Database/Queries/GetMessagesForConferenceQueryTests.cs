@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Faker;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async System.Threading.Tasks.Task should_retrieve_all_messages()
+        public async Task should_retrieve_all_messages()
         {
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
@@ -33,10 +33,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .Build();
 
             var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-            conference.AddMessage(Internet.Email(), judge.Username, "Message 1");
-            conference.AddMessage(judge.Username, Internet.Email(), "Message 2");
-            conference.AddMessage(judge.Username, Internet.Email(), "Message 3");
-            conference.AddMessage(Internet.Email(), judge.Username, "Message 4");
+            var vhOfficer = "VH Officer";
+            conference.AddMessage(vhOfficer, "Message 1");
+            conference.AddMessage(judge.DisplayName, "Message 2");
+            conference.AddMessage(judge.DisplayName, "Message 3");
+            conference.AddMessage(vhOfficer, "Message 4");
 
             var seededConference = await TestDataManager.SeedConference(conference);
             _newConferenceId = seededConference.Id;
@@ -57,7 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [TearDown]
-        public async System.Threading.Tasks.Task TearDown()
+        public async Task TearDown()
         {
             if (_newConferenceId != Guid.Empty)
             {

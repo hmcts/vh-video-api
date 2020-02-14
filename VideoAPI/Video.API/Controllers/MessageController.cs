@@ -78,7 +78,7 @@ namespace Video.API.Controllers
 
             try
             {
-                var command = new AddMessageCommand(conferenceId, request.From, request.To, request.MessageText);
+                var command = new AddMessageCommand(conferenceId, request.From, request.MessageText);
                 await _commandHandler.Handle(command);
 
                 return Ok("Message saved");
@@ -87,12 +87,6 @@ namespace Video.API.Controllers
             {
                 _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
-            }
-            catch (ParticipantNotFoundException)
-            {
-                _logger.LogError($"One of the participant does not exist in the conference {conferenceId}");
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide the valid username of the participant or admin user in the conference {conferenceId}");
-                return BadRequest(ModelState);
             }
         }
     }
