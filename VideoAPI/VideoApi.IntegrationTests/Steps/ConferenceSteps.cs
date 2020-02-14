@@ -276,8 +276,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = await GetResponses<ConferenceDetailsResponse>();
             conference.Should().NotBeNull();
-            conference.Should().BeEquivalentTo(_conferenceTestContext.ConferenceDetails,
-                options => options.Excluding(x => x.SelectedMemberPath.Contains("CurrentStatus.TimeStamp")));
+            conference.Should().BeEquivalentTo(_conferenceTestContext.ConferenceDetails);
         }
 
         [Given(@"I have a (.*) update a conference request")]
