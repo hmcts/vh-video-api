@@ -1,7 +1,9 @@
 using FluentAssertions;
 using NUnit.Framework;
+using System.Collections.Generic;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Mappings;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Mappings
@@ -10,10 +12,19 @@ namespace VideoApi.UnitTests.Mappings
     {
         private readonly ParticipantToSummaryResponseMapper _mapper = new ParticipantToSummaryResponseMapper();
 
-        [Test]
-        public void should_map_all_properties()
+        public static IEnumerable<Participant> ParticipantTestCases
         {
-            var participant = new ParticipantBuilder().Build();
+            get
+            {
+                yield return new ParticipantBuilder().WithUserRole(UserRole.Individual).Build();
+                yield return new ParticipantBuilder().WithUserRole(UserRole.Representative).Build();
+                yield return new ParticipantBuilder().WithUserRole(UserRole.CaseAdmin).Build();
+            }
+        }
+
+        [TestCaseSource("ParticipantTestCases")]
+        public void should_map_all_properties(Participant participant)
+        {
             participant.UpdateParticipantStatus(ParticipantState.Available);
             var response = _mapper.MapParticipantToSummary(participant);
             response.Should().BeEquivalentTo(participant, options => options

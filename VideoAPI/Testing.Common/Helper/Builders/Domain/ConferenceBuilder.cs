@@ -60,7 +60,7 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null)
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null, RoomType? roomType = null)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -73,6 +73,11 @@ namespace Testing.Common.Helper.Builders.Domain
             if (userRole == UserRole.Representative)
             {
                 participant.Representee = "Person";
+            }
+
+            if(roomType.HasValue)
+            {
+                participant.UpdateCurrentRoom(roomType);
             }
             
             participant.UpdateParticipantStatus(ParticipantState.Available);
