@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -60,10 +60,9 @@ namespace VideoApi.UnitTests.Middleware
                 .Setup(x => x.RequestDelegate(It.IsAny<HttpContext>()))
                 .Returns(Task.FromException(new Exception()));
             ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
-
-
+            
             await ExceptionMiddleware.InvokeAsync(HttpContext);
-
+            Assert.AreEqual("application/json", HttpContext.Response.ContentType);
             Assert.AreEqual((int) HttpStatusCode.InternalServerError, HttpContext.Response.StatusCode);
         }
     }
