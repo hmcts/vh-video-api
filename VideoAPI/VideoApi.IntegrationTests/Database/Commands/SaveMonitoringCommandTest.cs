@@ -52,6 +52,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedMonitor.OutgoingVideoPercentageLostRecent.Should().Be(0);
             savedMonitor.IncomingVideoPercentageLost.Should().Be(0);
             savedMonitor.IncomingVideoPercentageLostRecent.Should().Be(0);
+            savedMonitor.Timestamp.Should().NotBe(new DateTime());
+            savedMonitor.Timestamp.Should().BeAfter(DateTime.MinValue);
+            savedMonitor.Timestamp.Should().BeBefore(DateTime.MaxValue);
         }
 
         [TearDown]
@@ -61,6 +64,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             {
                 TestContext.WriteLine($"Removing test conference {_newConferenceId}");
                 await TestDataManager.RemoveConference(_newConferenceId);
+                await TestDataManager.RemoveMonitoring(_newConferenceId);
             }
 
             await TestDataManager.RemoveEvents();
