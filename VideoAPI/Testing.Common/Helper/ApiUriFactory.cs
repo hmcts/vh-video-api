@@ -94,7 +94,7 @@ namespace Testing.Common.Helper
     public class InstantMessageEndpoints
     {
         private string ApiRoot => "conferences";
-        public string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/messages";
-        public string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/messages";
+        public string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
+        public string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
     }
 }
