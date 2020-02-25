@@ -10,7 +10,7 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    [Migration("20200225142849_RenameMessageToInstantMessage")]
+    [Migration("20200225161527_RenameMessageToInstantMessage")]
     partial class RenameMessageToInstantMessage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,45 +121,18 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Event");
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
+            modelBuilder.Entity("VideoApi.Domain.Heartbeat", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<Guid>("ConferenceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("From")
-                        .IsRequired()
+                    b.Property<string>("BrowserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MessageText")
-                        .IsRequired()
+                    b.Property<string>("BrowserVersion")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("To")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConferenceId");
-
-                    b.HasIndex("TimeStamp");
-
-                    b.ToTable("InstantMessage");
-                });
-
-            modelBuilder.Entity("VideoApi.Domain.Monitoring", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
@@ -196,7 +169,40 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Monitoring");
+                    b.ToTable("Heartbeat");
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<Guid>("ConferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("From")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("To")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.HasIndex("TimeStamp");
+
+                    b.ToTable("InstantMessage");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>

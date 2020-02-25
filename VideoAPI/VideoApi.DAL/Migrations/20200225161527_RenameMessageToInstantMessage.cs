@@ -6,7 +6,6 @@ namespace VideoApi.DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.RenameTable(name: "Message", newName: "InstantMessage");
             migrationBuilder.RenameIndex("IX_Message_ConferenceId", "IX_InstantMessage_ConferenceId", "InstantMessage");
             migrationBuilder.RenameIndex("IX_Message_TimeStamp", "IX_InstantMessage_TimeStamp", "InstantMessage");

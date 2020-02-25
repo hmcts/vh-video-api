@@ -5,11 +5,12 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class SaveMonitoringCommand : ICommand
+    public class SaveHeartbeatCommand : ICommand
     {
-        public SaveMonitoringCommand(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
+        public SaveHeartbeatCommand(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
             decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
-            decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent)
+            decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
+            string browserName, string browserVersion)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -21,6 +22,8 @@ namespace VideoApi.DAL.Commands
             OutgoingVideoPercentageLostRecent = outgoingVideoPercentageLostRecent;
             IncomingVideoPercentageLost = incomingVideoPercentageLost;
             IncomingVideoPercentageLostRecent = incomingVideoPercentageLostRecent;
+            BrowserName = browserName;
+            BrowserVersion = browserVersion;
         }
 
         public Guid ConferenceId { get; }
@@ -33,27 +36,30 @@ namespace VideoApi.DAL.Commands
         public decimal OutgoingVideoPercentageLostRecent { get; }
         public decimal IncomingVideoPercentageLost { get; }
         public decimal IncomingVideoPercentageLostRecent { get; }
+        public string BrowserName { get; set; }
+        public string BrowserVersion { get; set; }
     }
 
-    public class SaveMonitoringCommandHandler : ICommandHandler<SaveMonitoringCommand>
+    public class SaveHeartbeatCommandHandler : ICommandHandler<SaveHeartbeatCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public SaveMonitoringCommandHandler(VideoApiDbContext context)
+        public SaveHeartbeatCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(SaveMonitoringCommand command)
+        public async Task Handle(SaveHeartbeatCommand command)
         {
-            var @event = new Monitoring(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost, command.OutgoingAudioPercentageLostRecent,
+            var @event = new Heartbeat(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost, command.OutgoingAudioPercentageLostRecent,
                 command.IncomingAudioPercentageLost, command.IncomingAudioPercentageLostRecent, command.OutgoingVideoPercentageLost, 
-                command.OutgoingVideoPercentageLostRecent, command.IncomingVideoPercentageLost, command.IncomingVideoPercentageLostRecent)
+                command.OutgoingVideoPercentageLostRecent, command.IncomingVideoPercentageLost, command.IncomingVideoPercentageLostRecent,
+                command.BrowserName, command.BrowserVersion)
             {
                 ParticipantId = command.ParticipantId
             };
 
-            await _context.Monitorings.AddAsync(@event);
+            await _context.Heartbeats.AddAsync(@event);
 
             await _context.SaveChangesAsync();
         }
