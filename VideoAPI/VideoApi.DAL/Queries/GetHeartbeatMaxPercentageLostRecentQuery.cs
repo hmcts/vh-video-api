@@ -8,30 +8,30 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetMonitoringMaxPercentageLostRecentQuery : IQuery
+    public class GetHeartbeatMaxPercentageLostRecentQuery : IQuery
     {
         public Guid ConferenceId { get; }
         public Guid ParticipantId { get; }
 
-        public GetMonitoringMaxPercentageLostRecentQuery(Guid conferenceId, Guid participantId)
+        public GetHeartbeatMaxPercentageLostRecentQuery(Guid conferenceId, Guid participantId)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
         }
     }
     
-    public class GetMonitoringMaxPercentageLostRecentQueryHandler : IQueryHandler<GetMonitoringMaxPercentageLostRecentQuery, IList<Monitoring>>
+    public class GetHeartbeatMaxPercentageLostRecentQueryHandler : IQueryHandler<GetHeartbeatMaxPercentageLostRecentQuery, IList<Heartbeat>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetMonitoringMaxPercentageLostRecentQueryHandler(VideoApiDbContext context)
+        public GetHeartbeatMaxPercentageLostRecentQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
         
-        public async Task<IList<Monitoring>> Handle(GetMonitoringMaxPercentageLostRecentQuery query)
+        public async Task<IList<Heartbeat>> Handle(GetHeartbeatMaxPercentageLostRecentQuery query)
         {
-            return await _context.Monitoring
+            return await _context.Heartbeats
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId && x.ParticipantId == query.ParticipantId)
                 .OrderBy(x => x.Timestamp)

@@ -9,9 +9,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetMonitoringMaxPercentageLostRecentQueryTests : DatabaseTestsBase
+    public class GetHeartbeatMaxPercentageLostRecentQueryTests : DatabaseTestsBase
     {
-        private GetMonitoringMaxPercentageLostRecentQueryHandler _handler;
+        private GetHeartbeatMaxPercentageLostRecentQueryHandler _handler;
         private Guid _newConferenceId;
         private Guid _newParticipantId;
         private VideoApiDbContext _context;
@@ -20,32 +20,32 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void Setup()
         {
             _context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetMonitoringMaxPercentageLostRecentQueryHandler(_context);
+            _handler = new GetHeartbeatMaxPercentageLostRecentQueryHandler(_context);
             _newConferenceId = Guid.Empty;
             _newParticipantId = Guid.Empty;
         }
 
         [Test]
-        public async Task should_retrieve_all_monitoring_records()
+        public async Task should_retrieve_all_heartbeat_records()
         {
             _newConferenceId = Guid.NewGuid();
             _newParticipantId = Guid.NewGuid();
             
-            var monitoringItems = new List<Monitoring>
+            var heartbeats = new List<Heartbeat>
             {
-                new Monitoring(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
-                new Monitoring(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
-                new Monitoring(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
-                new Monitoring(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
-                new Monitoring(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, "chrome", "1"),
             };
 
-            await AddMonitoringToDb(monitoringItems);
+            await AddHeartbeatsToDb(heartbeats);
 
-            var result = await _handler.Handle(new GetMonitoringMaxPercentageLostRecentQuery(_newConferenceId, _newParticipantId));
+            var result = await _handler.Handle(new GetHeartbeatMaxPercentageLostRecentQuery(_newConferenceId, _newParticipantId));
 
             result.Should().NotBeNull();
-            result.Should().NotBeEmpty().And.HaveCount(monitoringItems.Count);
+            result.Should().NotBeEmpty().And.HaveCount(heartbeats.Count);
             result.Should().NotContainNulls();
             result.Should().BeInAscendingOrder(x => x.Timestamp);
             result.Should().OnlyContain
@@ -65,9 +65,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
             );
         }
 
-        private async Task AddMonitoringToDb(IEnumerable<Monitoring> monitoringItems)
+        private async Task AddHeartbeatsToDb(IEnumerable<Heartbeat> heartbeats)
         {
-            await _context.Monitoring.AddRangeAsync(monitoringItems);
+            await _context.Heartbeats.AddRangeAsync(heartbeats);
             await _context.SaveChangesAsync();
         }
         
@@ -76,8 +76,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             if (_newConferenceId != Guid.Empty && _newParticipantId != Guid.Empty)
             {
-                TestContext.WriteLine($"Removing test monitoring records {_newConferenceId} & {_newParticipantId}");
-                await TestDataManager.RemoveMonitoring(_newConferenceId, _newParticipantId);
+                TestContext.WriteLine($"Removing test Heartbeat records {_newConferenceId} & {_newParticipantId}");
+                await TestDataManager.RemoveHeartbeats(_newConferenceId, _newParticipantId);
             }
         }
     }

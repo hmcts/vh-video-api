@@ -5,9 +5,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class SaveMonitoringCommand : ICommand
+    public class SaveHeartbeatCommand : ICommand
     {
-        public SaveMonitoringCommand(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
+        public SaveHeartbeatCommand(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
             decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
             decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
             string browserName, string browserVersion)
@@ -40,18 +40,18 @@ namespace VideoApi.DAL.Commands
         public string BrowserVersion { get; set; }
     }
 
-    public class SaveMonitoringCommandHandler : ICommandHandler<SaveMonitoringCommand>
+    public class SaveHeartbeatCommandHandler : ICommandHandler<SaveHeartbeatCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public SaveMonitoringCommandHandler(VideoApiDbContext context)
+        public SaveHeartbeatCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(SaveMonitoringCommand command)
+        public async Task Handle(SaveHeartbeatCommand command)
         {
-            var @event = new Monitoring(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost, command.OutgoingAudioPercentageLostRecent,
+            var @event = new Heartbeat(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost, command.OutgoingAudioPercentageLostRecent,
                 command.IncomingAudioPercentageLost, command.IncomingAudioPercentageLostRecent, command.OutgoingVideoPercentageLost, 
                 command.OutgoingVideoPercentageLostRecent, command.IncomingVideoPercentageLost, command.IncomingVideoPercentageLostRecent,
                 command.BrowserName, command.BrowserVersion)
@@ -59,7 +59,7 @@ namespace VideoApi.DAL.Commands
                 ParticipantId = command.ParticipantId
             };
 
-            await _context.Monitoring.AddAsync(@event);
+            await _context.Heartbeats.AddAsync(@event);
 
             await _context.SaveChangesAsync();
         }

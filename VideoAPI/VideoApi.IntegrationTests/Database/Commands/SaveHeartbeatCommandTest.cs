@@ -10,34 +10,34 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
-    public class SaveMonitoringCommandTest : DatabaseTestsBase
+    public class SaveHeartbeatCommandTest : DatabaseTestsBase
     {
-        private SaveMonitoringCommandHandler _handler;
+        private SaveHeartbeatCommandHandler _handler;
         private Guid _newConferenceId;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new SaveMonitoringCommandHandler(context);
+            _handler = new SaveHeartbeatCommandHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
         [Test]
-        public async Task should_save_monitoring()
+        public async Task should_save_heartbeats()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             var participantId = seededConference.GetParticipants().First().Id;
             
-            var command = new SaveMonitoringCommand(_newConferenceId, participantId, 1,1,1,1,1,1,1,1, "chrome", "1");
+            var command = new SaveHeartbeatCommand(_newConferenceId, participantId, 1,1,1,1,1,1,1,1, "chrome", "1");
             await _handler.Handle(command);
 
-            Monitoring savedMonitor;
+            Heartbeat savedMonitor;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedMonitor = await db.Monitoring.FirstOrDefaultAsync(x =>
+                savedMonitor = await db.Heartbeats.FirstOrDefaultAsync(x =>
                     x.ConferenceId == _newConferenceId && x.ParticipantId == participantId);
             }
 
@@ -66,7 +66,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             {
                 TestContext.WriteLine($"Removing test conference {_newConferenceId}");
                 await TestDataManager.RemoveConference(_newConferenceId);
-                await TestDataManager.RemoveMonitoring(_newConferenceId);
+                await TestDataManager.RemoveHeartbeats(_newConferenceId);
             }
 
             await TestDataManager.RemoveEvents();
