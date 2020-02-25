@@ -49,7 +49,7 @@ namespace VideoApi.IntegrationTests.Steps
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.GetMessages(conferenceId);
+            ApiTestContext.Uri = _endpoints.GetInstantMessageHistory(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 
@@ -96,7 +96,7 @@ namespace VideoApi.IntegrationTests.Steps
                     throw new ArgumentOutOfRangeException(nameof(conferenceScenario), conferenceScenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.SaveMessage(conferenceId);
+            ApiTestContext.Uri = _endpoints.SaveInstantMessage(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Post;
             var request = new AddInstantMessageRequest
             {

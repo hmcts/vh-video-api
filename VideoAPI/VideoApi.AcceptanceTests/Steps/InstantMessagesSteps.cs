@@ -35,7 +35,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get chat messages request")]
         public void GivenIHaveAGetChatMessagesRequest()
         {
-            _context.Request = _context.Get(_endpoints.GetMessages(_context.NewConferenceId));
+            _context.Request = _context.Get(_endpoints.GetInstantMessageHistory(_context.NewConferenceId));
         }
 
         [Given(@"I have a create chat messages request")]
@@ -46,7 +46,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 From = _fromUsername,
                 MessageText = MessageBody
             };
-            _context.Request = _context.Post(_endpoints.SaveMessage(_context.NewConferenceId), request);
+            _context.Request = _context.Post(_endpoints.SaveInstantMessage(_context.NewConferenceId), request);
         }
 
         [Then(@"the chat messages are retrieved")]

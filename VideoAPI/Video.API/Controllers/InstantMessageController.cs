@@ -41,7 +41,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Chat messages</returns>
-        [HttpGet("{conferenceId}/messages")]
+        [HttpGet("{conferenceId}/instantmessages")]
         [SwaggerOperation(OperationId = "GetInstantMessageHistory")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -70,7 +70,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">Id of the conference</param>
         /// <param name="request">Details of the chat message</param>
         /// <returns>OK if the message is saved successfully</returns>
-        [HttpPost("{conferenceId}/messages")]
+        [HttpPost("{conferenceId}/instantmessages")]
         [SwaggerOperation(OperationId = "AddInstantMessageToConference")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
