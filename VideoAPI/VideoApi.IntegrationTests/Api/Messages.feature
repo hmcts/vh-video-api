@@ -30,7 +30,7 @@ Feature: Messages
     Then the response should have the status NotFound and success status False
 
   Scenario: Remove messages for an existing conference
-    Given I have an remove messages from a valid conference request
+    Given I have a remove messages from a valid conference request
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 

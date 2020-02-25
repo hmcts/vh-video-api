@@ -49,6 +49,13 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Post(_endpoints.SaveMessage(_context.NewConferenceId), request);
         }
 
+        [Given(@"I have a remove messages from a conference request")]
+        public void GivenIHaveARemoveMessagesFromAConferenceRequest()
+        {
+            _context.Request = _context.Delete(_endpoints.RemoveMessagesForConference(_context.NewConferenceId));
+        }
+
+
         [Then(@"the chat messages are retrieved")]
         public void ThenTheChatMessagesRetrieved()
         {
@@ -56,6 +63,15 @@ namespace VideoApi.AcceptanceTests.Steps
             message.From.Should().Be(_fromUsername);
             message.MessageText.Should().Be(Message);
         }
+
+
+        [Then(@"the chat messages are deleted")]
+        public void ThenTheChatMessagesAreDeleted()
+        {
+            var message = GetMessages();
+            message.Count().Should().Be(0);
+        }
+
 
         private IEnumerable<MessageResponse> GetMessages()
         {
