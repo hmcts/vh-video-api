@@ -34,6 +34,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
                 .WithHearingTask("Suspended")
+                .WithMessages(2)
                 .Build();
 
             foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))

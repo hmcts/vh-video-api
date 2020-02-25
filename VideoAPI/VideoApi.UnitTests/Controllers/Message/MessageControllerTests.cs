@@ -15,23 +15,8 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers
 {
-    public class MessageControllerTests
+    public class MessageControllerTests : MessageControllerTestBase
     {
-        private Mock<IQueryHandler> queryHandler;
-        private Mock<ICommandHandler> commandHandler;
-        private Mock<ILogger<MessageController>> logger;
-        private MessageController messageController;
-
-        [SetUp]
-        public void TestInitialize()
-        {
-            queryHandler = new Mock<IQueryHandler>();
-            commandHandler = new Mock<ICommandHandler>();
-            logger = new Mock<ILogger<MessageController>>();
-
-            messageController = new MessageController(queryHandler.Object,commandHandler.Object,logger.Object);
-        }
-
         [Test]
         public async Task Should_successfully_save_given_message_request_and_return_ok_result()
         {

@@ -29,3 +29,24 @@ Feature: Messages
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
 
+  Scenario: Remove messages for an existing conference
+    Given I have an remove messages from a valid conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+
+  Scenario: Remove messages for an existing conference
+    Given I have an remove messages from a valid conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+
+  Scenario: Remove messages for an invalid conference
+    Given I have an remove messages from an invalid conference request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'Invalid conferenceId'
+
+  Scenario: Remove messages for a non-existent conference
+    Given I have an remove messages from a nonexistent conference request
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
+
