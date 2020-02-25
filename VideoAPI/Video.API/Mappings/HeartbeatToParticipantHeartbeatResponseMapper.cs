@@ -13,7 +13,8 @@ namespace Video.API.Mappings
             {
                 RecentPacketLoss = GetMaxPercentageLostRecent(x),
                 BrowserName = x.BrowserName,
-                BrowserVersion = x.BrowserVersion
+                BrowserVersion = x.BrowserVersion,
+                Timestamp = x.Timestamp
             });
         }
 

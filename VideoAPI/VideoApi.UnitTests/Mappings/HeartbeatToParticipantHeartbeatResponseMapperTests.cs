@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Mappings
                 .MapHeartbeatToParticipantHeartbeatResponse(heartbeats)
                 .ToList();
 
-            result.Should().NotBeNull().And.NotBeEmpty().And.NotContainNulls();
+            result.Should().NotBeNullOrEmpty().And.NotContainNulls();
             result.Should().HaveCount(heartbeats.Count);
             result.Should().ContainItemsAssignableTo<ParticipantHeartbeatResponse>();
             result.Should().OnlyContain(x => x.BrowserName == "chrome");

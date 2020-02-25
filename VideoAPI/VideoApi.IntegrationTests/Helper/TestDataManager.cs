@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Helper
         
         public async Task RemoveConferences(List<Guid> conferenceIds)
         {
-            using (var db = new VideoApiDbContext(_dbContextOptions))
+            await using (var db = new VideoApiDbContext(_dbContextOptions))
             {
                 var conferences = await db.Conferences
                     .Include("Participants.ParticipantStatuses")
@@ -85,12 +85,19 @@ namespace VideoApi.IntegrationTests.Helper
 
         public async Task RemoveEvents()
         {
-            using (var db = new VideoApiDbContext(_dbContextOptions))
+            await using (var db = new VideoApiDbContext(_dbContextOptions))
             {
                 var eventsToDelete = db.Events.Where(x => x.Reason.StartsWith("Automated"));
                 db.Events.RemoveRange(eventsToDelete);
                 await db.SaveChangesAsync();
             }
+        }
+        
+        public async Task SeedHeartbeats(IEnumerable<Heartbeat> heartbeats)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            await db.Heartbeats.AddRangeAsync(heartbeats);
+            await db.SaveChangesAsync();
         }
         
         public async Task RemoveHeartbeats(Guid conferenceId)
