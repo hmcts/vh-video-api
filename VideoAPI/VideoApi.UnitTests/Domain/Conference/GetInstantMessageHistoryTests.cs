@@ -5,20 +5,20 @@ using Testing.Common.Helper.Builders.Domain;
 
 namespace VideoApi.UnitTests.Domain.Conference
 {
-    public class GetMessagesTest
+    public class GetInstantMessageHistoryTests
     {
         [Test]
         public void should_get_all_messages_from_hearing()
         {
             var conference = new ConferenceBuilder().Build();
-            var beforeCount = conference.GetMessages().Count;
+            var beforeCount = conference.GetInstantMessageHistory().Count;
 
             var from = "Display name";
             var messageText = "test message";
-            conference.AddMessage(from, messageText);
+            conference.AddInstantMessage(from, messageText);
 
             //Act
-            var messages = conference.GetMessages();
+            var messages = conference.GetInstantMessageHistory();
 
             //Assert
             var afterCount = messages.Count;

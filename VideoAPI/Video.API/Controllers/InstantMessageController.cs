@@ -22,13 +22,14 @@ namespace Video.API.Controllers
     [Produces("application/json")]
     [Route("conferences")]
     [ApiController]
-    public class MessageController : ControllerBase
+    public class InstantMessageController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
-        private readonly ILogger<MessageController> _logger;
+        private readonly ILogger<InstantMessageController> _logger;
 
-        public MessageController(IQueryHandler queryHandler, ICommandHandler commandHandler,ILogger<MessageController> logger)
+        public InstantMessageController(IQueryHandler queryHandler, ICommandHandler commandHandler,
+            ILogger<InstantMessageController> logger)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -41,17 +42,18 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Chat messages</returns>
         [HttpGet("{conferenceId}/messages")]
-        [SwaggerOperation(OperationId = "GetMessages")]
-        [ProducesResponseType(typeof(List<MessageResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetMessages(Guid conferenceId)
+        [SwaggerOperation(OperationId = "GetInstantMessageHistory")]
+        [ProducesResponseType(typeof(List<InstantMessageResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetInstantMessageHistory(Guid conferenceId)
         {
-            _logger.LogDebug("GetMessages");
-            var query = new GetMessagesForConferenceQuery(conferenceId);
+            _logger.LogDebug($"Retrieving instant message history for conference {conferenceId}");
+            var query = new GetInstantMessagesForConferenceQuery(conferenceId);
             try
             {
-                var messages = await _queryHandler.Handle<GetMessagesForConferenceQuery, List<Message>>(query);
-                var mapper = new MessageToResponseMapper();
+                var messages =
+                    await _queryHandler.Handle<GetInstantMessagesForConferenceQuery, List<InstantMessage>>(query);
+                var mapper = new InstantMessageToResponseMapper();
                 var response = messages.Select(mapper.MapMessageToResponse);
                 return Ok(response);
             }
@@ -69,19 +71,19 @@ namespace Video.API.Controllers
         /// <param name="request">Details of the chat message</param>
         /// <returns>OK if the message is saved successfully</returns>
         [HttpPost("{conferenceId}/messages")]
-        [SwaggerOperation(OperationId = "SaveMessage")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SaveMessage(Guid conferenceId, AddMessageRequest request)
+        [SwaggerOperation(OperationId = "AddInstantMessageToConference")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddInstantMessageToConference(Guid conferenceId, AddInstantMessageRequest request)
         {
-            _logger.LogInformation($"Saving chat message for conference {conferenceId}");
+            _logger.LogDebug($"Saving instant message for conference {conferenceId}");
 
             try
             {
-                var command = new AddMessageCommand(conferenceId, request.From, request.MessageText);
+                var command = new AddInstantMessageCommand(conferenceId, request.From, request.MessageText);
                 await _commandHandler.Handle(command);
 
-                return Ok("Message saved");
+                return Ok("InstantMessage saved");
             }
             catch (ConferenceNotFoundException)
             {

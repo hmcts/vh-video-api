@@ -6,9 +6,9 @@ using VideoApi.DAL.Exceptions;
 
 namespace VideoApi.DAL.Commands
 {
-    public class AddMessageCommand : ICommand
+    public class AddInstantMessageCommand : ICommand
     {
-        public AddMessageCommand(Guid conferenceId, string from, string messageText)
+        public AddInstantMessageCommand(Guid conferenceId, string from, string messageText)
         {
             ConferenceId = conferenceId;
             From = from;
@@ -20,28 +20,28 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; }
     }
 
-    public class AddMessageCommandHandler : ICommandHandler<AddMessageCommand>
+    public class AddInstantMessageCommandHandler : ICommandHandler<AddInstantMessageCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public AddMessageCommandHandler(VideoApiDbContext context)
+        public AddInstantMessageCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(AddMessageCommand command)
+        public async Task Handle(AddInstantMessageCommand command)
         {
             var conference = await _context.Conferences
-                                    .Include(x => x.Participants)
-                                    .Include(x => x.Messages)
-                                    .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
+                .Include(x => x.Participants)
+                .Include(x => x.InstantMessageHistory)
+                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.AddMessage(command.From, command.MessageText);
+            conference.AddInstantMessage(command.From, command.MessageText);
             await _context.SaveChangesAsync();
         }
     }

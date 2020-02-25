@@ -1,4 +1,4 @@
-Feature: Messages
+Feature: Instant Messages
   In order to facilitate chat functionality
   As an API service
   I want to save message and retrieve messages
