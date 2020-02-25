@@ -31,32 +31,32 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participantId = seededConference.GetParticipants().First().Id;
             
-            var command = new SaveHeartbeatCommand(_newConferenceId, participantId, 1,1,1,1,1,1,1,1, "chrome", "1");
+            var command = new SaveHeartbeatCommand(_newConferenceId, participantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1");
             await _handler.Handle(command);
 
-            Heartbeat savedMonitor;
+            Heartbeat savedHeartbeat;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedMonitor = await db.Heartbeats.FirstOrDefaultAsync(x =>
+                savedHeartbeat = await db.Heartbeats.FirstOrDefaultAsync(x =>
                     x.ConferenceId == _newConferenceId && x.ParticipantId == participantId);
             }
 
-            savedMonitor.Should().NotBeNull();
-            savedMonitor.ConferenceId.Should().Be(_newConferenceId);
-            savedMonitor.ParticipantId.Should().Be(participantId);
-            savedMonitor.OutgoingAudioPercentageLost.Should().Be(1);
-            savedMonitor.OutgoingAudioPercentageLostRecent.Should().Be(1);
-            savedMonitor.IncomingAudioPercentageLost.Should().Be(1);
-            savedMonitor.IncomingAudioPercentageLostRecent.Should().Be(1);
-            savedMonitor.OutgoingVideoPercentageLost.Should().Be(1);
-            savedMonitor.OutgoingVideoPercentageLostRecent.Should().Be(1);
-            savedMonitor.IncomingVideoPercentageLost.Should().Be(1);
-            savedMonitor.IncomingVideoPercentageLostRecent.Should().Be(1);
-            savedMonitor.BrowserName.Should().Be("chrome");
-            savedMonitor.BrowserVersion.Should().Be("1");
-            savedMonitor.Timestamp.Should().NotBe(new DateTime());
-            savedMonitor.Timestamp.Should().BeAfter(DateTime.MinValue);
-            savedMonitor.Timestamp.Should().BeBefore(DateTime.MaxValue);
+            savedHeartbeat.Should().NotBeNull();
+            savedHeartbeat.ConferenceId.Should().Be(_newConferenceId);
+            savedHeartbeat.ParticipantId.Should().Be(participantId);
+            savedHeartbeat.OutgoingAudioPercentageLost.Should().Be(1);
+            savedHeartbeat.OutgoingAudioPercentageLostRecent.Should().Be(1);
+            savedHeartbeat.IncomingAudioPercentageLost.Should().Be(1);
+            savedHeartbeat.IncomingAudioPercentageLostRecent.Should().Be(1);
+            savedHeartbeat.OutgoingVideoPercentageLost.Should().Be(1);
+            savedHeartbeat.OutgoingVideoPercentageLostRecent.Should().Be(1);
+            savedHeartbeat.IncomingVideoPercentageLost.Should().Be(1);
+            savedHeartbeat.IncomingVideoPercentageLostRecent.Should().Be(1);
+            savedHeartbeat.BrowserName.Should().Be("chrome");
+            savedHeartbeat.BrowserVersion.Should().Be("1");
+            savedHeartbeat.Timestamp.Should().NotBe(new DateTime());
+            savedHeartbeat.Timestamp.Should().BeAfter(DateTime.MinValue);
+            savedHeartbeat.Timestamp.Should().BeBefore(DateTime.MaxValue);
         }
 
         [TearDown]

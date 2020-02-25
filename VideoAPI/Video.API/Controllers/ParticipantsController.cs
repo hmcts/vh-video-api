@@ -205,5 +205,44 @@ namespace Video.API.Controllers
             var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
             return Ok(response);
         }
+
+        /// <summary>
+        /// Get the Heartbeat Data For Participant
+        /// </summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
+        /// <returns></returns>
+        [HttpGet("{conferenceId}/participant/{participantId}/heartbeatrecent")]
+        [SwaggerOperation(OperationId = "GetHeartbeatDataForParticipant")]
+        [ProducesResponseType(typeof(ParticipantHeartbeatResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId)
+        {
+            _logger.LogDebug("GetHeartbeatDataForParticipant");
+
+            var queriedConference = await _queryHandler
+                .Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+
+            if (queriedConference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            var participant = queriedConference.Participants.SingleOrDefault(x => x.Id == participantId);
+            if (participant == null)
+            {
+                _logger.LogError($"Unable to find participant {participantId}");
+                return NotFound();
+            }
+            
+            var query = new GetHeartbeatsFromTimePointQuery(conferenceId, participantId, TimeSpan.FromMinutes(15));
+            var heartbeats = await _queryHandler.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(query);
+            
+            var responses = HeartbeatToParticipantHeartbeatResponseMapper
+                .MapHeartbeatToParticipantHeartbeatResponse(heartbeats);
+            
+            return Ok(responses);
+        }
     }
 }
