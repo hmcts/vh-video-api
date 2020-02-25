@@ -96,16 +96,16 @@ namespace VideoApi.IntegrationTests.Helper
         public async Task RemoveMonitoring(Guid conferenceId)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
-            var toDelete = db.Monitorings.Where(x => x.ConferenceId == conferenceId);
-            db.Monitorings.RemoveRange(toDelete);
+            var toDelete = db.Monitoring.Where(x => x.ConferenceId == conferenceId);
+            db.Monitoring.RemoveRange(toDelete);
             await db.SaveChangesAsync();
         }
         
         public async Task RemoveMonitoring(Guid conferenceId, Guid participantId)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
-            var toDelete = db.Monitorings.Where(x => x.ConferenceId == conferenceId && x.ParticipantId == participantId);
-            db.Monitorings.RemoveRange(toDelete);
+            var toDelete = db.Monitoring.Where(x => x.ConferenceId == conferenceId && x.ParticipantId == participantId);
+            db.Monitoring.RemoveRange(toDelete);
             await db.SaveChangesAsync();
         }
     }

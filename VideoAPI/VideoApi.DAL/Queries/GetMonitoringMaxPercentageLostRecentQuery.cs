@@ -31,7 +31,7 @@ namespace VideoApi.DAL.Queries
         
         public async Task<IList<Monitoring>> Handle(GetMonitoringMaxPercentageLostRecentQuery query)
         {
-            return await _context.Monitorings
+            return await _context.Monitoring
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId && x.ParticipantId == query.ParticipantId)
                 .OrderBy(x => x.Timestamp)
