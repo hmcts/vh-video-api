@@ -4,11 +4,11 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Mappings
 {
-    public class MonitoringMap : IEntityTypeConfiguration<Monitoring>
+    public class HeartbeatMap : IEntityTypeConfiguration<Heartbeat>
     {
-        public void Configure(EntityTypeBuilder<Monitoring> builder)
+        public void Configure(EntityTypeBuilder<Heartbeat> builder)
         {
-            builder.ToTable(nameof(Monitoring));
+            builder.ToTable(nameof(Heartbeat));
 
             builder.HasKey(x => x.Id);
 
@@ -22,6 +22,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.OutgoingVideoPercentageLostRecent);
             builder.Property(x => x.IncomingVideoPercentageLost);
             builder.Property(x => x.IncomingVideoPercentageLostRecent);
+            builder.Property(x => x.BrowserName);
+            builder.Property(x => x.BrowserVersion);
             builder.Property(x => x.Timestamp);
         }
     }

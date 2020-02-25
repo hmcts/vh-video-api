@@ -3,7 +3,7 @@ using VideoApi.Domain.Ddd;
 
 namespace VideoApi.Domain
 {
-    public class Monitoring : Entity<long>
+    public class Heartbeat : Entity<long>
     {
         public Guid ConferenceId { get; set; }
         public Guid ParticipantId { get; set; }
@@ -15,11 +15,14 @@ namespace VideoApi.Domain
         public decimal OutgoingVideoPercentageLostRecent { get; set; }
         public decimal IncomingVideoPercentageLost { get; set; }
         public decimal IncomingVideoPercentageLostRecent { get; set; }
+        public string BrowserName { get; set; }
+        public string BrowserVersion { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public Monitoring(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
+        public Heartbeat(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
             decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
-            decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent)
+            decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
+            string browserName, string browserVersion)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -31,6 +34,8 @@ namespace VideoApi.Domain
             OutgoingVideoPercentageLostRecent = outgoingVideoPercentageLostRecent;
             IncomingVideoPercentageLost = incomingVideoPercentageLost;
             IncomingVideoPercentageLostRecent = incomingVideoPercentageLostRecent;
+            BrowserName = browserName;
+            BrowserVersion = browserVersion;
             Timestamp = DateTime.UtcNow;
         }
     }
