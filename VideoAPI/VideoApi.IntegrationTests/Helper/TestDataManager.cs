@@ -108,6 +108,19 @@ namespace VideoApi.IntegrationTests.Helper
             await db.SaveChangesAsync();
         }
         
+        public async Task RemoveHeartbeats(List<Guid> conferenceIds)
+        {
+            await using (var db = new VideoApiDbContext(_dbContextOptions))
+            {
+                var heartbeats = await db.Heartbeats
+                    .Where(x => conferenceIds.Contains(x.ConferenceId))
+                    .ToListAsync();
+
+                db.RemoveRange(heartbeats);
+                await db.SaveChangesAsync();
+            }
+        }
+        
         public async Task RemoveHeartbeats(Guid conferenceId, Guid participantId)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);

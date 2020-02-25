@@ -35,10 +35,10 @@ namespace VideoApi.UnitTests.Controllers.Participant
         public async Task Should_get_heartbeatResponses()
         {
             var conferenceId = TestConference.Id;
-            var participant = TestConference.GetParticipants()[1];
+            var participantId = TestConference.GetParticipants()[1].Id;
             
 
-            var result = await _controller.GetHeartbeatDataForParticipantAsync(conferenceId, participant.Id);
+            var result = await _controller.GetHeartbeatDataForParticipantAsync(conferenceId, participantId);
 
             _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             _mockQueryHandler.Verify(m => m.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(It.IsAny<GetHeartbeatsFromTimePointQuery>()), Times.Once);

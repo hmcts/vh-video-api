@@ -6,7 +6,12 @@
   Scenario: Get heatbeats
     Given I have a conference
     And I have heartbeats
+    Then 3 heartbeats should be retrieved
+
+  Scenario: Save heatbeats
+    Given I have a conference
+    And I want to save a heartbeat
     When I send the request to the endpoint
-    Then the response should have the status OK and success status True
-    And 3 heartbeats should be retrieved
+    Then the response should have the status NoContent and success status True
+    And 1 heartbeat should be retrieved
 

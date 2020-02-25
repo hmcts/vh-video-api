@@ -104,6 +104,6 @@ namespace Testing.Common.Helper
     {
         private static string ApiRoot => "conferences";
         public string GetHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeatrecent";
-        public string SaveHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeatrecent";
+        public string SaveHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeat";
     }
 }

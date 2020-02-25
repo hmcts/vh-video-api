@@ -218,18 +218,18 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId)
         {
-            _logger.LogDebug("GetHeartbeatDataForParticipant");
+            _logger.LogDebug("GetHeartbeatDataForParticipantAsync");
 
-            var queriedConference = await _queryHandler
+            var conference = await _queryHandler
                 .Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
 
-            if (queriedConference == null)
+            if (conference == null)
             {
                 _logger.LogError($"Unable to find conference {conferenceId}");
                 return NotFound();
             }
 
-            var participant = queriedConference.Participants.SingleOrDefault(x => x.Id == participantId);
+            var participant = conference.Participants.SingleOrDefault(x => x.Id == participantId);
             if (participant == null)
             {
                 _logger.LogError($"Unable to find participant {participantId}");
@@ -243,6 +243,57 @@ namespace Video.API.Controllers
                 .MapHeartbeatToParticipantHeartbeatResponse(heartbeats);
             
             return Ok(responses);
+        }
+
+        /// <summary>
+        /// Post the Heartbeat Data For Participant
+        /// </summary>
+        /// <param name="request">The AddHeartbeatRequest</param>
+        /// <returns></returns>
+        [HttpPost("{conferenceId}/participant/{participantId}/heartbeat")]
+        [SwaggerOperation(OperationId = "SaveHeartbeatDataForParticipant")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SaveHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId, AddHeartbeatRequest request)
+        {
+            _logger.LogDebug("SaveHeartbeatDataForParticipantAsync");
+
+            if (request == null)
+            {
+                _logger.LogError($"AddHeartbeatRequest is null");
+                return BadRequest();
+            }
+
+            var conference = await _queryHandler
+                .Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+
+            if (conference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            var participant = conference.Participants.SingleOrDefault(x => x.Id == participantId);
+            if (participant == null)
+            {
+                _logger.LogError($"Unable to find participant {participantId}");
+                return NotFound();
+            }
+            
+            var command = new SaveHeartbeatCommand
+            (
+                conferenceId, participantId,
+                request.OutgoingAudioPercentageLost, request.OutgoingAudioPercentageLostRecent,
+                request.IncomingAudioPercentageLost, request.IncomingAudioPercentageLostRecent,
+                request.OutgoingVideoPercentageLost, request.OutgoingVideoPercentageLostRecent,
+                request.IncomingVideoPercentageLost, request.IncomingVideoPercentageLostRecent,
+                DateTime.UtcNow, request.BrowserName, request.BrowserVersion
+            );
+
+            await _commandHandler.Handle(command);
+
+            return NoContent();
         }
     }
 }
