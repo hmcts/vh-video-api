@@ -181,23 +181,11 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 await ApiTestContext.TestDataManager.SeedConference(c);
             }
-            //await ApiTestContext.TestDataManager.SeedConference(conference1);
-            //await ApiTestContext.TestDataManager.SeedConference(conference2);
-            //await ApiTestContext.TestDataManager.SeedConference(conference3);
-            //await ApiTestContext.TestDataManager.SeedConference(conference4);
-            //await ApiTestContext.TestDataManager.SeedConference(conference5);
-            //await ApiTestContext.TestDataManager.SeedConference(conference6);
 
             foreach (var c in conferenceList)
             {
                 _conferenceTestContext.SeededConferences.Add(c.Id);
             }
-            //_conferenceTestContext.SeededConferences.Add(conference1.Id);
-            //_conferenceTestContext.SeededConferences.Add(conference2.Id);
-            //_conferenceTestContext.SeededConferences.Add(conference3.Id);
-            //_conferenceTestContext.SeededConferences.Add(conference4.Id);
-            //_conferenceTestContext.SeededConferences.Add(conference5.Id);
-            //_conferenceTestContext.SeededConferences.Add(conference6.Id);
         }
 
         [When(@"I send the request to the endpoint")]
