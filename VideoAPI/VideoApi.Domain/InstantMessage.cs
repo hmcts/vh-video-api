@@ -3,13 +3,14 @@ using VideoApi.Domain.Ddd;
 
 namespace VideoApi.Domain
 {
-    public class Message : Entity<long>
+    public class InstantMessage : Entity<long>
     {
-        public Message(string from, string messageText)
+        public InstantMessage(string from, string messageText)
         {
             From = from;
             MessageText = messageText;
             TimeStamp = DateTime.UtcNow;
+            To = null;
         }
         public string From { get; }
         public string To { get; }

@@ -4,7 +4,7 @@ using Testing.Common.Helper.Builders.Domain;
 
 namespace VideoApi.UnitTests.Domain.Conference
 {
-    public class ClearMessagesTests
+    public class ClearInstantMessageHistoryTests
     {
         [Test]
         public void should_remove_all_messages_from_hearing()
@@ -13,13 +13,13 @@ namespace VideoApi.UnitTests.Domain.Conference
                 .WithMessages(5)
                 .Build();
 
-            var beforeCount = conference.GetMessages().Count;
+            var beforeCount = conference.GetInstantMessageHistory().Count;
 
             //Act
-            conference.ClearMessages();
+            conference.ClearInstantMessageHistory();
 
             //Assert
-            var afterCount = conference.GetMessages().Count;
+            var afterCount = conference.GetInstantMessageHistory().Count;
             afterCount.Should().BeLessThan(beforeCount);
             afterCount.Should().Be(0);
         }
