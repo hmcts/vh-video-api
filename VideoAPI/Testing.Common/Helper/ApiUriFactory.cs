@@ -98,6 +98,8 @@ namespace Testing.Common.Helper
         private string ApiRoot => "conferences";
         public string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
         public string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
+        public string RemoveInstantMessagesForConference(Guid conferenceId) =>
+           $"{ApiRoot}/{conferenceId}/instantmessages";
         public string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
     }
     
