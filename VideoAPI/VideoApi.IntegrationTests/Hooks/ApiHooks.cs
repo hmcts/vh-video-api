@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -90,6 +91,7 @@ namespace VideoApi.IntegrationTests.Hooks
                 await apiTestContext.TestDataManager.RemoveConference(apiTestContext.NewConferenceId);
             }
             await apiTestContext.TestDataManager.RemoveConferences(conferenceTestContext.SeededConferences);
+            await apiTestContext.TestDataManager.RemoveHeartbeats(conferenceTestContext.SeededConferences);
         }
 
         [AfterFeature]

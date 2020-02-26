@@ -10,7 +10,7 @@ namespace VideoApi.DAL.Commands
         public SaveHeartbeatCommand(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
             decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
             decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
-            string browserName, string browserVersion)
+            DateTime timestamp, string browserName, string browserVersion)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -22,6 +22,7 @@ namespace VideoApi.DAL.Commands
             OutgoingVideoPercentageLostRecent = outgoingVideoPercentageLostRecent;
             IncomingVideoPercentageLost = incomingVideoPercentageLost;
             IncomingVideoPercentageLostRecent = incomingVideoPercentageLostRecent;
+            Timestamp = timestamp;
             BrowserName = browserName;
             BrowserVersion = browserVersion;
         }
@@ -36,6 +37,7 @@ namespace VideoApi.DAL.Commands
         public decimal OutgoingVideoPercentageLostRecent { get; }
         public decimal IncomingVideoPercentageLost { get; }
         public decimal IncomingVideoPercentageLostRecent { get; }
+        public DateTime Timestamp { get; }
         public string BrowserName { get; set; }
         public string BrowserVersion { get; set; }
     }
@@ -54,7 +56,7 @@ namespace VideoApi.DAL.Commands
             var @event = new Heartbeat(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost, command.OutgoingAudioPercentageLostRecent,
                 command.IncomingAudioPercentageLost, command.IncomingAudioPercentageLostRecent, command.OutgoingVideoPercentageLost, 
                 command.OutgoingVideoPercentageLostRecent, command.IncomingVideoPercentageLost, command.IncomingVideoPercentageLostRecent,
-                command.BrowserName, command.BrowserVersion)
+                command.Timestamp, command.BrowserName, command.BrowserVersion)
             {
                 ParticipantId = command.ParticipantId
             };
