@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +75,8 @@ namespace Video.API
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
+            var serviceSettings = Configuration.GetSection("Services").Get<ServicesConfiguration>();
+
             serviceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -87,7 +89,7 @@ namespace Video.API
                     {
                         ClockSkew = TimeSpan.Zero,
                         ValidateLifetime = true,
-                        ValidAudience = securitySettings.VhVideoApiResourceId
+                        ValidAudience = serviceSettings.VhVideoApiResourceId
                     };
                 });
 

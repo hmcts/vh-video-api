@@ -9,12 +9,8 @@ variables:
   coverletCoverageExclusions: '[*]Video.API.Extensions.*,[Video.API]Video.API.ConfigureServicesExtensions,[Video.API]Video.API.Startup,[Video.API]Video.API.Program,[*]Video.API.Swagger.*,[VideoApi.*Tests?]*,[*]VideoApi.DAL.SeedData.*,[*]VideoApi.DAL.Migrations.*,[*]VideoApi.DAL.Mappings.*,[*]VideoApi.Domain.Ddd.*,[*]VideoApi.Domain.Validations.*,[VideoApi.DAL]VideoApi.DAL.VideoApiDbContext,[VideoApi.DAL]VideoApi.DAL.DesignTimeHearingsContextFactory,[*]VideoApi.Common.*,[*]Testing.Common.*'
   integrationTestsAppSettingsTransform: '
     "AzureAd/TenantId":"$(tenantid)",
-    "AzureAd/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
-    "AzureAd/VhVideoWebClientId":"$(vh-video-web-appid)",
     "AzureAd/ClientId":"$(vh-video-api-appid)",
     "AzureAd/ClientSecret":"$(vh-video-api-key)",
-    "Testing/TestClientId":"$(vh-admin-web-appid)",
-    "Testing/TestClientSecret":"$(vh-admin-web-key)",
     "ServiceBusQueue/ConnectionString":"$(AzureServiceBusConnectionStringSend)",
     "Services/KinlyApiUrl":"$(KinlyApiUrl)",
     "Services/KinlySelfTestApiUrl":"$(KinlySelfTestApiUrl)",
@@ -24,6 +20,8 @@ variables:
     "Services/PexipSelfTestNode":"$(PexipSelfTestNode)",
     "Services/UserApiUrl":"$(UserApiUrl)",
     "Services/UserApiResourceId":"$(vh-user-api-identifieruris)",
+    "Services/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
+    "Services/VhVideoWebClientId":"$(vh-video-web-appid)",
     "CustomToken/Secret":"$(Secret)",
     "CustomToken/ThirdPartySecret":"$(ThirdPartySecret)"
     '

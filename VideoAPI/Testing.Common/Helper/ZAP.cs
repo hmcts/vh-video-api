@@ -9,12 +9,11 @@ using Testing.Common.Configuration;
 
 namespace Testing.Common.Helper
 {
-    public static class ZAP
+    public static class Zap
     {        
-        private static readonly ClientApi _api = new ClientApi(ZapConfiguration.ApiAddress, ZapConfiguration.ApiPort, ZapConfiguration.Apikey);
-        private static IApiResponse _apiResponse;
+        private static readonly ClientApi _api = new ClientApi(ZapConfiguration.ApiAddress, ZapConfiguration.ApiPort, ZapConfiguration.ApiKey);
 
-        private static ZAPConfiguration ZapConfiguration
+        private static ZapConfiguration ZapConfiguration
         {
             get
             {
@@ -22,21 +21,14 @@ namespace Testing.Common.Helper
                     .AddJsonFile("appsettings.json")
                     .AddUserSecrets("9AECE566-336D-4D16-88FA-7A76C27321CD")
                     .Build()
-                    .GetSection("ZAPConfiguration")
-                    .Get<ZAPConfiguration>();
+                    .GetSection("ZapConfiguration")
+                    .Get<ZapConfiguration>();
             }
         }
 
-        public static IWebProxy WebProxy
-        {
-            get
-            {
-                return ZapConfiguration.RunZap ? new WebProxy($"http://{ZapConfiguration.ApiAddress}:{ZapConfiguration.ApiPort}", false) : null;
-            } 
-        }
-         
+        public static IWebProxy WebProxy => ZapConfiguration.RunZap ? new WebProxy($"http://{ZapConfiguration.ApiAddress}:{ZapConfiguration.ApiPort}", false) : null;
 
-        public static void StartZAPDaemon()
+        public static void StartZapDaemon()
         {
             if (!ZapConfiguration.RunZap) return;
 
@@ -49,10 +41,10 @@ namespace Testing.Common.Helper
              
             Process.Start(zapProcessStartInfo);
              
-            CheckIfZAPHasStartedByPollingTheAPI(1);
+            CheckIfZapHasStartedByPollingTheApi(1);
         } 
 
-        public static void CheckIfZAPHasStartedByPollingTheAPI(int minutesToWait)
+        public static void CheckIfZapHasStartedByPollingTheApi(int minutesToWait)
         { 
             var watch = new Stopwatch();
             watch.Start();
@@ -92,17 +84,17 @@ namespace Testing.Common.Helper
 
         private static void StartSpidering(string target)
         {
-            _apiResponse = _api.spider.scan(target, "", "", "", "");
-            var scanid = ((ApiResponseElement)_apiResponse).Value;
-            PollTheSpiderTillCompletion(scanid);
+            var apiResponse = _api.spider.scan(target, "", "", "", "");
+            var scanId = ((ApiResponseElement)apiResponse).Value;
+            PollTheSpiderTillCompletion(scanId);
         }
 
-        private static void PollTheSpiderTillCompletion(string scanid)
+        private static void PollTheSpiderTillCompletion(string scanId)
         {
             while (true)
             {
                 Thread.Sleep(1000);
-                var responseStatus = int.TryParse(((ApiResponseElement)_api.spider.status(scanid)).Value, out var spiderProgress);
+                var responseStatus = int.TryParse(((ApiResponseElement)_api.spider.status(scanId)).Value, out var spiderProgress);
                 if (!responseStatus || spiderProgress >= 100)
                     break;
             }
@@ -110,9 +102,8 @@ namespace Testing.Common.Helper
 
         private static void StartActiveScanning(string target)
         {
-            _apiResponse = _api.ascan.scan(target, "", "", "", "", "", "");
-
-            string activeScanId = ((ApiResponseElement)_apiResponse).Value;
+            var apiResponse = _api.ascan.scan(target, "", "", "", "", "", "");
+            var activeScanId = ((ApiResponseElement)apiResponse).Value;
             PollTheActiveScannerTillCompletion(activeScanId);
         }
 

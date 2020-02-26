@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using RestSharp;
-using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
@@ -15,22 +14,21 @@ namespace VideoApi.AcceptanceTests.Contexts
 {
     public class TestContext
     {
-        public RestRequest Request { get; set; }
-        public IRestResponse Response { get; set; }
+        public IOptions<AzureAdConfiguration> AzureAdConfiguration { get; set; }
         public string BearerToken { get; set; }
         public string BaseUrl { get; set; }
+        public CustomTokenSettings CustomTokenSettings { get; set; }
         public string Json { get; set; }
-        public TestSettings TestSettings { get; set; }
-        public ServicesConfiguration ServicesConfiguration { get; set; }
         public Guid NewConferenceId { get; set; }
         public Guid NewHearingRefId { get; set; }
         public ConferenceDetailsResponse NewConference { get; set; }
-        public long NewTaskId { get; set; }
         public List<ConferenceSummaryResponse> NewConferences { get; set; }
         public List<Guid> NewConferenceIds { get; set; }
-        public CustomTokenSettings CustomTokenSettings { get; set; }
-        public IOptions<AzureAdConfiguration> AzureAdConfiguration { get; set; }
+        public long NewTaskId { get; set; }
         public Guid ParticipantId { get; set; }
+        public RestRequest Request { get; set; }
+        public IRestResponse Response { get; set; }
+        public ServicesConfiguration ServicesConfiguration { get; set; }
 
         public TestContext()
         {
@@ -40,8 +38,7 @@ namespace VideoApi.AcceptanceTests.Contexts
 
         public RestClient Client()
         {
-            var client = new RestClient(BaseUrl);
-            client.Proxy = ZAP.WebProxy;
+            var client = new RestClient(BaseUrl) {Proxy = Zap.WebProxy};
             client.AddDefaultHeader("Accept", "application/json");
             client.AddDefaultHeader("Authorization", $"Bearer {BearerToken}");
             Debug.WriteLine($"bearer token {BearerToken}");
@@ -85,8 +82,8 @@ namespace VideoApi.AcceptanceTests.Contexts
         public void SetDefaultBearerToken()
         {
             BearerToken = new AzureTokenProvider(AzureAdConfiguration).GetClientAccessToken(
-                TestSettings.TestClientId, TestSettings.TestClientSecret,
-                AzureAdConfiguration.Value.VhVideoApiResourceId);
+                AzureAdConfiguration.Value.ClientId, AzureAdConfiguration.Value.ClientSecret,
+                ServicesConfiguration.VhVideoApiResourceId);
         }
     }
 }

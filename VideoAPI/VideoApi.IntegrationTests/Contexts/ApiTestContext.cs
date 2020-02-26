@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
@@ -41,11 +40,11 @@ namespace VideoApi.IntegrationTests.Contexts
             }
         }
 
-        private ZAPConfiguration ZapConfiguration
+        private ZapConfiguration ZapConfiguration
         {
             get
             {
-                return ConfigurationRoot.GetSection("ZAPConfiguration").Get<ZAPConfiguration>();
+                return ConfigurationRoot.GetSection("ZapConfiguration").Get<ZapConfiguration>();
             }
         }
 
@@ -58,7 +57,7 @@ namespace VideoApi.IntegrationTests.Contexts
             {
                 var handler = new HttpClientHandler
                 {
-                    Proxy = ZAP.WebProxy,
+                    Proxy = Zap.WebProxy,
                     UseProxy = true,
                 };
 
@@ -72,7 +71,7 @@ namespace VideoApi.IntegrationTests.Contexts
                 client = Server.CreateClient();
             }
             
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.BearerToken}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {BearerToken}");
             return client;
         }
     }

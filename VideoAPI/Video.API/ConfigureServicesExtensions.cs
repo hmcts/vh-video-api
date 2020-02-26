@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -150,7 +150,7 @@ namespace Video.API
         private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient,
             ServicesConfiguration servicesConfiguration)
         {
-            DefaultContractResolver contractResolver = new DefaultContractResolver
+            var contractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };

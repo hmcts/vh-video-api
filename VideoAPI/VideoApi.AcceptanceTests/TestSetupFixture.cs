@@ -11,7 +11,7 @@ namespace VideoApi.AcceptanceTests
         public void ZapReport()
         {
             var reportFileName = string.Format("VideoApi-Acceptance-Tests-Security-{0}", DateTime.Now.ToString("dd-MMM-yyyy-hh-mm-ss"));
-            ZAP.ReportAndShutDown(reportFileName); 
+            Zap.ReportAndShutDown(reportFileName); 
         }
     }
 }

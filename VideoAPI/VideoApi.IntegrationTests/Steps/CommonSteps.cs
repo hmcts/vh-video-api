@@ -118,27 +118,16 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task WhenISendTheRequestToTheEndpoint()
         {
             ApiTestContext.ResponseMessage = new HttpResponseMessage();
-            switch (ApiTestContext.HttpMethod.Method)
+            ApiTestContext.ResponseMessage = ApiTestContext.HttpMethod.Method switch
             {
-                case "GET":
-                    ApiTestContext.ResponseMessage = await SendGetRequestAsync(ApiTestContext);
-                    break;
-                case "POST":
-                    ApiTestContext.ResponseMessage = await SendPostRequestAsync(ApiTestContext);
-                    break;
-                case "PATCH":
-                    ApiTestContext.ResponseMessage = await SendPatchRequestAsync(ApiTestContext);
-                    break;
-                case "PUT":
-                    ApiTestContext.ResponseMessage = await SendPutRequestAsync(ApiTestContext);
-                    break;
-                case "DELETE":
-                    ApiTestContext.ResponseMessage = await SendDeleteRequestAsync(ApiTestContext);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(ApiTestContext.HttpMethod.ToString(),
-                        ApiTestContext.HttpMethod.ToString(), null);
-            }
+                "GET" => await SendGetRequestAsync(ApiTestContext),
+                "POST" => await SendPostRequestAsync(ApiTestContext),
+                "PATCH" => await SendPatchRequestAsync(ApiTestContext),
+                "PUT" => await SendPutRequestAsync(ApiTestContext),
+                "DELETE" => await SendDeleteRequestAsync(ApiTestContext),
+                _ => throw new ArgumentOutOfRangeException(ApiTestContext.HttpMethod.ToString(),
+                    ApiTestContext.HttpMethod.ToString(), null)
+            };
         }
 
         [Then(@"the response should have the status (.*) and success status (.*)")]
@@ -146,7 +135,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             ApiTestContext.ResponseMessage.StatusCode.Should().Be(statusCode);
             ApiTestContext.ResponseMessage.IsSuccessStatusCode.Should().Be(isSuccess);
-            ZAP.Scan(ApiTestContext.RequestUrl);
+            Zap.Scan(ApiTestContext.RequestUrl);
             TestContext.WriteLine($"Status Code: {ApiTestContext.ResponseMessage.StatusCode}");
         }
 
@@ -157,7 +146,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var messageString = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
             messageString.Should().Contain(errorMessage);
-            ZAP.Scan(ApiTestContext.RequestUrl);
+            Zap.Scan(ApiTestContext.RequestUrl);
         }
     }
 }
