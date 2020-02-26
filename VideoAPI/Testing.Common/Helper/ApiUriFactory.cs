@@ -11,6 +11,7 @@ namespace Testing.Common.Helper
         public ConsultationEndpoints ConsultationEndpoints { get; }
         public TaskEndpoints TaskEndpoints { get; }
         public InstantMessageEndpoints InstantMessageEndpoints { get; }
+        public HeartbeatEndpoints HeartbeatEndpoints { get; }
 
         public ApiUriFactory()
         {
@@ -21,6 +22,7 @@ namespace Testing.Common.Helper
             ConsultationEndpoints = new ConsultationEndpoints();
             TaskEndpoints = new TaskEndpoints();
             InstantMessageEndpoints = new InstantMessageEndpoints();
+            HeartbeatEndpoints = new HeartbeatEndpoints();
         }
     }
     
@@ -97,5 +99,12 @@ namespace Testing.Common.Helper
         public string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
         public string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
         public string GetClosedConferences => $"{ApiRoot}/expiredIM";
+    }
+    
+    public class HeartbeatEndpoints
+    {
+        private static string ApiRoot => "conferences";
+        public string GetHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeatrecent";
+        public string SaveHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeat";
     }
 }
