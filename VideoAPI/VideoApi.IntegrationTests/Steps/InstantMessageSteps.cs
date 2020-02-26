@@ -21,11 +21,11 @@ using VideoApi.IntegrationTests.Helper;
 namespace VideoApi.IntegrationTests.Steps
 {
     [Binding]
-    public class MessageSteps : StepsBase
+    public class InstantMessageSteps : StepsBase
     {
-        private readonly MessageEndpoints _endpoints = new ApiUriFactory().MessageEndpoints;
+        private readonly InstantMessageEndpoints _endpoints = new ApiUriFactory().InstantMessageEndpoints;
 
-        public MessageSteps(ApiTestContext apiTestContext) : base(apiTestContext)
+        public InstantMessageSteps(ApiTestContext apiTestContext) : base(apiTestContext)
         {
         }
 
@@ -49,7 +49,7 @@ namespace VideoApi.IntegrationTests.Steps
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.GetMessages(conferenceId);
+            ApiTestContext.Uri = _endpoints.GetInstantMessageHistory(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 
@@ -57,7 +57,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async System.Threading.Tasks.Task ThenTheChatMessagesShouldBeRetrieved()
         {
             var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            var messages = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<MessageResponse>>(json);
+            var messages = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<InstantMessageResponse>>(json);
             messages.Should().NotBeNullOrEmpty();
             messages.Should().BeInDescendingOrder(x => x.TimeStamp);
             foreach (var message in messages)
@@ -96,9 +96,9 @@ namespace VideoApi.IntegrationTests.Steps
                     throw new ArgumentOutOfRangeException(nameof(conferenceScenario), conferenceScenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.SaveMessage(conferenceId);
+            ApiTestContext.Uri = _endpoints.SaveInstantMessage(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Post;
-            var request = new AddMessageRequest
+            var request = new AddInstantMessageRequest
             {
                 From = from,
                 MessageText = Internet.DomainWord()
@@ -116,8 +116,8 @@ namespace VideoApi.IntegrationTests.Steps
                 .Build();
 
             var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-            conference.AddMessage(judge.DisplayName, "test message from Judge");
-            conference.AddMessage("VH Officer ", "test message from VHO");
+            conference.AddInstantMessage(judge.DisplayName, "test message from Judge");
+            conference.AddInstantMessage("VH Officer ", "test message from VHO");
             return await ApiTestContext.TestDataManager.SeedConference(conference);
         }
     }

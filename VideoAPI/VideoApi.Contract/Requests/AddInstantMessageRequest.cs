@@ -1,6 +1,6 @@
 namespace VideoApi.Contract.Requests
 {
-    public class AddMessageRequest
+    public class AddInstantMessageRequest
     {
         /// <summary>
         /// Username of the sender

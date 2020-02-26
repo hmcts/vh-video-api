@@ -42,7 +42,7 @@ namespace VideoApi.DAL
                     }
                 }
             }
-            modelBuilder.Entity<Message>()
+            modelBuilder.Entity<InstantMessage>()
                 .HasIndex(m => m.TimeStamp);
         }
         

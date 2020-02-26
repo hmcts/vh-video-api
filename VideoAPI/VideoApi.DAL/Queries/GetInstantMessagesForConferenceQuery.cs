@@ -6,13 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using Task = VideoApi.Domain.Task;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetMessagesForConferenceQuery : IQuery
+    public class GetInstantMessagesForConferenceQuery : IQuery
     {
-        public GetMessagesForConferenceQuery(Guid conferenceId)
+        public GetInstantMessagesForConferenceQuery(Guid conferenceId)
         {
             ConferenceId = conferenceId;
         }
@@ -20,18 +19,20 @@ namespace VideoApi.DAL.Queries
         public Guid ConferenceId { get; }
     }
 
-    public class GetMessagesForConferenceQueryHandler : IQueryHandler<GetMessagesForConferenceQuery, List<Message>>
+    public class
+        GetInstantMessagesForConferenceQueryHandler : IQueryHandler<GetInstantMessagesForConferenceQuery,
+            List<InstantMessage>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetMessagesForConferenceQueryHandler(VideoApiDbContext context)
+        public GetInstantMessagesForConferenceQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Message>> Handle(GetMessagesForConferenceQuery query)
+        public async Task<List<InstantMessage>> Handle(GetInstantMessagesForConferenceQuery query)
         {
-            var conference = await _context.Conferences.Include(x => x.Messages)
+            var conference = await _context.Conferences.Include(x => x.InstantMessageHistory)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
 
@@ -40,7 +41,7 @@ namespace VideoApi.DAL.Queries
                 throw new ConferenceNotFoundException(query.ConferenceId);
             }
 
-            return conference.Messages.OrderByDescending(x => x.TimeStamp).ToList();
+            return conference.InstantMessageHistory.OrderByDescending(x => x.TimeStamp).ToList();
         }
     }
 }

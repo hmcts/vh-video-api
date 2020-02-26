@@ -13,14 +13,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
 {
     public class GetMessagesForConferenceQueryTests : DatabaseTestsBase
     {
-        private GetMessagesForConferenceQueryHandler _handler;
+        private GetInstantMessagesForConferenceQueryHandler _handler;
         private Guid _newConferenceId;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetMessagesForConferenceQueryHandler(context);
+            _handler = new GetInstantMessagesForConferenceQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
@@ -34,18 +34,18 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             var vhOfficer = "VH Officer";
-            conference.AddMessage(vhOfficer, "Message 1");
-            conference.AddMessage(judge.DisplayName, "Message 2");
-            conference.AddMessage(judge.DisplayName, "Message 3");
-            conference.AddMessage(vhOfficer, "Message 4");
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 1");
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 2");
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 3");
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 4");
 
             var seededConference = await TestDataManager.SeedConference(conference);
             _newConferenceId = seededConference.Id;
 
 
-            var query = new GetMessagesForConferenceQuery(_newConferenceId);
+            var query = new GetInstantMessagesForConferenceQuery(_newConferenceId);
             var results = await _handler.Handle(query);
-            results.Count.Should().Be(conference.GetMessages().Count);
+            results.Count.Should().Be(conference.GetInstantMessageHistory().Count);
             results.Should().BeInDescendingOrder(x => x.TimeStamp);
         }
 
@@ -53,7 +53,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var query = new GetMessagesForConferenceQuery(conferenceId);
+            var query = new GetInstantMessagesForConferenceQuery(conferenceId);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(query));
         }
 
