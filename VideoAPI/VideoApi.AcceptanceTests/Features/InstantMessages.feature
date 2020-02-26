@@ -1,4 +1,4 @@
-Feature: Messages
+Feature: Instant Messages
   In order to manage IM messages
   As an api service
   I want to be able to create, retrieve, update and delete messages

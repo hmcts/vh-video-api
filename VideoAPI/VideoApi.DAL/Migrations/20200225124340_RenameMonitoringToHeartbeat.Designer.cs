@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideoApi.DAL;
 
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    partial class VideoApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200225124340_RenameMonitoringToHeartbeat")]
+    partial class RenameMonitoringToHeartbeat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,7 +172,7 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Heartbeat");
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
+            modelBuilder.Entity("VideoApi.Domain.Message", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -200,7 +202,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasIndex("TimeStamp");
 
-                    b.ToTable("InstantMessage");
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
@@ -372,10 +374,10 @@ namespace VideoApi.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
+            modelBuilder.Entity("VideoApi.Domain.Message", b =>
                 {
                     b.HasOne("VideoApi.Domain.Conference", null)
-                        .WithMany("InstantMessageHistory")
+                        .WithMany("Messages")
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

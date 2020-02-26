@@ -93,5 +93,21 @@ namespace VideoApi.IntegrationTests.Helper
                 await db.SaveChangesAsync();
             }
         }
+        
+        public async Task RemoveHeartbeats(Guid conferenceId)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var toDelete = db.Heartbeats.Where(x => x.ConferenceId == conferenceId);
+            db.Heartbeats.RemoveRange(toDelete);
+            await db.SaveChangesAsync();
+        }
+        
+        public async Task RemoveHeartbeats(Guid conferenceId, Guid participantId)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var toDelete = db.Heartbeats.Where(x => x.ConferenceId == conferenceId && x.ParticipantId == participantId);
+            db.Heartbeats.RemoveRange(toDelete);
+            await db.SaveChangesAsync();
+        }
     }
 }

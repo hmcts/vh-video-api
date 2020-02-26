@@ -13,14 +13,14 @@ using VideoApi.Domain.Enums;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public class MessagesSteps : BaseSteps
+    public class InstantMessagesSteps : BaseSteps
     {
         private readonly string _fromUsername;
-        private const string Message = "A message";
+        private const string MessageBody = "A message";
         private readonly TestContext _context;
-        private readonly MessageEndpoints _endpoints = new ApiUriFactory().MessageEndpoints;
+        private readonly InstantMessageEndpoints _endpoints = new ApiUriFactory().InstantMessageEndpoints;
 
-        public MessagesSteps(TestContext injectedContext)
+        public InstantMessagesSteps(TestContext injectedContext)
         {
             _context = injectedContext;
             _fromUsername = _context.NewConference.Participants.First(x => x.UserRole.Equals(UserRole.Judge)).DisplayName;
@@ -35,18 +35,18 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get chat messages request")]
         public void GivenIHaveAGetChatMessagesRequest()
         {
-            _context.Request = _context.Get(_endpoints.GetMessages(_context.NewConferenceId));
+            _context.Request = _context.Get(_endpoints.GetInstantMessageHistory(_context.NewConferenceId));
         }
 
         [Given(@"I have a create chat messages request")]
         public void GivenIHaveACreateChatMessagesRequest()
         {
-            var request = new AddMessageRequest()
+            var request = new AddInstantMessageRequest()
             {
                 From = _fromUsername,
-                MessageText = Message
+                MessageText = MessageBody
             };
-            _context.Request = _context.Post(_endpoints.SaveMessage(_context.NewConferenceId), request);
+            _context.Request = _context.Post(_endpoints.SaveInstantMessage(_context.NewConferenceId), request);
         }
 
         [Given(@"I have a remove messages from a conference request")]
@@ -61,7 +61,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var message = GetMessages().First();
             message.From.Should().Be(_fromUsername);
-            message.MessageText.Should().Be(Message);
+            message.MessageText.Should().Be(MessageBody);
         }
 
 
@@ -72,13 +72,12 @@ namespace VideoApi.AcceptanceTests.Steps
             message.Count().Should().Be(0);
         }
 
-
-        private IEnumerable<MessageResponse> GetMessages()
-        {
+        private IEnumerable<InstantMessageResponse> GetMessages()
+       {
             GivenIHaveAGetChatMessagesRequest();
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<MessageResponse>>(_context.Response.Content);
+            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<InstantMessageResponse>>(_context.Response.Content);
         }
 
         private void CreateMessage()

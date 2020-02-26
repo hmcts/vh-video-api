@@ -3,7 +3,7 @@ using VideoApi.Contract.Requests;
 
 namespace Video.API.Validations
 {
-    public class AddMessageRequestValidation : AbstractValidator<AddMessageRequest>
+    public class AddMessageRequestValidation : AbstractValidator<AddInstantMessageRequest>
     {
         public static readonly string NoFromErrorMessage = "From is required";
         public static readonly string NoMessageTextErrorMessage = "MessageText is required";
