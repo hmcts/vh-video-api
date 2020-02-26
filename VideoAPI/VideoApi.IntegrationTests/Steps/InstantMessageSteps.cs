@@ -123,7 +123,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Then(@"the response is an empty list should")]
-        public async Task ThenTheResponseIsAnEmptyListShould()
+        public async Task ThenTheResponseIsAnEmptyList()
         {
             var conferences = await GetResponses<List<ClosedConferencesResponse>>();
             conferences.Should().BeEmpty();

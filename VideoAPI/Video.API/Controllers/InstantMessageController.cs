@@ -132,7 +132,6 @@ namespace Video.API.Controllers
         [HttpGet("expiredIM")]
         [SwaggerOperation(OperationId = "GetClosedConferencesWithInstantMessages")]
         [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetClosedConferencesWithInstantMessages()
         {
             _logger.LogDebug($"GetClosedConferencesWithInstantMessages");
@@ -142,7 +141,7 @@ namespace Video.API.Controllers
             if (!closedConferences.Any())
             {
                 _logger.LogDebug($"No closed conferences with instant messages found.");
-                return NotFound();
+                return Ok(new List<ClosedConferencesResponse>());
             }
 
             var mapper = new ConferenceToClosedConferenceMapper();
