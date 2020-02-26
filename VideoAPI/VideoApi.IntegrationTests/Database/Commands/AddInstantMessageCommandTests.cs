@@ -16,13 +16,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
     public class AddMessageCommandTests : DatabaseTestsBase
     {
         private Guid _newConferenceId;
-        private AddMessageCommandHandler _handler;
+        private AddInstantMessageCommandHandler _handler;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new AddMessageCommandHandler(context);
+            _handler = new AddInstantMessageCommandHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
@@ -36,18 +36,18 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var from = participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
             var messageText = Internet.DomainWord();
 
-            var command = new AddMessageCommand(_newConferenceId, from, messageText);
+            var command = new AddInstantMessageCommand(_newConferenceId, from, messageText);
             await _handler.Handle(command);
 
             Conference conference;
             using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
                 conference = await db.Conferences
-                                .Include(x => x.Messages)
+                                .Include(x => x.InstantMessageHistory)
                                 .SingleAsync(x => x.Id == command.ConferenceId);
             }
 
-            var message = conference.GetMessages().First();
+            var message = conference.GetInstantMessageHistory().First();
 
             message.Should().NotBeNull();
             message.From.Should().Be(from);
@@ -58,7 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
-            var command = new AddMessageCommand(Guid.NewGuid(), "Display Name", "Test message");
+            var command = new AddInstantMessageCommand(Guid.NewGuid(), "Display Name", "Test message");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
