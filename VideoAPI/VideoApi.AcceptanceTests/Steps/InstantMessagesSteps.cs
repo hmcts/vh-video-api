@@ -52,7 +52,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a remove messages from a conference request")]
         public void GivenIHaveARemoveMessagesFromAConferenceRequest()
         {
-            _context.Request = _context.Delete(_endpoints.RemoveMessagesForConference(_context.NewConferenceId));
+            _context.Request = _context.Delete(_endpoints.RemoveInstantMessagesForConference(_context.NewConferenceId));
         }
 
 

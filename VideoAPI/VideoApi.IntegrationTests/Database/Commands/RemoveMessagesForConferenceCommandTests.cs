@@ -10,6 +10,8 @@ using System.Linq;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using Task = System.Threading.Tasks.Task;
+using Testing.Common.Helper.Builders.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
@@ -39,15 +41,26 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task should_remove_messages_from_conference()
         {
-            var seededConference = await TestDataManager.SeedConference();
+            var conference = new ConferenceBuilder(true)
+               .WithMessages(2)
+               .Build();
+
+            var seededConference = await TestDataManager.SeedConference(conference);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
                        
             var command = new RemoveMessagesForConferenceCommand(_newConferenceId);
             await _handler.Handle(command);
 
-            var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-            var afterCount = conference.GetMessages().Count;
+            Conference updatedConference;
+            using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                updatedConference = await db.Conferences
+                                .Include(x => x.InstantMessageHistory)
+                                .SingleAsync(x => x.Id == command.ConferenceId);
+            }
+
+            var afterCount = updatedConference.GetInstantMessageHistory().Count;
             afterCount.Should().Equals(0);
         }
 

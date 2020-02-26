@@ -92,12 +92,12 @@ namespace Video.API.Controllers
             }
         }
 
-        [HttpDelete("{conferenceId}/messages")]
-        [SwaggerOperation(OperationId = "RemoveChatMessages")]
+        [HttpDelete("{conferenceId}/instantmessages")]
+        [SwaggerOperation(OperationId = "RemoveInstantMessages")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> RemoveChatMessagesForConference(Guid conferenceId)
+        public async Task<IActionResult> RemoveInstantMessagesForConference(Guid conferenceId)
 
         {
             _logger.LogDebug("RemoveParticipantFromConference");

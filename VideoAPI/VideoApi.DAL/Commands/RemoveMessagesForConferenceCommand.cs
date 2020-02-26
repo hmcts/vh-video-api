@@ -29,7 +29,7 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(RemoveMessagesForConferenceCommand command)
         {
-            var conference = await _context.Conferences.Include("Messages")
+            var conference = await _context.Conferences.Include("InstantMessageHistory")
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -37,7 +37,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.ClearMessages();
+            conference.ClearInstantMessageHistory();
             await _context.SaveChangesAsync();
         }
     }

@@ -134,7 +134,7 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.RemoveMessagesForConference(conferenceId);
+            ApiTestContext.Uri = _endpoints.RemoveInstantMessagesForConference(conferenceId);
             ApiTestContext.HttpMethod = HttpMethod.Delete;
         }
 
