@@ -108,6 +108,38 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
 
+        [Given(@"I have a remove messages from a (.*) conference request")]
+        [Given(@"I have a remove messages from an (.*) conference request")]
+        public async System.Threading.Tasks.Task GivenIHaveAnRemoveMessagesFromAValidConferenceRequestAsync(Scenario scenario)
+        {
+            Guid conferenceId;
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                    {
+                        var seededConference = await ApiTestContext.TestDataManager.SeedConference();
+                        TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+                        ApiTestContext.NewConferenceId = seededConference.Id;
+                        conferenceId = seededConference.Id;
+                        break;
+                    }
+
+                case Scenario.Nonexistent:
+                    conferenceId = Guid.NewGuid();
+                    break;
+                case Scenario.Invalid:
+                    conferenceId = Guid.Empty;
+                    break;
+
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            ApiTestContext.Uri = _endpoints.RemoveInstantMessagesForConference(conferenceId);
+            ApiTestContext.HttpMethod = HttpMethod.Delete;
+        }
+
+
+
         private async Task<Conference> SeedConferenceWithMessages()
         {
             var conference = new ConferenceBuilder(true)

@@ -91,5 +91,39 @@ namespace Video.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpDelete("{conferenceId}/instantmessages")]
+        [SwaggerOperation(OperationId = "RemoveInstantMessages")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> RemoveInstantMessagesForConference(Guid conferenceId)
+
+        {
+            _logger.LogDebug("RemoveParticipantFromConference");
+
+            if (conferenceId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
+                _logger.LogError($"Invalid conferenceId: {conferenceId}");
+
+                return BadRequest(ModelState);
+            }
+
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (queriedConference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
+            await _commandHandler.Handle(command);
+            return NoContent();
+        }
+
     }
 }

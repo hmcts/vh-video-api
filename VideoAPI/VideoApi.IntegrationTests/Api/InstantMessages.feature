@@ -23,3 +23,25 @@ Feature: Instant Messages
     Given I have a valid conference with Nonexistent participants save message request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
+
+  Scenario: Fails to add a instant message for nonexistent conference
+    Given I have a Nonexistent conference with Nonexistent participants save message request
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
+
+  Scenario: Remove instant messages for an existing conference
+    Given I have a remove messages from a valid conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+
+  Scenario: Remove instant messages for an invalid conference
+    Given I have a remove messages from an Invalid conference request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+    And the error response message should also contain 'Please provide a valid conferenceId'
+
+  Scenario: Remove instant messages for a non-existent conference
+    Given I have a remove messages from a Nonexistent conference request
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
+
