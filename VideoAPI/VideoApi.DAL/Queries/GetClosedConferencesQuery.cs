@@ -24,8 +24,8 @@ namespace VideoApi.DAL.Queries
         public async Task<List<Conference>> Handle(GetClosedConferencesQuery query)
         {
             return await _context.Conferences
-                .Include("Messages")
-                .Where(x => x.Messages.Any())
+                .Include(x=>x.InstantMessageHistory)
+                .Where(x => x.InstantMessageHistory.Any())
                 .Where(x => x.State == ConferenceState.Closed 
                     && x.ClosedDateTime.Value.AddMinutes(30) <= DateTime.UtcNow)
                     // && x.ClosedDateTime.HasValue 

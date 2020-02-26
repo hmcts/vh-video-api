@@ -15,8 +15,8 @@ namespace VideoApi.UnitTests.Controllers
     {
         protected Mock<IQueryHandler> queryHandler;
         protected Mock<ICommandHandler> commandHandler;
-        protected Mock<ILogger<MessageController>> logger;
-        protected MessageController messageController;
+        protected Mock<ILogger<InstantMessageController>> logger;
+        protected InstantMessageController messageController;
         protected VideoApi.Domain.Conference TestConference;
 
         [SetUp]
@@ -24,8 +24,8 @@ namespace VideoApi.UnitTests.Controllers
         {
             queryHandler = new Mock<IQueryHandler>();
             commandHandler = new Mock<ICommandHandler>();
-            logger = new Mock<ILogger<Video.API.Controllers.MessageController>>();
-            messageController = new MessageController(queryHandler.Object, commandHandler.Object, logger.Object);
+            logger = new Mock<ILogger<InstantMessageController>>();
+            messageController = new InstantMessageController(queryHandler.Object, commandHandler.Object, logger.Object);
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
