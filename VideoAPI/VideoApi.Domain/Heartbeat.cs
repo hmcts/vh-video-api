@@ -22,7 +22,7 @@ namespace VideoApi.Domain
         public Heartbeat(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
             decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
             decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
-            string browserName, string browserVersion)
+            DateTime timestamp, string browserName, string browserVersion)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -34,9 +34,9 @@ namespace VideoApi.Domain
             OutgoingVideoPercentageLostRecent = outgoingVideoPercentageLostRecent;
             IncomingVideoPercentageLost = incomingVideoPercentageLost;
             IncomingVideoPercentageLostRecent = incomingVideoPercentageLostRecent;
+            Timestamp = timestamp;
             BrowserName = browserName;
             BrowserVersion = browserVersion;
-            Timestamp = DateTime.UtcNow;
         }
     }
 }
