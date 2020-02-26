@@ -120,7 +120,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var command = new RemoveMessagesForConferenceCommand(conferenceId);
+            var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
             await _commandHandler.Handle(command);
             return NoContent();
         }

@@ -8,17 +8,17 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class RemoveMessagesForConferenceCommand : ICommand
+    public class RemoveInstantMessagesForConferenceCommand : ICommand
     {
         public Guid ConferenceId { get; set; }
        
-        public RemoveMessagesForConferenceCommand(Guid conferenceId)
+        public RemoveInstantMessagesForConferenceCommand(Guid conferenceId)
         {
             ConferenceId = conferenceId;
         }
     }
 
-    public class RemoveMessagesForConferenceCommandHandler : ICommandHandler<RemoveMessagesForConferenceCommand>
+    public class RemoveMessagesForConferenceCommandHandler : ICommandHandler<RemoveInstantMessagesForConferenceCommand>
     {
         private readonly VideoApiDbContext _context;
 
@@ -27,7 +27,7 @@ namespace VideoApi.DAL.Commands
             _context = context;
         }
 
-        public async Task Handle(RemoveMessagesForConferenceCommand command)
+        public async Task Handle(RemoveInstantMessagesForConferenceCommand command)
         {
             var conference = await _context.Conferences.Include("InstantMessageHistory")
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);

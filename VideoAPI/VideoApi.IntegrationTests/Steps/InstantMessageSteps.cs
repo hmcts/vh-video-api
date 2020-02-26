@@ -109,7 +109,7 @@ namespace VideoApi.IntegrationTests.Steps
 
 
         [Given(@"I have a remove messages from a (.*) conference request")]
-        [Given(@"I have an remove messages from an (.*) conference request")]
+        [Given(@"I have a remove messages from an (.*) conference request")]
         public async System.Threading.Tasks.Task GivenIHaveAnRemoveMessagesFromAValidConferenceRequestAsync(Scenario scenario)
         {
             Guid conferenceId;

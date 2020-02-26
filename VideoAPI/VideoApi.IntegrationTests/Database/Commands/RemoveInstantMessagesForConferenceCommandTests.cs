@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
-    public class RemoveMessagesForConferenceCommandTests : DatabaseTestsBase
+    public class RemoveInstantMessagesForConferenceCommandTests : DatabaseTestsBase
     {
         private RemoveMessagesForConferenceCommandHandler _handler;
         private GetConferenceByIdQueryHandler _conferenceByIdHandler;
@@ -34,7 +34,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var command = new RemoveMessagesForConferenceCommand(conferenceId);
+            var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -49,7 +49,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
                        
-            var command = new RemoveMessagesForConferenceCommand(_newConferenceId);
+            var command = new RemoveInstantMessagesForConferenceCommand(_newConferenceId);
             await _handler.Handle(command);
 
             Conference updatedConference;
