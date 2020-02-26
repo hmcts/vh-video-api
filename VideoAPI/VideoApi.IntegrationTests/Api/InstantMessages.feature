@@ -24,9 +24,23 @@ Feature: Instant Messages
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
 
-Scenario: Get closed conferences with IMs
+  Scenario: Get closed conferences with IMs
     Given I have a many closed conferences with messages
     And I send the request to the get closed conferences endpoint
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And the responses list should contain closed conferences
+
+  Scenario: Get closed conferences with no IMs 
+    Given I have a many closed conferences with no messages
+    And I send the request to the get closed conferences endpoint
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
+    And the response is an empty list should
+
+  Scenario: Get open conferences with IMs
+    Given I have a many open conferences with messages
+    And I send the request to the get closed conferences endpoint
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
+    And the response is an empty list should

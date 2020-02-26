@@ -188,6 +188,109 @@ namespace VideoApi.IntegrationTests.Steps
             }
         }
 
+        [Given(@"I have a many closed conferences with no messages")]
+        public async Task GivenIHaveAManyClosedConferencesWithNoMessages()
+        {
+            var conferenceList = new List<Domain.Conference>();
+            var conferenceType = typeof(Domain.Conference);
+            var utcDate = DateTime.UtcNow;
+            var currentHearing = utcDate.AddMinutes(-40);
+            var oldHearing = utcDate.AddMinutes(-180);
+
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: currentHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .WithParticipantTask("Disconnected")
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-30));
+            conferenceList.Add(conference1);
+
+            var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .WithParticipantTask("Disconnected")
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-31));
+            conferenceList.Add(conference2);
+
+            var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .WithParticipantTask("Disconnected")
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference3, DateTime.UtcNow.AddMinutes(-30));
+            conferenceList.Add(conference3);
+
+            foreach (var c in conferenceList)
+            {
+                await ApiTestContext.TestDataManager.SeedConference(c);
+            }
+
+            foreach (var c in conferenceList)
+            {
+                _conferenceTestContext.SeededConferences.Add(c.Id);
+            }
+        }
+
+        [Given(@"I have a many open conferences with messages")]
+        public async Task GivenIHaveAManyOpenConferencesWithMessages()
+        {
+            var conferenceList = new List<Domain.Conference>();
+            var conferenceType = typeof(Domain.Conference);
+            var utcDate = DateTime.UtcNow;
+            var currentHearing = utcDate.AddMinutes(-40);
+            var oldHearing = utcDate.AddMinutes(-180);
+
+            var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Paused)
+                .WithParticipantTask("Disconnected")
+                .WithMessages(3)
+                .Build();
+            conferenceList.Add(conference3);
+
+            var conference4 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithParticipantTask("Disconnected")
+                .WithMessages(3)
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference4, DateTime.UtcNow.AddMinutes(-30));
+            conferenceList.Add(conference4);
+
+            var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithParticipantTask("Disconnected")
+                .WithMessages(3)
+                .Build();
+            conferenceList.Add(conference5);
+
+            var conference6 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Suspended)
+                .WithParticipantTask("Disconnected")
+                .Build();
+            conferenceList.Add(conference6);
+
+            foreach (var c in conferenceList)
+            {
+                await ApiTestContext.TestDataManager.SeedConference(c);
+            }
+
+            foreach (var c in conferenceList)
+            {
+                _conferenceTestContext.SeededConferences.Add(c.Id);
+            }
+        }
+
         [When(@"I send the request to the endpoint")]
         [When(@"I send the same request twice")]
         public async Task WhenISendTheRequestToTheEndpoint()

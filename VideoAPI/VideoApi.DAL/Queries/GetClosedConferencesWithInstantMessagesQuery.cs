@@ -9,19 +9,19 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetClosedConferencesQuery : IQuery
+    public class GetClosedConferencesWithInstantMessagesQuery : IQuery
     {
     }
 
-    public class GetClosedConferencesHandler : IQueryHandler<GetClosedConferencesQuery, List<Conference>>
+    public class GetClosedConferencesWithInstantMessagesHandler : IQueryHandler<GetClosedConferencesWithInstantMessagesQuery, List<Conference>>
     {
         private readonly VideoApiDbContext _context;
-        public GetClosedConferencesHandler(VideoApiDbContext context)
+        public GetClosedConferencesWithInstantMessagesHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Conference>> Handle(GetClosedConferencesQuery query)
+        public async Task<List<Conference>> Handle(GetClosedConferencesWithInstantMessagesQuery query)
         {
             return await _context.Conferences
                 .Include(x=>x.InstantMessageHistory)

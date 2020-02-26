@@ -111,7 +111,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I send the request to the get closed conferences endpoint")]
         public void GivenISendTheRequestToTheGetClosedConferencesEndpoint()
         {
-            ApiTestContext.Uri = _endpoints.GetClosedConferences;
+            ApiTestContext.Uri = _endpoints.GetClosedConferencesWithInstantMessages;
             ApiTestContext.HttpMethod = HttpMethod.Get;
         }
 
@@ -120,6 +120,13 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferences = await GetResponses<List<ClosedConferencesResponse>>();
             conferences.Should().NotBeEmpty();
+        }
+
+        [Then(@"the response is an empty list should")]
+        public async Task ThenTheResponseIsAnEmptyListShould()
+        {
+            var conferences = await GetResponses<List<ClosedConferencesResponse>>();
+            conferences.Should().BeEmpty();
         }
 
         private async Task<Conference> SeedConferenceWithMessages()

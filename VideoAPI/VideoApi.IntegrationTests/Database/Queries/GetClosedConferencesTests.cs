@@ -13,7 +13,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 {
     public class GetClosedConferencesTests : DatabaseTestsBase
     {
-        private GetClosedConferencesHandler _handler;
+        private GetClosedConferencesWithInstantMessagesHandler _handler;
         private Guid _conference1Id;
         private Guid _conference2Id;
         private Guid _conference3Id;
@@ -26,7 +26,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetClosedConferencesHandler(context);
+            _handler = new GetClosedConferencesWithInstantMessagesHandler(context);
             _conference1Id = Guid.Empty;
             _conference2Id = Guid.Empty;
             _conference3Id = Guid.Empty;
@@ -118,7 +118,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 await TestDataManager.SeedConference(c);
             }
 
-            var conferences = await _handler.Handle(new GetClosedConferencesQuery());
+            var conferences = await _handler.Handle(new GetClosedConferencesWithInstantMessagesQuery());
             var confIds = conferences.Select(x => x.Id).ToList();
 
             var expectedConferences = new List<Guid> { conference4.Id, conference5.Id };

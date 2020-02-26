@@ -93,18 +93,18 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Get list of closed conferences (closed over 30 minutes ago)
+        /// Get list of closed conferenceswith instant messages (closed over 30 minutes ago)
         /// </summary>
         /// <returns>List of Conference Ids</returns>
         [HttpGet("expiredIM")]
-        [SwaggerOperation(OperationId = "GetClosedConferences")]
+        [SwaggerOperation(OperationId = "GetClosedConferencesWithInstantMessages")]
         [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetClosedConferences()
+        public async Task<IActionResult> GetClosedConferencesWithInstantMessages()
         {
             _logger.LogDebug($"GetClosedConferences");
-            var query = new GetClosedConferencesQuery();
-            var closedConferences = await _queryHandler.Handle<GetClosedConferencesQuery, List<Conference>>(query);
+            var query = new GetClosedConferencesWithInstantMessagesQuery();
+            var closedConferences = await _queryHandler.Handle<GetClosedConferencesWithInstantMessagesQuery, List<Conference>>(query);
 
             if (closedConferences == null)
             {
