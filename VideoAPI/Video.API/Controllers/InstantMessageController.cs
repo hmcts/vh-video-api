@@ -109,7 +109,7 @@ namespace Video.API.Controllers
             if (closedConferences == null)
             {
                 _logger.LogDebug($"No Closed Clonferences found");
-                return NotFound();
+                return NotFound(new List<ClosedConferencesResponse>());
             }
 
             var mapper = new ConferenceToClosedConferenceMapper();
