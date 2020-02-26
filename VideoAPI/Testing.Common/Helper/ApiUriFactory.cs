@@ -96,5 +96,6 @@ namespace Testing.Common.Helper
         private string ApiRoot => "conferences";
         public string GetMessages(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/messages";
         public string SaveMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/messages";
+        public string GetClosedConferences => $"{ApiRoot}/expiredIM";
     }
 }

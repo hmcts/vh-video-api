@@ -17,6 +17,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -107,6 +108,19 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
+        [Given(@"I send the request to the get closed conferences endpoint")]
+        public void GivenISendTheRequestToTheGetClosedConferencesEndpoint()
+        {
+            ApiTestContext.Uri = _endpoints.GetClosedConferences;
+            ApiTestContext.HttpMethod = HttpMethod.Get;
+        }
+
+        [Then(@"the responses list should contain closed conferences")]
+        public async Task ThenTheResponsesListShouldContainClosedConferences()
+        {
+            var conferences = await GetResponses<List<ClosedConferencesResponse>>();
+            conferences.Should().NotBeEmpty();
+        }
 
         private async Task<Conference> SeedConferenceWithMessages()
         {
@@ -119,6 +133,12 @@ namespace VideoApi.IntegrationTests.Steps
             conference.AddMessage(judge.DisplayName, "test message from Judge");
             conference.AddMessage("VH Officer ", "test message from VHO");
             return await ApiTestContext.TestDataManager.SeedConference(conference);
+        }
+
+        private async Task<T> GetResponses<T>()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<T>(json);
         }
     }
 }

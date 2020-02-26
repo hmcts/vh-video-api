@@ -29,3 +29,9 @@ Feature: Messages
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
 
+Scenario: Get closed conferences with IMs
+    Given I have a many closed conferences with messages
+    And I send the request to the get closed conferences endpoint
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the responses list should contain closed conferences

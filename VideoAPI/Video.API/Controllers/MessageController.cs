@@ -89,5 +89,30 @@ namespace Video.API.Controllers
                 return NotFound();
             }
         }
+
+        /// <summary>
+        /// Get list of closed conferences (closed over 30 minutes ago)
+        /// </summary>
+        /// <returns>List of Conference Ids</returns>
+        [HttpGet("expiredIM")]
+        [SwaggerOperation(OperationId = "GetClosedConferences")]
+        [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetClosedConferences()
+        {
+            _logger.LogDebug($"GetClosedConferences");
+            var query = new GetClosedConferencesQuery();
+            var closedConferences = await _queryHandler.Handle<GetClosedConferencesQuery, List<Conference>>(query);
+
+            if (closedConferences == null)
+            {
+                _logger.LogDebug($"No Closed Clonferences found");
+                return NotFound();
+            }
+
+            var mapper = new ConferenceToClosedConferenceMapper();
+            var response = closedConferences.Select(mapper.MapConferenceToClosedResponse);
+            return Ok(response);
+        }
     }
 }
