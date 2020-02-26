@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideoApi.DAL;
 
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    partial class VideoApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200225123123_AddMonitoring_browser_columns")]
+    partial class AddMonitoring_browser_columns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,7 +121,40 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Event");
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.Heartbeat", b =>
+            modelBuilder.Entity("VideoApi.Domain.Message", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<Guid>("ConferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("From")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("To")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.HasIndex("TimeStamp");
+
+                    b.ToTable("Message");
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.Monitoring", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -167,40 +202,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Heartbeat");
-                });
-
-            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<Guid>("ConferenceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("From")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MessageText")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("To")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConferenceId");
-
-                    b.HasIndex("TimeStamp");
-
-                    b.ToTable("InstantMessage");
+                    b.ToTable("Monitoring");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
@@ -372,10 +374,10 @@ namespace VideoApi.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
+            modelBuilder.Entity("VideoApi.Domain.Message", b =>
                 {
                     b.HasOne("VideoApi.Domain.Conference", null)
-                        .WithMany("InstantMessageHistory")
+                        .WithMany("Messages")
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

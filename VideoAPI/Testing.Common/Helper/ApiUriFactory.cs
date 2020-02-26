@@ -10,7 +10,8 @@ namespace Testing.Common.Helper
         public HealthCheckEndpoints HealthCheckEndpoints { get; }
         public ConsultationEndpoints ConsultationEndpoints { get; }
         public TaskEndpoints TaskEndpoints { get; }
-        public MessageEndpoints MessageEndpoints { get; }
+        public InstantMessageEndpoints InstantMessageEndpoints { get; }
+        public HeartbeatEndpoints HeartbeatEndpoints { get; }
 
         public ApiUriFactory()
         {
@@ -20,7 +21,8 @@ namespace Testing.Common.Helper
             HealthCheckEndpoints = new HealthCheckEndpoints();
             ConsultationEndpoints = new ConsultationEndpoints();
             TaskEndpoints = new TaskEndpoints();
-            MessageEndpoints = new MessageEndpoints();
+            InstantMessageEndpoints = new InstantMessageEndpoints();
+            HeartbeatEndpoints = new HeartbeatEndpoints();
         }
     }
     
@@ -91,10 +93,17 @@ namespace Testing.Common.Helper
         public string UpdateTaskStatus(Guid conferenceId, long taskId) => $"{ApiRoot}/{conferenceId}/tasks/{taskId}";
     }
 
-    public class MessageEndpoints
+    public class InstantMessageEndpoints
     {
         private string ApiRoot => "conferences";
-        public string GetMessages(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/messages";
-        public string SaveMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/messages";
+        public string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
+        public string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
+    }
+    
+    public class HeartbeatEndpoints
+    {
+        private static string ApiRoot => "conferences";
+        public string GetHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeatrecent";
+        public string SaveHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeat";
     }
 }

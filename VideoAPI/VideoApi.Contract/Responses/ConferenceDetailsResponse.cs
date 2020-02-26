@@ -65,11 +65,5 @@ namespace VideoApi.Contract.Responses
         public MeetingRoomResponse MeetingRoom { get; set; }
         
         public string HearingVenueName { get; set;  }
-
-        /// <summary>
-        /// List of chat messages
-        /// </summary>
-        public List<MessageResponse> Messages { get; set; }
-
     }
 }

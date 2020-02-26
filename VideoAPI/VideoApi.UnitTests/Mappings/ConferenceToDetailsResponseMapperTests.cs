@@ -31,6 +31,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.ConferenceStatuses)
                 .Excluding(x => x.State)
                 .Excluding(x => x.Tasks)
+                .Excluding(x => x.InstantMessageHistory)
                 .Excluding(x => ExcludeIdFromMessage(x))
              );
 
@@ -49,7 +50,7 @@ namespace VideoApi.UnitTests.Mappings
         
         bool ExcludeIdFromMessage(IMemberInfo member)
         {
-            return member.SelectedMemberPath.Contains(nameof(Message)) && member.SelectedMemberInfo.Name.Contains("Id");
+            return member.SelectedMemberPath.Contains(nameof(InstantMessage)) && member.SelectedMemberInfo.Name.Contains("Id");
         }
     }
 }

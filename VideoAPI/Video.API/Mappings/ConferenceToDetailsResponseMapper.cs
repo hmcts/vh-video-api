@@ -1,6 +1,5 @@
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
-using System.Linq;
 
 namespace Video.API.Mappings
 {
@@ -23,8 +22,7 @@ namespace Video.API.Mappings
                 Participants =
                     new ParticipantToDetailsResponseMapper().MapParticipantsToResponse(conference.GetParticipants()),
                 MeetingRoom = new MeetingRoomToResponseMapper().MapVirtualCourtToResponse(conference.GetMeetingRoom()),
-                HearingVenueName = conference.HearingVenueName,
-                Messages = conference.GetMessages().Select(x => new MessageToResponseMapper().MapMessageToResponse(x)).ToList()
+                HearingVenueName = conference.HearingVenueName
             };
 
             if (response.MeetingRoom != null)

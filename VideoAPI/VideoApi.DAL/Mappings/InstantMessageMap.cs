@@ -4,11 +4,11 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Mappings
 {
-    public class MessageMap : IEntityTypeConfiguration<Message>
+    public class InstantMessageMap : IEntityTypeConfiguration<InstantMessage>
     {
-        public void Configure(EntityTypeBuilder<Message> builder)
+        public void Configure(EntityTypeBuilder<InstantMessage> builder)
         {
-            builder.ToTable(nameof(Message));
+            builder.ToTable(nameof(InstantMessage));
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.From).IsRequired();
