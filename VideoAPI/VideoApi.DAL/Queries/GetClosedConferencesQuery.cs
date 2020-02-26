@@ -26,10 +26,9 @@ namespace VideoApi.DAL.Queries
             return await _context.Conferences
                 .Include(x=>x.InstantMessageHistory)
                 .Where(x => x.InstantMessageHistory.Any())
-                .Where(x => x.State == ConferenceState.Closed 
+                .Where(x => x.State == ConferenceState.Closed
+                    && x.ClosedDateTime.HasValue
                     && x.ClosedDateTime.Value.AddMinutes(30) <= DateTime.UtcNow)
-                    // && x.ClosedDateTime.HasValue 
-                    // && x.ClosedDateTime.GetValueOrDefault().AddMinutes(30) <= DateTime.UtcNow)
                 .AsNoTracking()
                 .ToListAsync();
         }
