@@ -135,14 +135,14 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetClosedConferencesWithInstantMessages()
         {
-            _logger.LogDebug($"GetClosedConferences");
+            _logger.LogDebug($"GetClosedConferencesWithInstantMessages");
             var query = new GetClosedConferencesWithInstantMessagesQuery();
             var closedConferences = await _queryHandler.Handle<GetClosedConferencesWithInstantMessagesQuery, List<Conference>>(query);
 
-            if (closedConferences == null)
+            if (!closedConferences.Any())
             {
-                _logger.LogDebug($"No Closed Clonferences found");
-                return NotFound(new List<ClosedConferencesResponse>());
+                _logger.LogDebug($"No closed conferences with instant messages found.");
+                return NotFound();
             }
 
             var mapper = new ConferenceToClosedConferenceMapper();

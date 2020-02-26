@@ -221,7 +221,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithParticipantTask("Disconnected")
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference3, DateTime.UtcNow.AddMinutes(-30));
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference3, DateTime.UtcNow.AddMinutes(-29));
             conferenceList.Add(conference3);
 
             foreach (var c in conferenceList)
