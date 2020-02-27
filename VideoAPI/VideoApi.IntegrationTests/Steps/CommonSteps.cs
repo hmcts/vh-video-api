@@ -188,6 +188,54 @@ namespace VideoApi.IntegrationTests.Steps
             }
         }
 
+        [Given(@"I have a many very old closed conferences with messages")]
+        public async Task GivenIHaveAManyVeryOldClosedConferencesWithMessages()
+        {
+            var conferenceList = new List<Domain.Conference>();
+            var conferenceType = typeof(Domain.Conference);
+            var utcDate = DateTime.UtcNow;
+            var oldHearing = utcDate.AddMonths(-4);
+
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .WithParticipantTask("Disconnected")
+                .WithMessages(3)
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3));
+            conferenceList.Add(conference1);
+
+            var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .WithParticipantTask("Disconnected")
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-2));
+            conferenceList.Add(conference2);
+
+            var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .WithParticipantTask("Disconnected")
+                .WithMessages(3)
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference3, DateTime.UtcNow.AddMonths(-1));
+            conferenceList.Add(conference3);
+
+            foreach (var c in conferenceList)
+            {
+                await ApiTestContext.TestDataManager.SeedConference(c);
+            }
+
+            foreach (var c in conferenceList)
+            {
+                _conferenceTestContext.SeededConferences.Add(c.Id);
+            }
+        }
+
         [Given(@"I have a many closed conferences with no messages")]
         public async Task GivenIHaveAManyClosedConferencesWithNoMessages()
         {

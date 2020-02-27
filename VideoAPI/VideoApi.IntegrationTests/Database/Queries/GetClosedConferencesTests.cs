@@ -20,6 +20,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private Guid _conference4Id;
         private Guid _conference5Id;
         private Guid _conference6Id;
+        private Guid _conference7Id;
         private List<Domain.Conference> conferenceList;
 
         [SetUp]
@@ -33,6 +34,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _conference4Id = Guid.Empty;
             _conference5Id = Guid.Empty;
             _conference6Id = Guid.Empty;
+            _conference7Id = Guid.Empty;
         }
 
         [TearDown]
@@ -53,6 +55,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var utcDate = DateTime.UtcNow;
             var currentHearing = utcDate.AddMinutes(-40);
             var oldHearing = utcDate.AddMinutes(-180);
+            var veryOldHearing = utcDate.AddMonths(-4);
 
             // conference in session.
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: currentHearing)
@@ -113,7 +116,17 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _conference6Id = conference6.Id;
             conferenceList.Add(conference6);
 
-            foreach(var c in conferenceList)
+            var conference7 = new ConferenceBuilder(true, scheduledDateTime: veryOldHearing)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithMessages(10)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference7, DateTime.UtcNow.AddMonths(-3));
+            _conference7Id = conference7.Id;
+            conferenceList.Add(conference7);
+
+            foreach (var c in conferenceList)
             {
                 await TestDataManager.SeedConference(c);
             }
@@ -121,7 +134,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var conferences = await _handler.Handle(new GetClosedConferencesWithInstantMessagesQuery());
             var confIds = conferences.Select(x => x.Id).ToList();
 
-            var expectedConferences = new List<Guid> { conference4.Id, conference5.Id };
+            var expectedConferences = new List<Guid> { conference4.Id, conference5.Id, conference7.Id };
             confIds.Should()
                 .Contain(expectedConferences);
 
