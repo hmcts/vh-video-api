@@ -120,7 +120,7 @@ namespace Video.API
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };
             
-            var client = new KinlyApiClient(httpClient) {BaseUrl = servicesConfiguration.KinlyApiUrl};
+            var client = new KinlyApiClient(servicesConfiguration.KinlyApiUrl, httpClient);
             client.JsonSerializerSettings.ContractResolver = contractResolver;
             client.JsonSerializerSettings.Formatting = Formatting.Indented;
             return client;
