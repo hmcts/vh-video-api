@@ -118,12 +118,13 @@ namespace VideoApi.Services.Kinly
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.2.1.0 (NJsonSchema v10.1.3.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial class KinlyApiClient : IKinlyApiClient
     {
-        private string _baseUrl = "https://dev.hearings.hmcts.net/virtual-court/api/v1";
+        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public KinlyApiClient(System.Net.Http.HttpClient httpClient)
+        public KinlyApiClient(string baseUrl, System.Net.Http.HttpClient httpClient)
         {
+            BaseUrl = baseUrl; 
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
