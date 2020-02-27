@@ -102,15 +102,30 @@ namespace Video.API
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
 
-                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>()
-                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>()
-                    .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration));
+                services
+                    .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
+                    .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration))
+                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
             }
             
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
 
             return services;
+        }
+
+        private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient,
+            ServicesConfiguration servicesConfiguration)
+        {
+            DefaultContractResolver contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            };
+            
+            var client = new KinlyApiClient(servicesConfiguration.KinlyApiUrl, httpClient);
+            client.JsonSerializerSettings.ContractResolver = contractResolver;
+            client.JsonSerializerSettings.Formatting = Formatting.Indented;
+            return client;
         }
         
         /// <summary>
@@ -145,20 +160,6 @@ namespace Video.API
             });
 
             return builder;
-        }
-
-        private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient,
-            ServicesConfiguration servicesConfiguration)
-        {
-            DefaultContractResolver contractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            };
-            
-            var client = new KinlyApiClient(httpClient) {BaseUrl = servicesConfiguration.KinlyApiUrl};
-            client.JsonSerializerSettings.ContractResolver = contractResolver;
-            client.JsonSerializerSettings.Formatting = Formatting.Indented;
-            return client;
         }
 
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
