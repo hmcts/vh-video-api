@@ -17,6 +17,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -107,6 +108,26 @@ namespace VideoApi.IntegrationTests.Steps
             ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
+        [Given(@"I send the request to the get closed conferences endpoint")]
+        public void GivenISendTheRequestToTheGetClosedConferencesEndpoint()
+        {
+            ApiTestContext.Uri = _endpoints.GetClosedConferencesWithInstantMessages;
+            ApiTestContext.HttpMethod = HttpMethod.Get;
+        }
+
+        [Then(@"the responses list should contain closed conferences")]
+        public async Task ThenTheResponsesListShouldContainClosedConferences()
+        {
+            var conferences = await GetResponses<List<ClosedConferencesResponse>>();
+            conferences.Should().NotBeEmpty();
+        }
+
+        [Then(@"the response is an empty list should")]
+        public async Task ThenTheResponseIsAnEmptyList()
+        {
+            var conferences = await GetResponses<List<ClosedConferencesResponse>>();
+            conferences.Should().BeEmpty();
+        }
 
         [Given(@"I have a remove messages from a (.*) conference request")]
         [Given(@"I have a remove messages from an (.*) conference request")]
@@ -151,6 +172,12 @@ namespace VideoApi.IntegrationTests.Steps
             conference.AddInstantMessage(judge.DisplayName, "test message from Judge");
             conference.AddInstantMessage("VH Officer ", "test message from VHO");
             return await ApiTestContext.TestDataManager.SeedConference(conference);
+        }
+
+        private async Task<T> GetResponses<T>()
+        {
+            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<T>(json);
         }
     }
 }

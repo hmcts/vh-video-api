@@ -124,6 +124,30 @@ namespace Video.API.Controllers
             await _commandHandler.Handle(command);
             return NoContent();
         }
+        
+        /// <summary>
+        /// Get list of closed conferenceswith instant messages (closed over 30 minutes ago)
+        /// </summary>
+        /// <returns>List of Conference Ids</returns>
+        [HttpGet("expiredIM")]
+        [SwaggerOperation(OperationId = "GetClosedConferencesWithInstantMessages")]
+        [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetClosedConferencesWithInstantMessages()
+        {
+            _logger.LogDebug($"GetClosedConferencesWithInstantMessages");
+            var query = new GetClosedConferencesWithInstantMessagesQuery();
+            var closedConferences = await _queryHandler.Handle<GetClosedConferencesWithInstantMessagesQuery, List<Conference>>(query);
+
+            if (!closedConferences.Any())
+            {
+                _logger.LogDebug($"No closed conferences with instant messages found.");
+                return Ok(new List<ClosedConferencesResponse>());
+            }
+
+            var mapper = new ConferenceToClosedConferenceMapper();
+            var response = closedConferences.Select(mapper.MapConferenceToClosedResponse);
+            return Ok(response);
+        }
 
     }
 }

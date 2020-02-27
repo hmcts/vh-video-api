@@ -100,6 +100,7 @@ namespace Testing.Common.Helper
         public string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
         public string RemoveInstantMessagesForConference(Guid conferenceId) =>
            $"{ApiRoot}/{conferenceId}/instantmessages";
+        public string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
     }
     
     public class HeartbeatEndpoints
