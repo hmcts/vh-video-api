@@ -101,8 +101,10 @@ namespace Video.API
             else
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
-                services.AddHttpClient<IKinlyApiClient, KinlyApiClient>(httpClient =>
-                        BuildKinlyClient(httpClient, servicesConfiguration))
+
+                services
+                    .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
+                    .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
             }
             
@@ -124,6 +126,40 @@ namespace Video.API
             client.JsonSerializerSettings.ContractResolver = contractResolver;
             client.JsonSerializerSettings.Formatting = Formatting.Indented;
             return client;
+        }
+        
+        /// <summary>
+        /// Temporary work-around until typed-client bug is restored
+        /// https://github.com/dotnet/aspnetcore/issues/13346#issuecomment-535544207
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="factory"></param>
+        /// <typeparam name="TClient"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        private static IHttpClientBuilder AddTypedClient<TClient>(this IHttpClientBuilder builder,
+            Func<HttpClient, TClient> factory)
+            where TClient : class
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            builder.Services.AddTransient(s =>
+            {
+                var httpClientFactory = s.GetRequiredService<IHttpClientFactory>();
+                var httpClient = httpClientFactory.CreateClient(builder.Name);
+
+                return factory(httpClient);
+            });
+
+            return builder;
         }
 
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
