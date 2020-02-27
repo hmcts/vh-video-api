@@ -47,9 +47,8 @@ trigger:
     include:
     - master
     - release/*
-  tags:
-    include:
-    - v*
+    - hotfix/*
+    
 pr:
   - master
 
