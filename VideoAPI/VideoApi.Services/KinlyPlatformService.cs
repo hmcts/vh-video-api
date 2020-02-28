@@ -149,7 +149,8 @@ namespace VideoApi.Services
             await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request).ConfigureAwait(false);
         }
 
-        public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
+        public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy,
+            Participant requestedFor)
         {
             var targetRoom = conference.GetAvailableConsultationRoom();
 
