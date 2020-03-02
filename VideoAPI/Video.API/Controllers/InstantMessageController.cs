@@ -91,5 +91,63 @@ namespace Video.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpDelete("{conferenceId}/instantmessages")]
+        [SwaggerOperation(OperationId = "RemoveInstantMessages")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> RemoveInstantMessagesForConference(Guid conferenceId)
+
+        {
+            _logger.LogDebug("RemoveParticipantFromConference");
+
+            if (conferenceId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
+                _logger.LogError($"Invalid conferenceId: {conferenceId}");
+
+                return BadRequest(ModelState);
+            }
+
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (queriedConference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
+            await _commandHandler.Handle(command);
+            return NoContent();
+        }
+        
+        /// <summary>
+        /// Get list of closed conferenceswith instant messages (closed over 30 minutes ago)
+        /// </summary>
+        /// <returns>List of Conference Ids</returns>
+        [HttpGet("expiredIM")]
+        [SwaggerOperation(OperationId = "GetClosedConferencesWithInstantMessages")]
+        [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetClosedConferencesWithInstantMessages()
+        {
+            _logger.LogDebug($"GetClosedConferencesWithInstantMessages");
+            var query = new GetClosedConferencesWithInstantMessagesQuery();
+            var closedConferences = await _queryHandler.Handle<GetClosedConferencesWithInstantMessagesQuery, List<Conference>>(query);
+
+            if (!closedConferences.Any())
+            {
+                _logger.LogDebug($"No closed conferences with instant messages found.");
+                return Ok(new List<ClosedConferencesResponse>());
+            }
+
+            var mapper = new ConferenceToClosedConferenceMapper();
+            var response = closedConferences.Select(mapper.MapConferenceToClosedResponse);
+            return Ok(response);
+        }
+
     }
 }
