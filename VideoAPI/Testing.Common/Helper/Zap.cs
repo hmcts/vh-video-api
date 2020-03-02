@@ -123,7 +123,7 @@ namespace Testing.Common.Helper
             }
             finally
             {
-                ShutdownZAP();
+                ShutdownZap();
             }
         }
 
@@ -137,7 +137,7 @@ namespace Testing.Common.Helper
             File.WriteAllBytes(reportFileName + ".xml", Api.core.xmlreport());
         }
 
-        private static void ShutdownZAP()
+        private static void ShutdownZap()
         { 
             Api.core.shutdown(); 
         }
