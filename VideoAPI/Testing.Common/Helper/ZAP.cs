@@ -11,20 +11,15 @@ namespace Testing.Common.Helper
 {
     public static class Zap
     {        
-        private static readonly ClientApi _api = new ClientApi(ZapConfiguration.ApiAddress, ZapConfiguration.ApiPort, ZapConfiguration.ApiKey);
+        private static readonly ClientApi Api = new ClientApi(ZapConfiguration.ApiAddress, ZapConfiguration.ApiPort, ZapConfiguration.ApiKey);
 
-        private static ZapConfiguration ZapConfiguration
-        {
-            get
-            {
-                return new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json")
-                    .AddUserSecrets("9AECE566-336D-4D16-88FA-7A76C27321CD")
-                    .Build()
-                    .GetSection("ZapConfiguration")
-                    .Get<ZapConfiguration>();
-            }
-        }
+        private static ZapConfiguration ZapConfiguration =>
+            new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddUserSecrets("9AECE566-336D-4D16-88FA-7A76C27321CD")
+                .Build()
+                .GetSection("ZapConfiguration")
+                .Get<ZapConfiguration>();
 
         public static IWebProxy WebProxy => ZapConfiguration.RunZap ? new WebProxy($"http://{ZapConfiguration.ApiAddress}:{ZapConfiguration.ApiPort}", false) : null;
 
@@ -84,7 +79,7 @@ namespace Testing.Common.Helper
 
         private static void StartSpidering(string target)
         {
-            var apiResponse = _api.spider.scan(target, "", "", "", "");
+            var apiResponse = Api.spider.scan(target, "", "", "", "");
             var scanId = ((ApiResponseElement)apiResponse).Value;
             PollTheSpiderTillCompletion(scanId);
         }
@@ -94,7 +89,7 @@ namespace Testing.Common.Helper
             while (true)
             {
                 Thread.Sleep(1000);
-                var responseStatus = int.TryParse(((ApiResponseElement)_api.spider.status(scanId)).Value, out var spiderProgress);
+                var responseStatus = int.TryParse(((ApiResponseElement)Api.spider.status(scanId)).Value, out var spiderProgress);
                 if (!responseStatus || spiderProgress >= 100)
                     break;
             }
@@ -102,7 +97,7 @@ namespace Testing.Common.Helper
 
         private static void StartActiveScanning(string target)
         {
-            var apiResponse = _api.ascan.scan(target, "", "", "", "", "", "");
+            var apiResponse = Api.ascan.scan(target, "", "", "", "", "", "");
             var activeScanId = ((ApiResponseElement)apiResponse).Value;
             PollTheActiveScannerTillCompletion(activeScanId);
         }
@@ -112,7 +107,7 @@ namespace Testing.Common.Helper
             while (true)
             {
                 Thread.Sleep(5000);
-                var responseStatus = int.TryParse(((ApiResponseElement)_api.ascan.status(activeScanId)).Value, out var activeScannerprogress);
+                var responseStatus = int.TryParse(((ApiResponseElement)Api.ascan.status(activeScanId)).Value, out var activeScannerprogress);
                 if (!responseStatus || activeScannerprogress >= 100)
                     break;
             }
@@ -128,23 +123,23 @@ namespace Testing.Common.Helper
             }
             finally
             {
-                ShutdownZAP();
+                ShutdownZap();
             }
         }
 
         private static void WriteHtmlReport(string reportFileName)
         {
-            File.WriteAllBytes(reportFileName + ".html", _api.core.htmlreport());
+            File.WriteAllBytes(reportFileName + ".html", Api.core.htmlreport());
         }
 
         private static void WriteXmlReport(string reportFileName)
         {
-            File.WriteAllBytes(reportFileName + ".xml", _api.core.xmlreport());
+            File.WriteAllBytes(reportFileName + ".xml", Api.core.xmlreport());
         }
 
-        private static void ShutdownZAP()
+        private static void ShutdownZap()
         { 
-            _api.core.shutdown(); 
+            Api.core.shutdown(); 
         }
 
     }
