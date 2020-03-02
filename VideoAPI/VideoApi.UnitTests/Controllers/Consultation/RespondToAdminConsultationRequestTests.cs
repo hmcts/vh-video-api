@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
     public class RespondToAdminConsultationRequestTests : ConsultationControllerTestBase
     {
         [Test]
-        public async Task should_transfer_participant_when_consultation_is_accepted()
+        public async Task Should_transfer_participant_when_consultation_is_accepted()
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[3];
@@ -36,7 +36,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
         
         [Test]
-        public async Task should_not_transfer_participant_when_consultation_is_not_accepted()
+        public async Task Should_not_transfer_participant_when_consultation_is_not_accepted()
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[3];
@@ -59,10 +59,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task should_return_notfound_when_no_matching_participant_is_found()
+        public async Task Should_return_notfound_when_no_matching_participant_is_found()
         {
             var conferenceId = TestConference.Id;
-            var participant = TestConference.GetParticipants()[3];
              
             var request = new AdminConsultationRequest
             {
