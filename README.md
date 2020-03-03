@@ -47,7 +47,7 @@ To turn on\off ZAP security passive scan Set RunZAP - true\false
 To turn on\off ZAP security scans individually such as Spider\AjaxSpider\ActiveScan set respective parameters RunSpider\RunAjaxSpider\RunActiveScan - true\false
 
 
-##Branch naming git hook will run on pre commit and control the standard for branch naming.
+##Branch name git hook will run on pre commit and control the standard for new branch name.
 
 The branch name should start with: feature/VIH-XXX  (X - is digit).
 To change git hooks directory to directory under source control run:
