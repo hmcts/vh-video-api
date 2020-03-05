@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Net;
@@ -9,6 +9,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services;
+using System.Reflection;
 
 namespace Video.API.Controllers
 {
@@ -38,6 +39,7 @@ namespace Video.API.Controllers
         public async Task<IActionResult> Health()
         {
             var response = new HealthCheckResponse();
+            response.AppVersion = GetApplicationVersion();
             try
             {
                 var hearingId = Guid.NewGuid();
@@ -83,6 +85,20 @@ namespace Video.API.Controllers
             }
 
             return Ok(response);
+        }
+
+        private ApplicationVersion GetApplicationVersion()
+        {
+            var applicationVersion = new ApplicationVersion();
+            applicationVersion.FileVersion = GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
+            applicationVersion.InformationVersion = GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
+            return applicationVersion;
+        }
+
+        private string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
+        {
+            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
+            return value.Invoke(attribute);
         }
     }
 }
