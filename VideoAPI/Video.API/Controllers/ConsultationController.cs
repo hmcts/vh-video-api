@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Polly;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
@@ -28,15 +29,18 @@ namespace Video.API.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<ConsultationController> _logger;
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly IConsultationCache _consultationCache;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             ILogger<ConsultationController> logger,
-            IVideoPlatformService videoPlatformService)
+            IVideoPlatformService videoPlatformService,
+            IConsultationCache consultationCache)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _logger = logger;
             _videoPlatformService = videoPlatformService;
+            _consultationCache = consultationCache;
         }
 
         /// <summary>
@@ -51,9 +55,7 @@ namespace Video.API.Controllers
         public async Task<IActionResult> HandleConsultationRequest(ConsultationRequest request)
         {
             _logger.LogDebug($"HandleConsultationRequest");
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var conference = await GetConference(request.ConferenceId);
 
             if (conference == null)
             {
@@ -180,8 +182,39 @@ namespace Video.API.Controllers
             {
                 _logger.LogInformation(
                     $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
+
+                RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
+                
+                if (roomInCache.HasValue)
+                {
+                    // Retry until the cache is removed from the previous request
+                    var retryPolicy = Policy
+                    .HandleResult<RoomType?>(room => !room.HasValue)
+                    .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(1));
+
+                    await retryPolicy.ExecuteAsync(() => _consultationCache.GetConsultationRoom(conference.Id));
+
+                    // Get a fresh conference record again
+                    conference = await GetConference(conference.Id);
+                }
+                else
+                {
+                    // If there is nothing in the cache, then add this room to the cache
+                    var targetRoom = conference.GetAvailableConsultationRoom();
+                    await _consultationCache.AddConsultationRoomToCache(conference.Id, targetRoom);
+                }
+
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
+
+                // Remove from the cache
+                _consultationCache.Remove(conference.Id);
             }
+        }
+
+        private async Task<Conference> GetConference(Guid conferenceId)
+        {
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            return await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
         }
     }
 }
