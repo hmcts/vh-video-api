@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -115,6 +115,16 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             var response = (HealthCheckResponse) typedResult.Value;
             response.KinlyApiHealth.Successful.Should().BeFalse();
             response.KinlyApiHealth.ErrorMessage.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Test]
+        public async Task should_return_the_application_version_from_assembly()
+        {
+            var result = await _controller.Health();
+            var typedResult = (ObjectResult)result;
+            var response = (HealthCheckResponse)typedResult.Value;
+            response.AppVersion.FileVersion.Should().NotBeNullOrEmpty();
+            response.AppVersion.InformationVersion.Should().NotBeNullOrEmpty();
         }
     }
 }
