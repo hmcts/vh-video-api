@@ -29,18 +29,18 @@ namespace Video.API.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<ConsultationController> _logger;
         private readonly IVideoPlatformService _videoPlatformService;
-        private readonly IConsultationCache _consultationCache;
+        private readonly IRoomReservationService _roomReservationService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             ILogger<ConsultationController> logger,
             IVideoPlatformService videoPlatformService,
-            IConsultationCache consultationCache)
+            IRoomReservationService roomReservationService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _logger = logger;
             _videoPlatformService = videoPlatformService;
-            _consultationCache = consultationCache;
+            _roomReservationService = roomReservationService;
         }
 
         /// <summary>
@@ -86,8 +86,7 @@ namespace Video.API.Controllers
 
             try
             {
-             await InitiateStartConsultation(conference, requestedBy, requestedFor,
-                    request.Answer.GetValueOrDefault());
+                await InitiateStartConsultation(conference, requestedBy, requestedFor, request.Answer.GetValueOrDefault());
             }
             catch (DomainRuleException e)
             {
@@ -175,39 +174,14 @@ namespace Video.API.Controllers
             return NoContent();
         }
         
-        private async Task InitiateStartConsultation(Conference conference, Participant requestedBy,
-            Participant requestedFor, ConsultationAnswer answer)
+        private async Task InitiateStartConsultation(Conference conference, Participant requestedBy, Participant requestedFor, ConsultationAnswer answer)
         {
             if (answer == ConsultationAnswer.Accepted)
             {
-                _logger.LogInformation(
-                    $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
+                _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
 
-                RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
-                
-                if (roomInCache.HasValue)
-                {
-                    // Retry until the cache is removed from the previous request
-                    var retryPolicy = Policy
-                    .HandleResult<RoomType?>(room => !room.HasValue)
-                    .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(1));
-
-                    await retryPolicy.ExecuteAsync(() => _consultationCache.GetConsultationRoom(conference.Id));
-
-                    // Get a fresh conference record again
-                    conference = await GetConference(conference.Id);
-                }
-                else
-                {
-                    // If there is nothing in the cache, then add this room to the cache
-                    var targetRoom = conference.GetAvailableConsultationRoom();
-                    await _consultationCache.AddConsultationRoomToCache(conference.Id, targetRoom);
-                }
-
+                await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, GetConference);
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
-
-                // Remove from the cache
-                _consultationCache.Remove(conference.Id);
             }
         }
 
