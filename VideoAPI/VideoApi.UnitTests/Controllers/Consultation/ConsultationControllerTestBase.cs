@@ -32,6 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             CommandHandlerMock = new Mock<ICommandHandler>();
             MockLogger = new Mock<ILogger<ConsultationController>>();
             VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
+            RoomReservationService = new Mock<IRoomReservationService>();
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
