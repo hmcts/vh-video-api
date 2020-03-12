@@ -29,7 +29,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.Response.StatusCode.Should().Be(httpStatusCode);
             _context.Response.IsSuccessful.Should().Be(isSuccess);
-            ZAP.Scan(_context.Client().BuildUri(_context.Request).ToString());
+            Zap.Scan(_context.Client().BuildUri(_context.Request).ToString());
         }
     }
 }

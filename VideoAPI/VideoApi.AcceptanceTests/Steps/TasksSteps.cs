@@ -65,8 +65,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the tasks are retrieved")]
         public void ThenTheTaskIsRetrieved()
         {
-            var tasks =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(_context.Response.Content);
+            var tasks = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(_context.Response.Content);
             tasks.Should().NotBeNull();
             tasks.First().Id.Should().BeGreaterThan(-1);
             tasks.First().Created.Should().BeBefore(DateTime.Now);

@@ -119,7 +119,58 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Event");
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.Message", b =>
+            modelBuilder.Entity("VideoApi.Domain.Heartbeat", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BrowserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BrowserVersion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ConferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("IncomingAudioPercentageLost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IncomingAudioPercentageLostRecent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IncomingVideoPercentageLost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IncomingVideoPercentageLostRecent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OutgoingAudioPercentageLost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OutgoingAudioPercentageLostRecent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OutgoingVideoPercentageLost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OutgoingVideoPercentageLostRecent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("ParticipantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Heartbeat");
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,7 +200,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasIndex("TimeStamp");
 
-                    b.ToTable("Message");
+                    b.ToTable("InstantMessage");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
@@ -321,10 +372,10 @@ namespace VideoApi.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.Message", b =>
+            modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
                 {
                     b.HasOne("VideoApi.Domain.Conference", null)
-                        .WithMany("Messages")
+                        .WithMany("InstantMessageHistory")
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

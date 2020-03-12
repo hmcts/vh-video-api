@@ -1,9 +1,15 @@
+using System;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Responses
 {
     public class ParticipantSummaryResponse
     {
+        /// <summary>
+        /// The participant id
+        /// </summary>
+        public Guid Id { get; set; }
+        
         /// <summary>
         /// The participant username
         /// </summary>
