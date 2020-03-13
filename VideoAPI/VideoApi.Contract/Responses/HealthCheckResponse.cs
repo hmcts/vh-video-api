@@ -9,11 +9,12 @@ namespace VideoApi.Contract.Responses
             DatabaseHealth = new HealthCheck();
             KinlySelfTestHealth = new HealthCheck();
             KinlyApiHealth = new HealthCheck();
+            AppVersion = new ApplicationVersion();
         }
         public HealthCheck DatabaseHealth { get; set; }
         public HealthCheck KinlySelfTestHealth { get; set; }
         public HealthCheck KinlyApiHealth { get; set; }
-
+        public ApplicationVersion AppVersion { get; set; }
     }
 
     public class HealthCheck
@@ -21,5 +22,11 @@ namespace VideoApi.Contract.Responses
         public bool Successful { get; set; }
         public string ErrorMessage { get; set; }
         public IDictionary Data { get; set; }
+    }
+
+    public class ApplicationVersion
+    {
+        public string FileVersion { get; set; }
+        public string InformationVersion { get; set; }
     }
 }
