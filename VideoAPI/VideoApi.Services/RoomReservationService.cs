@@ -16,7 +16,7 @@ namespace VideoApi.Services
     public class RoomReservationService : IRoomReservationService
     {
         private readonly IMemoryCache _memoryCache;
-        private const double CacheExpirySeconds = 5; 
+        private const double CacheExpirySeconds = 10; 
 
         public RoomReservationService(IMemoryCache memoryCache)
         {
@@ -42,7 +42,7 @@ namespace VideoApi.Services
                     _memoryCache.Set<object>(reservationKey, null, TimeSpan.FromSeconds(CacheExpirySeconds));
                     return false;
                 })
-                .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(1));
+                .WaitAndRetryAsync(5, x => TimeSpan.FromSeconds(1));
             return await retryPolicy.ExecuteAsync(async () => {
                 ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"Conference: {conferenceId} - EnsureRoomAvailableAsync");
                 return await getConferenceAsync(conferenceId);
