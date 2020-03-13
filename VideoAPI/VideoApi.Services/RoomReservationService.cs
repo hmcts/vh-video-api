@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Polly;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common;
 
 namespace VideoApi.Services
 {
@@ -29,15 +30,23 @@ namespace VideoApi.Services
                 {
                     var roomType = x.GetAvailableConsultationRoom();
                     var reservationKey = $"{conferenceId}:{roomType}";
+
                     if (_memoryCache.TryGetValue(reservationKey, out _))
                     {
+                        ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"EnsureRoomAvailableAsync KEY : {reservationKey} : FOUND");
                         return true;
                     }
+
+                    ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"EnsureRoomAvailableAsync KEY : {reservationKey} : Not FOUND, setting cache");
+
                     _memoryCache.Set<object>(reservationKey, null, TimeSpan.FromSeconds(CacheExpirySeconds));
                     return false;
                 })
                 .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(1));
-            return await retryPolicy.ExecuteAsync(async () => await getConferenceAsync(conferenceId));
+            return await retryPolicy.ExecuteAsync(async () => {
+                ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"Conference: {conferenceId} - EnsureRoomAvailableAsync");
+                return await getConferenceAsync(conferenceId);
+                });
         }
     }
 }

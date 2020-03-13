@@ -4,8 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Polly;
 using Swashbuckle.AspNetCore.Annotations;
+using VideoApi.Common;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -180,7 +180,12 @@ namespace Video.API.Controllers
             {
                 _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
 
-                await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, GetConference);
+                ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
+
+                conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, GetConference);
+
+                ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"Conference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync");
+
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
         }
