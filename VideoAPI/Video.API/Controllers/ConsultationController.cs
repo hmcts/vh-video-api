@@ -179,12 +179,12 @@ namespace Video.API.Controllers
             if (answer == ConsultationAnswer.Accepted)
             {
                 _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
-
-                ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
+                
+                _logger.LogTrace($"PRIVATE_CONSULTATION - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
 
                 conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, GetConference);
 
-                ApplicationLogger.Trace("Information", "PRIVATE_CONSULTATION", $"Conference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync");
+                _logger.LogTrace($"PRIVATE_CONSULTATION - ConferenceConference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync");
 
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
