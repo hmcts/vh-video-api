@@ -47,7 +47,8 @@ namespace VideoApi.Services
                     _memoryCache.Set<object>(reservationKey, null, TimeSpan.FromSeconds(CacheExpirySeconds));
                     return false;
                 })
-                .WaitAndRetryAsync(5, x => TimeSpan.FromSeconds(1));
+                .WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
+                // .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(3));
 
             return await retryPolicy.ExecuteAsync(async () => {
                 _logger.LogTrace($"PRIVATE_CONSULTATION - Conference: {conferenceId} - EnsureRoomAvailableAsync- ExecuteAsync");
