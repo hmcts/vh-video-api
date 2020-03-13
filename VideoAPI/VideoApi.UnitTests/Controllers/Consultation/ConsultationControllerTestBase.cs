@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         protected Mock<IQueryHandler> QueryHandlerMock;
         protected Mock<ILogger<ConsultationController>> MockLogger;
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
-        protected Mock<IRoomReservationService> RoomReservationService;
+        protected Mock<IRoomReservationService> RoomReservationServiceMock;
 
         protected Conference TestConference;
 
@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             CommandHandlerMock = new Mock<ICommandHandler>();
             MockLogger = new Mock<ILogger<ConsultationController>>();
             VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
-            RoomReservationService = new Mock<IRoomReservationService>();
+            RoomReservationServiceMock = new Mock<IRoomReservationService>();
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -51,7 +51,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .Returns(Task.FromResult(default(object)));
 
             Controller = new ConsultationController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                MockLogger.Object, VideoPlatformServiceMock.Object, RoomReservationService.Object);
+                MockLogger.Object, VideoPlatformServiceMock.Object, RoomReservationServiceMock.Object);
         }
     }
 }
