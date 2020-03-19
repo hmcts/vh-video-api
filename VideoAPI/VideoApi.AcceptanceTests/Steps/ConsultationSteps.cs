@@ -1,8 +1,8 @@
-﻿using TechTalk.SpecFlow;
-using Testing.Common.Helper;
+using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
+using static Testing.Common.Helper.ApiUriFactory.ConsultationEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -10,7 +10,6 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class ConsultationSteps : BaseSteps
     {
         private readonly TestContext _context;
-        private readonly ConsultationEndpoints _endpoints = new ApiUriFactory().ConsultationEndpoints;
 
         public ConsultationSteps(TestContext injectedContext)
         {
@@ -31,7 +30,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 RequestedFor = representative,
                 Answer = ConsultationAnswer.Accepted
             };
-            _context.Request = _context.Post(_endpoints.HandleConsultationRequest, request);
+            _context.Request = _context.Post(HandleConsultationRequest, request);
         }
     }
 }

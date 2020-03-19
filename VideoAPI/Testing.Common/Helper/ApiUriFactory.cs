@@ -2,111 +2,68 @@ using System;
 
 namespace Testing.Common.Helper
 {
-    public class ApiUriFactory
+    public static class ApiUriFactory
     {
-        public EventsEndpoints EventsEndpoints { get; }
-        public ParticipantsEndpoints ParticipantsEndpoints { get; }
-        public ConferenceEndpoints ConferenceEndpoints { get; }
-        public HealthCheckEndpoints HealthCheckEndpoints { get; }
-        public ConsultationEndpoints ConsultationEndpoints { get; }
-        public TaskEndpoints TaskEndpoints { get; }
-        public InstantMessageEndpoints InstantMessageEndpoints { get; }
-        public HeartbeatEndpoints HeartbeatEndpoints { get; }
-
-        public ApiUriFactory()
+        public static class EventsEndpoints
         {
-            ParticipantsEndpoints = new ParticipantsEndpoints();
-            ConferenceEndpoints = new ConferenceEndpoints();
-            EventsEndpoints = new EventsEndpoints();
-            HealthCheckEndpoints = new HealthCheckEndpoints();
-            ConsultationEndpoints = new ConsultationEndpoints();
-            TaskEndpoints = new TaskEndpoints();
-            InstantMessageEndpoints = new InstantMessageEndpoints();
-            HeartbeatEndpoints = new HeartbeatEndpoints();
+            public const string Event = "events";
         }
-    }
-    
-    public class EventsEndpoints
-    {
-        public string Event => "events";
-    }
-    
-    public class ParticipantsEndpoints
-    {
-        private string ApiRoot => "conferences";
 
-        public string AddParticipantsToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/participants";
-        
-        public string RemoveParticipantFromConference(Guid conferenceId, Guid participantId) =>
-            $"{ApiRoot}/{conferenceId}/participants/{participantId}";
-        public string UpdateParticipantFromConference(Guid conferenceId, Guid participantId) =>
-            $"{ApiRoot}/{conferenceId}/participants/{participantId}";
-
-        public string GetTestCallResultForParticipant(Guid conferenceId, Guid participantId) =>
-            $"{ApiRoot}/{conferenceId}/participants/{participantId}/selftestresult";
-
-        public string GetIndependentTestCallResultForParticipant => $"{ApiRoot}/independentselftestresult";
-
-        public string UpdateParticipantSelfTestScore(Guid conferenceId, Guid participantId) => 
-            $"{ApiRoot}/{conferenceId}/participants/{participantId}/updatescore";
-    }
-    
-    public class ConferenceEndpoints
-    {
-        private string ApiRoot => "conferences";
-        public string BookNewConference => $"{ApiRoot}";
-        public string GetConferenceDetailsByUsername(string username) => $"{ApiRoot}/?username={username}";
-        public string GetConferencesToday => $"{ApiRoot}/today";
-        public string GetExpiredOpenConferences => $"{ApiRoot}/expired";
-        public string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
-        public string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
-        public string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
-        public string UpdateConference => $"{ApiRoot}";
-        public string CloseConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/close";
-    }
-
-    public class HealthCheckEndpoints
-    {
-        private string ApiRoot => "/healthcheck";
-
-        public string CheckServiceHealth()
+        public static class ParticipantsEndpoints
         {
-            return $"{ApiRoot}/health";
+            private const string ApiRoot = "conferences";
+            public static string AddParticipantsToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/participants";
+            public static string RemoveParticipantFromConference(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participants/{participantId}";
+            public static string UpdateParticipantFromConference(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participants/{participantId}";
+            public static string GetTestCallResultForParticipant(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participants/{participantId}/selftestresult";
+            public static string GetIndependentTestCallResultForParticipant => $"{ApiRoot}/independentselftestresult";
+            public static string UpdateParticipantSelfTestScore(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participants/{participantId}/updatescore";
+            public static string GetHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeatrecent";
+            public static string SetHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeat";
         }
-    }
 
-    public class ConsultationEndpoints
-    {
-        private string ApiRoot => "consultations";
+        public static class ConferenceEndpoints
+        {
+            private const string ApiRoot = "conferences";
+            public static string BookNewConference => $"{ApiRoot}";
+            public static string GetConferenceDetailsByUsername(string username) => $"{ApiRoot}/?username={username}";
+            public static string GetConferencesToday => $"{ApiRoot}/today";
+            public static string GetExpiredOpenConferences => $"{ApiRoot}/expired";
+            public static string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
+            public static string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
+            public static string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
+            public static string UpdateConference => $"{ApiRoot}";
+            public static string CloseConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/close";
+        }
 
-        public string HandleConsultationRequest =>   $"{ApiRoot}";
-        public string LeaveConsultationRequest =>   $"{ApiRoot}/leave";
-        public string RespondToAdminConsultationRequest =>   $"{ApiRoot}/vhofficer/respond";
-        
-    }
+        public static class HealthCheckEndpoints
+        {
+            private const string ApiRoot = "/healthcheck";
+            public static string CheckServiceHealth => $"{ApiRoot}/health";
+        }
 
-    public class TaskEndpoints
-    {
-        private string ApiRoot => "conferences";
+        public static class ConsultationEndpoints
+        {
+            private const string ApiRoot = "consultations";
+            public static string HandleConsultationRequest => $"{ApiRoot}";
+            public static string LeaveConsultationRequest => $"{ApiRoot}/leave";
+            public static string RespondToAdminConsultationRequest => $"{ApiRoot}/vhofficer/respond";
+        }
 
-        public string GetTasks(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/tasks";
-        public string UpdateTaskStatus(Guid conferenceId, long taskId) => $"{ApiRoot}/{conferenceId}/tasks/{taskId}";
-    }
+        public static class TaskEndpoints
+        {
+            private const string ApiRoot = "conferences";
+            public static string GetTasks(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/tasks";
+            public static string UpdateTaskStatus(Guid conferenceId, long taskId) => $"{ApiRoot}/{conferenceId}/tasks/{taskId}";
+        }
 
-    public class InstantMessageEndpoints
-    {
-        private string ApiRoot => "conferences";
-        public string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
-        public string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
-        public string RemoveInstantMessagesForConference(Guid conferenceId) =>
-           $"{ApiRoot}/{conferenceId}/instantmessages";
-        public string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
-    }
-    
-    public class HeartbeatEndpoints
-    {
-        private static string ApiRoot => "conferences";
-        public string GetHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeatrecent";
-        public string SaveHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeat";
+        public static class InstantMessageEndpoints
+        {
+            private const string ApiRoot = "conferences";
+            public static string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
+            public static string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
+            public static string RemoveInstantMessagesForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
+            public static string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
+        }
     }
 }

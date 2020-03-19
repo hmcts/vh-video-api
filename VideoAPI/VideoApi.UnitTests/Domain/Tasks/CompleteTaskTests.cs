@@ -9,7 +9,7 @@ namespace VideoApi.UnitTests.Domain.Tasks
     public class CompleteTaskTests
     {
         [Test]
-        public void should_not_be_completed_by_default()
+        public void Should_not_be_completed_by_default()
         {
             var alert = new Task(Guid.NewGuid(), "Something happened", TaskType.Participant);
             alert.Status.Should().Be(TaskStatus.ToDo);
@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Domain.Tasks
         }
 
         [Test]
-        public void should_update_status_to_done()
+        public void Should_update_status_to_done()
         {
             var alert = new Task(Guid.NewGuid(), "Something happened", TaskType.Participant);
             const string user = "Test User";

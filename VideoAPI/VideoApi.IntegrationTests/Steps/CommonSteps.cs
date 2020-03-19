@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Domain;
@@ -14,23 +14,20 @@ using VideoApi.IntegrationTests.Contexts;
 namespace VideoApi.IntegrationTests.Steps
 {
     [Binding]
-    public sealed class CommonSteps : StepsBase
+    public sealed class CommonSteps : BaseSteps
     {
-        private readonly ConferenceTestContext _conferenceTestContext;
+        private readonly TestContext _context;
 
-        public CommonSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(
-            apiTestContext)
+        public CommonSteps(TestContext c)
         {
-            _conferenceTestContext = conferenceTestContext;
+            _context = c;
         }
 
         [Given(@"I have a conference")]
         public async Task GivenIHaveAConference()
         {
-            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            ApiTestContext.NewConferenceId = seededConference.Id;
-            _conferenceTestContext.SeededConference = seededConference;
+            _context.Test.Conference = await _context.TestDataManager.SeedConference();
+            NUnit.Framework.TestContext.WriteLine($"New seeded conference id: {_context.Test.Conference.Id}");
         }
         
         [Given(@"I have a conference today")]
@@ -45,73 +42,71 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithHearingTask("Suspended")
                 .Build();
-            var seededConference = await ApiTestContext.TestDataManager.SeedConference(conference);
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            ApiTestContext.NewConferenceId = seededConference.Id;
-            _conferenceTestContext.SeededConference = seededConference;
+            _context.Test.Conference = await _context.TestDataManager.SeedConference(conference);
         }
         
-        [Given(@"I have a many conferences")]
+        [Given(@"I have several conferences")]
         public async Task GivenIHaveManyConferences()
         {
-            var today = DateTime.Today.AddHours(10);
-            var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
-            var yesterday = DateTime.Today.AddDays(-1).AddHours(10);
+            var today = DateTime.Today.ToUniversalTime().AddMinutes(1);
+            var tomorrow = DateTime.Today.ToUniversalTime().AddDays(1).AddMinutes(1);
+            var yesterday = DateTime.Today.ToUniversalTime().AddDays(-1).AddMinutes(1);
             
-            var conference1 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
+            var yesterdayClosedConference = new ConferenceBuilder(true, scheduledDateTime: yesterday)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
+            var todayConference1 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var conference3 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
+            var tomorrowConference1 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var conference4 = new ConferenceBuilder(true, scheduledDateTime: today)
+            var todayConference2 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var conference5 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
+            var tomorrowConference2 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var conference6 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
+            var yesterdayConference2 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipantTask("Disconnected")
                 .Build();
             
-            await ApiTestContext.TestDataManager.SeedConference(conference1);
-            await ApiTestContext.TestDataManager.SeedConference(conference2);
-            await ApiTestContext.TestDataManager.SeedConference(conference3);
-            await ApiTestContext.TestDataManager.SeedConference(conference4);
-            await ApiTestContext.TestDataManager.SeedConference(conference5);
-            await ApiTestContext.TestDataManager.SeedConference(conference6);
-            
-            _conferenceTestContext.SeededConferences.Add(conference1.Id);
-            _conferenceTestContext.SeededConferences.Add(conference2.Id);
-            _conferenceTestContext.SeededConferences.Add(conference3.Id);
-            _conferenceTestContext.SeededConferences.Add(conference4.Id);
-            _conferenceTestContext.SeededConferences.Add(conference5.Id);
-            _conferenceTestContext.SeededConferences.Add(conference6.Id);
+            _context.Test.ClosedConferences.Add(await _context.TestDataManager.SeedConference(yesterdayClosedConference));
+            _context.Test.YesterdayClosedConference = _context.Test.ClosedConferences.First();
+            _context.Test.TodaysConferences.Add(await _context.TestDataManager.SeedConference(todayConference1));
+            await _context.TestDataManager.SeedConference(tomorrowConference1);
+            _context.Test.TodaysConferences.Add(await _context.TestDataManager.SeedConference(todayConference2));
+            await _context.TestDataManager.SeedConference(tomorrowConference2);
+            _context.Test.ClosedConferences.Add(await _context.TestDataManager.SeedConference(yesterdayConference2));
+
+            _context.Test.Conferences.Add(yesterdayClosedConference);
+            _context.Test.Conferences.Add(todayConference1);
+            _context.Test.Conferences.Add(tomorrowConference1);
+            _context.Test.Conferences.Add(todayConference2);
+            _context.Test.Conferences.Add(tomorrowConference2);
+            _context.Test.Conferences.Add(yesterdayConference2);
         }
 
         [Given(@"I have a many closed conferences with messages")]
@@ -179,12 +174,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             foreach(var c in conferenceList)
             {
-                await ApiTestContext.TestDataManager.SeedConference(c);
-            }
-
-            foreach (var c in conferenceList)
-            {
-                _conferenceTestContext.SeededConferences.Add(c.Id);
+                _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
         }
 
@@ -227,12 +217,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             foreach (var c in conferenceList)
             {
-                await ApiTestContext.TestDataManager.SeedConference(c);
-            }
-
-            foreach (var c in conferenceList)
-            {
-                _conferenceTestContext.SeededConferences.Add(c.Id);
+                _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
         }
 
@@ -274,12 +259,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             foreach (var c in conferenceList)
             {
-                await ApiTestContext.TestDataManager.SeedConference(c);
-            }
-
-            foreach (var c in conferenceList)
-            {
-                _conferenceTestContext.SeededConferences.Add(c.Id);
+                _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
         }
 
@@ -289,7 +269,6 @@ namespace VideoApi.IntegrationTests.Steps
             var conferenceList = new List<Domain.Conference>();
             var conferenceType = typeof(Domain.Conference);
             var utcDate = DateTime.UtcNow;
-            var currentHearing = utcDate.AddMinutes(-40);
             var oldHearing = utcDate.AddMinutes(-180);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
@@ -330,12 +309,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             foreach (var c in conferenceList)
             {
-                await ApiTestContext.TestDataManager.SeedConference(c);
-            }
-
-            foreach (var c in conferenceList)
-            {
-                _conferenceTestContext.SeededConferences.Add(c.Id);
+                _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
         }
 
@@ -343,26 +317,25 @@ namespace VideoApi.IntegrationTests.Steps
         [When(@"I send the same request twice")]
         public async Task WhenISendTheRequestToTheEndpoint()
         {
-            ApiTestContext.ResponseMessage = new HttpResponseMessage();
-            ApiTestContext.ResponseMessage = ApiTestContext.HttpMethod.Method switch
+            _context.ResponseMessage = _context.HttpMethod.Method switch
             {
-                "GET" => await SendGetRequestAsync(ApiTestContext),
-                "POST" => await SendPostRequestAsync(ApiTestContext),
-                "PATCH" => await SendPatchRequestAsync(ApiTestContext),
-                "PUT" => await SendPutRequestAsync(ApiTestContext),
-                "DELETE" => await SendDeleteRequestAsync(ApiTestContext),
-                _ => throw new ArgumentOutOfRangeException(ApiTestContext.HttpMethod.ToString(),
-                    ApiTestContext.HttpMethod.ToString(), null)
+                "GET" => await SendGetRequestAsync(_context),
+                "POST" => await SendPostRequestAsync(_context),
+                "PATCH" => await SendPatchRequestAsync(_context),
+                "PUT" => await SendPutRequestAsync(_context),
+                "DELETE" => await SendDeleteRequestAsync(_context),
+                _ => throw new ArgumentOutOfRangeException(_context.HttpMethod.ToString(),
+                    _context.HttpMethod.ToString(), null)
             };
         }
 
         [Then(@"the response should have the status (.*) and success status (.*)")]
         public void ThenTheResponseShouldHaveStatus(HttpStatusCode statusCode, bool isSuccess)
         {
-            ApiTestContext.ResponseMessage.StatusCode.Should().Be(statusCode);
-            ApiTestContext.ResponseMessage.IsSuccessStatusCode.Should().Be(isSuccess);
-            Zap.Scan(ApiTestContext.RequestUrl);
-            TestContext.WriteLine($"Status Code: {ApiTestContext.ResponseMessage.StatusCode}");
+            _context.ResponseMessage.StatusCode.Should().Be(statusCode);
+            _context.ResponseMessage.IsSuccessStatusCode.Should().Be(isSuccess);
+            Zap.Scan($"{_context.Config.VhServices.VideoApiUrl}{_context.Uri}");
+            NUnit.Framework.TestContext.WriteLine($"Status Code: {_context.ResponseMessage.StatusCode}");
         }
 
         [Then(@"the response message should read '(.*)'")]
@@ -370,9 +343,9 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the error response message should also contain '(.*)'")]
         public async Task ThenTheResponseShouldContain(string errorMessage)
         {
-            var messageString = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
+            var messageString = await _context.ResponseMessage.Content.ReadAsStringAsync();
             messageString.Should().Contain(errorMessage);
-            Zap.Scan(ApiTestContext.RequestUrl);
+            Zap.Scan($"{_context.Config.VhServices.VideoApiUrl}{_context.Uri}");
         }
     }
 }

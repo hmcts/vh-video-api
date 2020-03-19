@@ -11,6 +11,7 @@ using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.AcceptanceTests.Helpers;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.CustomToken;
+using static Testing.Common.Helper.ApiUriFactory.HealthCheckEndpoints;
 
 namespace VideoApi.AcceptanceTests.Hooks
 {
@@ -80,34 +81,33 @@ namespace VideoApi.AcceptanceTests.Hooks
         [BeforeTestRun]
         public static void CheckHealth(TestContext context)
         {
-            var endpoint = new ApiUriFactory().HealthCheckEndpoints;
-            context.Request = context.Get(endpoint.CheckServiceHealth());
+            context.Request = context.Get(CheckServiceHealth);
             context.Response = context.Client().Execute(context.Request);
             context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [AfterScenario]
-        public static void RemoveConference(TestContext context, ConferenceEndpoints endpoints)
+        public static void RemoveConference(TestContext context)
         {
             if (context.NewConferenceId == Guid.Empty) return;
-            RemoveConference(context, endpoints, context.NewConferenceId);
+            RemoveConference(context, context.NewConferenceId);
         }
 
         [AfterScenario]
-        public static void RemoveConferences(TestContext context, ConferenceEndpoints endpoints)
+        public static void RemoveConferences(TestContext context)
         {
             if (context.NewConferenceIds.Count <= 0) return;
             foreach (var id in context.NewConferenceIds.Where(id => !id.Equals(context.NewConferenceId)))
-                RemoveConference(context, endpoints, id);
+                RemoveConference(context, id);
             context.NewConferences.Clear();
             context.NewConferenceIds.Clear();
             context.NewConferenceId = Guid.Empty;
         }
 
-        private static void RemoveConference(TestContext context, ConferenceEndpoints endpoints, Guid conferenceId)
+        private static void RemoveConference(TestContext context, Guid conferenceId)
         {
             context.SetDefaultBearerToken();
-            context.Request = context.Delete(endpoints.RemoveConference(conferenceId));
+            context.Request = context.Delete(ApiUriFactory.ConferenceEndpoints.RemoveConference(conferenceId));
             context.Response = context.Client().Execute(context.Request);
             context.Response.IsSuccessful.Should().BeTrue("Conference is deleted");
         }

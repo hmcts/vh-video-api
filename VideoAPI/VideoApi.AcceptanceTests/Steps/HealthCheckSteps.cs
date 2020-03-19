@@ -1,10 +1,10 @@
-using FluentAssertions;
 using System;
+using AcceptanceTests.Common.Api.Helpers;
+using FluentAssertions;
 using TechTalk.SpecFlow;
-using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Responses;
+using static Testing.Common.Helper.ApiUriFactory.HealthCheckEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -12,7 +12,6 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class HealthCheckSteps : BaseSteps
     {
         private readonly TestContext _context;
-        private readonly HealthCheckEndpoints _endpoints = new ApiUriFactory().HealthCheckEndpoints;
 
         public HealthCheckSteps(TestContext injectedContext)
         {
@@ -23,13 +22,13 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAGetHealthRequest()
         {
             _context.NewConferenceId = Guid.Empty;
-            _context.Request = _context.Get(_endpoints.CheckServiceHealth());
+            _context.Request = _context.Get(CheckServiceHealth);
         }
 
         [Then(@"the application version should be retrieved")]
         public void ThenTheApplicationVersionShouldBeRetrieved()
         {
-            var model = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Json);
+            var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Json);
             model.Should().NotBeNull();
             model.AppVersion.Should().NotBeNull();
             model.AppVersion.FileVersion.Should().NotBeNull();

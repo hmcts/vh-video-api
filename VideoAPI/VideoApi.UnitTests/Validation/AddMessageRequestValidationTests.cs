@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = new AddInstantMessageRequest
             {
@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_fail_validation_when_from_is_empty()
+        public async Task Should_fail_validation_when_from_is_empty()
         {
             var request = new AddInstantMessageRequest
             {
@@ -44,7 +44,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_fail_validation_when_message_text_is_empty()
+        public async Task Should_fail_validation_when_message_text_is_empty()
         {
             var request = new AddInstantMessageRequest
             {
@@ -56,7 +56,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_fail_validation_when_message_text_is_too_long()
+        public async Task Should_fail_validation_when_message_text_is_too_long()
         {
             var request = new AddInstantMessageRequest
             {

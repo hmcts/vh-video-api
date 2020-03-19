@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
-using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
+using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
+using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -17,9 +20,9 @@ namespace VideoApi.AcceptanceTests.Steps
     {
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
-        private readonly ParticipantsEndpoints _endpoints = new ApiUriFactory().ParticipantsEndpoints;
         private readonly CommonSteps _commonSteps;
         private const string ParticipantUsernameKey = "ParticipantUsername";
+        private const decimal LossPercentage = 0.25m;
 
         public ParticipantsSteps(TestContext injectedContext, ScenarioContext scenarioContext, CommonSteps commonSteps)
         {
@@ -36,15 +39,14 @@ namespace VideoApi.AcceptanceTests.Steps
                 Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}
             };
             _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
-            _context.Request = _context.Put(_endpoints.AddParticipantsToConference(_context.NewConferenceId), request);
+            _context.Request = _context.Put(AddParticipantsToConference(_context.NewConferenceId), request);
         }
 
         [Given(@"I have an remove participant from a valid conference request")]
         public void GivenIHaveAnRemoveParticipantFromAValidConferenceRequest()
         {
             _scenarioContext.Add(ParticipantUsernameKey, _context.NewConference.Participants.Last().DisplayName);
-            _context.Request = _context.Delete(_endpoints.RemoveParticipantFromConference(_context.NewConferenceId,
-                _context.NewConference.Participants.Last().Id));
+            _context.Request = _context.Delete(RemoveParticipantFromConference(_context.NewConferenceId, _context.NewConference.Participants.Last().Id));
         }
 
         [Given(@"I have an update participant details request")]
@@ -58,21 +60,61 @@ namespace VideoApi.AcceptanceTests.Steps
                 Representee = $"Updated {participant.Representee}"
             };
             _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
-            _context.Request =
-                _context.Patch(_endpoints.UpdateParticipantFromConference(_context.NewConferenceId, participant.Id),
-                    request);
+            _context.Request = _context.Patch(UpdateParticipantFromConference(_context.NewConferenceId, participant.Id), request);
+        }
+
+        [Given(@"I have a participant with heartbeat data")]
+        public void GivenIHaveSomeHeartbeatData()
+        {
+            SetHeartbeatDataRequest();
+            _commonSteps.WhenISendTheRequestToTheEndpoint();
+            _commonSteps.ThenTheResponseShouldHaveTheStatusAndSuccessStatus(HttpStatusCode.NoContent, true);
+        }
+
+        [Given(@"I have a valid get heartbeat data request")]
+        public void GetHeartbeatDataRequest()
+        {
+            _context.Request = _context.Get(GetHeartbeats(_context.NewConferenceId, _context.Test.ParticipantId));
+        }
+
+        [Given(@"I have a valid set heartbeat data request")]
+        public void SetHeartbeatDataRequest()
+        {
+            _context.Test.ParticipantId = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            var request = new AddHeartbeatRequest()
+            {
+                OutgoingAudioPercentageLost = LossPercentage,
+                OutgoingAudioPercentageLostRecent = LossPercentage,
+                IncomingAudioPercentageLost = LossPercentage,
+                IncomingAudioPercentageLostRecent = LossPercentage, 
+                OutgoingVideoPercentageLost = LossPercentage, 
+                OutgoingVideoPercentageLostRecent = LossPercentage, 
+                IncomingVideoPercentageLost = LossPercentage,
+                IncomingVideoPercentageLostRecent = LossPercentage,
+                BrowserName = "Chrome",
+                BrowserVersion = "80.0"
+            };
+            _context.Test.HeartbeatData = request;
+            _context.Request = _context.Post(SetHeartbeats(_context.NewConferenceId, _context.Test.ParticipantId), request);
+        }
+
+        [Then(@"the heartbeat data is retrieved")]
+        public void ThenTheHeartbeatDataIsRetrieved()
+        {
+            var heartbeatData = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
+            heartbeatData.First().BrowserName.Should().Be(_context.Test.HeartbeatData.BrowserName);
+            heartbeatData.First().BrowserVersion.Should().Be(_context.Test.HeartbeatData.BrowserVersion);
+            heartbeatData.First().RecentPacketLoss.Should().Be(LossPercentage);
+            heartbeatData.First().Timestamp.Minute.Should().BeOneOf(DateTime.Now.Minute, DateTime.Now.AddMinutes(-1).Minute);
         }
 
         [Then(@"the participant is (.*)")]
         public void ThenTheParticipantIsAdded(string state)
         {
-            var endpoints = new ApiUriFactory().ConferenceEndpoints;
-            _context.Request = _context.Get(endpoints.GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Request = _context.Get(GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
-            var conference =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
-                    _context.Response.Content);
+            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var exists = conference.Participants.Any(participant =>
                 participant.Username.ToLower().Equals(_scenarioContext.Get<string>(ParticipantUsernameKey).ToLower()));

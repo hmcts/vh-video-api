@@ -1,17 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
-using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
+using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
+
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -20,7 +21,6 @@ namespace VideoApi.AcceptanceTests.Steps
     {
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
-        private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
         private const string CurrentStatusKey = "CurrentStatus";
         private const string UpdatedKey = "UpdatedConference";
 
@@ -36,7 +36,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.SetDefaultBearerToken();
             _context.Request =
                 _context.Get(
-                    _endpoints.GetConferenceDetailsByUsername(_context.NewConference.Participants.First().Username));
+                    GetConferenceDetailsByUsername(_context.NewConference.Participants.First().Username));
         }
 
         [Given(@"I have an update conference request")]
@@ -54,7 +54,7 @@ namespace VideoApi.AcceptanceTests.Steps
             };
 
             _scenarioContext.Add(UpdatedKey, request);
-            _context.Request = _context.Put(_endpoints.UpdateConference, request);
+            _context.Request = _context.Put(UpdateConference, request);
         }
 
         [Given(@"I have a valid book a new conference request")]
@@ -115,42 +115,40 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get details for a conference request with a valid conference id")]
         public void GivenIHaveAGetDetailsForAConferenceRequestWithAValidConferenceId()
         {
-            _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Request = _context.Get(GetConferenceDetailsById(_context.NewConferenceId));
         }
 
         [Given(@"I have a valid delete conference request")]
         public void GivenIHaveAValidDeleteConferenceRequest()
         {
-            _context.Request = _context.Delete(_endpoints.RemoveConference(_context.NewConferenceId));
+            _context.Request = _context.Delete(RemoveConference(_context.NewConferenceId));
         }
 
         [Given(@"I have a get conferences for today request with a valid date")]
         public void GivenIHaveAValidGetTodaysConferencesRequest()
         {
-            _context.Request = _context.Get(_endpoints.GetConferencesToday);
+            _context.Request = _context.Get(GetConferencesToday);
         }
 
         [Given(@"I have a get expired conferences request")]
         public void GivenIHaveAGetExpiredConferencesRequest()
         {
-            _context.Request = _context.Get(_endpoints.GetExpiredOpenConferences);
+            _context.Request = _context.Get(GetExpiredOpenConferences);
         }
 
         [Given(@"I have a get details for a conference request by hearing id with a valid username")]
         public void GivenIHaveAGetDetailsForAConferenceRequestByHearingIdWithAValidUsername()
         {
-            _context.Request = _context.Get(_endpoints.GetConferenceByHearingRefId(_context.NewHearingRefId));
+            _context.Request = _context.Get(GetConferenceByHearingRefId(_context.NewHearingRefId));
         }
 
         [Then(@"the conference details have been updated")]
         public void ThenICanSeeTheConferenceDetailsHaveBeenUpdated()
         {
-            _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Request = _context.Get(GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
-            var conference =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
-                    _context.Response.Content);
+            var conference =RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
 
             var expected = _scenarioContext.Get<UpdateConferenceRequest>(UpdatedKey);
@@ -166,7 +164,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenTheConferenceDetailsShouldBeRetrieved()
         {
             var conference =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Json);
+                RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Json);
             conference.Should().NotBeNull();
             _context.NewConferenceId = conference.Id;
             AssertConferenceDetailsResponse.ForConference(conference);
@@ -176,7 +174,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
         {
             var conferences =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
+                RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -193,7 +191,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
         {
             var conferences =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
+                RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
             conferences.Should().NotContain(x => x.CurrentStatus == ConferenceState.Closed);
         }
 
@@ -201,7 +199,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenAListNotContainingTheClosedHearingsShouldBeRetrieved()
         {
             var conferences =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
+                RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Json);
             conferences.Select(x => x.Id).Should().NotContain(_context.NewConferenceIds);
         }
 
@@ -209,7 +207,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
             var conferences =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
+                RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Json);
             conferences.Should().NotBeNull();
             _context.NewConferenceId = conferences.First().Id;
             foreach (var conference in conferences)
@@ -223,7 +221,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the conference should be removed")]
         public void ThenTheConferenceShouldBeRemoved()
         {
-            _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Request = _context.Get(GetConferenceDetailsById(_context.NewConferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             _context.NewConferenceId = Guid.Empty;
@@ -235,7 +233,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("New conference is created");
             var conference =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
+                RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
                     _context.Response.Content);
             conference.Should().NotBeNull();
             _context.NewConferenceId = conference.Id;
@@ -246,7 +244,7 @@ namespace VideoApi.AcceptanceTests.Steps
 
         private void UpdateConferenceStateToClosed(Guid conferenceId)
         {
-            _context.Request = _context.Put(_endpoints.CloseConference(conferenceId), new object());
+            _context.Request = _context.Put(CloseConference(conferenceId), new object());
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference is closed");
         }
@@ -261,18 +259,18 @@ namespace VideoApi.AcceptanceTests.Steps
                 .WithHearingRefId(_context.NewHearingRefId)
                 .WithDate(date)
                 .Build();
-            _context.Request = _context.Post(_endpoints.BookNewConference, request);
+            _context.Request = _context.Post(BookNewConference, request);
         }
 
         private void CloseAndCheckConferenceClosed(Guid conferenceId)
         {
             UpdateConferenceStateToClosed(conferenceId);
 
-            _context.Request = _context.Get(_endpoints.GetConferenceDetailsById(conferenceId));
+            _context.Request = _context.Get(GetConferenceDetailsById(conferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
             var conference =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
+                RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(
                     _context.Response.Content);
             conference.CurrentStatus.Should().Be(ConferenceState.Closed);
         }

@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class AddParticipantTests
     {
         [Test]
-        public void should_add_new_participant_to_hearing()
+        public void Should_add_new_participant_to_hearing()
         {
             var conference = new ConferenceBuilder().Build();
 
@@ -24,7 +24,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
 
         [Test]
-        public void should_not_add_existing_participant_to_hearing()
+        public void Should_not_add_existing_participant_to_hearing()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")

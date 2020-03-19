@@ -1,4 +1,4 @@
-﻿Feature: Participants
+Feature: Participants
   In order to manage participants in a conference
   As an API service
   I want to create, update and retrieve participant data
@@ -23,3 +23,19 @@
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
     And the participant is updated
+
+  @VIH-5598
+  Scenario: Get the heartbeat data for participant
+    Given I have a conference
+    And I have a participant with heartbeat data
+    And I have a valid get heartbeat data request 
+    When I send the request to the endpoint
+    Then the response should have the status Ok and success status True
+    And the heartbeat data is retrieved
+  
+  @VIH-5599
+  Scenario: Set the heartbeat data for participant
+    Given I have a conference
+    And I have a valid set heartbeat data request 
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True

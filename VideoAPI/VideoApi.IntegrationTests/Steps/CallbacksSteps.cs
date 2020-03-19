@@ -2,80 +2,69 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using AcceptanceTests.Common.Api.Helpers;
 using FizzWare.NBuilder;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
-using Testing.Common.Helper;
 using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
+using static Testing.Common.Helper.ApiUriFactory;
+using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;
 
 namespace VideoApi.IntegrationTests.Steps
 {
     [Binding]
-    public class CallbacksSteps : StepsBase
+    public class CallbackSteps : BaseSteps
     {
-        private readonly EventsEndpoints _endpoints = new ApiUriFactory().EventsEndpoints;
-
-        public CallbacksSteps(ApiTestContext apiTestContext) : base(apiTestContext)
+        private readonly TestContext _context;
+        public CallbackSteps(TestContext context)
         {
+            _context = context;
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
-        public async Task GivenIHaveAnConferenceEventRequestForAnEventType(EventType eventType)
+        public void GivenIHaveAnConferenceEventRequestForAnEventType(EventType eventType)
         {
-            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            ApiTestContext.NewConferenceId = seededConference.Id;
-            var request = BuildRequest(eventType, seededConference);
-            ApiTestContext.Uri = _endpoints.Event;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
+            var request = BuildRequest(eventType, _context.Test.Conference);
+            _context.Uri = EventsEndpoints.Event;
+            _context.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
         [Given(@"I have a (.*) conference event request")]
         [Given(@"I have an (.*) conference event request")]
         public void GivenIHaveAnConferenceEventRequest(Scenario scenario)
         {
-            ConferenceEventRequest request;
-            switch (scenario)
+            var request = scenario switch
             {
-                case Scenario.Nonexistent:
-                    request = BuildRequest(EventType.Transfer);
-                    break;
-                case Scenario.Invalid:
-                    request = BuildInvalidRequest();
-                    break;
-                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
+                Scenario.Nonexistent => BuildRequest(EventType.Transfer),
+                Scenario.Invalid => BuildInvalidRequest(),
+                _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null)
+            };
 
-            ApiTestContext.Uri = _endpoints.Event;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.Uri = EventsEndpoints.Event;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
         [Given(@"I have a room transfer event request for a nonexistent participant")]
-        public async Task GivenIRoomTransferEventRequestForNonExistentParticipant()
+        public void GivenIRoomTransferEventRequestForNonExistentParticipant()
         {
-            var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            ApiTestContext.NewConferenceId = seededConference.Id;
-            var request = BuildRequest(EventType.Transfer, seededConference);
+            var request = BuildRequest(EventType.Transfer, _context.Test.Conference);
             request.ParticipantId = Guid.NewGuid().ToString();
 
-            ApiTestContext.Uri = _endpoints.Event;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
+            _context.Uri = EventsEndpoints.Event;
+            _context.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
-        private ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null)
+        private static ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null)
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = Guid.NewGuid().ToString())
@@ -95,7 +84,7 @@ namespace VideoApi.IntegrationTests.Steps
             return request;
         }
 
-        private ConferenceEventRequest BuildInvalidRequest()
+        private static ConferenceEventRequest BuildInvalidRequest()
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = string.Empty)

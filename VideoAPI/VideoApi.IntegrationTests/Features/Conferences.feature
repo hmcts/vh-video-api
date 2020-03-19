@@ -4,7 +4,8 @@ Feature: Conferences
   I want to create, update and retrieve conference data
 
   Scenario: Get conference details by username
-	Given I have a get details for a conference request by username with a valid username
+    Given I have a conference
+	  And I have a get details for a conference request by username with a valid username
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And the summary of conference details should be retrieved
@@ -46,7 +47,8 @@ Feature: Conferences
     And the error response message should also contain 'Please provide at least one participant'
 
   Scenario: Get details for an existing conference
-    Given I have a get details for a conference request with a valid conference id
+    Given I have a conference
+    And I have a get details for a conference request with a valid conference id
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And the conference details should be retrieved
@@ -63,7 +65,8 @@ Feature: Conferences
     Then the response should have the status NotFound and success status False
 
   Scenario: Remove an existing conference
-    Given I have a valid remove conference request
+    Given I have a conference
+    And I have a valid remove conference request
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
     And the conference should be removed
@@ -80,7 +83,8 @@ Feature: Conferences
     Then the response should have the status NotFound and success status False
 
   Scenario: Get details for an existing conference by hearing ref id 
-    Given I have a get details for a conference request with a valid hearing ref id
+    Given I have a conference
+    And I have a get details for a conference request with a valid hearing ref id
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And the conference details should be retrieved
@@ -97,14 +101,15 @@ Feature: Conferences
     Then the response should have the status NotFound and success status False
   
   Scenario: Get conferences for today only
-    Given I have a many conferences
-    And When I send the request to the endpoint
+    Given I have several conferences
+    And I have a valid get conferences for today request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And the summary of conference details should be retrieved
+    And only todays conferences should be retrieved
 
   Scenario: Update a conference with valid request
-    Given I have a valid update a conference request
+    Given I have a conference
+    And I have a valid update a conference request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
 
@@ -118,16 +123,26 @@ Feature: Conferences
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
 
-  Scenario: Get open conferences by scheduled date
-    Given I have a many conferences
-    And I send the request to the get expired conferences endpoint
+  Scenario: Get expired open conferences by scheduled date
+    Given I have several conferences
+    And I have a valid get expired open conferences by scheduled date request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And the responses list should not contain closed conferences
+    Then a list without closed conferences is retrieved
 
-  Scenario: Close all conferences
-    Given I have a many conferences
-    And I send the request to close all conferences
-    And I send the request to the get expired conferences endpoint
+  Scenario: Close conference
+    Given I have a conference
+    And I have a valid close conference request
     When I send the request to the endpoint
-    Then a list without the closed conferences is retrieved
+    Then the response should have the status NoContent and success status True
+    And the conference should be closed
+
+  Scenario: Close conference with nonexistent request
+    Given I have a close conference request for a nonexistent conference id
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
+
+  Scenario: Close conference with invalid request
+    Given I have an invalid close conference request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False

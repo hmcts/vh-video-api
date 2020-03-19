@@ -26,7 +26,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_get_conference_details_by_hearing_ref_id()
+        public async Task Should_get_conference_details_by_hearing_ref_id()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -38,7 +38,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_get_non_closed_conference()
+        public async Task Should_get_non_closed_conference()
         {
             var knownHearingRefId = Guid.NewGuid();
             var conference1 = new ConferenceBuilder(true, knownHearingRefId)

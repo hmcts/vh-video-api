@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace VideoApi.Contract.Requests
 {
     public class AddHeartbeatRequest

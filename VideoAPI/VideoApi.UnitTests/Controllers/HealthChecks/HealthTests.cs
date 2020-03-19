@@ -118,7 +118,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
         }
 
         [Test]
-        public async Task should_return_the_application_version_from_assembly()
+        public async Task Should_return_the_application_version_from_assembly()
         {
             var result = await _controller.Health();
             var typedResult = (ObjectResult)result;

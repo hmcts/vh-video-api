@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using AcceptanceTests.Common.Api.Helpers;
 using Microsoft.Extensions.Options;
 using RestSharp;
+using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.Contract.Responses;
@@ -29,11 +30,13 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Request { get; set; }
         public IRestResponse Response { get; set; }
         public ServicesConfiguration ServicesConfiguration { get; set; }
+        public Test Test { get; set; }
 
         public TestContext()
         {
             NewConferences = new List<ConferenceSummaryResponse>();
             NewConferenceIds = new List<Guid>();
+            Test = new Test();
         }
 
         public RestClient Client()
@@ -53,7 +56,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Post(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.POST);            
-            request.AddParameter("Application/json", ApiRequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
+            request.AddParameter("Application/json", RequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
                 ParameterType.RequestBody);
             return request;
         }
@@ -66,7 +69,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Put(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.PUT);
-            request.AddParameter("Application/json", ApiRequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
+            request.AddParameter("Application/json", RequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
                 ParameterType.RequestBody);
             return request;
         }
@@ -74,7 +77,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Patch(string path, object requestBody = null)
         {
             var request = new RestRequest(path, Method.PATCH);
-            request.AddParameter("Application/json", ApiRequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
+            request.AddParameter("Application/json", RequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
                 ParameterType.RequestBody);
             return request;
         }

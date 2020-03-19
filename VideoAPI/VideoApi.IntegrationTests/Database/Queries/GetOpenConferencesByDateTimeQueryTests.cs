@@ -41,7 +41,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_return_conferences_still_open_after_14_hours()
+        public async Task Should_return_conferences_still_open_after_14_hours()
         {
             var utcDate = DateTime.UtcNow;
             var expired = utcDate.AddHours(-15);

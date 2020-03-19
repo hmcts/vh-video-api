@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Events
         private LeaveEventHandler _eventHandler;
 
         [Test]
-        public async Task should_send_disconnected_message_to_participants_and_service_bus_when_participant_leave()
+        public async Task Should_send_disconnected_message_to_participants_and_service_bus_when_participant_leave()
         {
             _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 ServiceBusQueueClient);
@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Events
         }
 
         [Test]
-        public async Task should_send_not_signed_in_message_to_participant_and_service_bus_when_judge_leave()
+        public async Task Should_send_not_signed_in_message_to_participant_and_service_bus_when_judge_leave()
         {
             _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 ServiceBusQueueClient);

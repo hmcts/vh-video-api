@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AcceptanceTests.Common.Api.Helpers;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using TechTalk.SpecFlow;
-using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
+using static Testing.Common.Helper.ApiUriFactory.EventsEndpoints;
+using static Testing.Common.Helper.ApiUriFactory.TaskEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -18,8 +19,6 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class TaskSteps : BaseSteps
     {
         private readonly TestContext _context;
-        private readonly TaskEndpoints _endpoints = new ApiUriFactory().TaskEndpoints;
-        private readonly EventsEndpoints _eventsEndpoints = new ApiUriFactory().EventsEndpoints;
         private const string UpdatedBy = "AutomationUpdateUser";
 
         public TaskSteps(TestContext injectedContext)
@@ -39,7 +38,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.WaitingRoom)
                 .With(x => x.Reason = "Automated")
                 .Build();
-            _context.Request = _context.Post(_eventsEndpoints.Event, request);
+            _context.Request = _context.Post(Event, request);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
             _context.Response.IsSuccessful.Should().Be(true);
@@ -50,7 +49,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidGetTasksRequest()
         {
             _context.SetDefaultBearerToken();
-            _context.Request = _context.Get(_endpoints.GetTasks(_context.NewConferenceId));
+            _context.Request = _context.Get(GetTasks(_context.NewConferenceId));
         }
 
         [Given(@"I have a valid update task request")]
@@ -58,14 +57,14 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.SetDefaultBearerToken();
             var request = new UpdateTaskRequest {UpdatedBy = UpdatedBy};
-            _context.Request = _context.Patch(_endpoints.UpdateTaskStatus(_context.NewConferenceId, _context.NewTaskId),
+            _context.Request = _context.Patch(UpdateTaskStatus(_context.NewConferenceId, _context.NewTaskId),
                 request);
         }
 
         [Then(@"the tasks are retrieved")]
         public void ThenTheTaskIsRetrieved()
         {
-            var tasks = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(_context.Response.Content);
+            var tasks = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(_context.Response.Content);
             tasks.Should().NotBeNull();
             tasks.First().Id.Should().BeGreaterThan(-1);
             tasks.First().Created.Should().BeBefore(DateTime.Now);
@@ -77,7 +76,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the task is updated")]
         public void ThenTheStatusIsUpdated()
         {
-            var task = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<TaskResponse>(_context.Response.Content);
+            var task = RequestHelper.DeserialiseSnakeCaseJsonToResponse<TaskResponse>(_context.Response.Content);
             task.Updated.HasValue.Should().BeTrue();
             task.UpdatedBy.Should().Be(UpdatedBy);
             task.Status.Should().Be(TaskStatus.Done);

@@ -30,7 +30,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [TestCase(TaskType.Judge)]
         [TestCase(TaskType.Hearing)]
         [TestCase(TaskType.Participant)]
-        public async Task should_update_status_to_done(TaskType taskType)
+        public async Task Should_update_status_to_done(TaskType taskType)
         {
             const string body = "Automated Test Complete Task";
             const string updatedBy = "test@automated.com";
@@ -61,7 +61,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
 
         [Test]
-        public void should_throw_conference_not_found_exception()
+        public void Should_throw_conference_not_found_exception()
         {
             const string updatedBy = "test@automated.com";
             var command = new UpdateTaskCommand(Guid.NewGuid(), 9999, updatedBy);
@@ -69,7 +69,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_throw_task_not_found_exception()
+        public async Task Should_throw_task_not_found_exception()
         {
             const string body = "Automated Test Complete Task";
             const string updatedBy = "test@automated.com";

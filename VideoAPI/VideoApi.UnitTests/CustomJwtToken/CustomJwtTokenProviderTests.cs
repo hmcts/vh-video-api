@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Common.Security.CustomToken;
@@ -22,14 +22,14 @@ namespace VideoApi.UnitTests.CustomJwtToken
         }
 
         [Test]
-        public void should_generate_jwt_token_when_generate_token_is_called()
+        public void Should_generate_jwt_token_when_generate_token_is_called()
         {
             var generateToken = _customJwtTokenProvider.GenerateToken("Test User", 30);
             generateToken.Should().NotBeNullOrEmpty();
         }
 
         [Test]
-        public void should_be_valid_token_when_generated_by_custom_token_provider()
+        public void Should_be_valid_token_when_generated_by_custom_token_provider()
         {
             var token = _customJwtTokenProvider.GenerateToken("Test User", 30);
 
@@ -38,7 +38,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         }
 
         [Test]
-        public void should_be_invalid_token_when_token_is_random_string()
+        public void Should_be_invalid_token_when_token_is_random_string()
         {
             var token = "ey1221213121";
             var isValidToken = _customJwtTokenHandler.IsValidToken(token);
@@ -47,7 +47,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         }
 
         [Test]
-        public void should_get_principal_when_get_principal_is_called_with_valid_token()
+        public void Should_get_principal_when_get_principal_is_called_with_valid_token()
         {
             var testUser = "Test User";
             var token = _customJwtTokenProvider.GenerateToken(testUser, 30);
@@ -57,7 +57,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         }
 
         [Test]
-        public void should_not_be_able_to_get_principal_when_get_principal_is_called_with_invalid_token()
+        public void Should_not_be_able_to_get_principal_when_get_principal_is_called_with_invalid_token()
         {
             var token = "ey1221213121";
 
@@ -66,7 +66,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         }
 
         [Test]
-        public void should_be_invalid_token_when_token_generated_with_different_secret()
+        public void Should_be_invalid_token_when_token_generated_with_different_secret()
         {
             var secretKey = "F8pf/zwOgm/kASEFs+BKRDdyq+RhHCQ9i9tPjeaPjUebm6HvzXKIsr/nX28wpwAZoWRG0FQK9LVf6nrkW/vg4w==";
             var customTokenSettings = new CustomTokenSettings { Secret = secretKey, Audience = Audience, Issuer = Issuer};

@@ -36,7 +36,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_get_conference_for_username()
+        public async Task Should_get_conference_for_username()
         {
             var username = "Automation_knownuser@email.com";
             var conference1 = new ConferenceBuilder(true)
