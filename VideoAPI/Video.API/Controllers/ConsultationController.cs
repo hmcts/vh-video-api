@@ -178,29 +178,40 @@ namespace Video.API.Controllers
         private async Task InitiateStartConsultation(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
+            _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}, Answer : {answer}");
+            _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
+
             if (answer == ConsultationAnswer.Accepted)
             {
-                _logger.LogInformation(
-                    $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
-
-                RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
                 
+                RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
+                _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
+
                 if (roomInCache.HasValue)
                 {
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype found in the Cache");
                     // Retry until the cache is removed from the previous request
                     var retryPolicy = Policy
                     .HandleResult<RoomType?>(room => !room.HasValue)
-                    .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(1));
+                    .WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
+
+                    //_logger.LogTrace($"PRIVATE_CONSULTATION - Conference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync. Available room : {roomType}");
 
                     await retryPolicy.ExecuteAsync(() => _consultationCache.GetConsultationRoom(conference.Id));
 
                     // Get a fresh conference record again
                     conference = await GetConference(conference.Id);
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - gets a fresh record");
                 }
                 else
                 {
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype **NOT** found in the Cache");
+                    
                     // If there is nothing in the cache, then add this room to the cache
                     var targetRoom = conference.GetAvailableConsultationRoom();
+
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype {targetRoom} addd to the Cache");
+
                     await _consultationCache.AddConsultationRoomToCache(conference.Id, targetRoom);
                 }
 
@@ -208,6 +219,8 @@ namespace Video.API.Controllers
 
                 // Remove from the cache
                 _consultationCache.Remove(conference.Id);
+
+                _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
             }
         }
 

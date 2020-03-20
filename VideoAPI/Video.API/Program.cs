@@ -1,6 +1,8 @@
-﻿using System.IO;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 
 namespace Video.API
 {
@@ -22,6 +24,14 @@ namespace Video.API
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureLogging((hostingContext, logging) =>
+                    {
+                        logging.AddEventSourceLogger();
+                        logging
+                            .AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.
+                                    ApplicationInsightsLoggerProvider>
+                                ("", LogLevel.Trace);
+                    });
                 });
         }
     }
