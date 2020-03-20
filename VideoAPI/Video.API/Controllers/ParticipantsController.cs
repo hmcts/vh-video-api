@@ -248,6 +248,8 @@ namespace Video.API.Controllers
         /// <summary>
         /// Post the Heartbeat Data For Participant
         /// </summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="request">The AddHeartbeatRequest</param>
         /// <returns></returns>
         [HttpPost("{conferenceId}/participant/{participantId}/heartbeat")]

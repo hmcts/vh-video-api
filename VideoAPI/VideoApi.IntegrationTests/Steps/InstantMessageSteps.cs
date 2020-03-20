@@ -42,24 +42,10 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) get instant messages request")]
         public void GivenIHaveAConferenceWithMessages(Scenario scenario)
         {
-            Guid conferenceId;
-            switch (scenario)
-            {
-                case Scenario.Valid:
-                    conferenceId = _context.Test.Conference.Id;
-                    break;
-                case Scenario.Nonexistent:
-                    conferenceId = Guid.NewGuid();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
-
+            var conferenceId = scenario == Scenario.Nonexistent ? Guid.NewGuid() : _context.Test.Conference.Id;
             _context.Uri = GetInstantMessageHistory(conferenceId);
             _context.HttpMethod = HttpMethod.Get;
         }
-
-
 
         [Given(@"I have a (.*) set instant message request")]
         [Given(@"I have an (.*) set instant message request")]
@@ -112,22 +98,13 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) delete messages from a conference request")]
         public void GivenIHaveAnRemoveMessagesFromAValidConferenceRequestAsync(Scenario scenario)
         {
-            Guid conferenceId;
-            switch (scenario)
+            var conferenceId = scenario switch
             {
-                case Scenario.Valid:
-                    conferenceId = _context.Test.Conference.Id;
-                    break;
-                case Scenario.Nonexistent:
-                    conferenceId = Guid.NewGuid();
-                    break;
-                case Scenario.Invalid:
-                    conferenceId = Guid.Empty;
-                    break;
-
-                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
-
+                Scenario.Valid => _context.Test.Conference.Id,
+                Scenario.Nonexistent => Guid.NewGuid(),
+                Scenario.Invalid => Guid.Empty,
+                _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null)
+            };
             _context.Uri = RemoveInstantMessagesForConference(conferenceId);
             _context.HttpMethod = HttpMethod.Delete;
         }

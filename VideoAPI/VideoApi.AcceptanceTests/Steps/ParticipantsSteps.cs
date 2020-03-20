@@ -39,20 +39,20 @@ namespace VideoApi.AcceptanceTests.Steps
                 Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}
             };
             _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
-            _context.Request = _context.Put(AddParticipantsToConference(_context.NewConferenceId), request);
+            _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
         }
 
         [Given(@"I have an remove participant from a valid conference request")]
         public void GivenIHaveAnRemoveParticipantFromAValidConferenceRequest()
         {
-            _scenarioContext.Add(ParticipantUsernameKey, _context.NewConference.Participants.Last().DisplayName);
-            _context.Request = _context.Delete(RemoveParticipantFromConference(_context.NewConferenceId, _context.NewConference.Participants.Last().Id));
+            _scenarioContext.Add(ParticipantUsernameKey, _context.Test.ConferenceResponse.Participants.Last().DisplayName);
+            _context.Request = _context.Delete(RemoveParticipantFromConference(_context.Test.ConferenceResponse.Id, _context.Test.ConferenceResponse.Participants.Last().Id));
         }
 
         [Given(@"I have an update participant details request")]
         public void GivenIHaveAnUpdateParticipantRequest()
         {
-            var participant = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual);
+            var participant = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual);
             var request = new UpdateParticipantRequest()
             {
                 Fullname = $"Updated {participant.Name}",
@@ -60,7 +60,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 Representee = $"Updated {participant.Representee}"
             };
             _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
-            _context.Request = _context.Patch(UpdateParticipantFromConference(_context.NewConferenceId, participant.Id), request);
+            _context.Request = _context.Patch(UpdateParticipantFromConference(_context.Test.ConferenceResponse.Id, participant.Id), request);
         }
 
         [Given(@"I have a participant with heartbeat data")]
@@ -74,13 +74,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get heartbeat data request")]
         public void GetHeartbeatDataRequest()
         {
-            _context.Request = _context.Get(GetHeartbeats(_context.NewConferenceId, _context.Test.ParticipantId));
+            _context.Request = _context.Get(GetHeartbeats(_context.Test.ConferenceResponse.Id, _context.Test.ParticipantId));
         }
 
         [Given(@"I have a valid set heartbeat data request")]
         public void SetHeartbeatDataRequest()
         {
-            _context.Test.ParticipantId = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            _context.Test.ParticipantId = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual).Id;
             var request = new AddHeartbeatRequest()
             {
                 OutgoingAudioPercentageLost = LossPercentage,
@@ -95,7 +95,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 BrowserVersion = "80.0"
             };
             _context.Test.HeartbeatData = request;
-            _context.Request = _context.Post(SetHeartbeats(_context.NewConferenceId, _context.Test.ParticipantId), request);
+            _context.Request = _context.Post(SetHeartbeats(_context.Test.ConferenceResponse.Id, _context.Test.ParticipantId), request);
         }
 
         [Then(@"the heartbeat data is retrieved")]
@@ -111,7 +111,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the participant is (.*)")]
         public void ThenTheParticipantIsAdded(string state)
         {
-            _context.Request = _context.Get(GetConferenceDetailsById(_context.NewConferenceId));
+            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
             var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);

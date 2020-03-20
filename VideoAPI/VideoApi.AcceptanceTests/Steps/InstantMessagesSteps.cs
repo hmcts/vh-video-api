@@ -22,7 +22,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public InstantMessagesSteps(TestContext injectedContext)
         {
             _context = injectedContext;
-            _fromUsername = _context.NewConference.Participants.First(x => x.UserRole.Equals(UserRole.Judge)).DisplayName;
+            _fromUsername = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge)).DisplayName;
         }
 
         [Given(@"the conference has existing messages")]
@@ -34,7 +34,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get chat messages request")]
         public void GivenIHaveAGetChatMessagesRequest()
         {
-            _context.Request = _context.Get(GetInstantMessageHistory(_context.NewConferenceId));
+            _context.Request = _context.Get(GetInstantMessageHistory(_context.Test.ConferenceResponse.Id));
         }
 
         [Given(@"I have a create chat messages request")]
@@ -45,13 +45,13 @@ namespace VideoApi.AcceptanceTests.Steps
                 From = _fromUsername,
                 MessageText = MessageBody
             };
-            _context.Request = _context.Post(SaveInstantMessage(_context.NewConferenceId), request);
+            _context.Request = _context.Post(SaveInstantMessage(_context.Test.ConferenceResponse.Id), request);
         }
 
         [Given(@"I have a remove messages from a conference request")]
         public void GivenIHaveARemoveMessagesFromAConferenceRequest()
         {
-            _context.Request = _context.Delete(RemoveInstantMessagesForConference(_context.NewConferenceId));
+            _context.Request = _context.Delete(RemoveInstantMessagesForConference(_context.Test.ConferenceResponse.Id));
         }
 
 

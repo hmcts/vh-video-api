@@ -1,4 +1,3 @@
-using System;
 using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -21,14 +20,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get health request")]
         public void GivenIHaveAGetHealthRequest()
         {
-            _context.NewConferenceId = Guid.Empty;
             _context.Request = _context.Get(CheckServiceHealth);
         }
 
         [Then(@"the application version should be retrieved")]
         public void ThenTheApplicationVersionShouldBeRetrieved()
         {
-            var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Json);
+            var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Response.Content);
             model.Should().NotBeNull();
             model.AppVersion.Should().NotBeNull();
             model.AppVersion.FileVersion.Should().NotBeNull();

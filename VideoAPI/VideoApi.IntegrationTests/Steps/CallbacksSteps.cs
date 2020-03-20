@@ -5,7 +5,6 @@ using System.Text;
 using AcceptanceTests.Common.Api.Helpers;
 using FizzWare.NBuilder;
 using TechTalk.SpecFlow;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -30,7 +29,7 @@ namespace VideoApi.IntegrationTests.Steps
             var request = BuildRequest(eventType, _context.Test.Conference);
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 

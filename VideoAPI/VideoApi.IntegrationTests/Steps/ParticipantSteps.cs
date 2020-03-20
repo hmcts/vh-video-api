@@ -8,7 +8,6 @@ using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Api;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
@@ -36,26 +35,19 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an add participant to an (.*) conference request")]
         public void GivenIHaveAnAddParticipantToConferenceRequest(Scenario scenario)
         {
-            Guid conferenceId;
             var request = new AddParticipantsToConferenceRequest()
             {
                 Participants = new List<ParticipantRequest>
                     {new ParticipantRequestBuilder(UserRole.Individual).Build()}
             };
-            switch (scenario)
-            {
-                case Scenario.Valid:
-                    conferenceId = _context.Test.Conference.Id;
-                    break;
-                case Scenario.Nonexistent:
-                    conferenceId = Guid.NewGuid();
-                    break;
-                case Scenario.Invalid:
-                    conferenceId = Guid.Empty;
-                    break;
 
-                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
-            }
+            var conferenceId = scenario switch
+            {
+                Scenario.Valid => _context.Test.Conference.Id,
+                Scenario.Nonexistent => Guid.NewGuid(),
+                Scenario.Invalid => Guid.Empty,
+                _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null)
+            };
 
             _context.Uri = AddParticipantsToConference(conferenceId);
             _context.HttpMethod = HttpMethod.Put;
@@ -109,7 +101,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateParticipantFromConference(conferenceId, participantId);
             _context.HttpMethod = HttpMethod.Patch;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 

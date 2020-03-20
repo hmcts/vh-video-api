@@ -30,8 +30,8 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenTheConferenceHasATask()
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
-                .With(x => x.ConferenceId = _context.NewConferenceId.ToString())
-                .With(x => x.ParticipantId = _context.NewConference.Participants.First().Id.ToString())
+                .With(x => x.ConferenceId = _context.Test.ConferenceResponse.Id.ToString())
+                .With(x => x.ParticipantId = _context.Test.ConferenceResponse.Participants.First().Id.ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = EventType.MediaPermissionDenied)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
@@ -42,23 +42,19 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
             _context.Response.IsSuccessful.Should().Be(true);
-            _context.SetDefaultBearerToken();
         }
 
         [Given(@"I have a valid get tasks request")]
         public void GivenIHaveAValidGetTasksRequest()
         {
-            _context.SetDefaultBearerToken();
-            _context.Request = _context.Get(GetTasks(_context.NewConferenceId));
+            _context.Request = _context.Get(GetTasks(_context.Test.ConferenceResponse.Id));
         }
 
         [Given(@"I have a valid update task request")]
         public void GivenIHaveAValidUpdateTaskRequest()
         {
-            _context.SetDefaultBearerToken();
             var request = new UpdateTaskRequest {UpdatedBy = UpdatedBy};
-            _context.Request = _context.Patch(UpdateTaskStatus(_context.NewConferenceId, _context.NewTaskId),
-                request);
+            _context.Request = _context.Patch(UpdateTaskStatus(_context.Test.ConferenceResponse.Id, _context.Test.TaskId), request);
         }
 
         [Then(@"the tasks are retrieved")]
@@ -70,7 +66,7 @@ namespace VideoApi.AcceptanceTests.Steps
             tasks.First().Created.Should().BeBefore(DateTime.Now);
             tasks.First().Type.Should().Be(TaskType.Participant);
             tasks.First().Body.Should().Contain("Media blocked");
-            _context.NewTaskId = tasks.First().Id;
+            _context.Test.TaskId = tasks.First().Id;
         }
 
         [Then(@"the task is updated")]
