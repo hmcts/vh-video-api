@@ -99,14 +99,14 @@ Feature: Participants
     And I have a get heartbeats request with a nonexistent conference id
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Conference could not be found'
+    And the error response message should contain 'Not Found'
 
   Scenario: Get heartbeats with nonexistent participant id
     Given I have a conference
     And I have a get heartbeats request with a nonexistent participant id
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Participant could not be found'
+    And the error response message should contain 'Not Found'
 
   Scenario: Set heartbeats
     Given I have a conference
@@ -120,11 +120,11 @@ Feature: Participants
     And I have a set heartbeats request with a nonexistent conference id
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Conference could not be found'
+    And the error response message should contain 'Not Found'
 
   Scenario: Set heartbeats not found with nonexistent participant id
     Given I have a conference
     And I have a set heartbeats request with a nonexistent participant id
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Participant could not be found'
+    And the error response message should contain 'Not Found'
