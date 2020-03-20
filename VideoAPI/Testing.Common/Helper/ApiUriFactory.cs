@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Testing.Common.Helper
 {
@@ -48,6 +49,12 @@ namespace Testing.Common.Helper
             public static string HandleConsultationRequest => $"{ApiRoot}";
             public static string LeaveConsultationRequest => $"{ApiRoot}/leave";
             public static string RespondToAdminConsultationRequest => $"{ApiRoot}/vhofficer/respond";
+        }
+
+        public static class SelfTestEndpoints
+        {
+            private const string ApiRoot = "selftest";
+            public static string SelfTest => $"{ApiRoot}";
         }
 
         public static class TaskEndpoints

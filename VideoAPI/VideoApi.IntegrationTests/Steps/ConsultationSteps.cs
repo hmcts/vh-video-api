@@ -3,9 +3,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using AcceptanceTests.Common.Api.Helpers;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL;
 using VideoApi.Domain.Enums;
@@ -212,7 +212,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -220,7 +220,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.RespondToAdminConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -228,7 +228,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.LeaveConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 

@@ -16,7 +16,8 @@ Feature: Respond To Consultations
     Then the response should have the status NotFound and success status False
 
   Scenario: Respond to a private consultation request that fails validation
-    Given I have an invalid respond consultation request
+    Given I have a conference
+    And I have an invalid respond consultation request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
     And the error response message should also contain 'RequestedBy is required'

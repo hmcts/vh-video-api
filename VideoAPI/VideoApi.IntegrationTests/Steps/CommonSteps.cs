@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -109,8 +108,8 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Test.Conferences.Add(yesterdayConference2);
         }
 
-        [Given(@"I have a many closed conferences with messages")]
-        public async Task GivenIHaveAManyClosedConferencesWithMessages()
+        [Given(@"I have several closed conferences with messages")]
+        public async Task GivenIHaveSeveralClosedConferencesWithMessages()
         {
             var conferenceList = new List<Domain.Conference>();
             var conferenceType = typeof(Domain.Conference);
@@ -125,7 +124,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-30));
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-20));
             conferenceList.Add(conference1);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
@@ -134,7 +133,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithParticipantTask("Disconnected")
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-31));
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-40));
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
@@ -153,7 +152,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference4, DateTime.UtcNow.AddMinutes(-30));
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference4, DateTime.UtcNow.AddMinutes(-20));
             conferenceList.Add(conference4);
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
@@ -174,6 +173,12 @@ namespace VideoApi.IntegrationTests.Steps
 
             foreach(var c in conferenceList)
             {
+                if (c.ClosedDateTime!= null &&
+                    c.ClosedDateTime.Value.ToUniversalTime() < DateTime.Now.ToUniversalTime().AddMinutes(-30) &&
+                    c.InstantMessageHistory.Count > 0)
+                {
+                    _context.Test.ClosedConferencesWithMessages.Add(c);
+                }
                 _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
         }
@@ -317,7 +322,7 @@ namespace VideoApi.IntegrationTests.Steps
         [When(@"I send the same request twice")]
         public async Task WhenISendTheRequestToTheEndpoint()
         {
-            _context.ResponseMessage = _context.HttpMethod.Method switch
+            _context.Response = _context.HttpMethod.Method switch
             {
                 "GET" => await SendGetRequestAsync(_context),
                 "POST" => await SendPostRequestAsync(_context),
@@ -332,10 +337,10 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the response should have the status (.*) and success status (.*)")]
         public void ThenTheResponseShouldHaveStatus(HttpStatusCode statusCode, bool isSuccess)
         {
-            _context.ResponseMessage.StatusCode.Should().Be(statusCode);
-            _context.ResponseMessage.IsSuccessStatusCode.Should().Be(isSuccess);
+            _context.Response.StatusCode.Should().Be(statusCode);
+            _context.Response.IsSuccessStatusCode.Should().Be(isSuccess);
             Zap.Scan($"{_context.Config.VhServices.VideoApiUrl}{_context.Uri}");
-            NUnit.Framework.TestContext.WriteLine($"Status Code: {_context.ResponseMessage.StatusCode}");
+            NUnit.Framework.TestContext.WriteLine($"Status Code: {_context.Response.StatusCode}");
         }
 
         [Then(@"the response message should read '(.*)'")]
@@ -343,7 +348,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the error response message should also contain '(.*)'")]
         public async Task ThenTheResponseShouldContain(string errorMessage)
         {
-            var messageString = await _context.ResponseMessage.Content.ReadAsStringAsync();
+            var messageString = await _context.Response.Content.ReadAsStringAsync();
             messageString.Should().Contain(errorMessage);
             Zap.Scan($"{_context.Config.VhServices.VideoApiUrl}{_context.Uri}");
         }

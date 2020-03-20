@@ -126,7 +126,7 @@ namespace Video.API.Controllers
         }
         
         /// <summary>
-        /// Get list of closed conferenceswith instant messages (closed over 30 minutes ago)
+        /// Get list of closed conferences with instant messages (closed over 30 minutes ago)
         /// </summary>
         /// <returns>List of Conference Ids</returns>
         [HttpGet("expiredIM")]

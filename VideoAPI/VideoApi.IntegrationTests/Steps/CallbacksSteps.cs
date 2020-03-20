@@ -10,7 +10,6 @@ using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Helper;
-using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory;
 using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;
 
@@ -60,7 +59,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 

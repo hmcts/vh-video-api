@@ -29,7 +29,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the application version should be retrieved")]
         public async Task ThenTheApplicationVersionShouldBeRetrieved()
         {
-            var json = await _context.ResponseMessage.Content.ReadAsStringAsync();
+            var json = await _context.Response.Content.ReadAsStringAsync();
             var getResponseModel = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(json);
             getResponseModel.AppVersion.Should().NotBeNull();
             getResponseModel.AppVersion.FileVersion.Should().NotBeNull();

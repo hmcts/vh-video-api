@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
@@ -33,13 +33,5 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Features\*.feature" />
-    <Content Include="Features\*.feature.cs" />
-    <Content Include="Features\Consultations\AdminConsultations.feature" />
-    <Content Include="Features\Consultations\LeavePrivateConsultation.feature" />
-    <Content Include="Features\Consultations\RaisePrivateConsultation.feature" />
-    <Content Include="Features\Consultations\RespondToPrivateConsultation.feature" />
   </ItemGroup>
 </Project>

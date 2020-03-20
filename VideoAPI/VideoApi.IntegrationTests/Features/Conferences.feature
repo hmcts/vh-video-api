@@ -11,10 +11,10 @@ Feature: Conferences
     And the summary of conference details should be retrieved
 
   Scenario: Conference details not retrieved with a non-existent username
-	Given I have a get details for a conference request by username with a nonexistent username
+	  Given I have a get details for a conference request by username with a nonexistent username
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-	And an empty list is retrieved
+	  And an empty list is retrieved
 
   Scenario: Conference details not retrieved with an invalid username
     Given I have a get details for a conference request by username with an invalid username

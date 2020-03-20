@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using Faker;
 using FluentAssertions;
@@ -206,7 +205,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the conference details should be retrieved")]
         public async Task ThenAConferenceDetailsShouldBeRetrieved()
         {
-            _conferenceDetails = await GetResponses<ConferenceDetailsResponse>();
+            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
         }
@@ -217,14 +216,14 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = GetConferenceDetailsById(_context.Test.Conference.Id); 
             _context.HttpMethod = HttpMethod.Get;
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _conferenceDetails = await GetResponses<ConferenceDetailsResponse>();
+            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.CurrentStatus.Should().Be(ConferenceState.Closed);
         }
 
         [Then(@"the summary of conference details should be retrieved")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
+            var conferences = await Response.GetResponses<List<ConferenceSummaryResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -240,7 +239,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"only todays conferences should be retrieved")]
         public async Task ThenOnlyTodaysConferencesShouldBeRetrieved()
         {
-            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
+            var conferences = await Response.GetResponses<List<ConferenceSummaryResponse>>(_context.Response.Content);
             foreach (var conference in conferences)
             {
                 conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);
@@ -261,14 +260,14 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"an empty list is retrieved")]
         public async Task ThenAnEmptyListIsRetrieved()
         {
-            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
+            var conferences = await Response.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Should().BeEmpty();
         }
 
         [Then(@"a list without closed conferences is retrieved")]
         public async Task ThenAListWithoutClosedConferencesIsRetrieved()
         {
-            var conferences = await GetResponses<List<ExpiredConferencesResponse>>();
+            var conferences = await Response.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Count.Should().BeGreaterThan(0);
             conferences.Any(x => x.Id.Equals(_context.Test.YesterdayClosedConference.Id)).Should().BeFalse();
         }
@@ -276,14 +275,14 @@ namespace VideoApi.IntegrationTests.Steps
         [When(@"I save the conference details")]
         public async Task WhenISaveTheConferenceDetails()
         {
-            _conferenceDetails = await GetResponses<ConferenceDetailsResponse>();
+            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
         }
 
         [Then(@"the response should be the same")]
         public async Task ThenTheResponseShouldBeTheSame()
         {
-            var conference = await GetResponses<ConferenceDetailsResponse>();
+            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             conference.Should().BeEquivalentTo(_conferenceDetails);
         }
@@ -329,14 +328,8 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateConference;
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }
-
-        private async Task<T> GetResponses<T>()
-        {
-            var json = await _context.ResponseMessage.Content.ReadAsStringAsync();
-            return RequestHelper.DeserialiseSnakeCaseJsonToResponse<T>(json);
         }
     }
 }

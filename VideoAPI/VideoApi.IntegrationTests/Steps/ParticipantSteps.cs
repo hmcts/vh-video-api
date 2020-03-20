@@ -24,10 +24,12 @@ namespace VideoApi.IntegrationTests.Steps
     public sealed class ParticipantSteps : BaseSteps
     {
         private readonly TestContext _context;
+        private readonly CommonSteps _commonSteps;
 
-        public ParticipantSteps(TestContext c)
+        public ParticipantSteps(TestContext c, CommonSteps commonSteps)
         {
             _context = c;
+            _commonSteps = commonSteps;
         }
 
         [Given(@"I have an add participant to a (.*) conference request")]
@@ -35,35 +37,21 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAnAddParticipantToConferenceRequest(Scenario scenario)
         {
             Guid conferenceId;
-            AddParticipantsToConferenceRequest request;
+            var request = new AddParticipantsToConferenceRequest()
+            {
+                Participants = new List<ParticipantRequest>
+                    {new ParticipantRequestBuilder(UserRole.Individual).Build()}
+            };
             switch (scenario)
             {
                 case Scenario.Valid:
-                {
                     conferenceId = _context.Test.Conference.Id;
-                    request = new AddParticipantsToConferenceRequest
-                    {
-                        Participants = new List<ParticipantRequest>
-                            {new ParticipantRequestBuilder(UserRole.Individual).Build()}
-                    };
                     break;
-                }
-
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
-                    request = new AddParticipantsToConferenceRequest
-                    {
-                        Participants = new List<ParticipantRequest>
-                            {new ParticipantRequestBuilder(UserRole.Individual).Build()}
-                    };
                     break;
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
-                    request = new AddParticipantsToConferenceRequest
-                    {
-                        Participants = new List<ParticipantRequest>
-                            {new ParticipantRequestBuilder(UserRole.Individual).Build()}
-                    };
                     break;
 
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
@@ -126,21 +114,16 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"I have an add participant to a conference request with a (.*) body")]
-        [Given(@"I have an add participant to a conference request with an (.*) body")]
-        public void GivenIHaveAnAddParticipantToConferenceRequestWith(Scenario scenario)
+        [Given(@"I have an add participant to a conference request with an invalid body")]
+        public void GivenIHaveAnAddParticipantToConferenceRequestWithInvalidBody()
         {
-            var request = scenario switch
+            var request = new AddParticipantsToConferenceRequest
             {
-                Scenario.Invalid => new AddParticipantsToConferenceRequest
-                {
-                    Participants = new List<ParticipantRequest>()
-                },
-                _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null)
+                Participants = new List<ParticipantRequest>()
             };
-
             _context.Uri = AddParticipantsToConference(_context.Test.Conference.Id);
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -206,86 +189,95 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a participant with heartbeat data")]
         public async Task GivenIHaveHeartbeats()
         {
+            _context.Test.ParticipantId = _context.Test.Conference.GetParticipants()[0].Id;
             var heartbeats = new List<Heartbeat>
             {
-                new Heartbeat(_context.Test.Conference.Id, _context.Test.Conference.GetParticipants()[0].Id,
+                new Heartbeat(_context.Test.Conference.Id, _context.Test.ParticipantId,
                     1,2,3,4,5,6,7,8, DateTime.UtcNow.AddMinutes(5), "chrome", "1"),
-                new Heartbeat(_context.Test.Conference.Id, _context.Test.Conference.GetParticipants()[0].Id,
+                new Heartbeat(_context.Test.Conference.Id, _context.Test.ParticipantId,
                     8,7,6,5,4,3,2,1, DateTime.UtcNow.AddMinutes(2), "chrome", "1"),
-                new Heartbeat(_context.Test.Conference.Id, _context.Test.Conference.GetParticipants()[0].Id,
+                new Heartbeat(_context.Test.Conference.Id, _context.Test.ParticipantId,
                     5456,4495,5642,9795,5653,8723,4242,3343, DateTime.UtcNow.AddMinutes(1), "chrome", "1")
             };
 
             await _context.TestDataManager.SeedHeartbeats(heartbeats);
         }
 
-        [Given(@"I have a participant with heartbeat data")]
-        public void GivenIHaveAParticipantWithHeartbeatData()
+        [Given(@"I have a valid get heartbeats request")]
+        public void GetHeartbeatsRequest()
         {
+            var conferenceId = _context.Test.Conference.Id;
+            var participantId = _context.Test.ParticipantId;
+            _context.Uri = GetHeartbeats(conferenceId, participantId);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+        [Given(@"I have a get heartbeats request with a nonexistent conference id")]
+        public void GivenIHaveAGetHeartbeatsRequestWithANonexistentConferenceId()
+        {
+            var conferenceId = Guid.NewGuid();
+            var participantId = _context.Test.ParticipantId;
+            _context.Uri = GetHeartbeats(conferenceId, participantId);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+        [Given(@"I have a get heartbeats request with a nonexistent participant id")]
+        public void GivenIHaveAGetHeartbeatsRequestWithANonexistentParticipantId()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var participantId = Guid.NewGuid();
+            _context.Uri = GetHeartbeats(conferenceId, participantId);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+        [Given(@"I have a valid set heartbeats request")]
+        public void GivenIHaveAValidSetHeartbeatsRequest()
+        {
+            _context.Test.ParticipantId = _context.Test.Conference.GetParticipants()[0].Id;
+            _context.Uri = SetHeartbeats(_context.Test.Conference.Id, _context.Test.ParticipantId);
+            _context.HttpMethod = HttpMethod.Post;
+            _context.HttpContent = RequestBody.Set(new AddHeartbeatRequest { BrowserName = "firefox" });
+        }
+
+        [Given(@"I have a set heartbeats request with a nonexistent participant id")]
+        public void GivenIHaveASetHeartbeatsRequestWithANonexistentParticipantId()
+        {
+            var participantId = Guid.NewGuid();
+            _context.Uri = SetHeartbeats(_context.Test.Conference.Id, participantId);
+            _context.HttpMethod = HttpMethod.Post;
+            _context.HttpContent = RequestBody.Set(new AddHeartbeatRequest { BrowserName = "firefox" });
+        }
+
+        [Given(@"I have a set heartbeats request with a nonexistent conference id")]
+        public void GivenIHaveASetHeartbeatsRequestWithANonexistentConferenceId()
+        {
+            _context.Test.ParticipantId = _context.Test.Conference.GetParticipants()[0].Id;
+            var conferenceId = Guid.NewGuid();
+            _context.Uri = SetHeartbeats(conferenceId, _context.Test.ParticipantId);
+            _context.HttpMethod = HttpMethod.Post;
+            _context.HttpContent = RequestBody.Set(new AddHeartbeatRequest { BrowserName = "firefox" });
         }
 
         [Then(@"(.*) heartbeats should be retrieved")]
         [Then(@"(.*) heartbeat should be retrieved")]
         public async Task ThenTheHeartbeatsShouldBeRetrieved(int count)
         {
-            var conferenceId = _context.Test.Conference.Id;
-            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
-
-            _context.Uri = GetHeartbeats(conferenceId, participantId);
-            _context.HttpMethod = HttpMethod.Get;
-            _context.ResponseMessage = await SendGetRequestAsync(_context);
-            _context.ResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
-            _context.ResponseMessage.IsSuccessStatusCode.Should().Be(true);
-
-            var json = await _context.ResponseMessage.Content.ReadAsStringAsync();
-            var result = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ParticipantHeartbeatResponse>>(json);
-            result.Should().NotBeNullOrEmpty().And.NotContainNulls();
+            var result = await Response.GetResponses<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
             result.Should().HaveCount(count);
-            result.Should().BeInAscendingOrder(x => x.Timestamp);
-            result.Should().ContainItemsAssignableTo<ParticipantHeartbeatResponse>();
+            if (count > 0)
+            {
+                result.Should().BeInAscendingOrder(x => x.Timestamp);
+                result.Should().ContainItemsAssignableTo<ParticipantHeartbeatResponse>();
+            }
         }
 
-
-        [Given(@"I have a valid get heartbeats request")]
-        public void GivenIHaveAValidGetHeartbeatsRequest()
+        [Then(@"the heartbeats should be saved")]
+        public async Task ThenTheHeartbeatsShouldBeSaved()
         {
-            ScenarioContext.Current.Pending();
+            GetHeartbeatsRequest();
+            await _commonSteps.WhenISendTheRequestToTheEndpoint();
+            _commonSteps.ThenTheResponseShouldHaveStatus(HttpStatusCode.OK, true);
+            await ThenTheHeartbeatsShouldBeRetrieved(1);
         }
-
-        [Given(@"I have a get heartbeats request with a nonexistent conference id")]
-        public void GivenIHaveAGetHeartbeatsRequestWithANonexistentConferenceId()
-        {
-            ScenarioContext.Current.Pending();
-        }
-
-        [Given(@"I have a valid set heartbeats request")]
-        public void GivenIHaveAValidSetHeartbeatsRequest()
-        {
-            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
-
-            _context.Uri = SetHeartbeats(_context.Test.Conference.Id, participantId);
-            _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(new AddHeartbeatRequest { BrowserName = "firefox" });
-            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }
-
-        [Given(@"I have an invalid set heartbeats request")]
-        public void GivenIHaveAnInvalidSetHeartbeatsRequest()
-        {
-            ScenarioContext.Current.Pending();
-        }
-
-        [Given(@"I have a set heartbeats request with a nonexistent conference id")]
-        public void GivenIHaveASetHeartbeatsRequestWithANonexistentConferenceId()
-        {
-            ScenarioContext.Current.Pending();
-        }
-
-        [Then(@"(.*) heartbeats should be retrieved")]
-        public void ThenHeartbeatsShouldBeRetrievedScenarioGetHeartbeatsNotFoundWithNoHeartbeats(int p0)
-        {
-            ScenarioContext.Current.Pending();
-        }
-
     }
 }

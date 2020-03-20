@@ -58,6 +58,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Test = new Test()
             {
                 ClosedConferences = new List<Conference>(),
+                ClosedConferencesWithMessages = new List<Conference>(),
                 Conferences = new List<Conference>(),
                 TodaysConferences = new List<Conference>()
             };
@@ -96,7 +97,7 @@ namespace VideoApi.IntegrationTests.Hooks
 
         private static void RegisterApiSettings(TestContext context)
         {
-            context.ResponseMessage = new HttpResponseMessage(); 
+            context.Response = new HttpResponseMessage(); 
         }
 
         private static void GenerateBearerTokens(TestContext context, IOptions<AzureAdConfiguration> azureOptions)

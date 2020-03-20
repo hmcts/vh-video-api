@@ -11,7 +11,7 @@ namespace VideoApi.IntegrationTests.Contexts
         public Config Config { get; set; }
         public HttpContent HttpContent { get; set; }
         public HttpMethod HttpMethod { get; set; }
-        public HttpResponseMessage ResponseMessage { get; set; }
+        public HttpResponseMessage Response { get; set; }
         public TestServer Server { get; set; }
         public Test Test { get; set; }
         public TestDataManager TestDataManager { get; set; }
