@@ -176,15 +176,17 @@ namespace Video.API.Controllers
         
         private async Task InitiateStartConsultation(Conference conference, Participant requestedBy, Participant requestedFor, ConsultationAnswer answer)
         {
+            _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}, Answer : {answer}");
+            _logger.LogTrace($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
+            
             if (answer == ConsultationAnswer.Accepted)
             {
-                _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
-                
-                _logger.LogTrace($"PRIVATE_CONSULTATION - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
-
                 conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, GetConference);
 
-                _logger.LogTrace($"PRIVATE_CONSULTATION - ConferenceConference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync");
+                //Log available room 
+                var roomType = conference.GetAvailableConsultationRoom();
+
+                _logger.LogTrace($"PRIVATE_CONSULTATION - Conference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync. Available room : {roomType}");
 
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
