@@ -36,7 +36,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Claimant",null, RoomType.ConsultationRoom1)
                 .WithParticipant(UserRole.Representative, "Claimant")
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")

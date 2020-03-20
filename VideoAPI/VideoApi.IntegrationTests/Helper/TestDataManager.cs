@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Helper
         
         public async Task RemoveConferences(List<Guid> conferenceIds)
         {
-            using (var db = new VideoApiDbContext(_dbContextOptions))
+            await using (var db = new VideoApiDbContext(_dbContextOptions))
             {
                 var conferences = await db.Conferences
                     .Include("Participants.ParticipantStatuses")
@@ -85,12 +85,48 @@ namespace VideoApi.IntegrationTests.Helper
 
         public async Task RemoveEvents()
         {
-            using (var db = new VideoApiDbContext(_dbContextOptions))
+            await using (var db = new VideoApiDbContext(_dbContextOptions))
             {
                 var eventsToDelete = db.Events.Where(x => x.Reason.StartsWith("Automated"));
                 db.Events.RemoveRange(eventsToDelete);
                 await db.SaveChangesAsync();
             }
+        }
+        
+        public async Task SeedHeartbeats(IEnumerable<Heartbeat> heartbeats)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            await db.Heartbeats.AddRangeAsync(heartbeats);
+            await db.SaveChangesAsync();
+        }
+        
+        public async Task RemoveHeartbeats(Guid conferenceId)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var toDelete = db.Heartbeats.Where(x => x.ConferenceId == conferenceId);
+            db.Heartbeats.RemoveRange(toDelete);
+            await db.SaveChangesAsync();
+        }
+        
+        public async Task RemoveHeartbeats(List<Guid> conferenceIds)
+        {
+            await using (var db = new VideoApiDbContext(_dbContextOptions))
+            {
+                var heartbeats = await db.Heartbeats
+                    .Where(x => conferenceIds.Contains(x.ConferenceId))
+                    .ToListAsync();
+
+                db.RemoveRange(heartbeats);
+                await db.SaveChangesAsync();
+            }
+        }
+        
+        public async Task RemoveHeartbeats(Guid conferenceId, Guid participantId)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var toDelete = db.Heartbeats.Where(x => x.ConferenceId == conferenceId && x.ParticipantId == participantId);
+            db.Heartbeats.RemoveRange(toDelete);
+            await db.SaveChangesAsync();
         }
     }
 }

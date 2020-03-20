@@ -16,7 +16,7 @@ namespace VideoApi.Domain
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
             Tasks = new List<Task>();
-            Messages = new List<Message>();
+            InstantMessageHistory = new List<InstantMessage>();
             MeetingRoom = new MeetingRoom();
 
             HearingRefId = hearingRefId;
@@ -41,7 +41,7 @@ namespace VideoApi.Domain
         public virtual IList<Participant> Participants { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
         public virtual IList<Task> Tasks { get; set; }
-        public virtual IList<Message> Messages { get; }
+        public virtual IList<InstantMessage> InstantMessageHistory { get; }
         public string HearingVenueName { get; private set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
@@ -178,19 +178,19 @@ namespace VideoApi.Domain
             return Participants.SingleOrDefault(x => x.IsVideoHearingOfficer());
         }
 
-        public IList<Message> GetMessages()
+        public IList<InstantMessage> GetInstantMessageHistory()
         {
-            return Messages.OrderByDescending(x => x.TimeStamp).ToList();
+            return InstantMessageHistory.OrderByDescending(x => x.TimeStamp).ToList();
         }
-        public void AddMessage(string from, string messageText)
+        public void AddInstantMessage(string from, string messageText)
         {
-            var message = new Message(from, messageText);
-            Messages.Add(message);
+            var message = new InstantMessage(from, messageText);
+            InstantMessageHistory.Add(message);
         }
 
-        public void ClearMessages()
+        public void ClearInstantMessageHistory()
         {
-            Messages.Clear();
+            InstantMessageHistory.Clear();
         }
     }
 }

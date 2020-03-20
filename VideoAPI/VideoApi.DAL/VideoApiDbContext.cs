@@ -10,6 +10,7 @@ namespace VideoApi.DAL
     {
         public DbSet<Event> Events { get; set; }
         public DbSet<Conference> Conferences { get; set; }
+        public DbSet<Heartbeat> Heartbeats { get; set; }
         
         
         public VideoApiDbContext(DbContextOptions options) : base(options)
@@ -41,7 +42,7 @@ namespace VideoApi.DAL
                     }
                 }
             }
-            modelBuilder.Entity<Message>()
+            modelBuilder.Entity<InstantMessage>()
                 .HasIndex(m => m.TimeStamp);
         }
         

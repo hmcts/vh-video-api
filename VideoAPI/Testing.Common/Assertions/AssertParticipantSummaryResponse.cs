@@ -9,6 +9,7 @@ namespace Testing.Common.Assertions
         public static void ForParticipant(ParticipantSummaryResponse participant)
         {
             participant.Should().NotBeNull();
+            participant.Id.Should().NotBeEmpty();
             participant.Username.Should().NotBeNullOrWhiteSpace();
             participant.UserRole.Should().NotBeNull();
             participant.DisplayName.Should().NotBeNullOrWhiteSpace();

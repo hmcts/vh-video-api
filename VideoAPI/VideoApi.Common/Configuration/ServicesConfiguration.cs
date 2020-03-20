@@ -10,5 +10,7 @@ namespace VideoApi.Common.Configuration
         public string ConferenceUsername { get; set; }
         public string UserApiUrl { get; set; }
         public string UserApiResourceId { get; set; }
+        public string VhVideoApiResourceId { get; set; }
+        public string VhVideoWebClientId { get; set; }
     }
 }

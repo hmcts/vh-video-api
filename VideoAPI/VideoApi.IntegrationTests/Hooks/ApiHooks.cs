@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
-using Testing.Common.Configuration;
 using Video.API;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
@@ -63,15 +63,12 @@ namespace VideoApi.IntegrationTests.Hooks
 
             var configRoot = configRootBuilder.Build();
 
-            var azureAdConfigurationOptions =
-                Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
-            var testSettingsOptions = Options.Create(configRoot.GetSection("Testing").Get<TestSettings>());
-            var azureAdConfiguration = azureAdConfigurationOptions.Value;
-            var testSettings = testSettingsOptions.Value;
+            var azureAdConfiguration = Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
+            var servicesConfiguration = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
 
-            apiTestContext.BearerToken = new AzureTokenProvider(azureAdConfigurationOptions).GetClientAccessToken(
-                testSettings.TestClientId, testSettings.TestClientSecret,
-                azureAdConfiguration.VhVideoApiResourceId);
+            apiTestContext.BearerToken = new AzureTokenProvider(azureAdConfiguration).GetClientAccessToken(
+                azureAdConfiguration.Value.ClientId, azureAdConfiguration.Value.ClientSecret,
+                servicesConfiguration.VhVideoApiResourceId);
         }
 
         [BeforeScenario]
@@ -90,6 +87,7 @@ namespace VideoApi.IntegrationTests.Hooks
                 await apiTestContext.TestDataManager.RemoveConference(apiTestContext.NewConferenceId);
             }
             await apiTestContext.TestDataManager.RemoveConferences(conferenceTestContext.SeededConferences);
+            await apiTestContext.TestDataManager.RemoveHeartbeats(conferenceTestContext.SeededConferences);
         }
 
         [AfterFeature]

@@ -1,0 +1,70 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
+using VideoApi.DAL;
+using VideoApi.DAL.Exceptions;
+using VideoApi.DAL.Queries;
+using VideoApi.Domain.Enums;
+
+namespace VideoApi.IntegrationTests.Database.Queries
+{
+    public class GetMessagesForConferenceQueryTests : DatabaseTestsBase
+    {
+        private GetInstantMessagesForConferenceQueryHandler _handler;
+        private Guid _newConferenceId;
+
+        [SetUp]
+        public void Setup()
+        {
+            var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
+            _handler = new GetInstantMessagesForConferenceQueryHandler(context);
+            _newConferenceId = Guid.Empty;
+        }
+
+        [Test]
+        public async Task should_retrieve_all_messages()
+        {
+            var conference = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Judge, "Judge")
+                .Build();
+
+            var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
+            var vhOfficer = "VH Officer";
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 1");
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 2");
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 3");
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 4");
+
+            var seededConference = await TestDataManager.SeedConference(conference);
+            _newConferenceId = seededConference.Id;
+
+
+            var query = new GetInstantMessagesForConferenceQuery(_newConferenceId);
+            var results = await _handler.Handle(query);
+            results.Count.Should().Be(conference.GetInstantMessageHistory().Count);
+            results.Should().BeInDescendingOrder(x => x.TimeStamp);
+        }
+
+        [Test]
+        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
+        {
+            var conferenceId = Guid.NewGuid();
+            var query = new GetInstantMessagesForConferenceQuery(conferenceId);
+            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(query));
+        }
+
+        [TearDown]
+        public async Task TearDown()
+        {
+            if (_newConferenceId != Guid.Empty)
+            {
+                TestContext.WriteLine($"Removing test conference {_newConferenceId}");
+                await TestDataManager.RemoveConference(_newConferenceId);
+            }
+        }
+    }
+}

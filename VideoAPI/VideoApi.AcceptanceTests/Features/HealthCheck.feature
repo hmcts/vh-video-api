@@ -1,4 +1,4 @@
-﻿@VIH-3806 @health
+@VIH-3806 @health
 Feature: Healthcheck
   In order to assess the status of the service
   As an api service
@@ -8,3 +8,4 @@ Feature: Healthcheck
     Given I have a get health request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
+    And the application version should be retrieved

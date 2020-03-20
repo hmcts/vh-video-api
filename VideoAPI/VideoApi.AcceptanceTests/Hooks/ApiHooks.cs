@@ -5,7 +5,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using TechTalk.SpecFlow;
-using Testing.Common.Configuration;
 using Testing.Common.Helper;
 using Video.API;
 using VideoApi.AcceptanceTests.Contexts;
@@ -21,7 +20,7 @@ namespace VideoApi.AcceptanceTests.Hooks
         [BeforeTestRun]
         public static void OneTimeSetup(TestContext context)
         {
-            ZAP.StartZAPDaemon();
+            Zap.StartZapDaemon();
 
             var configRootBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
@@ -30,14 +29,11 @@ namespace VideoApi.AcceptanceTests.Hooks
 
             var configRoot = configRootBuilder.Build();
 
-            var azureAdConfigurationOptions =
-                Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
-            var testSettingsOptions = Options.Create(configRoot.GetSection("Testing").Get<TestSettings>());
+            var azureAdConfigurationOptions = Options.Create(configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
             var serviceSettingsOptions = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>());
 
             context.CustomTokenSettings = configRoot.GetSection("CustomToken").Get<CustomTokenSettings>();
             context.AzureAdConfiguration = azureAdConfigurationOptions;
-            context.TestSettings = testSettingsOptions.Value;
             context.ServicesConfiguration = serviceSettingsOptions.Value;
 
             context.SetDefaultBearerToken();
@@ -50,7 +46,6 @@ namespace VideoApi.AcceptanceTests.Hooks
 
             VerifyCustomSecretsAreSet(context.CustomTokenSettings);
             VerifyAzureSecretsAreSet(context.AzureAdConfiguration.Value);
-            VerifyTestSecretsAreSet(context.TestSettings);
             VerifyServicesSecretsAreSet(context.ServicesConfiguration);
         }
 
@@ -66,14 +61,6 @@ namespace VideoApi.AcceptanceTests.Hooks
             azureAdConfiguration.ClientId.Should().NotBeNullOrEmpty();
             azureAdConfiguration.ClientSecret.Should().NotBeNullOrEmpty();
             azureAdConfiguration.TenantId.Should().NotBeNullOrEmpty();
-            azureAdConfiguration.VhVideoApiResourceId.Should().NotBeNullOrEmpty();
-            azureAdConfiguration.VhVideoWebClientId.Should().NotBeNullOrEmpty();
-        }
-
-        private static void VerifyTestSecretsAreSet(TestSettings testSettings)
-        {
-            testSettings.TestClientId.Should().NotBeNullOrEmpty();
-            testSettings.TestClientSecret.Should().NotBeNullOrEmpty();
         }
 
         private static void VerifyServicesSecretsAreSet(ServicesConfiguration servicesConfiguration)
@@ -86,6 +73,8 @@ namespace VideoApi.AcceptanceTests.Hooks
             servicesConfiguration.PexipSelfTestNode.Should().NotBeNullOrEmpty();
             servicesConfiguration.UserApiResourceId.Should().NotBeNullOrEmpty();
             servicesConfiguration.UserApiUrl.Should().NotBeNullOrEmpty();
+            servicesConfiguration.VhVideoApiResourceId.Should().NotBeNullOrEmpty();
+            servicesConfiguration.VhVideoWebClientId.Should().NotBeNullOrEmpty();
         }
 
         [BeforeTestRun]

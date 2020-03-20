@@ -78,6 +78,8 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
+            result.Errors.Any(x => x.PropertyName == "ConsultationRoom")
+                .Should().BeTrue();
             result.Errors.Any(x => x.ErrorMessage == AdminConsultationRequestValidation.NotValidConsultationRoomMessage)
                 .Should().BeTrue();
         }

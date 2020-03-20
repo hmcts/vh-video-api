@@ -60,7 +60,7 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null)
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null, RoomType? roomType = null)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -73,6 +73,11 @@ namespace Testing.Common.Helper.Builders.Domain
             if (userRole == UserRole.Representative)
             {
                 participant.Representee = "Person";
+            }
+
+            if(roomType.HasValue)
+            {
+                participant.UpdateCurrentRoom(roomType);
             }
             
             participant.UpdateParticipantStatus(ParticipantState.Available);
@@ -134,12 +139,12 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public ConferenceBuilder WithMessages(int numberOfMessages)
         {
-            var messages = new Builder(_builderSettings).CreateListOfSize<Message>(numberOfMessages).All().WithFactory(() =>
-                new Message("Username", "Test Message")).Build();
+            var messages = new Builder(_builderSettings).CreateListOfSize<InstantMessage>(numberOfMessages).All().WithFactory(() =>
+                new InstantMessage("Username", "Test InstantMessage")).Build();
 
             foreach (var message in messages)
             {
-                _conference.AddMessage(message.From, message.MessageText);
+                _conference.AddInstantMessage(message.From, message.MessageText);
             }
 
             return this;
