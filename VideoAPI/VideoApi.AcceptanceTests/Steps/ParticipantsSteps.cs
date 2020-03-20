@@ -74,13 +74,14 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get heartbeat data request")]
         public void GetHeartbeatDataRequest()
         {
-            _context.Request = _context.Get(GetHeartbeats(_context.Test.ConferenceResponse.Id, _context.Test.ParticipantId));
+            var participantId = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            _context.Request = _context.Get(GetHeartbeats(_context.NewConferenceId, participantId));
         }
 
         [Given(@"I have a valid set heartbeat data request")]
         public void SetHeartbeatDataRequest()
         {
-            _context.Test.ParticipantId = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            var participantId = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
             var request = new AddHeartbeatRequest()
             {
                 OutgoingAudioPercentageLost = LossPercentage,
@@ -95,7 +96,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 BrowserVersion = "80.0"
             };
             _context.Test.HeartbeatData = request;
-            _context.Request = _context.Post(SetHeartbeats(_context.Test.ConferenceResponse.Id, _context.Test.ParticipantId), request);
+            _context.Request = _context.Post(SetHeartbeats(_context.NewConferenceId, participantId), request);
         }
 
         [Then(@"the heartbeat data is retrieved")]

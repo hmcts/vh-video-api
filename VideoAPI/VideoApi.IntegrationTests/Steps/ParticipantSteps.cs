@@ -181,14 +181,14 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a participant with heartbeat data")]
         public async Task GivenIHaveHeartbeats()
         {
-            _context.Test.ParticipantId = _context.Test.Conference.GetParticipants()[0].Id;
+            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
             var heartbeats = new List<Heartbeat>
             {
-                new Heartbeat(_context.Test.Conference.Id, _context.Test.ParticipantId,
+                new Heartbeat(_context.Test.Conference.Id, participantId,
                     1,2,3,4,5,6,7,8, DateTime.UtcNow.AddMinutes(5), "chrome", "1"),
-                new Heartbeat(_context.Test.Conference.Id, _context.Test.ParticipantId,
+                new Heartbeat(_context.Test.Conference.Id, participantId,
                     8,7,6,5,4,3,2,1, DateTime.UtcNow.AddMinutes(2), "chrome", "1"),
-                new Heartbeat(_context.Test.Conference.Id, _context.Test.ParticipantId,
+                new Heartbeat(_context.Test.Conference.Id, participantId,
                     5456,4495,5642,9795,5653,8723,4242,3343, DateTime.UtcNow.AddMinutes(1), "chrome", "1")
             };
 
@@ -199,7 +199,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GetHeartbeatsRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
-            var participantId = _context.Test.ParticipantId;
+            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
             _context.Uri = GetHeartbeats(conferenceId, participantId);
             _context.HttpMethod = HttpMethod.Get;
         }
@@ -208,7 +208,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAGetHeartbeatsRequestWithANonexistentConferenceId()
         {
             var conferenceId = Guid.NewGuid();
-            var participantId = _context.Test.ParticipantId;
+            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
             _context.Uri = GetHeartbeats(conferenceId, participantId);
             _context.HttpMethod = HttpMethod.Get;
         }
@@ -225,8 +225,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a valid set heartbeats request")]
         public void GivenIHaveAValidSetHeartbeatsRequest()
         {
-            _context.Test.ParticipantId = _context.Test.Conference.GetParticipants()[0].Id;
-            _context.Uri = SetHeartbeats(_context.Test.Conference.Id, _context.Test.ParticipantId);
+            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
+            _context.Uri = SetHeartbeats(_context.Test.Conference.Id, participantId);
             _context.HttpMethod = HttpMethod.Post;
             _context.HttpContent = RequestBody.Set(new AddHeartbeatRequest { BrowserName = "firefox" });
         }
@@ -243,9 +243,9 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a set heartbeats request with a nonexistent conference id")]
         public void GivenIHaveASetHeartbeatsRequestWithANonexistentConferenceId()
         {
-            _context.Test.ParticipantId = _context.Test.Conference.GetParticipants()[0].Id;
+            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
             var conferenceId = Guid.NewGuid();
-            _context.Uri = SetHeartbeats(conferenceId, _context.Test.ParticipantId);
+            _context.Uri = SetHeartbeats(conferenceId, participantId);
             _context.HttpMethod = HttpMethod.Post;
             _context.HttpContent = RequestBody.Set(new AddHeartbeatRequest { BrowserName = "firefox" });
         }
