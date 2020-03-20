@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;

@@ -16,7 +16,7 @@ using static Testing.Common.Helper.ApiUriFactory.TaskEndpoints;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class TaskSteps : BaseSteps
+    public sealed class TaskSteps
     {
         private readonly TestContext _context;
         private const string UpdatedBy = "AutomationUpdateUser";

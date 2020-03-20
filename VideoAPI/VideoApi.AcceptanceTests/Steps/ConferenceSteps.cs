@@ -17,11 +17,10 @@ using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class ConferenceSteps : BaseSteps
+    public sealed class ConferenceSteps
     {
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
-        private const string CurrentStatusKey = "CurrentStatus";
         private const string UpdatedKey = "UpdatedConference";
 
         public ConferenceSteps(TestContext injectedContext, ScenarioContext scenarioContext)
@@ -223,8 +222,6 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.Test.ConferenceResponse = conference;
-            //if (!_scenarioContext.ContainsKey(CurrentStatusKey))
-            //    _scenarioContext.Add(CurrentStatusKey, conference.CurrentStatus);
         }
 
         private void UpdateConferenceStateToClosed(Guid conferenceId)

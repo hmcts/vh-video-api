@@ -7,7 +7,7 @@ using VideoApi.AcceptanceTests.Contexts;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class CommonSteps : BaseSteps
+    public sealed class CommonSteps
     {
         private readonly TestContext _context;
 

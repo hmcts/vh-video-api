@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -16,6 +17,7 @@ namespace Testing.Common.Configuration
         public List<ConferenceSummaryResponse> ConferenceResponses { get; set; }
         public List<Conference> Conferences { get; set; }
         public AddInstantMessageRequest Message { get; set; }
+        public Guid ParticipantId { get; set; }
         public long TaskId { get; set; }
         public List<Conference> TodaysConferences { get; set; }
         public UpdateTaskRequest UpdateTaskRequest { get; set; }

@@ -8,7 +8,7 @@ using static Testing.Common.Helper.ApiUriFactory.HealthCheckEndpoints;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class HealthCheckSteps : BaseSteps
+    public sealed class HealthCheckSteps 
     {
         private readonly TestContext _context;
 

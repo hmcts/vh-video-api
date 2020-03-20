@@ -13,7 +13,7 @@ using static Testing.Common.Helper.ApiUriFactory.InstantMessageEndpoints;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public class InstantMessagesSteps : BaseSteps
+    public class InstantMessagesSteps 
     {
         private readonly string _fromUsername;
         private const string MessageBody = "A message";

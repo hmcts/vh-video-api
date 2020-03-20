@@ -13,7 +13,7 @@ using static Testing.Common.Helper.ApiUriFactory;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class CallbackSteps : BaseSteps
+    public sealed class CallbackSteps
     {
         private readonly TestContext _context;
 

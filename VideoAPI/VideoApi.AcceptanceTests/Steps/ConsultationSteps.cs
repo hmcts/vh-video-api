@@ -7,7 +7,7 @@ using static Testing.Common.Helper.ApiUriFactory.ConsultationEndpoints;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class ConsultationSteps : BaseSteps
+    public sealed class ConsultationSteps
     {
         private readonly TestContext _context;
 

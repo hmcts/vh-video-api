@@ -25,7 +25,7 @@ Feature: Participants
     And the participant is updated
 
   @VIH-5598
-  Scenario: Get the heartbeat data for participant
+  Scenario: Get the heartbeat data for a participant
     Given I have a conference
     And I have a participant with heartbeat data
     And I have a valid get heartbeat data request 
@@ -34,7 +34,7 @@ Feature: Participants
     And the heartbeat data is retrieved
   
   @VIH-5599
-  Scenario: Set the heartbeat data for participant
+  Scenario: Set the heartbeat data for a participant
     Given I have a conference
     And I have a valid set heartbeat data request 
     When I send the request to the endpoint

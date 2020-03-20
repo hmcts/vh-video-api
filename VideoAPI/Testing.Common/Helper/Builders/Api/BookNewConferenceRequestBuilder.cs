@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AcceptanceTests.Common.Data.Helpers;
 using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Contract.Requests;

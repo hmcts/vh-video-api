@@ -16,7 +16,7 @@ using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class ParticipantsSteps : BaseSteps
+    public sealed class ParticipantsSteps
     {
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
@@ -74,14 +74,14 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get heartbeat data request")]
         public void GetHeartbeatDataRequest()
         {
-            var participantId = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
-            _context.Request = _context.Get(GetHeartbeats(_context.NewConferenceId, participantId));
+            var participantId = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            _context.Request = _context.Get(GetHeartbeats(_context.Test.ConferenceResponse.Id, participantId));
         }
 
         [Given(@"I have a valid set heartbeat data request")]
         public void SetHeartbeatDataRequest()
         {
-            var participantId = _context.NewConference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            var participantId = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual).Id;
             var request = new AddHeartbeatRequest()
             {
                 OutgoingAudioPercentageLost = LossPercentage,
@@ -96,7 +96,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 BrowserVersion = "80.0"
             };
             _context.Test.HeartbeatData = request;
-            _context.Request = _context.Post(SetHeartbeats(_context.NewConferenceId, participantId), request);
+            _context.Request = _context.Post(SetHeartbeats(_context.Test.ConferenceResponse.Id, participantId), request);
         }
 
         [Then(@"the heartbeat data is retrieved")]
