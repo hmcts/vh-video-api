@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = ConsultationAnswer.Accepted
             };
 
-            await Controller.RespondToAdminConsultationRequest(request);
+            await Controller.RespondToAdminConsultationRequestAsync(request);
 
             VideoPlatformServiceMock.Verify(x =>
                     x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom),
@@ -50,7 +50,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = ConsultationAnswer.Rejected
             };
 
-            await Controller.RespondToAdminConsultationRequest(request);
+            await Controller.RespondToAdminConsultationRequestAsync(request);
 
             VideoPlatformServiceMock.Verify(x =>
                     x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom),
@@ -71,7 +71,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = ConsultationAnswer.Rejected
             };
 
-            var result = await Controller.RespondToAdminConsultationRequest(request);
+            var result = await Controller.RespondToAdminConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }

@@ -52,7 +52,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "HandleConsultationRequest")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> HandleConsultationRequest(ConsultationRequest request)
+        public async Task<IActionResult> HandleConsultationRequestAsync(ConsultationRequest request)
         {
             _logger.LogDebug($"HandleConsultationRequest");
             var conference = await GetConference(request.ConferenceId);
@@ -86,7 +86,7 @@ namespace Video.API.Controllers
 
             try
             {
-             await InitiateStartConsultation(conference, requestedBy, requestedFor,
+             await InitiateStartConsultationAsync(conference, requestedBy, requestedFor,
                     request.Answer.GetValueOrDefault());
             }
             catch (DomainRuleException e)
@@ -104,7 +104,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> LeavePrivateConsultation(LeaveConsultationRequest request)
+        public async Task<IActionResult> LeavePrivateConsultationAsync(LeaveConsultationRequest request)
         {
             _logger.LogDebug($"LeavePrivateConsultation");
 
@@ -145,7 +145,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RespondToAdminConsultationRequest(AdminConsultationRequest request)
+        public async Task<IActionResult> RespondToAdminConsultationRequestAsync(AdminConsultationRequest request)
         {
             _logger.LogDebug($"RespondToAdminConsultationRequest");
             
@@ -175,7 +175,7 @@ namespace Video.API.Controllers
             return NoContent();
         }
         
-        private async Task InitiateStartConsultation(Conference conference, Participant requestedBy,
+        private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
             _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}, Answer : {answer}");

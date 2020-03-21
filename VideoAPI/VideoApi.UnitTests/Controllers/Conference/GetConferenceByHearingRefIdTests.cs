@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Controllers
         [Test]
         public async Task Should_return_ok_result_for_given_valid_hearing_ref_id()
         {
-            var result = await Controller.GetConferenceByHearingRefId(Guid.NewGuid());
+            var result = await Controller.GetConferenceByHearingRefIdAsync(Guid.NewGuid());
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
         }
@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers
              .ReturnsAsync((Conference) null);
 
 
-            var result = await Controller.GetConferenceByHearingRefId(Guid.NewGuid());
+            var result = await Controller.GetConferenceByHearingRefIdAsync(Guid.NewGuid());
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }

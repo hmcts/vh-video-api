@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             _mockQueryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query))
                 .Returns(Task.FromResult(conference));
 
-            var result = await _controller.Health();
+            var result = await _controller.HealthAsync();
             var typedResult = (OkObjectResult) result;
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.OK);
         }
@@ -61,7 +61,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
                 .Setup(x => x.GetVirtualCourtRoomAsync(It.IsAny<Guid>()))
                 .ReturnsAsync((MeetingRoom)null);
 
-            var result = await _controller.Health();
+            var result = await _controller.HealthAsync();
             var typedResult = (ObjectResult) result;
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
             var response = (HealthCheckResponse) typedResult.Value;
@@ -85,7 +85,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
                 .Setup(x => x.GetVirtualCourtRoomAsync(It.IsAny<Guid>()))
                 .ReturnsAsync((MeetingRoom)null);
 
-            var result = await _controller.Health();
+            var result = await _controller.HealthAsync();
             var typedResult = (ObjectResult) result;
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
             var response = (HealthCheckResponse) typedResult.Value;
@@ -109,7 +109,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
                 .Setup(x => x.GetVirtualCourtRoomAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(exception);
 
-            var result = await _controller.Health();
+            var result = await _controller.HealthAsync();
             var typedResult = (ObjectResult) result;
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
             var response = (HealthCheckResponse) typedResult.Value;
@@ -118,9 +118,9 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
         }
 
         [Test]
-        public async Task should_return_the_application_version_from_assembly()
+        public async Task Should_return_the_application_version_from_assembly()
         {
-            var result = await _controller.Health();
+            var result = await _controller.HealthAsync();
             var typedResult = (ObjectResult)result;
             var response = (HealthCheckResponse)typedResult.Value;
             response.AppVersion.FileVersion.Should().NotBeNullOrEmpty();

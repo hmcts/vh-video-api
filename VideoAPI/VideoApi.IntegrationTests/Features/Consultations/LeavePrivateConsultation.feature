@@ -4,7 +4,8 @@ Feature: Leave Private Consultations
   I want to leave private consultations
 
   Scenario: Leave a private consultation with an invalid request
-    Given I have an invalid leave consultation request
+    Given I have a conference
+    And I have an invalid leave consultation request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
     And the error response message should also contain 'ConferenceId is required'

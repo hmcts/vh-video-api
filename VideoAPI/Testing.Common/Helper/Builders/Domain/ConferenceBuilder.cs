@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AcceptanceTests.Common.Data.Helpers;
 using Faker;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -11,6 +12,7 @@ namespace Testing.Common.Helper.Builders.Domain
 {
     public class ConferenceBuilder
     {
+        private const string CaseName = "Video Api Integration Test";
         private readonly Conference _conference;
         private readonly BuilderSettings _builderSettings;
 
@@ -30,7 +32,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
             const string caseType = "Civil Money Claims";
             var caseNumber = $"{GenerateRandom.CaseNumber(new Random())}";
-            const string caseName = "Video Api Integration Test";
+            const string caseName = CaseName;
             const int scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, 
                 scheduledDuration, "MyVenue");

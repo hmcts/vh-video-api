@@ -38,7 +38,7 @@ namespace VideoApi.DAL.Queries
                 x.ScheduledDateTime == query.ScheduledDateTime
                 && x.CaseName == query.CaseName
                 && x.CaseNumber == query.CaseNumber
-                && x.State != ConferenceState.Closed).ConfigureAwait(false);
+                && x.State != ConferenceState.Closed);
         }
     }
 }

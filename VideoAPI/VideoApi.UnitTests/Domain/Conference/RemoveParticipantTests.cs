@@ -14,7 +14,7 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class RemoveParticipantTests
     {
         [Test]
-        public void should_remove_participant_from_hearing()
+        public void Should_remove_participant_from_hearing()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")
@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
 
         [Test]
-        public void should_not_fail_when_removing_non_existent_participant()
+        public void Should_not_fail_when_removing_non_existent_participant()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")

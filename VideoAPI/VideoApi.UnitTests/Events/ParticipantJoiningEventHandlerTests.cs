@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Events
         private ParticipantJoiningEventHandler _eventHandler;
 
         [Test]
-        public async Task should_send_joining_message_to_participants_and_service_bus_when_a_participant_is_joining()
+        public async Task Should_send_joining_message_to_participants_and_service_bus_when_a_participant_is_joining()
         {
             _eventHandler = new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 ServiceBusQueueClient);

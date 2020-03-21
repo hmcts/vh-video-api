@@ -1,5 +1,5 @@
 @VIH-3806 @health
-Feature: Healthcheck
+Feature: Health Check
   In order to assess the status of the service
   As an api service
   I want to be able to request the health of the video api

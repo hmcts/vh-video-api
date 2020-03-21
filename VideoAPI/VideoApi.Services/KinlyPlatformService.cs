@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Helpers;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -15,6 +14,7 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 using Polly;
+using VideoApi.Services.Helpers;
 
 namespace VideoApi.Services
 {
@@ -46,7 +46,7 @@ namespace VideoApi.Services
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
                     Callback_uri = _servicesConfigOptions.CallbackUri
-                }).ConfigureAwait(false);
+                });
 
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Judge, response.Uris.Participant,
                     response.Uris.Pexip_node);
@@ -67,7 +67,7 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _kinlyApiClient.GetHearingAsync(conferenceId.ToString()).ConfigureAwait(false);
+                var response = await _kinlyApiClient.GetHearingAsync(conferenceId.ToString());
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Judge, response.Uris.Participant,
                     response.Uris.Pexip_node);
                 return meetingRoom;
@@ -98,7 +98,7 @@ namespace VideoApi.Services
 
             return await policy
                 .ExecuteAsync(async () => await GetSelfTestCallScore(participantId))
-                .ConfigureAwait(false);
+                ;
         }
 
         public async Task<TestCallResult> GetSelfTestCallScore(Guid participantId)
@@ -118,7 +118,7 @@ namespace VideoApi.Services
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
                     _customJwtTokenProvider.GenerateToken(participantId.ToString(), 2));
 
-                responseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
+                responseMessage = await httpClient.SendAsync(request);
             }
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
@@ -127,7 +127,7 @@ namespace VideoApi.Services
                 return null;
             }
 
-            var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var content = await responseMessage.Content.ReadAsStringAsync();
             var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
             _logger.LogError($" { responseMessage.StatusCode } : Successfully retrieved self test score for participant {participantId} ");
             return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
@@ -146,7 +146,7 @@ namespace VideoApi.Services
                 Part_id = participantId.ToString()
             };
 
-            await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request).ConfigureAwait(false);
+            await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
         public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy,
@@ -178,7 +178,7 @@ namespace VideoApi.Services
 
         public async Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
         {
-            await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString()).ConfigureAwait(false);
+            await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString());
         }
     }
 }

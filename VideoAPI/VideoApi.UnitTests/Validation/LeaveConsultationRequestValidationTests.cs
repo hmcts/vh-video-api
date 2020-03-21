@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = new LeaveConsultationRequest
             {
@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_return_missing_conference_id()
+        public async Task Should_return_missing_conference_id()
         {
             var request = new LeaveConsultationRequest
             {
@@ -49,7 +49,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_return_missing_participant_id()
+        public async Task Should_return_missing_participant_id()
         {
             var request = new LeaveConsultationRequest
             {

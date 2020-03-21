@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var participant = TestConference.GetParticipants()[1];
 
 
-            await _controller.RemoveParticipantFromConference(conferenceId, participant.Id);
+            await _controller.RemoveParticipantFromConferenceAsync(conferenceId, participant.Id);
 
             _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             _mockCommandHandler.Verify(c => c.Handle(It.IsAny<RemoveParticipantsFromConferenceCommand>()), Times.Once);
@@ -41,7 +41,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((Conference)null);
 
-            var result = await _controller.RemoveParticipantFromConference(Guid.NewGuid(), Guid.NewGuid());
+            var result = await _controller.RemoveParticipantFromConferenceAsync(Guid.NewGuid(), Guid.NewGuid());
 
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
@@ -50,7 +50,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Should_return_notfound_with_no_matching_participant()
         {
-            var result = await _controller.RemoveParticipantFromConference(TestConference.Id, Guid.NewGuid());
+            var result = await _controller.RemoveParticipantFromConferenceAsync(TestConference.Id, Guid.NewGuid());
 
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();

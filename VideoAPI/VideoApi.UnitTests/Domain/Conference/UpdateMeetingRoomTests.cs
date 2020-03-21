@@ -7,14 +7,14 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class UpdateMeetingRoomTests
     {
         [Test]
-        public void should_not_have_room_defined_by_default()
+        public void Should_not_have_room_defined_by_default()
         {
             var conference = new ConferenceBuilder().Build();
             conference.GetMeetingRoom().Should().BeNull();
         }
 
         [Test]
-        public void should_update_existing_room_details()
+        public void Should_update_existing_room_details()
         {
             var conference = new ConferenceBuilder().WithMeetingRoom("poc.node.com", "user@email.com").Build();
             conference.GetMeetingRoom().Should().NotBeNull();
@@ -34,7 +34,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
 
         [Test]
-        public void should_add_room_details()
+        public void Should_add_room_details()
         {
             var conference = new ConferenceBuilder().Build();
             conference.GetMeetingRoom().Should().BeNull();

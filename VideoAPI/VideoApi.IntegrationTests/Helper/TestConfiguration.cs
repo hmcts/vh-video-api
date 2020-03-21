@@ -1,4 +1,4 @@
-namespace VideoApi.IntegrationTests.Helpers
+namespace VideoApi.IntegrationTests.Helper
 {
     internal class TestConfiguration
     {

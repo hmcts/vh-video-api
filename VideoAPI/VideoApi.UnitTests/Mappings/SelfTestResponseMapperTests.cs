@@ -10,7 +10,7 @@ namespace VideoApi.UnitTests.Mappings
         private readonly PexipConfigurationMapper _mapper = new PexipConfigurationMapper();
 
         [Test]
-        public void should_map_all_properties()
+        public void Should_map_all_properties()
         {
             var pexipConfig = new ServicesConfiguration();
             pexipConfig.PexipSelfTestNode = "self-test.node";

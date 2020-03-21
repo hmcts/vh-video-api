@@ -11,6 +11,7 @@ namespace VideoApi.Common.Configuration
         public string UserApiUrl { get; set; }
         public string UserApiResourceId { get; set; }
         public string VhVideoApiResourceId { get; set; }
+        public string VideoApiUrl { get; set; }
         public string VhVideoWebClientId { get; set; }
     }
 }

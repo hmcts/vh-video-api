@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Events
         [TestCase(EventType.SelfTestFailed, typeof(SelfTestFailedEventHandler))]
         [TestCase(EventType.JudgeAvailable, typeof(JudgeAvailableEventHandler))]
         [TestCase(EventType.JudgeUnavailable, typeof(JudgeUnavailableEventHandler))]
-        public void should_return_instance_of_event_handler_when_factory_get_is_called_with_valid_request(
+        public void Should_return_instance_of_event_handler_when_factory_get_is_called_with_valid_request(
             EventType eventType, Type typeOfEventHandler)
         {
             var eventHandlerFactory = new EventHandlerFactory(EventHandlersList);
@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Events
         }
 
         [Test]
-        public void should_throw_exception_when_event_type_is_not_supported()
+        public void Should_throw_exception_when_event_type_is_not_supported()
         {
             var eventHandlerFactory = new EventHandlerFactory(EventHandlersList);
 

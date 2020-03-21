@@ -16,7 +16,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
     public class HandleConsultationRequestTests : ConsultationControllerTestBase
     {
         [Test]
-        public async Task should_raise_notification_to_requester_and_admin_when_consultation_is_accepted()
+        public async Task Should_raise_notification_to_requester_and_admin_when_consultation_is_accepted()
         {
             var conferenceId = TestConference.Id;
             var requestedBy = TestConference.GetParticipants()[2];
@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            await Controller.HandleConsultationRequest(request);
+            await Controller.HandleConsultationRequestAsync(request);
 
             CommandHandlerMock.Verify(x => x.Handle(It.Is<SaveEventCommand>(s => s.Reason == $"Consultation with {requestedFor.DisplayName}")), Times.Once);
             VideoPlatformServiceMock.Verify(x =>
@@ -41,7 +41,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task should_return_notfound_when_no_requested_by_participant_is_found()
+        public async Task Should_return_notfound_when_no_requested_by_participant_is_found()
         {
             var conferenceId = TestConference.Id;
             var requestedBy = TestConference.GetParticipants()[2];
@@ -56,13 +56,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequest(request);
+            var result = await Controller.HandleConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
 
         [Test]
-        public async Task should_return_notfound_when_no_requested_for_participant_is_found()
+        public async Task Should_return_notfound_when_no_requested_for_participant_is_found()
         {
             var conferenceId = TestConference.Id;
             var requestedFor = TestConference.GetParticipants()[3];
@@ -77,7 +77,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequest(request);
+            var result = await Controller.HandleConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -108,7 +108,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequest(request);
+            var result = await Controller.HandleConsultationRequestAsync(request);
 
             var typedResult = (ObjectResult) result;
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.BadRequest);

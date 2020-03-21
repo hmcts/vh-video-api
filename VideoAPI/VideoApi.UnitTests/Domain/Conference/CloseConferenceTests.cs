@@ -9,7 +9,7 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class CloseConferenceTests
     {
         [Test]
-        public void should_update_close_time_when_updating_status_to_closed()
+        public void Should_update_close_time_when_updating_status_to_closed()
         {
             var beforeActionTime = DateTime.UtcNow;
             var conference = new ConferenceBuilder()
@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
 
         [Test]
-        public void should_add_conference_status()
+        public void Should_add_conference_status()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")

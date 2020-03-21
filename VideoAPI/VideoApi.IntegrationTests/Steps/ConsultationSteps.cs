@@ -3,28 +3,26 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using AcceptanceTests.Common.Api.Helpers;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
-using Testing.Common.Helper;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using static Testing.Common.Helper.ApiUriFactory;
 
 namespace VideoApi.IntegrationTests.Steps
 {
     [Binding]
-    public class ConsultationSteps : StepsBase
+    public class ConsultationSteps : BaseSteps
     {
-        private readonly ConferenceTestContext _conferenceTestContext;
-        private readonly ConsultationEndpoints _endpoints = new ApiUriFactory().ConsultationEndpoints;
+        private readonly TestContext _context;
 
-        public ConsultationSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(
-            apiTestContext)
+        public ConsultationSteps(TestContext context)
         {
-            _conferenceTestContext = conferenceTestContext;
+            _context = context;
         }
 
         [Given(@"I have a (.*) raise consultation request")]
@@ -105,7 +103,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) leave consultation request")]
         public async Task GivenIHaveALeaveConsultationRequest(Scenario scenario)
         {
-            var request = await SetupLeaveConsultationRequest(true).ConfigureAwait(false);
+            var request = await SetupLeaveConsultationRequest(true);
             switch (scenario)
             {
                 case Scenario.Valid:
@@ -127,7 +125,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a leave consultation request for a nonexistent participant")]
         public async Task GivenIHaveALeaveConsultationRequestForANonexistentParticipant()
         {
-            var request = await SetupLeaveConsultationRequest(true).ConfigureAwait(false);
+            var request = await SetupLeaveConsultationRequest(true);
             request.ParticipantId = Guid.NewGuid();
             SerialiseLeaveConsultationRequest(request);
         }
@@ -135,7 +133,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a leave consultation request for a participant not in a consultation")]
         public async Task GivenIHaveALeaveConsultationRequestForAParticipantNotInAConsultation()
         {
-            var request = await SetupLeaveConsultationRequest(false).ConfigureAwait(false);
+            var request = await SetupLeaveConsultationRequest(false);
             SerialiseLeaveConsultationRequest(request);
         }
 
@@ -162,17 +160,15 @@ namespace VideoApi.IntegrationTests.Steps
         [Given("no consultation rooms are available")]
         public async Task GivenNoConsultationRoomsAreAvailable()
         {
-            using (var db = new VideoApiDbContext(ApiTestContext.VideoBookingsDbContextOptions))
-            {
-                var conference = await db.Conferences
-                    .Include("Participants")
-                    .SingleAsync(x => x.Id == _conferenceTestContext.SeededConference.Id);
+            await using var db = new VideoApiDbContext(_context.Config.VideoBookingsDbContextOptions);
+            var conference = await db.Conferences
+                .Include("Participants")
+                .SingleAsync(x => x.Id == _context.Test.Conference.Id);
 
-                conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
-                conference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom2);
+            conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
+            conference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom2);
 
-                await db.SaveChangesAsync();
-            }
+            await db.SaveChangesAsync();
         }
         
         [Given(@"I have a (.*) respond to admin consultation request")]
@@ -214,75 +210,64 @@ namespace VideoApi.IntegrationTests.Steps
 
         private void SerialiseConsultationRequest(ConsultationRequest request)
         {
-            ApiTestContext.Uri = _endpoints.HandleConsultationRequest;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
         private void SerialiseRespondToAdminConsultationRequest(AdminConsultationRequest request)
         {
-            ApiTestContext.Uri = _endpoints.RespondToAdminConsultationRequest;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.Uri = ConsultationEndpoints.RespondToAdminConsultationRequest;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
         private void SerialiseLeaveConsultationRequest(LeaveConsultationRequest request)
         {
-            ApiTestContext.Uri = _endpoints.LeaveConsultationRequest;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.Uri = ConsultationEndpoints.LeaveConsultationRequest;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
         private ConsultationRequest SetupConsultationRequest(bool withAnswer)
         {
             var request = new ConsultationRequest();
-            var seededConference = _conferenceTestContext.SeededConference;
 
-            if (seededConference == null) return request;
-
-            var participants = seededConference.GetParticipants().Where(x =>
+            var participants = _context.Test.Conference.GetParticipants().Where(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
 
-            request.ConferenceId = seededConference.Id;
+            request.ConferenceId = _context.Test.Conference.Id;
             request.RequestedBy = participants[0].Id;
             request.RequestedFor = participants[1].Id;
 
             if (withAnswer)
-            {
                 request.Answer = ConsultationAnswer.Accepted;
-            }
 
             return request;
         }
 
         private async Task<LeaveConsultationRequest> SetupLeaveConsultationRequest(bool inConsultationRoom)
         {
-            var request = new LeaveConsultationRequest();
-
-            var seededConference = _conferenceTestContext.SeededConference;
-
-            if (seededConference == null)
+            var request = new LeaveConsultationRequest
             {
-                return request;
-            }
-
-            request.ConferenceId = seededConference.Id;
-            request.ParticipantId = seededConference.Participants[0].Id;
+                ConferenceId = _context.Test.Conference.Id,
+                ParticipantId = _context.Test.Conference.Participants[0].Id
+            };
 
             if (!inConsultationRoom)
             {
                 return request;
             }
 
-            var participantId = seededConference.Participants[0].Id;
-            using (var db = new VideoApiDbContext(ApiTestContext.VideoBookingsDbContextOptions))
+            var participantId = _context.Test.Conference.Participants[0].Id;
+            await using (var db = new VideoApiDbContext(_context.Config.VideoBookingsDbContextOptions))
             {
                 var conference = await db.Conferences
                     .Include("Participants")
-                    .SingleAsync(x => x.Id == _conferenceTestContext.SeededConference.Id);
+                    .SingleAsync(x => x.Id == _context.Test.Conference.Id);
 
                 conference.Participants.Single(x => x.Id == participantId)
                     .UpdateCurrentRoom(RoomType.ConsultationRoom1);
@@ -299,23 +284,15 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var request = new AdminConsultationRequest();
 
-            var seededConference = _conferenceTestContext.SeededConference;
-
-            if (seededConference == null)
-            {
-                return request;
-            }
-
-            var participants = seededConference.GetParticipants().Where(x =>
+            var participants = _context.Test.Conference.GetParticipants().Where(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
 
-            request.ConferenceId = seededConference.Id;
+            request.ConferenceId = _context.Test.Conference.Id;
             request.ParticipantId = participants[0].Id;
             request.Answer = ConsultationAnswer.Accepted;
             request.ConsultationRoom = RoomType.ConsultationRoom1;
 
             return request;
         }
-
     }
 }

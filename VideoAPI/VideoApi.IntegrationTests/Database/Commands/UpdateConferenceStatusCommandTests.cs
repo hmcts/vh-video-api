@@ -26,7 +26,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public void should_throw_exception_when_conference_does_not_exist()
+        public void Should_throw_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
             var state = ConferenceState.Paused;
@@ -35,7 +35,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_update_conference_status()
+        public async Task Should_update_conference_status()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -58,7 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
         
         [Test]
-        public async Task should_update_conference_to_closed()
+        public async Task Should_update_conference_to_closed()
         {
             var beforeActionTime = DateTime.UtcNow;
             var seededConference = await TestDataManager.SeedConference();

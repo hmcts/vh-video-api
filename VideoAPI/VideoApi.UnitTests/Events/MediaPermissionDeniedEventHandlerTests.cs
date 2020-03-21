@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Events
         private MediaPermissionDeniedEventHandler _eventHandler;
 
         [Test]
-        public async Task should_call_command_handler_with_addtaskcommand_object()
+        public async Task Should_call_command_handler_with_addtaskcommand_object()
         {
             _eventHandler = new MediaPermissionDeniedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 ServiceBusQueueClient);
@@ -48,7 +48,7 @@ namespace VideoApi.UnitTests.Events
         }
 
         [Test]
-        public void should_throw_exception_when_conference_does_not_exist()
+        public void Should_throw_exception_when_conference_does_not_exist()
         {
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))

@@ -30,7 +30,7 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>())).ReturnsAsync((MeetingRoom)null);
             
-            await Controller.BookNewConference(request);
+            await Controller.BookNewConferenceAsync(request);
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>())).Throws(new DoubleBookingException(Guid.NewGuid()));
 
-            await Controller.BookNewConference(request);
+            await Controller.BookNewConferenceAsync(request);
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Once);
@@ -55,7 +55,7 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>())).ReturnsAsync(MeetingRoom);
 
-            await Controller.BookNewConference(request);
+            await Controller.BookNewConferenceAsync(request);
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);

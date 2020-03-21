@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = BuildRequest();
 
@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_fail_validation_when_conference_is_empty()
+        public async Task Should_fail_validation_when_conference_is_empty()
         {
             var request = BuildRequest();
             request.ConferenceId = Guid.Empty;
@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_fail_validation_when_requested_by_is_empty()
+        public async Task Should_fail_validation_when_requested_by_is_empty()
         {
             var request = BuildRequest();
             request.RequestedBy = Guid.Empty;
@@ -55,7 +55,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_fail_validation_when_requested_for_is_empty()
+        public async Task Should_fail_validation_when_requested_for_is_empty()
         {
             var request = BuildRequest();
             request.RequestedFor = Guid.Empty;
@@ -68,7 +68,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_fail_validation_when_answer_is_invalid()
+        public async Task Should_fail_validation_when_answer_is_invalid()
         {
             var request = BuildRequest();
             request.Answer = ConsultationAnswer.None;

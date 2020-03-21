@@ -49,7 +49,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddParticipantsToConference(Guid conferenceId,
+        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, 
             AddParticipantsToConferenceRequest request)
         {
             _logger.LogDebug("AddParticipantsToConference");
@@ -90,7 +90,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateParticipantDetails(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
+        public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
         {
             _logger.LogDebug("UpdateParticipantDetails");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
@@ -128,7 +128,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveParticipantFromConference(Guid conferenceId, Guid participantId)
+        public async Task<IActionResult> RemoveParticipantFromConferenceAsync(Guid conferenceId, Guid participantId)
         {
             _logger.LogDebug("RemoveParticipantFromConference");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
@@ -164,7 +164,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "GetTestCallResultForParticipant")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetTestCallResultForParticipant(Guid conferenceId, Guid participantId)
+        public async Task<IActionResult> GetTestCallResultForParticipantAsync(Guid conferenceId, Guid participantId)
         {
             _logger.LogDebug("GetTestCallResultForParticipant");
             var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
@@ -192,7 +192,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "GetIndependentTestCallResult")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetIndependentTestCallResult(Guid participantId)
+        public async Task<IActionResult> GetIndependentTestCallResultAsync(Guid participantId)
         {
             _logger.LogDebug("GetIndependentTestCallResult");
             var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
@@ -248,6 +248,8 @@ namespace Video.API.Controllers
         /// <summary>
         /// Post the Heartbeat Data For Participant
         /// </summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="request">The AddHeartbeatRequest</param>
         /// <returns></returns>
         [HttpPost("{conferenceId}/participant/{participantId}/heartbeat")]

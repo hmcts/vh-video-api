@@ -27,7 +27,7 @@ namespace VideoApi.Events.Handlers
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
                     callbackEvent.TransferTo);
-            await CommandHandler.Handle(command).ConfigureAwait(false);
+            await CommandHandler.Handle(command);
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)

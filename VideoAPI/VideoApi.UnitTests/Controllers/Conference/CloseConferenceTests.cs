@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>())).ReturnsAsync((MeetingRoom)null);
 
-            await Controller.CloseConference(Guid.NewGuid());
+            await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>())).ReturnsAsync(MeetingRoom);
 
-            await Controller.CloseConference(Guid.NewGuid());
+            await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
@@ -45,18 +45,18 @@ namespace VideoApi.UnitTests.Controllers
              .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
              .ReturnsAsync((Conference)null);
 
-            var result = await Controller.CloseConference(Guid.NewGuid());
+            var result = await Controller.CloseConferenceAsync(Guid.NewGuid());
 
-            var typedResult = (BadRequestResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            var typedResult = (NotFoundResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
         }
 
         [Test]
-        public async Task Should_return_bad_request_for_given_invalid_user_name()
+        public async Task Should_return_bad_request_for_given_invalid_conferenceid()
         {
             var conferenceId = Guid.Empty;
 
-            var result = await Controller.CloseConference(conferenceId);
+            var result = await Controller.CloseConferenceAsync(conferenceId);
 
             var typedResult = (ObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);

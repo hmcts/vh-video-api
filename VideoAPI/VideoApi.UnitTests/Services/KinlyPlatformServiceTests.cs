@@ -52,7 +52,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public void should_throw_exception_when_no_hearing_room_available()
+        public void Should_throw_exception_when_no_hearing_room_available()
         {
             var requestedBy = _testConference.GetParticipants()[2];
             var requestedFor = _testConference.GetParticipants()[3];
@@ -71,7 +71,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task should_transfer_participants_when_pc_started()
+        public async Task Should_transfer_participants_when_pc_started()
         {
             var requestedBy = _testConference.GetParticipants()[2];
             var requestedFor = _testConference.GetParticipants()[3];
@@ -85,7 +85,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task should_remove_all_participants_in_room()
+        public async Task Should_remove_all_participants_in_room()
         {
             var room = RoomType.ConsultationRoom1;
             _testConference.Participants[1].UpdateCurrentRoom(room);

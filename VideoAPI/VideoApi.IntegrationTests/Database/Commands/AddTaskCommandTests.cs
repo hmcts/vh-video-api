@@ -28,7 +28,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [TestCase(TaskType.Judge)]
         [TestCase(TaskType.Hearing)]
         [TestCase(TaskType.Participant)]
-        public async Task should_add_an_task(TaskType taskType)
+        public async Task Should_add_an_task(TaskType taskType)
         {
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceId = seededConference.Id;

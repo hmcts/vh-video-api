@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public void should_throw_exception_when_conference_does_not_exist()
+        public void Should_throw_exception_when_conference_does_not_exist()
         {
             var hearingRefId = Guid.NewGuid();
             var command = new UpdateConferenceDetailsCommand(hearingRefId, "caseNo", "caseType", 
@@ -34,7 +34,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_update_conference_details()
+        public async Task Should_update_conference_details()
         {
             var seededConference = await TestDataManager.SeedConference();
             var hearingRefId = seededConference.HearingRefId;

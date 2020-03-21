@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = BuildRequest();
 
@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation_when_joining_call_to_waiting_room()
+        public async Task Should_pass_validation_when_joining_call_to_waiting_room()
         {
             var request = BuildRequest();
             request.TransferFrom = null;
@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_conference_id_error()
+        public async Task Should_return_missing_conference_id_error()
         {
             var request = BuildRequest();
             request.ConferenceId = string.Empty;
@@ -56,7 +56,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_invalid_conference_id_format_error()
+        public async Task Should_return_invalid_conference_id_format_error()
         {
             var request = BuildRequest();
             request.ConferenceId = "uygfuyguds";
@@ -71,7 +71,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_event_id_error()
+        public async Task Should_return_missing_event_id_error()
         {
             var request = BuildRequest();
             request.EventId = string.Empty;
@@ -85,7 +85,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_participant_id_error()
+        public async Task Should_return_missing_participant_id_error()
         {
             var request = BuildRequest();
             request.ParticipantId = string.Empty;
@@ -98,7 +98,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_invalid_participant_id_error()
+        public async Task Should_return_invalid_participant_id_error()
         {
             var request = BuildRequest();
             request.ParticipantId = "iughfuidshif";
@@ -112,7 +112,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_event_type_error()
+        public async Task Should_return_missing_event_type_error()
         {
             var request = BuildRequest();
             request.EventType = EventType.None;
@@ -126,7 +126,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_valid_for_suspend_event_without_participantid()
+        public async Task Should_return_valid_for_suspend_event_without_participantid()
         {
             var request = BuildRequest();
             request.EventType = EventType.Suspend;
@@ -138,7 +138,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_invalid_for_transfer_event_without_participantid()
+        public async Task Should_return_invalid_for_transfer_event_without_participantid()
         {
             var request = BuildRequest();
             request.EventType = EventType.Transfer;

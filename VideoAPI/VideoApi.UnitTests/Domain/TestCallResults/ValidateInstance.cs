@@ -8,7 +8,7 @@ namespace VideoApi.UnitTests.Domain.TestCallResults
     public class ValidateInstance
     {
         [Test]
-        public void should_initialise_correctly()
+        public void Should_initialise_correctly()
         {
             var passed = false;
             var score = TestScore.Bad;
