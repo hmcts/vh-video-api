@@ -21,8 +21,8 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            await PublishParticipantDisconnectMessage().ConfigureAwait(false);
-            if (SourceParticipant.IsJudge()) await PublishSuspendedEventMessage().ConfigureAwait(false);
+            await PublishParticipantDisconnectMessage();
+            if (SourceParticipant.IsJudge()) await PublishSuspendedEventMessage();
         }
 
         private async Task PublishParticipantDisconnectMessage()
@@ -31,10 +31,10 @@ namespace VideoApi.Events.Handlers
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState,
                     null);
-            await CommandHandler.Handle(command).ConfigureAwait(false);
+            await CommandHandler.Handle(command);
             if (SourceConference.State != ConferenceState.Closed)
             {
-                await AddDisconnectedTask().ConfigureAwait(false);
+                await AddDisconnectedTask();
             }            
         }
 
@@ -42,14 +42,14 @@ namespace VideoApi.Events.Handlers
         {
             var taskType = SourceParticipant.IsJudge() ? TaskType.Judge : TaskType.Participant;
             var disconnected = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
-            await CommandHandler.Handle(disconnected).ConfigureAwait(false);
+            await CommandHandler.Handle(disconnected);
         }
 
         private async Task AddSuspendedTask()
         {
             var addSuspendedTask =
                 new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
-            await CommandHandler.Handle(addSuspendedTask).ConfigureAwait(false);
+            await CommandHandler.Handle(addSuspendedTask);
         }
 
         private async Task PublishSuspendedEventMessage()
@@ -57,9 +57,9 @@ namespace VideoApi.Events.Handlers
             var conferenceState = ConferenceState.Suspended;
             var updateConferenceStatusCommand =
                 new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
-            await CommandHandler.Handle(updateConferenceStatusCommand).ConfigureAwait(false);
+            await CommandHandler.Handle(updateConferenceStatusCommand);
 
-            await AddSuspendedTask().ConfigureAwait(false);
+            await AddSuspendedTask();
         }
     }
 }

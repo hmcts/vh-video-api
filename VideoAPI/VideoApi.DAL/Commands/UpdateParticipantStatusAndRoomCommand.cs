@@ -37,7 +37,7 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(UpdateParticipantStatusAndRoomCommand command)
         {
             var conference = await _context.Conferences.Include("Participants.ParticipantStatuses")
-                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId).ConfigureAwait(false);
+                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
             
             if (conference == null)
             {
@@ -52,7 +52,7 @@ namespace VideoApi.DAL.Commands
             
             participant.UpdateParticipantStatus(command.ParticipantState);
             participant.UpdateCurrentRoom(command.Room);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
+            await _context.SaveChangesAsync();
         }
     }
 }

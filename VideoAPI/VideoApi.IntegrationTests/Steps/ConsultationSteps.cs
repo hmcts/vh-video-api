@@ -103,7 +103,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) leave consultation request")]
         public async Task GivenIHaveALeaveConsultationRequest(Scenario scenario)
         {
-            var request = await SetupLeaveConsultationRequest(true).ConfigureAwait(false);
+            var request = await SetupLeaveConsultationRequest(true);
             switch (scenario)
             {
                 case Scenario.Valid:
@@ -125,7 +125,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a leave consultation request for a nonexistent participant")]
         public async Task GivenIHaveALeaveConsultationRequestForANonexistentParticipant()
         {
-            var request = await SetupLeaveConsultationRequest(true).ConfigureAwait(false);
+            var request = await SetupLeaveConsultationRequest(true);
             request.ParticipantId = Guid.NewGuid();
             SerialiseLeaveConsultationRequest(request);
         }
@@ -133,7 +133,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a leave consultation request for a participant not in a consultation")]
         public async Task GivenIHaveALeaveConsultationRequestForAParticipantNotInAConsultation()
         {
-            var request = await SetupLeaveConsultationRequest(false).ConfigureAwait(false);
+            var request = await SetupLeaveConsultationRequest(false);
             SerialiseLeaveConsultationRequest(request);
         }
 
