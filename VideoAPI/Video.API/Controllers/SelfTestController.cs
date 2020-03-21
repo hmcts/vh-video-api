@@ -28,7 +28,7 @@ namespace Video.API.Controllers
         /// Get the pexip service configuration.
         /// </summary>
         /// <returns>Returns the pexip node</returns>
-        [HttpGet()]
+        [HttpGet]
         [SwaggerOperation(OperationId = "GetPexipServicesConfiguration")]
         [ProducesResponseType(typeof(PexipConfigResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

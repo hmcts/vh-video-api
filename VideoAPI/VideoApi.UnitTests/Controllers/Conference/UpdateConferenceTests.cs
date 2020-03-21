@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers
                 CaseNumber = "CaseNo"
             };
 
-            await Controller.UpdateConference(request);
+            await Controller.UpdateConferenceAsync(request);
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>()), Times.Once);
         }
@@ -36,7 +36,7 @@ namespace VideoApi.UnitTests.Controllers
             CommandHandlerMock.Setup(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>())).Throws(new ConferenceNotFoundException(Guid.NewGuid()));
             var request = new UpdateConferenceRequest();
 
-            var result = await Controller.UpdateConference(request);
+            var result = await Controller.UpdateConferenceAsync(request);
 
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();

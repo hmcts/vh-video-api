@@ -30,7 +30,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 new UpdateSelfTestCallResultCommand(conferenceId, participantId, testResult.Passed, testResult.Score);
             _mockCommandHandler.Setup(x => x.Handle(command));
             
-            var response = await _controller.GetTestCallResultForParticipant(Guid.NewGuid(), Guid.NewGuid());
+            var response = await _controller.GetTestCallResultForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
         }
@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
                 .Returns(Task.FromResult<TestCallResult>(null));
             
-            var response = await _controller.GetTestCallResultForParticipant(Guid.NewGuid(), Guid.NewGuid());
+            var response = await _controller.GetTestCallResultForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (NotFoundResult) response;
             typedResult.Should().NotBeNull();
 

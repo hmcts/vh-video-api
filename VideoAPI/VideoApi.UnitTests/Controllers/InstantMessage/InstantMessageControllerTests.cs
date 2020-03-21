@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
                 MessageText = "Test message text"
             };
 
-            var result = await _instantMessageController.AddInstantMessageToConference(Guid.NewGuid(), request);
+            var result = await _instantMessageController.AddInstantMessageToConferenceAsync(Guid.NewGuid(), request);
 
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);

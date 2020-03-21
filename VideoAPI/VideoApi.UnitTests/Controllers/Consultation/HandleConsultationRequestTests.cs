@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            await Controller.HandleConsultationRequest(request);
+            await Controller.HandleConsultationRequestAsync(request);
 
             CommandHandlerMock.Verify(x => x.Handle(It.Is<SaveEventCommand>(s => s.Reason == $"Consultation with {requestedFor.DisplayName}")), Times.Once);
             VideoPlatformServiceMock.Verify(x =>
@@ -56,7 +56,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequest(request);
+            var result = await Controller.HandleConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -77,7 +77,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequest(request);
+            var result = await Controller.HandleConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -108,7 +108,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequest(request);
+            var result = await Controller.HandleConsultationRequestAsync(request);
 
             var typedResult = (ObjectResult) result;
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.BadRequest);

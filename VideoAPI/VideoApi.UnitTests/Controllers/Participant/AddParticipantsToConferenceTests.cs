@@ -34,7 +34,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
 
-            await _controller.AddParticipantsToConference(TestConference.Id, request);
+            await _controller.AddParticipantsToConferenceAsync(TestConference.Id, request);
 
             _mockQueryHandler.Verify(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             _mockCommandHandler.Verify(c => c.Handle(It.IsAny<AddParticipantsToConferenceCommand>()), Times.Once);
@@ -47,7 +47,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((Conference)null);                        
             
-            var result = await _controller.AddParticipantsToConference(Guid.NewGuid(), request);
+            var result = await _controller.AddParticipantsToConferenceAsync(Guid.NewGuid(), request);
 
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();

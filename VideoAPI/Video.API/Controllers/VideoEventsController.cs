@@ -39,7 +39,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "RaiseVideoEvent")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> PostEvent(ConferenceEventRequest request)
+        public async Task<IActionResult> PostEventAsync(ConferenceEventRequest request)
         {
             _logger.LogInformation($"Handling {request.EventType.ToString()} event for conference {request.ConferenceId}");
             Guid.TryParse(request.ConferenceId, out var conferenceId);
