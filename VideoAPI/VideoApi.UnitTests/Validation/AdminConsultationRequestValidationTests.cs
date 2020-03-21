@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = BuildRequest();
 
@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_fail_validation_when_conference_is_empty()
+        public async Task Should_fail_validation_when_conference_is_empty()
         {
             var request = BuildRequest();
             request.ConferenceId = Guid.Empty;
@@ -44,7 +44,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_fail_validation_when_participant_id_is_empty()
+        public async Task Should_fail_validation_when_participant_id_is_empty()
         {
             var request = BuildRequest();
             request.ParticipantId = Guid.Empty;
@@ -57,7 +57,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_fail_validation_when_answer_is_invalid()
+        public async Task Should_fail_validation_when_answer_is_invalid()
         {
             var request = BuildRequest();
             request.Answer = ConsultationAnswer.None;
@@ -70,7 +70,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_fail_validation_when_room_is_not_consultation()
+        public async Task Should_fail_validation_when_room_is_not_consultation()
         {
             var request = BuildRequest();
             request.ConsultationRoom = RoomType.AdminRoom;

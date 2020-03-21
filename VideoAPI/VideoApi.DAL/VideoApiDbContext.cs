@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +11,7 @@ namespace VideoApi.DAL
         public DbSet<Event> Events { get; set; }
         public DbSet<Conference> Conferences { get; set; }
         public DbSet<Heartbeat> Heartbeats { get; set; }
-        
-        
+
         public VideoApiDbContext(DbContextOptions options) : base(options)
         {
         }

@@ -282,7 +282,7 @@ namespace Video.API.Controllers
             if (conference == null)
             {
                 _logger.LogError($"Unable to find conference {conferenceId}");
-                return BadRequest();
+                return NotFound();
             }
                 
             var command = new CloseConferenceCommand(conferenceId);

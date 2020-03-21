@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = BuildRequest();
 
@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Validation
 
     
         [Test]
-        public async Task should_return_error()
+        public async Task Should_return_error()
         {
             var request = new UpdateParticipantRequest();
             var result = await _validator.ValidateAsync(request);

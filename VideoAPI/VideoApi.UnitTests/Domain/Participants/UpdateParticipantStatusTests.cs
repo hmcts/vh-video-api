@@ -8,7 +8,7 @@ namespace VideoApi.UnitTests.Domain.Participants
     public class UpdateParticipantStatusTests
     {
         [Test]
-        public void should_add_participant_status()
+        public void Should_add_participant_status()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
                 .WithCaseTypeGroup("Claimant")

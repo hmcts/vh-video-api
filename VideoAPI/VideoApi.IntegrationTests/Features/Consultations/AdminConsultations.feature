@@ -4,7 +4,8 @@ Feature: Respond to Admin Consultations
   I want to respond to private consultations with the VH Admin team
 
   Scenario: Respond to a VH Officer Consultation with an invalid request
-    Given I have an invalid respond to admin consultation request
+    Given I have a conference
+    And I have an invalid respond to admin consultation request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
     And the error response message should also contain 'ConferenceId is required'

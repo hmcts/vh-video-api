@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class GetAvailableConsultationRoomTests
     {
         [Test]
-        public void should_return_first_consultation_room_when_no_rooms_occupied()
+        public void Should_return_first_consultation_room_when_no_rooms_occupied()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")
@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
         
         [Test]
-        public void should_return_second_consultation_room_when_first_is_occupied()
+        public void Should_return_second_consultation_room_when_first_is_occupied()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")
@@ -37,7 +37,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
         
         [Test]
-        public void should_return_first_consultation_room_when_second_is_occupied()
+        public void Should_return_first_consultation_room_when_second_is_occupied()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")
@@ -51,7 +51,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
         
         [Test]
-        public void should_throw_exception_when_no_participants_in_conference()
+        public void Should_throw_exception_when_no_participants_in_conference()
         {
             var conference = new ConferenceBuilder()
                 .Build();
@@ -62,7 +62,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
 
         [Test]
-        public void should_throw_exception_when_no_room_is_available()
+        public void Should_throw_exception_when_no_room_is_available()
         {
             var conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")

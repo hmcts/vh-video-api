@@ -26,7 +26,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_retrieve_all_heartbeat_records()
+        public async Task Should_retrieve_all_heartbeat_records()
         {
             _newConferenceId = Guid.NewGuid();
             _newParticipantId = Guid.NewGuid();
@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
         
                 [Test]
-        public async Task should_retrieve_all_heartbeat_records_within_timespan()
+        public async Task Should_retrieve_all_heartbeat_records_within_timespan()
         {
             _newConferenceId = Guid.NewGuid();
             _newParticipantId = Guid.NewGuid();

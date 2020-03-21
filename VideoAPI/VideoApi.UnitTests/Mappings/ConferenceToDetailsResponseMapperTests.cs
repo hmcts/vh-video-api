@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Mappings
         private readonly ConferenceToDetailsResponseMapper _mapper = new ConferenceToDetailsResponseMapper();
 
         [Test]
-        public void should_map_all_properties()
+        public void Should_map_all_properties()
         {
             var conference = new ConferenceBuilder()
                 .WithConferenceStatus(ConferenceState.InSession)

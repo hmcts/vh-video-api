@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Mappings
         private readonly TaskCallResultResponseMapper _mapper = new TaskCallResultResponseMapper();
         
         [Test]
-        public void should_map_all_properties()
+        public void Should_map_all_properties()
         {
             var testCallResultGood = new TestCallResult(true, TestScore.Good);
             

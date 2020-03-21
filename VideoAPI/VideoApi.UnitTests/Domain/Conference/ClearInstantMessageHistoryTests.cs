@@ -7,7 +7,7 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class ClearInstantMessageHistoryTests
     {
         [Test]
-        public void should_remove_all_messages_from_hearing()
+        public void Should_remove_all_messages_from_hearing()
         {
             var conference = new ConferenceBuilder()
                 .WithMessages(5)

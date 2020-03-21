@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Mappings
         }
 
         [TestCaseSource("ParticipantTestCases")]
-        public void should_map_all_properties(Participant participant)
+        public void Should_map_all_properties(Participant participant)
         {
             participant.UpdateParticipantStatus(ParticipantState.Available);
             var response = _mapper.MapParticipantToSummary(participant);

@@ -22,7 +22,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = BuildRequest();
 
@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_participant_ref_id_error()
+        public async Task Should_return_missing_participant_ref_id_error()
         {
             var request = BuildRequest();
             request.ParticipantRefId = Guid.Empty;
@@ -46,7 +46,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_name_error()
+        public async Task Should_return_missing_name_error()
         {
             var request = BuildRequest();
             request.Name = string.Empty;
@@ -60,7 +60,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_display_name_error()
+        public async Task Should_return_missing_display_name_error()
         {
             var request = BuildRequest();
             request.DisplayName = string.Empty;
@@ -74,7 +74,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_username_error()
+        public async Task Should_return_missing_username_error()
         {
             var request = BuildRequest();
             request.Username = string.Empty;
@@ -88,7 +88,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_case_type_group_error()
+        public async Task Should_return_missing_case_type_group_error()
         {
             var request = BuildRequest();
             request.CaseTypeGroup = string.Empty;
@@ -102,7 +102,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_hearing_role_error()
+        public async Task Should_return_missing_hearing_role_error()
         {
             var request = BuildRequest();
             request.UserRole = UserRole.None;
@@ -116,7 +116,7 @@ namespace VideoApi.UnitTests.Validation
         }
         
         [Test]
-        public async Task should_return_missing_representee_error()
+        public async Task Should_return_missing_representee_error()
         {
             var request = BuildRequest();
             request.UserRole = UserRole.Representative;

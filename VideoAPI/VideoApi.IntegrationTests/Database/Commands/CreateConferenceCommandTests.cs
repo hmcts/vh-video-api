@@ -24,7 +24,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_save_new_conference()
+        public async Task Should_save_new_conference()
         {
             var hearingRefId = Guid.NewGuid();
             const string caseType = "Civil Money Claims";

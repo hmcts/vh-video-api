@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async System.Threading.Tasks.Task should_retrieve_all_alerts()
+        public async System.Threading.Tasks.Task Should_retrieve_all_alerts()
         {
             const string body = "Automated Test Complete Task";
             const string updatedBy = "test@automated.com";
@@ -63,7 +63,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
+        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
             var query = new GetTasksForConferenceQuery(conferenceId);
