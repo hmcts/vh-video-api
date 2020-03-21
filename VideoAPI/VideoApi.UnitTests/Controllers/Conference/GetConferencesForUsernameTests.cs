@@ -12,7 +12,7 @@ namespace VideoApi.UnitTests.Controllers
         [Test]
         public async Task Should_return_ok_result_for_given_valid_user_name()
         {
-            var result = await Controller.GetConferencesForUsername("test@tester.com");
+            var result = await Controller.GetConferencesForUsernameAsync("test@tester.com");
 
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Controllers
         {
             var username = string.Empty;
 
-            var result = await Controller.GetConferencesForUsername(username);
+            var result = await Controller.GetConferencesForUsernameAsync(username);
 
             var typedResult = (ObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);

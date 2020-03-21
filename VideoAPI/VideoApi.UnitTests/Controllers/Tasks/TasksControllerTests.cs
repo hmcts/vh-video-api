@@ -47,7 +47,7 @@ namespace VideoApi.UnitTests.Controllers.Tasks
                 UpdatedBy = "Test Updated"
             };
 
-            var result = await tasksController.UpdateTaskStatus(Guid.NewGuid(),0, request);
+            var result = await tasksController.UpdateTaskStatusAsync(Guid.NewGuid(),0, request);
 
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);

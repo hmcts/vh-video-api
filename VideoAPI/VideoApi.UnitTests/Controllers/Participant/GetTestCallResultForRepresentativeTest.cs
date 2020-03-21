@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             var participantId = Guid.NewGuid();
 
-            var response = await _controller.GetIndependentTestCallResult(participantId);
+            var response = await _controller.GetIndependentTestCallResultAsync(participantId);
             var typedResult = (OkObjectResult)response;
             typedResult.Should().NotBeNull();
         }
@@ -37,7 +37,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
                 .Returns(Task.FromResult<TestCallResult>(null));
 
-            var response = await _controller.GetIndependentTestCallResult(Guid.NewGuid());
+            var response = await _controller.GetIndependentTestCallResultAsync(Guid.NewGuid());
             var typedResult = (NotFoundResult)response;
             typedResult.Should().NotBeNull();
         }

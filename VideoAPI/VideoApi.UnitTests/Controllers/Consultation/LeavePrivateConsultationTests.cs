@@ -24,7 +24,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var leaveConsultationRequest = new LeaveConsultationRequest { ConferenceId = conferenceId, 
                 ParticipantId = request.Id  };
 
-            await Controller.LeavePrivateConsultation(leaveConsultationRequest);
+            await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.StopPrivateConsultationAsync(TestConference, RoomType.ConsultationRoom1), Times.Once);
@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = Guid.NewGuid()
             };
 
-            var result = await Controller.LeavePrivateConsultation(leaveConsultationRequest);
+            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -56,7 +56,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = Guid.NewGuid()
             };
 
-            var result = await Controller.LeavePrivateConsultation(leaveConsultationRequest);
+            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -73,7 +73,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = request.Id
             };
 
-            var result = await Controller.LeavePrivateConsultation(leaveConsultationRequest);
+            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
             var typedResult = (ObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             ((SerializableError)typedResult.Value).ContainsKeyAndErrorMessage("Room", $"Participant {request.Id} is not in a consultation room");           

@@ -36,7 +36,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "CheckServiceHealth")]
         [ProducesResponseType(typeof(HealthCheckResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(HealthCheckResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Health()
+        public async Task<IActionResult> HealthAsync()
         {
             var response = new HealthCheckResponse();
             response.AppVersion = GetApplicationVersion();

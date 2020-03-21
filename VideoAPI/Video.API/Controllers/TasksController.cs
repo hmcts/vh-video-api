@@ -42,7 +42,7 @@ namespace Video.API.Controllers
         [HttpGet("{conferenceId}/tasks")]
         [SwaggerOperation(OperationId = "GetTasksForConference")]
         [ProducesResponseType(typeof(List<TaskResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTasksForConference(Guid conferenceId)
+        public async Task<IActionResult> GetTasksForConferenceAsync(Guid conferenceId)
         {
             _logger.LogDebug("GetTasksForConference");
             var query = new GetTasksForConferenceQuery(conferenceId);
@@ -72,7 +72,7 @@ namespace Video.API.Controllers
         [ProducesResponseType(typeof(TaskResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateTaskStatus(Guid conferenceId, long taskId,
+        public async Task<IActionResult> UpdateTaskStatusAsync(Guid conferenceId, long taskId,
             [FromBody] UpdateTaskRequest updateTaskRequest)
         {
             _logger.LogDebug("UpdateTaskStatus");

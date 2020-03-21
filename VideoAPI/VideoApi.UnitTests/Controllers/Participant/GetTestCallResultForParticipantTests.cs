@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
     {
 
         [Test]
-        public async Task Should_return_okay_with_response()
+        public async Task should_return_okay_with_response()
         {
             var testResult = Builder<TestCallResult>.CreateNew()
                 .WithFactory(() => new TestCallResult(true, TestScore.Good)).Build();
@@ -30,19 +30,19 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 new UpdateSelfTestCallResultCommand(conferenceId, participantId, testResult.Passed, testResult.Score);
             _mockCommandHandler.Setup(x => x.Handle(command));
             
-            var response = await _controller.GetTestCallResultForParticipant(Guid.NewGuid(), Guid.NewGuid());
+            var response = await _controller.GetTestCallResultForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
         }
 
         [Test]
-        public async Task Should_return_not_found()
+        public async Task should_return_not_found()
         {
             _mockVideoPlatformService
                 .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
                 .Returns(Task.FromResult<TestCallResult>(null));
             
-            var response = await _controller.GetTestCallResultForParticipant(Guid.NewGuid(), Guid.NewGuid());
+            var response = await _controller.GetTestCallResultForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (NotFoundResult) response;
             typedResult.Should().NotBeNull();
 

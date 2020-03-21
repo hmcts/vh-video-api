@@ -45,7 +45,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "GetInstantMessageHistory")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetInstantMessageHistory(Guid conferenceId)
+        public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
         {
             _logger.LogDebug($"Retrieving instant message history for conference {conferenceId}");
             var query = new GetInstantMessagesForConferenceQuery(conferenceId);
@@ -74,7 +74,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "AddInstantMessageToConference")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddInstantMessageToConference(Guid conferenceId, AddInstantMessageRequest request)
+        public async Task<IActionResult> AddInstantMessageToConferenceAsync(Guid conferenceId, AddInstantMessageRequest request)
         {
             _logger.LogDebug($"Saving instant message for conference {conferenceId}");
 
@@ -97,7 +97,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> RemoveInstantMessagesForConference(Guid conferenceId)
+        public async Task<IActionResult> RemoveInstantMessagesForConferenceAsync(Guid conferenceId)
 
         {
             _logger.LogDebug("RemoveParticipantFromConference");
@@ -132,7 +132,7 @@ namespace Video.API.Controllers
         [HttpGet("expiredIM")]
         [SwaggerOperation(OperationId = "GetClosedConferencesWithInstantMessages")]
         [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetClosedConferencesWithInstantMessages()
+        public async Task<IActionResult> GetClosedConferencesWithInstantMessagesAsync()
         {
             _logger.LogDebug($"GetClosedConferencesWithInstantMessages");
             var query = new GetClosedConferencesWithInstantMessagesQuery();
