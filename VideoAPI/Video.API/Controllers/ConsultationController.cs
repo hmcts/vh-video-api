@@ -178,39 +178,46 @@ namespace Video.API.Controllers
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
-            _logger.LogInformation($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}, Answer : {answer}");
+            _logger.LogTrace($"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}, Answer : {answer}");
             _logger.LogError($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
 
             if (answer == ConsultationAnswer.Accepted)
             {
                 
                 RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
-                _logger.LogError($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
+
+                _logger.LogTrace($"PRIVATE_CONSULTATION - T InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
+                _logger.LogWarning($"PRIVATE_CONSULTATION - W InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
+                _logger.LogError($"PRIVATE_CONSULTATION - E InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
 
                 if (roomInCache.HasValue)
                 {
-                    _logger.LogError($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype found in the Cache");
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - T InitiateStartConsultation - Conference: {conference.Id} - Roomtype found in the Cache");
+                    _logger.LogError($"PRIVATE_CONSULTATION - E - InitiateStartConsultation - Conference: {conference.Id} - Roomtype found in the Cache");
                     // Retry until the cache is removed from the previous request
                     var retryPolicy = Policy
                     .HandleResult<RoomType?>(room => !room.HasValue)
                     .WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
 
-                    //_logger.LogTrace($"PRIVATE_CONSULTATION - Conference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync. Available room : {roomType}");
-
                     await retryPolicy.ExecuteAsync(() => _consultationCache.GetConsultationRoom(conference.Id));
 
                     // Get a fresh conference record again
                     conference = await GetConference(conference.Id);
-                    _logger.LogError($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - gets a fresh record");
+
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - T InitiateStartConsultation - Conference: {conference.Id} - gets a fresh record");
+                    _logger.LogError($"PRIVATE_CONSULTATION - E - InitiateStartConsultation - Conference: {conference.Id} - gets a fresh record");
                 }
                 else
                 {
-                    _logger.LogError($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype **NOT** found in the Cache");
+
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - T InitiateStartConsultation - Conference: {conference.Id} - Roomtype **NOT** found in the Cache");
+                    _logger.LogError($"PRIVATE_CONSULTATION - E - InitiateStartConsultation - Conference: {conference.Id} - Roomtype **NOT** found in the Cache");
                     
                     // If there is nothing in the cache, then add this room to the cache
                     var targetRoom = conference.GetAvailableConsultationRoom();
 
-                    _logger.LogError($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype {targetRoom} addd to the Cache");
+                    _logger.LogTrace($"PRIVATE_CONSULTATION - T InitiateStartConsultation - Conference: {conference.Id} - Roomtype {targetRoom} addd to the Cache");
+                    _logger.LogError($"PRIVATE_CONSULTATION - E - InitiateStartConsultation - Conference: {conference.Id} - Roomtype {targetRoom} addd to the Cache");
 
                     await _consultationCache.AddConsultationRoomToCache(conference.Id, targetRoom);
                 }
@@ -220,7 +227,8 @@ namespace Video.API.Controllers
                 // Remove from the cache
                 _consultationCache.Remove(conference.Id);
 
-                _logger.LogError($"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
+                _logger.LogError($"PRIVATE_CONSULTATION - T - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
+                _logger.LogError($"PRIVATE_CONSULTATION - E - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
             }
         }
 
