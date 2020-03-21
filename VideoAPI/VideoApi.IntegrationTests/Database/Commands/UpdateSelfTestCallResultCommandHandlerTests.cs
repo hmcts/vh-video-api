@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
+        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
             var participantId = Guid.NewGuid();
@@ -47,7 +47,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_throw_participant_not_found_exception_when_participant_does_not_exist()
+        public async Task Should_throw_participant_not_found_exception_when_participant_does_not_exist()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -59,7 +59,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_update_participant_self_test_score()
+        public async Task Should_update_participant_self_test_score()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");

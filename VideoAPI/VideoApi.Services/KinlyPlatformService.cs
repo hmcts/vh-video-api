@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Helpers;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -15,6 +14,7 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 using Polly;
+using VideoApi.Services.Helpers;
 
 namespace VideoApi.Services
 {

@@ -8,7 +8,7 @@ namespace VideoApi.UnitTests.Domain.Participants
     public class UpdateCurrentRoomTests
     {
         [Test]
-        public void should_update_current_room()
+        public void Should_update_current_room()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
                 .WithCaseTypeGroup("Claimant")

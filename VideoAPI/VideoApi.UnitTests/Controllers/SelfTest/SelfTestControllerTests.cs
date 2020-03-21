@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
         }
 
         [Test]
-        public void should_return_okay_with_response()
+        public void Should_return_okay_with_response()
         {
             _servicesConfiguration = new ServicesConfiguration();
             _controller = new SelfTestController(Options.Create(_servicesConfiguration), _mockLogger.Object);
@@ -38,7 +38,7 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
         }
 
         [Test]
-        public void should_return_not_found()
+        public void Should_return_not_found()
         {
             _servicesConfiguration = null;
             _controller = new SelfTestController(Options.Create(_servicesConfiguration), _mockLogger.Object);

@@ -27,7 +27,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
+        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
             var command = BuildCommand(conferenceId);
@@ -36,7 +36,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_add_conference_virtual_court()
+        public async Task Should_add_conference_virtual_court()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -54,7 +54,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_update_conference_virtual_court()
+        public async Task Should_update_conference_virtual_court()
         {
             var conferenceWithVirtualCourt = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")

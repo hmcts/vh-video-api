@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = BuildRequest();
 
@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_hearing_ref_id_error()
+        public async Task Should_return_missing_hearing_ref_id_error()
         {
             var request = BuildRequest();
             request.HearingRefId = Guid.Empty;
@@ -56,7 +56,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_case_type_error()
+        public async Task Should_return_missing_case_type_error()
         {
             var request = BuildRequest();
             request.CaseType = string.Empty;
@@ -70,7 +70,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_case_number_error()
+        public async Task Should_return_missing_case_number_error()
         {
             var request = BuildRequest();
             request.CaseNumber = string.Empty;
@@ -84,7 +84,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_invalid_datetime_error()
+        public async Task Should_return_invalid_datetime_error()
         {
             var request = BuildRequest();
             request.ScheduledDateTime = DateTime.MinValue;
@@ -99,7 +99,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_missing_participants_error()
+        public async Task Should_return_missing_participants_error()
         {
             var request = BuildRequest();
             request.Participants = Enumerable.Empty<ParticipantRequest>().ToList();
@@ -114,7 +114,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_return_participants_error()
+        public async Task Should_return_participants_error()
         {
             var request = BuildRequest();
             request.Participants[0].Username = string.Empty;

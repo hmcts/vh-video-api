@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         [TestCase(ConferenceState.Paused, false)]
         [TestCase(ConferenceState.Suspended, false)]
         [TestCase(ConferenceState.InSession, false)]
-        public void should_check_if_closed(ConferenceState state, bool isClosed)
+        public void Should_check_if_closed(ConferenceState state, bool isClosed)
         {
             var conference = new ConferenceBuilder()
                 .WithConferenceStatus(state).Build();
@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         }
 
         [Test]
-        public void should_not_be_closed_by_default()
+        public void Should_not_be_closed_by_default()
         {
             var conference = new ConferenceBuilder().Build();
             conference.IsClosed().Should().BeFalse();

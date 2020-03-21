@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Mappings
         private readonly TaskToResponseMapper _mapper = new TaskToResponseMapper();
 
         [Test]
-        public void should_map_all_properties()
+        public void Should_map_all_properties()
         {
             var alert = Builder<Task>.CreateNew()
                 .WithFactory(() => new Task(Guid.NewGuid(), "Automated Test", TaskType.Hearing)).Build();

@@ -27,7 +27,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task should_add_a_message()
+        public async Task Should_add_a_message()
         {
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceId = seededConference.Id;
@@ -56,7 +56,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
+        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var command = new AddInstantMessageCommand(Guid.NewGuid(), "Display Name", "Test message");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));

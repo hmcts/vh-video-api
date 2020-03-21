@@ -12,7 +12,7 @@ namespace VideoApi.UnitTests.Mappings
         private readonly ConferenceToSummaryResponseMapper _mapper = new ConferenceToSummaryResponseMapper();
 
         [Test]
-        public void should_map_all_properties()
+        public void Should_map_all_properties()
         {
             var conference = new ConferenceBuilder()
                 .WithConferenceStatus(ConferenceState.InSession)
@@ -38,7 +38,7 @@ namespace VideoApi.UnitTests.Mappings
         }
 
         [Test]
-        public void should_map_only_active_tasks_properties()
+        public void Should_map_only_active_tasks_properties()
         {
             var conference = new ConferenceBuilder()
                 .WithConferenceStatus(ConferenceState.InSession)
@@ -60,7 +60,7 @@ namespace VideoApi.UnitTests.Mappings
         }
 
         [Test]
-        public void should_map_if_no_tasks_assign_to_conference()
+        public void Should_map_if_no_tasks_assign_to_conference()
         {
             var conference = new ConferenceBuilder()
                 .WithConferenceStatus(ConferenceState.InSession)

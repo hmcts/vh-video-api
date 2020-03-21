@@ -16,7 +16,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
     public class HandleConsultationRequestTests : ConsultationControllerTestBase
     {
         [Test]
-        public async Task should_raise_notification_to_requester_and_admin_when_consultation_is_accepted()
+        public async Task Should_raise_notification_to_requester_and_admin_when_consultation_is_accepted()
         {
             var conferenceId = TestConference.Id;
             var requestedBy = TestConference.GetParticipants()[2];
@@ -41,7 +41,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task should_return_notfound_when_no_requested_by_participant_is_found()
+        public async Task Should_return_notfound_when_no_requested_by_participant_is_found()
         {
             var conferenceId = TestConference.Id;
             var requestedBy = TestConference.GetParticipants()[2];
@@ -62,7 +62,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task should_return_notfound_when_no_requested_for_participant_is_found()
+        public async Task Should_return_notfound_when_no_requested_for_participant_is_found()
         {
             var conferenceId = TestConference.Id;
             var requestedFor = TestConference.GetParticipants()[3];
@@ -84,7 +84,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
 
         [Test]
-        public async Task should_return_error_when_consultation_accepted_but_no_room_is_available()
+        public async Task Should_return_error_when_consultation_accepted_but_no_room_is_available()
         {
             var conferenceId = TestConference.Id;
             var requestedBy = TestConference.GetParticipants()[2];

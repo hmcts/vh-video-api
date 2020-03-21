@@ -48,7 +48,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_return_closed_conferences_with_im_messages_closed_over_30_minutes_ago()
+        public async Task Should_return_closed_conferences_with_im_messages_closed_over_30_minutes_ago()
         {
             conferenceList = new List<Domain.Conference>();
             var conferenceType = typeof(Domain.Conference);

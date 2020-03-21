@@ -1,54 +1,50 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
+using AcceptanceTests.Common.Api.Helpers;
 using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
-using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
+using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 
 namespace VideoApi.IntegrationTests.Steps
 {
     [Binding]
-    public sealed class ConferenceSteps : StepsBase
+    public sealed class ConferenceBaseSteps : BaseSteps
     {
-        private readonly ConferenceTestContext _conferenceTestContext;
-        private readonly ConferenceEndpoints _endpoints = new ApiUriFactory().ConferenceEndpoints;
+        private readonly TestContext _context;
+        private ConferenceDetailsResponse _conferenceDetails;
+        private readonly CommonSteps _commonSteps;
 
-        public ConferenceSteps(ApiTestContext apiTestContext, ConferenceTestContext conferenceTestContext) : base(
-            apiTestContext)
+        public ConferenceBaseSteps(TestContext context, CommonSteps commonSteps)
         {
-            _conferenceTestContext = conferenceTestContext;
+            _context = context;
+            _commonSteps = commonSteps;
         }
 
         [Given(@"I have a get details for a conference request by username with a (.*) username")]
         [Given(@"I have a get details for a conference request by username with an (.*) username")]
-        public async Task GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername(Scenario scenario)
+        public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername(Scenario scenario)
         {
             string username;
             switch (scenario)
             {
                 case Scenario.Valid:
                 {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    username = seededConference.Participants.First().Username;
+                    username = _context.Test.Conference.Participants.First().Username;
                     break;
                 }
 
@@ -61,49 +57,50 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.GetConferenceDetailsByUsername(username);
-            ApiTestContext.HttpMethod = HttpMethod.Get;
+            _context.Uri = GetConferenceDetailsByUsername(username);
+            _context.HttpMethod = HttpMethod.Get;
         }
 
-        [Given(@"When I send the request to the endpoint")]
+        [Given(@"I have a valid get conferences for today request")]
         public void GivenIHaveAGetConferencesTodayRequest()
         {
-            ApiTestContext.Uri = _endpoints.GetConferencesToday;
-            ApiTestContext.HttpMethod = HttpMethod.Get;
+            _context.Uri = GetConferencesToday;
+            _context.HttpMethod = HttpMethod.Get;
         }
-        
-        [Given(@"I send the request to the get expired conferences endpoint")]
-        public void GivenIHaveAGetExpiredConferencesRequest()
+
+        [Given(@"I have a valid close conference request")]
+        public void GivenIHaveACloseConferenceRequest()
         {
-            ApiTestContext.Uri = _endpoints.GetExpiredOpenConferences;
-            ApiTestContext.HttpMethod = HttpMethod.Get;
+            _context.Uri = CloseConference(_context.Test.Conference.Id);
+            _context.HttpMethod = HttpMethod.Put;
         }
-        
-        [Given(@"I send the request to close all conferences")]
-        public async Task GivenIHaveAGetOpenConferencesRequest()
+
+        [Given(@"I have a close conference request for a nonexistent conference id")]
+        public void GivenIHaveACloseConferenceRequestForANonexistentConferenceId()
         {
-            foreach (var conferenceId in _conferenceTestContext.SeededConferences)
-            {
-                ApiTestContext.Uri = _endpoints.CloseConference(conferenceId);
-                ApiTestContext.ResponseMessage = await SendPutRequestAsync(ApiTestContext);
-                ApiTestContext.ResponseMessage.StatusCode.Should().Be(HttpStatusCode.NoContent);
-                ApiTestContext.ResponseMessage.IsSuccessStatusCode.Should().Be(true);
-            }
+            _context.Uri = CloseConference(Guid.NewGuid());
+            _context.HttpMethod = HttpMethod.Put;
+        }
+
+        [Given(@"I have an invalid close conference request")]
+        public void GivenIHaveAnInvalidCloseConferenceRequest()
+        {
+            var guid = Guid.NewGuid();
+            var uri = CloseConference(guid);
+            _context.Uri = uri.Replace(guid.ToString(), "nonexistent");
+            _context.HttpMethod = HttpMethod.Put;
         }
 
         [Given(@"I have a get details for a conference request with a (.*) conference id")]
         [Given(@"I have a get details for a conference request with an (.*) conference id")]
-        public async Task GivenIHaveAGetConferenceDetailsRequest(Scenario scenario)
+        public void GivenIHaveAGetConferenceDetailsRequest(Scenario scenario)
         {
             Guid conferenceId;
             switch (scenario)
             {
                 case Scenario.Valid:
                 {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    conferenceId = seededConference.Id;
+                    conferenceId = _context.Test.Conference.Id;
                     break;
                 }
 
@@ -116,23 +113,20 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.GetConferenceDetailsById(conferenceId);
-            ApiTestContext.HttpMethod = HttpMethod.Get;
+            _context.Uri = GetConferenceDetailsById(conferenceId);
+            _context.HttpMethod = HttpMethod.Get;
         }
 
         [Given(@"I have a get details for a conference request with a (.*) hearing ref id")]
         [Given(@"I have a get details for a conference request with an (.*) hearing ref id")]
-        public async Task GivenIHaveAGetConferenceDetailsByHearingRefIdRequest(Scenario scenario)
+        public void GivenIHaveAGetConferenceDetailsByHearingRefIdRequest(Scenario scenario)
         {
             Guid hearingRefId;
             switch (scenario)
             {
                 case Scenario.Valid:
                 {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    hearingRefId = seededConference.HearingRefId;
+                    hearingRefId = _context.Test.Conference.HearingRefId;
                     break;
                 }
 
@@ -145,8 +139,8 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.GetConferenceByHearingRefId(hearingRefId);
-            ApiTestContext.HttpMethod = HttpMethod.Get;
+            _context.Uri = GetConferenceByHearingRefId(hearingRefId);
+            _context.HttpMethod = HttpMethod.Get;
         }
 
         [Given(@"I have a (.*) book a new conference request")]
@@ -168,25 +162,22 @@ namespace VideoApi.IntegrationTests.Steps
                 request.ScheduledDateTime = DateTime.Now.AddDays(-5);
             }
 
-            ApiTestContext.Uri = _endpoints.BookNewConference;
-            ApiTestContext.HttpMethod = HttpMethod.Post;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.Uri = BookNewConference;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
         [Given(@"I have a (.*) remove conference request")]
         [Given(@"I have an (.*) remove conference request")]
-        public async Task GivenIHaveAValidRemoveHearingRequest(Scenario scenario)
+        public void GivenIHaveAValidRemoveHearingRequest(Scenario scenario)
         {
             Guid conferenceId;
             switch (scenario)
             {
                 case Scenario.Valid:
                 {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    conferenceId = seededConference.Id;
+                    conferenceId = _context.Test.Conference.Id;
                     break;
                 }
 
@@ -199,23 +190,39 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            ApiTestContext.Uri = _endpoints.RemoveConference(conferenceId);
-            ApiTestContext.HttpMethod = HttpMethod.Delete;
+            _context.Uri = RemoveConference(conferenceId);
+            _context.HttpMethod = HttpMethod.Delete;
+        }
+
+        [Given(@"I have a valid get expired open conferences by scheduled date request")]
+        public void GivenIHaveAValidGetOpenConferencesByScheduledDateRequest()
+        {
+            _context.Uri = GetExpiredOpenConferences;
+            _context.HttpMethod = HttpMethod.Get;
         }
 
         [Then(@"the conference details should be retrieved")]
         public async Task ThenAConferenceDetailsShouldBeRetrieved()
         {
-            var conference = await GetResponses<ConferenceDetailsResponse>();
-            conference.Should().NotBeNull();
-            ApiTestContext.NewConferenceId = conference.Id;
-            AssertConferenceDetailsResponse.ForConference(conference);
+            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails.Should().NotBeNull();
+            AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
+        }
+
+        [Then(@"the conference should be closed")]
+        public async Task ThenTheConferenceShouldBeClosed()
+        {
+            _context.Uri = GetConferenceDetailsById(_context.Test.Conference.Id); 
+            _context.HttpMethod = HttpMethod.Get;
+            await _commonSteps.WhenISendTheRequestToTheEndpoint();
+            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails.CurrentStatus.Should().Be(ConferenceState.Closed);
         }
 
         [Then(@"the summary of conference details should be retrieved")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
+            var conferences = await Response.GetResponses<List<ConferenceSummaryResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -228,78 +235,74 @@ namespace VideoApi.IntegrationTests.Steps
             }
         }
 
+        [Then(@"only todays conferences should be retrieved")]
+        public async Task ThenOnlyTodaysConferencesShouldBeRetrieved()
+        {
+            var conferences = await Response.GetResponses<List<ConferenceSummaryResponse>>(_context.Response.Content);
+            foreach (var conference in conferences)
+            {
+                conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);
+            }
+        }
+
         [Then(@"the conference should be removed")]
         public async Task ThenTheHearingShouldBeRemoved()
         {
             Conference removedConference;
-            using (var db = new VideoApiDbContext(ApiTestContext.VideoBookingsDbContextOptions))
+            await using (var db = new VideoApiDbContext(_context.Config.VideoBookingsDbContextOptions))
             {
-                removedConference =
-                    await db.Conferences.SingleOrDefaultAsync(x => x.Id == ApiTestContext.NewConferenceId);
+                removedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
             }
-
             removedConference.Should().BeNull();
-            ApiTestContext.NewConferenceId = Guid.Empty;
         }
 
         [Then(@"an empty list is retrieved")]
         public async Task ThenAnEmptyListIsRetrieved()
         {
-            var conferences = await GetResponses<List<ConferenceSummaryResponse>>();
+            var conferences = await Response.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Should().BeEmpty();
         }
-        
-        [Then(@"a list without the closed conferences is retrieved")]
-        public async Task ThenAListWithoutTheClosedConferencesIsRetrieved()
+
+        [Then(@"a list without closed conferences is retrieved")]
+        public async Task ThenAListWithoutClosedConferencesIsRetrieved()
         {
-            var conferencesIds = (await GetResponses<List<ExpiredConferencesResponse>>()).Select(x => x.Id);
-            conferencesIds.Should().NotContain(_conferenceTestContext.SeededConferences);
-        }
-        
-        [Then(@"the responses list should not contain closed conferences")]
-        public async Task ThenTheResponsesListShouldNotContainClosedConferences()
-        {
-            var conferences = await GetResponses<List<ExpiredConferencesResponse>>();
-            conferences.Should().NotBeEmpty();
+            var conferences = await Response.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
+            conferences.Count.Should().BeGreaterThan(0);
+            conferences.Any(x => x.Id.Equals(_context.Test.YesterdayClosedConference.Id)).Should().BeFalse();
         }
 
         [When(@"I save the conference details")]
         public async Task WhenISaveTheConferenceDetails()
         {
-            var conference = await GetResponses<ConferenceDetailsResponse>();
-            conference.Should().NotBeNull();
-            ApiTestContext.NewConferenceId = conference.Id;
-            _conferenceTestContext.ConferenceDetails = conference;
+            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails.Should().NotBeNull();
         }
 
         [Then(@"the response should be the same")]
         public async Task ThenTheResponseShouldBeTheSame()
         {
-            var conference = await GetResponses<ConferenceDetailsResponse>();
+            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            conference.Should().BeEquivalentTo(_conferenceTestContext.ConferenceDetails);
+            conference.Should().BeEquivalentTo(_conferenceDetails);
         }
 
         [Given(@"I have a (.*) update a conference request")]
-        public async Task GivenIHaveAValidUpdateAConferenceRequest(Scenario scenario)
+        public void GivenIHaveAValidUpdateAConferenceRequest(Scenario scenario)
         {
             UpdateConferenceRequest request;
             switch (scenario)
             {
                 case Scenario.Valid:
                 {
-                    var seededConference = await ApiTestContext.TestDataManager.SeedConference();
-                    TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-                    ApiTestContext.NewConferenceId = seededConference.Id;
-                    var scheduledDateTime = seededConference.ScheduledDateTime.AddDays(1);
+                    var scheduledDateTime = _context.Test.Conference.ScheduledDateTime.AddDays(1);
                     request = new UpdateConferenceRequest
                     {
-                        CaseName = seededConference.CaseName,
+                        CaseName = _context.Test.Conference.CaseName,
                         ScheduledDateTime = scheduledDateTime,
-                        CaseNumber = seededConference.CaseNumber,
-                        HearingRefId = seededConference.HearingRefId,
-                        ScheduledDuration = seededConference.ScheduledDuration + 10,
-                        CaseType = seededConference.CaseType
+                        CaseNumber = _context.Test.Conference.CaseNumber,
+                        HearingRefId = _context.Test.Conference.HearingRefId,
+                        ScheduledDuration = _context.Test.Conference.ScheduledDuration + 10,
+                        CaseType = _context.Test.Conference.CaseType
                     };
                     break;
                 }
@@ -322,16 +325,10 @@ namespace VideoApi.IntegrationTests.Steps
             }
 
 
-            ApiTestContext.Uri = _endpoints.UpdateConference;
-            ApiTestContext.HttpMethod = HttpMethod.Put;
-            var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
-            ApiTestContext.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        }
-
-        private async Task<T> GetResponses<T>()
-        {
-            var json = await ApiTestContext.ResponseMessage.Content.ReadAsStringAsync();
-            return ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<T>(json);
+            _context.Uri = UpdateConference;
+            _context.HttpMethod = HttpMethod.Put;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
     }
 }

@@ -7,7 +7,7 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class AddInstantMessageTests
     {
         [Test]
-        public void should_add_new_message_to_hearing()
+        public void Should_add_new_message_to_hearing()
         {
             var conference = new ConferenceBuilder().Build();
             var beforeCount = conference.GetInstantMessageHistory().Count;

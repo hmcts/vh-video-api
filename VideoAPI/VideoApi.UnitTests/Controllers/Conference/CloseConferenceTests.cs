@@ -47,12 +47,12 @@ namespace VideoApi.UnitTests.Controllers
 
             var result = await Controller.CloseConferenceAsync(Guid.NewGuid());
 
-            var typedResult = (BadRequestResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            var typedResult = (NotFoundResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
         }
 
         [Test]
-        public async Task Should_return_bad_request_for_given_invalid_user_name()
+        public async Task Should_return_bad_request_for_given_invalid_conferenceid()
         {
             var conferenceId = Guid.Empty;
 

@@ -9,7 +9,7 @@ namespace VideoApi.UnitTests.Domain.Participants
     public class UpdateTestCallResultTests
     {
         [Test]
-        public void should_add_test_call_result()
+        public void Should_add_test_call_result()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
                 .WithCaseTypeGroup("Claimant")

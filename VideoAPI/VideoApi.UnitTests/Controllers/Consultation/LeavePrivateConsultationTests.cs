@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task should_return_notfound_when_no_matching_participant_is_found()
+        public async Task Should_return_notfound_when_no_matching_participant_is_found()
         {
             var conferenceId = TestConference.Id;
 
@@ -48,7 +48,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task should_return_notfound_when_no_matching_conference_is_found()
+        public async Task Should_return_notfound_when_no_matching_conference_is_found()
         {
             var leaveConsultationRequest = new LeaveConsultationRequest
             {
@@ -62,7 +62,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task should_return_badrequest_when_participant_current_room_is_not_consultation_room_type()
+        public async Task Should_return_badrequest_when_participant_current_room_is_not_consultation_room_type()
         {
             var conferenceId = TestConference.Id;
             var request = TestConference.GetParticipants()[2];

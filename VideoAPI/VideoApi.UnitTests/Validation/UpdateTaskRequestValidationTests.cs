@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation()
+        public async Task Should_pass_validation()
         {
             var request = new UpdateTaskRequest
             {
@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Validation
 
 
         [Test]
-        public async Task should_return_missing_username()
+        public async Task Should_return_missing_username()
         {
             var request = new UpdateTaskRequest();
 

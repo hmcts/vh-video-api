@@ -45,7 +45,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_get_conference_today()
+        public async Task Should_get_conference_today()
         {
             var today = DateTime.Today.AddHours(10);
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);

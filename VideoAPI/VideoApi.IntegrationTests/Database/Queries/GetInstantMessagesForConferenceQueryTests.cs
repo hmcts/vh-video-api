@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task should_retrieve_all_messages()
+        public async Task Should_retrieve_all_messages()
         {
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Claimant")
@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public void should_throw_conference_not_found_exception_when_conference_does_not_exist()
+        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
             var query = new GetInstantMessagesForConferenceQuery(conferenceId);

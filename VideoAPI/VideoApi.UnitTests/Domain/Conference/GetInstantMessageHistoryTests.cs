@@ -8,7 +8,7 @@ namespace VideoApi.UnitTests.Domain.Conference
     public class GetInstantMessageHistoryTests
     {
         [Test]
-        public void should_get_all_messages_from_hearing()
+        public void Should_get_all_messages_from_hearing()
         {
             var conference = new ConferenceBuilder().Build();
             var beforeCount = conference.GetInstantMessageHistory().Count;

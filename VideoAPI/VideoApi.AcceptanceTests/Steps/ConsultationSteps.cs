@@ -1,16 +1,15 @@
-﻿using TechTalk.SpecFlow;
-using Testing.Common.Helper;
+using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
+using static Testing.Common.Helper.ApiUriFactory.ConsultationEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class ConsultationSteps : BaseSteps
+    public sealed class ConsultationSteps
     {
         private readonly TestContext _context;
-        private readonly ConsultationEndpoints _endpoints = new ApiUriFactory().ConsultationEndpoints;
 
         public ConsultationSteps(TestContext injectedContext)
         {
@@ -20,18 +19,18 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid request private consultation request")]
         public void GivenIHaveAValidRequestPrivateConsultationRequest()
         {
-            var individual = _context.NewConference.Participants.Find(x => x.UserRole.Equals(UserRole.Individual)).Id;
-            var representative = _context.NewConference.Participants
+            var individual = _context.Test.ConferenceResponse.Participants.Find(x => x.UserRole.Equals(UserRole.Individual)).Id;
+            var representative = _context.Test.ConferenceResponse.Participants
                 .Find(x => x.UserRole.Equals(UserRole.Representative)).Id;
 
             var request = new ConsultationRequest()
             {
-                ConferenceId = _context.NewConferenceId,
+                ConferenceId = _context.Test.ConferenceResponse.Id,
                 RequestedBy = individual,
                 RequestedFor = representative,
                 Answer = ConsultationAnswer.Accepted
             };
-            _context.Request = _context.Post(_endpoints.HandleConsultationRequest, request);
+            _context.Request = _context.Post(HandleConsultationRequest, request);
         }
     }
 }

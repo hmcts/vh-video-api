@@ -7,7 +7,7 @@ using VideoApi.AcceptanceTests.Contexts;
 namespace VideoApi.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class CommonSteps : BaseSteps
+    public sealed class CommonSteps
     {
         private readonly TestContext _context;
 
@@ -20,8 +20,6 @@ namespace VideoApi.AcceptanceTests.Steps
         public void WhenISendTheRequestToTheEndpoint()
         {
             _context.Response = _context.Client().Execute(_context.Request);
-            if (_context.Response.Content != null)
-                _context.Json = _context.Response.Content;
         }
 
         [Then(@"the response should have the status (.*) and success status (.*)")]

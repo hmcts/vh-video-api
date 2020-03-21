@@ -10,7 +10,7 @@ namespace VideoApi.UnitTests.Mappings
         private readonly MeetingRoomToResponseMapper _mapper = new MeetingRoomToResponseMapper();
 
         [Test]
-        public void should_map_all_properties()
+        public void Should_map_all_properties()
         {
             const string adminUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string judgeUri = "https://judgetestpoc.node.com/viju/#/?conference=user@email.com&output=embed";
