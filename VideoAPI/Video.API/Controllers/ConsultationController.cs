@@ -187,7 +187,7 @@ namespace Video.API.Controllers
                 RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
 
                 _logger.LogTrace($"PRIVATE_CONSULTATION - T InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
-                _logger.LogWarning($"PRIVATE_CONSULTATION - W InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
+                _logger.LogWarning($"PRIVATE_CONSULTATION - W - InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
                 _logger.LogError($"PRIVATE_CONSULTATION - E InitiateStartConsultation - Conference: {conference.Id} - Roomtype in Cache has value: {roomInCache.HasValue}");
 
                 if (roomInCache.HasValue)
