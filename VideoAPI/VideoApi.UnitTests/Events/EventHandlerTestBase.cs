@@ -9,6 +9,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Handlers.Core;
+using VideoApi.Services;
 using VideoApi.UnitTests.Stubs;
 
 namespace VideoApi.UnitTests.Events
@@ -19,6 +20,7 @@ namespace VideoApi.UnitTests.Events
         protected List<IEventHandler> EventHandlersList;
         protected Mock<IQueryHandler> QueryHandlerMock;
         protected ServiceBusQueueClientStub ServiceBusQueueClient;
+        protected Mock<IConsultationCache> ConsultationCacheMock;
 
         protected Conference TestConference;
 
@@ -28,6 +30,7 @@ namespace VideoApi.UnitTests.Events
             QueryHandlerMock = new Mock<IQueryHandler>();
             CommandHandlerMock = new Mock<ICommandHandler>();
             ServiceBusQueueClient = new ServiceBusQueueClientStub();
+            ConsultationCacheMock = new Mock<IConsultationCache>();
 
             EventHandlersList = new List<IEventHandler>
             {
@@ -42,7 +45,7 @@ namespace VideoApi.UnitTests.Events
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
+                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient, ConsultationCacheMock.Object),
                 new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
             };
