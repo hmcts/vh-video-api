@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using VideoApi.Common;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -32,8 +33,12 @@ namespace VideoApi.Events.Handlers
                     callbackEvent.TransferTo);
             await CommandHandler.Handle(command);
 
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
+                         $"PRIVATE_CONSULTATION - AT - PublishStatusAsync - Conference: {SourceConference.Id} - removed from the Cache");
+
             // Remove from the cache
             _consultationCache.Remove(SourceConference.Id);
+            _consultationCache.Remove(callbackEvent.ConferenceId);
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
