@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
 
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.StopPrivateConsultationAsync(TestConference, RoomType.ConsultationRoom1), Times.Once);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
         }

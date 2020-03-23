@@ -147,7 +147,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) book a new conference request")]
         public void GivenIHaveABookANewConferenceRequest(Scenario scenario)
         {
-            var request = new BookNewConferenceRequestBuilder()
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")

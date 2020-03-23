@@ -24,7 +24,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                                                 Representee = "Represent" };
 
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
         }
 
@@ -37,7 +37,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             await _controller.UpdateParticipantDetailsAsync(conferenceId, participant.Id, updateParticipantRequest);
 
-            _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             _mockCommandHandler.Verify(c => c.Handle(It.IsAny<UpdateParticipantDetailsCommand>()), Times.Once);
         }
 
@@ -45,8 +45,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
         public async Task Should_return_notfound_with_no_matching_conference()
         {
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((Conference)null); 
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync((VideoApi.Domain.Conference)null); 
             
             var result = await _controller.UpdateParticipantDetailsAsync(Guid.NewGuid(), Guid.NewGuid(), updateParticipantRequest);
 

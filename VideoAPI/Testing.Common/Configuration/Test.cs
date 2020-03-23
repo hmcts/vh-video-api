@@ -8,7 +8,7 @@ namespace Testing.Common.Configuration
 {
     public class Test
     {
-        public AddHeartbeatRequest HeartbeatData { get; set; }
+        public string CaseName { get; set; }
         public List<Conference> ClosedConferences { get; set; }
         public List<Conference> ClosedConferencesWithMessages { get; set; }
         public Conference Conference { get; set; }
@@ -16,6 +16,7 @@ namespace Testing.Common.Configuration
         public ConferenceDetailsResponse ConferenceResponse { get; set; }
         public List<ConferenceSummaryResponse> ConferenceResponses { get; set; }
         public List<Conference> Conferences { get; set; }
+        public AddHeartbeatRequest HeartbeatData { get; set; }
         public AddInstantMessageRequest Message { get; set; }
         public Guid ParticipantId { get; set; }
         public long TaskId { get; set; }

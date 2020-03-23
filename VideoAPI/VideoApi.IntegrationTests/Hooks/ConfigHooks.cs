@@ -57,11 +57,13 @@ namespace VideoApi.IntegrationTests.Hooks
         {
             context.Test = new Test()
             {
+                CaseName = "Video Api Integration Test",
                 ClosedConferences = new List<Conference>(),
                 ClosedConferencesWithMessages = new List<Conference>(),
                 Conferences = new List<Conference>(),
                 TodaysConferences = new List<Conference>()
             };
+            context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
         }
 
         private void RegisterHearingServices(TestContext context)

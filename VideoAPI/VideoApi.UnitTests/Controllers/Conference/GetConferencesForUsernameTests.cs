@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Testing.Common.Assertions;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.UnitTests.Controllers
+namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class GetConferencesForUsernameTests : ConferenceControllerTestBase
     {

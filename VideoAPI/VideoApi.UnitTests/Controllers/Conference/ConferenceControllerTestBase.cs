@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using VideoApi.Common.Configuration;
@@ -15,7 +15,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.UnitTests.Controllers
+namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class ConferenceControllerTestBase
     {
@@ -46,16 +46,16 @@ namespace VideoApi.UnitTests.Controllers
                 .Build();
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(TestConference);
 
             QueryHandlerMock
-             .Setup(x => x.Handle<GetConferencesForTodayByUsernameQuery, List<Conference>>(It.IsAny<GetConferencesForTodayByUsernameQuery>()))
-             .ReturnsAsync(new List<Conference>());
+             .Setup(x => x.Handle<GetConferencesForTodayByUsernameQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetConferencesForTodayByUsernameQuery>()))
+             .ReturnsAsync(new List<VideoApi.Domain.Conference>());
 
             CommandHandlerMock
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))

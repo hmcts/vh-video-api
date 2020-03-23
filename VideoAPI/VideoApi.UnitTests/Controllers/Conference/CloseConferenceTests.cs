@@ -10,7 +10,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.UnitTests.Controllers
+namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class CloseConferenceTests : ConferenceControllerTestBase
     {
@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Controllers
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.DeleteVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Never);
         }
@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Controllers
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.DeleteVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Once);
         }
@@ -42,8 +42,8 @@ namespace VideoApi.UnitTests.Controllers
         public async Task Should_return_notfound_with_no_matching_conference()
         {
             QueryHandlerMock
-             .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-             .ReturnsAsync((Conference)null);
+             .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+             .ReturnsAsync((VideoApi.Domain.Conference)null);
 
             var result = await Controller.CloseConferenceAsync(Guid.NewGuid());
 

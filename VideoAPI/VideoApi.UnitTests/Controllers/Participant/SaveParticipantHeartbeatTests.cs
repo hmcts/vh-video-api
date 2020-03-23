@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         public void TestInitialize()
         {
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
         }
 
@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
             
             var result = await _controller.SaveHeartbeatDataForParticipantAsync(conferenceId, participantId, new AddHeartbeatRequest());
 
-            _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             _mockCommandHandler.Verify(c => c.Handle(It.IsAny<SaveHeartbeatCommand>()), Times.Once);
 
             result.Should().NotBeNull();
@@ -40,8 +40,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
         public async Task Should_return_badrequest_when_request_is_null()
         {
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((Conference)null); 
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync((VideoApi.Domain.Conference)null); 
             
             var result = await _controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, null);
 
@@ -53,8 +53,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
         public async Task Should_return_notfound_with_no_matching_conference()
         {
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((Conference)null); 
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync((VideoApi.Domain.Conference)null); 
             
             var result = await _controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, new AddHeartbeatRequest());
 
