@@ -215,7 +215,8 @@ namespace Video.API.Controllers
                     // Retry until the cache is removed from the previous request
                     var retryPolicy = Policy
                     .HandleResult<RoomType?>(room => !room.HasValue)
-                    .WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
+                    .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(2));
+                    //.WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
 
                     await retryPolicy.ExecuteAsync(() => _consultationCache.GetConsultationRoom(conference.Id));
 
@@ -247,16 +248,6 @@ namespace Video.API.Controllers
                 }
 
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
-
-                // Remove from the cache
-                _consultationCache.Remove(conference.Id);
-
-                _logger.LogTrace($"PRIVATE_CONSULTATION - T - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
-                _logger.LogWarning($"PRIVATE_CONSULTATION - W - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
-                _logger.LogError($"PRIVATE_CONSULTATION - E - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - AT - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache");
-                ApplicationLogger.TraceException("PRIVATE_CONSULTATION_Exception", "InitiateStartConsultationAsync",
-                         new Exception($"PRIVATE_CONSULTATION - AT - InitiateStartConsultation - Conference: {conference.Id} - Roomtype removed from the Cache"), null, null);
 
             }
         }
