@@ -79,8 +79,8 @@ namespace VideoApi.IntegrationTests.Hooks
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VhVideoApi);
-            context.Config.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            context.TestDataManager = new TestDataManager(context.Config.VhServices, context.Config.VideoBookingsDbContextOptions);
+            context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
+            context.TestDataManager = new TestDataManager(context.Config.VhServices, context.VideoBookingsDbContextOptions);
         }
 
         private static void RegisterServer(TestContext context)

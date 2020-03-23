@@ -160,7 +160,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given("no consultation rooms are available")]
         public async Task GivenNoConsultationRoomsAreAvailable()
         {
-            await using var db = new VideoApiDbContext(_context.Config.VideoBookingsDbContextOptions);
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var conference = await db.Conferences
                 .Include("Participants")
                 .SingleAsync(x => x.Id == _context.Test.Conference.Id);
@@ -263,7 +263,7 @@ namespace VideoApi.IntegrationTests.Steps
             }
 
             var participantId = _context.Test.Conference.Participants[0].Id;
-            await using (var db = new VideoApiDbContext(_context.Config.VideoBookingsDbContextOptions))
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
             {
                 var conference = await db.Conferences
                     .Include("Participants")

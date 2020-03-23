@@ -249,7 +249,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheHearingShouldBeRemoved()
         {
             Conference removedConference;
-            await using (var db = new VideoApiDbContext(_context.Config.VideoBookingsDbContextOptions))
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
             {
                 removedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
             }
