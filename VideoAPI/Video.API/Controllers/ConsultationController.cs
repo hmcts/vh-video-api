@@ -186,11 +186,11 @@ namespace Video.API.Controllers
             {
                 RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
 
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - AT InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id}, Roomtype in Cache has value: {roomInCache.HasValue}");
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id}, Roomtype in Cache has value: {roomInCache.HasValue}");
                 
                 if (roomInCache.HasValue)
                 {
-                    ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - AT - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - Roomtype {roomInCache.Value} found in the Cache");
+                    ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - Roomtype {roomInCache.Value} found in the Cache");
                     
                     // Retry until the cache is removed from the previous request
                     var retryPolicy = Policy
@@ -198,25 +198,35 @@ namespace Video.API.Controllers
                     .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(2));
                     //.WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
 
-                    await retryPolicy.ExecuteAsync(() => _consultationCache.GetConsultationRoom(conference.Id));
+                    await retryPolicy.ExecuteAsync(() => {
+
+                        ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync",
+                         $"PRIVATE_CONSULTATION - InitiateStartConsultation. Executing policy - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} ");
+                        var roomType1 = _consultationCache.GetConsultationRoom(conference.Id);
+
+                        ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync",
+                         $"PRIVATE_CONSULTATION - InitiateStartConsultation. Executing policy - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - CachedRoom : {roomType1}");
+
+                        return roomType1;
+                     });
 
                     // Get a fresh conference record again
                     conference = await GetConference(conference.Id);
 
                     ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync",
-                         $"PRIVATE_CONSULTATION - AT - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - gets a fresh record");
+                         $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - gets a fresh record");
                 }
                 else
                 {
 
                     ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync",
-                         $"PRIVATE_CONSULTATION - AT - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - Roomtype **NOT** found in the Cache");
+                         $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - Roomtype **NOT** found in the Cache");
 
                     // If there is nothing in the cache, then add this room to the cache
                     var targetRoom = conference.GetAvailableConsultationRoom();
 
                     ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync",
-                         $"PRIVATE_CONSULTATION - AT - InitiateStartConsultation - Conference: {conference.Id} - Roomtype {targetRoom} addd to the Cache, between {requestedBy.Id} and {requestedFor.Id}");
+                         $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Roomtype {targetRoom} addd to the Cache, between {requestedBy.Id} and {requestedFor.Id}");
 
                     await _consultationCache.AddConsultationRoomToCache(conference.Id, targetRoom);
                 }
