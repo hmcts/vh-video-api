@@ -43,7 +43,6 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(UpdateConferenceDetailsCommand command)
         {
             var conference = await _context.Conferences
-                .Include("ConferenceStatuses")
                 .Where(x => x.State != ConferenceState.Closed)
                 .SingleOrDefaultAsync(x => x.HearingRefId == command.HearingRefId);
 
