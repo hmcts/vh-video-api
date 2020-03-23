@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using AcceptanceTests.Common.Data.Helpers;
 using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Contract.Requests;
@@ -12,7 +11,7 @@ namespace Testing.Common.Helper.Builders.Api
     {
         private readonly BookNewConferenceRequest _bookNewConferenceRequest;
 
-        public BookNewConferenceRequestBuilder()
+        public BookNewConferenceRequestBuilder(string caseName)
         {
             var fromRandomNumber = new Random();
             _bookNewConferenceRequest = Builder<BookNewConferenceRequest>.CreateNew()
@@ -20,7 +19,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.CaseType = "Civil Money Claims")
                 .With(x => x.ScheduledDateTime = DateTime.Now.ToLocalTime().AddMinutes(2))
                 .With(x => x.CaseNumber = $"{GenerateRandom.CaseNumber(fromRandomNumber)}")
-                .With(x => x.CaseName = $"Video Api Automated Test {GenerateRandom.Letters(fromRandomNumber)}")
+                .With(x => x.CaseName = $"{caseName} {GenerateRandom.Letters(fromRandomNumber)}")
                 .With(x => x.ScheduledDuration = 120)
                 .With(x => x.Participants = new List<ParticipantRequest>())
                 .Build();

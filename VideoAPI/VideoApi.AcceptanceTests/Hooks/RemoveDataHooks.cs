@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
+using VideoApi.Contract.Responses;
+using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 
 namespace VideoApi.AcceptanceTests.Hooks
 {
@@ -23,6 +28,19 @@ namespace VideoApi.AcceptanceTests.Hooks
             foreach (var id in context.Test.ConferenceIds)
             {
                 RemoveConference(context, id);
+            }
+        }
+
+        [AfterScenario(Order = (int)HooksSequence.RemoveAllTodaysConferences)]
+        public static void RemoveAllTodaysConferences(TestContext context)
+        {
+            context.Request = context.Get(GetConferencesToday);
+            context.Response = context.Client().Execute(context.Request);
+            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(context.Response.Content);
+            if (conferences.Count <= 0) return;
+            foreach (var conference in conferences.Where(conference => conference.CaseName.Contains(context.Test.CaseName)))
+            {
+                RemoveConference(context, conference.Id);
             }
         }
 

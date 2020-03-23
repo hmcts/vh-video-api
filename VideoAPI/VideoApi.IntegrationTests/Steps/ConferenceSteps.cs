@@ -147,7 +147,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an (.*) book a new conference request")]
         public void GivenIHaveABookANewConferenceRequest(Scenario scenario)
         {
-            var request = new BookNewConferenceRequestBuilder()
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
@@ -249,7 +249,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheHearingShouldBeRemoved()
         {
             Conference removedConference;
-            await using (var db = new VideoApiDbContext(_context.Config.VideoBookingsDbContextOptions))
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
             {
                 removedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
             }

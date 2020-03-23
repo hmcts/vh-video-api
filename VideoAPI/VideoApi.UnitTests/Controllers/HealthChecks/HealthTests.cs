@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -37,7 +37,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             var query = new GetConferenceByIdQuery(hearingId);
 
             _controller = new HealthCheckController(_mockQueryHandler.Object, _mockVideoPlatformService.Object);
-            _mockQueryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(query))
+            _mockQueryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(query))
                 .Returns(Task.FromResult(conference));
 
             var result = await _controller.HealthAsync();
@@ -52,7 +52,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             
             _controller = new HealthCheckController(_mockQueryHandler.Object, _mockVideoPlatformService.Object);
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ThrowsAsync(exception);
             _mockVideoPlatformService
                 .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
@@ -76,8 +76,8 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
 
             _controller = new HealthCheckController(_mockQueryHandler.Object, _mockVideoPlatformService.Object);
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(Builder<Conference>.CreateNew().Build);
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(Builder<VideoApi.Domain.Conference>.CreateNew().Build);
             _mockVideoPlatformService
                 .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(exception);
@@ -100,8 +100,8 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
 
             _controller = new HealthCheckController(_mockQueryHandler.Object, _mockVideoPlatformService.Object);
             _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(Builder<Conference>.CreateNew().Build);
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(Builder<VideoApi.Domain.Conference>.CreateNew().Build);
             _mockVideoPlatformService
                 .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
                 .ReturnsAsync((TestCallResult)null);

@@ -16,7 +16,6 @@ namespace Testing.Common.Helper
         private static ZapConfiguration ZapConfiguration =>
             new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddUserSecrets("9AECE566-336D-4D16-88FA-7A76C27321CD")
                 .Build()
                 .GetSection("ZapConfiguration")
                 .Get<ZapConfiguration>();

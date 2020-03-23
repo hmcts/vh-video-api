@@ -8,7 +8,7 @@ using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.UnitTests.Controllers
+namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class UpdateConferenceTests : ConferenceControllerTestBase
     {
