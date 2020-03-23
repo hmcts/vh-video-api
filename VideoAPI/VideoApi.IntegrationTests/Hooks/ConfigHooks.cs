@@ -57,11 +57,13 @@ namespace VideoApi.IntegrationTests.Hooks
         {
             context.Test = new Test()
             {
+                CaseName = "Video Api Integration Test",
                 ClosedConferences = new List<Conference>(),
                 ClosedConferencesWithMessages = new List<Conference>(),
                 Conferences = new List<Conference>(),
                 TodaysConferences = new List<Conference>()
             };
+            context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
         }
 
         private void RegisterHearingServices(TestContext context)
@@ -77,8 +79,8 @@ namespace VideoApi.IntegrationTests.Hooks
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VhVideoApi);
-            context.Config.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            context.TestDataManager = new TestDataManager(context.Config.VhServices, context.Config.VideoBookingsDbContextOptions);
+            context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
+            context.TestDataManager = new TestDataManager(context.Config.VhServices, context.VideoBookingsDbContextOptions);
         }
 
         private static void RegisterServer(TestContext context)

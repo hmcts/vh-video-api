@@ -9,16 +9,16 @@ using VideoApi.Domain;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.UnitTests.Controllers
+namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class BookNewConferenceTests : ConferenceControllerTestBase
     {
-        private BookNewConferenceRequest request;
+        private BookNewConferenceRequest _request;
 
         [SetUp]
         public void TestInitialize()
         {
-            request = new BookNewConferenceRequestBuilder()
+            _request = new BookNewConferenceRequestBuilder("Video Api Unit Test Hearing")
                .WithJudge()
                .WithRepresentative("Claimant").WithIndividual("Claimant")
                .WithRepresentative("Defendant").WithIndividual("Defendant")
@@ -30,11 +30,11 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>())).ReturnsAsync((MeetingRoom)null);
             
-            await Controller.BookNewConferenceAsync(request);
+            await Controller.BookNewConferenceAsync(_request);
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
         }
 
         [Test]
@@ -42,12 +42,12 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>())).Throws(new DoubleBookingException(Guid.NewGuid()));
 
-            await Controller.BookNewConferenceAsync(request);
+            await Controller.BookNewConferenceAsync(_request);
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
         }
 
         [Test]
@@ -55,11 +55,11 @@ namespace VideoApi.UnitTests.Controllers
         {
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>())).ReturnsAsync(MeetingRoom);
 
-            await Controller.BookNewConferenceAsync(request);
+            await Controller.BookNewConferenceAsync(_request);
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
         }
     }
 }

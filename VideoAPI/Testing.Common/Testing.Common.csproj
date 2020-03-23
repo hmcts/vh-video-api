@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Faker.NETCore" Version="1.0.2" />
@@ -14,12 +14,10 @@
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="NBuilder" Version="6.1.0" />
     <PackageReference Include="OWASPZAPDotNetAPI" Version="2.8.0" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.95" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VideoApi.Common\VideoApi.Common.csproj" />
     <ProjectReference Include="..\VideoApi.Contract\VideoApi.Contract.csproj" />
-    <ProjectReference Include="..\VideoApi.DAL\VideoApi.DAL.csproj" />
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
   </ItemGroup>
 </Project>

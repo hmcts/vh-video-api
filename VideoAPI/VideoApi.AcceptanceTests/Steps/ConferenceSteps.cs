@@ -233,7 +233,7 @@ namespace VideoApi.AcceptanceTests.Steps
 
         private void CreateNewConferenceRequest(DateTime date)
         {
-            var request = new BookNewConferenceRequestBuilder()
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge()
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")

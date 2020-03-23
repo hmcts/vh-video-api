@@ -6,6 +6,7 @@ namespace VideoApi.AcceptanceTests.Hooks
         ConfigHooks = 2,
         HealthCheckHooks = 3,
         RemoveConference = 4,
-        RemoveConferences = 5
+        RemoveConferences = 5,
+        RemoveAllTodaysConferences = 6
     }
 }
