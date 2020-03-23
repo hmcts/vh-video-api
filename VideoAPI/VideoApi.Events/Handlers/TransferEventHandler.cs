@@ -7,15 +7,18 @@ using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using VideoApi.Events.ServiceBus;
+using VideoApi.Services;
 
 namespace VideoApi.Events.Handlers
 {
     public class TransferEventHandler : EventHandlerBase
     {
+        private readonly IConsultationCache _consultationCache;
         public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient) : base(
+            IServiceBusQueueClient serviceBusQueueClient, IConsultationCache consultationCache) : base(
             queryHandler, commandHandler, serviceBusQueueClient)
         {
+            _consultationCache = consultationCache;
         }
 
         public override EventType EventType => EventType.Transfer;
@@ -28,6 +31,9 @@ namespace VideoApi.Events.Handlers
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
                     callbackEvent.TransferTo);
             await CommandHandler.Handle(command);
+
+            // Remove from the cache
+            _consultationCache.Remove(SourceConference.Id);
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)

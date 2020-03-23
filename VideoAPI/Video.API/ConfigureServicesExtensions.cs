@@ -73,7 +73,7 @@ namespace Video.API
         public static IServiceCollection AddCustomTypes(this IServiceCollection services, bool useStub)
         {
             services.AddMemoryCache();
-            
+            services.AddScoped<IConsultationCache, ConsultationCache>();
             services.AddScoped<ITokenProvider, AzureTokenProvider>();
             services.AddTransient<UserApiTokenHandler>();
             services.AddSingleton<ITelemetryInitializer, BadRequestTelemetry>();

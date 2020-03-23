@@ -21,6 +21,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         protected Mock<IQueryHandler> QueryHandlerMock;
         protected Mock<ILogger<ConsultationController>> MockLogger;
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
+        protected Mock<IConsultationCache> ConsultationCacheMock;
 
         protected Conference TestConference;
 
@@ -31,6 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             CommandHandlerMock = new Mock<ICommandHandler>();
             MockLogger = new Mock<ILogger<ConsultationController>>();
             VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
+            ConsultationCacheMock = new Mock<IConsultationCache>();
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -49,7 +51,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .Returns(Task.FromResult(default(object)));
 
             Controller = new ConsultationController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                MockLogger.Object, VideoPlatformServiceMock.Object);
+                MockLogger.Object, VideoPlatformServiceMock.Object, ConsultationCacheMock.Object);
         }
     }
 }
