@@ -74,6 +74,7 @@ namespace Video.API
         {
             services.AddMemoryCache();
             services.AddScoped<IConsultationCache, ConsultationCache>();
+            services.AddScoped<IRoomReservationService, RoomReservationService>();
             services.AddScoped<ITokenProvider, AzureTokenProvider>();
             services.AddTransient<UserApiTokenHandler>();
             services.AddSingleton<ITelemetryInitializer, BadRequestTelemetry>();
