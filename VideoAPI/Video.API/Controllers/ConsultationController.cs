@@ -244,11 +244,12 @@ namespace Video.API.Controllers
             Participant requestedFor, ConsultationAnswer answer)
         {
             
-            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", 
+                $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
 
             if (answer == ConsultationAnswer.Accepted)
             {
-                conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, GetConference);
+                conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, requestedBy.Id, requestedFor.Id, GetConference);
 
                 //Log available room 
                 var roomType = conference.GetAvailableConsultationRoom();
