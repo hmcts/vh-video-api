@@ -31,17 +31,20 @@ namespace Video.API.Controllers
         private readonly ILogger<ConsultationController> _logger;
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly IConsultationCache _consultationCache;
+        private readonly IRoomReservationService _roomReservationService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             ILogger<ConsultationController> logger,
             IVideoPlatformService videoPlatformService,
-            IConsultationCache consultationCache)
+            IConsultationCache consultationCache,
+            IRoomReservationService roomReservationService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _logger = logger;
             _videoPlatformService = videoPlatformService;
             _consultationCache = consultationCache;
+            _roomReservationService = roomReservationService;
         }
 
         /// <summary>
@@ -176,16 +179,21 @@ namespace Video.API.Controllers
             return NoContent();
         }
         
-        private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
+        private async Task InitiateStartConsultationAsyncOld(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
-            
+            RoomType? roomInCache = _consultationCache.GetConsultationRoom(conference.Id).Result;
+
+            var retryPolicy = Policy
+                .HandleResult<RoomType?>(room => !room.HasValue)
+                .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(2));
+            //.WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
+
             ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
 
             if (answer == ConsultationAnswer.Accepted)
             {
-                RoomType? roomInCache = await _consultationCache.GetConsultationRoom(conference.Id);
-
+                
                 ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id}, Roomtype in Cache has value: {roomInCache.HasValue}");
                 
                 if (roomInCache.HasValue)
@@ -193,10 +201,7 @@ namespace Video.API.Controllers
                     ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - between {requestedBy.Id} and {requestedFor.Id} - Roomtype {roomInCache.Value} found in the Cache");
                     
                     // Retry until the cache is removed from the previous request
-                    var retryPolicy = Policy
-                    .HandleResult<RoomType?>(room => !room.HasValue)
-                    .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(2));
-                    //.WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
+
 
                     await retryPolicy.ExecuteAsync(() => {
 
@@ -235,8 +240,31 @@ namespace Video.API.Controllers
             }
         }
 
+        private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
+            Participant requestedFor, ConsultationAnswer answer)
+        {
+            
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
+
+            if (answer == ConsultationAnswer.Accepted)
+            {
+                conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, GetConference);
+
+                //Log available room 
+                var roomType = conference.GetAvailableConsultationRoom();
+
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - Conference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync. Available room : {roomType}");
+
+                await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
+
+            }
+        }
+
+        
         private async Task<Conference> GetConference(Guid conferenceId)
         {
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "GetConference",
+                         $"PRIVATE_CONSULTATION - GetConference - Conference: {conferenceId}");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             return await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
         }

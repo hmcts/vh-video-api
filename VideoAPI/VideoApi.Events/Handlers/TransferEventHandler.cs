@@ -34,11 +34,18 @@ namespace VideoApi.Events.Handlers
             await CommandHandler.Handle(command);
 
             ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
-                         $"PRIVATE_CONSULTATION - AT - PublishStatusAsync - Conference: {SourceConference.Id} - removed from the Cache");
+                         $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - removed from the Cache");
+
+            RoomType? roomInCache = await _consultationCache.GetConsultationRoom(SourceConference.Id);
+            
+            if (roomInCache.HasValue)
+            {
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - Roomtype {roomInCache.Value} found in the Cache");
+            }
 
             // Remove from the cache
             _consultationCache.Remove(SourceConference.Id);
-            _consultationCache.Remove(callbackEvent.ConferenceId);
+            
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)

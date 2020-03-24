@@ -19,7 +19,7 @@ namespace VideoApi.Services
         private readonly IMemoryCache _memoryCache;
 
         // Cache expiry in seconds
-        private const double CACHE_EXPIRY = 10;
+        private const double CACHE_EXPIRY = 30;
 
         public ConsultationCache(IMemoryCache memoryCache)
         {

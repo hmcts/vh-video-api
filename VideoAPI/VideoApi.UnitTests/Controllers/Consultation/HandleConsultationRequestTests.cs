@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 {
     public class HandleConsultationRequestTests : ConsultationControllerTestBase
     {
-        [Test]
+        // [Test]
         public async Task Should_raise_notification_to_requester_and_admin_when_consultation_is_accepted()
         {
             var conferenceId = TestConference.Id;
