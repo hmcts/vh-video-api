@@ -61,10 +61,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants().First();
-            var state = ParticipantState.InConsultation;
-            var room = RoomType.ConsultationRoom1;
+            const ParticipantState state = ParticipantState.InConsultation;
+            const RoomType room = RoomType.ConsultationRoom1;
 
-            var beforeCount = participant.GetParticipantStatuses().Count;
             var beforeState = participant.GetCurrentStatus();
 
             var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, room);
@@ -73,10 +72,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var updatedParticipant =
                 updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
-            var afterCount = updatedParticipant.GetParticipantStatuses().Count;
             var afterState = updatedParticipant.GetCurrentStatus();
 
-            afterCount.Should().BeGreaterThan(beforeCount);
             afterState.Should().NotBe(beforeState);
             afterState.ParticipantState.Should().Be(state);
 

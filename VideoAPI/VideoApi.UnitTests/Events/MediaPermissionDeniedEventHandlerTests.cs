@@ -21,8 +21,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_call_command_handler_with_addtaskcommand_object()
         {
-            _eventHandler = new MediaPermissionDeniedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new MediaPermissionDeniedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
@@ -54,8 +53,7 @@ namespace VideoApi.UnitTests.Events
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((Conference) null);
 
-            _eventHandler = new MediaPermissionDeniedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new MediaPermissionDeniedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();

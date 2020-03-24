@@ -58,11 +58,6 @@ namespace VideoApi.Domain
             TestCallResult = new TestCallResult(passed, score);
         }
 
-        public TestCallResult GetTestCallResult()
-        {
-            return TestCallResult;
-        }
-
         public void UpdateCurrentRoom(RoomType? currentRoom)
         {
             CurrentRoom = currentRoom;

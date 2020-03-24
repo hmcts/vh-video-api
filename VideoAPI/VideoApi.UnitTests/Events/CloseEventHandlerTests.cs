@@ -16,8 +16,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_send_messages_to_participants_and_service_bus_on_close()
         {
-            _eventHandler = new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             var callbackEvent = new CallbackEvent

@@ -18,8 +18,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_send_unavailable_participant_messages_when_judge_unavailable()
         {
-            _eventHandler = new JudgeUnavailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new JudgeUnavailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
 
