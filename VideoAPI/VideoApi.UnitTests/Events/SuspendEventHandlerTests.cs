@@ -17,8 +17,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_send_messages_to_participants_on_suspended()
         {
-            _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             
@@ -47,8 +46,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_send_messages_to_participants_on_suspended_for_technical_assistance()
         {
-            _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             

@@ -28,7 +28,8 @@ namespace VideoApi.DAL.Queries
         public async Task<Conference> Handle(GetConferenceByIdQuery query)
         {
             return await _context.Conferences
-                .Include(x => x.Participants).ThenInclude(x => x.TestCallResult)
+                .Include(x => x.Participants)
+                .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
         }
     }

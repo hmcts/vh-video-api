@@ -5,15 +5,13 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
-using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
 {
     public class LeaveEventHandler : EventHandlerBase
     {
-        public LeaveEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient) : base(
-            queryHandler, commandHandler, serviceBusQueueClient)
+        public LeaveEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
+            queryHandler, commandHandler)
         {
         }
 

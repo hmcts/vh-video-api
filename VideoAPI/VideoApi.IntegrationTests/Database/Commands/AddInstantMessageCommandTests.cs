@@ -63,7 +63,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [TearDown]
-        public async System.Threading.Tasks.Task TearDown()
+        public async Task TearDown()
         {
             if (_newConferenceId != Guid.Empty)
             {

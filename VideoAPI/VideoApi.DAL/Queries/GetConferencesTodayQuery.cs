@@ -27,7 +27,8 @@ namespace VideoApi.DAL.Queries
             var tomorrow = DateTime.Today.AddDays(1);
             return await _context.Conferences
                 .Include(x => x.Participants)
-                .Include("Tasks").AsNoTracking()
+                .Include("Tasks")
+                .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
                 .OrderBy(x => x.ScheduledDateTime)
                 .ToListAsync();

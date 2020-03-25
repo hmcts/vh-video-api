@@ -17,8 +17,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_send_available_participant_messages_when_judge_available()
         {
-            _eventHandler = new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             

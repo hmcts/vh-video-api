@@ -17,8 +17,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_send_disconnect_messages_to_participants_and_service_bus_on_participant_disconnect()
         {
-            _eventHandler = new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -72,8 +71,7 @@ namespace VideoApi.UnitTests.Events
         public async Task
             Should_send_disconnect_and_suspend_messages_to_participants_and_service_bus_on_judge_disconnect()
         {
-            _eventHandler = new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient);
+            _eventHandler = new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             

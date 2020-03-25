@@ -6,15 +6,13 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
-using VideoApi.Events.ServiceBus;
 
 namespace VideoApi.Events.Handlers
 {
     public class TransferEventHandler : EventHandlerBase
     {
-        public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient) : base(
-            queryHandler, commandHandler, serviceBusQueueClient)
+        public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
+            queryHandler, commandHandler)
         {
         }
 

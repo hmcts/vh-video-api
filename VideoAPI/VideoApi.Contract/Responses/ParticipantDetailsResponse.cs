@@ -50,10 +50,5 @@ namespace VideoApi.Contract.Responses
         /// The current participant status
         /// </summary>
         public ParticipantState CurrentStatus { get; set; }
-        
-        /// <summary>
-        /// The self test results (if self-test completed)
-        /// </summary>
-        public TestCallScoreResponse SelfTestScore { get; set; }
     }
 }

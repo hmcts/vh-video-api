@@ -9,7 +9,6 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Handlers.Core;
-using VideoApi.UnitTests.Stubs;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -18,7 +17,6 @@ namespace VideoApi.UnitTests.Events
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected List<IEventHandler> EventHandlersList;
         protected Mock<IQueryHandler> QueryHandlerMock;
-        protected ServiceBusQueueClientStub ServiceBusQueueClient;
 
         protected Conference TestConference;
 
@@ -27,24 +25,21 @@ namespace VideoApi.UnitTests.Events
         {
             QueryHandlerMock = new Mock<IQueryHandler>();
             CommandHandlerMock = new Mock<ICommandHandler>();
-            ServiceBusQueueClient = new ServiceBusQueueClientStub();
 
             EventHandlersList = new List<IEventHandler>
             {
-                new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                    ServiceBusQueueClient),
-                new JudgeUnavailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                    ServiceBusQueueClient),
+                new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new JudgeUnavailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
 
-                new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
+                new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
             };
 
             TestConference = new ConferenceBuilder()
