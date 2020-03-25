@@ -179,7 +179,7 @@ namespace Video.API.Controllers
                 testCallResult.Score);
             await _commandHandler.Handle(command);
             _logger.LogDebug("Saving test call result");
-            var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
+            var response = TaskCallResultResponseMapper.MapTaskToResponse(testCallResult);
             return Ok(response);
         }
 
@@ -202,7 +202,7 @@ namespace Video.API.Controllers
                     $"Unable to find test call result for participant {participantId}");
                 return NotFound();
             }
-            var response = new TaskCallResultResponseMapper().MapTaskToResponse(testCallResult);
+            var response = TaskCallResultResponseMapper.MapTaskToResponse(testCallResult);
             return Ok(response);
         }
 

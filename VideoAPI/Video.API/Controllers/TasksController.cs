@@ -49,8 +49,7 @@ namespace Video.API.Controllers
             try
             {
                 var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
-                var mapper = new TaskToResponseMapper();
-                var response = tasks.Select(mapper.MapTaskToResponse);
+                var response = tasks.Select(TaskToResponseMapper.MapTaskToResponse);
                 return Ok(response);
             }
             catch (ConferenceNotFoundException)
@@ -86,7 +85,7 @@ namespace Video.API.Controllers
                 _logger.LogInformation(
                     $"Completed task {taskId} in conference {conferenceId} by {updateTaskRequest.UpdatedBy}");
                 var task = tasks.Single(x => x.Id == taskId);
-                var response = new TaskToResponseMapper().MapTaskToResponse(task);
+                var response = TaskToResponseMapper.MapTaskToResponse(task);
                 return Ok(response);
             }
             catch (TaskNotFoundException)

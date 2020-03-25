@@ -1,32 +1,27 @@
 using System.Collections.Generic;
+using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 
 namespace Video.API.Mappings
 {
-    public class ParticipantToDetailsResponseMapper
+    public static class ParticipantToDetailsResponseMapper
     {
-        public List<ParticipantDetailsResponse> MapParticipantsToResponse(IEnumerable<Participant> participants)
+        public static List<ParticipantDetailsResponse> MapParticipantsToResponse(IEnumerable<Participant> participants)
         {
-            var response = new List<ParticipantDetailsResponse>();
-            foreach (var participant in participants)
+            return participants.Select(participant => new ParticipantDetailsResponse
             {
-                var paResponse = new ParticipantDetailsResponse
-                {
-                    Id = participant.Id,
-                    RefId = participant.ParticipantRefId,
-                    Name = participant.Name,
-                    Username = participant.Username,
-                    DisplayName = participant.DisplayName,
-                    UserRole = participant.UserRole,
-                    CaseTypeGroup = participant.CaseTypeGroup,
-                    Representee = participant.Representee,
-                    CurrentStatus = participant.State
-                };
-                response.Add(paResponse);
-            }
-
-            return response;
+                Id = participant.Id,
+                RefId = participant.ParticipantRefId,
+                Name = participant.Name,
+                Username = participant.Username,
+                DisplayName = participant.DisplayName,
+                UserRole = participant.UserRole,
+                CaseTypeGroup = participant.CaseTypeGroup,
+                Representee = participant.Representee,
+                CurrentStatus = participant.State
+            })
+            .ToList();
         }
     }
 }

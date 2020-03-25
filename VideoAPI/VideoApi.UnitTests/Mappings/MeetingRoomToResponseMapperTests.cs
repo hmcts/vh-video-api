@@ -7,8 +7,6 @@ namespace VideoApi.UnitTests.Mappings
 {
     public class MeetingRoomToResponseMapperTests
     {
-        private readonly MeetingRoomToResponseMapper _mapper = new MeetingRoomToResponseMapper();
-
         [Test]
         public void Should_map_all_properties()
         {
@@ -20,7 +18,7 @@ namespace VideoApi.UnitTests.Mappings
 
             var meetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
 
-            var response = _mapper.MapVirtualCourtToResponse(meetingRoom);
+            var response = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(meetingRoom);
             response.Should().BeEquivalentTo(meetingRoom);
         }
     }

@@ -4,9 +4,9 @@ using VideoApi.Domain.Enums;
 
 namespace Video.API.Mappings
 {
-    public class ParticipantToSummaryResponseMapper
+    public static class ParticipantToSummaryResponseMapper
     {
-        public ParticipantSummaryResponse MapParticipantToSummary(Participant participant)
+        public static ParticipantSummaryResponse MapParticipantToSummary(Participant participant)
         {
             var participantStatus = participant.GetCurrentStatus() != null
                 ? participant.GetCurrentStatus().ParticipantState

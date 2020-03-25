@@ -10,8 +10,6 @@ namespace VideoApi.UnitTests.Mappings
 {
     public class ParticipantToSummaryResponseMapperTests
     {
-        private readonly ParticipantToSummaryResponseMapper _mapper = new ParticipantToSummaryResponseMapper();
-
         public static IEnumerable<Participant> ParticipantTestCases
         {
             get
@@ -26,7 +24,7 @@ namespace VideoApi.UnitTests.Mappings
         public void Should_map_all_properties(Participant participant)
         {
             participant.UpdateParticipantStatus(ParticipantState.Available);
-            var response = _mapper.MapParticipantToSummary(participant);
+            var response = ParticipantToSummaryResponseMapper.MapParticipantToSummary(participant);
             response.Should().BeEquivalentTo(participant, options => options
                 .Excluding(x => x.ParticipantRefId)
                 .Excluding(x => x.DisplayName)

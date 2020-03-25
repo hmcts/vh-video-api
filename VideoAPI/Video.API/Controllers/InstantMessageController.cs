@@ -53,8 +53,7 @@ namespace Video.API.Controllers
             {
                 var messages =
                     await _queryHandler.Handle<GetInstantMessagesForConferenceQuery, List<InstantMessage>>(query);
-                var mapper = new InstantMessageToResponseMapper();
-                var response = messages.Select(mapper.MapMessageToResponse);
+                var response = messages.Select(InstantMessageToResponseMapper.MapMessageToResponse);
                 return Ok(response);
             }
             catch (ConferenceNotFoundException)
@@ -144,8 +143,7 @@ namespace Video.API.Controllers
                 return Ok(new List<ClosedConferencesResponse>());
             }
 
-            var mapper = new ConferenceToClosedConferenceMapper();
-            var response = closedConferences.Select(mapper.MapConferenceToClosedResponse);
+            var response = closedConferences.Select(ConferenceToClosedConferenceMapper.MapConferenceToClosedResponse);
             return Ok(response);
         }
 

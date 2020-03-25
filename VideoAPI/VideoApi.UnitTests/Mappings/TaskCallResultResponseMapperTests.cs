@@ -8,8 +8,6 @@ namespace VideoApi.UnitTests.Mappings
 {
     public class TaskCallResultResponseMapperTests
     {
-        private readonly TaskCallResultResponseMapper _mapper = new TaskCallResultResponseMapper();
-        
         [Test]
         public void Should_map_all_properties()
         {
@@ -19,9 +17,9 @@ namespace VideoApi.UnitTests.Mappings
 
             var testCallResultBad = new TestCallResult(false, TestScore.Bad);
 
-            var responseGood = _mapper.MapTaskToResponse(testCallResultGood);
-            var responseOkay = _mapper.MapTaskToResponse(testCallResultOkay);
-            var responseBad = _mapper.MapTaskToResponse(testCallResultBad);
+            var responseGood = TaskCallResultResponseMapper.MapTaskToResponse(testCallResultGood);
+            var responseOkay = TaskCallResultResponseMapper.MapTaskToResponse(testCallResultOkay);
+            var responseBad = TaskCallResultResponseMapper.MapTaskToResponse(testCallResultBad);
 
             responseGood.Should().BeEquivalentTo(testCallResultGood, options => options.Excluding(x => x.Id));
             responseOkay.Should().BeEquivalentTo(testCallResultOkay, options => options.Excluding(x => x.Id));
