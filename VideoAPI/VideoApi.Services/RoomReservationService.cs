@@ -11,7 +11,7 @@ namespace VideoApi.Services
 {
     public interface IRoomReservationService
     {
-        Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, Guid requestedBy, Guid requestedFor, Func<Guid, Task<Conference>> getConferenceAsync);
+        Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync);
     }
 
     public class RoomReservationService : IRoomReservationService
@@ -26,7 +26,7 @@ namespace VideoApi.Services
             _logger = logger;
         }
 
-        public async Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, Guid requestedBy, Guid requestedFor, Func<Guid, Task<Conference>> getConferenceAsync)
+        public async Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync)
         {
             var retryPolicy = Policy
                 .HandleResult<Conference>(x =>
@@ -36,11 +36,11 @@ namespace VideoApi.Services
 
                     if (_memoryCache.TryGetValue(reservationKey, out _))
                     {
-                        ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"Between {requestedBy} and {requestedFor} - EnsureRoomAvailableAsync KEY : {reservationKey} : FOUND");
+                        ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync - Between {requestedBy} and {requestedFor} - KEY : {reservationKey} : FOUND");
                         return true;
                     }
 
-                    ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"Between {requestedBy} and {requestedFor} - EnsureRoomAvailableAsync KEY : {reservationKey} : Not FOUND, setting cache");
+                    ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync- Between {requestedBy} and {requestedFor} - KEY : {reservationKey} : Not FOUND, setting cache");
 
                     _memoryCache.Set<object>(reservationKey, null, TimeSpan.FromSeconds(CacheExpirySeconds));
                     return false;
@@ -49,7 +49,7 @@ namespace VideoApi.Services
                 .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(3));
 
             return await retryPolicy.ExecuteAsync(async () => {
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"Between {requestedBy} and {requestedFor} - Conference: {conferenceId} - EnsureRoomAvailableAsync- ExecuteAsync");
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync- ExecuteAsync - Between {requestedBy} and {requestedFor} - Conference: {conferenceId}");
                 return await getConferenceAsync(conferenceId);
             });
         }

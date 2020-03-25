@@ -245,16 +245,18 @@ namespace Video.API.Controllers
         {
             
             ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", 
-                $"PRIVATE_CONSULTATION - InitiateStartConsultation - Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}. Answer : {answer} ");
+                $"InitiateStartConsultation - Conference: {conference.Id}, Answer : {answer} - Attempting to start private consultation between {requestedBy.Id} - {requestedBy.Username}  and {requestedFor.Id} - {requestedFor.Username}.");
 
             if (answer == ConsultationAnswer.Accepted)
             {
-                conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, requestedBy.Id, requestedFor.Id, GetConference);
+                conference = await _roomReservationService.EnsureRoomAvailableAsync(conference.Id, requestedBy.Username, requestedFor.Username, GetConference);
 
                 //Log available room 
                 var roomType = conference.GetAvailableConsultationRoom();
 
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"PRIVATE_CONSULTATION - Conference: {conference.Id} -InitiateStartConsultation : EnsureRoomAvailableAsync. Available room : {roomType}");
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"InitiateStartConsultation - Conference: {conference.Id}  : Available room : {roomType}");
+
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "InitiateStartConsultationAsync", $"InitiateStartConsultation ***** TRANSFERRING {requestedBy.Username}  and {requestedFor.Id} ****  - Conference: {conference.Id}  : Available room : {roomType}");
 
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
 
@@ -265,7 +267,7 @@ namespace Video.API.Controllers
         private async Task<Conference> GetConference(Guid conferenceId)
         {
             ApplicationLogger.Trace("PRIVATE_CONSULTATION", "GetConference",
-                         $"PRIVATE_CONSULTATION - GetConference - Conference: {conferenceId}");
+                         $"GetConference - Conference: {conferenceId}");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             return await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
         }

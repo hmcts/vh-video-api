@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using System.Threading.Tasks;
 using VideoApi.Common;
 using VideoApi.DAL.Commands;
@@ -15,11 +16,13 @@ namespace VideoApi.Events.Handlers
     public class TransferEventHandler : EventHandlerBase
     {
         private readonly IConsultationCache _consultationCache;
+        private readonly IMemoryCache _memoryCache;
         public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient, IConsultationCache consultationCache) : base(
+            IServiceBusQueueClient serviceBusQueueClient, IConsultationCache consultationCache, IMemoryCache memoryCache) : base(
             queryHandler, commandHandler, serviceBusQueueClient)
         {
             _consultationCache = consultationCache;
+            _memoryCache = memoryCache;
         }
 
         public override EventType EventType => EventType.Transfer;
@@ -34,17 +37,33 @@ namespace VideoApi.Events.Handlers
             await CommandHandler.Handle(command);
 
             ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
-                         $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - removed from the Cache");
+                         $"PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id}," +
+                         $" Username : {SourceParticipant.Username}, EventType : {callbackEvent.EventType}, " +
+                         $"TransferFrom : {callbackEvent.TransferFrom}, TransferTo : {callbackEvent.TransferTo}");
 
-            RoomType? roomInCache = await _consultationCache.GetConsultationRoom(SourceConference.Id);
             
-            if (roomInCache.HasValue)
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
+                         $"PublishStatusAsync - Conference: {SourceConference.Id}, participant : -  {SourceParticipant.Username} - removed from the Cache");
+
+            var reservationKey = $"{SourceConference.Id}:{callbackEvent.TransferTo}";
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
+                         $"PublishStatusAsync : reservationKey : {reservationKey}");
+
+            if (_memoryCache.TryGetValue(reservationKey, out _))
             {
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - Roomtype {roomInCache.Value} found in the Cache");
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - *****  Cache found ********");
             }
 
-            // Remove from the cache
-            _consultationCache.Remove(SourceConference.Id);
+            _memoryCache.Remove(reservationKey);
+            //RoomType? roomInCache = await _consultationCache.GetConsultationRoom(SourceConference.Id);
+            
+            //if (roomInCache.HasValue)
+            //{
+            //    ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - Roomtype {roomInCache.Value} found in the Cache");
+            //}
+
+            //// Remove from the cache
+            //_consultationCache.Remove(SourceConference.Id);
             
         }
 
