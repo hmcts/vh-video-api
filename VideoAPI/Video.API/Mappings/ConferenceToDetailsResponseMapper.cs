@@ -3,9 +3,9 @@ using VideoApi.Domain;
 
 namespace Video.API.Mappings
 {
-    public class ConferenceToDetailsResponseMapper
+    public static class ConferenceToDetailsResponseMapper
     {
-        public ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
+        public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
             string pexipSelfTestNode)
         {
             var response = new ConferenceDetailsResponse
@@ -20,8 +20,8 @@ namespace Video.API.Mappings
                 ScheduledDuration = conference.ScheduledDuration,
                 CurrentStatus = conference.GetCurrentStatus(),
                 Participants =
-                    new ParticipantToDetailsResponseMapper().MapParticipantsToResponse(conference.GetParticipants()),
-                MeetingRoom = new MeetingRoomToResponseMapper().MapVirtualCourtToResponse(conference.GetMeetingRoom()),
+                    ParticipantToDetailsResponseMapper.MapParticipantsToResponse(conference.GetParticipants()),
+                MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom()),
                 HearingVenueName = conference.HearingVenueName
             };
 

@@ -41,7 +41,7 @@ namespace Video.API.Controllers
                 _logger.LogError($"Unable to retrieve the pexip configuration!");
                 return NotFound();
             }
-            var response = new PexipConfigurationMapper().MapPexipConfigToResponse(_servicesConfiguration);
+            var response = PexipConfigurationMapper.MapPexipConfigToResponse(_servicesConfiguration);
             return Ok(response);
         }
     }

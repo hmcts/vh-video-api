@@ -3,11 +3,15 @@ using VideoApi.Contract.Responses;
 
 namespace Video.API.Mappings
 {
-    public class PexipConfigurationMapper
+    public static class PexipConfigurationMapper
     {
-        public PexipConfigResponse MapPexipConfigToResponse(ServicesConfiguration serviceConfiguration)
+        public static PexipConfigResponse MapPexipConfigToResponse(ServicesConfiguration serviceConfiguration)
         {
-            if (serviceConfiguration == null) return null;
+            if (serviceConfiguration == null)
+            {
+                return null;
+            }
+            
             return new PexipConfigResponse
             {
                 PexipSelfTestNode = serviceConfiguration.PexipSelfTestNode

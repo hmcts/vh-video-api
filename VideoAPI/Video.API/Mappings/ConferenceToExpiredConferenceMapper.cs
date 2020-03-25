@@ -3,9 +3,9 @@ using VideoApi.Domain;
 
 namespace Video.API.Mappings
 {
-    public class ConferenceToExpiredConferenceMapper
+    public static class ConferenceToExpiredConferenceMapper
     {
-        public ExpiredConferencesResponse MapConferenceToExpiredResponse(Conference conference)
+        public static ExpiredConferencesResponse MapConferenceToExpiredResponse(Conference conference)
         {
             return new ExpiredConferencesResponse
             {

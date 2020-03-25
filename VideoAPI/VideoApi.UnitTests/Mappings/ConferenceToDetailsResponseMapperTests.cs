@@ -10,8 +10,6 @@ namespace VideoApi.UnitTests.Mappings
 {
     public class ConferenceToDetailsResponseMapperTests
     {
-        private readonly ConferenceToDetailsResponseMapper _mapper = new ConferenceToDetailsResponseMapper();
-
         [Test]
         public void Should_map_all_properties()
         {
@@ -24,7 +22,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Build();
 
             var pexipSelfTestNode = "selttest@pexip.node";
-            var response = _mapper.MapConferenceToResponse(conference, pexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, pexipSelfTestNode);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)

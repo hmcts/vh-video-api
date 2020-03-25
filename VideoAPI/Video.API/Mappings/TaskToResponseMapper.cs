@@ -3,9 +3,9 @@ using VideoApi.Domain;
 
 namespace Video.API.Mappings
 {
-    public class TaskToResponseMapper
+    public static class TaskToResponseMapper
     {
-        public TaskResponse MapTaskToResponse(Task task)
+        public static TaskResponse MapTaskToResponse(Task task)
         {
             return new TaskResponse
             {
