@@ -3,9 +3,10 @@ using System;
 using System.Threading.Tasks;
 using Polly;
 using VideoApi.Domain;
-using Task = System.Threading.Tasks.Task;
 using VideoApi.Common;
 using Microsoft.Extensions.Logging;
+using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 
 namespace VideoApi.Services
 {
@@ -24,6 +25,51 @@ namespace VideoApi.Services
         {
             _memoryCache = memoryCache;
             _logger = logger;
+        }
+        
+        public RoomType GetNextAvailableConsultationRoom(Conference conference)
+        {
+            var roomType = conference.GetAvailableConsultationRoom();
+            var reservationKey = $"{conference.Id}:{roomType}";
+
+            // if not in cache, add to cache and return room
+            if(!CheckIfRoomReserved(reservationKey, roomType))
+            {
+                return roomType;
+            }
+            
+
+            // else return next room type
+            if (roomType == RoomType.ConsultationRoom1)
+            {
+                roomType = RoomType.ConsultationRoom2; 
+                reservationKey = $"{conference.Id}:{roomType}";
+                if (!CheckIfRoomReserved(reservationKey, roomType))
+                {
+                    return roomType;
+                }
+            }
+            throw new DomainRuleException("Unavailable room", "No consultation rooms available");
+        }
+
+        private bool CheckIfRoomReserved(string reservationKey, RoomType roomType)
+        {
+            var isReserved = _memoryCache.TryGetValue(reservationKey, out _);
+            if (!isReserved)
+            {
+                
+            }
+            _memoryCache.Set(reservationKey, roomType);
+            return isReserved;
+        }
+
+        public void RemoveRoomReservation(Guid conferenceId, RoomType roomType)
+        {
+            var reservationKey = $"{conferenceId}:{roomType}";
+            if (_memoryCache.TryGetValue(reservationKey, out _))
+            {
+                _memoryCache.Remove(reservationKey);
+            }
         }
 
         public async Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync)
