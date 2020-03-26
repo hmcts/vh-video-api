@@ -12,11 +12,11 @@ namespace VideoApi.Services
 {
     public interface IRoomReservationService
     {
-        Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync);
+        //Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync);
 
         void RemoveRoomReservation(Guid conferenceId, RoomType roomType);
 
-        RoomType GetNextAvailableConsultationRoom(Conference conference);
+        RoomType GetNextAvailableConsultationRoom(Conference conference, string requestedBy, string requestedFor);
     }
 
     public class RoomReservationService : IRoomReservationService
@@ -31,13 +31,19 @@ namespace VideoApi.Services
             _logger = logger;
         }
         
-        public RoomType GetNextAvailableConsultationRoom(Conference conference)
+        public RoomType GetNextAvailableConsultationRoom(Conference conference, string requestedBy, string requestedFor)
         {
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "RoomReservationService::GetNextAvailableConsultationRoom",
+              $"StartPrivateConsultationAsync - Conference: {conference.Id},  between {requestedBy} and {requestedFor}.");
+
             var roomType = conference.GetAvailableConsultationRoom();
             var reservationKey = $"{conference.Id}:{roomType}";
 
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "GetNextAvailableConsultationRoom", $"RoomReservationService::GetNextAvailableConsultationRoom - " +
+                   $"Between {requestedBy} and {requestedFor} , roomType : {roomType} - KEY : {reservationKey}");
+
             // if not in cache, add to cache and return room
-            if(!CheckIfRoomReserved(reservationKey, roomType))
+            if (!CheckIfRoomReserved(reservationKey, roomType))
             {
                 return roomType;
             }
@@ -47,6 +53,10 @@ namespace VideoApi.Services
             {
                 roomType = RoomType.ConsultationRoom2; 
                 reservationKey = $"{conference.Id}:{roomType}";
+
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "GetNextAvailableConsultationRoom", $"RoomReservationService::GetNextAvailableConsultationRoom - " +
+                   $"Between {requestedBy} and {requestedFor} , roomType : {roomType} - KEY : {reservationKey}");
+
                 if (!CheckIfRoomReserved(reservationKey, roomType))
                 {
                     return roomType;
@@ -58,49 +68,55 @@ namespace VideoApi.Services
         private bool CheckIfRoomReserved(string reservationKey, RoomType roomType)
         {
             var isReserved = _memoryCache.TryGetValue(reservationKey, out _);
+            
             if (!isReserved)
             {
-                
+                _memoryCache.Set(reservationKey, roomType);
             }
-            _memoryCache.Set(reservationKey, roomType);
+            
             return isReserved;
         }
 
         public void RemoveRoomReservation(Guid conferenceId, RoomType roomType)
         {
             var reservationKey = $"{conferenceId}:{roomType}";
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "RemoveRoomReservation", $"RoomReservationService::RemoveRoomReservation - " +
+                   $"KEY : {reservationKey}");
+
             if (_memoryCache.TryGetValue(reservationKey, out _))
             {
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "RemoveRoomReservation", $"RoomReservationService::RemoveRoomReservation - " +
+                   $" ********* KEY : {reservationKey} REMOVED ********* ");
                 _memoryCache.Remove(reservationKey);
             }
         }
 
-        public async Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync)
-        {
-            var retryPolicy = Policy
-                .HandleResult<Conference>(x =>
-                {
-                    var roomType = x.GetAvailableConsultationRoom();
-                    var reservationKey = $"{conferenceId}:{roomType}";
+        //public async Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync)
+        //{
+        //    var retryPolicy = Policy
+        //        .HandleResult<Conference>(x =>
+        //        {
+        //            var roomType = x.GetAvailableConsultationRoom();
+        //            var reservationKey = $"{conferenceId}:{roomType}";
 
-                    if (_memoryCache.TryGetValue(reservationKey, out _))
-                    {
-                        ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync - Between {requestedBy} and {requestedFor} - KEY : {reservationKey} : FOUND");
-                        return true;
-                    }
+        //            if (_memoryCache.TryGetValue(reservationKey, out _))
+        //            {
+        //                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync - Between {requestedBy} and {requestedFor} - KEY : {reservationKey} : FOUND");
+        //                return true;
+        //            }
 
-                    ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync- Between {requestedBy} and {requestedFor} - KEY : {reservationKey} : Not FOUND, setting cache");
+        //            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync- Between {requestedBy} and {requestedFor} - KEY : {reservationKey} : Not FOUND, setting cache");
 
-                    _memoryCache.Set<object>(reservationKey, null, TimeSpan.FromSeconds(CacheExpirySeconds));
-                    return false;
-                })
-                //.WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
-                .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(3));
+        //            _memoryCache.Set<object>(reservationKey, null, TimeSpan.FromSeconds(CacheExpirySeconds));
+        //            return false;
+        //        })
+        //        //.WaitAndRetryForeverAsync(x => TimeSpan.FromSeconds(1));
+        //        .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(3));
 
-            return await retryPolicy.ExecuteAsync(async () => {
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync- ExecuteAsync - Between {requestedBy} and {requestedFor} - Conference: {conferenceId}");
-                return await getConferenceAsync(conferenceId);
-            });
-        }
+        //    return await retryPolicy.ExecuteAsync(async () => {
+        //        ApplicationLogger.Trace("PRIVATE_CONSULTATION", "EnsureRoomAvailableAsync", $"EnsureRoomAvailableAsync- ExecuteAsync - Between {requestedBy} and {requestedFor} - Conference: {conferenceId}");
+        //        return await getConferenceAsync(conferenceId);
+        //    });
+        //}
     }
 }

@@ -39,21 +39,9 @@ namespace VideoApi.Events.Handlers
             ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
                          $"PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id}," +
                          $" Username : {SourceParticipant.Username}, EventType : {callbackEvent.EventType}, " +
-                         $"TransferFrom : {callbackEvent.TransferFrom}, TransferTo : {callbackEvent.TransferTo}");
+                         $"TransferFrom : {callbackEvent.TransferFrom}, participantStatus : {participantStatus}, TransferTo : {callbackEvent.TransferTo}");
 
-            
-            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
-                         $"PublishStatusAsync - Conference: {SourceConference.Id}, participant : -  {SourceParticipant.Username} - removed from the Cache");
-
-            var reservationKey = $"{SourceConference.Id}:{callbackEvent.TransferTo}";
-            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
-                         $"PublishStatusAsync : reservationKey : {reservationKey}");
-
-            //if (_memoryCache.TryGetValue(reservationKey, out _))
-            //{
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - *****  Cache found ********");
-            //}
-
+           
             // Alternative solution though this will only run after they  leave the room
             // if(callbackEvent.TransferFrom.GetValueOrDefault() == RoomType.ConsultationRoom1 || 
             // callbackEvent.TransferFrom.GetValueOrDefault() == RoomType.ConsultationRoom2) {
@@ -62,6 +50,10 @@ namespace VideoApi.Events.Handlers
 
             if(participantStatus == ParticipantState.InConsultation)
             {
+                var reservationKey = $"{SourceConference.Id}:{callbackEvent.TransferTo}";
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
+                             $"PublishStatusAsync : reservationKey : {reservationKey}");
+
                 _roomReservationService.RemoveRoomReservation(SourceConference.Id, (RoomType)callbackEvent.TransferTo);
             }
             

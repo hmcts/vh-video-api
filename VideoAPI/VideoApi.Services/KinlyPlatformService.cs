@@ -15,6 +15,7 @@ using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 using Polly;
 using VideoApi.Services.Helpers;
+using VideoApi.Common;
 
 namespace VideoApi.Services
 {
@@ -155,7 +156,17 @@ namespace VideoApi.Services
         public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy,
             Participant requestedFor)
         {
-            var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
+
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "StartPrivateConsultationAsync",
+              $"KinlyPlatformService::StartPrivateConsultationAsync -Getting latest room - Conference: {conference.Id}, " +
+              $" between {requestedBy.Username} and {requestedFor.Username}.");
+
+            var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference, requestedBy.Username, requestedFor.Username);
+
+            ApplicationLogger.Trace("PRIVATE_CONSULTATION", "StartPrivateConsultationAsync",
+               $"KinlyPlatformService::StartPrivateConsultationAsync - Conference: {conference.Id}, TargetRoom : {targetRoom} - " +
+               $" between {requestedBy.Username} and {requestedFor.Username}.");
+
 
             _logger.LogInformation(
                 $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
