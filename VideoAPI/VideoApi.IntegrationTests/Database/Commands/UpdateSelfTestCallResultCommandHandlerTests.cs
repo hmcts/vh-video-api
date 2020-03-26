@@ -57,22 +57,5 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
-
-        [Test]
-        public async Task Should_update_participant_self_test_score()
-        {
-            var seededConference = await TestDataManager.SeedConference();
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            _newConferenceId = seededConference.Id;
-            var participantId = seededConference.GetParticipants().First(x => x.UserRole == UserRole.Individual).Id;
-
-            var command = new UpdateSelfTestCallResultCommand(_newConferenceId, participantId, true, TestScore.Good);
-            await _handler.Handle(command);
-
-            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-            var participant = updatedConference.GetParticipants().First(x => x.Id == participantId);
-            participant.GetTestCallResult().Score.Should().Be(TestScore.Good);
-            participant.GetTestCallResult().Passed.Should().BeTrue();
-        }
     }
 }

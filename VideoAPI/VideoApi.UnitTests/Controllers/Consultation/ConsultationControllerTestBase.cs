@@ -7,7 +7,6 @@ using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using Task = System.Threading.Tasks.Task;
@@ -24,7 +23,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         protected Mock<IConsultationCache> ConsultationCacheMock;
         protected Mock<IRoomReservationService> RoomReservationServiceMock;
 
-        protected Conference TestConference;
+        protected VideoApi.Domain.Conference TestConference;
 
         [SetUp]
         public void Setup()
@@ -46,7 +45,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .Build();
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
 
             CommandHandlerMock

@@ -10,14 +10,12 @@ namespace VideoApi.UnitTests.Mappings
 {
     public class TaskToResponseMapperTests
     {
-        private readonly TaskToResponseMapper _mapper = new TaskToResponseMapper();
-
         [Test]
         public void Should_map_all_properties()
         {
             var alert = Builder<Task>.CreateNew()
                 .WithFactory(() => new Task(Guid.NewGuid(), "Automated Test", TaskType.Hearing)).Build();
-            var response = _mapper.MapTaskToResponse(alert);
+            var response = TaskToResponseMapper.MapTaskToResponse(alert);
             response.Should().BeEquivalentTo(alert, options => options
                 .Excluding(x => x.Status)
                 .Excluding(x => x.Created)

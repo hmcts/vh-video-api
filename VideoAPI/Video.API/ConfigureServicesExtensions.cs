@@ -22,7 +22,6 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
-using VideoApi.Events.ServiceBus;
 using VideoApi.Services;
 using VideoApi.Services.Kinly;
 
@@ -86,7 +85,6 @@ namespace Video.API
             services.AddScoped<ICommandHandler, CommandHandler>();
             
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
-            services.AddScoped<IServiceBusQueueClient, ServiceBusQueueClient>();
 	        services.AddTransient<KinlyApiTokenDelegatingHandler>();
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);

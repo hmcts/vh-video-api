@@ -9,8 +9,6 @@ namespace VideoApi.UnitTests.Mappings
 {
     public class ConferenceToSummaryMapperTests
     {
-        private readonly ConferenceToSummaryResponseMapper _mapper = new ConferenceToSummaryResponseMapper();
-
         [Test]
         public void Should_map_all_properties()
         {
@@ -25,7 +23,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithJudgeTask("Test3")
                 .Build();
 
-            var response = _mapper.MapConferenceToSummaryResponse(conference);
+            var response = ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse(conference);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
@@ -54,7 +52,7 @@ namespace VideoApi.UnitTests.Mappings
 
             conference.Tasks[0].Status = TaskStatus.Done;
 
-            var response = _mapper.MapConferenceToSummaryResponse(conference);
+            var response = ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse(conference);
             response.Tasks.Count.Should().BeGreaterThan(0);
             response.Tasks.Any(x => x.Status == TaskStatus.Done).Should().Be(false);
         }
@@ -70,7 +68,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithParticipants(3)
                 .Build();
 
-            var response = _mapper.MapConferenceToSummaryResponse(conference);
+            var response = ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse(conference);
             response.Tasks.Count.Should().Be(0);
         }
     }

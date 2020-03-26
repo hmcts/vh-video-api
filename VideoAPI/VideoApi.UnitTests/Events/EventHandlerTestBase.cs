@@ -40,13 +40,11 @@ namespace VideoApi.UnitTests.Events
 
             EventHandlersList = new List<IEventHandler>
             {
-                new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                    ServiceBusQueueClient),
-                new JudgeUnavailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                    ServiceBusQueueClient),
+                new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new JudgeAvailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new JudgeUnavailableEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
 
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),

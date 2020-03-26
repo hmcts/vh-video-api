@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using VideoApi.DAL.Commands;
@@ -75,9 +74,6 @@ namespace VideoApi.UnitTests.Events
 
             Assert.ThrowsAsync<RoomTransferException>(() =>
                 _eventHandler.HandleAsync(callbackEvent));
-
-            // Verify messages sent to ASB queue
-            ServiceBusQueueClient.Count.Should().Be(0);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>

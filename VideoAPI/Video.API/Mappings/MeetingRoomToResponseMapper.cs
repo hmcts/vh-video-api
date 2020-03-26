@@ -3,9 +3,9 @@ using VideoApi.Domain;
 
 namespace Video.API.Mappings
 {
-    public class MeetingRoomToResponseMapper
+    public static class MeetingRoomToResponseMapper
     {
-        public MeetingRoomResponse MapVirtualCourtToResponse(MeetingRoom meetingRoom)
+        public static MeetingRoomResponse MapVirtualCourtToResponse(MeetingRoom meetingRoom)
         {
             if (meetingRoom == null) return null;
 

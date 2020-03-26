@@ -50,9 +50,11 @@ namespace VideoApi.AcceptanceTests.Hooks
         {
             context.Test = new Test()
             {
+                CaseName = "Video Api Automated Test",
                 ConferenceIds = new List<Guid>(),
                 ConferenceResponses = new List<ConferenceSummaryResponse>()
             };
+            context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
         }
 
         private void RegisterHearingServices(TestContext context)

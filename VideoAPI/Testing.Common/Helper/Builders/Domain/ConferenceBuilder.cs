@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AcceptanceTests.Common.Data.Helpers;
 using Faker;
 using FizzWare.NBuilder;
 using FluentAssertions;

@@ -6,7 +6,6 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Models;
-using VideoApi.Events.ServiceBus;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers.Core
@@ -15,14 +14,11 @@ namespace VideoApi.Events.Handlers.Core
     {
         protected readonly ICommandHandler CommandHandler;
         protected readonly IQueryHandler QueryHandler;
-        protected readonly IServiceBusQueueClient ServiceBusQueueClient;
 
-        protected EventHandlerBase(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient)
+        protected EventHandlerBase(IQueryHandler queryHandler, ICommandHandler commandHandler)
         {
             QueryHandler = queryHandler;
             CommandHandler = commandHandler;
-            ServiceBusQueueClient = serviceBusQueueClient;
         }
 
         public Conference SourceConference { get; set; }

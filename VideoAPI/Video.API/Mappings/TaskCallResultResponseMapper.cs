@@ -3,11 +3,15 @@ using VideoApi.Domain;
 
 namespace Video.API.Mappings
 {
-    public class TaskCallResultResponseMapper
+    public static class TaskCallResultResponseMapper
     {
-        public TestCallScoreResponse MapTaskToResponse(TestCallResult testCallScore)
+        public static TestCallScoreResponse MapTaskToResponse(TestCallResult testCallScore)
         {
-            if (testCallScore == null) return null;
+            if (testCallScore == null)
+            {
+                return null;
+            }
+            
             return new TestCallScoreResponse
             {
                 Passed = testCallScore.Passed,

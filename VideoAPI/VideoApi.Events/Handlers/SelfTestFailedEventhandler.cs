@@ -8,16 +8,14 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
-using VideoApi.Events.ServiceBus;
 using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.Events.Handlers
 {
     public class SelfTestFailedEventHandler : EventHandlerBase
     {
-        public SelfTestFailedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient) : base(
-            queryHandler, commandHandler, serviceBusQueueClient)
+        public SelfTestFailedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
+            queryHandler, commandHandler)
         {
         }
 

@@ -75,8 +75,7 @@ namespace Video.API.Controllers
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             _logger.LogInformation($"Created conference {response.Id} for hearing {request.HearingRefId}");
             return CreatedAtAction(nameof(GetConferenceDetailsByIdAsync), new {conferenceId = response.Id}, response);
         }
@@ -131,8 +130,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
             
-            var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
 
@@ -178,8 +176,7 @@ namespace Video.API.Controllers
             var query = new GetConferencesTodayQuery();
             var conferences = await _queryHandler.Handle<GetConferencesTodayQuery, List<Conference>>(query);
 
-            var mapper = new ConferenceToSummaryResponseMapper();
-            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            var response = conferences.Select(ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse);
             return Ok(response);
         }
 
@@ -205,8 +202,7 @@ namespace Video.API.Controllers
             var query = new GetConferencesForTodayByUsernameQuery(username.ToLower().Trim());
             var conferences = await _queryHandler.Handle<GetConferencesForTodayByUsernameQuery, List<Conference>>(query);
 
-            var mapper = new ConferenceToSummaryResponseMapper();
-            var response = conferences.Select(mapper.MapConferenceToSummaryResponse);
+            var response = conferences.Select(ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse);
             return Ok(response);
         }
 
@@ -231,8 +227,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
             
-            var mapper = new ConferenceToDetailsResponseMapper();
-            var response = mapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
         
@@ -251,8 +246,7 @@ namespace Video.API.Controllers
             var query = new GetExpiredUnclosedConferencesQuery();
             var conferences = await _queryHandler.Handle<GetExpiredUnclosedConferencesQuery, List<Conference>>(query);
 
-            var mapper = new ConferenceToExpiredConferenceMapper();
-            var response = conferences.Select(mapper.MapConferenceToExpiredResponse);
+            var response = conferences.Select(ConferenceToExpiredConferenceMapper.MapConferenceToExpiredResponse);
             
             return Ok(response);
         }

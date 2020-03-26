@@ -41,17 +41,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var beforeCount = seededConference.GetConferenceStatuses().Count;
             var beforeState = seededConference.GetCurrentStatus();
 
             var command = new CloseConferenceCommand(_newConferenceId);
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-            var afterCount = updatedConference.GetConferenceStatuses().Count;
             var afterState = updatedConference.GetCurrentStatus();
 
-            afterCount.Should().BeGreaterThan(beforeCount);
             afterState.Should().NotBe(beforeState);
             afterState.Should().Be(ConferenceState.Closed);
 

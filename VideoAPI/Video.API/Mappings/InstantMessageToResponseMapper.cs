@@ -3,9 +3,9 @@ using VideoApi.Domain;
 
 namespace Video.API.Mappings
 {
-    public class InstantMessageToResponseMapper
+    public static class InstantMessageToResponseMapper
     {
-        public InstantMessageResponse MapMessageToResponse(InstantMessage instantMessage)
+        public static InstantMessageResponse MapMessageToResponse(InstantMessage instantMessage)
         {
             return new InstantMessageResponse
             {
