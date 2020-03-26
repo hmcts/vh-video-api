@@ -13,6 +13,10 @@ namespace VideoApi.Services
     public interface IRoomReservationService
     {
         Task<Conference> EnsureRoomAvailableAsync(Guid conferenceId, string requestedBy, string requestedFor, Func<Guid, Task<Conference>> getConferenceAsync);
+
+        void RemoveRoomReservation(Guid conferenceId, RoomType roomType);
+
+        RoomType GetNextAvailableConsultationRoom(Conference conference);
     }
 
     public class RoomReservationService : IRoomReservationService
@@ -38,7 +42,6 @@ namespace VideoApi.Services
                 return roomType;
             }
             
-
             // else return next room type
             if (roomType == RoomType.ConsultationRoom1)
             {

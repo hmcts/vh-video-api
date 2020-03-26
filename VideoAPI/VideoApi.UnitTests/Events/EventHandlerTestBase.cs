@@ -23,6 +23,8 @@ namespace VideoApi.UnitTests.Events
         protected ServiceBusQueueClientStub ServiceBusQueueClient;
         protected Mock<IConsultationCache> ConsultationCacheMock;
         protected Mock<IMemoryCache> MemoryCacheMock;
+        protected Mock<IRoomReservationService> RoomReservationServiceMock;
+        
 
         protected Conference TestConference;
 
@@ -34,6 +36,7 @@ namespace VideoApi.UnitTests.Events
             ServiceBusQueueClient = new ServiceBusQueueClientStub();
             ConsultationCacheMock = new Mock<IConsultationCache>();
             MemoryCacheMock = new Mock<IMemoryCache>();
+            RoomReservationServiceMock = new Mock<IRoomReservationService>();
 
             EventHandlersList = new List<IEventHandler>
             {
@@ -48,7 +51,7 @@ namespace VideoApi.UnitTests.Events
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
-                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient, ConsultationCacheMock.Object, MemoryCacheMock.Object),
+                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient, ConsultationCacheMock.Object, RoomReservationServiceMock.Object),
                 new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
                 new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, ServiceBusQueueClient),
             };

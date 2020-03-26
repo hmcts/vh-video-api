@@ -16,13 +16,13 @@ namespace VideoApi.Events.Handlers
     public class TransferEventHandler : EventHandlerBase
     {
         private readonly IConsultationCache _consultationCache;
-        private readonly IMemoryCache _memoryCache;
+        private readonly IRoomReservationService _roomReservationService;
         public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient, IConsultationCache consultationCache, IMemoryCache memoryCache) : base(
+            IServiceBusQueueClient serviceBusQueueClient, IConsultationCache consultationCache, IRoomReservationService roomReservationService) : base(
             queryHandler, commandHandler, serviceBusQueueClient)
         {
             _consultationCache = consultationCache;
-            _memoryCache = memoryCache;
+            _roomReservationService = roomReservationService;
         }
 
         public override EventType EventType => EventType.Transfer;
@@ -49,21 +49,21 @@ namespace VideoApi.Events.Handlers
             ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync",
                          $"PublishStatusAsync : reservationKey : {reservationKey}");
 
-            if (_memoryCache.TryGetValue(reservationKey, out _))
-            {
-                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - *****  Cache found ********");
-            }
-
-            _memoryCache.Remove(reservationKey);
-            //RoomType? roomInCache = await _consultationCache.GetConsultationRoom(SourceConference.Id);
-            
-            //if (roomInCache.HasValue)
+            //if (_memoryCache.TryGetValue(reservationKey, out _))
             //{
-            //    ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - Roomtype {roomInCache.Value} found in the Cache");
+                ApplicationLogger.Trace("PRIVATE_CONSULTATION", "PublishStatusAsync", $"PRIVATE_CONSULTATION - PublishStatusAsync - Conference: {SourceConference.Id}, participant : {SourceParticipant.Id} - *****  Cache found ********");
             //}
 
-            //// Remove from the cache
-            //_consultationCache.Remove(SourceConference.Id);
+            // Alternative solution though this will only run after they  leave the room
+            // if(callbackEvent.TransferFrom.GetValueOrDefault() == RoomType.ConsultationRoom1 || 
+            // callbackEvent.TransferFrom.GetValueOrDefault() == RoomType.ConsultationRoom2) {
+            //     roomReservationService.RemoveRoomReservation(SourceConference.Id, callbackEvent.TransferFrom);
+            // }
+
+            if(participantStatus == ParticipantState.InConsultation)
+            {
+                _roomReservationService.RemoveRoomReservation(SourceConference.Id, (RoomType)callbackEvent.TransferTo);
+            }
             
         }
 
