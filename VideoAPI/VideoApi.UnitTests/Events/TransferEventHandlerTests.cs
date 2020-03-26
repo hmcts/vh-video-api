@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Events
             RoomType from, RoomType to, ParticipantState status)
         {
             _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, ConsultationCacheMock.Object, RoomReservationServiceMock.Object);
+                ConsultationCacheMock.Object, RoomReservationServiceMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -56,7 +56,7 @@ namespace VideoApi.UnitTests.Events
         public void Should_throw_exception_when_transfer_cannot_be_mapped_to_participant_status()
         {
             _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                ServiceBusQueueClient, ConsultationCacheMock.Object, RoomReservationServiceMock.Object);
+                ConsultationCacheMock.Object, RoomReservationServiceMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);

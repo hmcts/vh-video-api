@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Caching.Memory;
 using System.Threading.Tasks;
 using VideoApi.Common;
 using VideoApi.DAL.Commands;
@@ -8,7 +7,6 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
-using VideoApi.Events.ServiceBus;
 using VideoApi.Services;
 
 namespace VideoApi.Events.Handlers
@@ -18,8 +16,8 @@ namespace VideoApi.Events.Handlers
         private readonly IConsultationCache _consultationCache;
         private readonly IRoomReservationService _roomReservationService;
         public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IServiceBusQueueClient serviceBusQueueClient, IConsultationCache consultationCache, IRoomReservationService roomReservationService) : base(
-            queryHandler, commandHandler, serviceBusQueueClient)
+            IConsultationCache consultationCache, IRoomReservationService roomReservationService) : base(
+            queryHandler, commandHandler)
         {
             _consultationCache = consultationCache;
             _roomReservationService = roomReservationService;
