@@ -1,6 +1,8 @@
 using System;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -46,7 +48,11 @@ namespace Video.API
                         .AllowCredentials();
                 }));
 
-            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+            {
+                InstrumentationKey = Configuration["ApplicationInsights:InstrumentationKey"],
+                EnableAdaptiveSampling = false
+            });
             
             services.AddJsonOptions();
             RegisterSettings(services);
@@ -101,6 +107,15 @@ namespace Video.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Application Insights fixed rate 100% sampling
+            var configuration = app.ApplicationServices.GetService<TelemetryConfiguration>();
+            var builder = configuration.DefaultTelemetrySink.TelemetryProcessorChainBuilder;
+            // For older versions of the Application Insights SDK, use the following line instead:
+            // var builder = TelemetryConfiguration.Active.TelemetryProcessorChainBuilder;
+            // Using fixed rate sampling   
+            builder.UseSampling(100);
+            builder.Build();
+                
             app.RunLatestMigrations();
 
             app.UseSwagger();
