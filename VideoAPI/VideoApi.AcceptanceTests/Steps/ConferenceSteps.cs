@@ -29,12 +29,6 @@ namespace VideoApi.AcceptanceTests.Steps
             _scenarioContext = scenarioContext;
         }
 
-        [Given(@"I have a get details for a conference request by username with a valid username")]
-        public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername()
-        {
-            _context.Request =  _context.Get(GetConferenceDetailsByUsername(_context.Test.ConferenceResponse.Participants.First().Username));
-        }
-
         [Given(@"I have an update conference request")]
         public void GivenIHaveAnUpdateConferenceRequest()
         {

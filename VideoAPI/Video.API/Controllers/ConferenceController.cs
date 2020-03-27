@@ -181,15 +181,15 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Get non-closed conferences for a participant by their username
+        /// Get all conferences for a judge
         /// </summary>
-        /// <param name="username">person username</param>
-        /// <returns>Conference details</returns>
-        [HttpGet(Name = "GetConferencesForUsername")]
-        [SwaggerOperation(OperationId = "GetConferencesForUsername")]
-        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
+        /// <param name="username">judge username</param>
+        /// <returns>List of conferences for judge</returns>
+        [HttpGet("today/judge")]
+        [SwaggerOperation(OperationId = "GetConferencesTodayForJudgeByUsername")]
+        [ProducesResponseType(typeof(List<ConferenceForJudgeResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesForUsernameAsync([FromQuery] string username)
+        public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug($"GetConferencesForUsername {username}");
             if (!username.IsValidEmail())
@@ -200,9 +200,37 @@ namespace Video.API.Controllers
             }
 
             var query = new GetConferencesForTodayByUsernameQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesForTodayByUsernameQuery, List<Conference>>(query);
+            var conferences =
+                await _queryHandler.Handle<GetConferencesForTodayByUsernameQuery, List<Conference>>(query);
 
-            var response = conferences.Select(ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse);
+            var response = conferences.Select(ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get non-closed conferences for a participant by their username
+        /// </summary>
+        /// <param name="username">person username</param>
+        /// <returns>List of non-closed conferences for judge</returns>
+        [HttpGet("today/individual")]
+        [SwaggerOperation(OperationId = "GetConferencesTodayForIndividualByUsername")]
+        [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
+        {
+            _logger.LogDebug($"GetConferencesForUsername {username}");
+            if (!username.IsValidEmail())
+            {
+                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
+                _logger.LogError($"Invalid username {username}");
+                return BadRequest(ModelState);
+            }
+
+            var query = new GetConferencesForTodayByUsernameQuery(username.ToLower().Trim());
+            var conferences =
+                await _queryHandler.Handle<GetConferencesForTodayByUsernameQuery, List<Conference>>(query);
+
+            var response = conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel);
             return Ok(response);
         }
 

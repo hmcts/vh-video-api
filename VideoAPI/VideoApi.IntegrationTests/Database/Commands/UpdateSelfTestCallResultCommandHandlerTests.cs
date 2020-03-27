@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
