@@ -13,6 +13,10 @@
     </DocumentationFile>
     <UserSecretsId>9AECE566-336D-4D16-88FA-7A76C27321CD</UserSecretsId>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <UseAppHost>false</UseAppHost>
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />

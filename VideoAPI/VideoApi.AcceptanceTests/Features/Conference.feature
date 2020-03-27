@@ -3,14 +3,6 @@
   As an api service
   I want to be able to create, retrieve, update and delete conferences
 
-  Scenario: Get conference details by username
-    Given I have a conference
-    And The conference has a pending task
-    And I have a get details for a conference request by username with a valid username
-    When I send the request to the endpoint
-    Then the response should have the status OK and success status True
-    And the summary of conference details should be retrieved
-
   Scenario: Update conference
     Given I have a conference
     And I have an update conference request
@@ -43,6 +35,24 @@
     And I have another conference
     And I have a conference for tomorrow
     And I have a get conferences for today request with a valid date
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And a list containing only todays hearings conference details should be retrieved
+
+  Scenario: Get conferences today for judge
+    Given I have a conference
+    And I have another conference
+    And I have a conference for tomorrow
+    And I have a get conferences today for a judge
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And a list containing only todays hearings conference details should be retrieved
+
+  Scenario: Get conferences today for individual
+    Given I have a conference
+    And I have another conference
+    And I have a conference for tomorrow
+    And I have a get conferences today for an individual
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And a list containing only todays hearings conference details should be retrieved
