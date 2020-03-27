@@ -28,8 +28,8 @@ namespace VideoApi.UnitTests.Mappings
             response.ScheduledDateTime.Should().Be(conference.ScheduledDateTime);
             response.ScheduledDuration.Should().Be(conference.ScheduledDuration);
             response.CaseType.Should().Be(conference.CaseType);
-            response.CaseNumber.Should().Be(conference.CaseName);
-            response.CaseName.Should().Be(conference.CaseNumber);
+            response.CaseName.Should().Be(conference.CaseName);
+            response.CaseNumber.Should().Be(conference.CaseNumber);
             response.Status.ToString().Should().Be(conference.State.ToString());
             response.Participants.Count.Should().Be(conference.Participants.Count);
         }

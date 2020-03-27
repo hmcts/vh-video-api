@@ -1,18 +1,20 @@
 using System;
-using System.Threading.Tasks;
+using System.Linq;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
-using VideoApi.DAL.Queries;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class UpdateSelfTestCallResultCommandHandlerTests : DatabaseTestsBase
     {
         private UpdateSelfTestCallResultCommandHandler _handler;
-        private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         private Guid _newConferenceId;
 
         [SetUp]
@@ -20,7 +22,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new UpdateSelfTestCallResultCommandHandler(context);
-            _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
@@ -54,6 +55,29 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateSelfTestCallResultCommand(_newConferenceId, participantId, true, TestScore.Good);
 
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
+        }
+        
+        [Test]
+        public async Task Should_update_participant_self_test_score()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            var participantId = seededConference.Participants.First().Id;
+            var command = new UpdateSelfTestCallResultCommand(_newConferenceId, participantId, true, TestScore.Good);
+
+            await _handler.Handle(command);
+
+            Conference resultConference;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                resultConference = await db.Conferences.Include(x => x.Participants).ThenInclude(x => x.TestCallResult)
+                    .SingleAsync(x => x.Id == command.ConferenceId);
+            }
+
+            var resultParticipant = resultConference.GetParticipants().Single(x => x.Id == participantId);
+            resultParticipant.TestCallResult.Passed.Should().BeTrue();
+            resultParticipant.TestCallResult.Score.Should().Be(TestScore.Good);
         }
     }
 }
