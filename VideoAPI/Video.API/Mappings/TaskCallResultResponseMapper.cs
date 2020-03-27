@@ -7,11 +7,6 @@ namespace Video.API.Mappings
     {
         public static TestCallScoreResponse MapTaskToResponse(TestCallResult testCallScore)
         {
-            if (testCallScore == null)
-            {
-                return null;
-            }
-            
             return new TestCallScoreResponse
             {
                 Passed = testCallScore.Passed,

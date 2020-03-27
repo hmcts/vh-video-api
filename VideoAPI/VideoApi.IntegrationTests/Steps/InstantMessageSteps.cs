@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Requests;

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -52,10 +51,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(TestConference);
-
-            QueryHandlerMock
-             .Setup(x => x.Handle<GetConferencesForTodayByUsernameQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetConferencesForTodayByUsernameQuery>()))
-             .ReturnsAsync(new List<VideoApi.Domain.Conference>());
 
             CommandHandlerMock
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))

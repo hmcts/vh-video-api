@@ -35,8 +35,34 @@ namespace VideoApi.IntegrationTests.Steps
             _commonSteps = commonSteps;
         }
 
-        [Given(@"I have a get details for a conference request by username with a (.*) username")]
-        [Given(@"I have a get details for a conference request by username with an (.*) username")]
+        [Given(@"I have a get conferences for a judge by username request with a (.*) username")]
+        [Given(@"I have a get conferences for a judge by username request with an (.*) username")]
+        public void GivenIHaveAGetConferenceForAJudgeByUsernameRequestWithA(Scenario scenario)
+        {
+            string username;
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                {
+                    username = _context.Test.Conference.Participants.First().Username;
+                    break;
+                }
+
+                case Scenario.Nonexistent:
+                    username = Internet.Email();
+                    break;
+                case Scenario.Invalid:
+                    username = "invalidemail";
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            _context.Uri = GetConferencesTodayForJudge(username);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I have a get conferences for an individual by username request with a (.*) username")]
+        [Given(@"I have a get conferences for an individual by username request with an (.*) username")]
         public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername(Scenario scenario)
         {
             string username;
@@ -57,7 +83,7 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            _context.Uri = GetConferenceDetailsByUsername(username);
+            _context.Uri = GetConferencesTodayForIndividual(username);
             _context.HttpMethod = HttpMethod.Get;
         }
 

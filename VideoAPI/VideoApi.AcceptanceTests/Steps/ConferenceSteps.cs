@@ -29,12 +29,6 @@ namespace VideoApi.AcceptanceTests.Steps
             _scenarioContext = scenarioContext;
         }
 
-        [Given(@"I have a get details for a conference request by username with a valid username")]
-        public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername()
-        {
-            _context.Request =  _context.Get(GetConferenceDetailsByUsername(_context.Test.ConferenceResponse.Participants.First().Username));
-        }
-
         [Given(@"I have an update conference request")]
         public void GivenIHaveAnUpdateConferenceRequest()
         {
@@ -121,6 +115,20 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidGetTodaysConferencesRequest()
         {
             _context.Request = _context.Get(GetConferencesToday);
+        }
+
+        [Given(@"I have a get conferences today for a judge")]
+        public void GivenIHaveAGetConferenceTodayForAJudge()
+        {
+            var judge = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
+            _context.Request = _context.Get(GetConferencesTodayForJudge(judge.Username));
+        }
+        
+        [Given(@"I have a get conferences today for an individual")]
+        public void GivenIHaveAGetConferenceTodayForAnIndividual()
+        {
+            var individual = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole != UserRole.Judge);
+            _context.Request = _context.Get(GetConferencesTodayForJudge(individual.Username));
         }
 
         [Given(@"I have a get expired conferences request")]

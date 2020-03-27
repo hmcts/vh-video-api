@@ -100,15 +100,7 @@ namespace Video.API.Controllers
 
         {
             _logger.LogDebug("RemoveParticipantFromConference");
-
-            if (conferenceId == Guid.Empty)
-            {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                _logger.LogError($"Invalid conferenceId: {conferenceId}");
-
-                return BadRequest(ModelState);
-            }
-
+            
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
