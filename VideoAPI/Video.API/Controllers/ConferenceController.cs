@@ -199,9 +199,9 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var query = new GetConferencesForTodayByUsernameQuery(username.ToLower().Trim());
+            var query = new GetConferencesForTodayByJudgeQuery(username.ToLower().Trim());
             var conferences =
-                await _queryHandler.Handle<GetConferencesForTodayByUsernameQuery, List<Conference>>(query);
+                await _queryHandler.Handle<GetConferencesForTodayByJudgeQuery, List<Conference>>(query);
 
             var response = conferences.Select(ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel);
             return Ok(response);
@@ -226,9 +226,9 @@ namespace Video.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var query = new GetConferencesForTodayByUsernameQuery(username.ToLower().Trim());
+            var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
             var conferences =
-                await _queryHandler.Handle<GetConferencesForTodayByUsernameQuery, List<Conference>>(query);
+                await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
 
             var response = conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel);
             return Ok(response);
