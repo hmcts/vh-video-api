@@ -90,7 +90,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a valid get conferences for today request")]
         public void GivenIHaveAGetConferencesTodayRequest()
         {
-            _context.Uri = GetConferencesToday;
+            _context.Uri = GetConferencesTodayForAdmin;
             _context.HttpMethod = HttpMethod.Get;
         }
 
@@ -248,11 +248,11 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the summary of conference details should be retrieved")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ConferenceSummaryResponse>>(_context.Response.Content);
+            var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
-                AssertConferenceSummaryResponse.ForConference(conference);
+                AssertConferenceForAdminResponse.ForConference(conference);
                 conference.Participants.Should().NotBeNullOrEmpty();
                 foreach (var participant in conference.Participants)
                 {
@@ -264,7 +264,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"only todays conferences should be retrieved")]
         public async Task ThenOnlyTodaysConferencesShouldBeRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ConferenceSummaryResponse>>(_context.Response.Content);
+            var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
             foreach (var conference in conferences)
             {
                 conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);

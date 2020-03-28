@@ -167,16 +167,16 @@ namespace Video.API.Controllers
         /// Get todays conferences
         /// </summary>
         /// <returns>Conference details</returns>
-        [HttpGet("today")]
-        [SwaggerOperation(OperationId = "GetConferencesToday")]
-        [ProducesResponseType(typeof(List<ConferenceSummaryResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesTodayAsync()
+        [HttpGet("today/vho")]
+        [SwaggerOperation(OperationId = "GetConferencesTodayForAdmin")]
+        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetConferencesTodayForAdminByUsernameAsync()
         {
-            _logger.LogDebug("GetConferencesToday");
-            var query = new GetConferencesTodayQuery();
-            var conferences = await _queryHandler.Handle<GetConferencesTodayQuery, List<Conference>>(query);
+            _logger.LogDebug("GetConferencesTodayForAdmin");
+            var query = new GetConferencesTodayForAdminQuery();
+            var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminQuery, List<Conference>>(query);
 
-            var response = conferences.Select(ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse);
+            var response = conferences.Select(ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse);
             return Ok(response);
         }
 
@@ -191,7 +191,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
-            _logger.LogDebug($"GetConferencesForUsername {username}");
+            _logger.LogDebug($"GetConferencesTodayForJudgeByUsername {username}");
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
@@ -218,7 +218,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
-            _logger.LogDebug($"GetConferencesForUsername {username}");
+            _logger.LogDebug($"GetConferencesTodayForIndividualByUsername {username}");
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");

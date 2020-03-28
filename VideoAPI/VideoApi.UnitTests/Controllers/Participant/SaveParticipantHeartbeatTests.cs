@@ -6,7 +6,6 @@ using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Participant
@@ -16,7 +15,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [SetUp]
         public void TestInitialize()
         {
-            _mockQueryHandler
+            MockQueryHandler
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
         }
@@ -27,9 +26,10 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var conferenceId = TestConference.Id;
             var participantId = TestConference.GetParticipants()[1].Id;
             
-            var result = await _controller.SaveHeartbeatDataForParticipantAsync(conferenceId, participantId, new AddHeartbeatRequest());
+            var result = await Controller.SaveHeartbeatDataForParticipantAsync(conferenceId, participantId, new AddHeartbeatRequest());
 
-            _mockCommandHandler.Verify(c => c.Handle(It.IsAny<SaveHeartbeatCommand>()), Times.Once);
+            MockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            MockCommandHandler.Verify(c => c.Handle(It.IsAny<SaveHeartbeatCommand>()), Times.Once);
 
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<NoContentResult>();
@@ -38,11 +38,11 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Should_return_badrequest_when_request_is_null()
         {
-            _mockQueryHandler
+            MockQueryHandler
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((VideoApi.Domain.Conference)null); 
             
-            var result = await _controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, null);
+            var result = await Controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, null);
 
             var typedResult = (BadRequestResult)result;
             typedResult.Should().NotBeNull();

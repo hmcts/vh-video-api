@@ -75,24 +75,24 @@ namespace Video.API.Controllers
             [FromBody] UpdateTaskRequest updateTaskRequest)
         {
             _logger.LogDebug("UpdateTaskStatus");
-            var command = new UpdateTaskCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
-            
             try
             {
+                var command = new UpdateTaskCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
                 await _commandHandler.Handle(command);
-                var query = new GetTasksForConferenceQuery(conferenceId);
-                var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
-                _logger.LogInformation(
-                    $"Completed task {taskId} in conference {conferenceId} by {updateTaskRequest.UpdatedBy}");
-                var task = tasks.Single(x => x.Id == taskId);
-                var response = TaskToResponseMapper.MapTaskToResponse(task);
-                return Ok(response);
             }
             catch (TaskNotFoundException)
             {
                 _logger.LogError($"Unable to find task {taskId} in conference {conferenceId}");
                 return NotFound();
             }
+            
+            var query = new GetTasksForConferenceQuery(conferenceId);
+            var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
+            _logger.LogInformation(
+                $"Completed task {taskId} in conference {conferenceId} by {updateTaskRequest.UpdatedBy}");
+            var task = tasks.Single(x => x.Id == taskId);
+            var response = TaskToResponseMapper.MapTaskToResponse(task);
+            return Ok(response);
         }
     }
 }

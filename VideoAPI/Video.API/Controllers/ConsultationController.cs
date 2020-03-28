@@ -151,6 +151,12 @@ namespace Video.API.Controllers
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
+            if (!request.Answer.HasValue)
+            {
+                ModelState.AddModelError(nameof(request.Answer), "Response to consultation is missing");
+                return BadRequest(ModelState);
+            }
+            
             if (conference == null)
             {
                 _logger.LogError($"Unable to find conference {request.ConferenceId}");

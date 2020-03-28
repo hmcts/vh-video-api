@@ -97,20 +97,18 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveInstantMessagesForConferenceAsync(Guid conferenceId)
-        {
-            _logger.LogDebug("RemoveParticipantFromConference");
 
+        {
+            _logger.LogDebug("RemoveInstantMessagesForConference");
             try
             {
                 var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
                 await _commandHandler.Handle(command);
-                
                 return NoContent();
             }
-            catch (ConferenceNotFoundException)
+            catch (ConferenceNotFoundException e)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                
+                _logger.LogError(e,$"Unable to find conference {conferenceId}");
                 return NotFound();
             }
         }

@@ -11,6 +11,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -49,10 +50,10 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, AddParticipantsToConferenceRequest request)
+        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, 
+            AddParticipantsToConferenceRequest request)
         {
             _logger.LogDebug("AddParticipantsToConference");
-            
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(),
                         x.Username.ToLowerInvariant().Trim(), x.UserRole,
@@ -62,10 +63,18 @@ namespace Video.API.Controllers
                     })
                 .ToList();
 
-            var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants);
-            await _commandHandler.Handle(addParticipantCommand);
+            try
+            {
+                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants);
+                await _commandHandler.Handle(addParticipantCommand);
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ConferenceNotFoundException e)
+            {
+                _logger.LogError(e, $"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
         }
 
         /// <summary>
@@ -83,28 +92,25 @@ namespace Video.API.Controllers
         public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
         {
             _logger.LogDebug("UpdateParticipantDetails");
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference == null)
+            try
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
+                    request.Fullname,
+                    request.DisplayName, request.Representee);
+                await _commandHandler.Handle(updateParticipantDetailsCommand);
+
+                return NoContent();
+            }
+            catch (ConferenceNotFoundException e)
+            {
+                _logger.LogError(e, $"Unable to find conference {conferenceId}");
                 return NotFound();
             }
-
-            var participant = queriedConference.Participants.SingleOrDefault(x => x.Id == participantId);
-            if (participant == null)
+            catch (ParticipantNotFoundException e)
             {
-                _logger.LogError($"Unable to find participant {participantId}");
+                _logger.LogError(e, $"Unable to find participant {participantId}");
                 return NotFound();
             }
-
-            var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId, request.Fullname,
-                request.DisplayName, request.Representee);
-            await _commandHandler.Handle(updateParticipantDetailsCommand);
-
-            return NoContent();
         }
 
         /// <summary>
@@ -253,10 +259,26 @@ namespace Video.API.Controllers
 
             if (request == null)
             {
-                _logger.LogError("AddHeartbeatRequest is null");
+                _logger.LogError($"AddHeartbeatRequest is null");
                 return BadRequest();
             }
 
+            var conference = await _queryHandler
+                .Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+
+            if (conference == null)
+            {
+                _logger.LogError($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            var participant = conference.Participants.SingleOrDefault(x => x.Id == participantId);
+            if (participant == null)
+            {
+                _logger.LogError($"Unable to find participant {participantId}");
+                return NotFound();
+            }
+            
             var command = new SaveHeartbeatCommand
             (
                 conferenceId, participantId,

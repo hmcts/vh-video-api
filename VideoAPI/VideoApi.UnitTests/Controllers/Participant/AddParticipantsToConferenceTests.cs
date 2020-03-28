@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Queries;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
@@ -15,12 +15,12 @@ namespace VideoApi.UnitTests.Controllers.Participant
 {
     public class AddParticipantsToConferenceTests : ParticipantsControllerTestBase
     {
-        private AddParticipantsToConferenceRequest request;
+        private AddParticipantsToConferenceRequest _request;
 
         [SetUp]
         public void TestInitialize()
         {
-            request = new AddParticipantsToConferenceRequest
+            _request = new AddParticipantsToConferenceRequest
             {
                 Participants = new List<ParticipantRequest> { new ParticipantRequestBuilder(UserRole.Individual).Build() }
             };
@@ -29,9 +29,25 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Should_add_participants_to_conference()
         {
-            await _controller.AddParticipantsToConferenceAsync(TestConference.Id, request);
+            var result = await Controller.AddParticipantsToConferenceAsync(TestConference.Id, _request);
 
-            _mockCommandHandler.Verify(c => c.Handle(It.IsAny<AddParticipantsToConferenceCommand>()), Times.Once);
+            MockCommandHandler.Verify(c => c.Handle(It.IsAny<AddParticipantsToConferenceCommand>()), Times.Once);
+            var typedResult = (NoContentResult)result;
+            typedResult.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task Should_return_notfound_with_no_matching_conference()
+        {
+            MockCommandHandler
+                .Setup(
+                    x => x.Handle(It.IsAny<AddParticipantsToConferenceCommand>()))
+                .ThrowsAsync(new ConferenceNotFoundException(TestConference.Id));                     
+            
+            var result = await Controller.AddParticipantsToConferenceAsync(Guid.NewGuid(), _request);
+
+            var typedResult = (NotFoundResult)result;
+            typedResult.Should().NotBeNull();
         }
     }
 }
