@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [SetUp]
         public void TestInitialize()
         {
-            _mockQueryHandler
+            MockQueryHandler
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
             
@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 new Heartbeat(TestConference.Id, TestConference.Participants.First().Id, 1,2,3,4,5,6,7,8, DateTime.MaxValue, "chrome", "1")
             };
 
-            _mockQueryHandler
+            MockQueryHandler
                 .Setup(x => x.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(It.IsAny<GetHeartbeatsFromTimePointQuery>()))
                 .ReturnsAsync(heartbeats);
         }
@@ -38,10 +38,10 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var participantId = TestConference.GetParticipants()[1].Id;
             
 
-            var result = await _controller.GetHeartbeatDataForParticipantAsync(conferenceId, participantId);
+            var result = await Controller.GetHeartbeatDataForParticipantAsync(conferenceId, participantId);
 
-            _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-            _mockQueryHandler.Verify(m => m.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(It.IsAny<GetHeartbeatsFromTimePointQuery>()), Times.Once);
+            MockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            MockQueryHandler.Verify(m => m.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(It.IsAny<GetHeartbeatsFromTimePointQuery>()), Times.Once);
 
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<OkObjectResult>();
@@ -55,11 +55,11 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Should_return_notfound_with_no_matching_conference()
         {
-            _mockQueryHandler
+            MockQueryHandler
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((VideoApi.Domain.Conference)null); 
             
-            var result = await _controller.GetHeartbeatDataForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
+            var result = await Controller.GetHeartbeatDataForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
 
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
@@ -68,7 +68,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Should_return_notfound_with_no_matching_participant()
         {
-            var result = await _controller.GetHeartbeatDataForParticipantAsync(TestConference.Id, Guid.NewGuid());
+            var result = await Controller.GetHeartbeatDataForParticipantAsync(TestConference.Id, Guid.NewGuid());
 
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();

@@ -35,7 +35,7 @@ namespace VideoApi.IntegrationTests.Hooks
 
         private static async Task<List<ConferenceDetailsResponse>> GetTodaysConferences(TestContext context)
         {
-            var endpoint = GetConferencesToday;
+            var endpoint = GetConferencesTodayForAdmin;
             using var client = context.CreateClient();
             var response = await client.GetAsync(endpoint);
             var json = await response.Content.ReadAsStringAsync();

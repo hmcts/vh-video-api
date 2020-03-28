@@ -4,9 +4,9 @@ using VideoApi.Contract.Responses;
 
 namespace Testing.Common.Assertions
 {
-    public static class AssertConferenceSummaryResponse
+    public static class AssertConferenceForAdminResponse
     {
-        public static void ForConference(ConferenceSummaryResponse conference)
+        public static void ForConference(ConferenceForAdminResponse conference)
         {
             conference.Should().NotBeNull();
             conference.CaseType.Should().NotBeNullOrEmpty();

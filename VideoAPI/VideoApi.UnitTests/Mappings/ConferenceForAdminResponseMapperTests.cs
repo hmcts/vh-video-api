@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithJudgeTask("Test3")
                 .Build();
 
-            var response = ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse(conference);
+            var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
@@ -52,7 +52,7 @@ namespace VideoApi.UnitTests.Mappings
 
             conference.Tasks[0].Status = TaskStatus.Done;
 
-            var response = ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse(conference);
+            var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference);
             response.Tasks.Count.Should().BeGreaterThan(0);
             response.Tasks.Any(x => x.Status == TaskStatus.Done).Should().Be(false);
         }
@@ -68,7 +68,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithParticipants(3)
                 .Build();
 
-            var response = ConferenceToSummaryResponseMapper.MapConferenceToSummaryResponse(conference);
+            var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference);
             response.Tasks.Count.Should().Be(0);
         }
     }

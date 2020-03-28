@@ -26,7 +26,7 @@ namespace Testing.Common.Helper
         {
             private const string ApiRoot = "conferences";
             public static string BookNewConference => $"{ApiRoot}";
-            public static string GetConferencesToday => $"{ApiRoot}/today";
+            public static string GetConferencesTodayForAdmin => $"{ApiRoot}/today/vho";
             public static string GetConferencesTodayForJudge(string username) => $"{ApiRoot}/today/judge?username=${username}";
             public static string GetConferencesTodayForIndividual(string username) => $"{ApiRoot}/today/individual?username=${username}";
             public static string GetExpiredOpenConferences => $"{ApiRoot}/expired";
