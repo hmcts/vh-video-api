@@ -163,7 +163,9 @@ namespace Video.API.Controllers
         public async Task<IActionResult> GetTestCallResultForParticipantAsync(Guid conferenceId, Guid participantId)
         {
             _logger.LogDebug("GetTestCallResultForParticipant");
+            
             var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
+            
             if (testCallResult == null)
             {
                 _logger.LogError(
@@ -171,11 +173,14 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
-                testCallResult.Score);
+            var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed, testCallResult.Score);
+            
             await _commandHandler.Handle(command);
+            
             _logger.LogDebug("Saving test call result");
+            
             var response = TaskCallResultResponseMapper.MapTaskToResponse(testCallResult);
+            
             return Ok(response);
         }
 
