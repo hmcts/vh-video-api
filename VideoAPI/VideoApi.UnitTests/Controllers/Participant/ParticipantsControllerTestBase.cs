@@ -13,19 +13,19 @@ namespace VideoApi.UnitTests.Controllers.Participant
 {
     public class ParticipantsControllerTestBase
     {
-        protected ParticipantsController _controller;
-        protected Mock<IQueryHandler> _mockQueryHandler;
-        protected Mock<ICommandHandler> _mockCommandHandler;
-        protected Mock<IVideoPlatformService> _mockVideoPlatformService;
-        protected Mock<ILogger<ParticipantsController>> _mockLogger;
+        protected ParticipantsController Controller;
+        protected Mock<IQueryHandler> MockQueryHandler;
+        protected Mock<ICommandHandler> MockCommandHandler;
+        protected Mock<IVideoPlatformService> MockVideoPlatformService;
+        private Mock<ILogger<ParticipantsController>> _mockLogger;
         protected VideoApi.Domain.Conference TestConference;
 
         [SetUp]
         public void Setup()
         {
-            _mockQueryHandler = new Mock<IQueryHandler>();
-            _mockCommandHandler = new Mock<ICommandHandler>();
-            _mockVideoPlatformService = new Mock<IVideoPlatformService>();
+            MockQueryHandler = new Mock<IQueryHandler>();
+            MockCommandHandler = new Mock<ICommandHandler>();
+            MockVideoPlatformService = new Mock<IVideoPlatformService>();
             _mockLogger = new Mock<ILogger<ParticipantsController>>();
 
             TestConference = new ConferenceBuilder()
@@ -36,8 +36,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
               .WithParticipant(UserRole.Representative, "Defendant")
               .Build();
 
-            _controller = new ParticipantsController(_mockCommandHandler.Object, _mockQueryHandler.Object,
-                _mockVideoPlatformService.Object, _mockLogger.Object);
+            Controller = new ParticipantsController(MockCommandHandler.Object, MockQueryHandler.Object,
+                MockVideoPlatformService.Object, _mockLogger.Object);
         }
     }
 }
