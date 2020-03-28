@@ -9,6 +9,7 @@ using Video.API.Controllers;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries.Core;
 using Task = System.Threading.Tasks.Task;
 
@@ -32,7 +33,7 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
         }
 
         [Test]
-        public async Task Should_successfully_save_given_message_request_and_return_ok_result()
+        public async Task Should_successfully_save_given_instantmessages_request_and_return_ok_result()
         {
             var request = new AddInstantMessageRequest
             {
@@ -46,6 +47,29 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
             typedResult.Value.Should().Be("InstantMessage saved");
             _commandHandler.Verify(c => c.Handle(It.IsAny<AddInstantMessageCommand>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_successfully_remove_instantmessages_and_return_nocontent()
+        {
+            var result = await _instantMessageController.RemoveInstantMessagesForConferenceAsync(Guid.NewGuid());
+
+            var typedResult = (NoContentResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
+            _commandHandler.Verify(c => c.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_return_notfound()
+        {
+            _commandHandler.Setup(x => x.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()))
+                .Throws(new ConferenceNotFoundException(Guid.NewGuid()));
+            
+            var result = await _instantMessageController.RemoveInstantMessagesForConferenceAsync(Guid.NewGuid());
+
+            var typedResult = (NotFoundResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            _commandHandler.Verify(c => c.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
         }
     }
 }

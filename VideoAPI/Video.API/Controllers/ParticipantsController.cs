@@ -49,20 +49,10 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, 
-            AddParticipantsToConferenceRequest request)
+        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, AddParticipantsToConferenceRequest request)
         {
             _logger.LogDebug("AddParticipantsToConference");
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference == null)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-
+            
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(),
                         x.Username.ToLowerInvariant().Trim(), x.UserRole,
@@ -263,26 +253,10 @@ namespace Video.API.Controllers
 
             if (request == null)
             {
-                _logger.LogError($"AddHeartbeatRequest is null");
+                _logger.LogError("AddHeartbeatRequest is null");
                 return BadRequest();
             }
 
-            var conference = await _queryHandler
-                .Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-
-            if (conference == null)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-
-            var participant = conference.Participants.SingleOrDefault(x => x.Id == participantId);
-            if (participant == null)
-            {
-                _logger.LogError($"Unable to find participant {participantId}");
-                return NotFound();
-            }
-            
             var command = new SaveHeartbeatCommand
             (
                 conferenceId, participantId,

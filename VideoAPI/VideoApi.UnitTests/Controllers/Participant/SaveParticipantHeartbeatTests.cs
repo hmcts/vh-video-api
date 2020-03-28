@@ -29,7 +29,6 @@ namespace VideoApi.UnitTests.Controllers.Participant
             
             var result = await _controller.SaveHeartbeatDataForParticipantAsync(conferenceId, participantId, new AddHeartbeatRequest());
 
-            _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             _mockCommandHandler.Verify(c => c.Handle(It.IsAny<SaveHeartbeatCommand>()), Times.Once);
 
             result.Should().NotBeNull();
@@ -46,28 +45,6 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var result = await _controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, null);
 
             var typedResult = (BadRequestResult)result;
-            typedResult.Should().NotBeNull();
-        }
-        
-        [Test]
-        public async Task Should_return_notfound_with_no_matching_conference()
-        {
-            _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((VideoApi.Domain.Conference)null); 
-            
-            var result = await _controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, new AddHeartbeatRequest());
-
-            var typedResult = (NotFoundResult)result;
-            typedResult.Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task Should_return_notfound_with_no_matching_participant()
-        {
-            var result = await _controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, new AddHeartbeatRequest());
-
-            var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
     }

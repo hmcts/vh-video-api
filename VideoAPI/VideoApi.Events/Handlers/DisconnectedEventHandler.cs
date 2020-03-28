@@ -40,21 +40,22 @@ namespace VideoApi.Events.Handlers
         {
             var taskType = SourceParticipant.IsJudge() ? TaskType.Judge : TaskType.Participant;
             var disconnected = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
+            
             await CommandHandler.Handle(disconnected);
         }
 
         private async Task AddSuspendedTask()
         {
-            var addSuspendedTask =
-                new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
+            var addSuspendedTask = new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
+            
             await CommandHandler.Handle(addSuspendedTask);
         }
 
         private async Task PublishSuspendedEventMessage()
         {
-            var conferenceState = ConferenceState.Suspended;
-            var updateConferenceStatusCommand =
-                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            const ConferenceState conferenceState = ConferenceState.Suspended;
+            var updateConferenceStatusCommand = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            
             await CommandHandler.Handle(updateConferenceStatusCommand);
 
             await AddSuspendedTask();

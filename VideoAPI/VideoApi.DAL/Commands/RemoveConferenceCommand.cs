@@ -34,10 +34,12 @@ namespace VideoApi.DAL.Commands
                 .Include(x => x.Participants).ThenInclude(x => x.TestCallResult)
                 .Include(x => x.Tasks)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
+            
             if (conference == null)
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
+            
             var events = await _context.Events.Where(x => x.ConferenceId == conference.Id).ToListAsync();
 
             _context.Remove(conference);

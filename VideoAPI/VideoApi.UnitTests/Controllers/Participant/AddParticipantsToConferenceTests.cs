@@ -29,27 +29,9 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Should_add_participants_to_conference()
         {
-            _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(TestConference);
-
             await _controller.AddParticipantsToConferenceAsync(TestConference.Id, request);
 
-            _mockQueryHandler.Verify(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             _mockCommandHandler.Verify(c => c.Handle(It.IsAny<AddParticipantsToConferenceCommand>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Should_return_notfound_with_no_matching_conference()
-        {
-            _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((VideoApi.Domain.Conference)null);                        
-            
-            var result = await _controller.AddParticipantsToConferenceAsync(Guid.NewGuid(), request);
-
-            var typedResult = (NotFoundResult)result;
-            typedResult.Should().NotBeNull();
         }
     }
 }

@@ -27,10 +27,10 @@ namespace VideoApi.Events.Handlers
             var tasks = await QueryHandler.Handle<GetTasksForConferenceQuery, List<Domain.Task>>(query);
             var task = tasks.SingleOrDefault(x => x.Type == TaskType.Participant 
                 && x.OriginId == SourceParticipant.Id && x.Status == TaskStatus.ToDo && x.Body == callbackEvent.Reason);
+            
             if (task == null)
             {
-                var command = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id,
-                    callbackEvent.Reason, TaskType.Participant);
+                var command = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, callbackEvent.Reason, TaskType.Participant);
                 await CommandHandler.Handle(command);
             }
         }

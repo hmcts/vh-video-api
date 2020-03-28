@@ -32,7 +32,6 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(AddInstantMessageCommand command)
         {
             var conference = await _context.Conferences
-                .Include(x => x.InstantMessageHistory)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)

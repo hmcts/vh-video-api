@@ -9,11 +9,6 @@ Feature: Participants
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 
-  Scenario: Add participant to a nonexistent conference
-    Given I have an add participant to a nonexistent conference request
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
-
   Scenario: Add participant to an invalid conference
     Given I have an add participant to an invalid conference request
     When I send the request to the endpoint
@@ -114,17 +109,3 @@ Feature: Participants
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
     And the heartbeats should be saved
-
-  Scenario: Set heartbeats not found with nonexistent conference id
-    Given I have a conference
-    And I have a set heartbeats request with a nonexistent conference id
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Not Found'
-
-  Scenario: Set heartbeats not found with nonexistent participant id
-    Given I have a conference
-    And I have a set heartbeats request with a nonexistent participant id
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Not Found'

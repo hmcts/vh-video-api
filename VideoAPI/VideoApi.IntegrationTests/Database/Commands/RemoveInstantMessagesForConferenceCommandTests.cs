@@ -55,7 +55,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
 
             var afterCount = updatedConference.GetInstantMessageHistory().Count;
-            afterCount.Should().Equals(0);
+            afterCount.Should().Be(0);
         }
 
 
