@@ -278,7 +278,7 @@ namespace Video.API.Controllers
             
             return Ok(response);
         }
-        
+
         /// <summary>
         /// Close a conference, set its state to closed
         /// </summary>
@@ -286,34 +286,25 @@ namespace Video.API.Controllers
         /// <returns>No Content status</returns>
         [HttpPut("{conferenceId}/close")]
         [SwaggerOperation(OperationId = "CloseConference")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloseConferenceAsync(Guid conferenceId)
         {
-            if (conferenceId == Guid.Empty)
+            try
             {
-                ModelState.AddModelError(nameof(conferenceId), $"Please provide a valid {nameof(conferenceId)}");
-                _logger.LogError($"Invalid conferenceId: {conferenceId}");
-                    
-                return BadRequest(ModelState);
+                var command = new CloseConferenceCommand(conferenceId);
+
+                await _commandHandler.Handle(command);
+                await SafelyRemoveCourtRoomAsync(conferenceId);
+                return NoContent();
             }
-                
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-                
-            if (conference == null)
+            catch (ConferenceNotFoundException e)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                _logger.LogError(e, $"Unable to find conference {conferenceId}");
                 return NotFound();
             }
-                
-            var command = new CloseConferenceCommand(conferenceId);
-                
-            await _commandHandler.Handle(command);
-            await SafelyRemoveCourtRoomAsync(conferenceId);
-            return NoContent();
         }
-    
+
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
