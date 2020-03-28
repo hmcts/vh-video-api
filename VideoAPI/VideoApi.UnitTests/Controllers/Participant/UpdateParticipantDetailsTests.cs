@@ -5,26 +5,29 @@ using NUnit.Framework;
 using System;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Participant
 {
     public class UpdateParticipantDetailsTests : ParticipantsControllerTestBase
     {
-        private UpdateParticipantRequest updateParticipantRequest;
+        private UpdateParticipantRequest _updateParticipantRequest;
 
         [SetUp]
         public void TestInitialize()
         {
-            updateParticipantRequest = new UpdateParticipantRequest { 
-                                                Fullname = "Test Name", 
-                                                DisplayName = "Test N", 
-                                                Representee = "Represent" };
+            _updateParticipantRequest = new UpdateParticipantRequest
+            {
+                Fullname = "Test Name",
+                DisplayName = "Test N",
+                Representee = "Represent"
+            };
 
-            _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+            MockQueryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
         }
 
@@ -33,33 +36,45 @@ namespace VideoApi.UnitTests.Controllers.Participant
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[1];
+
+
+            var result = await Controller.UpdateParticipantDetailsAsync(conferenceId, participant.Id, _updateParticipantRequest);
+            MockCommandHandler.Verify(c => c.Handle(It.IsAny<UpdateParticipantDetailsCommand>()), Times.Once);
             
-
-            await _controller.UpdateParticipantDetailsAsync(conferenceId, participant.Id, updateParticipantRequest);
-
-            _mockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-            _mockCommandHandler.Verify(c => c.Handle(It.IsAny<UpdateParticipantDetailsCommand>()), Times.Once);
+            var typedResult = (NoContentResult)result;
+            typedResult.Should().NotBeNull();
         }
 
         [Test]
         public async Task Should_return_notfound_with_no_matching_conference()
         {
-            _mockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((VideoApi.Domain.Conference)null); 
-            
-            var result = await _controller.UpdateParticipantDetailsAsync(Guid.NewGuid(), Guid.NewGuid(), updateParticipantRequest);
+            MockCommandHandler
+                .Setup(
+                    x => x.Handle(It.IsAny<UpdateParticipantDetailsCommand>()))
+                .ThrowsAsync(new ConferenceNotFoundException(TestConference.Id));
 
-            var typedResult = (NotFoundResult)result;
+            var result =
+                await Controller.UpdateParticipantDetailsAsync(Guid.NewGuid(), Guid.NewGuid(),
+                    _updateParticipantRequest);
+
+            var typedResult = (NotFoundResult) result;
             typedResult.Should().NotBeNull();
         }
 
         [Test]
         public async Task Should_return_notfound_with_no_matching_participant()
         {
-            var result = await _controller.UpdateParticipantDetailsAsync(TestConference.Id, Guid.NewGuid(), updateParticipantRequest);
+            MockCommandHandler
+                .Setup(
+                    x => x.Handle(It.IsAny<UpdateParticipantDetailsCommand>()))
+                .ThrowsAsync(new ParticipantNotFoundException(Guid.NewGuid()));
 
-            var typedResult = (NotFoundResult)result;
+
+            var result =
+                await Controller.UpdateParticipantDetailsAsync(TestConference.Id, Guid.NewGuid(),
+                    _updateParticipantRequest);
+
+            var typedResult = (NotFoundResult) result;
             typedResult.Should().NotBeNull();
         }
     }

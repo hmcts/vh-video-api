@@ -114,7 +114,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get conferences for today request with a valid date")]
         public void GivenIHaveAValidGetTodaysConferencesRequest()
         {
-            _context.Request = _context.Get(GetConferencesToday);
+            _context.Request = _context.Get(GetConferencesTodayForAdmin);
         }
 
         [Given(@"I have a get conferences today for a judge")]
@@ -172,11 +172,11 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"a list containing only todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
-                AssertConferenceSummaryResponse.ForConference(conference);
+                AssertConferenceForAdminResponse.ForConference(conference);
                 foreach (var participant in conference.Participants)
                     AssertParticipantSummaryResponse.ForParticipant(participant);
                 conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
@@ -202,12 +202,12 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the summary of conference details should be retrieved")]
         public void ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             _context.Test.ConferenceResponse.Id = conferences.First().Id;
             foreach (var conference in conferences)
             {
-                AssertConferenceSummaryResponse.ForConference(conference);
+                AssertConferenceForAdminResponse.ForConference(conference);
                 foreach (var participant in conference.Participants)
                     AssertParticipantSummaryResponse.ForParticipant(participant);
             }

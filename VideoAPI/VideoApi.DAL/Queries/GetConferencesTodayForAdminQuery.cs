@@ -8,20 +8,20 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetConferencesTodayQuery : IQuery
+    public class GetConferencesTodayForAdminQuery : IQuery
     {
     }
 
-    public class GetConferencesTodayQueryHandler : IQueryHandler<GetConferencesTodayQuery, List<Conference>>
+    public class GetConferencesTodayForAdminQueryHandler : IQueryHandler<GetConferencesTodayForAdminQuery, List<Conference>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetConferencesTodayQueryHandler(VideoApiDbContext context)
+        public GetConferencesTodayForAdminQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Conference>> Handle(GetConferencesTodayQuery query)
+        public async Task<List<Conference>> Handle(GetConferencesTodayForAdminQuery forAdminQuery)
         {
             var today = DateTime.Today;
             var tomorrow = DateTime.Today.AddDays(1);

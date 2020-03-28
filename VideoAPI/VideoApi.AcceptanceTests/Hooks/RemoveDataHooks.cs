@@ -34,9 +34,9 @@ namespace VideoApi.AcceptanceTests.Hooks
         [AfterScenario(Order = (int)HooksSequence.RemoveAllTodaysConferences)]
         public static void RemoveAllTodaysConferences(TestContext context)
         {
-            context.Request = context.Get(GetConferencesToday);
+            context.Request = context.Get(GetConferencesTodayForAdmin);
             context.Response = context.Client().Execute(context.Request);
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceSummaryResponse>>(context.Response.Content);
+            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(context.Response.Content);
             if (conferences.Count <= 0) return;
             foreach (var conference in conferences.Where(conference => conference.CaseName.Contains(context.Test.CaseName)))
             {

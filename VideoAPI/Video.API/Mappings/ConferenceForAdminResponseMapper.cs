@@ -5,16 +5,16 @@ using VideoApi.Domain.Enums;
 
 namespace Video.API.Mappings
 {
-    public static class ConferenceToSummaryResponseMapper
+    public static class ConferenceForAdminResponseMapper
     {
-        public static ConferenceSummaryResponse MapConferenceToSummaryResponse(Conference conference)
+        public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference)
         {
             var participants = conference.GetParticipants().Select(x => ParticipantToSummaryResponseMapper.MapParticipantToSummary(x))
                 .ToList();
 
             var activeTasks = conference.GetTasks().Where(x => x.Status == TaskStatus.ToDo).Select(x => TaskToResponseMapper.MapTaskToResponse(x)).ToList();
 
-            return new ConferenceSummaryResponse
+            return new ConferenceForAdminResponse
             {
                 Id = conference.Id,
                 CaseType = conference.CaseType,
