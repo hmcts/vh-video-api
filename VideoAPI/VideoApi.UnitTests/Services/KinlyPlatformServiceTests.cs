@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using FluentAssertions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -24,6 +25,9 @@ namespace VideoApi.UnitTests.Services
         private Mock<ILogger<KinlyPlatformService>> _loggerMock;
         private Mock<IOptions<ServicesConfiguration>> _servicesConfigOptionsMock;
 
+        private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
+        private IRoomReservationService _roomReservationService;
+        private IMemoryCache _memoryCache;
         private KinlyPlatformService _kinlyPlatformService;
         private Conference _testConference;
 
@@ -35,11 +39,17 @@ namespace VideoApi.UnitTests.Services
             _loggerMock = new Mock<ILogger<KinlyPlatformService>>();
             _servicesConfigOptionsMock = new Mock<IOptions<ServicesConfiguration>>();
 
+            _loggerRoomReservationMock = new Mock<ILogger<IRoomReservationService>>();
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
+            _roomReservationService = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
+            
+
             _kinlyPlatformService = new KinlyPlatformService(
                 _kinlyApiClientMock.Object,
                 _servicesConfigOptionsMock.Object,
                 _customJwtTokenProviderMock.Object,
-                _loggerMock.Object
+                _loggerMock.Object,
+                _roomReservationService
             );
             
             _testConference = new ConferenceBuilder()
