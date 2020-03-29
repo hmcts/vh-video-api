@@ -221,27 +221,11 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("GetHeartbeatDataForParticipantAsync");
 
-            var conference = await _queryHandler
-                .Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-
-            if (conference == null)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-
-            var participant = conference.Participants.SingleOrDefault(x => x.Id == participantId);
-            if (participant == null)
-            {
-                _logger.LogError($"Unable to find participant {participantId}");
-                return NotFound();
-            }
-            
             var query = new GetHeartbeatsFromTimePointQuery(conferenceId, participantId, TimeSpan.FromMinutes(15));
+            
             var heartbeats = await _queryHandler.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(query);
             
-            var responses = HeartbeatToParticipantHeartbeatResponseMapper
-                .MapHeartbeatToParticipantHeartbeatResponse(heartbeats);
+            var responses = HeartbeatToParticipantHeartbeatResponseMapper.MapHeartbeatToParticipantHeartbeatResponse(heartbeats);
             
             return Ok(responses);
         }
@@ -268,22 +252,6 @@ namespace Video.API.Controllers
                 return BadRequest();
             }
 
-            var conference = await _queryHandler
-                .Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-
-            if (conference == null)
-            {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
-            }
-
-            var participant = conference.Participants.SingleOrDefault(x => x.Id == participantId);
-            if (participant == null)
-            {
-                _logger.LogError($"Unable to find participant {participantId}");
-                return NotFound();
-            }
-            
             var command = new SaveHeartbeatCommand
             (
                 conferenceId, participantId,

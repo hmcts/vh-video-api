@@ -40,7 +40,6 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             var result = await Controller.GetHeartbeatDataForParticipantAsync(conferenceId, participantId);
 
-            MockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             MockQueryHandler.Verify(m => m.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(It.IsAny<GetHeartbeatsFromTimePointQuery>()), Times.Once);
 
             result.Should().NotBeNull();
@@ -50,28 +49,6 @@ namespace VideoApi.UnitTests.Controllers.Participant
             responses.First().As<ParticipantHeartbeatResponse>().BrowserName.Should().Be("chrome");
             responses.First().As<ParticipantHeartbeatResponse>().BrowserVersion.Should().Be("1");
             responses.First().As<ParticipantHeartbeatResponse>().RecentPacketLoss.Should().Be(8);
-        }
-
-        [Test]
-        public async Task Should_return_notfound_with_no_matching_conference()
-        {
-            MockQueryHandler
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync((VideoApi.Domain.Conference)null); 
-            
-            var result = await Controller.GetHeartbeatDataForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
-
-            var typedResult = (NotFoundResult)result;
-            typedResult.Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task Should_return_notfound_with_no_matching_participant()
-        {
-            var result = await Controller.GetHeartbeatDataForParticipantAsync(TestConference.Id, Guid.NewGuid());
-
-            var typedResult = (NotFoundResult)result;
-            typedResult.Should().NotBeNull();
         }
     }
 }

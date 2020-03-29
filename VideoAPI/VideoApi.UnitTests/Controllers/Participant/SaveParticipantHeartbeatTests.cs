@@ -28,7 +28,6 @@ namespace VideoApi.UnitTests.Controllers.Participant
             
             var result = await Controller.SaveHeartbeatDataForParticipantAsync(conferenceId, participantId, new AddHeartbeatRequest());
 
-            MockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             MockCommandHandler.Verify(c => c.Handle(It.IsAny<SaveHeartbeatCommand>()), Times.Once);
 
             result.Should().NotBeNull();

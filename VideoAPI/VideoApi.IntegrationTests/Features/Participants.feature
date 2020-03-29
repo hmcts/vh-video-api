@@ -89,20 +89,6 @@ Feature: Participants
     Then the response should have the status OK and success status True
     And 0 heartbeats should be retrieved
 
-  Scenario: Get heartbeats with nonexistent conference id
-    Given I have a conference
-    And I have a get heartbeats request with a nonexistent conference id
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Not Found'
-
-  Scenario: Get heartbeats with nonexistent participant id
-    Given I have a conference
-    And I have a get heartbeats request with a nonexistent participant id
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
-    And the error response message should contain 'Not Found'
-
   Scenario: Set heartbeats
     Given I have a conference
     And I have a valid set heartbeats request
