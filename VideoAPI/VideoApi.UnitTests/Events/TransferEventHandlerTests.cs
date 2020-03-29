@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Events
         public async Task Should_send_participant__status_messages_to_clients_and_asb_when_transfer_occurs(
             RoomType from, RoomType to, ParticipantState status)
         {
-            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
+            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationServiceMock);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -54,7 +54,7 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public void Should_throw_exception_when_transfer_cannot_be_mapped_to_participant_status()
         {
-            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
+            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationServiceMock);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -9,6 +11,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Handlers.Core;
+using VideoApi.Services;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -17,6 +20,9 @@ namespace VideoApi.UnitTests.Events
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected List<IEventHandler> EventHandlersList;
         protected Mock<IQueryHandler> QueryHandlerMock;
+        protected IRoomReservationService RoomReservationServiceMock;
+        private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
+        private IMemoryCache _memoryCache;
 
         protected Conference TestConference;
 
@@ -25,6 +31,10 @@ namespace VideoApi.UnitTests.Events
         {
             QueryHandlerMock = new Mock<IQueryHandler>();
             CommandHandlerMock = new Mock<ICommandHandler>();
+            _loggerRoomReservationMock = new Mock<ILogger<IRoomReservationService>>();
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
+
+            RoomReservationServiceMock = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
 
             EventHandlersList = new List<IEventHandler>
             {
@@ -37,7 +47,7 @@ namespace VideoApi.UnitTests.Events
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationServiceMock),
                 new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
             };

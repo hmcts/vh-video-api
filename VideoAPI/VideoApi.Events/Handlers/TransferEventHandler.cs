@@ -6,14 +6,18 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Services;
 
 namespace VideoApi.Events.Handlers
 {
     public class TransferEventHandler : EventHandlerBase
     {
-        public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
+        private readonly IRoomReservationService _roomReservationService;
+        public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
+            IRoomReservationService roomReservationService) : base(
             queryHandler, commandHandler)
         {
+            _roomReservationService = roomReservationService;
         }
 
         public override EventType EventType => EventType.Transfer;
@@ -26,6 +30,11 @@ namespace VideoApi.Events.Handlers
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
                     callbackEvent.TransferTo);
             await CommandHandler.Handle(command);
+
+            if (participantStatus == ParticipantState.InConsultation)
+            {
+                _roomReservationService.RemoveRoomReservation(SourceConference.Id, (RoomType)callbackEvent.TransferTo);
+            }
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
