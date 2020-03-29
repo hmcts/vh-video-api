@@ -43,8 +43,8 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri,
-                command.PexipNode);
+            conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri, command.PexipNode);
+            
             await _context.SaveChangesAsync();
         }
     }

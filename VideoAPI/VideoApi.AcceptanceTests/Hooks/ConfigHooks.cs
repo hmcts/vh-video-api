@@ -52,7 +52,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             {
                 CaseName = "Video Api Automated Test",
                 ConferenceIds = new List<Guid>(),
-                ConferenceResponses = new List<ConferenceSummaryResponse>()
+                ConferenceResponses = new List<ConferenceForAdminResponse>()
             };
             context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
         }

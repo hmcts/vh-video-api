@@ -75,5 +75,21 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
+
+        [Test]
+        public async Task should_return_bad_request_when_answer_is_not_provided()
+        {
+            var conferenceId = TestConference.Id;
+            var request = new AdminConsultationRequest
+            {
+                ConferenceId = conferenceId,
+                ParticipantId = Guid.NewGuid(),
+                ConsultationRoom = RoomType.ConsultationRoom1
+            };
+            
+            var result = await Controller.RespondToAdminConsultationRequestAsync(request);
+            var typedResult = (BadRequestObjectResult)result;
+            typedResult.Should().NotBeNull();
+        }
     }
 }

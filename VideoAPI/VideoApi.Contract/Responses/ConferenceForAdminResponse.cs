@@ -4,7 +4,7 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Responses
 {
-    public class ConferenceSummaryResponse
+    public class ConferenceForAdminResponse
     {
         public Guid Id { get; set; }
         public DateTime ScheduledDateTime { get; set; }

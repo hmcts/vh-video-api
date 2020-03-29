@@ -9,9 +9,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetConferencesTodayQueryTests : DatabaseTestsBase
+    public class GetConferencesTodayForAdminQueryTests : DatabaseTestsBase
     {
-        private GetConferencesTodayQueryHandler _handler;
+        private GetConferencesTodayForAdminQueryHandler _handler;
         private Guid _newConferenceId1;
         private Guid _newConferenceId2;
         private Guid _newConferenceId3;
@@ -23,7 +23,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetConferencesTodayQueryHandler(context);
+            _handler = new GetConferencesTodayForAdminQueryHandler(context);
             _newConferenceId1 = Guid.Empty;
             _newConferenceId2 = Guid.Empty;
             _newConferenceId3 = Guid.Empty;
@@ -35,7 +35,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [TearDown]
         public async Task TearDown()
         {
-            TestContext.WriteLine("Cleaning conferences for GetConferencesTodayQueryHandler");
+            TestContext.WriteLine("Cleaning conferences for GetConferencesTodayForAdminQueryHandler");
             await TestDataManager.RemoveConference(_newConferenceId1);
             await TestDataManager.RemoveConference(_newConferenceId2);
             await TestDataManager.RemoveConference(_newConferenceId3);
@@ -98,7 +98,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
 
-            var conferences = await _handler.Handle(new GetConferencesTodayQuery());
+            var conferences = await _handler.Handle(new GetConferencesTodayForAdminQuery());
 
             conferences.Should().NotBeEmpty();
             foreach (var conference in conferences)

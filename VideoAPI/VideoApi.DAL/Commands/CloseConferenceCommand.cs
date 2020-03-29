@@ -27,7 +27,7 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(CloseConferenceCommand command)
         {
-            var conference = await _context.Conferences.Include("ConferenceStatuses")
+            var conference = await _context.Conferences
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -36,6 +36,7 @@ namespace VideoApi.DAL.Commands
             }
 
             conference.CloseConference();
+            
             await _context.SaveChangesAsync();
         }
     }
