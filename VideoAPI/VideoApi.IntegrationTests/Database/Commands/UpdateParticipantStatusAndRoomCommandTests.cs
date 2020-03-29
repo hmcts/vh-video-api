@@ -70,13 +70,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
-            var updatedParticipant =
-                updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
+            var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
             var afterState = updatedParticipant.GetCurrentStatus();
 
             afterState.Should().NotBe(beforeState);
             afterState.ParticipantState.Should().Be(state);
-
             updatedParticipant.CurrentRoom.Should().Be(room);
         }
 

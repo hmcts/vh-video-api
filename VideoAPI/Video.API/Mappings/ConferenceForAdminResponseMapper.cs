@@ -9,10 +9,10 @@ namespace Video.API.Mappings
     {
         public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference)
         {
-            var participants = conference.GetParticipants().Select(x => ParticipantToSummaryResponseMapper.MapParticipantToSummary(x))
+            var participants = conference.GetParticipants().Select(ParticipantToSummaryResponseMapper.MapParticipantToSummary)
                 .ToList();
 
-            var activeTasks = conference.GetTasks().Where(x => x.Status == TaskStatus.ToDo).Select(x => TaskToResponseMapper.MapTaskToResponse(x)).ToList();
+            var activeTasks = conference.GetTasks().Where(x => x.Status == TaskStatus.ToDo).Select(TaskToResponseMapper.MapTaskToResponse).ToList();
 
             return new ConferenceForAdminResponse
             {

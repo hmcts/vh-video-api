@@ -37,9 +37,7 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(UpdateParticipantDetailsCommand command)
         {
-            var conference = await _context.Conferences.Include("Participants")
-                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
-
+            var conference = await _context.Conferences.Include("Participants").SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
             if (conference == null)
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
@@ -54,6 +52,7 @@ namespace VideoApi.DAL.Commands
             participant.Name = command.Fullname;
             participant.DisplayName = command.DisplayName;
             participant.Representee = command.Representee;
+            
             await _context.SaveChangesAsync();
         }
     }

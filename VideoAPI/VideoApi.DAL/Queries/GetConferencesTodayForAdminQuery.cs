@@ -21,7 +21,7 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
 
-        public async Task<List<Conference>> Handle(GetConferencesTodayForAdminQuery forAdminQuery)
+        public async Task<List<Conference>> Handle(GetConferencesTodayForAdminQuery query)
         {
             var today = DateTime.Today;
             var tomorrow = DateTime.Today.AddDays(1);

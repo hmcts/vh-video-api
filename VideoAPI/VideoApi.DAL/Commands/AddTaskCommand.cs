@@ -34,7 +34,7 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AddTaskCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Tasks)
+            var conference = await _context.Conferences
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)

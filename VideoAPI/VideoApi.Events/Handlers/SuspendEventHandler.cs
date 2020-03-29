@@ -19,12 +19,14 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var conferenceState = ConferenceState.Suspended;
+            const ConferenceState conferenceState = ConferenceState.Suspended;
 
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            
             await CommandHandler.Handle(command);
 
             var reason = "Hearing suspended";
+            
             if (SourceParticipant == null)
             {
                 SourceParticipant = SourceConference.GetJudge();
@@ -32,6 +34,7 @@ namespace VideoApi.Events.Handlers
             }
 
             var taskCommand = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, reason, TaskType.Hearing);
+            
             await CommandHandler.Handle(taskCommand);
         }
     }

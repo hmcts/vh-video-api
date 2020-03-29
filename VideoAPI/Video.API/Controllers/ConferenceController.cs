@@ -296,6 +296,7 @@ namespace Video.API.Controllers
 
                 await _commandHandler.Handle(command);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
+                
                 return NoContent();
             }
             catch (ConferenceNotFoundException e)
