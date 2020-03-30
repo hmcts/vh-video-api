@@ -24,15 +24,18 @@ namespace VideoApi.Services
         private readonly ICustomJwtTokenProvider _customJwtTokenProvider;
         private readonly ILogger<KinlyPlatformService> _logger;
         private readonly ServicesConfiguration _servicesConfigOptions;
+        private readonly IRoomReservationService _roomReservationService;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
             IOptions<ServicesConfiguration> servicesConfigOptions,
-            ICustomJwtTokenProvider customJwtTokenProvider, ILogger<KinlyPlatformService> logger)
+            ICustomJwtTokenProvider customJwtTokenProvider, ILogger<KinlyPlatformService> logger,
+            IRoomReservationService roomReservationService)
         {
             _kinlyApiClient = kinlyApiClient;
             _customJwtTokenProvider = customJwtTokenProvider;
             _logger = logger;
             _servicesConfigOptions = servicesConfigOptions.Value;
+            _roomReservationService = roomReservationService;
         }
 
 
@@ -152,7 +155,7 @@ namespace VideoApi.Services
         public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy,
             Participant requestedFor)
         {
-            var targetRoom = conference.GetAvailableConsultationRoom();
+            var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
 
             _logger.LogInformation(
                 $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
