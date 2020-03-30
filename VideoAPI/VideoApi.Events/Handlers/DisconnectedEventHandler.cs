@@ -20,7 +20,6 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             await PublishParticipantDisconnectMessage();
-            if (SourceParticipant.IsJudge()) await PublishSuspendedEventMessage();
         }
 
         private async Task PublishParticipantDisconnectMessage()
@@ -33,32 +32,22 @@ namespace VideoApi.Events.Handlers
             if (SourceConference.State != ConferenceState.Closed)
             {
                 await AddDisconnectedTask();
-            }            
+            }
         }
 
         private async Task AddDisconnectedTask()
         {
             var taskType = SourceParticipant.IsJudge() ? TaskType.Judge : TaskType.Participant;
             var disconnected = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
-            
+
             await CommandHandler.Handle(disconnected);
         }
 
         private async Task AddSuspendedTask()
         {
             var addSuspendedTask = new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
-            
+
             await CommandHandler.Handle(addSuspendedTask);
-        }
-
-        private async Task PublishSuspendedEventMessage()
-        {
-            const ConferenceState conferenceState = ConferenceState.Suspended;
-            var updateConferenceStatusCommand = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
-            
-            await CommandHandler.Handle(updateConferenceStatusCommand);
-
-            await AddSuspendedTask();
         }
     }
 }
