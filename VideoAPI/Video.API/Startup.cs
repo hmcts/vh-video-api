@@ -18,6 +18,7 @@ using Video.API.Validations;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.CustomToken;
 using VideoApi.DAL;
+using OwaspHeaders.Core.Extensions;
 
 namespace Video.API
 {
@@ -128,8 +129,8 @@ namespace Video.API
             app.UseCors("CorsPolicy");
             
             app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
-            
 
+            app.UseSecureHeadersMiddleware(SecureHeadersMiddlewareExtensions.BuildDefaultConfiguration());
             app.UseMiddleware<LogResponseBodyMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
         }
