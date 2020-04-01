@@ -95,7 +95,7 @@ namespace Video.API.Controllers
             {
                 var command = new UpdateConferenceDetailsCommand(request.HearingRefId, request.CaseNumber,
                     request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime,
-                    request.HearingVenueName);
+                    request.HearingVenueName, request.AudioRecordingRequired, request.IngestUrl);
 
                 await _commandHandler.Handle(command);
                 
@@ -353,7 +353,7 @@ namespace Video.API.Controllers
             var createConferenceCommand = new CreateConferenceCommand
             (
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber, 
-                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName
+                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName, request.AudioRecordingRequired
             );
             
             await _commandHandler.Handle(createConferenceCommand);

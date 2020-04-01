@@ -29,7 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var hearingRefId = Guid.NewGuid();
             var command = new UpdateConferenceDetailsCommand(hearingRefId, "caseNo", "caseType", 
-                "caseName", 10, DateTime.Today, "MyVenue");
+                "caseName", 10, DateTime.Today, "MyVenue", false, string.Empty);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var scheduledDateTime = seededConference.ScheduledDateTime.AddDays(1);
             var command = new UpdateConferenceDetailsCommand(hearingRefId, seededConference.CaseNumber,
                 seededConference.CaseType, seededConference.CaseName, duration, 
-                scheduledDateTime, "MyVenue");
+                scheduledDateTime, "MyVenue", false, string.Empty);
 
             await _handler.Handle(command);
             var conference = _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id)).Result;

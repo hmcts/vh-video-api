@@ -38,7 +38,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
-                    scheduledDuration, participants, hearingVenueName);
+                    scheduledDuration, participants, hearingVenueName, false);
             await _handler.Handle(command);
 
             command.NewConferenceId.Should().NotBeEmpty();
