@@ -215,6 +215,22 @@
         "callback_uri": {
           "type": "string",
           "description": "Callback uri"
+        },
+        "recording_enabled": {
+          "type": "boolean",
+          "description": "Should record conference"
+        },
+        "recording_url": {
+          "type": "string",
+          "description": "Recording url"
+        },
+        "streaming_enabled": {
+          "type": "boolean",
+          "description": "Should stream conference"
+        },
+        "streaming_url": {
+          "type": "string",
+          "description": "Streaming url"
         }
       }
     },
