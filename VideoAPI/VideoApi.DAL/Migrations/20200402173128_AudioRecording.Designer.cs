@@ -10,7 +10,7 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    [Migration("20200401131039_AudioRecording")]
+    [Migration("20200402173128_AudioRecording")]
     partial class AudioRecording
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

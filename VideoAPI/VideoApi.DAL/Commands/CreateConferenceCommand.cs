@@ -19,10 +19,11 @@ namespace VideoApi.DAL.Commands
         public List<Participant> Participants { get; }
         public string HearingVenueName { get; }
         public bool AudioRecordingRequired { get; set; }
+        public string IngestUrl { get; set; }
 
         public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
             string caseNumber, string caseName, int scheduledDuration, List<Participant> participants,
-            string hearingVenueName, bool audioRecordingRequired)
+            string hearingVenueName, bool audioRecordingRequired, string ingestUrl)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
@@ -33,6 +34,7 @@ namespace VideoApi.DAL.Commands
             Participants = participants;
             HearingVenueName = hearingVenueName;
             AudioRecordingRequired = audioRecordingRequired;
+            IngestUrl = ingestUrl;
         }
     }
 
@@ -48,7 +50,7 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(CreateConferenceCommand command)
         {
             var conference = new Conference(command.HearingRefId, command.CaseType, command.ScheduledDateTime,
-                command.CaseNumber,command.CaseName, command.ScheduledDuration, command.HearingVenueName, command.AudioRecordingRequired);
+                command.CaseNumber,command.CaseName, command.ScheduledDuration, command.HearingVenueName, command.AudioRecordingRequired, command.IngestUrl);
             
             foreach (var participant in command.Participants)
             {

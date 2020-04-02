@@ -96,10 +96,12 @@ namespace Video.API
             if (useStub)
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+                services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             }
             else
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
+                services.AddScoped<IAudioPlatformService, AudioPlatformService>();
 
                 services
                     .AddHttpClient<IKinlyApiClient, KinlyApiClient>()

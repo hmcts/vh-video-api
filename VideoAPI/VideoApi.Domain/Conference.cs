@@ -10,7 +10,7 @@ namespace VideoApi.Domain
     public class Conference : Entity<Guid>
     {
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
-            string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired)
+            string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl)
         {
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
@@ -28,6 +28,7 @@ namespace VideoApi.Domain
             ClosedDateTime = null;
             HearingVenueName = hearingVenueName;
             AudioRecordingRequired = audioRecordingRequired;
+            IngestUrl = ingestUrl;
         }
 
         public Guid HearingRefId { get; private set; }
@@ -139,7 +140,7 @@ namespace VideoApi.Domain
         }
 
         public void UpdateConferenceDetails(string caseType, string caseNumber, string caseName,
-            int scheduledDuration, DateTime scheduledDateTime, string hearingVenueName, bool audioRecordingRequired, string ingestUrl)
+            int scheduledDuration, DateTime scheduledDateTime, string hearingVenueName, bool audioRecordingRequired)
         {
             CaseName = caseName;
             CaseNumber = caseNumber;
@@ -148,7 +149,6 @@ namespace VideoApi.Domain
             ScheduledDuration = scheduledDuration;
             HearingVenueName = hearingVenueName;
             AudioRecordingRequired = audioRecordingRequired;
-            IngestUrl = ingestUrl;
         }
 
         public RoomType GetAvailableConsultationRoom()
