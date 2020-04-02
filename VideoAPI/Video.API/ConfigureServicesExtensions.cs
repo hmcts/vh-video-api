@@ -101,7 +101,7 @@ namespace Video.API
             else
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
-                services.AddScoped<IAudioPlatformService, AudioPlatformService>();
+                services.AddScoped<IAudioPlatformService, AzureMediaAudioPlatformService>();
 
                 services
                     .AddHttpClient<IKinlyApiClient, KinlyApiClient>()

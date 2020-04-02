@@ -2,7 +2,7 @@ using System;
 
 namespace VideoApi.Services
 {
-    public class AudioPlatformService : IAudioPlatformService
+    public class AzureMediaAudioPlatformService : IAudioPlatformService
     {
         public string CreateAudioIngestUrl()
         {
