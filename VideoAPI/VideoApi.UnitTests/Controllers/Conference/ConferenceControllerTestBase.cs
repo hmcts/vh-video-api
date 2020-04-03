@@ -26,6 +26,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IOptions<ServicesConfiguration>> ServicesConfiguration;
         protected MeetingRoom MeetingRoom;
         protected VideoApi.Domain.Conference TestConference;
+        protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
 
         [SetUp]
         public void Setup()
@@ -35,6 +36,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             MockLogger = new Mock<ILogger<ConferenceController>>();
             VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
             ServicesConfiguration = new Mock<IOptions<ServicesConfiguration>>();
+            AudioPlatformServiceMock = new Mock<IAudioPlatformService>();
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -61,7 +63,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode");
 
             Controller = new ConferenceController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                 VideoPlatformServiceMock.Object, ServicesConfiguration.Object, MockLogger.Object);
+                 VideoPlatformServiceMock.Object, ServicesConfiguration.Object, MockLogger.Object, AudioPlatformServiceMock.Object);
         }
     }
 }

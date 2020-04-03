@@ -10,7 +10,7 @@ namespace VideoApi.Domain
     public class Conference : Entity<Guid>
     {
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
-            string caseName, int scheduledDuration, string hearingVenueName)
+            string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl)
         {
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
@@ -27,6 +27,8 @@ namespace VideoApi.Domain
             ScheduledDuration = scheduledDuration;
             ClosedDateTime = null;
             HearingVenueName = hearingVenueName;
+            AudioRecordingRequired = audioRecordingRequired;
+            IngestUrl = ingestUrl;
         }
 
         public Guid HearingRefId { get; private set; }
@@ -43,6 +45,8 @@ namespace VideoApi.Domain
         public virtual IList<Task> Tasks { get; set; }
         public virtual IList<InstantMessage> InstantMessageHistory { get; }
         public string HearingVenueName { get; private set; }
+        public bool AudioRecordingRequired { get; set; }
+        public string IngestUrl { get; set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
         {
@@ -136,7 +140,7 @@ namespace VideoApi.Domain
         }
 
         public void UpdateConferenceDetails(string caseType, string caseNumber, string caseName,
-            int scheduledDuration, DateTime scheduledDateTime, string hearingVenueName)
+            int scheduledDuration, DateTime scheduledDateTime, string hearingVenueName, bool audioRecordingRequired)
         {
             CaseName = caseName;
             CaseNumber = caseNumber;
@@ -144,6 +148,7 @@ namespace VideoApi.Domain
             ScheduledDateTime = scheduledDateTime;
             ScheduledDuration = scheduledDuration;
             HearingVenueName = hearingVenueName;
+            AudioRecordingRequired = audioRecordingRequired;
         }
 
         public RoomType GetAvailableConsultationRoom()

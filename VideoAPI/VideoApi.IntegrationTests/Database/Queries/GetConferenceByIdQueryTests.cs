@@ -37,6 +37,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conference.ScheduledDuration.Should().Be(seededConference.ScheduledDuration);
             conference.ScheduledDateTime.Should().Be(seededConference.ScheduledDateTime);
             conference.HearingRefId.Should().Be(seededConference.HearingRefId);
+            conference.AudioRecordingRequired.Should().Be(seededConference.AudioRecordingRequired);
+            conference.IngestUrl.Should().Be(seededConference.IngestUrl);
 
             var participants = conference.GetParticipants();
             participants.Should().NotBeNullOrEmpty();

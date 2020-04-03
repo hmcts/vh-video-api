@@ -760,6 +760,22 @@ namespace VideoApi.Services.Kinly
         [Newtonsoft.Json.JsonProperty("callback_uri", Required = Newtonsoft.Json.Required.Always)]
         public string Callback_uri { get; set; }
     
+        /// <summary>Should record conference</summary>
+        [Newtonsoft.Json.JsonProperty("recording_enabled", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Recording_enabled { get; set; }
+    
+        /// <summary>Recording url</summary>
+        [Newtonsoft.Json.JsonProperty("recording_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Recording_url { get; set; }
+    
+        /// <summary>Should stream conference</summary>
+        [Newtonsoft.Json.JsonProperty("streaming_enabled", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Streaming_enabled { get; set; }
+    
+        /// <summary>Streaming url</summary>
+        [Newtonsoft.Json.JsonProperty("streaming_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Streaming_url { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);

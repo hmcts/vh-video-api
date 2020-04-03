@@ -35,16 +35,19 @@ namespace Video.API.Controllers
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly ServicesConfiguration _servicesConfiguration;
         private readonly ILogger<ConferenceController> _logger;
+        private readonly IAudioPlatformService _audioPlatformService;
+        
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
-            ILogger<ConferenceController> logger)
+            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _videoPlatformService = videoPlatformService;
             _servicesConfiguration = servicesConfiguration.Value;
             _logger = logger;
+            _audioPlatformService = audioPlatformService;
         }
 
         /// <summary>
@@ -65,10 +68,14 @@ namespace Video.API.Controllers
                 participant.Name = participant.Name.Trim();
                 participant.DisplayName = participant.DisplayName.Trim();
             }
-            
-            var conferenceId = await CreateConferenceAsync(request);
+
+            //Azure media service and get the ingest url
+            var ingestUrl = _audioPlatformService.CreateAudioIngestUrl();
+
+            var conferenceId = await CreateConferenceAsync(request, ingestUrl);
             _logger.LogDebug("Conference Created");
-            await BookKinlyMeetingRoomAsync(conferenceId);
+            
+            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, ingestUrl);
             _logger.LogDebug("Kinly Room Booked");
             
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
@@ -95,7 +102,7 @@ namespace Video.API.Controllers
             {
                 var command = new UpdateConferenceDetailsCommand(request.HearingRefId, request.CaseNumber,
                     request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime,
-                    request.HearingVenueName);
+                    request.HearingVenueName, request.AudioRecordingRequired);
 
                 await _commandHandler.Handle(command);
                 
@@ -315,12 +322,12 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task BookKinlyMeetingRoomAsync(Guid conferenceId)
+        private async Task BookKinlyMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)
         {
             MeetingRoom meetingRoom;
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId);            
+                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId, audioRecordingRequired, ingestUrl);            
             }
             catch (DoubleBookingException)
             {
@@ -335,7 +342,7 @@ namespace Video.API.Controllers
             await _commandHandler.Handle(command);
         }
 
-        private async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request)
+        private async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
         {
             var existingConference = await _queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
                 new CheckConferenceOpenQuery(request.ScheduledDateTime, request.CaseNumber, request.CaseName));
@@ -353,7 +360,7 @@ namespace Video.API.Controllers
             var createConferenceCommand = new CreateConferenceCommand
             (
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber, 
-                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName
+                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName, request.AudioRecordingRequired, ingestUrl
             );
             
             await _commandHandler.Handle(createConferenceCommand);
