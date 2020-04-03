@@ -42,12 +42,5 @@ namespace VideoApi.Events.Handlers
 
             await CommandHandler.Handle(disconnected);
         }
-
-        private async Task AddSuspendedTask()
-        {
-            var addSuspendedTask = new AddTaskCommand(SourceConference.Id, SourceConference.Id, "Suspended", TaskType.Hearing);
-
-            await CommandHandler.Handle(addSuspendedTask);
-        }
     }
 }
