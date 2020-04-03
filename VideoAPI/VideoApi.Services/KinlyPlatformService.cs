@@ -39,7 +39,7 @@ namespace VideoApi.Services
         }
 
 
-        public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId)
+        public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)
         {
             _logger.LogInformation(
                 $"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");

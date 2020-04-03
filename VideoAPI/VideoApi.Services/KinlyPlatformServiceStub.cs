@@ -17,7 +17,7 @@ namespace VideoApi.Services
             _bookedGuids = new List<Guid>();
         }
 
-        public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId)
+        public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)
         {
             if (_bookedGuids.Contains(conferenceId))
                 throw new DoubleBookingException(conferenceId, "Meeting room already exists");

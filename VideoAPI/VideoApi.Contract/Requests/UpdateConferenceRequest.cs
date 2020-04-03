@@ -11,5 +11,6 @@ namespace VideoApi.Contract.Requests
         public string CaseName { get; set; }
         public int ScheduledDuration { get; set; }
         public string HearingVenueName { get; set; }
+        public bool AudioRecordingRequired { get; set; }
     }
 }

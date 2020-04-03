@@ -35,10 +35,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = new ParticipantBuilder(true).Build();
             var participants = new List<Participant> {participant};
             const string hearingVenueName = "MyVenue";
+            string ingestUrl = $"https://localhost/ingesturl";
 
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
-                    scheduledDuration, participants, hearingVenueName);
+                    scheduledDuration, participants, hearingVenueName, true, ingestUrl);
             await _handler.Handle(command);
 
             command.NewConferenceId.Should().NotBeEmpty();
