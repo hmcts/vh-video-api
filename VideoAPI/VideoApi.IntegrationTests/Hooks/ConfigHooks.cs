@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore;
@@ -102,6 +103,8 @@ namespace VideoApi.IntegrationTests.Hooks
                 azureOptions.Value.ClientId, azureOptions.Value.ClientSecret,
                 context.Config.VhServices.VhVideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
+
+            Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
         }
     }
 }

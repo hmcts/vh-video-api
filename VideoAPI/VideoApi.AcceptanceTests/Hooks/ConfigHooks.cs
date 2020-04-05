@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.Configuration;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -76,6 +77,8 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Tokens.VideoApiBearerToken = await ConfigurationManager.GetBearerToken(
                 azureConfig, context.Config.VhServices.VhVideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
+            
+            Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
         }
     }
 
