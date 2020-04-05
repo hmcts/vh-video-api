@@ -40,7 +40,6 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterHearingServices(context);
             RegisterDatabaseSettings(context);
             RegisterServer(context);
-            RegisterZapSettings(context);
             RegisterApiSettings(context);
             GenerateBearerTokens(context, azureOptions);
         }
@@ -90,11 +89,6 @@ namespace VideoApi.IntegrationTests.Hooks
                     .UseEnvironment("Development")
                     .UseStartup<Startup>();
             context.Server = new TestServer(webHostBuilder);
-        }
-
-        private void RegisterZapSettings(TestContext context)
-        {
-            context.Config.ZapConfig = Options.Create(_configRoot.GetSection("ZapConfiguration").Get<ZapConfiguration>()).Value;
         }
 
         private static void RegisterApiSettings(TestContext context)

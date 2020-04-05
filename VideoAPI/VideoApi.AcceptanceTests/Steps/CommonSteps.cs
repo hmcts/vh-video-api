@@ -1,7 +1,6 @@
 using System.Net;
 using FluentAssertions;
 using TechTalk.SpecFlow;
-using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
 
 namespace VideoApi.AcceptanceTests.Steps
@@ -27,7 +26,6 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.Response.StatusCode.Should().Be(httpStatusCode);
             _context.Response.IsSuccessful.Should().Be(isSuccess);
-            Zap.Scan(_context.Client().BuildUri(_context.Request).ToString());
         }
     }
 }

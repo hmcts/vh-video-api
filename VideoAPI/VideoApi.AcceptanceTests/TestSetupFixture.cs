@@ -1,17 +1,29 @@
-using NUnit.Framework; 
-using System;
-using Testing.Common.Helper;
+using AcceptanceTests.Common.Api;
+using Microsoft.Extensions.Configuration;
+using NUnit.Framework;
+using VideoApi.Common.Configuration;
 
 namespace VideoApi.AcceptanceTests
 {
     [SetUpFixture]
     public class TestSetupFixture
-    { 
+    {
+        private ServicesConfiguration ServicesConfiguration => new ConfigurationBuilder()
+                                                            .AddJsonFile("appsettings.json")
+                                                            .Build()
+                                                            .GetSection("VhServices")
+                                                            .Get<ServicesConfiguration>();
+
+        [OneTimeSetUp]
+        public void ZapStart()
+        {
+            Zap.Start();
+        }
+
         [OneTimeTearDown]
         public void ZapReport()
         {
-            var reportFileName = string.Format("VideoApi-Acceptance-Tests-Security-{0}", DateTime.Now.ToString("dd-MMM-yyyy-hh-mm-ss"));
-            Zap.ReportAndShutDown(reportFileName); 
+            Zap.ReportAndShutDown("VideoApi - Acceptance",ServicesConfiguration.VideoApiUrl); 
         }
     }
 }

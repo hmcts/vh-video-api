@@ -339,7 +339,6 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Response.StatusCode.Should().Be(statusCode);
             _context.Response.IsSuccessStatusCode.Should().Be(isSuccess);
-            Zap.Scan($"{_context.Config.VhServices.VideoApiUrl}{_context.Uri}");
             NUnit.Framework.TestContext.WriteLine($"Status Code: {_context.Response.StatusCode}");
         }
 
@@ -350,7 +349,6 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var messageString = await _context.Response.Content.ReadAsStringAsync();
             messageString.Should().Contain(errorMessage);
-            Zap.Scan($"{_context.Config.VhServices.VideoApiUrl}{_context.Uri}");
         }
     }
 }
