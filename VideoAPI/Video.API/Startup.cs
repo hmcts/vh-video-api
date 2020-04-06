@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Video.API.Extensions;
+using Video.API.Telemetry;
 using Video.API.ValidationMiddleware;
 using Video.API.Validations;
 using VideoApi.Common.Configuration;
@@ -47,7 +48,8 @@ namespace Video.API
                 }));
 
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
-            
+            services.AddApplicationInsightsTelemetryProcessor<SuccessfulDependencyProcessor>();
+
             services.AddJsonOptions();
             RegisterSettings(services);
             bool.TryParse(Configuration["UseStub"], out var useStub);
