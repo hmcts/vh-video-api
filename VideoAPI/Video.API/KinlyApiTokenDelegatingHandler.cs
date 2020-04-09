@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using VideoApi.Common.Security.CustomToken;
+using VideoApi.Common.Security.Kinly;
 
 namespace Video.API
 {
@@ -16,7 +16,7 @@ namespace Video.API
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var token = _tokenProvider.GenerateToken("hmcts-video-api-client", 2);
+            var token = _tokenProvider.GenerateApiToken("hmcts-video-api-client", 2);
             request.Headers.Add("Authorization", $"Bearer {token}");
             return base.SendAsync(request, cancellationToken);
         }

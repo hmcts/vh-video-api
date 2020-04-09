@@ -3,15 +3,15 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
-namespace VideoApi.Common.Security.CustomToken
+namespace VideoApi.Common.Security.Kinly
 {
     public class CustomJwtTokenHandler : ICustomJwtTokenHandler
     {
-        private readonly CustomTokenSettings _customTokenSettings;
+        private readonly KinlyConfiguration _kinlyConfiguration;
 
-        public CustomJwtTokenHandler(CustomTokenSettings customTokenSettings)
+        public CustomJwtTokenHandler(KinlyConfiguration kinlyConfiguration)
         {
-            _customTokenSettings = customTokenSettings;
+            _kinlyConfiguration = kinlyConfiguration;
         }
 
         public ClaimsPrincipal GetPrincipal(string token)
@@ -28,11 +28,11 @@ namespace VideoApi.Common.Security.CustomToken
                 return null;
             }
 
-            byte[] key = Convert.FromBase64String(_customTokenSettings.Secret);
+            byte[] key = Convert.FromBase64String(_kinlyConfiguration.ApiSecret);
             var parameters = new TokenValidationParameters()
             {
                 RequireExpirationTime = true,
-                ValidIssuers = new[] {_customTokenSettings.Issuer},
+                ValidIssuers = new[] {_kinlyConfiguration.Issuer},
                 ValidateIssuer = true,
                 ValidateAudience = false,
                 IssuerSigningKey = new SymmetricSecurityKey(key)
