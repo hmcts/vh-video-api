@@ -1,28 +1,28 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using VideoApi.Common.Security.CustomToken;
 using VideoApi.Common.Security.HashGen;
+using VideoApi.Common.Security.Kinly;
 
 namespace VideoApi.UnitTests.CustomJwtToken
 {
     public class HashGeneratorTests
     {
-        private CustomTokenSettings _customTokenSettings;
+        private KinlyConfiguration _kinlyConfiguration;
 
         [SetUp]
         public void SetUp()
         {
-            _customTokenSettings = new CustomTokenSettings
+            _kinlyConfiguration = new KinlyConfiguration
             {
-                Secret = "W2gEmBn2H7b2FCMIQl6l9rggbJU1qR7luIeAf1uuaY+ik6TP5rN0NEsPVg0TGkroiel0SoCQT7w3cbk7hFrBtA=="
+                ApiSecret = "W2gEmBn2H7b2FCMIQl6l9rggbJU1qR7luIeAf1uuaY+ik6TP5rN0NEsPVg0TGkroiel0SoCQT7w3cbk7hFrBtA=="
             };
         }
 
         [Test]
         public void Should_encrypt()
         {
-            var hashGenerator = new HashGenerator(_customTokenSettings);
+            var hashGenerator = new HashGenerator(_kinlyConfiguration);
             var id = Guid.NewGuid().ToString();
             var computedHash = hashGenerator.GenerateHash(DateTime.UtcNow.AddMinutes(20), id);
             computedHash.Should().NotBeNullOrEmpty();
@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         [Test]
         public void Should_fail_authentication()
         {
-            var hashGenerator = new HashGenerator(_customTokenSettings);
+            var hashGenerator = new HashGenerator(_kinlyConfiguration);
             var id = Guid.NewGuid().ToString();
             var computedHash = hashGenerator.GenerateHash(DateTime.UtcNow.AddMinutes(20), id);
 

@@ -17,7 +17,7 @@ using Video.API.Telemetry;
 using Video.API.ValidationMiddleware;
 using Video.API.Validations;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.CustomToken;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 
 namespace Video.API
@@ -70,7 +70,7 @@ namespace Video.API
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceBusSettings>(options => Configuration.Bind("ServiceBusQueue", options));
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
-            var customTokenSettings = Configuration.GetSection("CustomToken").Get<CustomTokenSettings>();
+            var customTokenSettings = Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>();
             services.AddSingleton(customTokenSettings);
         }
 

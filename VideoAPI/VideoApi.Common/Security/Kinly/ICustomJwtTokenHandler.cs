@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace VideoApi.Common.Security.CustomToken
+namespace VideoApi.Common.Security.Kinly
 {
     public interface ICustomJwtTokenHandler
     {

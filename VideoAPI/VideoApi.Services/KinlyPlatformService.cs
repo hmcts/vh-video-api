@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.CustomToken;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 using Polly;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Services.Helpers;
 
 namespace VideoApi.Services
@@ -94,14 +94,14 @@ namespace VideoApi.Services
             var policy = Policy
                 .Handle<Exception>()
                 .OrResult<TestCallResult>(r => r == null)
-                .WaitAndRetryAsync(maxRetryAttempts, x => pauseBetweenFailures, (ex, ts, retryAttempt, context) =>
-                {
-                    _logger.LogError($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt { retryAttempt }");
-                });
+                .WaitAndRetryAsync(maxRetryAttempts, x => pauseBetweenFailures,
+                    (ex, ts, retryAttempt, context) =>
+                    {
+                        _logger.LogError(
+                            $"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}");
+                    });
 
-            return await policy
-                .ExecuteAsync(async () => await GetSelfTestCallScore(participantId))
-                ;
+            return await policy.ExecuteAsync(async () => await GetSelfTestCallScore(participantId));
         }
 
         public async Task<TestCallResult> GetSelfTestCallScore(Guid participantId)
@@ -119,7 +119,7 @@ namespace VideoApi.Services
                 };
 
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
-                    _customJwtTokenProvider.GenerateToken(participantId.ToString(), 2));
+                    _customJwtTokenProvider.GenerateSelfTestApiToken(participantId.ToString(), 2));
 
                 responseMessage = await httpClient.SendAsync(request);
             }

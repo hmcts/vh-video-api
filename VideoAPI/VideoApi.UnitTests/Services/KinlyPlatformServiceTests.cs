@@ -8,7 +8,7 @@ using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.CustomToken;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;

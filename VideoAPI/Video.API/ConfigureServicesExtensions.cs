@@ -17,7 +17,7 @@ using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
-using VideoApi.Common.Security.CustomToken;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;

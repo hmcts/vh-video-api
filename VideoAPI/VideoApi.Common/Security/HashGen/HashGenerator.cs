@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using VideoApi.Common.Security.CustomToken;
+using VideoApi.Common.Security.Kinly;
 
 namespace VideoApi.Common.Security.HashGen
 {
     public class HashGenerator
     {
-        private readonly CustomTokenSettings _customTokenSettings;
+        private readonly KinlyConfiguration _kinlyConfiguration;
 
-        public HashGenerator(CustomTokenSettings customTokenSettings)
+        public HashGenerator(KinlyConfiguration kinlyConfiguration)
         {
-            _customTokenSettings = customTokenSettings;
+            _kinlyConfiguration = kinlyConfiguration;
         }
 
         public string GenerateHash(DateTime expiresOnUtc, string data)
         {
-            var key = Convert.FromBase64String(_customTokenSettings.Secret);
+            var key = Convert.FromBase64String(_kinlyConfiguration.ApiSecret);
             var stringToHash = $"{expiresOnUtc}{data}";
 
             var request = Encoding.UTF8.GetBytes(stringToHash);

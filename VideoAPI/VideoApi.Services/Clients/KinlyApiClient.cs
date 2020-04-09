@@ -791,6 +791,10 @@ namespace VideoApi.Services.Kinly
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class Hearing 
     {
+        /// <summary>The conference's UUID</summary>
+        [Newtonsoft.Json.JsonProperty("virtual_courtroom_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Virtual_courtroom_id { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("uris", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Uris Uris { get; set; }
     
