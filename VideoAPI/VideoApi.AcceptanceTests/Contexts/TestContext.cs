@@ -1,7 +1,7 @@
+using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.Api.Helpers;
 using RestSharp;
 using Testing.Common.Configuration;
-using Testing.Common.Helper;
 
 namespace VideoApi.AcceptanceTests.Contexts
 {

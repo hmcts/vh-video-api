@@ -1,8 +1,8 @@
 using System.Net.Http;
+using AcceptanceTests.Common.Api;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Testing.Common.Configuration;
-using Testing.Common.Helper;
 using VideoApi.DAL;
 using VideoApi.IntegrationTests.Helper;
 
@@ -24,7 +24,7 @@ namespace VideoApi.IntegrationTests.Contexts
         public HttpClient CreateClient()
         {
             HttpClient client;
-            if (Config.ZapConfig.RunZap)
+            if (Zap.SetupProxy)
             {
                 var handler = new HttpClientHandler
                 {

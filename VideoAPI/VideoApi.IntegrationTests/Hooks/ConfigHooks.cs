@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore;
@@ -40,7 +41,6 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterHearingServices(context);
             RegisterDatabaseSettings(context);
             RegisterServer(context);
-            RegisterZapSettings(context);
             RegisterApiSettings(context);
             GenerateBearerTokens(context, azureOptions);
         }
@@ -92,11 +92,6 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Server = new TestServer(webHostBuilder);
         }
 
-        private void RegisterZapSettings(TestContext context)
-        {
-            context.Config.ZapConfig = Options.Create(_configRoot.GetSection("ZapConfiguration").Get<ZapConfiguration>()).Value;
-        }
-
         private static void RegisterApiSettings(TestContext context)
         {
             context.Response = new HttpResponseMessage(); 
@@ -108,6 +103,8 @@ namespace VideoApi.IntegrationTests.Hooks
                 azureOptions.Value.ClientId, azureOptions.Value.ClientSecret,
                 context.Config.VhServices.VhVideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
+
+            Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
         }
     }
 }
