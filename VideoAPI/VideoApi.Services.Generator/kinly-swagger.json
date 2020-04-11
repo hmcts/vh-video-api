@@ -237,6 +237,11 @@
     "hearing": {
       "type": "object",
       "properties": {
+        "virtual_courtroom_id": {
+          "type": "string",
+          "description": "The conference's UUID",
+          "format": "uuid"
+        },
         "uris": {
           "$ref": "#/definitions/uris"
         }

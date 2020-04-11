@@ -1,7 +1,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using VideoApi.Common.Security.CustomToken;
+using VideoApi.Common.Security.Kinly;
 
 namespace VideoApi.UnitTests.CustomJwtToken
 {
@@ -16,7 +16,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         public void Setup()
         {
             var secretKey = "6t8obpbl0iHOSvDpnUImSdZjYEpTcaEWC8SzLO4/X6iOHArHEm/3Ja6NnzaKS6JwE3U/Bjy1LE/bARMqNCN98w==";
-            var customTokenSettings = new CustomTokenSettings{ Secret = secretKey, Audience = Audience, Issuer = Issuer};
+            var customTokenSettings = new KinlyConfiguration{ ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
             _customJwtTokenProvider = new CustomJwtTokenProvider(customTokenSettings);
             _customJwtTokenHandler = new CustomJwtTokenHandler(customTokenSettings);
         }
@@ -24,14 +24,14 @@ namespace VideoApi.UnitTests.CustomJwtToken
         [Test]
         public void Should_generate_jwt_token_when_generate_token_is_called()
         {
-            var generateToken = _customJwtTokenProvider.GenerateToken("Test User", 30);
+            var generateToken = _customJwtTokenProvider.GenerateApiToken("Test User", 30);
             generateToken.Should().NotBeNullOrEmpty();
         }
 
         [Test]
         public void Should_be_valid_token_when_generated_by_custom_token_provider()
         {
-            var token = _customJwtTokenProvider.GenerateToken("Test User", 30);
+            var token = _customJwtTokenProvider.GenerateApiToken("Test User", 30);
 
             var isValidToken = _customJwtTokenHandler.IsValidToken(token);
             isValidToken.Should().BeTrue();
@@ -50,7 +50,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         public void Should_get_principal_when_get_principal_is_called_with_valid_token()
         {
             var testUser = "Test User";
-            var token = _customJwtTokenProvider.GenerateToken(testUser, 30);
+            var token = _customJwtTokenProvider.GenerateApiToken(testUser, 30);
 
             var claimsPrincipal = _customJwtTokenHandler.GetPrincipal(token);
             claimsPrincipal.Claims.First().Value.Should().Be(testUser);
@@ -69,10 +69,10 @@ namespace VideoApi.UnitTests.CustomJwtToken
         public void Should_be_invalid_token_when_token_generated_with_different_secret()
         {
             var secretKey = "F8pf/zwOgm/kASEFs+BKRDdyq+RhHCQ9i9tPjeaPjUebm6HvzXKIsr/nX28wpwAZoWRG0FQK9LVf6nrkW/vg4w==";
-            var customTokenSettings = new CustomTokenSettings { Secret = secretKey, Audience = Audience, Issuer = Issuer};
+            var customTokenSettings = new KinlyConfiguration { ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
             _customJwtTokenProvider = new CustomJwtTokenProvider(customTokenSettings);
 
-            var token = _customJwtTokenProvider.GenerateToken("Test User", 1);
+            var token = _customJwtTokenProvider.GenerateApiToken("Test User", 1);
 
             var claimsPrincipal = _customJwtTokenHandler.IsValidToken(token);
             claimsPrincipal.Should().BeFalse();

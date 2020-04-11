@@ -32,6 +32,7 @@ namespace VideoApi.Services
             // If not in cache, add to cache and return room
             if (!CheckIfRoomReserved(reservationKey, roomType))
             {
+                _logger.LogDebug($"Using room {roomType} for consultation in conference {conference.Id}");
                 return roomType;
             }
 
@@ -43,6 +44,7 @@ namespace VideoApi.Services
 
                 if (!CheckIfRoomReserved(reservationKey, roomType))
                 {
+                    _logger.LogDebug($"Using room {roomType} for consultation in conference {conference.Id}");
                     return roomType;
                 }
             }
@@ -55,6 +57,7 @@ namespace VideoApi.Services
 
             if (!isReserved)
             {
+                _logger.LogDebug($"Adding reservation for room {roomType} for conference {reservationKey}");
                 _memoryCache.Set(reservationKey, roomType);
             }
 
@@ -63,6 +66,7 @@ namespace VideoApi.Services
 
         public void RemoveRoomReservation(Guid conferenceId, RoomType roomType)
         {
+            _logger.LogDebug($"removing reservation for room {roomType} for conference {conferenceId}");
             var reservationKey = $"{conferenceId}:{roomType}";
             
             if (_memoryCache.TryGetValue(reservationKey, out _))
