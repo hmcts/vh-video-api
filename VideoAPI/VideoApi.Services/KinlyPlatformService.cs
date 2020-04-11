@@ -41,19 +41,24 @@ namespace VideoApi.Services
 
         public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)
         {
-            _logger.LogInformation(
-                $"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
+            _logger.LogInformation($"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
+            
             try
             {
                 var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
-                    Callback_uri = _servicesConfigOptions.CallbackUri
+                    Callback_uri = _servicesConfigOptions.CallbackUri,
+                    Recording_enabled = audioRecordingRequired,
+                    Recording_url = ingestUrl,
+                    Streaming_enabled = false,
+                    Streaming_url = null
                 });
 
-                var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Judge, response.Uris.Participant,
-                    response.Uris.Pexip_node);
-                return meetingRoom;
+                return new MeetingRoom
+                (
+                    response.Uris.Admin, response.Uris.Judge, response.Uris.Participant, response.Uris.Pexip_node
+                );
             }
             catch (KinlyApiException e)
             {
