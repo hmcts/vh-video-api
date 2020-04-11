@@ -1,4 +1,6 @@
+using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.Api.Healthchecks;
+using System.Net;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 
@@ -14,7 +16,7 @@ namespace VideoApi.AcceptanceTests.Hooks
         }
         private static void CheckVideoApiHealth(string apiUrl, string bearerToken)
         {
-            HealthcheckManager.CheckHealthOfVideoApi(apiUrl, bearerToken);
+            HealthcheckManager.CheckHealthOfVideoApi(apiUrl, bearerToken, (WebProxy)Zap.WebProxy);
         }
     }
 }

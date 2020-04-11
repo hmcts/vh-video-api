@@ -11,7 +11,7 @@ namespace VideoApi.IntegrationTests
         private ServicesConfiguration ServicesConfiguration => new ConfigurationBuilder()
                                                             .AddJsonFile("appsettings.json")
                                                             .Build()
-                                                            .GetSection("VhServices")
+                                                            .GetSection("Services")
                                                             .Get<ServicesConfiguration>();
 
 

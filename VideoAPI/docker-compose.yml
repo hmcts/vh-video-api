@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  videoapi:
+    container_name: videoapi
+    image: ${DOCKER_REGISTRY-}videoapi
+    restart: always
+    build:
+      context: .
+      dockerfile: Video.API/Dockerfile
+    depends_on:
+      - "db"
+    environment:
+      SQLCONNSTR_VhVideoAPi: 'Server=db;Database=VhVideoApi;User ID=sa;Password=VeryStrongPassword!'
+
+  db:
+    container_name: db
+    image: mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
+    expose:
+      - "1433"
+    environment:
+      ACCEPT_EULA: 'yes'
+      SA_PASSWORD: 'VeryStrongPassword!'
