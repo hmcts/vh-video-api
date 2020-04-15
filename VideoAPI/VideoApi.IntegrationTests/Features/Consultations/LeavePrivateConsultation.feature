@@ -29,9 +29,9 @@ Feature: Leave Private Consultations
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
 
-  Scenario: Leaving a consultation for a participant not in a consultation returns a bad request
+  Scenario: Leaving a consultation for a participant not in a consultation returns no content
     Given I have a conference
     And I have a leave consultation request for a participant not in a consultation
     When I send the request to the endpoint
-    Then the response should have the status BadRequest and success status False
-    And the error response message should also contain 'is not in a consultation room'
+    Then the response should have the status NoContent and success status True
+    
