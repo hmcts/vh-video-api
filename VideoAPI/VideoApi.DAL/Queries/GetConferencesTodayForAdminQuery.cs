@@ -31,6 +31,7 @@ namespace VideoApi.DAL.Queries
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
                 .OrderBy(x => x.ScheduledDateTime)
+                .Take(10)
                 .ToListAsync();
         }
     }
