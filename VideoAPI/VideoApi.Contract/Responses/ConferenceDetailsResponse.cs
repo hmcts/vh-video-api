@@ -65,5 +65,10 @@ namespace VideoApi.Contract.Responses
         public MeetingRoomResponse MeetingRoom { get; set; }
         
         public string HearingVenueName { get; set;  }
+
+        /// <summary>
+        /// The option to indicate hearing audio recording
+        /// </summary>
+        public bool AudioRecordingRequired { get; set; }
     }
 }

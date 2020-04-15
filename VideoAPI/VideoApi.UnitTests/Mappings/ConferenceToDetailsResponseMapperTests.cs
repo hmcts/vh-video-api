@@ -32,7 +32,6 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.InstantMessageHistory)
                 .Excluding(x => ExcludeIdFromMessage(x))
                 .Excluding(x => x.IngestUrl)
-                .Excluding(x => x.AudioRecordingRequired)
              );
 
             response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus());
