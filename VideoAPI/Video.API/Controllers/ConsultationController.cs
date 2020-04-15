@@ -105,10 +105,8 @@ namespace Video.API.Controllers
         public async Task<IActionResult> LeavePrivateConsultationAsync(LeaveConsultationRequest request)
         {
             _logger.LogDebug($"LeavePrivateConsultation");
-
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (conference == null)
             {
@@ -127,15 +125,14 @@ namespace Video.API.Controllers
             if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 &&
                                           currentRoom != RoomType.ConsultationRoom2))
             {
+                // This could only happen when both the participants press 'Close' button at the same time to end the call
                 _logger.LogError($"Participant {request.ParticipantId} is not in a consultation to leave from");
-                ModelState.AddModelError("Room",
-                    $"Participant {request.ParticipantId} is not in a consultation room");
-                return BadRequest(ModelState);
+                return NoContent();
             }
 
             await _videoPlatformService.StopPrivateConsultationAsync(conference, currentRoom.Value);
-
             return NoContent();
+
         }
 
         [HttpPost("vhofficer/respond")]
