@@ -62,7 +62,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
 
         [Test]
-        public async Task Should_return_badrequest_when_participant_current_room_is_not_consultation_room_type()
+        public async Task Should_return_nocontent_when_participant_current_room_is_not_consultation_room_type()
         {
             var conferenceId = TestConference.Id;
             var request = TestConference.GetParticipants()[2];
@@ -74,9 +74,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             };
 
             var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
-            var typedResult = (ObjectResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            ((SerializableError)typedResult.Value).ContainsKeyAndErrorMessage("Room", $"Participant {request.Id} is not in a consultation room");           
+            var typedResult = (NoContentResult)result;
+            typedResult.Should().NotBeNull();
         }
     }
 }
