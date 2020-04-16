@@ -11,7 +11,7 @@ namespace VideoApi.DAL.Queries
 {
     public class GetConferencesTodayForAdminQuery : IQuery
     {
-        public List<string> VenueNames { get; set; }
+        public IEnumerable<string> VenueNames { get; set; }
     }
 
     public class
