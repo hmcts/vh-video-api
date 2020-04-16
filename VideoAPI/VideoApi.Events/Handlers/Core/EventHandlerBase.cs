@@ -26,7 +26,7 @@ namespace VideoApi.Events.Handlers.Core
 
         public abstract EventType EventType { get; }
 #pragma warning disable S4457 // Parameter validation in "async/await" methods should be wrapped
-        public async Task HandleAsync(CallbackEvent callbackEvent)
+        public virtual async Task HandleAsync(CallbackEvent callbackEvent)
         {
             SourceConference =
                 await QueryHandler.Handle<GetConferenceByIdQuery, Conference>(
