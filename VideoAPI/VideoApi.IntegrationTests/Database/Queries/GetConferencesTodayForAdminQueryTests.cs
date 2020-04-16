@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -104,6 +105,56 @@ namespace VideoApi.IntegrationTests.Database.Queries
             foreach (var conference in conferences)
             {
                 conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.UtcNow.DayOfYear);
+            }
+        }
+
+        [Test]
+        public async Task should_get_conferences_today_filtered_by_venue()
+        {
+            var venue1 = @"Manchester";
+            var venue2 = @"Birmingham";
+            var venue3 = @"Luton";
+            var today = DateTime.Today.AddHours(10);
+            var conference1 = new ConferenceBuilder(true, venueName: venue1)
+                .WithParticipants(2).Build();
+            _newConferenceId1 = conference1.Id;
+
+            var conference2 = new ConferenceBuilder(true, venueName: venue1)
+                .WithParticipants(2).Build();
+            _newConferenceId2 = conference2.Id;
+
+            var conference3 = new ConferenceBuilder(true, venueName: venue2)
+                .WithParticipants(2).Build();
+            _newConferenceId3 = conference3.Id;
+
+            var conference4 = new ConferenceBuilder(true, venueName: venue2)
+                .WithParticipants(2).Build();
+            _newConferenceId4 = conference4.Id;
+
+            var conference5 = new ConferenceBuilder(true, venueName: venue3)
+                .WithParticipants(2).Build();
+            _newConferenceId5 = conference5.Id;
+
+            var conference6 = new ConferenceBuilder(true, venueName: venue3)
+                .WithParticipants(2).Build();
+            _newConferenceId6 = conference6.Id;
+
+            await TestDataManager.SeedConference(conference1);
+            await TestDataManager.SeedConference(conference2);
+            await TestDataManager.SeedConference(conference3);
+            await TestDataManager.SeedConference(conference4);
+            await TestDataManager.SeedConference(conference5);
+            await TestDataManager.SeedConference(conference6);
+
+            var result = await _handler.Handle(new GetConferencesTodayForAdminQuery
+            {
+                VenueNames = new List<string> {venue1, venue3}
+            });
+
+            result.Should().NotBeEmpty();
+            foreach (var conference in result)
+            {
+                conference.HearingVenueName.Should().NotBe(venue2);
             }
         }
     }
