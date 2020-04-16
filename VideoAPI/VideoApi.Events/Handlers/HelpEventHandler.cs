@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -20,12 +17,12 @@ namespace VideoApi.Events.Handlers
 
         public override async Task HandleAsync(CallbackEvent callbackEvent)
         {
-            
+            // We don't do anything with this
         }
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-
+            // We don't do anything with this
         }
 
     }
