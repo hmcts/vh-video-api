@@ -16,9 +16,9 @@ namespace VideoApi.Services.Clients
     public class WowzaHttpClient : IWowzaHttpClient
     {
         private readonly HttpClient _httpClient;
-        private readonly WowzaStreamingEngineConfiguration _configuration;
+        private readonly WowzaConfiguration _configuration;
 
-        public WowzaHttpClient(HttpClient httpClient, WowzaStreamingEngineConfiguration configuration)
+        public WowzaHttpClient(HttpClient httpClient, WowzaConfiguration configuration)
         {
             _httpClient = httpClient;
             _configuration = configuration;

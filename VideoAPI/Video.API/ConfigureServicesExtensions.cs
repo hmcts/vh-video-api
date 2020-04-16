@@ -77,7 +77,7 @@ namespace Video.API
         {
             var container = services.BuildServiceProvider();
             var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
-            var streamingConfiguration = container.GetService<IOptions<WowzaStreamingEngineConfiguration>>().Value;
+            var streamingConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
             
             services.AddMemoryCache();
             services.AddScoped<IRoomReservationService, RoomReservationService>();

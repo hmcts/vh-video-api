@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using VideoApi.Contract.Responses;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
+using VideoApi.Services.Responses;
 
 namespace VideoApi.Services
 {
@@ -18,7 +19,7 @@ namespace VideoApi.Services
             _logger = logger;
         }
 
-        public async Task<AudioStreamServiceResponse> GetApplicationAsync(string applicationName)
+        public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName)
         {
             try
             {
@@ -26,7 +27,7 @@ namespace VideoApi.Services
 
                 _logger.LogInformation($"Get Wowza application info: {applicationName}");
 
-                return new AudioStreamServiceResponse(true, data: response);
+                return response;
             }
             catch (StreamingEngineException ex)
             {
@@ -35,11 +36,11 @@ namespace VideoApi.Services
                 
                 _logger.LogError(errorMessage, ex);
 
-                return new AudioStreamServiceResponse(false, errorMessage);
+                return null;
             }
         }
 
-        public async Task<AudioStreamServiceResponse> GetApplicationsAsync()
+        public async Task<WowzaGetApplicationsResponse> GetApplicationsAsync()
         {
             try
             {
@@ -47,7 +48,7 @@ namespace VideoApi.Services
 
                 _logger.LogInformation("Get all Wowza applications info");
 
-                return new AudioStreamServiceResponse(true, data: response);
+                return response;
             }
             catch (StreamingEngineException ex)
             {
@@ -56,7 +57,7 @@ namespace VideoApi.Services
                 
                 _logger.LogError(errorMessage, ex);
 
-                return new AudioStreamServiceResponse(false, errorMessage);
+                return null;
             }
         }
 
@@ -86,7 +87,7 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<AudioStreamServiceResponse> MonitoringStreamRecorderAsync(string applicationName)
+        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName)
         {
             try
             {
@@ -94,7 +95,7 @@ namespace VideoApi.Services
 
                 _logger.LogInformation($"Get Wowza monitor stream data for application: {applicationName}");
 
-                return new AudioStreamServiceResponse(true, data: response);
+                return response;
             }
             catch (StreamingEngineException ex)
             {
@@ -103,7 +104,7 @@ namespace VideoApi.Services
                 
                 _logger.LogError(errorMessage, ex);
 
-                return new AudioStreamServiceResponse(false, errorMessage);
+                return null;
             }
         }
 

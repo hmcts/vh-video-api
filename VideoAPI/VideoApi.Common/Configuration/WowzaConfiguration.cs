@@ -1,6 +1,6 @@
 ﻿namespace VideoApi.Common.Configuration
 {
-    public class WowzaStreamingEngineConfiguration
+    public class WowzaConfiguration
     {
         public string Endpoint { get; set; }
         public string ServerName { get; set; }
