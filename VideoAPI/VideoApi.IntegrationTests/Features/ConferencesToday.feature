@@ -3,13 +3,27 @@ Feature: Conferences Today
   As an API service
   I want to view conferences for today
 
-  Scenario: Get all conferences today
+  Scenario: Get list of conferences for vho
     Given I have several conferences
-    And I have a valid get conferences for today request
+    And I have a get conferences for a vho request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And only todays conferences should be retrieved
-  
+
+  Scenario Outline: Get list of conferences for vho with venue filter
+    Given I have several conferences
+    And I have a get conferences for a vho request
+    And I filter by <venues>
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And I get <result> hearing(s)
+    Examples:
+      | venues                 | result |
+      | Birmingham             | 1      |
+      | Manchester             | 1      |
+      | Manchester, Birmingham | 2      |
+      | Stoke                  | 0      |
+
   Scenario: Get list of conferences for judge with valid username
     Given I have a conference
     And I have a get conferences for a judge by username request with a valid username

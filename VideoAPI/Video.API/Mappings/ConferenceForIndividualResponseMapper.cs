@@ -12,7 +12,9 @@ namespace Video.API.Mappings
                 Id = conference.Id,
                 CaseName = conference.CaseName,
                 CaseNumber = conference.CaseNumber,
-                ScheduledDateTime = conference.ScheduledDateTime
+                ScheduledDateTime = conference.ScheduledDateTime,
+                Status = conference.State,
+                ClosedDateTime = conference.ClosedDateTime
             };
         }
     }
