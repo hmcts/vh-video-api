@@ -1,4 +1,5 @@
 using System;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Responses
 {
@@ -23,5 +24,15 @@ namespace VideoApi.Contract.Responses
         /// The case name
         /// </summary>
         public string CaseName { get; set; }
+
+        /// <summary>
+        /// The current conference status
+        /// </summary>
+        public ConferenceState Status { get; set; }
+
+        /// <summary>
+        /// The conference closed datetime
+        /// </summary>
+        public DateTime? ClosedDateTime { get; set; }
     }
 }
