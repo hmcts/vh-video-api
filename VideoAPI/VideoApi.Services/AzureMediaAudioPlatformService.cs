@@ -1,3 +1,5 @@
+using VideoApi.Services.Contracts;
+
 namespace VideoApi.Services
 {
     public class AzureMediaAudioPlatformService : IAudioPlatformService

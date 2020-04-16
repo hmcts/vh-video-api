@@ -14,6 +14,7 @@ using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 using Polly;
 using VideoApi.Common.Security.Kinly;
+using VideoApi.Services.Contracts;
 using VideoApi.Services.Helpers;
 
 namespace VideoApi.Services

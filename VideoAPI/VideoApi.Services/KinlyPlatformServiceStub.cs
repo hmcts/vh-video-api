@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
 

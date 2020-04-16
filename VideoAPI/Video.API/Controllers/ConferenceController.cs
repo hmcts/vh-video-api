@@ -19,6 +19,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services;
+using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
 

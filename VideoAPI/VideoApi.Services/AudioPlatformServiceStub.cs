@@ -1,4 +1,5 @@
 using System;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.Services
 {

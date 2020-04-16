@@ -4,7 +4,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.Services
+namespace VideoApi.Services.Contracts
 {
     public interface IVideoPlatformService
     {

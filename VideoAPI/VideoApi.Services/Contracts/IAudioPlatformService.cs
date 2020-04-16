@@ -1,4 +1,4 @@
-namespace VideoApi.Services
+namespace VideoApi.Services.Contracts
 {
     public interface IAudioPlatformService
     {
