@@ -39,3 +39,4 @@ Feature: Callbacks
     | JudgeUnavailable      |
     | MediaPermissionDenied |
     | ParticipantJoining    |
+    | Help                  |

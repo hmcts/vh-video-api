@@ -1,4 +1,4 @@
-﻿Feature: Events
+Feature: Events
   In order to keep VH data up to date
   As an API service
   I want to handle external events
@@ -34,3 +34,4 @@
       | JudgeUnavailable      |
       | MediaPermissionDenied |
       | ParticipantJoining    |
+      | Help                  |
