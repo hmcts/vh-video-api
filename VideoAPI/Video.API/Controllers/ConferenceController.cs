@@ -177,10 +177,14 @@ namespace Video.API.Controllers
         [HttpGet("today/vho")]
         [SwaggerOperation(OperationId = "GetConferencesTodayForAdmin")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesTodayForAdminByUsernameAsync()
+        public async Task<IActionResult> GetConferencesTodayForAdminByUsernameAsync(
+            [FromQuery] ConferenceForAdminRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
-            var query = new GetConferencesTodayForAdminQuery();
+            var query = new GetConferencesTodayForAdminQuery
+            {
+                VenueNames = request.VenueNames
+            };
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminQuery, List<Conference>>(query);
 
             var response = conferences.Select(ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse);

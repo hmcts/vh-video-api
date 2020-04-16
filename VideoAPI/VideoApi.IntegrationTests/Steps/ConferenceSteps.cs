@@ -87,10 +87,19 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
 
-        [Given(@"I have a valid get conferences for today request")]
-        public void GivenIHaveAGetConferencesTodayRequest()
+        [Given(@"I have a get conferences for a vho request")]
+        public void GivenIHaveAGetConferencesTodayForAVho()
         {
             _context.Uri = GetConferencesTodayForAdmin;
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I filter by (.*)")]
+        public void GivenIFilterByVenues(string venuesList)
+        {
+            var venueNames = venuesList.Split(",").Select(v => v.Trim());
+            var queryParams = string.Join("&", venueNames.Select(v => $"VenueNames={v}"));
+            _context.Uri = $"{GetConferencesTodayForAdmin}?{queryParams}";
             _context.HttpMethod = HttpMethod.Get;
         }
 
@@ -355,6 +364,13 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Put;
             var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
+        [Then(@"I get (.*) hearing\(s\)")]
+        public async Task ThenIGetXNumberOfHearings(int number)
+        {
+            var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
+            conferences.Count.Should().Be(number);
         }
     }
 }

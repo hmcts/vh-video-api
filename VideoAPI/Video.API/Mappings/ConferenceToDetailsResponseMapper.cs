@@ -22,7 +22,8 @@ namespace Video.API.Mappings
                 Participants =
                     ParticipantToDetailsResponseMapper.MapParticipantsToResponse(conference.GetParticipants()),
                 MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom()),
-                HearingVenueName = conference.HearingVenueName
+                HearingVenueName = conference.HearingVenueName,
+                AudioRecordingRequired = conference.AudioRecordingRequired
             };
 
             if (response.MeetingRoom != null)

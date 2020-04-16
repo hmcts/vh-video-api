@@ -15,7 +15,7 @@ namespace Testing.Common.Helper.Builders.Domain
         private readonly Conference _conference;
         private readonly BuilderSettings _builderSettings;
 
-        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null, DateTime? scheduledDateTime = null)
+        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null, DateTime? scheduledDateTime = null, string venueName = "MyVenue")
         {
             _builderSettings = new BuilderSettings();
             if (ignoreId)
@@ -34,7 +34,7 @@ namespace Testing.Common.Helper.Builders.Domain
             const string caseName = CaseName;
             const int scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, 
-                scheduledDuration, "MyVenue", false, string.Empty);
+                scheduledDuration, venueName, false, string.Empty);
         }
         
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
