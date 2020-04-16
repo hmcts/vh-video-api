@@ -77,7 +77,7 @@ namespace Video.API
         {
             var container = services.BuildServiceProvider();
             var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
-            var streamingConfiguration = container.GetService<IOptions<StreamingConfiguration>>().Value;
+            var streamingConfiguration = container.GetService<IOptions<WowzaStreamingEngineConfiguration>>().Value;
             
             services.AddMemoryCache();
             services.AddScoped<IRoomReservationService, RoomReservationService>();
@@ -102,6 +102,7 @@ namespace Video.API
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
+                services.AddScoped<IAudioStreamService, WowzaStreamingServiceStub>();
             }
             else
             {
@@ -112,29 +113,28 @@ namespace Video.API
                     .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
                     .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
+                
+                services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
+                {
+                    x.BaseAddress = new Uri(streamingConfiguration.Endpoint);
+                    x.DefaultRequestHeaders.Add("Accept", "application/json");
+                    x.DefaultRequestHeaders.Add("ContentType", "application/json");
+                }).ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler
+                {
+                    Credentials = new CredentialCache
+                    {
+                        {
+                            new Uri(streamingConfiguration.Endpoint), 
+                            "Digest",
+                            new NetworkCredential(streamingConfiguration.Username, streamingConfiguration.Password) 
+                        }
+                    }
+                });
+                services.AddScoped<IAudioStreamService, WowzaStreamingService>();
             }
             
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
-
-            services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
-            {
-                x.BaseAddress = new Uri(streamingConfiguration.Endpoint);
-                x.DefaultRequestHeaders.Add("Accept", "application/json");
-                x.DefaultRequestHeaders.Add("ContentType", "application/json");
-            })
-            .ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler
-            {
-                Credentials = new CredentialCache
-                {
-                    {
-                        new Uri(streamingConfiguration.Endpoint), 
-                        "Digest",
-                        new NetworkCredential(streamingConfiguration.Username, streamingConfiguration.Password) 
-                    }
-                }
-            });
-            services.AddScoped<IConferenceStreamingService, WowzaStreamingService>();
 
             return services;
         }

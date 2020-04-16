@@ -10,12 +10,12 @@ namespace Video.API.Controllers
     [ApiController]
     public class ConferenceAudioController : ControllerBase
     {
-        private readonly IConferenceStreamingService _conferenceStreamingService;
+        private readonly IAudioStreamService _audioStreamService;
         private readonly ILogger<ConferenceAudioController> _logger;
 
-        public ConferenceAudioController(IConferenceStreamingService conferenceStreamingService, ILogger<ConferenceAudioController> logger)
+        public ConferenceAudioController(IAudioStreamService audioStreamService, ILogger<ConferenceAudioController> logger)
         {
-            _conferenceStreamingService = conferenceStreamingService;
+            _audioStreamService = audioStreamService;
             _logger = logger;
         }
         
