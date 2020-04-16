@@ -43,56 +43,60 @@ namespace VideoApi.IntegrationTests.Steps
                 .Build();
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference);
         }
-        
+
         [Given(@"I have several conferences")]
         public async Task GivenIHaveManyConferences()
         {
             var today = DateTime.Today.ToUniversalTime().AddMinutes(1);
             var tomorrow = DateTime.Today.ToUniversalTime().AddDays(1).AddMinutes(1);
             var yesterday = DateTime.Today.ToUniversalTime().AddDays(-1).AddMinutes(1);
-            
-            var yesterdayClosedConference = new ConferenceBuilder(true, scheduledDateTime: yesterday)
+
+            var venue1 = "Manchester";
+            var venue2 = "Birmingham";
+
+            var yesterdayClosedConference = new ConferenceBuilder(true, scheduledDateTime: yesterday, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var todayConference1 = new ConferenceBuilder(true, scheduledDateTime: today)
+            var todayConference1 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var tomorrowConference1 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
+            var tomorrowConference1 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var todayConference2 = new ConferenceBuilder(true, scheduledDateTime: today)
+            var todayConference2 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var tomorrowConference2 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
+            var tomorrowConference2 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .WithParticipantTask("Disconnected")
                 .Build();
 
-            var yesterdayConference2 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
+            var yesterdayConference2 = new ConferenceBuilder(true, scheduledDateTime: yesterday, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipantTask("Disconnected")
                 .Build();
-            
-            _context.Test.ClosedConferences.Add(await _context.TestDataManager.SeedConference(yesterdayClosedConference));
+
+            _context.Test.ClosedConferences.Add(
+                await _context.TestDataManager.SeedConference(yesterdayClosedConference));
             _context.Test.YesterdayClosedConference = _context.Test.ClosedConferences.First();
             _context.Test.TodaysConferences.Add(await _context.TestDataManager.SeedConference(todayConference1));
             await _context.TestDataManager.SeedConference(tomorrowConference1);
