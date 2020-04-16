@@ -2,7 +2,8 @@
 {
     public class WowzaConfiguration
     {
-        public string Endpoint { get; set; }
+        public string RestApiEndpoint { get; set; }
+        public string StreamingEndpoint { get; set; }
         public string ServerName { get; set; }
         public string HostName { get; set; }
         public string Username { get; set; }

@@ -37,7 +37,7 @@ namespace Video.API.Controllers
         private readonly ServicesConfiguration _servicesConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
-        
+
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
@@ -70,9 +70,16 @@ namespace Video.API.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
-            //Azure media service and get the ingest url
-            var ingestUrl = _audioPlatformService.CreateAudioIngestUrl();
-
+            string ingestUrl = null;
+            
+            if (request.AudioRecordingRequired)
+            {
+                ingestUrl = await _audioPlatformService.CreateConferenceStreamAsync(request.CaseName, request.HearingRefId);
+            }
+            // TODO - do we want to throw if audio recording application can't be created, 
+            //     or handle it as post process to create
+            //     or have acheck later to see if application is created ?
+            
             var conferenceId = await CreateConferenceAsync(request, ingestUrl);
             _logger.LogDebug("Conference Created");
             
@@ -80,11 +87,12 @@ namespace Video.API.Controllers
             _logger.LogDebug("Kinly Room Booked");
             
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            
             _logger.LogInformation($"Created conference {response.Id} for hearing {request.HearingRefId}");
+            
             return CreatedAtAction(nameof(GetConferenceDetailsByIdAsync), new {conferenceId = response.Id}, response);
         }
 

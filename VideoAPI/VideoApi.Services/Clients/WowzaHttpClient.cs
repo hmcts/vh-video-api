@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using VideoApi.Common.Configuration;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Helpers;
@@ -16,15 +15,13 @@ namespace VideoApi.Services.Clients
     public class WowzaHttpClient : IWowzaHttpClient
     {
         private readonly HttpClient _httpClient;
-        private readonly WowzaConfiguration _configuration;
 
-        public WowzaHttpClient(HttpClient httpClient, WowzaConfiguration configuration)
+        public WowzaHttpClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _configuration = configuration;
         }
 
-        public async Task CreateApplicationAsync(string applicationName)
+        public async Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory)
         {
             var request = new CreateApplicationRequest
             {
@@ -37,7 +34,7 @@ namespace VideoApi.Services.Clients
                 {
                     CreateStorageDir = true,
                     StreamType = "live-record",
-                    StorageDir = $"{_configuration.StorageDirectory}{applicationName}",
+                    StorageDir = $"{storageDirectory}{applicationName}",
                     StorageDirExists = false
                 },
                 SecurityConfig = new SecurityConfigRequest
@@ -49,14 +46,14 @@ namespace VideoApi.Services.Clients
 
             var response = await _httpClient.PostAsync
             (
-                new Uri($"v2/servers/{_configuration.ServerName}/vhosts/{_configuration.HostName}/applications"),
+                new Uri($"v2/servers/{server}/vhosts/{host}/applications"),
                 new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
             );
 
             await HandleUnsuccessfulResponse(response);
         }
 
-        public async Task AddStreamRecorderAsync(string applicationName)
+        public async Task AddStreamRecorderAsync(string applicationName, string server, string host)
         {
             var request = new AddStreamRecorderRequest
             {
@@ -74,7 +71,7 @@ namespace VideoApi.Services.Clients
 
             var response = await _httpClient.PostAsync
             (
-                $"v2/servers/{_configuration.ServerName}/vhosts/{_configuration.HostName}/applications/" +
+                $"v2/servers/{server}/vhosts/{host}/applications/" +
                 $"{applicationName}/instances/_definst_/streamrecorders",
                 new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
             );
@@ -82,11 +79,11 @@ namespace VideoApi.Services.Clients
             await HandleUnsuccessfulResponse(response);
         }
 
-        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName)
+        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host)
         {
             var response = await _httpClient.GetAsync
             (
-                $"v2/servers/{_configuration.ServerName}/vhosts/{_configuration.HostName}/applications/" +
+                $"v2/servers/{server}/vhosts/{host}/applications/" +
                 $"{applicationName}/instances/_definst_/incomingstreams/{applicationName}/monitoring/current"
             );
 
@@ -95,11 +92,11 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaMonitorStreamResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<WowzaGetApplicationsResponse> GetApplicationsAsync()
+        public async Task<WowzaGetApplicationsResponse> GetApplicationsAsync(string server, string host)
         {
             var response = await _httpClient.GetAsync
             (
-                $"v2/servers/{_configuration.ServerName}/vhosts/{_configuration.HostName}/applications"
+                $"v2/servers/{server}/vhosts/{host}/applications"
             );
 
             await HandleUnsuccessfulResponse(response);
@@ -107,11 +104,11 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName)
+        public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host)
         {
             var response = await _httpClient.GetAsync
             (
-                $"v2/servers/{_configuration.ServerName}/vhosts/{_configuration.HostName}/applications/{applicationName}"
+                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
             );
 
             await HandleUnsuccessfulResponse(response);
@@ -119,11 +116,11 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetApplicationResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task StopStreamRecorderAsync(string applicationName)
+        public async Task StopStreamRecorderAsync(string applicationName, string server, string host)
         {
             var response = await _httpClient.PutAsync
             (
-                $"v2/servers/{_configuration.ServerName}/vhosts/{_configuration.HostName}/applications/" +
+                $"v2/servers/{server}/vhosts/{host}/applications/" +
                 $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}/actions/stopRecording",
                 new StringContent("")
             );
@@ -137,7 +134,7 @@ namespace VideoApi.Services.Clients
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
 
-                throw new StreamingEngineException(errorMessage, response.StatusCode);
+                throw new AudioPlatformException(errorMessage, response.StatusCode);
             }
         }
 

@@ -3,11 +3,11 @@ using System.Net;
 
 namespace VideoApi.Services.Exceptions
 {
-    public class StreamingEngineException : Exception
+    public class AudioPlatformException : Exception
     {
         public HttpStatusCode StatusCode { get; }
         
-        public StreamingEngineException(string message, HttpStatusCode statusCode) : base(message)
+        public AudioPlatformException(string message, HttpStatusCode statusCode) : base(message)
         {
             StatusCode = statusCode;
         }

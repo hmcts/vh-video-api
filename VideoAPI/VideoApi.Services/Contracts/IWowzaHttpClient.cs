@@ -5,11 +5,11 @@ namespace VideoApi.Services.Contracts
 {
     public interface IWowzaHttpClient
     {
-        Task CreateApplicationAsync(string applicationName);
-        Task AddStreamRecorderAsync(string applicationName);
-        Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName);
-        Task<WowzaGetApplicationsResponse> GetApplicationsAsync();
-        Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName);
-        Task StopStreamRecorderAsync(string applicationName); 
+        Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory);
+        Task AddStreamRecorderAsync(string applicationName, string server, string host);
+        Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host);
+        Task<WowzaGetApplicationsResponse> GetApplicationsAsync(string server, string host);
+        Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host);
+        Task StopStreamRecorderAsync(string applicationName, string server, string host); 
     }
 }
