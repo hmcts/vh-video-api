@@ -21,7 +21,14 @@ variables:
     "Services/UserApiUrl":"$(UserApiUrl)",
     "Services/UserApiResourceId":"$(vh-user-api-identifieruris)",
     "Services/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
-    "Services/VhVideoWebClientId":"$(vh-video-web-appid)"
+    "Services/VhVideoWebClientId":"$(vh-video-web-appid)",
+    "WowzaConfiguration/RestApiEndpoint":"$(wowza_restApiEndpoint)",
+    "WowzaConfiguration/StreamingEndpoint":"$(wowza_streamingEndpoint)",
+    "WowzaConfiguration/ServerName":"$(wowza_serverName)",
+    "WowzaConfiguration/HostName":"$(wowza_hostName)",
+    "WowzaConfiguration/Username":"$(wowza_userName)",
+    "WowzaConfiguration/Password":"$(wowza_password)",
+    "WowzaConfiguration/StorageDirectory":"$(wowza_storageDirectory)"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests
