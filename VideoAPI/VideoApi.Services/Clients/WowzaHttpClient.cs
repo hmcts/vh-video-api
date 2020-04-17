@@ -116,6 +116,19 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetApplicationResponse>(await response.Content.ReadAsStringAsync());
         }
 
+        public async Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host)
+        {
+            var response = await _httpClient.GetAsync
+            (
+                $"v2/servers/{server}/vhosts/{host}/applications/" +
+                $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}"
+            );
+
+            await HandleUnsuccessfulResponse(response);
+            
+            return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
+        }
+
         public async Task StopStreamRecorderAsync(string applicationName, string server, string host)
         {
             var response = await _httpClient.PutAsync

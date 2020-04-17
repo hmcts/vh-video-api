@@ -22,13 +22,13 @@ namespace VideoApi.Services
             _logger = logger;
         }
         
-        public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName)
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationAsync(string applicationName)
         {
             try
             {
                 var response = await _wowzaClient.GetApplicationAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
 
-                _logger.LogInformation($"Get Wowza application info: {applicationName}");
+                _logger.LogInformation($"Got Wowza application info: {applicationName}");
 
                 return response;
             }
@@ -43,13 +43,13 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<WowzaGetApplicationsResponse> GetApplicationsAsync()
+        public async Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsAsync()
         {
             try
             {
                 var response = await _wowzaClient.GetApplicationsAsync(_wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
 
-                _logger.LogInformation("Get all Wowza applications info");
+                _logger.LogInformation("Got all Wowza applications info");
 
                 return response;
             }
@@ -64,7 +64,7 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<string> CreateConferenceStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<string> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
         {
             var applicationName = $"{caseNumber}_{hearingId}";
 
@@ -86,17 +86,17 @@ namespace VideoApi.Services
                 
                 _logger.LogError(errorMessage, ex);
 
-                throw;
+                return " ";
             }
         }
 
-        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName)
+        public async Task<WowzaMonitorStreamResponse> GetAudioStreamRealtimeInfoAsync(string applicationName)
         {
             try
             {
                 var response = await _wowzaClient.MonitoringStreamRecorderAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
 
-                _logger.LogInformation($"Get Wowza monitor stream data for application: {applicationName}");
+                _logger.LogInformation($"Got Wowza monitor stream data for application: {applicationName}");
 
                 return response;
             }
@@ -111,7 +111,28 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<AudioPlatformServiceResponse> StopStreamRecorderAsync(string applicationName)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string applicationName)
+        {
+            try
+            {
+                var response = await _wowzaClient.GetStreamRecorderAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+
+                _logger.LogInformation($"Got Wowza stream recorder for application: {applicationName}");
+
+                return response;
+            }
+            catch (AudioPlatformException ex)
+            {
+                var errorMessage = $"Failed to get the Wowza stream recorder for application: {applicationName}, " +
+                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                
+                _logger.LogError(errorMessage, ex);
+
+                return null;
+            }
+        }
+
+        public async Task<AudioPlatformServiceResponse> StopAudioStreamAsync(string applicationName)
         {
             try
             {
@@ -123,7 +144,7 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = $"Failed to the Wowza stream recorder for application: {applicationName}, " +
+                var errorMessage = $"Failed to get the Wowza stream recorder for application: {applicationName}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
                 _logger.LogError(errorMessage, ex);

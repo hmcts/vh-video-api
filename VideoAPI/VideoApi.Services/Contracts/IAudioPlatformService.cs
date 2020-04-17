@@ -7,10 +7,11 @@ namespace VideoApi.Services.Contracts
 {
     public interface IAudioPlatformService
     {
-        Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName);
-        Task<WowzaGetApplicationsResponse> GetApplicationsAsync();
-        Task<string> CreateConferenceStreamAsync(string caseNumber, Guid hearingId);
-        Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName);
-        Task<AudioPlatformServiceResponse> StopStreamRecorderAsync(string applicationName);
+        Task<WowzaGetApplicationResponse> GetAudioApplicationAsync(string applicationName);
+        Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsAsync();
+        Task<string> CreateAudioStreamAsync(string caseNumber, Guid hearingId);
+        Task<WowzaMonitorStreamResponse> GetAudioStreamRealtimeInfoAsync(string applicationName);
+        Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string applicationName);
+        Task<AudioPlatformServiceResponse> StopAudioStreamAsync(string applicationName);
     }
 }

@@ -8,7 +8,7 @@ namespace VideoApi.Services
 {
     public class AudioPlatformServiceStub : IAudioPlatformService
     {
-        public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName)
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationAsync(string applicationName)
         {
             return await Task.FromResult(new WowzaGetApplicationResponse
             {
@@ -16,7 +16,7 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<WowzaGetApplicationsResponse> GetApplicationsAsync()
+        public async Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsAsync()
         {
             return await Task.FromResult(new WowzaGetApplicationsResponse
             {
@@ -24,12 +24,12 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<string> CreateConferenceStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<string> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
         {
             return await Task.FromResult($"https://localhost.streaming.mediaServices.windows.net/{Guid.NewGuid()}");
         }
 
-        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName)
+        public async Task<WowzaMonitorStreamResponse> GetAudioStreamRealtimeInfoAsync(string applicationName)
         {
             return await Task.FromResult(new WowzaMonitorStreamResponse
             {
@@ -37,7 +37,15 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<AudioPlatformServiceResponse> StopStreamRecorderAsync(string applicationName)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string applicationName)
+        {
+            return await Task.FromResult(new WowzaGetStreamRecorderResponse
+            {
+                ApplicationName = "MyApplicationName"
+            });
+        }
+
+        public async Task<AudioPlatformServiceResponse> StopAudioStreamAsync(string applicationName)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }

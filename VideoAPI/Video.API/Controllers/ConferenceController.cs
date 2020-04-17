@@ -74,11 +74,8 @@ namespace Video.API.Controllers
             
             if (request.AudioRecordingRequired)
             {
-                ingestUrl = await _audioPlatformService.CreateConferenceStreamAsync(request.CaseName, request.HearingRefId);
+                ingestUrl = await _audioPlatformService.CreateAudioStreamAsync(request.CaseName, request.HearingRefId);
             }
-            // TODO - do we want to throw if audio recording application can't be created, 
-            //     or handle it as post process to create
-            //     or have acheck later to see if application is created ?
             
             var conferenceId = await CreateConferenceAsync(request, ingestUrl);
             _logger.LogDebug("Conference Created");
