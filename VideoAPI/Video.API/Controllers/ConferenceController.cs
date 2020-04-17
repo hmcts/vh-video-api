@@ -63,6 +63,7 @@ namespace Video.API.Controllers
         public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
         {
             _logger.LogDebug("BookNewConference");
+            
             foreach (var participant in request.Participants)
             {
                 participant.Username = participant.Username.ToLower().Trim();
@@ -74,7 +75,18 @@ namespace Video.API.Controllers
             
             if (request.AudioRecordingRequired)
             {
-                ingestUrl = await _audioPlatformService.CreateAudioStreamAsync(request.CaseName, request.HearingRefId);
+                var createAudioRecordingResponse = await _audioPlatformService.CreateAudioStreamAsync
+                (
+                    request.CaseName, 
+                    request.HearingRefId
+                );
+
+                ingestUrl = createAudioRecordingResponse.IngestUrl;
+                
+                if (!createAudioRecordingResponse.Success)
+                {
+                    _logger.LogError($"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");    
+                }
             }
             
             var conferenceId = await CreateConferenceAsync(request, ingestUrl);

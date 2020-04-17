@@ -12,5 +12,6 @@ namespace VideoApi.Contract.Responses
         public bool Success { get; private set; }
         public string Message { get; set; }
         public HttpStatusCode StatusCode { get; set; }
+        public string IngestUrl { get; set; }
     }
 }

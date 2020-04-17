@@ -46,8 +46,18 @@ namespace VideoApi.Services.Clients
 
             var response = await _httpClient.PostAsync
             (
-                new Uri($"v2/servers/{server}/vhosts/{host}/applications"),
+                $"v2/servers/{server}/vhosts/{host}/applications",
                 new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
+            );
+
+            await HandleUnsuccessfulResponse(response);
+        }
+
+        public async Task DeleteApplicationAsync(string applicationName, string server, string host)
+        {
+            var response = await _httpClient.DeleteAsync
+            (
+                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
             );
 
             await HandleUnsuccessfulResponse(response);

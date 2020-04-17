@@ -14,6 +14,7 @@ namespace VideoApi.Services
         private readonly IWowzaHttpClient _wowzaClient;
         private readonly WowzaConfiguration _wowzaConfiguration;
         private readonly ILogger<AudioPlatformService> _logger;
+        private const string DefaultEmptyIngestUrl = " ";
 
         public AudioPlatformService(IWowzaHttpClient wowzaClient, WowzaConfiguration wowzaConfiguration, ILogger<AudioPlatformService> logger)
         {
@@ -22,8 +23,10 @@ namespace VideoApi.Services
             _logger = logger;
         }
         
-        public async Task<WowzaGetApplicationResponse> GetAudioApplicationAsync(string applicationName)
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationAsync(string caseNumber, Guid hearingId)
         {
+            var applicationName = $"{caseNumber}_{hearingId}";
+            
             try
             {
                 var response = await _wowzaClient.GetApplicationAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
@@ -64,7 +67,7 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<string> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
         {
             var applicationName = $"{caseNumber}_{hearingId}";
 
@@ -75,8 +78,8 @@ namespace VideoApi.Services
                 
                 await _wowzaClient.AddStreamRecorderAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
                 _logger.LogInformation($"Created a Wowza stream recorder for: {applicationName}");
-                
-                return GetAudioIngestUrl(applicationName);
+
+                return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(applicationName) };
             }
             catch (AudioPlatformException ex)
             {
@@ -86,12 +89,40 @@ namespace VideoApi.Services
                 
                 _logger.LogError(errorMessage, ex);
 
-                return " ";
+                return new AudioPlatformServiceResponse(false)
+                {
+                    Message = errorMessage, StatusCode = ex.StatusCode, IngestUrl = DefaultEmptyIngestUrl
+                };
             }
         }
 
-        public async Task<WowzaMonitorStreamResponse> GetAudioStreamRealtimeInfoAsync(string applicationName)
+        public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(string caseNumber, Guid hearingId)
         {
+            var applicationName = $"{caseNumber}_{hearingId}";
+            
+            try
+            {
+                await _wowzaClient.DeleteApplicationAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+
+                _logger.LogInformation($"Deleted Wowza application: {applicationName}");
+
+                return new AudioPlatformServiceResponse(true);
+            }
+            catch (AudioPlatformException ex)
+            {
+                var errorMessage = $"Failed to delete the Wowza application: {applicationName}, " +
+                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                
+                _logger.LogError(errorMessage, ex);
+
+                return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
+            }
+        }
+
+        public async Task<WowzaMonitorStreamResponse> GetAudioStreamRealtimeInfoAsync(string caseNumber, Guid hearingId)
+        {
+            var applicationName = $"{caseNumber}_{hearingId}";
+            
             try
             {
                 var response = await _wowzaClient.MonitoringStreamRecorderAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
@@ -111,8 +142,10 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string applicationName)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string caseNumber, Guid hearingId)
         {
+            var applicationName = $"{caseNumber}_{hearingId}";
+            
             try
             {
                 var response = await _wowzaClient.GetStreamRecorderAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
@@ -132,8 +165,10 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<AudioPlatformServiceResponse> StopAudioStreamAsync(string applicationName)
+        public async Task<AudioPlatformServiceResponse> StopAudioStreamAsync(string caseNumber, Guid hearingId)
         {
+            var applicationName = $"{caseNumber}_{hearingId}";
+            
             try
             {
                 await _wowzaClient.StopStreamRecorderAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
@@ -149,7 +184,7 @@ namespace VideoApi.Services
                 
                 _logger.LogError(errorMessage, ex);
 
-                return new AudioPlatformServiceResponse(false){ Message = errorMessage };
+                return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
         }
         
