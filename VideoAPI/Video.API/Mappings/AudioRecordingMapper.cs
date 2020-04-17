@@ -5,6 +5,31 @@ namespace Video.API.Mappings
 {
     public static class AudioRecordingMapper
     {
+        public static AudioApplicationInfoResponse MapToAudioApplicationInfo(WowzaGetApplicationResponse response)
+        {
+            return new AudioApplicationInfoResponse
+            {
+                Description = response.Description,
+                Name = response.Name,
+                ServerName = response.ServerName,
+                StreamConfig = MapToAudioApplicationStreamConfigResponse(response.StreamConfig)
+            };
+        }
+
+        private static AudioApplicationStreamConfigResponse MapToAudioApplicationStreamConfigResponse(Streamconfig response)
+        {
+            if (response == null) return null;
+            
+            return new AudioApplicationStreamConfigResponse
+            {
+                KeyDir = response.KeyDir,
+                ServerName = response.ServerName,
+                StorageDir = response.StorageDir,
+                StreamType = response.StreamType,
+                StorageDirExists = response.StorageDirExists
+            };
+        }
+
         public static AudioStreamInfoResponse MapToAudioStreamInfo(WowzaGetStreamRecorderResponse response)
         {
             return new AudioStreamInfoResponse

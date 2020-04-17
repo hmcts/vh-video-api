@@ -18,7 +18,6 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
@@ -75,7 +74,7 @@ namespace Video.API.Controllers
             
             if (request.AudioRecordingRequired)
             {
-                var createAudioRecordingResponse = await _audioPlatformService.CreateAudioStreamAsync
+                var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationWithStreamAsync
                 (
                     request.CaseName, 
                     request.HearingRefId

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +24,31 @@ namespace Video.API.Controllers
             _audioPlatformService = audioPlatformService;
             _logger = logger;
         }
+        
+        /// <summary>
+        /// Gets the audio application info for the conference by caseNumber and hearingId
+        /// </summary>
+        /// <param name="caseNumber">The case number of the conference</param>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <returns></returns>
+        [HttpGet("audioapplications/{caseNumber}/{hearingId}")]
+        [SwaggerOperation(OperationId = "GetAudioApplication")]
+        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAudioApplicationAsync(string caseNumber, Guid hearingId)
+        {
+            _logger.LogDebug("GetAudioApplication");
+            
+            var response = await _audioPlatformService.GetAudioApplicationInfoAsync(caseNumber, hearingId);
+
+            if (response == null) return NotFound();
+
+            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(response));
+        }
 
         /// <summary>
-        /// Deletes the audio application for the conference by caseNumber and hearingId
+        /// Creates the audio application for the conference by caseNumber and hearingId
         /// </summary>
         /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
@@ -43,14 +64,36 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("CreateAudioApplication");
             
-            var response = await _audioPlatformService.CreateAudioStreamAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.CreateAudioApplicationAsync(caseNumber, hearingId);
 
             if (!response.Success)
             {
-                return StatusCode((int) response.StatusCode);
+                return StatusCode((int) response.StatusCode, response.Message);
             }
 
-            return Ok(response.IngestUrl);
+            return Ok();
+        }
+        
+        /// <summary>
+        /// Creates the audio application and associated stream for the conference by caseNumber and hearingId
+        /// </summary>
+        /// <param name="caseNumber">The case number of the conference</param>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <returns>The ingest url for other applications to stream to the endpoint</returns>
+        [HttpPost("audioapplications/{caseNumber}/{hearingId}")]
+        [SwaggerOperation(OperationId = "CreateAudioApplicationWithStream")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> CreateAudioApplicationWithStreamAsync(string caseNumber, Guid hearingId)
+        {
+            _logger.LogDebug("CreateAudioApplicationWithStream");
+            
+            var response = await _audioPlatformService.CreateAudioApplicationWithStreamAsync(caseNumber, hearingId);
+
+            return !response.Success ? StatusCode((int) response.StatusCode, response.Message) : Ok(response.IngestUrl);
         }
         
         /// <summary>
@@ -67,9 +110,14 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("DeleteAudioApplication");
             
-            var response = await _audioPlatformService.DeleteAudioStreamAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.DeleteAudioApplicationAsync(caseNumber, hearingId);
 
-            return !response.Success ? StatusCode((int) response.StatusCode) : NoContent();
+            if (!response.Success)
+            {
+                return StatusCode((int) response.StatusCode, response.Message);
+            }
+
+            return NoContent();
         }
         
         /// <summary>
@@ -77,10 +125,10 @@ namespace Video.API.Controllers
         /// </summary>
         /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
-        /// <returns></returns>
+        /// <returns>AudioStreamInfoResponse</returns>
         [HttpGet("audiostreams/{caseNumber}/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioStreamInfo")]
-        [ProducesResponseType(typeof(List<InstantMessageResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioStreamInfoAsync(string caseNumber, Guid hearingId)
@@ -95,22 +143,49 @@ namespace Video.API.Controllers
         }
         
         /// <summary>
+        /// Creates the audio stream for the conference by caseNumber and hearingId
+        /// </summary>
+        /// <param name="caseNumber">The case number of the conference</param>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <returns></returns>
+        [HttpPost("audiostreams/{caseNumber}/{hearingId}")]
+        [SwaggerOperation(OperationId = "CreateAudioStream")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
+        {
+            _logger.LogDebug("CreateAudioStream");
+            
+            var response = await _audioPlatformService.CreateAudioStreamAsync(caseNumber, hearingId);
+
+            return response.Success ? Ok(response.IngestUrl) : StatusCode((int) response.StatusCode, response.Message);
+        }
+        
+        /// <summary>
         /// Deletes the audio stream for the conference by caseNumber and hearingId
         /// </summary>
         /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns></returns>
         [HttpDelete("audiostreams/{caseNumber}/{hearingId}")]
-        [SwaggerOperation(OperationId = "RemoveAudioStream")]
+        [SwaggerOperation(OperationId = "DeleteAudioStream")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> DeleteAudioStreamAsync(string caseNumber, Guid hearingId)
         {
-            _logger.LogDebug("RemoveAudioStream");
+            _logger.LogDebug("DeleteAudioStream");
             
-            var response = await _audioPlatformService.StopAudioStreamAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.DeleteAudioStreamAsync(caseNumber, hearingId);
 
-            return !response.Success ? StatusCode((int) response.StatusCode) : NoContent();
+            if (!response.Success)
+            {
+                return StatusCode((int) response.StatusCode, response.Message);
+            }
+
+            return NoContent();
         }
     }
 }

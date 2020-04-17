@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Contract.Responses;
 using VideoApi.Services.Contracts;
@@ -8,7 +9,7 @@ namespace VideoApi.Services
 {
     public class AudioPlatformServiceStub : IAudioPlatformService
     {
-        public async Task<WowzaGetApplicationResponse> GetAudioApplicationAsync(string caseNumber, Guid hearingId)
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(string caseNumber, Guid hearingId)
         {
             return await Task.FromResult(new WowzaGetApplicationResponse
             {
@@ -16,12 +17,20 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsAsync()
+        public async Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsInfoAsync()
         {
             return await Task.FromResult(new WowzaGetApplicationsResponse
             {
-                ServerName = "Server"
+                ServerName = "Server", Applications = new List<Application>
+                {
+                    new Application{Id = "one"}, new Application{Id = "two"}, new Application{Id = "three"}
+                }.ToArray()
             });
+        }
+
+        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(string caseNumber, Guid hearingId)
+        {
+            return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
 
         public async Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
@@ -32,12 +41,20 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(string caseNumber, Guid hearingId)
+        {
+            return await Task.FromResult(new AudioPlatformServiceResponse(true)
+            {
+                IngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{Guid.NewGuid()}"
+            });
+        }
+
+        public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(string caseNumber, Guid hearingId)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
 
-        public async Task<WowzaMonitorStreamResponse> GetAudioStreamRealtimeInfoAsync(string caseNumber, Guid hearingId)
+        public async Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(string caseNumber, Guid hearingId)
         {
             return await Task.FromResult(new WowzaMonitorStreamResponse
             {
@@ -54,7 +71,7 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<AudioPlatformServiceResponse> StopAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(string caseNumber, Guid hearingId)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
