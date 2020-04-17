@@ -80,7 +80,7 @@ namespace Video.API.Controllers
         /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns>The ingest url for other applications to stream to the endpoint</returns>
-        [HttpPost("audioapplications/{caseNumber}/{hearingId}")]
+        [HttpPost("audioapplications/audiostream/{caseNumber}/{hearingId}")]
         [SwaggerOperation(OperationId = "CreateAudioApplicationWithStream")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -140,6 +140,28 @@ namespace Video.API.Controllers
             if (response == null) return NotFound();
 
             return Ok(AudioRecordingMapper.MapToAudioStreamInfo(response));
+        }
+        
+        /// <summary>
+        /// Gets the audio stream for the conference by caseNumber and hearingId
+        /// </summary>
+        /// <param name="caseNumber">The case number of the conference</param>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <returns>AudioStreamInfoResponse</returns>
+        [HttpGet("audiostreams/{caseNumber}/{hearingId}/monitoring")]
+        [SwaggerOperation(OperationId = "GetAudioStreamMonitoringInfo")]
+        [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(string caseNumber, Guid hearingId)
+        {
+            _logger.LogDebug("GetAudioStreamMonitoringInfo");
+            
+            var response = await _audioPlatformService.GetAudioStreamMonitoringInfoAsync(caseNumber, hearingId);
+
+            if (response == null) return NotFound();
+
+            return Ok(AudioRecordingMapper.MapToAudioStreamMonitoringInfo(response));
         }
         
         /// <summary>

@@ -204,7 +204,7 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = "Failed to create the Wowza application and/or stream recorder for: " +
+                var errorMessage = "Failed to create the Wowza stream recorder for: " +
                                    $"{applicationName}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
