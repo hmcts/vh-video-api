@@ -23,6 +23,7 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             // We don't do anything with this
+            await Task.CompletedTask;
         }
 
     }
