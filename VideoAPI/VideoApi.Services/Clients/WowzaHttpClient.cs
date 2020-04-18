@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -12,7 +11,6 @@ using VideoApi.Services.Responses;
 
 namespace VideoApi.Services.Clients
 {
-    [ExcludeFromCodeCoverage]
     public class WowzaHttpClient : IWowzaHttpClient
     {
         private readonly HttpClient _httpClient;

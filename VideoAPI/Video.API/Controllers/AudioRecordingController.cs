@@ -90,7 +90,7 @@ namespace Video.API.Controllers
             
             var response = await _audioPlatformService.CreateAudioApplicationWithStreamAsync(hearingId);
 
-            return !response.Success ? StatusCode((int) response.StatusCode, response.Message) : Ok(response.IngestUrl);
+            return response.Success ? Ok(response.IngestUrl) : StatusCode((int) response.StatusCode, response.Message);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Video.API.Controllers
         /// <returns>AudioStreamInfoResponse</returns>
         [HttpGet("audiostreams/{hearingId}/monitoring")]
         [SwaggerOperation(OperationId = "GetAudioStreamMonitoringInfo")]
-        [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AudioStreamMonitoringInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)

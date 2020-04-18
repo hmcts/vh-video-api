@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
@@ -58,6 +59,52 @@ namespace VideoApi.UnitTests.Controllers.Conference
             await Controller.BookNewConferenceAsync(_request);
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>()), Times.Once);
+            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_book_kinly_conference_with_null_ingesturl_when_audio_recording_not_required()
+        {
+            VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), false, null)).ReturnsAsync(MeetingRoom);
+
+            _request.AudioRecordingRequired = false;
+            await Controller.BookNewConferenceAsync(_request);
+
+            AudioPlatformServiceMock.Verify(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()), Times.Never);
+            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), false, null), Times.Once);
+            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_book_kinly_conference_with_returned_ingesturl_when_create_audio_recording_request_fails()
+        {
+            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) { IngestUrl = "http://myIngestUrl.com" };
+            AudioPlatformServiceMock.Setup(x => x.CreateAudioApplicationWithStreamAsync(_request.HearingRefId)).ReturnsAsync(audioPlatformServiceResponse);
+            VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl)).ReturnsAsync(MeetingRoom);
+
+            _request.AudioRecordingRequired = true;
+            await Controller.BookNewConferenceAsync(_request);
+
+            AudioPlatformServiceMock.Verify(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()), Times.Once);
+            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl), Times.Once);
+            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_book_kinly_conference_with_default_ingesturl_when_create_audio_recording_request_fails()
+        {
+            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(false) { IngestUrl = " " };
+            AudioPlatformServiceMock.Setup(x => x.CreateAudioApplicationWithStreamAsync(_request.HearingRefId)).ReturnsAsync(audioPlatformServiceResponse);
+            VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl)).ReturnsAsync(MeetingRoom);
+
+            _request.AudioRecordingRequired = true;
+            await Controller.BookNewConferenceAsync(_request);
+
+            AudioPlatformServiceMock.Verify(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()), Times.Once);
+            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
         }
