@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,23 +45,37 @@ namespace VideoApi.Services.Clients
                 }
             };
 
-            var response = await _httpClient.PostAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications",
-                new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
-            );
+            try
+            {
+                var response = await _httpClient.PostAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications",
+                    new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task DeleteApplicationAsync(string applicationName, string server, string host)
         {
-            var response = await _httpClient.DeleteAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
-            );
+            try
+            {
+                var response = await _httpClient.DeleteAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task AddStreamRecorderAsync(string applicationName, string server, string host)
@@ -79,76 +94,118 @@ namespace VideoApi.Services.Clients
                 Option = "APPEND_FILE"
             };
 
-            var response = await _httpClient.PostAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders",
-                new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
-            );
+            try
+            {
+                var response = await _httpClient.PostAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications/" +
+                    $"{applicationName}/instances/_definst_/streamrecorders",
+                    new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host)
         {
-            var response = await _httpClient.GetAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/incomingstreams/{applicationName}/monitoring/current"
-            );
+            try
+            {
+                var response = await _httpClient.GetAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications/" +
+                    $"{applicationName}/instances/_definst_/incomingstreams/{applicationName}/monitoring/current"
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
             
-            return JsonConvert.DeserializeObject<WowzaMonitorStreamResponse>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<WowzaMonitorStreamResponse>(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<WowzaGetApplicationsResponse> GetApplicationsAsync(string server, string host)
         {
-            var response = await _httpClient.GetAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications"
-            );
+            try
+            {
+                var response = await _httpClient.GetAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications"
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
             
-            return JsonConvert.DeserializeObject<WowzaGetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<WowzaGetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host)
         {
-            var response = await _httpClient.GetAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
-            );
+            try
+            {
+                var response = await _httpClient.GetAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
             
-            return JsonConvert.DeserializeObject<WowzaGetApplicationResponse>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<WowzaGetApplicationResponse>(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host)
         {
-            var response = await _httpClient.GetAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}"
-            );
+            try
+            {
+                var response = await _httpClient.GetAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications/" +
+                    $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}"
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
             
-            return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task StopStreamRecorderAsync(string applicationName, string server, string host)
         {
-            var response = await _httpClient.PutAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}/actions/stopRecording",
-                new StringContent("")
-            );
+            try
+            {
+                var response = await _httpClient.PutAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications/" +
+                    $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}/actions/stopRecording",
+                    new StringContent("")
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         private static async Task HandleUnsuccessfulResponse(HttpResponseMessage response)

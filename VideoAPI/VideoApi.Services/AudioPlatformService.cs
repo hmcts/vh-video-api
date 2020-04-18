@@ -38,7 +38,7 @@ namespace VideoApi.Services
                 var errorMessage = $"Failed to get info for Wowza application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return null;
             }
@@ -59,7 +59,7 @@ namespace VideoApi.Services
                 var errorMessage = $"Failed to get all Wowza applications info, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return null;
             }
@@ -80,7 +80,7 @@ namespace VideoApi.Services
                                    $"{hearingId}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false)
                 {
@@ -107,7 +107,7 @@ namespace VideoApi.Services
                                    $"{hearingId}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false)
                 {
@@ -131,7 +131,7 @@ namespace VideoApi.Services
                 var errorMessage = $"Failed to delete the Wowza application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
@@ -152,7 +152,7 @@ namespace VideoApi.Services
                 var errorMessage = $"Failed to get Wowza monitor stream data for application {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return null;
             }
@@ -173,7 +173,7 @@ namespace VideoApi.Services
                 var errorMessage = $"Failed to get the Wowza stream recorder for application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return null;
             }
@@ -194,7 +194,7 @@ namespace VideoApi.Services
                                    $"{hearingId}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false)
                 {
@@ -218,7 +218,7 @@ namespace VideoApi.Services
                 var errorMessage = $"Failed to get the Wowza stream recorder for application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
