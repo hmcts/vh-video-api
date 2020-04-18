@@ -24,23 +24,22 @@ namespace Video.API.Controllers
             _audioPlatformService = audioPlatformService;
             _logger = logger;
         }
-        
+
         /// <summary>
-        /// Gets the audio application info for the conference by caseNumber and hearingId
+        /// Gets the audio application info for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns></returns>
-        [HttpGet("audioapplications/{caseNumber}/{hearingId}")]
+        [HttpGet("audioapplications/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioApplication")]
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAudioApplicationAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioApplication");
             
-            var response = await _audioPlatformService.GetAudioApplicationInfoAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.GetAudioApplicationInfoAsync(hearingId);
 
             if (response == null) return NotFound();
 
@@ -48,23 +47,22 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Creates the audio application for the conference by caseNumber and hearingId
+        /// Creates the audio application for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns></returns>
-        [HttpPost("audioapplications/{caseNumber}/{hearingId}")]
+        [HttpPost("audioapplications/{hearingId}")]
         [SwaggerOperation(OperationId = "CreateAudioApplication")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAudioApplicationAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> CreateAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("CreateAudioApplication");
             
-            var response = await _audioPlatformService.CreateAudioApplicationAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.CreateAudioApplicationAsync(hearingId);
 
             if (!response.Success)
             {
@@ -73,44 +71,42 @@ namespace Video.API.Controllers
 
             return Ok();
         }
-        
+
         /// <summary>
-        /// Creates the audio application and associated stream for the conference by caseNumber and hearingId
+        /// Creates the audio application and associated stream for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns>The ingest url for other applications to stream to the endpoint</returns>
-        [HttpPost("audioapplications/audiostream/{caseNumber}/{hearingId}")]
+        [HttpPost("audioapplications/audiostream/{hearingId}")]
         [SwaggerOperation(OperationId = "CreateAudioApplicationWithStream")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAudioApplicationWithStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> CreateAudioApplicationWithStreamAsync(Guid hearingId)
         {
             _logger.LogDebug("CreateAudioApplicationWithStream");
             
-            var response = await _audioPlatformService.CreateAudioApplicationWithStreamAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.CreateAudioApplicationWithStreamAsync(hearingId);
 
             return !response.Success ? StatusCode((int) response.StatusCode, response.Message) : Ok(response.IngestUrl);
         }
-        
+
         /// <summary>
-        /// Deletes the audio application for the conference by caseNumber and hearingId
+        /// Deletes the audio application for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns></returns>
-        [HttpDelete("audioapplications/{caseNumber}/{hearingId}")]
+        [HttpDelete("audioapplications/{hearingId}")]
         [SwaggerOperation(OperationId = "DeleteAudioApplication")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAudioApplicationAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> DeleteAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("DeleteAudioApplication");
             
-            var response = await _audioPlatformService.DeleteAudioApplicationAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.DeleteAudioApplicationAsync(hearingId);
 
             if (!response.Success)
             {
@@ -119,88 +115,84 @@ namespace Video.API.Controllers
 
             return NoContent();
         }
-        
+
         /// <summary>
-        /// Gets the audio stream for the conference by caseNumber and hearingId
+        /// Gets the audio stream for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
-        [HttpGet("audiostreams/{caseNumber}/{hearingId}")]
+        [HttpGet("audiostreams/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAudioStreamInfoAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioStreamInfo");
             
-            var response = await _audioPlatformService.GetAudioStreamInfoAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.GetAudioStreamInfoAsync(hearingId);
 
             if (response == null) return NotFound();
 
             return Ok(AudioRecordingMapper.MapToAudioStreamInfo(response));
         }
-        
+
         /// <summary>
-        /// Gets the audio stream for the conference by caseNumber and hearingId
+        /// Gets the audio stream for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
-        [HttpGet("audiostreams/{caseNumber}/{hearingId}/monitoring")]
+        [HttpGet("audiostreams/{hearingId}/monitoring")]
         [SwaggerOperation(OperationId = "GetAudioStreamMonitoringInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioStreamMonitoringInfo");
             
-            var response = await _audioPlatformService.GetAudioStreamMonitoringInfoAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.GetAudioStreamMonitoringInfoAsync(hearingId);
 
             if (response == null) return NotFound();
 
             return Ok(AudioRecordingMapper.MapToAudioStreamMonitoringInfo(response));
         }
-        
+
         /// <summary>
-        /// Creates the audio stream for the conference by caseNumber and hearingId
+        /// Creates the audio stream for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns></returns>
-        [HttpPost("audiostreams/{caseNumber}/{hearingId}")]
+        [HttpPost("audiostreams/{hearingId}")]
         [SwaggerOperation(OperationId = "CreateAudioStream")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> CreateAudioStreamAsync(Guid hearingId)
         {
             _logger.LogDebug("CreateAudioStream");
             
-            var response = await _audioPlatformService.CreateAudioStreamAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.CreateAudioStreamAsync(hearingId);
 
             return response.Success ? Ok(response.IngestUrl) : StatusCode((int) response.StatusCode, response.Message);
         }
-        
+
         /// <summary>
-        /// Deletes the audio stream for the conference by caseNumber and hearingId
+        /// Deletes the audio stream for the conference by hearingId
         /// </summary>
-        /// <param name="caseNumber">The case number of the conference</param>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
         /// <returns></returns>
-        [HttpDelete("audiostreams/{caseNumber}/{hearingId}")]
+        [HttpDelete("audiostreams/{hearingId}")]
         [SwaggerOperation(OperationId = "DeleteAudioStream")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<IActionResult> DeleteAudioStreamAsync(Guid hearingId)
         {
             _logger.LogDebug("DeleteAudioStream");
             
-            var response = await _audioPlatformService.DeleteAudioStreamAsync(caseNumber, hearingId);
+            var response = await _audioPlatformService.DeleteAudioStreamAsync(hearingId);
 
             if (!response.Success)
             {

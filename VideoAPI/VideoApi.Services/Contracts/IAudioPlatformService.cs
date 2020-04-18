@@ -7,17 +7,17 @@ namespace VideoApi.Services.Contracts
 {
     public interface IAudioPlatformService
     {
-        Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(string caseNumber, Guid hearingId);
+        Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId);
         Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsInfoAsync();
         
-        Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(string caseNumber, Guid hearingId);
-        Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(string caseNumber, Guid hearingId);
-        Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(string caseNumber, Guid hearingId);
+        Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId);
+        Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId);
+        Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId);
         
-        Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(string caseNumber, Guid hearingId);
+        Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(Guid hearingId);
         
-        Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string caseNumber, Guid hearingId);
-        Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(string caseNumber, Guid hearingId);
-        Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(string caseNumber, Guid hearingId);
+        Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId);
+        Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(Guid hearingId);
+        Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId);
     }
 }

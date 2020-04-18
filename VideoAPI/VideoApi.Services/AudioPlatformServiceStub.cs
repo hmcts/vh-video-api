@@ -9,7 +9,7 @@ namespace VideoApi.Services
 {
     public class AudioPlatformServiceStub : IAudioPlatformService
     {
-        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(string caseNumber, Guid hearingId)
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId)
         {
             return await Task.FromResult(new WowzaGetApplicationResponse
             {
@@ -28,12 +28,12 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
 
-        public async Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(Guid hearingId)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true)
             {
@@ -41,7 +41,7 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true)
             {
@@ -49,12 +49,12 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
 
-        public async Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(string caseNumber, Guid hearingId)
+        public async Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
         {
             return await Task.FromResult(new WowzaMonitorStreamResponse
             {
@@ -62,7 +62,7 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string caseNumber, Guid hearingId)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId)
         {
             return await Task.FromResult(new WowzaGetStreamRecorderResponse
             {
@@ -71,7 +71,7 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(string caseNumber, Guid hearingId)
+        public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId)
         {
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }

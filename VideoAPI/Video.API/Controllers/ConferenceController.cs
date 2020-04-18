@@ -76,7 +76,6 @@ namespace Video.API.Controllers
             {
                 var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationWithStreamAsync
                 (
-                    request.CaseName, 
                     request.HearingRefId
                 );
 
