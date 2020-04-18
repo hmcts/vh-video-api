@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VideoApi.Common.Security.Kinly;
 
-namespace Video.API
+namespace VideoApi.Services.Handlers
 {
     public class KinlyApiTokenDelegatingHandler : DelegatingHandler
     {

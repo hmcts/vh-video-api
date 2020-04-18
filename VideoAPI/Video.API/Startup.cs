@@ -70,8 +70,9 @@ namespace Video.API
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceBusSettings>(options => Configuration.Bind("ServiceBusQueue", options));
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
-            var customTokenSettings = Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>();
-            services.AddSingleton(customTokenSettings);
+            services.Configure<WowzaConfiguration>(options => Configuration.Bind("WowzaConfiguration", options));
+            services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
+            services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)

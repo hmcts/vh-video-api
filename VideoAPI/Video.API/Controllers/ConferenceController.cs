@@ -18,7 +18,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Services;
+using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
@@ -36,7 +36,7 @@ namespace Video.API.Controllers
         private readonly ServicesConfiguration _servicesConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
-        
+
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
@@ -62,6 +62,7 @@ namespace Video.API.Controllers
         public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
         {
             _logger.LogDebug("BookNewConference");
+            
             foreach (var participant in request.Participants)
             {
                 participant.Username = participant.Username.ToLower().Trim();
@@ -69,9 +70,23 @@ namespace Video.API.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
-            //Azure media service and get the ingest url
-            var ingestUrl = _audioPlatformService.CreateAudioIngestUrl();
+            string ingestUrl = null;
+            
+            if (request.AudioRecordingRequired)
+            {
+                var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationWithStreamAsync
+                (
+                    request.HearingRefId
+                );
 
+                ingestUrl = createAudioRecordingResponse.IngestUrl;
+                
+                if (!createAudioRecordingResponse.Success)
+                {
+                    _logger.LogError($"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");    
+                }
+            }
+            
             var conferenceId = await CreateConferenceAsync(request, ingestUrl);
             _logger.LogDebug("Conference Created");
             
@@ -79,11 +94,12 @@ namespace Video.API.Controllers
             _logger.LogDebug("Kinly Room Booked");
             
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            
             _logger.LogInformation($"Created conference {response.Id} for hearing {request.HearingRefId}");
+            
             return CreatedAtAction(nameof(GetConferenceDetailsByIdAsync), new {conferenceId = response.Id}, response);
         }
 

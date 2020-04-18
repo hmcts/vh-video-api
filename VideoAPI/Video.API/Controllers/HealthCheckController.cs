@@ -8,8 +8,8 @@ using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Services;
 using System.Reflection;
+using VideoApi.Services.Contracts;
 
 namespace Video.API.Controllers
 {

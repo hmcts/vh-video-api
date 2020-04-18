@@ -18,5 +18,17 @@ namespace VideoApi.Services.Helpers
                 Formatting = Formatting.Indented
             });
         }
+        
+        public static string SerialiseRequestToCamelCaseJson(object request)
+        {
+            return JsonConvert.SerializeObject(request, new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                },
+                Formatting = Formatting.Indented
+            });
+        }
     }
 }

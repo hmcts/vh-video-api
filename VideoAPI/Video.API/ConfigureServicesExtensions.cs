@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -23,6 +24,9 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Services;
+using VideoApi.Services.Clients;
+using VideoApi.Services.Contracts;
+using VideoApi.Services.Handlers;
 using VideoApi.Services.Kinly;
 
 namespace Video.API
@@ -71,6 +75,10 @@ namespace Video.API
 
         public static IServiceCollection AddCustomTypes(this IServiceCollection services, bool useStub)
         {
+            var container = services.BuildServiceProvider();
+            var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
+            var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
+            
             services.AddMemoryCache();
             services.AddScoped<IRoomReservationService, RoomReservationService>();
 
@@ -89,9 +97,6 @@ namespace Video.API
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);
-
-            var container = services.BuildServiceProvider();
-            var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
             
             if (useStub)
             {
@@ -100,13 +105,31 @@ namespace Video.API
             }
             else
             {
-                services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
-                services.AddScoped<IAudioPlatformService, AzureMediaAudioPlatformService>();
-
                 services
                     .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
                     .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
+                
+                services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
+                {
+                    x.BaseAddress = new Uri(wowzaConfiguration.RestApiEndpoint);
+                    x.DefaultRequestHeaders.Add("Accept", "application/json");
+                    x.DefaultRequestHeaders.Add("ContentType", "application/json");
+                }).ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler
+                {
+                    Credentials = new CredentialCache
+                    {
+                        {
+                            new Uri(wowzaConfiguration.RestApiEndpoint), 
+                            "Digest",
+                            new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password) 
+                        }
+                    }
+                });
+                
+                services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
+                services.AddScoped<IAudioPlatformService, AudioPlatformService>();
+
             }
             
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
@@ -115,17 +138,14 @@ namespace Video.API
             return services;
         }
 
-        private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient,
-            ServicesConfiguration servicesConfiguration)
+        private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient, ServicesConfiguration servicesConfiguration)
         {
-            DefaultContractResolver contractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            };
-            
             var client = new KinlyApiClient(servicesConfiguration.KinlyApiUrl, httpClient);
+            var contractResolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() };
+            
             client.JsonSerializerSettings.ContractResolver = contractResolver;
             client.JsonSerializerSettings.Formatting = Formatting.Indented;
+            
             return client;
         }
         
