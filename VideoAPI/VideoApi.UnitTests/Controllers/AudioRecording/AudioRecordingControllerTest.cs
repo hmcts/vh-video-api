@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -17,10 +17,10 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
     [TestFixture]
     public class AudioRecordingControllerTest
     {
-        private Mock<IAudioPlatformService> _audioPlatformService;
-        private Mock<ILogger<AudioRecordingController>> _logger;
+        private readonly Mock<IAudioPlatformService> _audioPlatformService;
+        private readonly Mock<ILogger<AudioRecordingController>> _logger;
         
-        private AudioRecordingController _controller;
+        private readonly AudioRecordingController _controller;
         
         public AudioRecordingControllerTest()
         {
