@@ -7,7 +7,6 @@ using Video.API.Controllers;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
-using VideoApi.Services;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.UnitTests.Controllers.Participant
