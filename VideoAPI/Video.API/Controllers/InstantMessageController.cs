@@ -56,9 +56,9 @@ namespace Video.API.Controllers
                 var response = messages.Select(InstantMessageToResponseMapper.MapMessageToResponse);
                 return Ok(response);
             }
-            catch (ConferenceNotFoundException)
+            catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
                 return NotFound();
             }
         }
@@ -84,9 +84,9 @@ namespace Video.API.Controllers
 
                 return Ok("InstantMessage saved");
             }
-            catch (ConferenceNotFoundException)
+            catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
                 return NotFound();
             }
         }
@@ -106,9 +106,9 @@ namespace Video.API.Controllers
                 await _commandHandler.Handle(command);
                 return NoContent();
             }
-            catch (ConferenceNotFoundException e)
+            catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(e,$"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
                 return NotFound();
             }
         }

@@ -83,7 +83,7 @@ namespace Video.API.Controllers
                 
                 if (!createAudioRecordingResponse.Success)
                 {
-                    _logger.LogError($"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");    
+                    _logger.LogWarning($"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");    
                 }
             }
             
@@ -149,7 +149,8 @@ namespace Video.API.Controllers
 
             if (queriedConference == null)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                _logger.LogWarning($"Unable to find conference {conferenceId}");
+                
                 return NotFound();
             }
             
@@ -175,15 +176,17 @@ namespace Video.API.Controllers
             {
                 await _commandHandler.Handle(removeConferenceCommand);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
+                
+                _logger.LogInformation($"Successfully removed conference {conferenceId}");
+                
+                return NoContent();
             }
-            catch (ConferenceNotFoundException)
+            catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
+                
                 return NotFound();
             }
-
-            _logger.LogInformation($"Successfully removed conference {conferenceId}");
-            return NoContent();
         }
 
         /// <summary>
@@ -197,13 +200,16 @@ namespace Video.API.Controllers
             [FromQuery] ConferenceForAdminRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
+            
             var query = new GetConferencesTodayForAdminQuery
             {
                 VenueNames = request.VenueNames
             };
+            
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminQuery, List<Conference>>(query);
 
             var response = conferences.Select(ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse);
+            
             return Ok(response);
         }
 
@@ -219,18 +225,20 @@ namespace Video.API.Controllers
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug($"GetConferencesTodayForJudgeByUsername {username}");
+            
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-                _logger.LogError($"Invalid username {username}");
+                
+                _logger.LogWarning($"Invalid username {username}");
+                
                 return BadRequest(ModelState);
             }
 
             var query = new GetConferencesForTodayByJudgeQuery(username.ToLower().Trim());
-            var conferences =
-                await _queryHandler.Handle<GetConferencesForTodayByJudgeQuery, List<Conference>>(query);
-
+            var conferences = await _queryHandler.Handle<GetConferencesForTodayByJudgeQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel);
+            
             return Ok(response);
         }
 
@@ -246,18 +254,20 @@ namespace Video.API.Controllers
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug($"GetConferencesTodayForIndividualByUsername {username}");
+            
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-                _logger.LogError($"Invalid username {username}");
+                
+                _logger.LogWarning($"Invalid username {username}");
+                
                 return BadRequest(ModelState);
             }
 
             var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
-            var conferences =
-                await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
-
+            var conferences = await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel);
+
             return Ok(response);
         }
 
@@ -273,16 +283,19 @@ namespace Video.API.Controllers
         public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId)
         {
             _logger.LogDebug($"GetConferenceByHearingRefId {hearingRefId}");
+            
             var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
             var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
             if (conference == null)
             {
-                _logger.LogError($"Unable to find conference with hearing id {hearingRefId}");
+                _logger.LogWarning($"Unable to find conference with hearing id {hearingRefId}");
+                
                 return NotFound();
             }
             
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
+            
             return Ok(response);
         }
         
@@ -300,7 +313,6 @@ namespace Video.API.Controllers
             
             var query = new GetExpiredUnclosedConferencesQuery();
             var conferences = await _queryHandler.Handle<GetExpiredUnclosedConferencesQuery, List<Conference>>(query);
-
             var response = conferences.Select(ConferenceToExpiredConferenceMapper.MapConferenceToExpiredResponse);
             
             return Ok(response);
@@ -326,9 +338,10 @@ namespace Video.API.Controllers
                 
                 return NoContent();
             }
-            catch (ConferenceNotFoundException e)
+            catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(e, $"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
+                
                 return NotFound();
             }
         }
@@ -349,16 +362,20 @@ namespace Video.API.Controllers
             {
                 meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId, audioRecordingRequired, ingestUrl);            
             }
-            catch (DoubleBookingException)
+            catch (DoubleBookingException ex)
             {
-                _logger.LogWarning($"Kinly Room already booked for conference {conferenceId}");
+                _logger.LogError(ex, $"Kinly Room already booked for conference {conferenceId}");
+                
                 meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             }
 
             if (meetingRoom == null) return;
             
-            var command = new UpdateMeetingRoomCommand(conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri,
-                meetingRoom.ParticipantUri, meetingRoom.PexipNode);
+            var command = new UpdateMeetingRoomCommand
+            (
+                conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri, meetingRoom.ParticipantUri, meetingRoom.PexipNode
+            );
+            
             await _commandHandler.Handle(command);
         }
 

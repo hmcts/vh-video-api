@@ -57,21 +57,21 @@ namespace Video.API.Controllers
 
             if (conference == null)
             {
-                _logger.LogError($"Unable to find conference {request.ConferenceId}");
+                _logger.LogWarning($"Unable to find conference {request.ConferenceId}");
                 return NotFound();
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
             if (requestedBy == null)
             {
-                _logger.LogError($"Unable to find participant request by with id {request.RequestedBy}");
+                _logger.LogWarning($"Unable to find participant request by with id {request.RequestedBy}");
                 return NotFound();
             }
 
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
             if (requestedFor == null)
             {
-                _logger.LogError($"Unable to find participant request for with id {request.RequestedFor}");
+                _logger.LogWarning($"Unable to find participant request for with id {request.RequestedFor}");
                 return NotFound();
             }
 
@@ -87,9 +87,9 @@ namespace Video.API.Controllers
              await InitiateStartConsultationAsync(conference, requestedBy, requestedFor,
                     request.Answer.GetValueOrDefault());
             }
-            catch (DomainRuleException e)
+            catch (DomainRuleException ex)
             {
-                _logger.LogError(e, $"No consultation room available for conference {conference.Id}");
+                _logger.LogError(ex, $"No consultation room available for conference {conference.Id}");
                 ModelState.AddModelError("ConsultationRoom", "No consultation room available");
                 return BadRequest(ModelState);
             }
@@ -110,14 +110,14 @@ namespace Video.API.Controllers
 
             if (conference == null)
             {
-                _logger.LogError($"Unable to find conference {request.ConferenceId}");
+                _logger.LogWarning($"Unable to find conference {request.ConferenceId}");
                 return NotFound();
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
             if (participant == null)
             {
-                _logger.LogError($"Unable to find participant request by with id {request.ParticipantId}");
+                _logger.LogWarning($"Unable to find participant request by with id {request.ParticipantId}");
                 return NotFound();
             }
 
@@ -126,7 +126,7 @@ namespace Video.API.Controllers
                                           currentRoom != RoomType.ConsultationRoom2))
             {
                 // This could only happen when both the participants press 'Close' button at the same time to end the call
-                _logger.LogError($"Participant {request.ParticipantId} is not in a consultation to leave from");
+                _logger.LogWarning($"Participant {request.ParticipantId} is not in a consultation to leave from");
                 return NoContent();
             }
 
@@ -156,14 +156,14 @@ namespace Video.API.Controllers
             
             if (conference == null)
             {
-                _logger.LogError($"Unable to find conference {request.ConferenceId}");
+                _logger.LogWarning($"Unable to find conference {request.ConferenceId}");
                 return NotFound();
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
             if (participant == null)
             {
-                _logger.LogError($"Unable to find participant request by with id {request.ParticipantId}");
+                _logger.LogWarning($"Unable to find participant request by with id {request.ParticipantId}");
                 return NotFound();
             }
 

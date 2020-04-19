@@ -52,9 +52,9 @@ namespace Video.API.Controllers
                 var response = tasks.Select(TaskToResponseMapper.MapTaskToResponse);
                 return Ok(response);
             }
-            catch (ConferenceNotFoundException)
+            catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
                 return NotFound();
             }
         }
@@ -80,9 +80,9 @@ namespace Video.API.Controllers
                 var command = new UpdateTaskCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
                 await _commandHandler.Handle(command);
             }
-            catch (TaskNotFoundException)
+            catch (TaskNotFoundException ex)
             {
-                _logger.LogError($"Unable to find task {taskId} in conference {conferenceId}");
+                _logger.LogError(ex, $"Unable to find task {taskId} in conference {conferenceId}");
                 return NotFound();
             }
             

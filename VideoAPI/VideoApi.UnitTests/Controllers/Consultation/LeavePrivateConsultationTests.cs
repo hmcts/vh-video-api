@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
