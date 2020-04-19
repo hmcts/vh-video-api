@@ -17,17 +17,18 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
     [TestFixture]
     public class AudioRecordingControllerTest
     {
-        private Mock<IAudioPlatformService> _audioPlatformService;
-        private Mock<ILogger<AudioRecordingController>> _logger;
-        
-        private AudioRecordingController _controller;
+        private readonly Mock<IAudioPlatformService> _audioPlatformService;
+
+        private readonly AudioRecordingController _controller;
         
         public AudioRecordingControllerTest()
         {
             _audioPlatformService = new Mock<IAudioPlatformService>();
-            _logger = new Mock<ILogger<AudioRecordingController>>();
-            
-            _controller = new AudioRecordingController(_audioPlatformService.Object, _logger.Object);    
+
+            _controller = new AudioRecordingController
+            (
+                _audioPlatformService.Object, new Mock<ILogger<AudioRecordingController>>().Object
+            );    
         }
 
         [Test]
@@ -37,7 +38,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                 .Setup(x => x.GetAudioApplicationInfoAsync(It.IsAny<Guid>()))
                 .ReturnsAsync((WowzaGetApplicationResponse) null);
             
-            var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as NotFoundResult;
+            var result = await _controller.GetAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }

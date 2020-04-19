@@ -50,14 +50,16 @@ namespace Video.API.Controllers
             {
                 command.ParticipantId = participantId;
             }
-            _logger.LogError($"EVENT: { request.EventType.ToString() } | " +
-                $"Participant ID: { request.ParticipantId } | " +
-                $"Reason: { request.Reason } | " +
-                $"External Timestamp: { request.TimeStampUtc :yyyy-MM-dd HH:mm:ss.fffffff} | " +
-                $"Timestamp: { (DateTime.Now) :yyyy-MM-dd HH:mm:ss.fffffff} | " +
-                $"TransferFrom: { request.TransferFrom } | " +
-                $"TransferTo: { request.TransferTo } | " +
-                $"Conference ID: { request.ConferenceId } ");
+
+            _logger.LogWarning($"EVENT: {request.EventType.ToString()} | " +
+                               $"Participant ID: {request.ParticipantId} | " +
+                               $"Reason: {request.Reason} | " +
+                               $"External Timestamp: {request.TimeStampUtc:yyyy-MM-dd HH:mm:ss.fffffff} | " +
+                               $"Timestamp: {(DateTime.Now):yyyy-MM-dd HH:mm:ss.fffffff} | " +
+                               $"TransferFrom: {request.TransferFrom} | " +
+                               $"TransferTo: {request.TransferTo} | " +
+                               $"Conference ID: {request.ConferenceId} ");
+            
             await _commandHandler.Handle(command);
 
             var callbackEvent = new CallbackEvent
