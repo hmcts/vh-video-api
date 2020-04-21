@@ -1,11 +1,10 @@
+using FluentAssertions;
+using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain.Enums;
 
@@ -49,13 +48,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
             results.Should().BeInDescendingOrder(x => x.TimeStamp);
         }
 
-        [Test]
-        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
-        {
-            var conferenceId = Guid.NewGuid();
-            var query = new GetInstantMessagesForConferenceQuery(conferenceId);
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(query));
-        }
 
         [TearDown]
         public async Task TearDown()

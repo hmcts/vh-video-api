@@ -52,10 +52,10 @@ namespace Video.API.Controllers
                 var response = tasks.Select(TaskToResponseMapper.MapTaskToResponse);
                 return Ok(response);
             }
-            catch (ConferenceNotFoundException)
+            catch (Exception e)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
+                _logger.LogError(e, $"Unable to find tasks for conference {conferenceId}");
+                return BadRequest();
             }
         }
 

@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
@@ -38,19 +38,19 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = CreateTaskCommand(seededConference, body, taskType);
             await _handler.Handle(command);
 
-            Conference conference;
+            List<Domain.Task> tasks;
             using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                conference = await db.Conferences.Include(x => x.Tasks)
-                    .SingleAsync(x => x.Id == command.ConferenceId);
+                tasks = await db.Tasks.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
-            var savedAlert = conference.GetTasks().First(x => x.Body == body && x.Type == taskType);
+            var savedAlert = tasks.First(x => x.Body == body && x.Type == taskType);
 
             savedAlert.Should().NotBeNull();
             savedAlert.Status.Should().Be(TaskStatus.ToDo);
             savedAlert.Updated.Should().BeNull();
             savedAlert.UpdatedBy.Should().BeNull();
+            savedAlert.ConferenceId.Should().Be(command.ConferenceId);
         }
 
         private AddTaskCommand CreateTaskCommand(Conference conference, string body, TaskType taskType)
@@ -72,18 +72,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
         }
 
-        [Test]
-        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
-        {
-            const TaskType taskType = TaskType.Hearing;
-            const string body = "Automated Test Add Task";
-            var conferenceId = Guid.NewGuid();
-            var participantId = Guid.NewGuid();
-            var command = new AddTaskCommand(conferenceId, participantId, body, taskType);
-
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
-        }
-        
+              
         [TearDown]
         public async Task TearDown()
         {

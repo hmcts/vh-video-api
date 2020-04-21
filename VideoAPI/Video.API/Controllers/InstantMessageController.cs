@@ -1,17 +1,16 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -43,8 +42,8 @@ namespace Video.API.Controllers
         /// <returns>Chat messages</returns>
         [HttpGet("{conferenceId}/instantmessages")]
         [SwaggerOperation(OperationId = "GetInstantMessageHistory")]
-        [ProducesResponseType(typeof(List<InstantMessageResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
         {
             _logger.LogDebug($"Retrieving instant message history for conference {conferenceId}");
@@ -53,12 +52,13 @@ namespace Video.API.Controllers
             {
                 var messages =
                     await _queryHandler.Handle<GetInstantMessagesForConferenceQuery, List<InstantMessage>>(query);
+
                 var response = messages.Select(InstantMessageToResponseMapper.MapMessageToResponse);
                 return Ok(response);
             }
-            catch (ConferenceNotFoundException)
+            catch (Exception e)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
+                _logger.LogError(e, $"Unable to find instant messages for conference {conferenceId}");
                 return NotFound();
             }
         }
@@ -71,8 +71,8 @@ namespace Video.API.Controllers
         /// <returns>OK if the message is saved successfully</returns>
         [HttpPost("{conferenceId}/instantmessages")]
         [SwaggerOperation(OperationId = "AddInstantMessageToConference")]
-        [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddInstantMessageToConferenceAsync(Guid conferenceId, AddInstantMessageRequest request)
         {
             _logger.LogDebug($"Saving instant message for conference {conferenceId}");
@@ -84,10 +84,10 @@ namespace Video.API.Controllers
 
                 return Ok("InstantMessage saved");
             }
-            catch (ConferenceNotFoundException)
+            catch (Exception e)
             {
-                _logger.LogError($"Unable to find conference {conferenceId}");
-                return NotFound();
+                _logger.LogError(e, $"Unable to add instant messages to conference {conferenceId}");
+                return BadRequest();
             }
         }
 
@@ -106,13 +106,13 @@ namespace Video.API.Controllers
                 await _commandHandler.Handle(command);
                 return NoContent();
             }
-            catch (ConferenceNotFoundException e)
+            catch (Exception e)
             {
-                _logger.LogError(e,$"Unable to find conference {conferenceId}");
-                return NotFound();
+                _logger.LogError(e, $"Unable to remove instant messages for conference {conferenceId}");
+                return BadRequest();
             }
         }
-        
+
         /// <summary>
         /// Get list of closed conferences with instant messages (closed over 30 minutes ago)
         /// </summary>

@@ -1,13 +1,14 @@
-using System;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
-using VideoApi.DAL.Exceptions;
 using Task = System.Threading.Tasks.Task;
-using Testing.Common.Helper.Builders.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
@@ -24,16 +25,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = Guid.Empty;
         }
 
+       
         [Test]
-        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
-        {
-            var conferenceId = Guid.NewGuid();
-            var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
-        }
-
-        [Test]
-        public async Task Should_remove_messages_from_conference()
+        public async Task Should_remove_messages_for_conference()
         {
             var conference = new ConferenceBuilder(true)
                .WithMessages(2)
@@ -46,15 +40,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new RemoveInstantMessagesForConferenceCommand(_newConferenceId);
             await _handler.Handle(command);
 
-            Conference updatedConference;
+            List<InstantMessage> messages;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                updatedConference = await db.Conferences
-                                .Include(x => x.InstantMessageHistory)
-                                .SingleAsync(x => x.Id == command.ConferenceId);
+                messages = await db.InstantMessages.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
-            var afterCount = updatedConference.GetInstantMessageHistory().Count;
+            var afterCount = messages.Count;
             afterCount.Should().Be(0);
         }
 
