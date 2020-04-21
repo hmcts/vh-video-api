@@ -104,7 +104,7 @@ namespace VideoApi.Domain
             State = status;
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
-        
+
         public void CloseConference()
         {
             ClosedDateTime = DateTime.UtcNow;
@@ -113,7 +113,7 @@ namespace VideoApi.Domain
             ConferenceStatuses.Add(new ConferenceStatus(ConferenceState.Closed));
         }
 
-        public void AddTask(Guid originId,TaskType taskType, string message)
+        public void AddTask(Guid originId, TaskType taskType, string message)
         {
             var task = new Task(originId, message, taskType);
             Tasks.Add(task);
@@ -157,22 +157,22 @@ namespace VideoApi.Domain
             {
                 throw new DomainRuleException("No Participants", "This conference has no participants");
             }
-            
+
             var consultationRoom1Occupied = GetParticipants().Any(x => x.CurrentRoom == RoomType.ConsultationRoom1);
             if (!consultationRoom1Occupied)
             {
                 return RoomType.ConsultationRoom1;
             }
-            
+
             var consultationRoomOccupied = GetParticipants().Any(x => x.CurrentRoom == RoomType.ConsultationRoom2);
-            if(!consultationRoomOccupied)
+            if (!consultationRoomOccupied)
             {
                 return RoomType.ConsultationRoom2;
             }
-            
+
             throw new DomainRuleException("Unavailable room", "No consultation rooms available");
         }
-        
+
         public Participant GetJudge()
         {
             return Participants.SingleOrDefault(x => x.IsJudge());

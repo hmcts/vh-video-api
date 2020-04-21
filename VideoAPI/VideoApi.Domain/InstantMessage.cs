@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using VideoApi.Domain.Ddd;
 
 namespace VideoApi.Domain
@@ -16,5 +16,6 @@ namespace VideoApi.Domain
         public string To { get; }
         public string MessageText { get; }
         public DateTime TimeStamp { get; }
+        public Guid ConferenceId { set; get; }
     }
 }

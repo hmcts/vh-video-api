@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
+using VideoApi.Domain;
 
 namespace VideoApi.DAL.Commands
 {
@@ -28,18 +27,14 @@ namespace VideoApi.DAL.Commands
         {
             _context = context;
         }
-
-        public async Task Handle(AddInstantMessageCommand command)
+      
+        public async System.Threading.Tasks.Task Handle(AddInstantMessageCommand command)
         {
-            var conference = await _context.Conferences
-                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
-
-            if (conference == null)
+            var @instantMessage = new InstantMessage(command.From, command.MessageText)
             {
-                throw new ConferenceNotFoundException(command.ConferenceId);
-            }
-
-            conference.AddInstantMessage(command.From, command.MessageText);
+                ConferenceId = command.ConferenceId
+            };
+            await _context.AddAsync(@instantMessage);
             await _context.SaveChangesAsync();
         }
     }

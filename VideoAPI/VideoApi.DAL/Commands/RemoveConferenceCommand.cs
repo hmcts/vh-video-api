@@ -32,7 +32,6 @@ namespace VideoApi.DAL.Commands
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses")
                 .Include(x => x.Participants).ThenInclude(x => x.TestCallResult)
-                .Include(x => x.Tasks)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
             
             if (conference == null)
@@ -41,10 +40,12 @@ namespace VideoApi.DAL.Commands
             }
             
             var events = await _context.Events.Where(x => x.ConferenceId == conference.Id).ToListAsync();
+            var tasks = await _context.Tasks.Where(x => x.ConferenceId == conference.Id).ToListAsync();
 
             _context.Remove(conference);
             _context.RemoveRange(events);
-            
+            _context.RemoveRange(tasks);
+
             await _context.SaveChangesAsync();
         }
     }

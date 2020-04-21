@@ -1,8 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
@@ -34,15 +32,11 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AddTaskCommand command)
         {
-            var conference = await _context.Conferences
-                .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
-
-            if (conference == null)
+            var task = new Domain.Task(command.OriginId, command.Body, command.TaskType)
             {
-                throw new ConferenceNotFoundException(command.ConferenceId);
-            }
-
-            conference.AddTask(command.OriginId, command.TaskType, command.Body);
+                ConferenceId = command.ConferenceId
+            };
+            await _context.Tasks.AddAsync(task);
 
             await _context.SaveChangesAsync();
         }

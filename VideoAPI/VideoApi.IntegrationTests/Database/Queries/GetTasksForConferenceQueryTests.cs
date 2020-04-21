@@ -62,14 +62,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
             results.Should().BeInDescendingOrder(x => x.Created);
         }
 
-        [Test]
-        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
-        {
-            var conferenceId = Guid.NewGuid();
-            var query = new GetTasksForConferenceQuery(conferenceId);
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(query));
-        }
-
         [TearDown]
         public async System.Threading.Tasks.Task TearDown()
         {

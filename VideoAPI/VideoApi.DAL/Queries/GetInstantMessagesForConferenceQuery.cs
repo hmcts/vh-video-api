@@ -1,8 +1,8 @@
-﻿using System;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -32,16 +32,13 @@ namespace VideoApi.DAL.Queries
 
         public async Task<List<InstantMessage>> Handle(GetInstantMessagesForConferenceQuery query)
         {
-            var conference = await _context.Conferences.Include(x => x.InstantMessageHistory)
+            var instantMessages = await _context.InstantMessages
                 .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
+                .Where(x => x.ConferenceId == query.ConferenceId)
+                .OrderByDescending(x => x.TimeStamp)
+                .ToListAsync();
 
-            if (conference == null)
-            {
-                throw new ConferenceNotFoundException(query.ConferenceId);
-            }
-
-            return conference.InstantMessageHistory.OrderByDescending(x => x.TimeStamp).ToList();
+            return instantMessages;
         }
     }
 }

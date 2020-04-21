@@ -21,6 +21,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.Created)
                 .Excluding(x => x.Updated)
                 .Excluding(x => x.UpdatedBy)
+                .Excluding(x => x.ConferenceId)
             );
         }
     }

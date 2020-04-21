@@ -14,7 +14,7 @@ Feature: Instant Messages
   Scenario: Get instant messages with a nonexistent conference
     Given I have a nonexistent get instant messages request
     When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
+    Then the response should have the status Ok and success status True
 
   Scenario: Set instant messages
     Given I have a conference
@@ -25,7 +25,7 @@ Feature: Instant Messages
   Scenario: Set instant messages for a nonexistent conference
     Given I have a nonexistent set instant message request
     When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
+    Then the response should have the status BadRequest and success status False
 
   Scenario: Delete instant messages
     Given I have a conference
@@ -38,7 +38,7 @@ Feature: Instant Messages
   Scenario: Delete instant messages for a non-existent conference
     Given I have a nonexistent delete messages from a conference request
     When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
+    Then the response should have the status NoContent and success status True
 
   Scenario: Delete instant messages for an invalid conference request
     Given I have an invalid delete messages from a conference request
@@ -80,7 +80,7 @@ Feature: Instant Messages
     And the conference has messages
     And I have an nonexistent delete messages from a conference request
     When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
+    Then the response should have the status NoContent and success status True
 
   Scenario: Remove instant messages for a conference successfully
     Given I have a conference

@@ -60,15 +60,15 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
         }
         
         [Test]
-        public async Task Should_return_notfound()
+        public async Task Should_return_badRequest()
         {
             _commandHandler.Setup(x => x.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()))
-                .Throws(new ConferenceNotFoundException(Guid.NewGuid()));
+                .Throws(new Exception());
             
             var result = await _instantMessageController.RemoveInstantMessagesForConferenceAsync(Guid.NewGuid());
 
-            var typedResult = (NotFoundResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            var typedResult = (BadRequestResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             _commandHandler.Verify(c => c.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
         }
     }

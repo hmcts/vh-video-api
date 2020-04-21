@@ -3,10 +3,10 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
@@ -39,29 +39,23 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new AddInstantMessageCommand(_newConferenceId, from, messageText);
             await _handler.Handle(command);
 
-            Conference conference;
+            List<InstantMessage> instantMessages;
             using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                conference = await db.Conferences
-                                .Include(x => x.InstantMessageHistory)
-                                .SingleAsync(x => x.Id == command.ConferenceId);
+                instantMessages = await db.InstantMessages
+                                .Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
-            var message = conference.GetInstantMessageHistory().First();
+            var message = instantMessages.First();
 
             message.Should().NotBeNull();
             message.From.Should().Be(from);
             message.MessageText.Should().Be(messageText);
             message.TimeStamp.Should().BeBefore(DateTime.UtcNow);
+            message.ConferenceId.Should().Be(command.ConferenceId);
         }
 
-        [Test]
-        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
-        {
-            var command = new AddInstantMessageCommand(Guid.NewGuid(), "Display Name", "Test message");
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
-        }
-
+      
         [TearDown]
         public async Task TearDown()
         {

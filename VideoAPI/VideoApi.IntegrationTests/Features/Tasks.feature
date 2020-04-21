@@ -14,7 +14,7 @@ Feature: Tasks
     Given I have a conference
     And I have a nonexistent get tasks request
     When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
+    Then the response should have the status Ok and success status True
 
   Scenario: Update task status
     Given I have a conference

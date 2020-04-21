@@ -16,6 +16,7 @@ namespace VideoApi.Domain
         public DateTime Created { get; set;}
         public DateTime? Updated { get; set; }
         public string UpdatedBy { get; private set; }
+        public Guid ConferenceId { get; set; }
         
         public Task(Guid originId, string body, TaskType type)
         {

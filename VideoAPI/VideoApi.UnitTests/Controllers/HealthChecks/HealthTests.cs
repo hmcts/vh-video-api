@@ -1,10 +1,10 @@
-using System;
-using System.Net;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Net;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using VideoApi.Contract.Responses;
