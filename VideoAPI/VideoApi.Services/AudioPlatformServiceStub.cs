@@ -43,9 +43,10 @@ namespace VideoApi.Services
 
         public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId)
         {
+            var applicationName = Guid.NewGuid();
             return await Task.FromResult(new AudioPlatformServiceResponse(true)
             {
-                IngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{Guid.NewGuid()}"
+                IngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{applicationName}/{applicationName}"
             });
         }
 
