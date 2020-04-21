@@ -32,7 +32,7 @@ namespace VideoApi.Services.Clients
                 StreamConfig = new StreamConfigurationConfig
                 {
                     CreateStorageDir = true,
-                    StreamType = "live-record",
+                    StreamType = "live",
                     StorageDir = $"{storageDirectory}{applicationName}",
                     StorageDirExists = false
                 },
@@ -230,9 +230,7 @@ namespace VideoApi.Services.Clients
         private class AddStreamRecorderRequest
         {
             public string RecorderName { get; set; }
-            public int CurrentSize { get; set; }
             public bool StartOnKeyFrame { get; set; }
-            public bool RecordData { get; set; }
             public string OutputPath { get; set; }
             public string CurrentFile { get; set; }
             public string SegmentationType { get; set; }
@@ -241,10 +239,6 @@ namespace VideoApi.Services.Clients
             public string Option { get; set; }
             public bool DefaultRecorder { get; set; }
             public bool SplitOnTcDiscontinuity { get; set; }
-            public string VersioningOption { get; set; }
-            public string OutputFile { get; set; }
-            public string FileTemplate { get; set; }
-            public bool DefaultAudioSearchPosition { get; set; }
         }
 
         private class StreamConfigurationConfig
@@ -261,9 +255,7 @@ namespace VideoApi.Services.Clients
             /// Comma separated string
             /// </summary>
             public string PublishIPWhiteList { get; set; }
-            public string PublishAuthenticationMethod { get; set; }
             public bool PublishBlockDuplicateStreamNames { get; set; }
-            public string PublishRTMPSecureURL { get; set; }
         }
     }
 }

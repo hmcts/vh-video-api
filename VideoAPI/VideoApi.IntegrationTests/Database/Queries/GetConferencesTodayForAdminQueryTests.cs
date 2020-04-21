@@ -114,7 +114,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var venue1 = @"Manchester";
             var venue2 = @"Birmingham";
             var venue3 = @"Luton";
-            var today = DateTime.Today.AddHours(10);
             var conference1 = new ConferenceBuilder(true, venueName: venue1)
                 .WithParticipants(2).Build();
             _newConferenceId1 = conference1.Id;

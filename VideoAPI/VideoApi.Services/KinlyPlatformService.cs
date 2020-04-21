@@ -103,7 +103,7 @@ namespace VideoApi.Services
                 .WaitAndRetryAsync(maxRetryAttempts, x => pauseBetweenFailures,
                     (ex, ts, retryAttempt, context) =>
                     {
-                        _logger.LogError(
+                        _logger.LogWarning(
                             $"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}");
                     });
 
@@ -132,13 +132,13 @@ namespace VideoApi.Services
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
             {
-                _logger.LogError($" { responseMessage.StatusCode } : Failed to retrieve self test score for participant {participantId} ");
+                _logger.LogWarning($" { responseMessage.StatusCode } : Failed to retrieve self test score for participant {participantId} ");
                 return null;
             }
 
             var content = await responseMessage.Content.ReadAsStringAsync();
             var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
-            _logger.LogError($" { responseMessage.StatusCode } : Successfully retrieved self test score for participant {participantId} ");
+            _logger.LogWarning($" { responseMessage.StatusCode } : Successfully retrieved self test score for participant {participantId} ");
             return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
         }
 
