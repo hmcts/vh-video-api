@@ -134,7 +134,7 @@ namespace VideoApi.UnitTests.Services
         
             result.Should().NotBeNull();
             result.Success.Should().BeTrue();
-            result.IngestUrl.Should().Be($"{_wowzaConfiguration.StreamingEndpoint}{hearingId}");
+            result.IngestUrl.Should().Be($"{_wowzaConfiguration.StreamingEndpoint}{hearingId}/{hearingId}");
         }
         
         [Test]
@@ -239,7 +239,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().NotBeNull();
             result.Success.Should().BeTrue();
-            result.IngestUrl.Should().Be($"{_wowzaConfiguration.StreamingEndpoint}{hearingId}");
+            result.IngestUrl.Should().Be($"{_wowzaConfiguration.StreamingEndpoint}{hearingId}/{hearingId}");
         }
         
         [Test]

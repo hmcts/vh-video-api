@@ -224,6 +224,6 @@ namespace VideoApi.Services
             }
         }
 
-        private string GetAudioIngestUrl(string applicationName) => $"{_wowzaConfiguration.StreamingEndpoint}{applicationName}";
+        private string GetAudioIngestUrl(string applicationName) => $"{_wowzaConfiguration.StreamingEndpoint}{applicationName}/{applicationName}";
     }
 }
