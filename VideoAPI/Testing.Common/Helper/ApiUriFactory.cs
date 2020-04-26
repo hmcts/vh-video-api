@@ -35,6 +35,7 @@ namespace Testing.Common.Helper
             public static string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
             public static string UpdateConference => $"{ApiRoot}";
             public static string CloseConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/close";
+            public static string GetJudgesInHearingsToday() => $"{ApiRoot}/today/judgesinhearings";
         }
 
         public static class HealthCheckEndpoints

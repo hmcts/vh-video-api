@@ -82,3 +82,11 @@
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And a list not containing the closed hearings should be retrieved
+
+  @VIH-5827
+  Scenario: Get the judges in hearings today
+    Given I have a conference
+    And I have a get judges in hearings today
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the Judges in hearings should be retrieved

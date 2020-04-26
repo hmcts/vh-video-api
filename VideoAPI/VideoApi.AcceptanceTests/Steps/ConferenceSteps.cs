@@ -221,6 +221,20 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             _context.Test.ConferenceResponse.Id = Guid.Empty;
         }
+        
+        [Given(@"I have a get judges in hearings today")]
+        public void GivenIHaveAGetJudgesInHearingsToday()
+        {
+            _context.Request = _context.Get(GetJudgesInHearingsToday());
+        }
+        
+        [Then(@"the Judges in hearings should be retrieved")]
+        public void ThenTheJudgeInHearingResponseShouldBeRetrieved()
+        {
+            var judgeInHearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<JudgeInHearingResponse>>(_context.Response.Content);
+            judgeInHearings.Should().NotBeNull();
+            judgeInHearings.Should().BeEmpty();
+        }
 
         private void CreateConference(DateTime date)
         {
