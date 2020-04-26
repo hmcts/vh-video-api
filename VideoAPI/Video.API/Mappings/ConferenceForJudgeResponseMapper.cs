@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
@@ -20,6 +21,23 @@ namespace Video.API.Mappings
                 Participants = conference.Participants
                     .Select(ParticipantForJudgeResponseMapper.MapParticipantSummaryToModel).ToList()
             };
+        }
+        
+        public static IEnumerable<JudgeInHearingResponse> MapConferenceSummaryToJudgeInHearingResponse(Conference conference)
+        {
+            var conferenceId = conference.Id;
+            
+            return conference.Participants
+            .Where(x => x.IsJudge())    
+            .Select(x => new JudgeInHearingResponse
+            {
+                Id = x.Id,
+                ConferenceId = conferenceId,
+                Status = x.State,
+                Username = x.Username,
+                CaseGroup = x.CaseTypeGroup,
+                UserRole = x.UserRole
+            });
         }
     }
     

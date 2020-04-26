@@ -345,6 +345,24 @@ namespace Video.API.Controllers
                 return NotFound();
             }
         }
+        
+        /// <summary>
+        /// Get today's conferences where judges are in hearings
+        /// </summary>
+        /// <returns>Conference details</returns>
+        [HttpGet("today/judgesinhearings")]
+        [SwaggerOperation(OperationId = "GetJudgesInHearingsToday")]
+        [ProducesResponseType(typeof(List<JudgeInHearingResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
+        {
+            _logger.LogDebug("GetJudgesInHearingsToday");
+
+            var conferences = await _queryHandler.Handle<GetJudgesInHearingsTodayQuery, List<Conference>>(new GetJudgesInHearingsTodayQuery());
+
+            var response = conferences.SelectMany(ConferenceForJudgeResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
+            
+            return Ok(response);
+        }
 
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
