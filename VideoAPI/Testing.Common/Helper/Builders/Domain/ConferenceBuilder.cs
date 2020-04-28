@@ -61,7 +61,8 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null, RoomType? roomType = null)
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null, RoomType? roomType = null, 
+            ParticipantState participantState = ParticipantState.None)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -81,7 +82,7 @@ namespace Testing.Common.Helper.Builders.Domain
                 participant.UpdateCurrentRoom(roomType);
             }
             
-            participant.UpdateParticipantStatus(ParticipantState.Available);
+            participant.UpdateParticipantStatus(participantState == ParticipantState.None ? ParticipantState.Available : participantState);
             _conference.AddParticipant(participant);
 
             return this;
