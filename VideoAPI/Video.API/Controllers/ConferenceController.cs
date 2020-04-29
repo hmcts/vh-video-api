@@ -335,6 +335,7 @@ namespace Video.API.Controllers
 
                 await _commandHandler.Handle(command);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
+                await DeleteAudioRecordingApplication(conferenceId);
                 
                 return NoContent();
             }
@@ -370,6 +371,17 @@ namespace Video.API.Controllers
             if (meetingRoom != null)
             {
                 await _videoPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
+            }
+        }
+
+        private async Task DeleteAudioRecordingApplication(Guid conferenceId)
+        {
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (queriedConference != null && queriedConference.AudioRecordingRequired)
+            {
+                await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
             }
         }
 
