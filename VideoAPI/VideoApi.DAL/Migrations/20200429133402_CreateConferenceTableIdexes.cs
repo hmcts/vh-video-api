@@ -8,24 +8,15 @@ namespace VideoApi.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
-                name: "IX_Conference_HearingRefId",
+                name: "IX_Conference_HearingRefId_State",
                 table: "Conference",
-                column: "HearingRefId");
-            
-            migrationBuilder.CreateIndex(
-                name: "IX_Conference_State",
-                table: "Conference",
-                column: "State");
+                columns: new[]{"HearingRefId", "State"});
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
-                name: "IX_Conference_HearingRefId",
-                table: "Conference");
-            
-            migrationBuilder.DropIndex(
-                name: "IX_Conference_State",
+                name: "IX_Conference_HearingRefId_State",
                 table: "Conference");
         }
     }
