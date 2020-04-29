@@ -1,14 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Alert = VideoApi.Domain.Task;
 using Task = System.Threading.Tasks.Task;
 using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
@@ -34,52 +34,32 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             const string body = "Automated Test Complete Task";
             const string updatedBy = "test@automated.com";
-            var conferenceWithAlert = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithTask(body, taskType)
-                .Build();
-            var seededConference = await TestDataManager.SeedConference(conferenceWithAlert);
-            _newConferenceId = seededConference.Id;
-            var task = seededConference.GetTasks().First();
-
+            _newConferenceId = Guid.NewGuid();
+            var task = new Alert(_newConferenceId, _newConferenceId, body, taskType);
+            await TestDataManager.SeedAlerts(new List<Alert>{task});
+            
             var command = new UpdateTaskCommand(_newConferenceId, task.Id, updatedBy);
             await _handler.Handle(command);
 
-            Conference conference;
-            using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            List<Alert> alerts;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                conference = await db.Conferences.Include(x => x.Tasks)
-                    .SingleAsync(x => x.Id == command.ConferenceId);
+                alerts = await db.Tasks.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
-            var updatedAlert = conference.GetTasks().First(x => x.Id == task.Id);
+            var updatedAlert = alerts.First(x => x.Id == task.Id);
             updatedAlert.Should().NotBeNull();
             updatedAlert.Status.Should().Be(TaskStatus.Done);
             updatedAlert.Updated.Should().NotBeNull();
             updatedAlert.UpdatedBy.Should().Be(updatedBy);
         }
 
-
         [Test]
-        public void Should_throw_conference_not_found_exception()
+        public void Should_throw_task_not_found_exception()
         {
             const string updatedBy = "test@automated.com";
-            var command = new UpdateTaskCommand(Guid.NewGuid(), 9999, updatedBy);
-            Assert.ThrowsAsync<TaskNotFoundException>(() => _handler.Handle(command));
-        }
-
-        [Test]
-        public async Task Should_throw_task_not_found_exception()
-        {
-            const string body = "Automated Test Complete Task";
-            const string updatedBy = "test@automated.com";
-            var conferenceWithAlert = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipantTask(body)
-                .Build();
-            var seededConference = await TestDataManager.SeedConference(conferenceWithAlert);
-            _newConferenceId = seededConference.Id;
-
+            _newConferenceId = Guid.NewGuid();
+            
             var command = new UpdateTaskCommand(_newConferenceId, 9999, updatedBy);
             Assert.ThrowsAsync<TaskNotFoundException>(() => _handler.Handle(command));
         }
@@ -90,7 +70,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             if (_newConferenceId != Guid.Empty)
             {
                 TestContext.WriteLine($"Removing test conference {_newConferenceId}");
-                await TestDataManager.RemoveConference(_newConferenceId);
+                await TestDataManager.RemoveAlerts(_newConferenceId);
             }
         }
     }

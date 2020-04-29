@@ -32,10 +32,7 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AddTaskCommand command)
         {
-            var task = new Domain.Task(command.OriginId, command.Body, command.TaskType)
-            {
-                ConferenceId = command.ConferenceId
-            };
+            var task = new Domain.Task(command.ConferenceId, command.OriginId, command.Body, command.TaskType);
             await _context.Tasks.AddAsync(task);
 
             await _context.SaveChangesAsync();

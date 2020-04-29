@@ -11,6 +11,7 @@ namespace VideoApi.DAL.Mappings
             builder.ToTable(nameof(Task));
             
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.ConferenceId);
             builder.Property(x => x.OriginId);
             builder.Property(x => x.Body);
             builder.Property(x => x.Type);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -12,6 +13,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory.TaskEndpoints;
+using Alert = VideoApi.Domain.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -23,6 +25,23 @@ namespace VideoApi.IntegrationTests.Steps
         public TaskBaseSteps(TestContext context)
         {
             _context = context;
+        }
+
+        [Given(@"A conference has tasks")]
+        public async Task GivenAConferenceHasTasks()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var participantId = _context.Test.Conference.GetParticipants().First().Id;
+            var judgeId = _context.Test.Conference.GetJudge().Id;
+
+            var alert1 = new Alert(conferenceId, conferenceId, "Automated Test", TaskType.Hearing);
+            var alert2 = new Alert(conferenceId, participantId, "Automated Test", TaskType.Participant);
+            var alert3 = new Alert(conferenceId, judgeId, "Automated Test", TaskType.Judge);
+            
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
+            {
+                alert1, alert2, alert3
+            });
         }
 
         [Given(@"I have a (.*) get tasks request")]
@@ -46,7 +65,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Then(@"the list of tasks should be retrieved")]
-        public async System.Threading.Tasks.Task ThenTheListOfTasksShouldBeRetrieved()
+        public async Task ThenTheListOfTasksShouldBeRetrieved()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
             var tasks = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(json);
@@ -61,7 +80,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Then(@"the task should be retrieved with updated details")]
-        public async System.Threading.Tasks.Task ThenTheTaskShouldBeRetrievedWithUpdatedDetails()
+        public async Task ThenTheTaskShouldBeRetrievedWithUpdatedDetails()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
             var updatedTask = RequestHelper.DeserialiseSnakeCaseJsonToResponse<TaskResponse>(json);
@@ -83,13 +102,13 @@ namespace VideoApi.IntegrationTests.Steps
             switch (scenario)
             {
                 case Scenario.Valid:
-                    taskId = _context.Test.Conference.Tasks.First().Id;
+                    taskId = _context.Test.Alerts.First().Id;
                     break;
                 case Scenario.Invalid:
                     taskId = 0;
                     break;
                 case Scenario.Nonexistent:
-                    taskId = _context.Test.Conference.Tasks.First().Id;
+                    taskId = _context.Test.Alerts.First().Id;
                     conferenceId = Guid.NewGuid();
                     break;
                 default:

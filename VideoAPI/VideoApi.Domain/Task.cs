@@ -18,8 +18,9 @@ namespace VideoApi.Domain
         public string UpdatedBy { get; private set; }
         public Guid ConferenceId { get; set; }
         
-        public Task(Guid originId, string body, TaskType type)
+        public Task(Guid conferenceId, Guid originId, string body, TaskType type)
         {
+            ConferenceId = conferenceId;
             OriginId = originId;
             Body = body;
             Type = type;

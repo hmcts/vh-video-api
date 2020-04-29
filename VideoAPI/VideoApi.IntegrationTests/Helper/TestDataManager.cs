@@ -8,6 +8,7 @@ using VideoApi.Common.Configuration;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Alert = VideoApi.Domain.Task;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Helper
@@ -33,7 +34,6 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
-                .WithHearingTask("Suspended")
                 .Build();
 
             foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))
@@ -46,13 +46,21 @@ namespace VideoApi.IntegrationTests.Helper
 
         public async Task<Conference> SeedConference(Conference conference)
         {
-            await using (var db = new VideoApiDbContext(_dbContextOptions))
-            {
-                await db.Conferences.AddAsync(conference);
-                await db.SaveChangesAsync();
-            }
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            await db.Conferences.AddAsync(conference);
+            await db.SaveChangesAsync();
 
             return conference;
+        }
+
+        public async Task<List<Alert>> SeedAlerts(IEnumerable<Alert> alerts)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var seedAlerts = alerts.ToList();
+            await db.Tasks.AddRangeAsync(seedAlerts);
+            await db.SaveChangesAsync();
+
+            return seedAlerts;
         }
 
         public async Task RemoveConference(Guid conferenceId)
@@ -65,6 +73,8 @@ namespace VideoApi.IntegrationTests.Helper
 
             db.Remove(conference);
             await db.SaveChangesAsync();
+
+            await RemoveAlerts(conferenceId);
         }
         
         public async Task RemoveConferences(List<Conference> conferences)
@@ -78,6 +88,11 @@ namespace VideoApi.IntegrationTests.Helper
 
             db.RemoveRange(allConferences);
             await db.SaveChangesAsync();
+
+            foreach (var id in conferenceIds)
+            {
+                await RemoveAlerts(id);
+            }
         }
 
         public async Task RemoveEvents()
@@ -120,6 +135,14 @@ namespace VideoApi.IntegrationTests.Helper
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var toDelete = db.Heartbeats.Where(x => x.ConferenceId == conferenceId && x.ParticipantId == participantId);
             db.Heartbeats.RemoveRange(toDelete);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task RemoveAlerts(Guid conferenceId)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var toDelete = db.Tasks.Where(x => x.ConferenceId == conferenceId);
+            db.Tasks.RemoveRange(toDelete);
             await db.SaveChangesAsync();
         }
     }

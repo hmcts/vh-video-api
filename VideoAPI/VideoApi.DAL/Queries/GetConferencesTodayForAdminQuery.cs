@@ -31,7 +31,6 @@ namespace VideoApi.DAL.Queries
 
             var adminQuery = _context.Conferences
                 .Include(x => x.Participants)
-                .Include("Tasks")
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
 

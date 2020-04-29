@@ -9,7 +9,6 @@ using Video.API.Controllers;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries.Core;
 using Task = System.Threading.Tasks.Task;
 

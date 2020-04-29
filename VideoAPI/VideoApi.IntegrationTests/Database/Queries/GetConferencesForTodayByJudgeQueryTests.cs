@@ -77,7 +77,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var conference6 = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipantTask("Test Task")
                 .Build();
             _newConferenceId6 = conference6.Id;
 
