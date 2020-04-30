@@ -36,7 +36,7 @@ namespace VideoApi.UnitTests.Events
 
             var tasks = new List<VideoApi.Domain.Task>
             {
-                new VideoApi.Domain.Task(Guid.NewGuid(), "Test", TaskType.Participant)
+                new VideoApi.Domain.Task(conference.Id, Guid.NewGuid(), "Test", TaskType.Participant)
             };
 
             QueryHandlerMock.Setup(x => x.Handle<GetTasksForConferenceQuery, List<VideoApi.Domain.Task>>(

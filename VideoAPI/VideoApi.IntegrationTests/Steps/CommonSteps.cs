@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
+using Alert = VideoApi.Domain.Task;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -27,7 +28,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Test.Conference = await _context.TestDataManager.SeedConference();
             NUnit.Framework.TestContext.WriteLine($"New seeded conference id: {_context.Test.Conference.Id}");
         }
-        
+
         [Given(@"I have a conference today")]
         public async Task GivenIHaveAConferenceToday()
         {
@@ -38,9 +39,11 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithHearingTask("Suspended")
                 .Build();
+
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference);
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new[]
+                {new Alert(conference.Id, conference.Id, "Suspended", TaskType.Hearing)});
         }
 
         [Given(@"I have several conferences")]
@@ -57,41 +60,35 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .Build();
 
             var todayConference1 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithParticipantTask("Disconnected")
                 .Build();
 
             var tomorrowConference1 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
-                .WithParticipantTask("Disconnected")
                 .Build();
 
             var todayConference2 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
-                .WithParticipantTask("Disconnected")
                 .Build();
 
             var tomorrowConference2 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
-                .WithParticipantTask("Disconnected")
                 .Build();
 
             var yesterdayConference2 = new ConferenceBuilder(true, scheduledDateTime: yesterday, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipantTask("Disconnected")
                 .Build();
 
             _context.Test.ClosedConferences.Add(
@@ -103,12 +100,24 @@ namespace VideoApi.IntegrationTests.Steps
             await _context.TestDataManager.SeedConference(tomorrowConference2);
             _context.Test.ClosedConferences.Add(await _context.TestDataManager.SeedConference(yesterdayConference2));
 
+            var alert1 = new Alert(yesterdayClosedConference.Id,yesterdayClosedConference.Id, "Disconnected", TaskType.Participant);
+            var alert2 = new Alert(todayConference1.Id,todayConference1.Id, "Disconnected", TaskType.Participant);
+            var alert3 = new Alert(tomorrowConference1.Id,tomorrowConference1.Id, "Disconnected", TaskType.Participant);
+            var alert4 = new Alert(todayConference2.Id,todayConference2.Id, "Disconnected", TaskType.Participant);
+            var alert5 = new Alert(todayConference2.Id,todayConference2.Id, "Disconnected", TaskType.Participant);
+            var alert6 = new Alert(yesterdayConference2.Id,yesterdayConference2.Id, "Disconnected", TaskType.Participant);
+
             _context.Test.Conferences.Add(yesterdayClosedConference);
             _context.Test.Conferences.Add(todayConference1);
             _context.Test.Conferences.Add(tomorrowConference1);
             _context.Test.Conferences.Add(todayConference2);
             _context.Test.Conferences.Add(tomorrowConference2);
             _context.Test.Conferences.Add(yesterdayConference2);
+
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
+            {
+                alert1, alert2, alert3, alert4, alert5, alert6
+            });
         }
 
         [Given(@"I have several closed conferences with messages")]
@@ -124,26 +133,23 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-20));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference1, DateTime.UtcNow.AddMinutes(-20));
             conferenceList.Add(conference1);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-40));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference1, DateTime.UtcNow.AddMinutes(-40));
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
             conferenceList.Add(conference3);
@@ -152,17 +158,15 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference4, DateTime.UtcNow.AddMinutes(-20));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference4, DateTime.UtcNow.AddMinutes(-20));
             conferenceList.Add(conference4);
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
             conferenceList.Add(conference5);
@@ -170,20 +174,32 @@ namespace VideoApi.IntegrationTests.Steps
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipantTask("Disconnected")
                 .Build();
             conferenceList.Add(conference6);
 
-            foreach(var c in conferenceList)
+            foreach (var c in conferenceList)
             {
-                if (c.ClosedDateTime!= null &&
+                if (c.ClosedDateTime != null &&
                     c.ClosedDateTime.Value.ToUniversalTime() < DateTime.Now.ToUniversalTime().AddMinutes(-30) &&
                     c.InstantMessageHistory.Count > 0)
                 {
                     _context.Test.ClosedConferencesWithMessages.Add(c);
                 }
+
                 _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
+
+            var alert1 = new Alert(conference1.Id,conference1.Id, "Disconnected", TaskType.Participant);
+            var alert2 = new Alert(conference2.Id,conference2.Id, "Disconnected", TaskType.Participant);
+            var alert3 = new Alert(conference3.Id,conference3.Id, "Disconnected", TaskType.Participant);
+            var alert4 = new Alert(conference4.Id,conference4.Id, "Disconnected", TaskType.Participant);
+            var alert5 = new Alert(conference5.Id,conference5.Id, "Disconnected", TaskType.Participant);
+            var alert6 = new Alert(conference6.Id,conference6.Id, "Disconnected", TaskType.Participant);
+
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
+            {
+                alert1, alert2, alert3, alert4, alert5, alert6
+            });
         }
 
         [Given(@"I have a many very old closed conferences with messages")]
@@ -198,35 +214,41 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference1, DateTime.UtcNow.AddMonths(-3));
             conferenceList.Add(conference1);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-2));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference1, DateTime.UtcNow.AddMonths(-2));
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference3, DateTime.UtcNow.AddMonths(-1));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference3, DateTime.UtcNow.AddMonths(-1));
             conferenceList.Add(conference3);
 
             foreach (var c in conferenceList)
             {
                 _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
+
+            var alert1 = new Alert(conference1.Id, conference1.Id, "Disconnected", TaskType.Participant);
+            var alert2 = new Alert(conference2.Id, conference2.Id, "Disconnected", TaskType.Participant);
+            var alert3 = new Alert(conference3.Id, conference3.Id, "Disconnected", TaskType.Participant);
+            
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
+            {
+                alert1, alert2, alert3
+            });
         }
 
         [Given(@"I have a many closed conferences with no messages")]
@@ -242,33 +264,39 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-30));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference1, DateTime.UtcNow.AddMinutes(-30));
             conferenceList.Add(conference1);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMinutes(-31));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference1, DateTime.UtcNow.AddMinutes(-31));
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithParticipantTask("Disconnected")
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference3, DateTime.UtcNow.AddMinutes(-29));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference3, DateTime.UtcNow.AddMinutes(-29));
             conferenceList.Add(conference3);
 
             foreach (var c in conferenceList)
             {
                 _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
+
+            var alert1 = new Alert(conference1.Id, conference1.Id, "Disconnected", TaskType.Participant);
+            var alert2 = new Alert(conference2.Id, conference2.Id, "Disconnected", TaskType.Participant);
+            var alert3 = new Alert(conference3.Id, conference3.Id, "Disconnected", TaskType.Participant);
+
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
+            {
+                alert1, alert2, alert3
+            });
         }
 
         [Given(@"I have a many open conferences with messages")]
@@ -283,7 +311,6 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
             conferenceList.Add(conference3);
@@ -292,17 +319,15 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference4, DateTime.UtcNow.AddMinutes(-30));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(conference4, DateTime.UtcNow.AddMinutes(-30));
             conferenceList.Add(conference4);
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithParticipantTask("Disconnected")
                 .WithMessages(3)
                 .Build();
             conferenceList.Add(conference5);
@@ -311,7 +336,6 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
-                .WithParticipantTask("Disconnected")
                 .Build();
             conferenceList.Add(conference6);
 
@@ -319,6 +343,16 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
+
+            var alert3 = new Alert(conference3.Id, conference3.Id, "Disconnected", TaskType.Participant);
+            var alert4 = new Alert(conference4.Id, conference4.Id, "Disconnected", TaskType.Participant);
+            var alert5 = new Alert(conference5.Id, conference5.Id, "Disconnected", TaskType.Participant);
+            var alert6 = new Alert(conference6.Id, conference6.Id, "Disconnected", TaskType.Participant);
+
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
+            {
+                alert3, alert4, alert5, alert6
+            });
         }
 
         [When(@"I send the request to the endpoint")]

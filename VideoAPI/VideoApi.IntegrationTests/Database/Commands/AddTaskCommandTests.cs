@@ -39,7 +39,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             await _handler.Handle(command);
 
             List<Domain.Task> tasks;
-            using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
                 tasks = await db.Tasks.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
@@ -63,12 +63,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
             if (taskType == TaskType.Judge)
             {
                 var participant = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-                return new AddTaskCommand(_newConferenceId, participant.Id, body, taskType);
+                return new AddTaskCommand(conference.Id, participant.Id, body, taskType);
             }
             else
             {
                 var participant = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-                return new AddTaskCommand(_newConferenceId, participant.Id, body, taskType);
+                return new AddTaskCommand(conference.Id, participant.Id, body, taskType);
             }
         }
 

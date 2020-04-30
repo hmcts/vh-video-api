@@ -1,7 +1,6 @@
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 
 namespace Video.API.Mappings
 {
@@ -11,9 +10,7 @@ namespace Video.API.Mappings
         {
             var participants = conference.GetParticipants().Select(ParticipantToSummaryResponseMapper.MapParticipantToSummary)
                 .ToList();
-
-            var activeTasks = conference.GetTasks().Where(x => x.Status == TaskStatus.ToDo).Select(TaskToResponseMapper.MapTaskToResponse).ToList();
-
+            
             return new ConferenceForAdminResponse
             {
                 Id = conference.Id,
@@ -24,11 +21,9 @@ namespace Video.API.Mappings
                 ClosedDateTime = conference.ClosedDateTime,
                 ScheduledDuration = conference.ScheduledDuration,
                 Status = conference.GetCurrentStatus(),
-                PendingTasks = conference.GetTasks().Count(x => x.Status == TaskStatus.ToDo),
                 Participants = participants,
                 HearingRefId = conference.HearingRefId,
                 HearingVenueName = conference.HearingVenueName,
-                Tasks = activeTasks
             };
         }
     }

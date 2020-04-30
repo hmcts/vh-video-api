@@ -15,7 +15,6 @@ namespace VideoApi.Domain
             Id = Guid.NewGuid();
             Participants = new List<Participant>();
             ConferenceStatuses = new List<ConferenceStatus>();
-            Tasks = new List<Task>();
             InstantMessageHistory = new List<InstantMessage>();
             MeetingRoom = new MeetingRoom();
 
@@ -42,7 +41,6 @@ namespace VideoApi.Domain
         public ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
-        public virtual IList<Task> Tasks { get; set; }
         public virtual IList<InstantMessage> InstantMessageHistory { get; }
         public string HearingVenueName { get; private set; }
         public bool AudioRecordingRequired { get; set; }
@@ -111,17 +109,6 @@ namespace VideoApi.Domain
 
             State = ConferenceState.Closed;
             ConferenceStatuses.Add(new ConferenceStatus(ConferenceState.Closed));
-        }
-
-        public void AddTask(Guid originId, TaskType taskType, string message)
-        {
-            var task = new Task(originId, message, taskType);
-            Tasks.Add(task);
-        }
-
-        public IList<Task> GetTasks()
-        {
-            return Tasks.OrderByDescending(x => x.Created).ToList();
         }
 
         public IList<ConferenceStatus> GetConferenceStatuses()

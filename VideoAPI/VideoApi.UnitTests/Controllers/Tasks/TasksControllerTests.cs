@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Tasks
             queryHandler = new Mock<IQueryHandler>();
             commandHandler = new Mock<ICommandHandler>();
             logger = new Mock<ILogger<TasksController>>();
-            var task = new VideoApi.Domain.Task(Guid.NewGuid(), "Test body", VideoApi.Domain.Enums.TaskType.Hearing);
+            var task = new VideoApi.Domain.Task(Guid.NewGuid(),Guid.NewGuid(), "Test body", VideoApi.Domain.Enums.TaskType.Hearing);
             
 
             queryHandler

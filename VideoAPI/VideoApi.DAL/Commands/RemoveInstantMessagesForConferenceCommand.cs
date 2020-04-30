@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
