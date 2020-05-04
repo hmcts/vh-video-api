@@ -33,7 +33,6 @@ namespace Video.API.Controllers
         [HttpGet("audioapplications/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioApplication")]
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
         {
@@ -124,7 +123,6 @@ namespace Video.API.Controllers
         [HttpGet("audiostreams/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId)
         {
@@ -145,7 +143,6 @@ namespace Video.API.Controllers
         [HttpGet("audiostreams/{hearingId}/monitoring")]
         [SwaggerOperation(OperationId = "GetAudioStreamMonitoringInfo")]
         [ProducesResponseType(typeof(AudioStreamMonitoringInfo), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
         {
