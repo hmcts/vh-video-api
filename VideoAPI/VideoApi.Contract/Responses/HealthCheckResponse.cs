@@ -10,11 +10,13 @@ namespace VideoApi.Contract.Responses
             KinlySelfTestHealth = new HealthCheck();
             KinlyApiHealth = new HealthCheck();
             AppVersion = new ApplicationVersion();
+            WowzaHealth = new HealthCheck();
         }
         public HealthCheck DatabaseHealth { get; set; }
         public HealthCheck KinlySelfTestHealth { get; set; }
         public HealthCheck KinlyApiHealth { get; set; }
         public ApplicationVersion AppVersion { get; set; }
+        public HealthCheck WowzaHealth { get; set; }
     }
 
     public class HealthCheck

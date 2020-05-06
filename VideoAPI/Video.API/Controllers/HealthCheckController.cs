@@ -1,14 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using System.Reflection;
 using VideoApi.Services.Contracts;
 
 namespace Video.API.Controllers
@@ -21,11 +21,14 @@ namespace Video.API.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly IAudioPlatformService _audioPlatformService;
 
-        public HealthCheckController(IQueryHandler queryHandler, IVideoPlatformService videoPlatformService)
+        public HealthCheckController(IQueryHandler queryHandler, IVideoPlatformService videoPlatformService,
+            IAudioPlatformService audioPlatformService)
         {
             _queryHandler = queryHandler;
             _videoPlatformService = videoPlatformService;
+            _audioPlatformService = audioPlatformService;
         }
 
         /// <summary>
@@ -78,13 +81,33 @@ namespace Video.API.Controllers
                 response.KinlyApiHealth.Data = ex.Data;
             }
 
+            response.WowzaHealth = await WowzaEngineHealthCheckAsync();
+
             if (!response.DatabaseHealth.Successful || !response.KinlySelfTestHealth.Successful ||
-                !response.KinlyApiHealth.Successful)
+                !response.KinlyApiHealth.Successful || !response.WowzaHealth.Successful)
             {
-                return StatusCode((int) HttpStatusCode.InternalServerError, response);
+                return StatusCode((int)HttpStatusCode.InternalServerError, response);
             }
 
             return Ok(response);
+        }
+
+        private async Task<HealthCheck> WowzaEngineHealthCheckAsync()
+        {
+            var wowzaHealthCheck = new HealthCheck();
+            try
+            {
+                await _audioPlatformService.GetAudioStreamInfoAsync(Guid.Empty);
+                wowzaHealthCheck.Successful = true;
+            }
+            catch (Exception ex)
+            {
+                wowzaHealthCheck.Successful = false;
+                wowzaHealthCheck.ErrorMessage = ex.Message;
+                wowzaHealthCheck.Data = ex.Data;
+            }
+
+            return wowzaHealthCheck;
         }
 
         private ApplicationVersion GetApplicationVersion()
@@ -99,6 +122,6 @@ namespace Video.API.Controllers
         {
             T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
             return value.Invoke(attribute);
-        }        
+        }
     }
 }
