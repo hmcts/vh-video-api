@@ -12,14 +12,14 @@ namespace VideoApi.Services
     public class AudioPlatformService : IAudioPlatformService
     {
         private readonly IWowzaHttpClient _wowzaClient;
-        private readonly WowzaConfiguration _wowzaConfiguration;
+        private readonly WowzaConfiguration _configuration;
         private readonly ILogger<AudioPlatformService> _logger;
         private const string DefaultEmptyIngestUrl = " ";
 
-        public AudioPlatformService(IWowzaHttpClient wowzaClient, WowzaConfiguration wowzaConfiguration, ILogger<AudioPlatformService> logger)
+        public AudioPlatformService(IWowzaHttpClient wowzaClient, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
             _wowzaClient = wowzaClient;
-            _wowzaConfiguration = wowzaConfiguration;
+            _configuration = configuration;
             _logger = logger;
         }
         
@@ -27,7 +27,7 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _wowzaClient.GetApplicationAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                var response = await _wowzaClient.GetApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
 
                 _logger.LogInformation($"Got Wowza application info: {hearingId}");
 
@@ -48,7 +48,7 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _wowzaClient.GetApplicationsAsync(_wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                var response = await _wowzaClient.GetApplicationsAsync(_configuration.ServerName, _configuration.HostName);
 
                 _logger.LogInformation("Got all Wowza applications info");
 
@@ -94,7 +94,7 @@ namespace VideoApi.Services
             {
                 await CreateAndUpdateApplicationAsync(hearingId.ToString());
 
-                await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
                 _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
 
                 return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(hearingId.ToString()) };
@@ -118,7 +118,7 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.DeleteApplicationAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                await _wowzaClient.DeleteApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
 
                 _logger.LogInformation($"Deleted Wowza application: {hearingId}");
 
@@ -139,7 +139,7 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _wowzaClient.MonitoringStreamRecorderAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                var response = await _wowzaClient.MonitoringStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
 
                 _logger.LogInformation($"Got Wowza monitor stream data for application: {hearingId}");
 
@@ -160,7 +160,7 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _wowzaClient.GetStreamRecorderAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                var response = await _wowzaClient.GetStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
 
                 _logger.LogInformation($"Got Wowza stream recorder for application: {hearingId}");
 
@@ -181,7 +181,7 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
                 _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
 
                 return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(hearingId.ToString()) };
@@ -205,7 +205,7 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.StopStreamRecorderAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
+                await _wowzaClient.StopStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
 
                 _logger.LogInformation($"Stopped Wowza stream recorder for application: {hearingId}");
 
@@ -224,13 +224,13 @@ namespace VideoApi.Services
 
         private async Task CreateAndUpdateApplicationAsync(string applicationName)
         {
-            await _wowzaClient.CreateApplicationAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName, _wowzaConfiguration.StorageDirectory);
+            await _wowzaClient.CreateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.StorageDirectory);
             _logger.LogInformation($"Created a Wowza application for: {applicationName}");
 
-            await _wowzaClient.UpdateApplicationAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName, _wowzaConfiguration.AzureStorageDirectory);
+            await _wowzaClient.UpdateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.AzureStorageDirectory);
             _logger.LogInformation($"Updating Wowza application for: {applicationName}");
         }
 
-        private string GetAudioIngestUrl(string applicationName) => $"{_wowzaConfiguration.StreamingEndpoint}{applicationName}/{applicationName}";
+        private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
     }
 }

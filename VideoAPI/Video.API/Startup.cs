@@ -24,12 +24,14 @@ namespace Video.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         private IConfiguration Configuration { get; }
+        private IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -53,7 +55,7 @@ namespace Video.API
             services.AddJsonOptions();
             RegisterSettings(services);
             bool.TryParse(Configuration["UseStub"], out var useStub);
-            services.AddCustomTypes(useStub);
+            services.AddCustomTypes(Environment, useStub);
             RegisterAuth(services);
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
 

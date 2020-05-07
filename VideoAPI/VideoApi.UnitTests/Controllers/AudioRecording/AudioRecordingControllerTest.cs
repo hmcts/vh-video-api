@@ -18,16 +18,18 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
     public class AudioRecordingControllerTest
     {
         private readonly Mock<IAudioPlatformService> _audioPlatformService;
+        private readonly Mock<IStorageService> _storageService;
 
         private readonly AudioRecordingController _controller;
         
         public AudioRecordingControllerTest()
         {
             _audioPlatformService = new Mock<IAudioPlatformService>();
+            _storageService = new Mock<IStorageService>();
 
             _controller = new AudioRecordingController
             (
-                _audioPlatformService.Object, new Mock<ILogger<AudioRecordingController>>().Object
+                _audioPlatformService.Object, _storageService.Object, new Mock<ILogger<AudioRecordingController>>().Object
             );    
         }
 
@@ -318,6 +320,33 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var result = await _controller.DeleteAudioStreamAsync(It.IsAny<Guid>()) as NoContentResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status204NoContent);
+        }
+
+        [Test]
+        public async Task GetAudioRecordingLinkAsync_return_notfound()
+        {
+            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+            
+            var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as NotFoundResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        }
+        
+        [Test]
+        public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
+        {
+            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+            _storageService
+                .Setup(x => x.CreateSharedAccessSignature(It.IsAny<string>(), It.IsAny<TimeSpan>()))
+                .ReturnsAsync("fileLink");
+            
+            var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as OkObjectResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            var item = result.Value.As<HearingAudioRecordingResponse>();
+            item.Should().NotBeNull();
+            item.AudioFileLink.Should().NotBeNullOrEmpty();
+            item.AudioFileLink.Should().Be("fileLink");
         }
     }
 }
