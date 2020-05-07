@@ -108,7 +108,7 @@ namespace VideoApi.Services.Clients
                                     Section = "/Root/Application",
                                     Name = "fileMoverDestinationPath",
                                     Type = "String",
-                                    Value = "${com.wowza.wms.context.VHostConfigHome}/content/azurecopy",
+                                    Value = azureStorageDirectory,
                                     Documented = false,
                                     Enabled = true
                                 },
