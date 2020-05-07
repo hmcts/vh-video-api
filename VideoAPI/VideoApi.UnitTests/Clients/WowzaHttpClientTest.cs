@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -69,7 +69,64 @@ namespace VideoApi.UnitTests.Clients
             result.IsCompleted.Should().BeTrue();
             result.IsFaulted.Should().BeFalse();
         }
-        
+
+        [Test]
+        public void UpdateApplicationAsync_Throws_AudioPlatformException_On_Http_Failure()
+        {
+            WowzaHttpClient wowzaHttpClient;
+            AudioPlatformException exception;
+
+            // Case 1
+            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
+            {
+                BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
+            });
+
+            exception = Assert.ThrowsAsync<AudioPlatformException>
+            (
+                () => wowzaHttpClient.UpdateApplicationAsync
+                (
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                )
+            );
+            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+            exception.Message.Should().Be("Exception thrown");
+
+            // Case 2
+            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
+            {
+                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
+            });
+
+            exception = Assert.ThrowsAsync<AudioPlatformException>
+            (
+                () => wowzaHttpClient.UpdateApplicationAsync
+                (
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                )
+            );
+            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+            exception.Message.Should().Be("Bad request");
+        }
+
+        [Test]
+        public void UpdateApplicationAsync_Success()
+        {
+            // Case 1
+            var wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
+            {
+                BaseAddress = new Uri($"http://{HttpStatusCode.OK}.com/")
+            });
+
+            var result = wowzaHttpClient.UpdateApplicationAsync
+            (
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+            );
+
+            result.IsCompleted.Should().BeTrue();
+            result.IsFaulted.Should().BeFalse();
+        }
+
         [Test]
         public void DeleteApplicationAsync_Throws_AudioPlatformException_On_Http_Failure()
         {

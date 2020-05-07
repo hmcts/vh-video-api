@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -48,6 +48,98 @@ namespace VideoApi.Services.Clients
                 var response = await _httpClient.PostAsync
                 (
                     $"v2/servers/{server}/vhosts/{host}/applications",
+                    new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
+                );
+
+                await HandleUnsuccessfulResponse(response);
+            }
+            catch (Exception ex)
+            {
+                throw new AudioPlatformException(ex.Message, HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public async Task UpdateApplicationAsync(string applicationName, string server, string host, string azureStorageDirectory)
+        {
+            var request = new ApplicationConfigAdvRequest
+            {
+                Modules = new ModuleConfig[]
+                                        {
+                                            new ModuleConfig
+                                            {
+                                                Name = "base",
+                                                Description = "Base",
+                                                Class = "com.wowza.wms.module.ModuleCore",
+                                                Order = 0
+                                            },
+                                            new ModuleConfig
+                                            {
+                                                Name = "logging",
+                                                Description = "Client Logging",
+                                                Class = "com.wowza.wms.module.ModuleClientLogging",
+                                                Order =1
+                                            },
+                                            new ModuleConfig
+                                            {
+                                                Name = "flvplayback",
+                                                Description = "FLVPlayback12",
+                                                Class = "com.wowza.wms.module.ModuleFLVPlayback",
+                                                Order =2
+                                            },
+                                            new ModuleConfig
+                                            {
+                                                Name = "ModuleCoreSecurity",
+                                                Description = "Core Security Module for Applications",
+                                                Class = "com.wowza.wms.module.ModuleCoreSecurity",
+                                                Order =3
+                                            },
+                                            new ModuleConfig
+                                            {
+                                                Name = "ModuleMediaWriterFileMover",
+                                                Description = "ModuleMediaWriterFileMover",
+                                                Class = "com.wowza.wms.module.ModuleMediaWriterFileMover",
+                                                Order =3
+                                            }
+                                        },
+                AdvancedSettings = new AdvancedSetting[] {
+                                new AdvancedSetting
+                                {
+                                    SectionName = "Application",
+                                    Section = "/Root/Application",
+                                    Name = "fileMoverDestinationPath",
+                                    Type = "String",
+                                    Value = "${com.wowza.wms.context.VHostConfigHome}/content/azurecopy",
+                                    Documented = false,
+                                    Enabled = true
+                                },
+                                new AdvancedSetting
+                                {
+                                    SectionName = "Application",
+                                    Section = "/Root/Application",
+                                    Name = "fileMoverDeleteOriginal",
+                                    Type = "Boolean",
+                                    Value = "true",
+                                    Documented = false,
+                                    Enabled = true
+                                },
+                                new AdvancedSetting
+                                {
+                                    SectionName = "Application",
+                                    Section = "/Root/Application",
+                                    Name = "fileMoverVersionFile",
+                                    Type = "Boolean",
+                                    Value = "true",
+                                    Documented = false,
+                                    Enabled = true
+                                }
+                }
+            };
+
+            try
+            {
+                var response = await _httpClient.PostAsync
+                (
+                    $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}/adv",
                     new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
                 );
 
@@ -256,6 +348,32 @@ namespace VideoApi.Services.Clients
             /// </summary>
             public string PublishIPWhiteList { get; set; }
             public bool PublishBlockDuplicateStreamNames { get; set; }
+        }
+
+        private class ApplicationConfigAdvRequest
+        {
+            public AdvancedSetting[] AdvancedSettings { get; set; }
+            public ModuleConfig[] Modules { get; set; }
+        }
+
+        private class AdvancedSetting
+        {
+            public string SectionName { get; set; }
+            public string Section { get; set; }
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public string Value { get; set; }
+            public bool Documented { get; set; }
+            public bool Enabled { get; set; }
+
+        }
+
+        private class ModuleConfig
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public string Class { get; set; }
+            public int Order { get; set; }
         }
     }
 }

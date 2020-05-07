@@ -69,10 +69,9 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.CreateApplicationAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName, _wowzaConfiguration.StorageDirectory);
-                _logger.LogInformation($"Created a Wowza application for: {hearingId}");
+               await CreateAndUpdateApplicationAsync(hearingId.ToString());
                 
-                return new AudioPlatformServiceResponse(true);
+               return new AudioPlatformServiceResponse(true);
             }
             catch (AudioPlatformException ex)
             {
@@ -93,9 +92,8 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.CreateApplicationAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName, _wowzaConfiguration.StorageDirectory);
-                _logger.LogInformation($"Created a Wowza application for: {hearingId}");
-                
+                await CreateAndUpdateApplicationAsync(hearingId.ToString());
+
                 await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString(), _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName);
                 _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
 
@@ -222,6 +220,15 @@ namespace VideoApi.Services
 
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
+        }
+
+        private async Task CreateAndUpdateApplicationAsync(string applicationName)
+        {
+            await _wowzaClient.CreateApplicationAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName, _wowzaConfiguration.StorageDirectory);
+            _logger.LogInformation($"Created a Wowza application for: {applicationName}");
+
+            await _wowzaClient.UpdateApplicationAsync(applicationName, _wowzaConfiguration.ServerName, _wowzaConfiguration.HostName, _wowzaConfiguration.AzureStorageDirectory);
+            _logger.LogInformation($"Updating Wowza application for: {applicationName}");
         }
 
         private string GetAudioIngestUrl(string applicationName) => $"{_wowzaConfiguration.StreamingEndpoint}{applicationName}/{applicationName}";

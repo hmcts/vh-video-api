@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using VideoApi.Services.Responses;
 
 namespace VideoApi.Services.Contracts
@@ -6,6 +6,7 @@ namespace VideoApi.Services.Contracts
     public interface IWowzaHttpClient
     {
         Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory);
+        Task UpdateApplicationAsync(string applicationName, string server, string host, string storageDirectory);
         Task DeleteApplicationAsync(string applicationName, string server, string host);
         Task AddStreamRecorderAsync(string applicationName, string server, string host);
         Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host);
