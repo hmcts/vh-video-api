@@ -5,9 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using Azure.Identity;
+using Azure.Storage;
+using Azure.Storage.Blobs;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -51,20 +56,25 @@ namespace Video.API
                 c.EnableAnnotations();
 
                 c.AddSecurityDefinition("Bearer", //Name the security scheme
-                    new OpenApiSecurityScheme{
+                    new OpenApiSecurityScheme
+                    {
                         Description = "JWT Authorization header using the Bearer scheme.",
                         Type = SecuritySchemeType.Http, //We set the scheme type to http since we're using bearer authentication
                         Scheme = "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
                     });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement{ 
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
                     {
-                        new OpenApiSecurityScheme{
-                            Reference = new OpenApiReference{
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
                                 Id = "Bearer", //The name of the previously defined security scheme.
                                 Type = ReferenceType.SecurityScheme
                             }
-                        },new List<string>()
+                        },
+                        new List<string>()
                     }
                 });
                 c.OperationFilter<AuthResponsesOperationFilter>();
@@ -73,31 +83,31 @@ namespace Video.API
             return services;
         }
 
-        public static IServiceCollection AddCustomTypes(this IServiceCollection services, bool useStub)
+        public static IServiceCollection AddCustomTypes(this IServiceCollection services, IWebHostEnvironment environment, bool useStub)
         {
             var container = services.BuildServiceProvider();
             var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
-            
+
             services.AddMemoryCache();
             services.AddScoped<IRoomReservationService, RoomReservationService>();
 
             services.AddScoped<ITokenProvider, AzureTokenProvider>();
             services.AddTransient<UserApiTokenHandler>();
             services.AddSingleton<ITelemetryInitializer, BadRequestTelemetry>();
-            
+
             services.AddScoped<IQueryHandlerFactory, QueryHandlerFactory>();
             services.AddScoped<IQueryHandler, QueryHandler>();
-            
+
             services.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
             services.AddScoped<ICommandHandler, CommandHandler>();
-            
+
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
-	        services.AddTransient<KinlyApiTokenDelegatingHandler>();
+            services.AddTransient<KinlyApiTokenDelegatingHandler>();
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);
-            
+
             if (useStub)
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
@@ -109,7 +119,7 @@ namespace Video.API
                     .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
                     .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
-                
+
                 services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
                 {
                     x.BaseAddress = new Uri(wowzaConfiguration.RestApiEndpoint);
@@ -120,20 +130,46 @@ namespace Video.API
                     Credentials = new CredentialCache
                     {
                         {
-                            new Uri(wowzaConfiguration.RestApiEndpoint), 
+                            new Uri(wowzaConfiguration.RestApiEndpoint),
                             "Digest",
-                            new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password) 
+                            new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
                         }
                     }
                 });
-                
+
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
-
             }
-            
+
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
+
+            if (environment.IsDevelopment())
+            {
+                services.AddSingleton
+                (
+                    x =>
+                    {
+                        var credentials = new StorageSharedKeyCredential(wowzaConfiguration.StorageAccountName, wowzaConfiguration.StorageAccountKey);
+                        return new BlobServiceClient(new Uri(wowzaConfiguration.StorageEndpoint), credentials);
+                    }
+                );
+            }
+            else
+            {
+                services.AddSingleton
+                (
+                    x =>
+                    {
+                        var defaultAzureCredential = new DefaultAzureCredential();
+                        var managedIdentityCredential = new ManagedIdentityCredential(wowzaConfiguration.ManagedIdentityClientId);
+                        var chainedTokenCredential = new ChainedTokenCredential(managedIdentityCredential, defaultAzureCredential);
+                        return new BlobServiceClient(new Uri(wowzaConfiguration.StorageEndpoint), chainedTokenCredential);
+                    }
+                );
+            }
+
+            services.AddScoped<IStorageService>(x => new AzureStorageService(x.GetService<BlobServiceClient>(), wowzaConfiguration, environment.IsProduction()));
 
             return services;
         }
@@ -141,14 +177,14 @@ namespace Video.API
         private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient, ServicesConfiguration servicesConfiguration)
         {
             var client = new KinlyApiClient(servicesConfiguration.KinlyApiUrl, httpClient);
-            var contractResolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() };
-            
+            var contractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()};
+
             client.JsonSerializerSettings.ContractResolver = contractResolver;
             client.JsonSerializerSettings.Formatting = Formatting.Indented;
-            
+
             return client;
         }
-        
+
         /// <summary>
         /// Temporary work-around until typed-client bug is restored
         /// https://github.com/dotnet/aspnetcore/issues/13346#issuecomment-535544207
@@ -186,7 +222,7 @@ namespace Video.API
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
         {
             var eventHandlers = GetAllTypesOf<IEventHandler>();
-            
+
             foreach (var eventHandler in eventHandlers)
             {
                 if (eventHandler.IsInterface || eventHandler.IsAbstract) continue;
@@ -194,7 +230,7 @@ namespace Video.API
                 serviceCollection.AddScoped(serviceType, eventHandler);
             }
         }
-        
+
         private static IEnumerable<Type> GetAllTypesOf<T>()
         {
             var platform = Environment.OSVersion.Platform.ToString();
@@ -205,7 +241,7 @@ namespace Video.API
                 .SelectMany(a => a.ExportedTypes)
                 .Where(t => typeof(T).IsAssignableFrom(t));
         }
-        
+
         private static void RegisterCommandHandlers(IServiceCollection serviceCollection)
         {
             var commandHandlers = typeof(ICommand).Assembly.GetTypes().Where(t =>
@@ -219,7 +255,7 @@ namespace Video.API
                 serviceCollection.AddScoped(serviceType, queryHandler);
             }
         }
-        
+
         private static void RegisterQueryHandlers(IServiceCollection serviceCollection)
         {
             var queryHandlers = typeof(IQuery).Assembly.GetTypes().Where(t =>
