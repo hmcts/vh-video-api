@@ -36,15 +36,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = $"Failed to get info for Wowza application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-                
-                _logger.LogError(ex, errorMessage);
+
+                LogError(ex, errorMessage);
 
                 return null;
             }
@@ -62,15 +57,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = $"Failed to get all Wowza applications info, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return null;
             }
@@ -86,16 +76,11 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = "Failed to create the Wowza application for: " +
                                    $"{hearingId}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false)
                 {
@@ -117,16 +102,11 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = "Failed to create the Wowza application and/or stream recorder for: " +
                                    $"{hearingId}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false)
                 {
@@ -147,15 +127,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = $"Failed to delete the Wowza application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
@@ -173,15 +148,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = $"Failed to get Wowza monitor stream data for application {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return null;
             }
@@ -199,15 +169,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = $"Failed to get the Wowza stream recorder for application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return null;
             }
@@ -224,16 +189,11 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = "Failed to create the Wowza stream recorder for: " +
                                    $"{hearingId}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false)
                 {
@@ -254,15 +214,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-                
                 var errorMessage = $"Failed to get the Wowza stream recorder for application: {hearingId}, " +
                                    $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 
-                _logger.LogError(ex, errorMessage);
+                LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
@@ -275,6 +230,14 @@ namespace VideoApi.Services
 
             await _wowzaClient.UpdateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.AzureStorageDirectory);
             _logger.LogInformation($"Updating Wowza application for: {applicationName}");
+        }
+
+        private void LogError(AudioPlatformException ex, string errorMessage)
+        {
+            if (ex.StatusCode != HttpStatusCode.NotFound)
+            {
+                _logger.LogError(ex, errorMessage);
+            }
         }
 
         private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
