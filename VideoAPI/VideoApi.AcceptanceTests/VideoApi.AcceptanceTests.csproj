@@ -37,5 +37,35 @@
   <ItemGroup>
     <Content Include="Features\*.feature" />
   </ItemGroup>
-
+    
+  <ItemGroup>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.aat.json" Condition="Exists('Configuration\Environments\appsettings.aat.json')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>appsettings.aat.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.demo.json" Condition="Exists('Configuration\Environments\appsettings.demo.json')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>appsettings.demo.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.dev.json" Condition="Exists('Configuration\Environments\appsettings.dev.json')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>appsettings.dev.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.local.json" Condition="Exists('Configuration\Environments\appsettings.local.json')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>appsettings.local.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.preprod.json" Condition="Exists('Configuration\Environments\appsettings.preprod.json')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>appsettings.preprod.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.preview.json" Condition="Exists('Configuration\Environments\appsettings.preview.json')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>appsettings.preview.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.sandbox.json" Condition="Exists('Configuration\Environments\appsettings.sandbox.json')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <TargetPath>appsettings.sandbox.json</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
 </Project>

@@ -8,5 +8,5 @@ Feature: Healthcheck
     When I send the request to the endpoint
     Then the response should have the status ok and success status True
     And the application version should be retrieved
-
+    And the Wowza health should be retrieved
   
