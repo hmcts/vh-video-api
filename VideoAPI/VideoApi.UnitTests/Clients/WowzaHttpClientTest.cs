@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Clients
         public void CreateApplicationAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -25,31 +25,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.CreateApplicationAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-            
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-            
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.CreateApplicationAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
         
         [Test]
@@ -74,7 +57,7 @@ namespace VideoApi.UnitTests.Clients
         public void UpdateApplicationAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
 
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -82,31 +65,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
 
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.UpdateApplicationAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.UpdateApplicationAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
 
         [Test]
@@ -131,7 +97,7 @@ namespace VideoApi.UnitTests.Clients
         public void DeleteApplicationAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -139,31 +105,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.DeleteApplicationAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-            
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-            
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.DeleteApplicationAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
         
         [Test]
@@ -188,7 +137,7 @@ namespace VideoApi.UnitTests.Clients
         public void AddStreamRecorderAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -196,14 +145,13 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.AddStreamRecorderAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
             
             // Case 2
@@ -219,7 +167,6 @@ namespace VideoApi.UnitTests.Clients
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Bad request");
         }
         
@@ -245,7 +192,7 @@ namespace VideoApi.UnitTests.Clients
         public void MonitoringStreamRecorderAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -253,31 +200,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.MonitoringStreamRecorderAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-            
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-            
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.MonitoringStreamRecorderAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
         
         [Test]
@@ -301,7 +231,7 @@ namespace VideoApi.UnitTests.Clients
         public void GetApplicationsAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -309,31 +239,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.GetApplicationsAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-            
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-            
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.GetApplicationsAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
         
         [Test]
@@ -357,7 +270,7 @@ namespace VideoApi.UnitTests.Clients
         public void GetApplicationAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -365,31 +278,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.GetApplicationAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-            
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-            
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.GetApplicationAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
         
         [Test]
@@ -413,7 +309,7 @@ namespace VideoApi.UnitTests.Clients
         public void GetStreamRecorderAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -421,31 +317,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.GetStreamRecorderAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-            
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-            
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.GetStreamRecorderAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
         
         [Test]
@@ -469,7 +348,7 @@ namespace VideoApi.UnitTests.Clients
         public void StopStreamRecorderAsync_Throws_AudioPlatformException_On_Http_Failure()
         {
             WowzaHttpClient wowzaHttpClient;
-            AudioPlatformException exception;
+            Exception exception;
             
             // Case 1
             wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
@@ -477,31 +356,14 @@ namespace VideoApi.UnitTests.Clients
                 BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
             });
             
-            exception = Assert.ThrowsAsync<AudioPlatformException>
+            exception = Assert.ThrowsAsync<Exception>
             (
                 () => wowzaHttpClient.StopStreamRecorderAsync
                 (
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             exception.Message.Should().Be("Exception thrown");
-            
-            // Case 2
-            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
-            {
-                BaseAddress = new Uri($"http://{HttpStatusCode.BadRequest}.com/")
-            });
-            
-            exception = Assert.ThrowsAsync<AudioPlatformException>
-            (
-                () => wowzaHttpClient.StopStreamRecorderAsync
-                (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
-                )
-            );
-            exception.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-            exception.Message.Should().Be("Bad request");
         }
         
         [Test]
