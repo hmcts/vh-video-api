@@ -26,6 +26,11 @@ namespace VideoApi.AcceptanceTests.Contexts
             return new RestRequest(path, Method.GET);
         }
 
+        public RestRequest Post(string path)
+        {
+            return new RestRequest(path, Method.POST);
+        }
+
         public RestRequest Post(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.POST);            

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +31,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Gets the audio application info for the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <returns></returns>
         [HttpGet("audioapplications/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioApplication")]
@@ -51,7 +51,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Creates the audio application for the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to create the audio application info</param>
         /// <returns></returns>
         [HttpPost("audioapplications/{hearingId}")]
         [SwaggerOperation(OperationId = "CreateAudioApplication")]
@@ -77,7 +77,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Creates the audio application and associated stream for the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to create the audio recording stream</param>
         /// <returns>The ingest url for other applications to stream to the endpoint</returns>
         [HttpPost("audioapplications/audiostream/{hearingId}")]
         [SwaggerOperation(OperationId = "CreateAudioApplicationWithStream")]
@@ -98,7 +98,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Deletes the audio application for the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
         /// <returns></returns>
         [HttpDelete("audioapplications/{hearingId}")]
         [SwaggerOperation(OperationId = "DeleteAudioApplication")]
@@ -121,7 +121,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         [HttpGet("audiostreams/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioStreamInfo")]
@@ -139,9 +139,9 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Gets the audio stream for the conference by hearingId
+        /// Gets the audio stream for monitoring the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         [HttpGet("audiostreams/{hearingId}/monitoring")]
         [SwaggerOperation(OperationId = "GetAudioStreamMonitoringInfo")]
@@ -161,7 +161,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Creates the audio stream for the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to create the audio recording stream</param>
         /// <returns></returns>
         [HttpPost("audiostreams/{hearingId}")]
         [SwaggerOperation(OperationId = "CreateAudioStream")]
@@ -182,7 +182,7 @@ namespace Video.API.Controllers
         /// <summary>
         /// Deletes the audio stream for the conference by hearingId
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording stream</param>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio stream</param>
         /// <returns></returns>
         [HttpDelete("audiostreams/{hearingId}")]
         [SwaggerOperation(OperationId = "DeleteAudioStream")]
@@ -206,10 +206,10 @@ namespace Video.API.Controllers
         /// Get the audio recording link for a given hearing.
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
-        /// <returns> HearingAudioRecordingResponse with the link - AudioFileLink</returns>
+        /// <returns> AudioRecordingResponse with the link - AudioFileLink</returns>
         [HttpGet("audio/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLink")]
-        [ProducesResponseType(typeof(HearingAudioRecordingResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(AudioRecordingResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
@@ -226,7 +226,7 @@ namespace Video.API.Controllers
 
             var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(7));
 
-            return Ok(new HearingAudioRecordingResponse {AudioFileLink = audioFileLink});
+            return Ok(new AudioRecordingResponse {AudioFileLink = audioFileLink});
         }
     }
 }

@@ -37,7 +37,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Request = context.Get(GetConferencesTodayForAdmin);
             context.Response = context.Client().Execute(context.Request);
             var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(context.Response.Content);
-            if (conferences.Count <= 0) return;
+            if (conferences == null || conferences.Count <= 0) return;
             foreach (var conference in conferences.Where(conference => conference.CaseName.Contains(context.Test.CaseName)))
             {
                 RemoveConference(context, conference.Id);
