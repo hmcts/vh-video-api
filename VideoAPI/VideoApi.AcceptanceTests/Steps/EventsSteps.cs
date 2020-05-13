@@ -22,7 +22,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context = injectedContext;
         }
 
-        [Given(@"I have a valid conference event request for event type (.*) for a Judge")]
+        [Given(@"I have a valid conference event request for a Judge with event type (.*)")]
         public void GivenIHaveAValidConferenceEventRequestForAJudge(EventType eventType)
         {
             var participant = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);

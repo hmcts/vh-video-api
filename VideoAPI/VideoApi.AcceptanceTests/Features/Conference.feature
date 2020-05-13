@@ -1,4 +1,4 @@
-﻿Feature: Conference
+Feature: Conference
   In order to manage conferences
   As an api service
   I want to be able to create, retrieve, update and delete conferences
@@ -30,11 +30,11 @@
     Then the response should have the status NoContent and success status True
     And the conference should be removed
 
-  Scenario: Get conference details for todays hearings
+  Scenario: Get conferences today for vho
     Given I have a conference
     And I have another conference
     And I have a conference for tomorrow
-    And I have a get conferences for today request with a valid date
+    And I have a get conferences today for a vho
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And a list containing only todays hearings conference details should be retrieved
@@ -86,6 +86,7 @@
   @VIH-5827
   Scenario: Get the judges in hearings today
     Given I have a conference
+    And the judge status is in hearing
     And I have a get judges in hearings today
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
