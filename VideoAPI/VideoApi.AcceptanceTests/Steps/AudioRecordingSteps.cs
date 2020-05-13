@@ -99,24 +99,28 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenTheAudioApplicationDetailsAreRetrieved()
         {
             var audioApplication = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioApplicationInfoResponse>(_context.Response.Content);
+            audioApplication.Should().NotBeNull();
         }
 
         [Then(@"the audio stream details are retrieved")]
         public void ThenTheAudioStreamDetailsAreRetrieved()
         {
             var audioStream = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioStreamInfoResponse>(_context.Response.Content);
+            audioStream.Should().NotBeNull();
         }
 
         [Then(@"the audio stream monitoring details are retrieved")]
         public void ThenTheAudioStreamMonitoringDetailsAreRetrieved()
         {
             var audioMonitoring = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioStreamMonitoringInfo>(_context.Response.Content);
+            audioMonitoring.Should().NotBeNull();
         }
 
         [Then(@"the audio recording link is retrieved")]
         public void ThenTheAudioRecordingLinkIsRetrieved()
         {
             var audioLink = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioRecordingResponse>(_context.Response.Content);
+            audioLink.Should().NotBeNull();
         }
     }
 }

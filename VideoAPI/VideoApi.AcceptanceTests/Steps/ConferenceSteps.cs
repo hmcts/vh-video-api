@@ -240,7 +240,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             CreateNewConferenceRequest(date);
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.IsSuccessful.Should().BeTrue("New conference is created");
+            _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
             var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.Test.ConferenceResponse = conference;
