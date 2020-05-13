@@ -81,7 +81,17 @@ namespace Video.API.Controllers
                 response.KinlyApiHealth.Data = ex.Data;
             }
 
-            response.WowzaHealth = await WowzaEngineHealthCheckAsync();
+            try
+            {
+                await _audioPlatformService.GetAudioStreamInfoAsync(Guid.Parse("6a4d4cf4-c058-4717-adc0-d150483faf03"));
+                response.WowzaHealth.Successful = true;
+            }
+            catch (Exception ex)
+            {
+                response.WowzaHealth.Successful = false;
+                response.WowzaHealth.ErrorMessage = ex.Message;
+                response.WowzaHealth.Data = ex.Data;
+            }
 
             if (!response.DatabaseHealth.Successful || !response.KinlySelfTestHealth.Successful ||
                 !response.KinlyApiHealth.Successful || !response.WowzaHealth.Successful)
@@ -90,24 +100,6 @@ namespace Video.API.Controllers
             }
 
             return Ok(response);
-        }
-
-        private async Task<HealthCheck> WowzaEngineHealthCheckAsync()
-        {
-            var wowzaHealthCheck = new HealthCheck();
-            try
-            {
-                await _audioPlatformService.GetAudioStreamInfoAsync(Guid.Empty);
-                wowzaHealthCheck.Successful = true;
-            }
-            catch (Exception ex)
-            {
-                wowzaHealthCheck.Successful = false;
-                wowzaHealthCheck.ErrorMessage = ex.Message;
-                wowzaHealthCheck.Data = ex.Data;
-            }
-
-            return wowzaHealthCheck;
         }
 
         private ApplicationVersion GetApplicationVersion()
