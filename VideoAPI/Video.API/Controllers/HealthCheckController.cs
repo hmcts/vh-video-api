@@ -83,7 +83,7 @@ namespace Video.API.Controllers
 
             try
             {
-                await _audioPlatformService.GetAudioStreamInfoAsync(Guid.Parse("6a4d4cf4-c058-4717-adc0-d150483faf03"));
+                await _audioPlatformService.GetAudioStreamInfoAsync(Guid.Empty);
                 response.WowzaHealth.Successful = true;
             }
             catch (Exception ex)
