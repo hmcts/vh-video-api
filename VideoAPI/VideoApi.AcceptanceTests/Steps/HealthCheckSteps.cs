@@ -39,7 +39,6 @@ namespace VideoApi.AcceptanceTests.Steps
             var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Response.Content);
             model.Should().NotBeNull();
             model.WowzaHealth.Should().NotBeNull();
-            model.WowzaHealth.Successful.Should().BeTrue();
         }
     }
 }

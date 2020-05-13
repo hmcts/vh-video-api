@@ -1,9 +1,8 @@
-﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VideoApi.DAL.Migrations
 {
-    public partial class CreateConferenceTableIdexes : Migration
+    public partial class CreateConferenceTableIndexes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

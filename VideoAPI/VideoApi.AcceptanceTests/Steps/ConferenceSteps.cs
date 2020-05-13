@@ -21,12 +21,14 @@ namespace VideoApi.AcceptanceTests.Steps
     {
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
+        private readonly CallbackSteps _callbackSteps;
         private const string UpdatedKey = "UpdatedConference";
 
-        public ConferenceSteps(TestContext injectedContext, ScenarioContext scenarioContext)
+        public ConferenceSteps(TestContext injectedContext, ScenarioContext scenarioContext, CallbackSteps callbackSteps)
         {
             _context = injectedContext;
             _scenarioContext = scenarioContext;
+            _callbackSteps = callbackSteps;
         }
 
         [Given(@"I have an update conference request")]
@@ -111,7 +113,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Delete(RemoveConference(_context.Test.ConferenceResponse.Id));
         }
 
-        [Given(@"I have a get conferences for today request with a valid date")]
+        [Given(@"I have a get conferences today for a vho")]
         public void GivenIHaveAValidGetTodaysConferencesRequest()
         {
             _context.Request = _context.Get(GetConferencesTodayForAdmin);
@@ -227,20 +229,33 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.Request = _context.Get(GetJudgesInHearingsToday());
         }
-        
+
+        [Given(@"the judge status is in hearing")]
+        public void GivenTheConferenceIsInSession()
+        {
+            _callbackSteps.GivenIHaveAValidConferenceEventRequestForAJudge(EventType.Joined);
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
         [Then(@"the Judges in hearings should be retrieved")]
         public void ThenTheJudgeInHearingResponseShouldBeRetrieved()
         {
             var judgeInHearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<JudgeInHearingResponse>>(_context.Response.Content);
             judgeInHearings.Should().NotBeNull();
-            judgeInHearings.Should().BeEmpty();
+            var judge = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
+            var expectedHearing = judgeInHearings.First(x => x.ConferenceId.Equals(_context.Test.ConferenceResponse.Id));
+            expectedHearing.Id.Should().Be(judge.Id);
+            expectedHearing.Status.Should().Be(ParticipantState.InHearing);
+            expectedHearing.UserRole.Should().Be(judge.UserRole);
+            expectedHearing.Username.Should().Be(judge.Username);
         }
 
         private void CreateConference(DateTime date)
         {
             CreateNewConferenceRequest(date);
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.IsSuccessful.Should().BeTrue("New conference is created");
+            _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
             var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.Test.ConferenceResponse = conference;
