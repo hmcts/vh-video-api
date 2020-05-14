@@ -201,7 +201,7 @@ namespace VideoApi.Services.Clients
         {
             var response = await _httpClient.GetAsync
             (
-                $"diag v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
+                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
             );
 
             await HandleUnsuccessfulResponse(response);
