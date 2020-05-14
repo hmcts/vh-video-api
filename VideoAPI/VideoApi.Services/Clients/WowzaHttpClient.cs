@@ -110,7 +110,7 @@ namespace VideoApi.Services.Clients
                         Section = "/Root/Application",
                         Name = "fileMoverDeleteOriginal",
                         Type = "Boolean",
-                        Value = "true",
+                        Value = "false",
                         Documented = false,
                         Enabled = true
                     },
@@ -120,7 +120,7 @@ namespace VideoApi.Services.Clients
                         Section = "/Root/Application",
                         Name = "fileMoverVersionFile",
                         Type = "Boolean",
-                        Value = "true",
+                        Value = "false",
                         Documented = false,
                         Enabled = true
                     }
@@ -201,7 +201,7 @@ namespace VideoApi.Services.Clients
         {
             var response = await _httpClient.GetAsync
             (
-                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
+                $"diag v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
             );
 
             await HandleUnsuccessfulResponse(response);
