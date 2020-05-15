@@ -31,6 +31,12 @@
         <None Update="appsettings.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="TestAudioFile.m4a">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestAudioFile.mp4">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <ContentWithTargetPath Include="Environments\appsettings.aat.json" Condition="Exists('Environments\appsettings.aat.json')">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <TargetPath>appsettings.aat.json</TargetPath>

@@ -37,6 +37,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             RegisterAzureSecrets(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
+            RegisterWowzaSettings(context);
             await GenerateBearerTokens(context);
         }
 
@@ -62,6 +63,12 @@ namespace VideoApi.AcceptanceTests.Hooks
         {
             context.Config.VhServices = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.VhServices);
+        }
+
+        private void RegisterWowzaSettings(TestContext context)
+        {
+            context.Config.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.Config.Wowza);
         }
 
         private static async Task GenerateBearerTokens(TestContext context)

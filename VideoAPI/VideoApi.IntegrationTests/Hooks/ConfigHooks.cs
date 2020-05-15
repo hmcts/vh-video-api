@@ -39,6 +39,7 @@ namespace VideoApi.IntegrationTests.Hooks
             var azureOptions = RegisterAzureSecrets(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
+            RegisterWowzaSettings(context);
             RegisterDatabaseSettings(context);
             RegisterServer(context);
             RegisterApiSettings(context);
@@ -70,6 +71,12 @@ namespace VideoApi.IntegrationTests.Hooks
         {
             context.Config.VhServices = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.VhServices);
+        }
+
+        private void RegisterWowzaSettings(TestContext context)
+        {
+            context.Config.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.Config.Wowza);
         }
 
         private void RegisterDatabaseSettings(TestContext context)
