@@ -32,5 +32,13 @@ namespace VideoApi.AcceptanceTests.Steps
             model.AppVersion.FileVersion.Should().NotBeNull();
             model.AppVersion.InformationVersion.Should().NotBeNull();
         }
+        
+        [Then(@"the Wowza health should be retrieved")]
+        public void ThenTheWowzaHealthShouldBeRetrieved()
+        {
+            var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Response.Content);
+            model.Should().NotBeNull();
+            model.WowzaHealth.Should().NotBeNull();
+        }
     }
 }

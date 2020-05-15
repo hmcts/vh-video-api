@@ -35,5 +35,14 @@ namespace VideoApi.IntegrationTests.Steps
             getResponseModel.AppVersion.FileVersion.Should().NotBeNull();
             getResponseModel.AppVersion.InformationVersion.Should().NotBeNull();
         }
+        
+        [Then(@"the Wowza health should be retrieved")]
+        public async Task ThenTheWowzaHealthShouldBeRetrieved()
+        {
+            var json = await _context.Response.Content.ReadAsStringAsync();
+            var getResponseModel = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(json);
+            getResponseModel.WowzaHealth.Should().NotBeNull();
+            getResponseModel.WowzaHealth.Successful.Should().BeTrue();
+        }
     }
 }

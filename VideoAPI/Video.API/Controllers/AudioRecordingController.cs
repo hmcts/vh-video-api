@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace Video.API.Controllers
     public class AudioRecordingController : ControllerBase
     {
         private readonly IAudioPlatformService _audioPlatformService;
+        private readonly IStorageService _storageService;
         private readonly ILogger<AudioRecordingController> _logger;
 
-        public AudioRecordingController(IAudioPlatformService audioPlatformService, ILogger<AudioRecordingController> logger)
+        public AudioRecordingController(IAudioPlatformService audioPlatformService, IStorageService storageService, ILogger<AudioRecordingController> logger)
         {
             _audioPlatformService = audioPlatformService;
+            _storageService = storageService;
             _logger = logger;
         }
 
@@ -197,6 +200,33 @@ namespace Video.API.Controllers
             }
 
             return NoContent();
+        }
+        
+        /// <summary>
+        /// Get the audio recording link for a given hearing.
+        /// </summary>
+        /// <param name="hearingId">The hearing id.</param>
+        /// <returns> HearingAudioRecordingResponse with the link - AudioFileLink</returns>
+        [HttpGet("audio/{hearingId}")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLink")]
+        [ProducesResponseType(typeof(HearingAudioRecordingResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
+        {
+            _logger.LogInformation($"Getting audio recording link for hearing: {hearingId}");
+
+            var filePath = $"{hearingId}.mp4";
+            
+            if (!await _storageService.FileExistsAsync(filePath))
+            {
+                _logger.LogWarning($"Audio recording file not found for hearing: {hearingId}");
+
+                return NotFound();
+            }
+
+            var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(7));
+
+            return Ok(new HearingAudioRecordingResponse {AudioFileLink = audioFileLink});
         }
     }
 }

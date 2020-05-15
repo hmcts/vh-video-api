@@ -9,6 +9,20 @@ namespace Testing.Common.Helper
             public const string Event = "events";
         }
 
+        public static class AudioRecordingEndpoints
+        {
+            private const string ApiRoot = "conferences";
+            public static string GetAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
+            public static string CreateAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
+            public static string DeleteAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
+            public static string CreateAudioApplicationAndStream(Guid hearingId) => $"{ApiRoot}/audioapplications/audiostream/{hearingId}";
+            public static string GetAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams​/{hearingId}";
+            public static string CreateAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams​/{hearingId}";
+            public static string DeleteAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams​/{hearingId}";
+            public static string GetAudioMonitoringStream(Guid hearingId) => $"{ApiRoot}/audiostreams​/{hearingId}/conferences/audiostreams/{hearingId}/monitoring";
+            public static string GetAudioRecordingLink(Guid hearingId) => $"{ApiRoot}/conferences/audio/{hearingId}";
+        }
+
         public static class ParticipantsEndpoints
         {
             private const string ApiRoot = "conferences";

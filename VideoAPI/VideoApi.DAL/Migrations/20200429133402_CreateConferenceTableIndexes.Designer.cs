@@ -11,7 +11,7 @@ namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
     [Migration("20200429133402_CreateConferenceTableIdexes")]
-    partial class CreateConferenceTableIdexes
+    partial class CreateConferenceTableIndexes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
