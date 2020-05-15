@@ -17,7 +17,7 @@
     <PackageReference Include="SpecFlow" Version="3.1.97" />
     <PackageReference Include="SpecFlow.NUnit" Version="3.1.97" />
     <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.97" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.180" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.187" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,11 +31,8 @@
         <None Update="appsettings.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="TestAudioFile.m4a">
+        <None Update="TestAudioFiles\TestAudioFile.mp4">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="TestAudioFile.mp4">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <ContentWithTargetPath Include="Environments\appsettings.aat.json" Condition="Exists('Environments\appsettings.aat.json')">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

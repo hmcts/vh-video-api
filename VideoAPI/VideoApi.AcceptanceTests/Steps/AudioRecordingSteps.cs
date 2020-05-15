@@ -1,5 +1,7 @@
 using System.Net;
+using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
+using AcceptanceTests.Common.AudioRecordings;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
@@ -41,7 +43,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             GivenIHaveACreateAudioApplicationRequest();
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Given(@"I have a valid create audio application and stream request")]
@@ -80,13 +82,21 @@ namespace VideoApi.AcceptanceTests.Steps
             GivenTheConferenceHasAnAudioApplication();
             GivenIHaveAValidCreateAudioStreamRequest();
             _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Given(@"the conference has an audio recording")]
-        public void GivenTheConferenceHasAnAudioRecording()
+        public async Task GivenTheConferenceHasAnAudioRecording()
         {
-            ScenarioContext.StepIsPending();
+            var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.ConferenceResponse.HearingId);
+            
+            var wowsaManager = new WowzaManager()
+                .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
+                .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
+                .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
+                .CreateBlobClient(_context.Test.ConferenceResponse.HearingId);
+
+            await wowsaManager.UploadAudioFileToStorage(file);
         }
 
         [Given(@"I have a valid get audio recording link request")]

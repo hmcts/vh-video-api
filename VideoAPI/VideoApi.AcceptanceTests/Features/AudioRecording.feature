@@ -17,7 +17,7 @@ Scenario: Create Audio Application
     Given I have a conference
     And I have a valid create audio application request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Delete Audio Application
@@ -32,7 +32,7 @@ Scenario: Create Audio Application and Stream
     Given I have a conference
     And I have a valid create audio application and stream request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Get Audio Stream
@@ -49,11 +49,12 @@ Scenario: Create Audio Stream
     And the conference has an audio application
     And I have a valid create audio stream request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Delete Audio Stream
     Given I have a conference
+    And the conference has an audio stream
     And I have a valid delete audio stream request
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
@@ -67,7 +68,7 @@ Scenario: Get Audio Stream Monitoring
     Then the response should have the status Ok and success status True
     And the audio stream monitoring details are retrieved
 
-@VIH-5868 @Ignore
+@VIH-5868
 Scenario: Get Audio Recording Link
     Given I have a conference
     And the conference has an audio recording

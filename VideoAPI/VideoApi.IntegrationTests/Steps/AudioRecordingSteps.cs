@@ -1,17 +1,8 @@
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
-using Azure;
-using Azure.Identity;
-using Azure.Storage;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
 using FluentAssertions;
-using NUnit.Framework.Internal;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Responses;
 using VideoApi.IntegrationTests.Contexts;
@@ -59,43 +50,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an audio recording")]
         public async Task GivenIHaveAnAudioRecording()
         {
-            var defaultAzureCredential = new DefaultAzureCredential();
-            var storageSharedKeyCredential = new StorageSharedKeyCredential(_context.Config.Wowza.StorageAccountName, _context.Config.Wowza.StorageAccountKey);
-            var managedIdentityCredential = new ManagedIdentityCredential(_context.Config.Wowza.ManagedIdentityClientId);
-            var chainedTokenCredential = new ChainedTokenCredential(managedIdentityCredential, defaultAzureCredential);
-            var serviceEndpoint = $"https://{_context.Config.Wowza.StorageAccountName}.blob.core.windows.net/";
-            var serviceClient = new BlobServiceClient(new Uri(serviceEndpoint), storageSharedKeyCredential);
-            var blobContainer = serviceClient.CreateBlobContainerAsync(_context.Config.Wowza.StorageContainerName);
-            var containerClient = serviceClient.GetBlobContainerClient(_context.Config.Wowza.StorageContainerName);
-            var blobClient = containerClient.GetBlobClient($"{_context.Test.Conference.HearingRefId}/{_context.Test.Conference.HearingRefId}.mp4");
-            var filePathToAudioFile = Environment.OSVersion.Platform == PlatformID.MacOSX ? "/usr/bin/" : Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fileWithExtension = $"{filePathToAudioFile}TestAudioFile.mp4";
-            File.Move(fileWithExtension, $"{filePathToAudioFile}{_context.Test.Conference.HearingRefId}.mp4");
-            var audioFile = new FileStream(filePathToAudioFile, FileMode.Open);
-            await blobClient.UploadAsync(audioFile);
-            
 
-            if (!await blobClient.ExistsAsync())
-            {
-                throw new RequestFailedException($"Can not find file: {_context.Test.Conference.HearingRefId}.mp4");
-            }
-
-            var now = DateTimeOffset.UtcNow;
-            var until = now + TimeSpan.FromDays(1);
-            var blobSasBuilder = new BlobSasBuilder
-            {
-                BlobContainerName = _context.Config.Wowza.StorageContainerName,
-                BlobName = $"{_context.Test.Conference.HearingRefId}/{_context.Test.Conference.HearingRefId}.mp4",
-                Resource = "b",
-                StartsOn = now.AddHours(-1),
-                ExpiresOn = until
-            };
-            blobSasBuilder.SetPermissions(BlobSasPermissions.Read);
-
-
-            var sasToken = blobSasBuilder.ToSasQueryParameters(storageSharedKeyCredential).ToString();
-            var sasUri = $"{serviceEndpoint}{_context.Config.Wowza.StorageContainerName}/{_context.Test.Conference.HearingRefId}/{_context.Test.Conference.HearingRefId}.mp4?{sasToken}";
-            //sasUri.Dump();
         }
 
         [Given(@"I have a valid get audio application request")]
