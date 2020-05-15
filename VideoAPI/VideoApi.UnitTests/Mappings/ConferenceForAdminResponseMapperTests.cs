@@ -29,8 +29,12 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.IngestUrl)
                 .Excluding(x => x.AudioRecordingRequired)
                 .Excluding(x => x.Id)
+                .Excluding(x => x.ActualStartTime)
             );
+            
+            response.StartedDateTime.Should().Be(conference.ActualStartTime);
             response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus());
+            response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
         }
     }
 }

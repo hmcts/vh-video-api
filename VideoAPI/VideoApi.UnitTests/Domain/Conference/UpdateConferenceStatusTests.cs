@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Domain.Conference
 
             Action action = () => conference.UpdateConferenceStatus(ConferenceState.NotStarted);
             action.Should().Throw<DomainRuleException>().And.ValidationFailures
-                .Any(x => x.Message == "Cannot set conference status to 'none'").Should().BeTrue();
+                .Any(x => x.Message == "Cannot set conference status to 'Not Started'").Should().BeTrue();
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             conference.ClosedDateTime.Should().BeNull();
             conference.UpdateConferenceStatus(ConferenceState.Closed);
             conference.ClosedDateTime.Should().NotBeNull();
-            conference.ClosedDateTime.Value.Should().BeAfter(beforeActionTime);
+            conference.ClosedDateTime.Should().HaveValue().And.BeAfter(beforeActionTime);
             conference.GetCurrentStatus().Should().Be(ConferenceState.Closed);
         }
 
@@ -52,6 +52,33 @@ namespace VideoApi.UnitTests.Domain.Conference
             afterCount.Should().BeGreaterThan(beforeCount);
 
             conference.GetCurrentStatus().Should().Be(ConferenceState.InSession);
+        }
+
+        [TestCase(ConferenceState.InSession, true)]
+        [TestCase(ConferenceState.Paused, false)]
+        [TestCase(ConferenceState.Suspended, false)]
+        [TestCase(ConferenceState.Closed, false)]
+        public void should_set_start_time_when_status_changes_to_in_session_first_time(ConferenceState status,
+            bool startTimeSet)
+        {
+            var conference = new ConferenceBuilder().Build();
+            conference.UpdateConferenceStatus(status);
+            conference.ActualStartTime.HasValue.Should().Be(startTimeSet);
+        }
+
+        [Test]
+        public void should_not_reset_start_time_on_resume()
+        {
+            var conferenceType = typeof(VideoApi.Domain.Conference);
+            var conference = new ConferenceBuilder()
+                .WithConferenceStatus(ConferenceState.InSession).WithConferenceStatus(ConferenceState.Paused)
+                .Build();
+            var existingStartTime = DateTime.UtcNow.AddMinutes(-5); 
+            conferenceType.GetProperty(nameof(conference.ActualStartTime))?.SetValue(conference, existingStartTime);
+            
+            conference.UpdateConferenceStatus(ConferenceState.InSession);
+            
+            conference.ActualStartTime.Should().Be(existingStartTime);
         }
     }
 }

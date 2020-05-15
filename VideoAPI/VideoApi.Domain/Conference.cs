@@ -33,6 +33,7 @@ namespace VideoApi.Domain
         public Guid HearingRefId { get; private set; }
         public string CaseType { get; private set; }
         public DateTime ScheduledDateTime { get; private set; }
+        public DateTime? ActualStartTime { get; private set; }
         public DateTime? ClosedDateTime { get; private set; }
         public string CaseNumber { get; private set; }
         public string CaseName { get; private set; }
@@ -91,7 +92,12 @@ namespace VideoApi.Domain
         {
             if (status == ConferenceState.NotStarted)
             {
-                throw new DomainRuleException(nameof(status), "Cannot set conference status to 'none'");
+                throw new DomainRuleException(nameof(status), "Cannot set conference status to 'Not Started'");
+            }
+
+            if (status == ConferenceState.InSession && !ActualStartTime.HasValue)
+            {
+                ActualStartTime = DateTime.UtcNow;
             }
 
             if (status == ConferenceState.Closed)
