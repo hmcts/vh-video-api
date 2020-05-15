@@ -51,7 +51,7 @@ namespace Testing.Common.Assertions
             
             if (conference.CurrentStatus == ConferenceState.Closed)
             {
-                conference.ClosedDateTime.Should().NotBe(DateTime.MinValue);
+                conference.ClosedDateTime.Should().HaveValue().And.NotBe(DateTime.MinValue);
             }
         }
     }
