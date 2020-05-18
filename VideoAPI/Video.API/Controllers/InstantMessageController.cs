@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -79,7 +80,7 @@ namespace Video.API.Controllers
 
             try
             {
-                var command = new AddInstantMessageCommand(conferenceId, request.From, request.MessageText);
+                var command = new AddInstantMessageCommand(conferenceId, request.From, request.MessageText, request.To);
                 await _commandHandler.Handle(command);
 
                 return Ok("InstantMessage saved");

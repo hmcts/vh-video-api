@@ -35,8 +35,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participants = seededConference.Participants;
             var from = participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
             var messageText = Internet.DomainWord();
+            var to = "VH Officer";
 
-            var command = new AddInstantMessageCommand(_newConferenceId, from, messageText);
+            var command = new AddInstantMessageCommand(_newConferenceId, from, messageText, to);
             await _handler.Handle(command);
 
             List<InstantMessage> instantMessages;
@@ -53,6 +54,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             message.MessageText.Should().Be(messageText);
             message.TimeStamp.Should().BeBefore(DateTime.UtcNow);
             message.ConferenceId.Should().Be(command.ConferenceId);
+            message.To.Should().Be(to);
         }
 
       

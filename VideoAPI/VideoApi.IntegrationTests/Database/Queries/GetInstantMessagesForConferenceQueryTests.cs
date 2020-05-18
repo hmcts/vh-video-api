@@ -33,10 +33,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             var vhOfficer = "VH Officer";
-            conference.AddInstantMessage(vhOfficer, "InstantMessage 1");
-            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 2");
-            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 3");
-            conference.AddInstantMessage(vhOfficer, "InstantMessage 4");
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 1", judge.DisplayName);
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 2", vhOfficer);
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 3", vhOfficer);
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 4", judge.DisplayName);
 
             var seededConference = await TestDataManager.SeedConference(conference);
             _newConferenceId = seededConference.Id;

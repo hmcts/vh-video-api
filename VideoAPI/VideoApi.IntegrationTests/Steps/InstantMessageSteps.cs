@@ -52,17 +52,20 @@ namespace VideoApi.IntegrationTests.Steps
         {
             Guid conferenceId;
             string from;
+            string to;
             switch (scenario)
             {
                 case Scenario.Valid:
                 {
                     from = _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
                     conferenceId = _context.Test.Conference.Id;
+                    to = "VH Officer";
                     break;
                 }
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
                     from = "non-existent-user";
+                    to = "non-existant-receiver";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
@@ -73,7 +76,8 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Test.Message = new AddInstantMessageRequest
             {
                 From = from,
-                MessageText = Internet.DomainWord()
+                MessageText = Internet.DomainWord(),
+                To = to
             };
             var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(_context.Test.Message);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");

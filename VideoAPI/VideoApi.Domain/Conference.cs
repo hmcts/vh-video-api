@@ -174,9 +174,9 @@ namespace VideoApi.Domain
         {
             return InstantMessageHistory.OrderByDescending(x => x.TimeStamp).ToList();
         }
-        public void AddInstantMessage(string from, string messageText)
+        public void AddInstantMessage(string from, string messageText, string to)
         {
-            var message = new InstantMessage(from, messageText);
+            var message = new InstantMessage(from, messageText, to);
             InstantMessageHistory.Add(message);
         }
 

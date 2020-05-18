@@ -18,6 +18,7 @@ namespace VideoApi.AcceptanceTests.Steps
         private readonly string _fromUsername;
         private const string MessageBody = "A message";
         private readonly TestContext _context;
+        private readonly string _toUsername = "Receiver Username";
 
         public InstantMessagesSteps(TestContext injectedContext)
         {
@@ -43,7 +44,8 @@ namespace VideoApi.AcceptanceTests.Steps
             var request = new AddInstantMessageRequest()
             {
                 From = _fromUsername,
-                MessageText = MessageBody
+                MessageText = MessageBody,
+                To = _toUsername
             };
             _context.Request = _context.Post(SaveInstantMessage(_context.Test.ConferenceResponse.Id), request);
         }
