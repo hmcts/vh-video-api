@@ -60,6 +60,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .CreateBlobClient(_context.Test.Conference.HearingRefId);
 
             await _context.Wowsa.UploadAudioFileToStorage(file);
+            AudioRecordingsManager.RemoveLocalAudioFile(file);
         }
 
         [Given(@"I have a valid get audio application request")]

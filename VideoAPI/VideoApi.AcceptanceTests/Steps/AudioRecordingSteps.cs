@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
@@ -14,28 +15,36 @@ namespace VideoApi.AcceptanceTests.Steps
     public class AudioRecordingSteps
     {
         private readonly TestContext _context;
+        private readonly Guid _hearingId;
 
         public AudioRecordingSteps(TestContext context)
         {
             _context = context;
+            _hearingId = Guid.NewGuid();
         }
 
         [Given(@"I have a valid create audio application request")]
         public void GivenIHaveACreateAudioApplicationRequest()
         {
-            _context.Request = _context.Post(CreateAudioApplication(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Post(CreateAudioApplication(_hearingId));
         }
 
         [Given(@"I have a valid get audio application request")]
         public void GivenIHaveAValidGetAudioApplicationRequest()
         {
-            _context.Request = _context.Get(GetAudioApplication(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Get(GetAudioApplication(_hearingId));
+        }
+
+        [Given(@"I have a nonexistent get audio application request")]
+        public void GivenIHaveANonexistentGetAudioApplicationRequest()
+        {
+            _context.Request = _context.Get(GetAudioApplication(_hearingId));
         }
 
         [Given(@"I have a valid delete audio application request")]
         public void GivenIHaveAValidDeleteAudioApplicationRequest()
         {
-            _context.Request = _context.Delete(DeleteAudioApplication(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Delete(DeleteAudioApplication(_hearingId));
         }
 
         [Given(@"the conference has an audio application")]
@@ -49,31 +58,31 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid create audio application and stream request")]
         public void GivenIHaveAValidCreateAudioApplicationAndStreamRequest()
         {
-            _context.Request = _context.Post(CreateAudioApplicationAndStream(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Post(CreateAudioApplicationAndStream(_hearingId));
         }
 
         [Given(@"I have a valid get audio stream request")]
         public void GivenIHaveAValidGetAudioStreamRequest()
         {
-            _context.Request = _context.Get(GetAudioStream(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Get(GetAudioStream(_hearingId));
         }
 
         [Given(@"I have a valid create audio stream request")]
         public void GivenIHaveAValidCreateAudioStreamRequest()
         {
-            _context.Request = _context.Post(CreateAudioStream(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Post(CreateAudioStream(_hearingId));
         }
 
         [Given(@"I have a valid delete audio stream request")]
         public void GivenIHaveAValidDeleteAudioStreamRequest()
         {
-            _context.Request = _context.Delete(DeleteAudioStream(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Delete(DeleteAudioStream(_hearingId));
         }
 
         [Given(@"I have a valid get audio stream monitoring request")]
         public void GivenIHaveAValidGetAudioStreamMonitoringRequest()
         {
-            _context.Request = _context.Get(GetAudioMonitoringStream(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Get(GetAudioMonitoringStream(_hearingId));
         }
 
         [Given(@"the conference has an audio stream")]
@@ -97,6 +106,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .CreateBlobClient(_context.Test.ConferenceResponse.HearingId);
 
             await _context.Wowsa.UploadAudioFileToStorage(file);
+            AudioRecordingsManager.RemoveLocalAudioFile(file);
         }
 
         [Given(@"I have a valid get audio recording link request")]
