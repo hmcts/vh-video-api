@@ -26,12 +26,6 @@ Scenario: Create Audio Application - Created
     Then the response should have the status Ok and success status True
 
 @VIH-5868
-Scenario: Create Audio Application - Not Found
-    And I have a nonexistent create audio application request
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
-
-@VIH-5868
 Scenario: Create Audio Application - Conflict
     Given I have a conference
     And I have a valid create audio application request
@@ -61,13 +55,6 @@ Scenario: Create Audio Application and Stream - Created
     And I have a valid create audio application and stream request
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
-
-@VIH-5868
-Scenario: Create Audio Application and Stream - Not Found
-    Given I have a conference
-    And I have a nonexistent create audio application and stream request
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
 
 @VIH-5868
 Scenario: Create Audio Application and Stream - Conflict
@@ -101,13 +88,6 @@ Scenario: Create Audio Stream - Created
     And I have a valid create audio stream request
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
-
-@VIH-5868
-Scenario: Create Audio Stream - Not Found
-    Given I have a conference
-    And I have a nonexistent create audio stream request
-    When I send the request to the endpoint
-    Then the response should have the status NotFound and success status False
 
 @VIH-5868
 Scenario: Create Audio Stream - Conflict

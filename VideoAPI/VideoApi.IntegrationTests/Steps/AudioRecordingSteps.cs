@@ -51,13 +51,13 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an audio recording")]
         public async Task GivenIHaveAnAudioRecording()
         {
-            var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.ConferenceResponse.HearingId);
+            var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.Conference.HearingRefId);
 
             _context.Wowsa = new WowzaManager()
                 .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
-                .CreateBlobClient(_context.Test.ConferenceResponse.HearingId);
+                .CreateBlobClient(_context.Test.Conference.HearingRefId);
 
             await _context.Wowsa.UploadAudioFileToStorage(file);
         }
