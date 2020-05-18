@@ -215,7 +215,7 @@ namespace Video.API.Controllers
         {
             _logger.LogInformation($"Getting audio recording link for hearing: {hearingId}");
 
-            var filePath = $"{hearingId}/{hearingId}.mp4";
+            var filePath = $"{hearingId}.mp4";
             
             if (!await _storageService.FileExistsAsync(filePath))
             {

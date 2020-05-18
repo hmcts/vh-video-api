@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
@@ -76,6 +77,31 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             updatedConference.IsClosed().Should().BeTrue();
             updatedConference.ClosedDateTime.Should().BeAfter(beforeActionTime);
+        }
+        
+        
+
+        [Test]
+        public async Task should_set_start_time_when_status_moves_from_not_started_to_in_session()
+        {
+            var conference = new ConferenceBuilder(true)
+                .Build();
+            var seededConference = await TestDataManager.SeedConference(conference);
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            const ConferenceState state = ConferenceState.InSession;
+
+            var beforeState = seededConference.GetCurrentStatus();
+
+            var command = new UpdateConferenceStatusCommand(_newConferenceId, state);
+            await _handler.Handle(command);
+
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var afterState = updatedConference.GetCurrentStatus();
+
+            afterState.Should().NotBe(beforeState);
+            afterState.Should().Be(state);
+            updatedConference.ActualStartTime.Should().HaveValue();
         }
 
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VideoApi.DAL.Migrations
 {
@@ -6,6 +6,7 @@ namespace VideoApi.DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql(@"DROP INDEX IF EXISTS [IX_Conference_ScheduledDateTime] ON [dbo].[Conference]");
             migrationBuilder.CreateIndex(
                 name: "IX_Conference_ScheduledDateTime",
                 table: "Conference",

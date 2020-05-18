@@ -17,14 +17,16 @@ namespace VideoApi.AcceptanceTests.Hooks
         [AfterScenario(Order = (int)HooksSequence.RemoveConference)]
         public static void RemoveConference(TestContext context)
         {
-            if (context.Test.Conference == null) return;
+            if (context?.Test?.Conference == null) return;
             RemoveConference(context, context.Test.Conference.Id);
         }
 
         [AfterScenario(Order = (int)HooksSequence.RemoveConferences)]
         public static void RemoveConferences(TestContext context)
         {
-            if (context.Test.ConferenceIds.Count <= 0) return;
+            if (context?.Test == null) return;
+            if (context.Test.ConferenceIds?.Count <= 0) return;
+            if (context.Test.ConferenceIds == null) return;
             foreach (var id in context.Test.ConferenceIds)
             {
                 RemoveConference(context, id);
@@ -36,6 +38,7 @@ namespace VideoApi.AcceptanceTests.Hooks
         {
             context.Request = context.Get(GetConferencesTodayForAdmin);
             context.Response = context.Client().Execute(context.Request);
+            context.Response.IsSuccessful.Should().BeTrue($"conferences for today were retrieved, but status code was {context.Response.StatusCode} with error message '{context.Response.Content}'");
             var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(context.Response.Content);
             if (conferences == null || conferences.Count <= 0) return;
             foreach (var conference in conferences.Where(conference => conference.CaseName.Contains(context.Test.CaseName)))
@@ -48,7 +51,7 @@ namespace VideoApi.AcceptanceTests.Hooks
         {
             context.Request = context.Delete(ApiUriFactory.ConferenceEndpoints.RemoveConference(conferenceId));
             context.Response = context.Client().Execute(context.Request);
-            context.Response.IsSuccessful.Should().BeTrue("Conference is deleted");
+            context.Response.IsSuccessful.Should().BeTrue($"Conference is deleted, but status code was {context.Response.StatusCode} with error message '{context.Response.Content}'");
         }
     }
 }
