@@ -19,4 +19,9 @@
     <ProjectReference Include="..\VideoApi.Contract\VideoApi.Contract.csproj" />
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
   </ItemGroup>
+    <ItemGroup>
+        <None Update="TestAudioFiles\TestAudioFile.mp4">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>

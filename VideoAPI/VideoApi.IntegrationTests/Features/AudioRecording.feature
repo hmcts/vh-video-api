@@ -23,7 +23,7 @@ Scenario: Create Audio Application - Created
     Given I have a conference
     And I have a valid create audio application request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Create Audio Application - Not Found
@@ -36,8 +36,9 @@ Scenario: Create Audio Application - Conflict
     Given I have a conference
     And I have a valid create audio application request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
     When I have a duplicate create audio application request
+    And I send the request to the endpoint
     Then the response should have the status Conflict and success status False
 
 @VIH-5868
@@ -59,7 +60,7 @@ Scenario: Create Audio Application and Stream - Created
     Given I have a conference
     And I have a valid create audio application and stream request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Create Audio Application and Stream - Not Found
@@ -73,7 +74,7 @@ Scenario: Create Audio Application and Stream - Conflict
     Given I have a conference
     And I have a valid create audio application and stream request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
     When I have a duplicate create audio application and stream request
     And I send the request to the endpoint
     Then the response should have the status Conflict and success status False
@@ -99,14 +100,7 @@ Scenario: Create Audio Stream - Created
     And the conference has an audio application
     And I have a valid create audio stream request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
-
-@VIH-5868
-Scenario: Create Audio Stream - Client Error
-    Given I have a conference
-    And I have a valid create audio stream request
-    When I send the request to the endpoint
-    Then the response should have the status ClientError and success status False
+    Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Create Audio Stream - Not Found
@@ -121,7 +115,7 @@ Scenario: Create Audio Stream - Conflict
     And the conference has an audio application
     And I have a valid create audio stream request
     When I send the request to the endpoint
-    Then the response should have the status Created and success status True
+    Then the response should have the status Ok and success status True
     When I have a duplicate create audio stream request
     And I send the request to the endpoint
     Then the response should have the status Conflict and success status False
@@ -165,7 +159,7 @@ Scenario: Get Audio Recording Link - OK
     And the audio recording link details are retrieved
 
 @VIH-5868
-Scenario: Get Audio Monitoring Stream - Not Found
+Scenario: Get Audio Recording Link - Not Found
     Given I have a nonexistent get audio recording link request
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False

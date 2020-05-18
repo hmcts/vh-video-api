@@ -90,13 +90,13 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.ConferenceResponse.HearingId);
             
-            var wowsaManager = new WowzaManager()
+            _context.Wowsa = new WowzaManager()
                 .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
                 .CreateBlobClient(_context.Test.ConferenceResponse.HearingId);
 
-            await wowsaManager.UploadAudioFileToStorage(file);
+            await _context.Wowsa.UploadAudioFileToStorage(file);
         }
 
         [Given(@"I have a valid get audio recording link request")]

@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AcceptanceTests.Common.AudioRecordings;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Responses;
@@ -28,7 +29,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             GivenIHaveAValidCreateAudioApplicationRequest();
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Given(@"the conference has an application and an audio stream")]
@@ -36,7 +37,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             GivenIHaveAValidCreateAudioApplicationAndStreamRequest();
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Given(@"the conference has an audio stream")]
@@ -44,13 +45,21 @@ namespace VideoApi.IntegrationTests.Steps
         {
             GivenIHaveAValidCreateAudioStreamRequest();
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.Created);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Given(@"I have an audio recording")]
         public async Task GivenIHaveAnAudioRecording()
         {
+            var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.ConferenceResponse.HearingId);
 
+            _context.Wowsa = new WowzaManager()
+                .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
+                .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
+                .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
+                .CreateBlobClient(_context.Test.ConferenceResponse.HearingId);
+
+            await _context.Wowsa.UploadAudioFileToStorage(file);
         }
 
         [Given(@"I have a valid get audio application request")]
