@@ -28,7 +28,10 @@ variables:
     "WowzaConfiguration/HostName":"$(wowza_hostName)",
     "WowzaConfiguration/Username":"$(wowza_userName)",
     "WowzaConfiguration/Password":"$(wowza_password)",
-    "WowzaConfiguration/StorageDirectory":"$(wowza_storageDirectory)"
+    "WowzaConfiguration/StorageDirectory":"$(wowza_storageDirectory)",
+    "WowzaConfiguration/StorageAccountName": "$(wowza_storageAccountName)", 
+    "WowzaConfiguration/StorageAccountKey": "$(wowza_storageAccountKey)",
+    "WowzaConfiguration/StorageContainerName": "$(wowza_storageContainerName)"
     '
   dalWorkingDirectory: 'VideoAPI/VideoApi.DAL'
   keyVaultName: vhcoreinfrahtdev # Used to get secrets for integration tests

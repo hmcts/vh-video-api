@@ -76,7 +76,9 @@ namespace VideoApi.IntegrationTests.Hooks
         private void RegisterWowzaSettings(TestContext context)
         {
             context.Config.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.Wowza);
+            context.Config.Wowza.StorageAccountKey.Should().NotBeNullOrEmpty();
+            context.Config.Wowza.StorageAccountName.Should().NotBeNullOrEmpty();
+            context.Config.Wowza.StorageContainerName.Should().NotBeNullOrEmpty();
         }
 
         private void RegisterDatabaseSettings(TestContext context)
