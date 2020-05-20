@@ -43,7 +43,4 @@
     <ItemGroup>
         <Content Include="Features\*.feature" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="TestAudioFiles\" />
-    </ItemGroup>
 </Project>
