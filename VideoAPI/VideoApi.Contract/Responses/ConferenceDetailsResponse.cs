@@ -25,6 +25,11 @@ namespace VideoApi.Contract.Responses
         public DateTime ScheduledDateTime { get; set; }
         
         /// <summary>
+        /// The time a conference started (not resumed)
+        /// </summary>
+        public DateTime? StartedDateTime { get; set; }
+        
+        /// <summary>
         /// The time a conference was closed
         /// </summary>
         public DateTime? ClosedDateTime { get; set; }

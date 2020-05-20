@@ -224,7 +224,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(7));
+            var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
 
             return Ok(new HearingAudioRecordingResponse {AudioFileLink = audioFileLink});
         }

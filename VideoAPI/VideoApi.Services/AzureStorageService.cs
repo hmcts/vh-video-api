@@ -45,13 +45,13 @@ namespace VideoApi.Services
 	
             builder.SetPermissions(BlobSasPermissions.Read);
 	
-            return $"{_configuration.StorageEndpoint}{_configuration.StorageContainerName}/{filePath}?{await GenerateSasToken(builder, until)}";
+            return $"{_configuration.StorageEndpoint}{_configuration.StorageContainerName}/{filePath}?{await GenerateSasToken(builder)}";
         }
 
-        private async Task<string> GenerateSasToken(BlobSasBuilder builder, DateTimeOffset until)
+        private async Task<string> GenerateSasToken(BlobSasBuilder builder)
         {
             var blobSasQueryParameters = _useUserDelegation
-                ? builder.ToSasQueryParameters(await _serviceClient.GetUserDelegationKeyAsync(DateTimeOffset.UtcNow.AddHours(-1), until), _configuration.StorageAccountName)
+                ? builder.ToSasQueryParameters(await _serviceClient.GetUserDelegationKeyAsync(DateTimeOffset.UtcNow.AddHours(-1), DateTimeOffset.UtcNow.AddDays(1)), _configuration.StorageAccountName)
                 : builder.ToSasQueryParameters(new StorageSharedKeyCredential(_configuration.StorageAccountName, _configuration.StorageAccountKey));
 
             return blobSasQueryParameters.ToString();
