@@ -21,7 +21,7 @@ namespace VideoApi.IntegrationTests.Contexts
         public VideoApiTokens Tokens { get; set; }
         public string Uri { get; set; }
         public DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions { get; set; }
-        public WowzaManager AzureStorage { get; set; }
+        public AzureStorageManager AzureStorage { get; set; }
 
         public HttpClient CreateClient()
         {
