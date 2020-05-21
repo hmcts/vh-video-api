@@ -9,7 +9,7 @@ namespace VideoApi.IntegrationTests.Hooks
         [AfterScenario(Order = (int)HooksSequence.RemoveAudioFiles)]
         public static void RemoveAudioFiles(TestContext context)
         {
-            context.Wowsa?.RemoveAudioFileFromStorage();
+            context.AzureStorage?.RemoveAudioFileFromStorage();
         }
     }
 }

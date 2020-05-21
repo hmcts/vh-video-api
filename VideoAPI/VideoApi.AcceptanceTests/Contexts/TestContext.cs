@@ -13,7 +13,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public IRestResponse Response { get; set; }
         public Test Test { get; set; }
         public VideoApiTokens Tokens { get; set; }
-        public WowzaManager Wowsa { get; set; }
+        public AzureStorageManager AzureStorage { get; set; }
 
         public RestClient Client()
         {

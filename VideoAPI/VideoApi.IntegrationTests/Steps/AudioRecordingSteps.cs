@@ -51,16 +51,16 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an audio recording")]
         public async Task GivenIHaveAnAudioRecording()
         {
-            var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.Conference.HearingRefId);
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.Conference.HearingRefId);
 
-            _context.Wowsa = new WowzaManager()
+            _context.AzureStorage = new AzureStorageManager()
                 .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
                 .CreateBlobClient(_context.Test.Conference.HearingRefId);
 
-            await _context.Wowsa.UploadAudioFileToStorage(file);
-            AudioRecordingsManager.RemoveLocalAudioFile(file);
+            await _context.AzureStorage.UploadAudioFileToStorage(file);
+            FileManager.RemoveLocalAudioFile(file);
         }
 
         [Given(@"I have a valid get audio application request")]
