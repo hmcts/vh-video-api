@@ -1,5 +1,6 @@
 using System.Net.Http;
 using AcceptanceTests.Common.Api;
+using AcceptanceTests.Common.AudioRecordings;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Testing.Common.Configuration;
@@ -20,6 +21,7 @@ namespace VideoApi.IntegrationTests.Contexts
         public VideoApiTokens Tokens { get; set; }
         public string Uri { get; set; }
         public DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions { get; set; }
+        public AzureStorageManager AzureStorage { get; set; }
 
         public HttpClient CreateClient()
         {
