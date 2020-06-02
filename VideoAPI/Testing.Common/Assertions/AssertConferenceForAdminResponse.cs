@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using VideoApi.Contract.Responses;
+using VideoApi.Domain.Enums;
 
 namespace Testing.Common.Assertions
 {
@@ -15,6 +16,20 @@ namespace Testing.Common.Assertions
             conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.Id.Should().NotBeEmpty();
+            conference.Status.Should().NotBeNull();
+            
+            if (conference.Status > ConferenceState.NotStarted)
+            {
+                conference.StartedDateTime.Should().HaveValue().And.NotBe(DateTime.MinValue);
+            }
+            
+            if (conference.Status == ConferenceState.Closed)
+            {
+                conference.ClosedDateTime.Should().HaveValue().And.NotBe(DateTime.MinValue);
+            }
+
+            conference.Participants.Should().NotBeNullOrEmpty();
+            conference.HearingVenueName.Should().NotBeNull();
         }
     }
 }

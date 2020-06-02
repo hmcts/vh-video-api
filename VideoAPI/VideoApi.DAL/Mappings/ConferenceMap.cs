@@ -22,6 +22,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property<ConferenceState>("State");
             builder.Property(x => x.AudioRecordingRequired);
             builder.Property(x => x.IngestUrl);
+            builder.Property(x => x.ActualStartTime);
 
             builder.HasMany<Participant>("Participants").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<ConferenceStatus>("ConferenceStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);

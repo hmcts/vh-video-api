@@ -1,6 +1,6 @@
 ﻿﻿namespace VideoApi.Contract.Responses
 {
-    public class HearingAudioRecordingResponse
+    public class AudioRecordingResponse
     {
         public string AudioFileLink { get; set; }
     }

@@ -31,8 +31,11 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.InstantMessageHistory)
                 .Excluding(x => ExcludeIdFromMessage(x))
                 .Excluding(x => x.IngestUrl)
+                .Excluding(x => x.ActualStartTime)
              );
 
+            response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);
+            response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus());
 
             var participants = conference.GetParticipants();

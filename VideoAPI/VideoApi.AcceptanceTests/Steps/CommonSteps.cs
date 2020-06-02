@@ -16,6 +16,7 @@ namespace VideoApi.AcceptanceTests.Steps
         }
 
         [When(@"I send the request to the endpoint")]
+        [When(@"I resend the request to the endpoint")]
         public void WhenISendTheRequestToTheEndpoint()
         {
             _context.Response = _context.Client().Execute(_context.Request);

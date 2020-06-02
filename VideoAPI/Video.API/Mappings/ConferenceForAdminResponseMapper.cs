@@ -18,6 +18,7 @@ namespace Video.API.Mappings
                 CaseNumber = conference.CaseNumber,
                 CaseName = conference.CaseName,
                 ScheduledDateTime = conference.ScheduledDateTime,
+                StartedDateTime = conference.ActualStartTime,
                 ClosedDateTime = conference.ClosedDateTime,
                 ScheduledDuration = conference.ScheduledDuration,
                 Status = conference.GetCurrentStatus(),

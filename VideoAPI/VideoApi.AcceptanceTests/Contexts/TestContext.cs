@@ -1,5 +1,6 @@
 using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.Api.Helpers;
+using AcceptanceTests.Common.AudioRecordings;
 using RestSharp;
 using Testing.Common.Configuration;
 
@@ -12,6 +13,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public IRestResponse Response { get; set; }
         public Test Test { get; set; }
         public VideoApiTokens Tokens { get; set; }
+        public AzureStorageManager AzureStorage { get; set; }
 
         public RestClient Client()
         {
@@ -24,6 +26,11 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Get(string path)
         {
             return new RestRequest(path, Method.GET);
+        }
+
+        public RestRequest Post(string path)
+        {
+            return new RestRequest(path, Method.POST);
         }
 
         public RestRequest Post(string path, object requestBody)

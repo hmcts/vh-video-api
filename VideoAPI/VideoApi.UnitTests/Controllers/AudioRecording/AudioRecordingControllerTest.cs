@@ -343,7 +343,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            var item = result.Value.As<HearingAudioRecordingResponse>();
+            var item = result.Value.As<AudioRecordingResponse>();
             item.Should().NotBeNull();
             item.AudioFileLink.Should().NotBeNullOrEmpty();
             item.AudioFileLink.Should().Be("fileLink");
