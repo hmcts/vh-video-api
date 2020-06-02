@@ -37,7 +37,8 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
             var request = new AddInstantMessageRequest
             {
                 From = "Display From",
-                MessageText = "Test message text"
+                MessageText = "Test message text",
+                To = "Display To"
             };
 
             var result = await _instantMessageController.AddInstantMessageToConferenceAsync(Guid.NewGuid(), request);

@@ -63,6 +63,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var message = GetMessages().First();
             message.From.Should().Be(_fromUsername);
             message.MessageText.Should().Be(MessageBody);
+            message.To.Should().Be(_toUsername);
         }
 
 

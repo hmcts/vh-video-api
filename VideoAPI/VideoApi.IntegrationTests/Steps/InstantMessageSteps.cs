@@ -157,6 +157,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 message.From.Should().Be(_context.Test.Message.From);
                 message.MessageText.Should().Be(_context.Test.Message.MessageText);
+                message.To.Should().Be(_context.Test.Message.To);
             }
         }
     }
