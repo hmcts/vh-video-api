@@ -35,7 +35,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get chat messages request")]
         public void GivenIHaveAGetChatMessagesRequest()
         {
-            _context.Request = _context.Get(GetInstantMessageHistory(_context.Test.ConferenceResponse.Id, null));
+            _context.Request = _context.Get(GetInstantMessageHistory(_context.Test.ConferenceResponse.Id));
+        }
+
+        [Given(@"I have a get chat messages request for participant")]
+        public void GivenIHaveAGetChatMessagesRequestForParticipant()
+        {
+            _context.Request = _context.Get(GetInstantMessageHistoryFor(_context.Test.ConferenceResponse.Id, _toUsername));
         }
 
         [Given(@"I have a create chat messages request")]
@@ -66,6 +72,15 @@ namespace VideoApi.AcceptanceTests.Steps
             message.To.Should().Be(_toUsername);
         }
 
+        [Then(@"the chat messages are retrieved for the participant")]
+        public void ThenTheChatMessagesAreRetrievedForTheParticipant()
+        {
+            var message = GetMessagesForParticipant().First();
+            message.From.Should().Be(_fromUsername);
+            message.MessageText.Should().Be(MessageBody);
+            message.To.Should().Be(_toUsername);
+        }
+
 
         [Then(@"the chat messages are deleted")]
         public void ThenTheChatMessagesAreDeleted()
@@ -87,6 +102,14 @@ namespace VideoApi.AcceptanceTests.Steps
             GivenIHaveACreateChatMessagesRequest();
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        private IEnumerable<InstantMessageResponse> GetMessagesForParticipant()
+        {
+            GivenIHaveAGetChatMessagesRequestForParticipant();
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            return RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<InstantMessageResponse>>(_context.Response.Content);
         }
     }
 }

@@ -39,29 +39,35 @@ namespace Video.API.Controllers
         /// Get all the chat messages for a conference
         /// </summary>
         /// <param name="conferenceId">Id of the conference</param>
-        /// <param name="participantName">instant messages for the participant name</param>
         /// <returns>Chat messages</returns>
         [HttpGet("{conferenceId}/instantmessages")]
         [SwaggerOperation(OperationId = "GetInstantMessageHistory")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetInstantMessageHistoryAsync([FromRoute]Guid conferenceId, [FromQuery]string participantName)
+        public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
         {
             _logger.LogDebug($"Retrieving instant message history for conference {conferenceId}");
-            var query = new GetInstantMessagesForConferenceQuery(conferenceId, participantName);
-            try
-            {
-                var messages =
-                    await _queryHandler.Handle<GetInstantMessagesForConferenceQuery, List<InstantMessage>>(query);
+            var query = new GetInstantMessagesForConferenceQuery(conferenceId, null);
 
-                var response = messages.Select(InstantMessageToResponseMapper.MapMessageToResponse);
-                return Ok(response);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Unable to find instant messages for conference {conferenceId}");
-                return NotFound();
-            }
+            return await GetInstantMessageHistoryAsync(query);
+        }
+
+        /// <summary>
+        /// Get all the chat messages for a conference
+        /// </summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <param name="participantusername">instant messages for the participant user name</param>
+        /// <returns>Chat messages</returns>
+        [HttpGet("{conferenceId}/instantmessages/{participantusername}")]
+        [SwaggerOperation(OperationId = "GetInstantMessageHistoryForParticipant")]
+        [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetInstantMessageHistoryForParticipantAsync(Guid conferenceId, string participantusername)
+        {
+            _logger.LogDebug($"Retrieving instant message history for conference {conferenceId} and participant {participantusername}");
+            var query = new GetInstantMessagesForConferenceQuery(conferenceId, participantusername);
+
+            return await GetInstantMessageHistoryAsync(query);
         }
 
         /// <summary>
@@ -137,5 +143,22 @@ namespace Video.API.Controllers
             return Ok(response);
         }
 
+        private async Task<IActionResult> GetInstantMessageHistoryAsync(GetInstantMessagesForConferenceQuery query)
+        {
+            _logger.LogDebug($"Retrieving instant message history for conference {query.ConferenceId}");
+            try
+            {
+                var messages =
+                    await _queryHandler.Handle<GetInstantMessagesForConferenceQuery, List<InstantMessage>>(query);
+
+                var response = messages.Select(InstantMessageToResponseMapper.MapMessageToResponse);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Unable to find instant messages for conference {query.ConferenceId}");
+                return NotFound();
+            }
+        }
     }
 }

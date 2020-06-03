@@ -27,3 +27,12 @@ And I have a remove messages from a conference request
 When I send the request to the endpoint
 Then the response should have the status NoContent and success status True
 And the chat messages are deleted
+
+@VIH-6021
+Scenario: Get chat messages for a participant
+  Given I have a conference
+  And the conference has existing messages
+  And I have a get chat messages request for participant
+  When I send the request to the endpoint
+  Then the response should have the status OK and success status True
+  And the chat messages are retrieved for the participant

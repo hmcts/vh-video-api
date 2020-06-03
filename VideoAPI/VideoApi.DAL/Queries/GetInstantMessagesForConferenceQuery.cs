@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -21,9 +20,7 @@ namespace VideoApi.DAL.Queries
         public string ParticipantName { get; set; }
     }
 
-    public class
-        GetInstantMessagesForConferenceQueryHandler : IQueryHandler<GetInstantMessagesForConferenceQuery,
-            List<InstantMessage>>
+    public class GetInstantMessagesForConferenceQueryHandler : IQueryHandler<GetInstantMessagesForConferenceQuery, List<InstantMessage>>
     {
         private readonly VideoApiDbContext _context;
 
@@ -36,9 +33,16 @@ namespace VideoApi.DAL.Queries
         {
             var instantMessages = await _context.InstantMessages
                 .AsNoTracking()
-                .Where(x => x.ConferenceId == query.ConferenceId && (x.From == query.ParticipantName || x.To == query.ParticipantName))
+                .Where(x => x.ConferenceId == query.ConferenceId)
                 .OrderByDescending(x => x.TimeStamp)
                 .ToListAsync();
+
+            if(query.ParticipantName != null)
+            {
+                instantMessages = instantMessages
+                    .Where(x => x.From.ToUpper() == query.ParticipantName.ToUpper() ||
+                    x.To.ToUpper() == query.ParticipantName.ToUpper()).ToList();
+            }
 
             return instantMessages;
         }
