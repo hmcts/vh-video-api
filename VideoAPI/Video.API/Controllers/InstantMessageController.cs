@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -40,15 +39,16 @@ namespace Video.API.Controllers
         /// Get all the chat messages for a conference
         /// </summary>
         /// <param name="conferenceId">Id of the conference</param>
+        /// <param name="participantName">instant messages for the participant name</param>
         /// <returns>Chat messages</returns>
         [HttpGet("{conferenceId}/instantmessages")]
         [SwaggerOperation(OperationId = "GetInstantMessageHistory")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
+        public async Task<IActionResult> GetInstantMessageHistoryAsync([FromRoute]Guid conferenceId, [FromQuery]string participantName)
         {
             _logger.LogDebug($"Retrieving instant message history for conference {conferenceId}");
-            var query = new GetInstantMessagesForConferenceQuery(conferenceId);
+            var query = new GetInstantMessagesForConferenceQuery(conferenceId, participantName);
             try
             {
                 var messages =

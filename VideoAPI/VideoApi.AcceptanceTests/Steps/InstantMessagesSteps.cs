@@ -35,7 +35,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get chat messages request")]
         public void GivenIHaveAGetChatMessagesRequest()
         {
-            _context.Request = _context.Get(GetInstantMessageHistory(_context.Test.ConferenceResponse.Id));
+            _context.Request = _context.Get(GetInstantMessageHistory(_context.Test.ConferenceResponse.Id, null));
         }
 
         [Given(@"I have a create chat messages request")]

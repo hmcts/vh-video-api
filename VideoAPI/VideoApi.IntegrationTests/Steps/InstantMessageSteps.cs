@@ -42,7 +42,8 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAConferenceWithMessages(Scenario scenario)
         {
             var conferenceId = scenario == Scenario.Nonexistent ? Guid.NewGuid() : _context.Test.Conference.Id;
-            _context.Uri = GetInstantMessageHistory(conferenceId);
+            var participantName = scenario == Scenario.Nonexistent ? "VH Officer" : _context.Test.Message.From;
+            _context.Uri = GetInstantMessageHistory(conferenceId, participantName);
             _context.HttpMethod = HttpMethod.Get;
         }
 
@@ -139,7 +140,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the messages have been deleted")]
         public async Task ThenTheMessagesHaveBeenDeleted()
         {
-            _context.Uri = GetInstantMessageHistory(_context.Test.Conference.Id);
+            var participantName = _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Individual).DisplayName;
+            _context.Uri = GetInstantMessageHistory(_context.Test.Conference.Id, participantName);
             _context.HttpMethod = HttpMethod.Get;
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
