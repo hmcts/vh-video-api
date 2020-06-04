@@ -180,9 +180,14 @@ namespace VideoApi.Domain
         {
             return InstantMessageHistory.OrderByDescending(x => x.TimeStamp).ToList();
         }
-        public void AddInstantMessage(string from, string messageText)
+        public IList<InstantMessage> GetInstantMessageHistoryFor(string participantName)
         {
-            var message = new InstantMessage(from, messageText);
+            return InstantMessageHistory.Where(x => x.From.ToUpper() == participantName.ToUpper() || x.To.ToUpper() == participantName.ToUpper())
+                .OrderByDescending(x => x.TimeStamp).ToList();
+        }
+        public void AddInstantMessage(string from, string messageText, string to)
+        {
+            var message = new InstantMessage(from, messageText, to);
             InstantMessageHistory.Add(message);
         }
 

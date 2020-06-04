@@ -18,6 +18,8 @@ namespace VideoApi.AcceptanceTests.Steps
         private readonly string _fromUsername;
         private const string MessageBody = "A message";
         private readonly TestContext _context;
+        private readonly string _toUsername = "Receiver Username";
+        private string _nonExistentUser = "nonExistentUserName";
 
         public InstantMessagesSteps(TestContext injectedContext)
         {
@@ -37,13 +39,26 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetInstantMessageHistory(_context.Test.ConferenceResponse.Id));
         }
 
+        [Given(@"I have a get chat messages request for participant")]
+        public void GivenIHaveAGetChatMessagesRequestForParticipant()
+        {
+            _context.Request = _context.Get(GetInstantMessageHistoryFor(_context.Test.ConferenceResponse.Id, _toUsername));
+        }
+
+        [Given(@"I have a get chat messages request for non existent participant")]
+        public void GivenIHaveAGetChatMessagesRequestForNonExistentParticipant()
+        {
+            _context.Request = _context.Get(GetInstantMessageHistoryFor(_context.Test.ConferenceResponse.Id, _nonExistentUser));
+        }
+
         [Given(@"I have a create chat messages request")]
         public void GivenIHaveACreateChatMessagesRequest()
         {
             var request = new AddInstantMessageRequest()
             {
                 From = _fromUsername,
-                MessageText = MessageBody
+                MessageText = MessageBody,
+                To = _toUsername
             };
             _context.Request = _context.Post(SaveInstantMessage(_context.Test.ConferenceResponse.Id), request);
         }
@@ -61,8 +76,24 @@ namespace VideoApi.AcceptanceTests.Steps
             var message = GetMessages().First();
             message.From.Should().Be(_fromUsername);
             message.MessageText.Should().Be(MessageBody);
+            message.To.Should().Be(_toUsername);
         }
 
+        [Then(@"the chat messages are retrieved for the participant")]
+        public void ThenTheChatMessagesAreRetrievedForTheParticipant()
+        {
+            var message = GetMessagesForParticipant().First();
+            message.From.Should().Be(_fromUsername);
+            message.MessageText.Should().Be(MessageBody);
+            message.To.Should().Be(_toUsername);
+        }
+
+        [Then(@"no chat messages are retrieved for the participant")]
+        public void ThenNoChatMessagesAreRetrievedForTheParticipant()
+        {
+            var message = GetMessagesForNoParticipant();
+            message.Count().Should().Be(0);
+        }
 
         [Then(@"the chat messages are deleted")]
         public void ThenTheChatMessagesAreDeleted()
@@ -84,6 +115,22 @@ namespace VideoApi.AcceptanceTests.Steps
             GivenIHaveACreateChatMessagesRequest();
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        private IEnumerable<InstantMessageResponse> GetMessagesForParticipant()
+        {
+            GivenIHaveAGetChatMessagesRequestForParticipant();
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            return RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<InstantMessageResponse>>(_context.Response.Content);
+        }
+
+        private IEnumerable<InstantMessageResponse> GetMessagesForNoParticipant()
+        {
+            GivenIHaveAGetChatMessagesRequestForNonExistentParticipant();
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
+            return RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<InstantMessageResponse>>(_context.Response.Content);
         }
     }
 }

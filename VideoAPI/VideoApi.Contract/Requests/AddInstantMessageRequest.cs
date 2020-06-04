@@ -11,5 +11,10 @@ namespace VideoApi.Contract.Requests
         /// Body of the chat message
         /// </summary>
         public string MessageText { get; set; }
+
+        /// <summary>
+        /// Username of the receiver
+        /// </summary>
+        public string To { get; set; }
     }
 }

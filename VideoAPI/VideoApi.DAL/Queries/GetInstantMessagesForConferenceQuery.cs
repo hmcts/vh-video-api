@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +10,17 @@ namespace VideoApi.DAL.Queries
 {
     public class GetInstantMessagesForConferenceQuery : IQuery
     {
-        public GetInstantMessagesForConferenceQuery(Guid conferenceId)
+        public GetInstantMessagesForConferenceQuery(Guid conferenceId, string participantName)
         {
             ConferenceId = conferenceId;
+            ParticipantName = participantName;
         }
 
         public Guid ConferenceId { get; }
+        public string ParticipantName { get; set; }
     }
 
-    public class
-        GetInstantMessagesForConferenceQueryHandler : IQueryHandler<GetInstantMessagesForConferenceQuery,
-            List<InstantMessage>>
+    public class GetInstantMessagesForConferenceQueryHandler : IQueryHandler<GetInstantMessagesForConferenceQuery, List<InstantMessage>>
     {
         private readonly VideoApiDbContext _context;
 
@@ -31,13 +31,18 @@ namespace VideoApi.DAL.Queries
 
         public async Task<List<InstantMessage>> Handle(GetInstantMessagesForConferenceQuery query)
         {
-            var instantMessages = await _context.InstantMessages
+            var instantMessages = _context.InstantMessages
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId)
-                .OrderByDescending(x => x.TimeStamp)
-                .ToListAsync();
+                .OrderByDescending(x => x.TimeStamp);
 
-            return instantMessages;
+            if(query.ParticipantName != null)
+            {
+                instantMessages = (IOrderedQueryable<InstantMessage>) instantMessages
+                    .Where(x => x.From.ToUpper() == query.ParticipantName.ToUpper() || x.To.ToUpper() == query.ParticipantName.ToUpper());
+            }
+
+            return await instantMessages.ToListAsync();
         }
     }
 }

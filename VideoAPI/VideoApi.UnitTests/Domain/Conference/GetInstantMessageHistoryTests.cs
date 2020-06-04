@@ -15,7 +15,8 @@ namespace VideoApi.UnitTests.Domain.Conference
 
             var from = "Display name";
             var messageText = "test message";
-            conference.AddInstantMessage(from, messageText);
+            var to = "Receiver Display name";
+            conference.AddInstantMessage(from, messageText, to);
 
             //Act
             var messages = conference.GetInstantMessageHistory();

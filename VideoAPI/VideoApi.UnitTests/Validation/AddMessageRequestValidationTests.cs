@@ -23,7 +23,8 @@ namespace VideoApi.UnitTests.Validation
             var request = new AddInstantMessageRequest
             {
                 From = "Display name",
-                MessageText = "This is a test message"
+                MessageText = "This is a test message",
+                To = "Receiver display name"
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -66,6 +67,19 @@ namespace VideoApi.UnitTests.Validation
             
             var result = await _validator.ValidateAsync(request);
             result.Errors.Any(x => x.ErrorMessage == AddMessageRequestValidation.MaxMessageLength)
+                .Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Should_fail_validation_when_to_is_empty()
+        {
+            var request = new AddInstantMessageRequest
+            {
+                From = "Display Name",
+                MessageText = "test message",
+            };
+            var result = await _validator.ValidateAsync(request);
+            result.Errors.Any(x => x.ErrorMessage == AddMessageRequestValidation.NoToErrorMessage)
                 .Should().BeTrue();
         }
     }

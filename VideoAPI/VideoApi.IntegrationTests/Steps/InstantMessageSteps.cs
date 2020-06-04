@@ -46,23 +46,46 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
 
+        [Given(@"I have a (.*) get instant messages request for a participant")]
+        [Given(@"I have an (.*) get instant messages request for a participant")]
+        public void GivenIHaveAValidGetInstantMessagesRequestForAParticipant(Scenario scenario)
+        {
+            var conferenceId = scenario == Scenario.Nonexistent ? Guid.NewGuid() : _context.Test.Conference.Id;
+            var participantName = scenario == Scenario.Nonexistent ? "VH Officer" : _context.Test.Message.From;
+            _context.Uri = GetInstantMessageHistoryFor(conferenceId, participantName);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+        [Given(@"I have a (.*) get instant messages request for a non existent participant")]
+        public void GivenIHaveAValidGetInstantMessagesRequestForANonExistentParticipant(Scenario scenario)
+        {
+            var conferenceId = scenario == Scenario.Nonexistent ? Guid.NewGuid() : _context.Test.Conference.Id;
+            var participantName = "nonExistentUser";
+            _context.Uri = GetInstantMessageHistoryFor(conferenceId, participantName);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+
         [Given(@"I have a (.*) set instant message request")]
         [Given(@"I have an (.*) set instant message request")]
         public void GivenIHaveASaveMessageRequest(Scenario scenario)
         {
             Guid conferenceId;
             string from;
+            string to;
             switch (scenario)
             {
                 case Scenario.Valid:
                 {
                     from = _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
                     conferenceId = _context.Test.Conference.Id;
+                    to = "VH Officer";
                     break;
                 }
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
                     from = "non-existent-user";
+                    to = "non-existant-receiver";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
@@ -73,7 +96,8 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Test.Message = new AddInstantMessageRequest
             {
                 From = from,
-                MessageText = Internet.DomainWord()
+                MessageText = Internet.DomainWord(),
+                To = to
             };
             var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(_context.Test.Message);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -153,7 +177,15 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 message.From.Should().Be(_context.Test.Message.From);
                 message.MessageText.Should().Be(_context.Test.Message.MessageText);
+                message.To.Should().Be(_context.Test.Message.To);
             }
+        }
+
+        [Then(@"the no chat message should be retrieved")]
+        public async Task ThenTheNoChatMessageShouldBeRetrieved()
+        {
+            var messages = await Response.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
+            messages.Should().BeEmpty();
         }
     }
 }
