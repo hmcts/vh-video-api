@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -56,16 +57,16 @@ namespace Video.API.Controllers
         /// Get all the chat messages for a conference
         /// </summary>
         /// <param name="conferenceId">Id of the conference</param>
-        /// <param name="participantusername">instant messages for the participant user name</param>
+        /// <param name="participantUsername">instant messages for the participant user name</param>
         /// <returns>Chat messages</returns>
-        [HttpGet("{conferenceId}/instantmessages/{participantusername}")]
+        [HttpGet("{conferenceId}/instantMessages/{participantUsername}")]
         [SwaggerOperation(OperationId = "GetInstantMessageHistoryForParticipant")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetInstantMessageHistoryForParticipantAsync(Guid conferenceId, string participantusername)
+        public async Task<IActionResult> GetInstantMessageHistoryForParticipantAsync(Guid conferenceId, string participantUsername)
         {
-            _logger.LogDebug($"Retrieving instant message history for conference {conferenceId} and participant {participantusername}");
-            var query = new GetInstantMessagesForConferenceQuery(conferenceId, participantusername);
+            _logger.LogDebug($"Retrieving instant message history for conference {conferenceId} and participant {participantUsername}");
+            var query = new GetInstantMessagesForConferenceQuery(conferenceId, participantUsername);
 
             return await GetInstantMessageHistoryAsync(query);
         }

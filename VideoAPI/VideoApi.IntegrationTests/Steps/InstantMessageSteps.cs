@@ -56,6 +56,16 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
 
+        [Given(@"I have a (.*) get instant messages request for a non existent participant")]
+        public void GivenIHaveAValidGetInstantMessagesRequestForANonExistentParticipant(Scenario scenario)
+        {
+            var conferenceId = scenario == Scenario.Nonexistent ? Guid.NewGuid() : _context.Test.Conference.Id;
+            var participantName = "nonExistentUser";
+            _context.Uri = GetInstantMessageHistoryFor(conferenceId, participantName);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+
         [Given(@"I have a (.*) set instant message request")]
         [Given(@"I have an (.*) set instant message request")]
         public void GivenIHaveASaveMessageRequest(Scenario scenario)
@@ -169,6 +179,13 @@ namespace VideoApi.IntegrationTests.Steps
                 message.MessageText.Should().Be(_context.Test.Message.MessageText);
                 message.To.Should().Be(_context.Test.Message.To);
             }
+        }
+
+        [Then(@"the no chat message should be retrieved")]
+        public async Task ThenTheNoChatMessageShouldBeRetrieved()
+        {
+            var messages = await Response.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
+            messages.Should().BeEmpty();
         }
     }
 }

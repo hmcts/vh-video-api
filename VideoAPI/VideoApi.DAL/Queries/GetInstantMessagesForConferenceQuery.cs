@@ -31,20 +31,18 @@ namespace VideoApi.DAL.Queries
 
         public async Task<List<InstantMessage>> Handle(GetInstantMessagesForConferenceQuery query)
         {
-            var instantMessages = await _context.InstantMessages
+            var instantMessages = _context.InstantMessages
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId)
-                .OrderByDescending(x => x.TimeStamp)
-                .ToListAsync();
+                .OrderByDescending(x => x.TimeStamp);
 
             if(query.ParticipantName != null)
             {
-                instantMessages = instantMessages
-                    .Where(x => x.From.ToUpper() == query.ParticipantName.ToUpper() ||
-                    x.To.ToUpper() == query.ParticipantName.ToUpper()).ToList();
+                instantMessages = (IOrderedQueryable<InstantMessage>) instantMessages
+                    .Where(x => x.From.ToUpper() == query.ParticipantName.ToUpper() || x.To.ToUpper() == query.ParticipantName.ToUpper());
             }
 
-            return instantMessages;
+            return await instantMessages.ToListAsync();
         }
     }
 }

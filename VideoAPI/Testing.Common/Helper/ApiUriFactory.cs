@@ -83,7 +83,7 @@ namespace Testing.Common.Helper
         {
             private const string ApiRoot = "conferences";
             public static string GetInstantMessageHistory(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
-            public static string GetInstantMessageHistoryFor(Guid conferenceId, string participantName) => $"{ApiRoot}/{conferenceId}/instantmessages/{participantName}";
+            public static string GetInstantMessageHistoryFor(Guid conferenceId, string participantName) => $"{ApiRoot}/{conferenceId}/instantMessages/{participantName}";
             public static string SaveInstantMessage(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
             public static string RemoveInstantMessagesForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
             public static string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
