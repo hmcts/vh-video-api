@@ -28,15 +28,16 @@ Feature: Callbacks
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 	Examples: 
-    | EventType             |
-    | Joined                |
-    | Disconnected          |
-    | Transfer              |
-    | Pause                 |
-    | Close                 |
-    | Leave                 |
-    | JudgeAvailable        |
-    | JudgeUnavailable      |
-    | MediaPermissionDenied |
-    | ParticipantJoining    |
-    | Help                  |
+    | EventType              |
+    | Joined                 |
+    | Disconnected           |
+    | Transfer               |
+    | Pause                  |
+    | Close                  |
+    | Leave                  |
+    | JudgeAvailable         |
+    | JudgeUnavailable       |
+    | MediaPermissionDenied  |
+    | ParticipantJoining     |
+    | Help                   |
+    | ParticipantNotSignedIn |
