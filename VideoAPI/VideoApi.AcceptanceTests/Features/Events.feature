@@ -24,14 +24,15 @@ Feature: Events
     Then the response should have the status NoContent and success status True
 
     Examples:
-      | EventType             |
-      | Joined                |
-      | Disconnected          |
-      | Pause                 |
-      | Close                 |
-      | Leave                 |
-      | JudgeAvailable        |
-      | JudgeUnavailable      |
-      | MediaPermissionDenied |
-      | ParticipantJoining    |
-      | Help                  |
+      | EventType              |
+      | Joined                 |
+      | Disconnected           |
+      | Pause                  |
+      | Close                  |
+      | Leave                  |
+      | JudgeAvailable         |
+      | JudgeUnavailable       |
+      | MediaPermissionDenied  |
+      | ParticipantJoining     |
+      | Help                   |
+      | ParticipantNotSignedIn |
