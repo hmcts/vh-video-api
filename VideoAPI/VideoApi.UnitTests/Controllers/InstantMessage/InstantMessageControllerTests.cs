@@ -1,20 +1,21 @@
-using System;
-using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Net;
 using Video.API.Controllers;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.UnitTests.Controllers.Conference;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.InstantMessage
 {
-    public class InstantMessageControllerTests
+    public class InstantMessageControllerTests : ConferenceControllerTestBase
     {
         private Mock<IQueryHandler> _queryHandler;
         private Mock<ICommandHandler> _commandHandler;
@@ -37,7 +38,8 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
             var request = new AddInstantMessageRequest
             {
                 From = "Display From",
-                MessageText = "Test message text"
+                MessageText = "Test message text",
+                To = "Display To"
             };
 
             var result = await _instantMessageController.AddInstantMessageToConferenceAsync(Guid.NewGuid(), request);

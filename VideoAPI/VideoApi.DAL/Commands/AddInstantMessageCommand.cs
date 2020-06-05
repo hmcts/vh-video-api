@@ -7,16 +7,18 @@ namespace VideoApi.DAL.Commands
 {
     public class AddInstantMessageCommand : ICommand
     {
-        public AddInstantMessageCommand(Guid conferenceId, string from, string messageText)
+        public AddInstantMessageCommand(Guid conferenceId, string from, string messageText, string to)
         {
             ConferenceId = conferenceId;
             From = from;
             MessageText = messageText;
+            To = to;
         }
 
         public string From { get; set; }
         public string MessageText { get; set; }
         public Guid ConferenceId { get; }
+        public string To { get; set; }
     }
 
     public class AddInstantMessageCommandHandler : ICommandHandler<AddInstantMessageCommand>
@@ -30,7 +32,7 @@ namespace VideoApi.DAL.Commands
       
         public async System.Threading.Tasks.Task Handle(AddInstantMessageCommand command)
         {
-            var @instantMessage = new InstantMessage(command.From, command.MessageText)
+            var @instantMessage = new InstantMessage(command.From, command.MessageText, command.To)
             {
                 ConferenceId = command.ConferenceId
             };

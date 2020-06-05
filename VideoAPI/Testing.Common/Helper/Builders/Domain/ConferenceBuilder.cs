@@ -109,11 +109,11 @@ namespace Testing.Common.Helper.Builders.Domain
         public ConferenceBuilder WithMessages(int numberOfMessages)
         {
             var messages = new Builder(_builderSettings).CreateListOfSize<InstantMessage>(numberOfMessages).All().WithFactory(() =>
-                new InstantMessage("Username", "Test InstantMessage")).Build();
+                new InstantMessage("Username", "Test InstantMessage", "ReceiverUsername")).Build();
 
             foreach (var message in messages)
             {
-                _conference.AddInstantMessage(message.From, message.MessageText);
+                _conference.AddInstantMessage(message.From, message.MessageText, message.To);
             }
 
             return this;

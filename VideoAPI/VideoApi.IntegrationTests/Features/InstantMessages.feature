@@ -88,3 +88,19 @@ Feature: Instant Messages
     And I have an valid delete messages from a conference request
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
+
+  Scenario: Get instant messages for participants
+    Given I have a conference
+    And the conference has messages
+    And I have a valid get instant messages request for a participant
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the chat message should be retrieved
+
+  Scenario: Get instant messages for non existent participant
+    Given I have a conference
+    And the conference has messages
+    And I have a valid get instant messages request for a non existent participant
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the no chat message should be retrieved

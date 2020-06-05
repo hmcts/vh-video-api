@@ -9,6 +9,7 @@ namespace Video.API.Validations
         public static readonly string NoMessageTextErrorMessage = "MessageText is required";
         private static readonly int MaxCharLength = 256;
         public static readonly string MaxMessageLength = $"MessageText cannot exceed {MaxCharLength} characters";
+        public static readonly string NoToErrorMessage = "To is required";
 
         public AddMessageRequestValidation()
         {
@@ -16,6 +17,7 @@ namespace Video.API.Validations
             RuleFor(x => x.MessageText)
                 .NotEmpty().WithMessage(NoMessageTextErrorMessage)
                 .MaximumLength(MaxCharLength).WithMessage(MaxMessageLength);
+            RuleFor(x => x.To).NotEmpty().WithMessage(NoToErrorMessage);
         }
     }
 }

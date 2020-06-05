@@ -33,21 +33,47 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             var vhOfficer = "VH Officer";
-            conference.AddInstantMessage(vhOfficer, "InstantMessage 1");
-            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 2");
-            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 3");
-            conference.AddInstantMessage(vhOfficer, "InstantMessage 4");
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 1", judge.DisplayName);
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 2", vhOfficer);
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 3", vhOfficer);
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 4", judge.DisplayName);
 
             var seededConference = await TestDataManager.SeedConference(conference);
             _newConferenceId = seededConference.Id;
 
 
-            var query = new GetInstantMessagesForConferenceQuery(_newConferenceId);
+            var query = new GetInstantMessagesForConferenceQuery(_newConferenceId, vhOfficer);
             var results = await _handler.Handle(query);
             results.Count.Should().Be(conference.GetInstantMessageHistory().Count);
             results.Should().BeInDescendingOrder(x => x.TimeStamp);
         }
 
+        [Test]
+        public async Task Should_retrieve_all_messages_for_the_participant()
+        {
+            var conference = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Judge, "Judge")
+                .Build();
+
+            var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
+            var participant = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
+            var vhOfficer = "VH Officer";
+
+            conference.AddInstantMessage(vhOfficer, "InstantMessage 1", judge.DisplayName);
+            conference.AddInstantMessage(judge.DisplayName, "InstantMessage 2", vhOfficer);
+
+            conference.AddInstantMessage(participant.Username, "Hello VHO", vhOfficer);
+            conference.AddInstantMessage(vhOfficer, "Hello ParticipantOne", participant.Username);
+
+            var seededConference = await TestDataManager.SeedConference(conference);
+            _newConferenceId = seededConference.Id;
+
+            var query = new GetInstantMessagesForConferenceQuery(_newConferenceId, participant.Username);
+            var results = await _handler.Handle(query);
+            results.Count.Should().Be(conference.GetInstantMessageHistoryFor(participant.Username).Count);
+            results.Should().BeInDescendingOrder(x => x.TimeStamp);
+        }
 
         [TearDown]
         public async Task TearDown()

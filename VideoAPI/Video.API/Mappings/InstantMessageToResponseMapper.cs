@@ -11,7 +11,8 @@ namespace Video.API.Mappings
             {
                 From = instantMessage.From,
                 MessageText = instantMessage.MessageText,
-                TimeStamp = instantMessage.TimeStamp
+                TimeStamp = instantMessage.TimeStamp,
+                To = instantMessage.To
             };
         }
     }

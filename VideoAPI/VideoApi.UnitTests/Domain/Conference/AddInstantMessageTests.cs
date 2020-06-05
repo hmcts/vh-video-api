@@ -13,7 +13,8 @@ namespace VideoApi.UnitTests.Domain.Conference
             var beforeCount = conference.GetInstantMessageHistory().Count;
             var from = "Display Name";
             var message = "Test message";
-            conference.AddInstantMessage(from, message);
+            var to = "Receiver Display Name";
+            conference.AddInstantMessage(from, message, to);
 
             var afterCount = conference.GetInstantMessageHistory().Count;
             afterCount.Should().BeGreaterThan(beforeCount);

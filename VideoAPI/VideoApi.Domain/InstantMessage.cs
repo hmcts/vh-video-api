@@ -5,12 +5,12 @@ namespace VideoApi.Domain
 {
     public class InstantMessage : Entity<long>
     {
-        public InstantMessage(string from, string messageText)
+        public InstantMessage(string from, string messageText, string to)
         {
             From = from;
             MessageText = messageText;
             TimeStamp = DateTime.UtcNow;
-            To = null;
+            To = to;
         }
         public string From { get; }
         public string To { get; }
