@@ -29,6 +29,8 @@ namespace Testing.Common.Helper.Builders.Api
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
+                .With(x => x.FirstName = $"Automation_{Name.First()}")
+                .With(x => x.LastName = $"Automation_{Name.Last()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Judge)
@@ -43,6 +45,8 @@ namespace Testing.Common.Helper.Builders.Api
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
+                .With(x => x.FirstName = $"Automation_{Name.First()}")
+                .With(x => x.LastName = $"Automation_{Name.Last()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Representative)
@@ -63,6 +67,8 @@ namespace Testing.Common.Helper.Builders.Api
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
+                .With(x => x.FirstName = $"Automation_{Name.First()}")
+                .With(x => x.LastName = $"Automation_{Name.Last()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Individual)

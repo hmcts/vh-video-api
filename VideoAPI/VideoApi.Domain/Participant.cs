@@ -13,7 +13,7 @@ namespace VideoApi.Domain
             ParticipantStatuses = new List<ParticipantStatus>();
         }
 
-        public Participant(Guid participantRefId, string name, string displayName, string username, UserRole userRole,
+        public Participant(Guid participantRefId, string name, string firstName, string lastName, string displayName, string username, UserRole userRole,
             string caseTypeGroup) : this()
         {
             ParticipantRefId = participantRefId;
@@ -22,10 +22,14 @@ namespace VideoApi.Domain
             UserRole = userRole;
             CaseTypeGroup = caseTypeGroup;
             Name = name;
+            FirstName = firstName;
+            LastName = lastName;
         }
 
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string DisplayName { get; set; }
         public string Username { get; set; }
         public UserRole UserRole { get; set; }

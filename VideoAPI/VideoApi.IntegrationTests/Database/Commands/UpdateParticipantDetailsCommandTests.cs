@@ -31,7 +31,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conferenceId = Guid.NewGuid();
             var participantId = Guid.NewGuid();
             
-            var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "displayname", String.Empty);
+            var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "firstName", "lastName", "displayname", String.Empty);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -43,7 +43,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participantId = Guid.NewGuid();
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "displayname", String.Empty);
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "firstName", "lastName", "displayname", String.Empty);
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -55,7 +55,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants().First();
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "displayname", String.Empty);
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName", "lastName", "displayname", String.Empty);
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
@@ -63,6 +63,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
             updatedParticipant.DisplayName.Should().Be("displayname");
             updatedParticipant.Name.Should().Be("fullname");
+            updatedParticipant.FirstName.Should().Be("firstName");
+            updatedParticipant.LastName.Should().Be("lastName");
         }
 
 

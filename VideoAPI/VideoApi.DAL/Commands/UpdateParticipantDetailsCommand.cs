@@ -14,8 +14,10 @@ namespace VideoApi.DAL.Commands
         public string DisplayName { get; }
         public string Representee { get; }
         public string Fullname { get; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
-        public UpdateParticipantDetailsCommand(Guid conferenceId, Guid participantId, string fullname,
+        public UpdateParticipantDetailsCommand(Guid conferenceId, Guid participantId, string fullname, string firstname, string lastname,
             string displayName, string representee)
         {
             ConferenceId = conferenceId;
@@ -23,6 +25,8 @@ namespace VideoApi.DAL.Commands
             Fullname = fullname;
             DisplayName = displayName;
             Representee = representee;
+            FirstName = firstname;
+            LastName = lastname;
         }
     }
 
@@ -50,6 +54,8 @@ namespace VideoApi.DAL.Commands
             }
 
             participant.Name = command.Fullname;
+            participant.FirstName = command.FirstName;
+            participant.LastName = command.LastName;
             participant.DisplayName = command.DisplayName;
             participant.Representee = command.Representee;
             

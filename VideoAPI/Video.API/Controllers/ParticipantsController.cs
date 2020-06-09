@@ -55,7 +55,7 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.DisplayName.Trim(),
+                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(), x.DisplayName.Trim(),
                         x.Username.ToLowerInvariant().Trim(), x.UserRole,
                         x.CaseTypeGroup)
                     {
@@ -95,7 +95,7 @@ namespace Video.API.Controllers
             try
             {
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
-                    request.Fullname,
+                    request.Fullname, request.FirstName, request.LastName,
                     request.DisplayName, request.Representee);
                 await _commandHandler.Handle(updateParticipantDetailsCommand);
 
