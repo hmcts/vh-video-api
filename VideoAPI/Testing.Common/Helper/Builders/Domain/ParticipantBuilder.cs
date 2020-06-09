@@ -50,7 +50,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var name = Name.FullName();
             
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), name, name, Internet.Email(), _userRole,
+                new Participant(Guid.NewGuid(), name, Name.First(), Name.Last(), name, Internet.Email(), _userRole,
                     _caseTypeGroup))
                 .With(x => x.CurrentRoom = null)
                 .Build();

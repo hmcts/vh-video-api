@@ -56,6 +56,8 @@ namespace VideoApi.AcceptanceTests.Steps
             var request = new UpdateParticipantRequest()
             {
                 Fullname = $"Updated {participant.Name}",
+                FirstName = $"Updated {participant.FirstName}",
+                LastName = $"Updated {participant.LastName}",
                 DisplayName = $"Updated {participant.DisplayName}",
                 Representee = $"Updated {participant.Representee}"
             };
@@ -133,6 +135,8 @@ namespace VideoApi.AcceptanceTests.Steps
                     x.Username.Equals(_scenarioContext.Get<string>(ParticipantUsernameKey)));
 
                 participant.Name.Should().Contain("Updated");
+                participant.FirstName.Should().Contain("Updated");
+                participant.LastName.Should().Contain("Updated");
                 participant.DisplayName.Should().Contain("Updated");
                 participant.Representee.Should().Contain("Updated");
             }

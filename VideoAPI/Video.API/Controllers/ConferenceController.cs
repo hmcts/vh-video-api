@@ -67,6 +67,8 @@ namespace Video.API.Controllers
             {
                 participant.Username = participant.Username.ToLower().Trim();
                 participant.Name = participant.Name.Trim();
+                participant.FirstName = participant.FirstName.Trim();
+                participant.LastName = participant.LastName.Trim();
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
@@ -417,7 +419,7 @@ namespace Video.API.Controllers
             if (existingConference != null) return existingConference.Id;
             
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.DisplayName, x.Username, x.UserRole,
+                    new Participant(x.ParticipantRefId, x.Name, x.FirstName, x.LastName, x.DisplayName, x.Username, x.UserRole,
                         x.CaseTypeGroup)
                     {
                         Representee = x.Representee

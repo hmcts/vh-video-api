@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Domain.Conference
 
             var beforeCount = conference.GetParticipants().Count;
             var participant = Builder<Participant>.CreateNew().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(),
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(), Internet.Email(),
                     UserRole.Representative, "Claimant")).Build();
 
             Action action = () => conference.RemoveParticipant(participant);

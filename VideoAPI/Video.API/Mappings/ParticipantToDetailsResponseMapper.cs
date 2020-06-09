@@ -14,6 +14,8 @@ namespace Video.API.Mappings
                 Id = participant.Id,
                 RefId = participant.ParticipantRefId,
                 Name = participant.Name,
+                FirstName = participant.FirstName,
+                LastName = participant.LastName,
                 Username = participant.Username,
                 DisplayName = participant.DisplayName,
                 UserRole = participant.UserRole,

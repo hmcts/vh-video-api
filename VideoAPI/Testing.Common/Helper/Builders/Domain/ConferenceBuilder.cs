@@ -38,7 +38,7 @@ namespace Testing.Common.Helper.Builders.Domain
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
         {
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Internet.Email(), UserRole.Individual,
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(), Internet.Email(), UserRole.Individual,
                     "Claimant")).Build();
 
             foreach (var participant in participants)
@@ -67,7 +67,7 @@ namespace Testing.Common.Helper.Builders.Domain
                 username = Internet.Email();
             }
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), username, userRole,
+                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(), username, userRole,
                     caseTypeGroup)).Build();
 
             if (userRole == UserRole.Representative)
