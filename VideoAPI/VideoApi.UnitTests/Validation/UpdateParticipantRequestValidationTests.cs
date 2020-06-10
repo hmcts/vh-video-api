@@ -35,16 +35,25 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(2);
+            result.Errors.Count.Should().Be(4);
             result.Errors.Any(x => x.ErrorMessage == UpdateParticipantRequestValidation.NoNameErrorMessage)
                 .Should().BeTrue();
             result.Errors.Any(x => x.ErrorMessage == UpdateParticipantRequestValidation.NoDisplayNameErrorMessage)
+                .Should().BeTrue();
+            result.Errors.Any(x => x.ErrorMessage == UpdateParticipantRequestValidation.NoLastNameErrorMessage)
+                .Should().BeTrue();
+            result.Errors.Any(x => x.ErrorMessage == UpdateParticipantRequestValidation.NoFirstNameErrorMessage)
                 .Should().BeTrue();
         }
 
         private UpdateParticipantRequest BuildRequest()
         {
-            return new UpdateParticipantRequest {DisplayName = "displayname", Fullname = "Fullname"};
+            return new UpdateParticipantRequest {
+                DisplayName = "displayname", 
+                Fullname = "Fullname", 
+                FirstName = "FirstName", 
+                LastName = "LastName" 
+            };
         }
     }
 }
