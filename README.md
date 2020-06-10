@@ -27,26 +27,6 @@ Under the unit test project directory
 dotnet reportgenerator "-reports:../Artifacts/Coverage/coverage.opencover.xml" "-targetDir:../Artifacts/Coverage/Report" -reporttypes:HtmlInline_AzurePipelines
 ```
 
-## Running ZAP Security Testing
-
-Download and Install ZAP from https://www.zaproxy.org/download/
-
-Configure or note the ZAP API Key from Tools > options > API > API Key field
-
-Configure or note the port under which ZAP is run from Tools > options > Local Proxies > Port 
-
-Install Certificate by going to Tools>Options>Dynamic SSL Certificate. Click Generate and then click Save.
-Save the certificate in the desired location. Open your browser and install the Certificate to your browser (Firefox, Chrome, IE) accordingly
-
-Update ZAPConfiguration parameters on with the values observed above ApiAddress, ApiPort, ApiKey (User Secrets)
-
-Update WorkingDirectory with location under which ZAP.exe is installed
-
-To turn on\off ZAP security passive scan Set RunZAP - true\false
-
-To turn on\off ZAP security scans individually such as Spider\AjaxSpider\ActiveScan set respective parameters RunSpider\RunAjaxSpider\RunActiveScan - true\false
-
-
 ##Branch name git hook will run on pre commit and control the standard for new branch name.
 
 The branch name should start with: feature/VIH-XXXX-branchName  (X - is digit).
@@ -58,3 +38,46 @@ $ git config core.hooksPath .githooks
 The commit message will be validated by prepare-commit-msg hook.
 The commit message format should start with : 'feature/VIH-XXXX : ' folowing by 8 or more characters description of commit, otherwise the warning message will be presented.
 
+## Run Zap scan locally
+
+To run Zap scan locally update the following settings and run acceptance\integration tests
+
+User Secrets:
+
+- "Services:VideoApiUrl": "https://VideoApi_AC/"
+
+Update following configuration under appsettings.json under VideoApi.AcceptanceTests or  VideoApi.IntegrationTests
+
+- "Services:VideoApiUrl": "https://VideoApi_AC/"
+- "ZapConfiguration:ZapScan": true
+- "ConnectionStrings:VhVideoApi": "Server=localhost,1433;Database=VhVideoApi;User=sa;Password=VeryStrongPassword!;" (IntegrationTest alone)
+
+Note: Ensure you have Docker desktop engine installed and setup
+
+## Run Stryker
+
+To run stryker mutation test, go to UnitTest folder under command prompt and run the following command
+
+```bash
+dotnet stryker
+```
+
+From the results look for line(s) of code highlighted with Survived\No Coverage and fix them.
+
+
+If in case you have not installed stryker previously, please use one of the following commands
+
+### Global
+```bash
+dotnet tool install -g dotnet-stryker
+```
+### Local
+```bash
+dotnet tool install dotnet-stryker
+```
+
+To update latest version of stryker please use the following command
+
+```bash
+dotnet tool update --global dotnet-stryker
+```
