@@ -52,9 +52,13 @@ namespace VideoApi.DAL.Migrations
                 Update Participant set FirstName = 'Taylor House', LastName = 'Courtroom31' WHERE Username = 'TaylorHousecourt31@hearings.reform.hmcts.net'
                 Update Participant set FirstName = 'Taylor House', LastName = 'Courtroom32' WHERE Username = 'TaylorHousecourt32@hearings.reform.hmcts.net'
                 Update Participant set FirstName = 'Taylor House', LastName = 'Courtroom33' WHERE Username = 'TaylorHousecourt33@hearings.reform.hmcts.net'
-                Update Participant set FirstName = 'Taylor House', LastName = 'CourtGen1' WHERE Username = 'TaylorHousecourtGen1@hearings.reform.hmcts.net'
-                Update Participant set FirstName = 'Taylor House', LastName = 'CourtGen2' WHERE Username = 'TaylorHousecourtGen2@hearings.reform.hmcts.net'
-                Update Participant set FirstName = 'Taylor House', LastName = 'CourtGen3' WHERE Username = 'TaylorHousecourtGen3@hearings.reform.hmcts.net'");
+                Update Participant set FirstName = 'Taylor House', LastName = 'CourtroomGen1' WHERE Username = 'TaylorHousecourtGen1@hearings.reform.hmcts.net'
+                Update Participant set FirstName = 'Taylor House', LastName = 'CourtroomGen2' WHERE Username = 'TaylorHousecourtGen2@hearings.reform.hmcts.net'
+                Update Participant set FirstName = 'Taylor House', LastName = 'CourtroomGen3' WHERE Username = 'TaylorHousecourtGen3@hearings.reform.hmcts.net'
+                Update Participant set FirstName = 'Taylor House', LastName = 'CourtroomGen4' WHERE Username = 'TaylorHousecourtGen4@hearings.reform.hmcts.net'
+                Update Participant set FirstName = 'Taylor House', LastName = 'CourtroomGen5' WHERE Username = 'TaylorHousecourtGen5@hearings.reform.hmcts.net'
+                Update Participant set FirstName = 'Taylor House', LastName = 'CourtroomGen6' WHERE Username = 'TaylorHousecourtGen6@hearings.reform.hmcts.net'
+                ");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -107,7 +111,11 @@ namespace VideoApi.DAL.Migrations
                 Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourt33@hearings.reform.hmcts.net'
                 Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourtGen1@hearings.reform.hmcts.net'
                 Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourtGen2@hearings.reform.hmcts.net'
-                Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourtGen3@hearings.reform.hmcts.net'");
+                Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourtGen3@hearings.reform.hmcts.net'
+                Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourtGen4@hearings.reform.hmcts.net'
+                Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourtGen5@hearings.reform.hmcts.net'
+                Update Participant set FirstName = NULL, LastName = NULL WHERE Username = 'TaylorHousecourtGen6@hearings.reform.hmcts.net'
+                ");
         }
     }
 }
