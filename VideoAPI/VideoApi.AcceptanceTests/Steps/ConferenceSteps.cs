@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using AcceptanceTests.Common.Api.Helpers;
+using Faker;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
@@ -59,6 +60,19 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAConference()
         {
             CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2));
+        }
+
+        [Given(@"I have multiple conferences")]
+        public void GivenIHaveMultipleConferences()
+        {
+            CreateMultipleConferences(false);
+
+        }
+
+        [Given(@"I have multiple conferences with duplicate first names for judges")]
+        public void GivenIHaveMultipleConferencesWithDuplicateFirstNamesForJudges ()
+        {
+            CreateMultipleConferences(true);
         }
 
         [Given(@"I have another conference")]
@@ -251,6 +265,32 @@ namespace VideoApi.AcceptanceTests.Steps
             expectedHearing.Username.Should().Be(judge.Username);
         }
 
+        private void CreateMultipleConferences(bool addDuplicateFirstNames)
+        {
+            _context.Test.ConferenceDetailsResponses = new List<ConferenceDetailsResponse>();
+            string judge1 = "Automation_" + Name.First() + RandomNumber.Next();
+            string judge2 = "Automation_" + Name.First() + RandomNumber.Next();
+            
+            for (int i = 0; i < 2; i++)
+            {
+                CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge1 : null);
+                _context.Response = _context.Client().Execute(_context.Request);
+                _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
+                var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+                conference.Should().NotBeNull();
+                _context.Test.ConferenceDetailsResponses.Add(conference);
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge2 : null);
+                _context.Response = _context.Client().Execute(_context.Request);
+                _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
+                var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+                conference.Should().NotBeNull();
+                _context.Test.ConferenceDetailsResponses.Add(conference);
+            }
+        }
+
         private void CreateConference(DateTime date)
         {
             CreateNewConferenceRequest(date);
@@ -268,10 +308,10 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference is closed");
         }
 
-        private void CreateNewConferenceRequest(DateTime date)
+        private void CreateNewConferenceRequest(DateTime date, string judgeFirstName = null)
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
-                .WithJudge()
+                .WithJudge(judgeFirstName)
                 .WithRepresentative("Claimant").WithIndividual("Claimant")
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
                 .WithHearingRefId(Guid.NewGuid())

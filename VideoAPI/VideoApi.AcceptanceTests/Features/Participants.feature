@@ -39,3 +39,19 @@ Feature: Participants
     And I have a valid set heartbeat data request 
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
+
+     @VIH-6002
+  Scenario: Get the a list of judge names
+    Given I have multiple conferences
+    And I have a valid get judge names data request 
+    When I send the request to the endpoint
+    Then the response should have the status Ok and success status True
+    And the judge names should be retrieved
+
+  @VIH-6002
+  Scenario: Get the a distinct list of judge names
+    Given I have multiple conferences with duplicate first names for judges
+    And I have a valid get judge names data request 
+    When I send the request to the endpoint
+    Then the response should have the status Ok and success status True
+    And the judge names should be retrieved
