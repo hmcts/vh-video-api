@@ -271,7 +271,7 @@ namespace Video.API.Controllers
         /// Get a list of distinct first name of judges
         /// </summary>
         /// <returns></returns>
-        [HttpGet("participants/judge/firstname")]
+        [HttpGet("participants/Judge/firstname")]
         [SwaggerOperation(OperationId = "GetDistinctJudgeNames")]
         [ProducesResponseType(typeof(JudgeNameListResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDistinctJudgeNamesAsync()
