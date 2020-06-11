@@ -266,5 +266,20 @@ namespace Video.API.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Get a list of distinct first name of judges
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("participants/judge/firstname")]
+        [SwaggerOperation(OperationId = "GetDistinctJudgeNames")]
+        [ProducesResponseType(typeof(JudgeNameListResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetDistinctJudgeNamesAsync()
+        {
+            _logger.LogDebug("GetDistinctJudgeNames");
+            var query = new GetDistinctJudgeListByFirstNameQuery();
+            var judgeFirstNames = await _queryHandler.Handle<GetDistinctJudgeListByFirstNameQuery, List<string>>(query);
+            return Ok(new JudgeNameListResponse { FirstNames = judgeFirstNames });
+        }
     }
 }
