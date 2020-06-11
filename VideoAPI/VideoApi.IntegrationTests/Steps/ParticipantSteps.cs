@@ -70,6 +70,8 @@ namespace VideoApi.IntegrationTests.Steps
                     request = new UpdateParticipantRequest
                     {
                         Fullname = "Automation_Mr Test_Fullname",
+                        FirstName = "Automation_Mr Test_Firstname",
+                        LastName = "Automation_Mr Test_Lastname",
                         DisplayName = "Automation_Test_Displayname",
                         Representee = "Automation_Test_Representee"
                     };
@@ -82,6 +84,8 @@ namespace VideoApi.IntegrationTests.Steps
                     request = new UpdateParticipantRequest
                     {
                         Fullname = "Automation_Mr Test_Fullname",
+                        FirstName = "Automation_Mr Test_Firstname",
+                        LastName = "Automation_Mr Test_Lastname",
                         DisplayName = "Automation_Test_Displayname",
                         Representee = "Automation_Test_Representee"
                     };
@@ -91,6 +95,8 @@ namespace VideoApi.IntegrationTests.Steps
                     request = new UpdateParticipantRequest
                     {
                         Fullname = "Automation_Mr Test_Fullname",
+                        FirstName = "Automation_Mr Test_Firstname",
+                        LastName = "Automation_Mr Test_Lastname",
                         DisplayName = "Automation_Test_Displayname",
                         Representee = "Automation_Test_Representee"
                     };
