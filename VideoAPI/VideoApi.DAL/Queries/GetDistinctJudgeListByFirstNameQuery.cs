@@ -24,6 +24,7 @@ namespace VideoApi.DAL.Queries
         {
             var participants = await _context.Participants
                 .AsNoTracking()
+                .Where(p => p.UserRole == UserRole.Judge && !string.IsNullOrEmpty(p.FirstName))
                 .Where(p => p.UserRole == UserRole.Judge)
                 .Select(x => x.FirstName)
                 .Distinct()

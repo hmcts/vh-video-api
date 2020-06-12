@@ -162,14 +162,8 @@ namespace VideoApi.AcceptanceTests.Steps
 
             foreach (var judge in judges)
             {
-                var requestJudgeFirstName = judge.FirstName;
-                requestJudgeFirstName.Should().NotBeNull();
-                string judgeName = judgesList.FirstOrDefault(x => x.Contains(requestJudgeFirstName));
-                judgeName.Should().NotBeNullOrEmpty();
-
-                judgesList.Count(x => x.Contains(requestJudgeFirstName)).Should().Be(1);
+                judgesList.Count(x => x.Contains(judge.FirstName)).Should().Be(1);
             }
-
         }
     }
 }
