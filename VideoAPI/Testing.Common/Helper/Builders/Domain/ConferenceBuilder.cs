@@ -59,15 +59,20 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null, RoomType? roomType = null, 
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null, string firstName = null, RoomType? roomType = null, 
             ParticipantState participantState = ParticipantState.None)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
                 username = Internet.Email();
             }
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                firstName = Name.First();
+            }
+
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(), username, userRole,
+                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username, userRole,
                     caseTypeGroup)).Build();
 
             if (userRole == UserRole.Representative)

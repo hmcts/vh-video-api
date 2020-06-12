@@ -16,6 +16,7 @@ namespace Testing.Common.Configuration
         public List<Alert> Alerts { get; set; }
         public List<Guid> ConferenceIds { get; set; }
         public ConferenceDetailsResponse ConferenceResponse { get; set; }
+        public List<ConferenceDetailsResponse> ConferenceDetailsResponses { get; set; }
         public List<ConferenceForAdminResponse> ConferenceResponses { get; set; }
         public List<Conference> Conferences { get; set; }
         public AddHeartbeatRequest HeartbeatData { get; set; }

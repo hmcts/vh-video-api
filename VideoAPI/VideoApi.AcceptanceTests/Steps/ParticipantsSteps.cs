@@ -141,5 +141,29 @@ namespace VideoApi.AcceptanceTests.Steps
                 participant.Representee.Should().Contain("Updated");
             }
         }
+
+        [Given(@"I have a valid get judge names data request")]
+        public void GetJudgeNamesDataRequest()
+        {
+            _context.Request = _context.Get(GetDistinctJudgeNames());
+        }
+
+        [Then(@"the judge names should be retrieved")]
+        public void ThenTheJudgeNamesShouldBeRetrieved()
+        {
+            var judgesList = RequestHelper.DeserialiseSnakeCaseJsonToResponse<JudgeNameListResponse>(_context.Response.Content).FirstNames;
+            var conferences = _context.Test.ConferenceDetailsResponses;
+
+            var judges = conferences.SelectMany(c => c.Participants).Where(p => p.UserRole == UserRole.Judge).ToList();
+            judges.Should().NotBeNull();
+            judges.Count.Should().BeGreaterOrEqualTo(4);
+            judgesList.Count.Should().BeGreaterOrEqualTo(2);
+            judgesList.Should().NotBeNull();
+
+            foreach (var judge in judges)
+            {
+                judgesList.Count(x => x.Contains(judge.FirstName)).Should().Be(1);
+            }
+        }
     }
 }
