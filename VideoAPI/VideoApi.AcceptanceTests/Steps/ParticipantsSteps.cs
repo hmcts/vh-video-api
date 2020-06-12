@@ -154,15 +154,22 @@ namespace VideoApi.AcceptanceTests.Steps
             var judgesList = RequestHelper.DeserialiseSnakeCaseJsonToResponse<JudgeNameListResponse>(_context.Response.Content).FirstNames;
             var conferences = _context.Test.ConferenceDetailsResponses;
 
-            var judges = conferences.SelectMany(c => c.Participants).Where(p => p.UserRole == UserRole.Judge);
+            var judges = conferences.SelectMany(c => c.Participants).Where(p => p.UserRole == UserRole.Judge).ToList();
             judges.Should().NotBeNull();
+            judges.Count.Should().BeGreaterOrEqualTo(4);
+            judgesList.Count.Should().BeGreaterOrEqualTo(2);
+            judgesList.Should().NotBeNull();
 
             foreach (var judge in judges)
             {
-                judgesList.Count(x => x.Contains(judge.FirstName)).Should().Be(1);
-                judgesList.Count.Should().BeGreaterOrEqualTo(2);
+                var requestJudgeFirstName = judge.FirstName;
+                requestJudgeFirstName.Should().NotBeNull();
+                string judgeName = judgesList.FirstOrDefault(x => x.Contains(requestJudgeFirstName));
+                judgeName.Should().NotBeNullOrEmpty();
+
+                judgesList.Count(x => x.Contains(requestJudgeFirstName)).Should().Be(1);
             }
-            judgesList.Should().NotBeEmpty();
+
         }
     }
 }

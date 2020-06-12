@@ -266,27 +266,19 @@ namespace VideoApi.AcceptanceTests.Steps
 
             for (int i = 0; i < 2; i++)
             {
-                CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge1 : null);
-                _context.Response = _context.Client().Execute(_context.Request);
-                _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
-                var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
-                conference.Should().NotBeNull();
-                _context.Test.ConferenceDetailsResponses.Add(conference);
+                CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge1 : null);
+                _context.Test.ConferenceDetailsResponses.Add(_context.Test.ConferenceResponse);
             }
             for (int i = 0; i < 2; i++)
             {
-                CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge2 : null);
-                _context.Response = _context.Client().Execute(_context.Request);
-                _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
-                var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
-                conference.Should().NotBeNull();
-                _context.Test.ConferenceDetailsResponses.Add(conference);
+                CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge2 : null);
+                _context.Test.ConferenceDetailsResponses.Add(_context.Test.ConferenceResponse);
             }
         }
 
-        private void CreateConference(DateTime date)
+        private void CreateConference(DateTime date, string judgeFirstName = null)
         {
-            CreateNewConferenceRequest(date);
+            CreateNewConferenceRequest(date, judgeFirstName);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
             var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
