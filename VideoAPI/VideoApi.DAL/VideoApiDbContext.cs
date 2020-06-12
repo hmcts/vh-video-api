@@ -16,6 +16,8 @@ namespace VideoApi.DAL
 
         public DbSet<Task> Tasks { get; set; }
 
+        public DbSet<Participant> Participants { get; set; }
+
         public VideoApiDbContext(DbContextOptions options) : base(options)
         {
         }
