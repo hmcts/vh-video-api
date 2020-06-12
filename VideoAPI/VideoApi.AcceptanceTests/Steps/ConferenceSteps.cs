@@ -62,13 +62,7 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2));
         }
 
-        [Given(@"I have multiple conferences")]
-        public void GivenIHaveMultipleConferences()
-        {
-            CreateMultipleConferences(false);
-
-        }
-
+        
         [Given(@"I have multiple conferences with duplicate first names for judges")]
         public void GivenIHaveMultipleConferencesWithDuplicateFirstNamesForJudges ()
         {
@@ -267,10 +261,9 @@ namespace VideoApi.AcceptanceTests.Steps
 
         private void CreateMultipleConferences(bool addDuplicateFirstNames)
         {
-            _context.Test.ConferenceDetailsResponses = new List<ConferenceDetailsResponse>();
-            string judge1 = "Automation_" + Name.First() + RandomNumber.Next();
-            string judge2 = "Automation_" + Name.First() + RandomNumber.Next();
-            
+            var judge1 = $"Automation_{Name.First()}{ RandomNumber.Next()}";
+            var judge2 = $"Automation_{Name.First()}{ RandomNumber.Next()}";
+
             for (int i = 0; i < 2; i++)
             {
                 CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge1 : null);

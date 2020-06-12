@@ -28,7 +28,7 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithJudge(string firstName = null)
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.Name = "Automation_" + Name.First() + Faker.RandomNumber.Next())
+                .With(x => x.Name = $"Automation_{Name.First()}{Faker.RandomNumber.Next()}")
                 .With(x => x.FirstName = $"Automation_{Name.First()}")
                 .With(x => x.LastName = $"Automation_{Name.Last()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")

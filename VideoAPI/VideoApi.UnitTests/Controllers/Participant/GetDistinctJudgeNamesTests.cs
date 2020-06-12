@@ -24,7 +24,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         }
 
         [Test]
-        public async Task should_getjudgelistResponses()
+        public async Task Should_get_judge_list_response()
         {
             var result = await Controller.GetDistinctJudgeNamesAsync();
 
@@ -36,6 +36,5 @@ namespace VideoApi.UnitTests.Controllers.Participant
             response.FirstNames.Count.Should().Be(3);
         }
     }
-
 }
 

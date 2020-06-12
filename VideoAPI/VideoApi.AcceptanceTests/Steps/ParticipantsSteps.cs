@@ -155,12 +155,12 @@ namespace VideoApi.AcceptanceTests.Steps
             var conferences = _context.Test.ConferenceDetailsResponses;
 
             var judges = conferences.SelectMany(c => c.Participants).Where(p => p.UserRole == UserRole.Judge);
+            judges.Should().NotBeNull();
 
             foreach (var judge in judges)
             {
                 judgesList.Count(x => x.Contains(judge.FirstName)).Should().Be(1);
                 judgesList.Count.Should().BeGreaterOrEqualTo(2);
-                
             }
             judgesList.Should().NotBeEmpty();
         }

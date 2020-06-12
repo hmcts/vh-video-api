@@ -49,14 +49,13 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [Test]
         public async Task Should_get_unique_list_of_judges()
         {
-            //This is done to create an unique first name to avoid the test from failing because of any existing data
-            string judge1 = "Automation_" + Name.First() + Faker.RandomNumber.Next();
+            string judge1 = CreateUniqueName();
             for (int i = 0; i < 2; i++)
             {
                 await CreateConference(judge1);
             }
 
-            string judge2 = "Automation_" + Name.First() + Faker.RandomNumber.Next();
+            string judge2 = CreateUniqueName();
             for (int i = 0; i < 3; i++)
             {
                 await CreateConference(judge2);
@@ -91,6 +90,12 @@ namespace VideoApi.IntegrationTests.Database.Queries
             {
                 await TestDataManager.RemoveConference(conferenceId);
             }
+        }
+        
+        private string CreateUniqueName()
+        {
+            //This is done to create an unique first name to avoid the test from failing because of any existing data
+            return $"Automation_{Name.First()}{Faker.RandomNumber.Next()}";
         }
     }
 }
