@@ -53,5 +53,20 @@ namespace VideoApi.UnitTests.Controllers.Tasks
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
             commandHandler.Verify(c => c.Handle(It.IsAny<UpdateTaskCommand>()), Times.Once);
         }
+
+        [Test]
+        public async Task Should_return_not_found_when_no_task_is_found()
+        {
+            var request = new UpdateTaskRequest
+            {
+                UpdatedBy = "Test Updated"
+            };
+
+            var result = await tasksController.UpdateTaskStatusAsync(Guid.NewGuid(), 10, request);
+
+            var typedResult = (NotFoundResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            commandHandler.Verify(c => c.Handle(It.IsAny<UpdateTaskCommand>()), Times.Once);
+        }
     }
 }

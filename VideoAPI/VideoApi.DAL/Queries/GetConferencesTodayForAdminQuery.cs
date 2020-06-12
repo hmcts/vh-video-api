@@ -6,12 +6,13 @@ using Castle.Core.Internal;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
     public class GetConferencesTodayForAdminQuery : IQuery
     {
-        public IEnumerable<string> VenueNames { get; set; }
+        public IEnumerable<string> UserNames { get; set; }
     }
 
     public class
@@ -34,9 +35,10 @@ namespace VideoApi.DAL.Queries
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
 
-            if (!query.VenueNames.IsNullOrEmpty())
+            if (!query.UserNames.IsNullOrEmpty())
             {
-                adminQuery = adminQuery.Where(c => query.VenueNames.Contains(c.HearingVenueName));
+                adminQuery = adminQuery.Where(p => p.Participants.Any(j => j.UserRole == UserRole.Judge
+                    && query.UserNames.Contains(j.FirstName))).Distinct();
             }
 
             return await adminQuery

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using Alert = VideoApi.Domain.Task;
@@ -118,6 +119,65 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 alert1, alert2, alert3, alert4, alert5, alert6
             });
+        }
+
+        [Given(@"I have several conferences with users")]
+        public async Task GivenIHaveSeveralConferencesWithUsers()
+        {
+            var today = DateTime.Today.AddMinutes(10);
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: today)
+                .WithParticipants(new List<Participant>
+                {
+                    new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
+                    new Participant(Guid.NewGuid(),"", "IndividualOne", "Brown", "IndividualOne Brown", "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct")
+                })
+                .Build();
+            today = DateTime.Today.AddMinutes(20);
+            var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
+                .WithParticipants(new List<Participant>
+                {
+                    new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
+                    new Participant(Guid.NewGuid(),"", "RepresentativeOne", "Green", "RepresentativeOne Green", "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct")
+                })
+                .Build();
+            today = DateTime.Today.AddMinutes(30);
+            var conference3 = new ConferenceBuilder(true, scheduledDateTime: today)
+                .WithParticipants(new List<Participant>
+                {
+                    new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
+                    new Participant(Guid.NewGuid(),"", "RepresentativeTwo", "Brown", "RepresentativeTwo Brown", "RepresentativeTwo.Brown@email.com", UserRole.Individual, "ChildrenAct")
+                })
+                .Build();
+            today = DateTime.Today.AddMinutes(35);
+            var conference4 = new ConferenceBuilder(true, scheduledDateTime: today)
+                .WithParticipants(new List<Participant>
+                {
+                    new Participant(Guid.NewGuid(),"", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@email.com", UserRole.Judge, "ChildrenAct"),
+                    new Participant(Guid.NewGuid(),"", "RepresentativeOne", "Green", "RepresentativeOne Green", "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct")
+                })
+                .Build();
+            today = DateTime.Today.AddMinutes(40);
+            var conference5 = new ConferenceBuilder(true, scheduledDateTime: today)
+                .WithParticipants(new List<Participant>
+                {
+                    new Participant(Guid.NewGuid(),"", "JudgeFour", "Matt", "JudgeFour Matt", "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct"),
+                    new Participant(Guid.NewGuid(),"", "RepresentativeTwo", "Dredd", "RepresentativeTwo Dredd", "RepresentativeTwo.Dredd@email.com", UserRole.Individual, "ChildrenAct")
+                })
+                .Build();
+            today = DateTime.Today.AddMinutes(45);
+            var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
+                .WithParticipants(new List<Participant>
+                {
+                    new Participant(Guid.NewGuid(),"", "JudgeFour", "Matt", "JudgeFour Matt", "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct"),
+                    new Participant(Guid.NewGuid(),"", "IndividualOne", "Brown", "IndividualOne Brown", "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct")
+                })
+                .Build();
+            await _context.TestDataManager.SeedConference(conference1);
+            await _context.TestDataManager.SeedConference(conference2);
+            await _context.TestDataManager.SeedConference(conference3);
+            await _context.TestDataManager.SeedConference(conference4);
+            await _context.TestDataManager.SeedConference(conference5);
+            await _context.TestDataManager.SeedConference(conference6);
         }
 
         [Given(@"I have several closed conferences with messages")]

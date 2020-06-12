@@ -122,7 +122,7 @@ namespace Video.API.Controllers
             }
 
             var currentRoom = participant.CurrentRoom;
-            if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 &&
+            if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 && 
                                           currentRoom != RoomType.ConsultationRoom2))
             {
                 // This could only happen when both the participants press 'Close' button at the same time to end the call
@@ -143,14 +143,15 @@ namespace Video.API.Controllers
         public async Task<IActionResult> RespondToAdminConsultationRequestAsync(AdminConsultationRequest request)
         {
             _logger.LogDebug($"RespondToAdminConsultationRequest");
-            
+
+            const string modelErrorMessage = "Response to consultation is missing";
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (!request.Answer.HasValue)
             {
-                ModelState.AddModelError(nameof(request.Answer), "Response to consultation is missing");
+                ModelState.AddModelError(nameof(request.Answer), modelErrorMessage);
                 return BadRequest(ModelState);
             }
             
