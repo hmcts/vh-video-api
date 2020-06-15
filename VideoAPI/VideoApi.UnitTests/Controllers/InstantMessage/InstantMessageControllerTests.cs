@@ -4,11 +4,14 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using Video.API.Controllers;
 using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.UnitTests.Controllers.Conference;
 using Task = System.Threading.Tasks.Task;
@@ -71,6 +74,22 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
             var typedResult = (BadRequestResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             _commandHandler.Verify(c => c.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_return_Ok_and_an_empty_list_when_no_closed_conferences_found()
+        {
+            var closedConferences = new List<VideoApi.Domain.Conference>();
+            _queryHandler
+                .Setup(x => x.Handle<GetClosedConferencesWithInstantMessagesQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetClosedConferencesWithInstantMessagesQuery>()))
+                .ReturnsAsync(closedConferences);
+
+            var result = await _instantMessageController.GetClosedConferencesWithInstantMessagesAsync();
+            var typedResult = (OkObjectResult)result;
+            typedResult.Should().NotBeNull();
+            var response = (List<ClosedConferencesResponse>) typedResult.Value;
+            response.Should().NotBeNull();
+            response.Count.Should().Be(0);
         }
     }
 }

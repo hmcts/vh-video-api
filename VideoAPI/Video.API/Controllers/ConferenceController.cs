@@ -205,7 +205,7 @@ namespace Video.API.Controllers
             
             var query = new GetConferencesTodayForAdminQuery
             {
-                VenueNames = request.VenueNames
+                UserNames = request.UserNames
             };
             
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminQuery, List<Conference>>(query);

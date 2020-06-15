@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -339,14 +339,17 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageService
                 .Setup(x => x.CreateSharedAccessSignature(It.IsAny<string>(), It.IsAny<TimeSpan>()))
                 .ReturnsAsync("fileLink");
-            
-            var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as OkObjectResult;
+
+            var hearingId = Guid.NewGuid();
+            var filePath = $"{hearingId}.mp4";
+            var result = await _controller.GetAudioRecordingLinkAsync(hearingId) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var item = result.Value.As<AudioRecordingResponse>();
             item.Should().NotBeNull();
             item.AudioFileLink.Should().NotBeNullOrEmpty();
             item.AudioFileLink.Should().Be("fileLink");
+            _storageService.Verify(c=>c.CreateSharedAccessSignature(filePath, It.IsAny<TimeSpan>()));
         }
     }
 }

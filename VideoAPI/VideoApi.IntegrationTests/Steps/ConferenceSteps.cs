@@ -95,10 +95,10 @@ namespace VideoApi.IntegrationTests.Steps
         }
         
         [Given(@"I filter by (.*)")]
-        public void GivenIFilterByVenues(string venuesList)
+        public void GivenIFilterByVenues(string usernameList)
         {
-            var venueNames = venuesList.Split(",").Select(v => v.Trim());
-            var queryParams = string.Join("&", venueNames.Select(v => $"VenueNames={v}"));
+            var userNames = usernameList.Split(",").Select(v => v.Trim());
+            var queryParams = string.Join("&", userNames.Select(v => $"UserNames={v}"));
             _context.Uri = $"{GetConferencesTodayForAdmin}?{queryParams}";
             _context.HttpMethod = HttpMethod.Get;
         }

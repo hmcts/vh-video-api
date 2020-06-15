@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Participant
@@ -26,11 +25,11 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[1];
 
-
             await Controller.RemoveParticipantFromConferenceAsync(conferenceId, participant.Id);
 
             MockQueryHandler.Verify(m => m.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-            MockCommandHandler.Verify(c => c.Handle(It.IsAny<RemoveParticipantsFromConferenceCommand>()), Times.Once);
+            MockCommandHandler.Verify(c => 
+                c.Handle(It.Is<RemoveParticipantsFromConferenceCommand>(x=>x.Participants[0].Id == participant.Id)), Times.Once);
         }
 
 

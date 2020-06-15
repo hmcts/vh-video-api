@@ -90,7 +90,12 @@ namespace Video.API.Controllers
             var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
             _logger.LogInformation(
                 $"Completed task {taskId} in conference {conferenceId} by {updateTaskRequest.UpdatedBy}");
-            var task = tasks.Single(x => x.Id == taskId);
+            var task = tasks.SingleOrDefault(x => x.Id == taskId);
+            if (task == null)
+            {
+                _logger.LogError($"Unable to find task {taskId} in conference {conferenceId}");
+                return NotFound();
+            }
             var response = TaskToResponseMapper.MapTaskToResponse(task);
             return Ok(response);
         }
