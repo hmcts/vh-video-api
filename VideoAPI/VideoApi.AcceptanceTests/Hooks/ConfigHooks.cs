@@ -38,6 +38,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterWowzaSettings(context);
+            RegisterAudioRecordingTestIdConfiguration(context);
             await GenerateBearerTokens(context);
         }
 
@@ -72,6 +73,13 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Config.Wowza.StorageAccountKey.Should().NotBeNullOrEmpty();
             context.Config.Wowza.StorageAccountName.Should().NotBeNullOrEmpty(); 
             context.Config.Wowza.StorageContainerName.Should().NotBeNullOrEmpty();
+        }
+
+        private void RegisterAudioRecordingTestIdConfiguration(TestContext context)
+        {
+            context.Config.AudioRecordingTestIds = new AudioRecordingTestIdConfiguration();
+            context.Config.AudioRecordingTestIds.NonExistent.Should().NotBeEmpty();
+            context.Config.AudioRecordingTestIds.Existing.Should().NotBeEmpty();
         }
 
         private static async Task GenerateBearerTokens(TestContext context)
