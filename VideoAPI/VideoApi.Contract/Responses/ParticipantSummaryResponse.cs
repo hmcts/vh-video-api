@@ -19,6 +19,16 @@ namespace VideoApi.Contract.Responses
         /// The participant display name
         /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// The participant first name
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// The participant last name
+        /// </summary>
+        public string LastName { get; set; }
         
         /// <summary>
         /// The current participant status

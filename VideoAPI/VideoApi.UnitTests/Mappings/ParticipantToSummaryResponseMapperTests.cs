@@ -29,8 +29,6 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.ParticipantRefId)
                 .Excluding(x => x.DisplayName)
                 .Excluding(x => x.Name)
-                .Excluding(x => x.FirstName)
-                .Excluding(x => x.LastName)
                 .Excluding(x => x.UserRole)
                 .Excluding(x => x.Id)
                 .Excluding(x => x.CaseTypeGroup)
