@@ -29,6 +29,12 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Post(CreateAudioApplication(_hearingId));
         }
 
+        [Given(@"I have a valid create audio application request for an existing hearing")]
+        public void GivenIHaveACreateAudioApplicationRequestForAnExistingHearing()
+        {
+            _context.Request = _context.Post(CreateAudioApplication(_context.Config.AudioRecordingTestIds.Existing));
+        }
+
         [Given(@"I have a valid get audio application request")]
         public void GivenIHaveAValidGetAudioApplicationRequest()
         {
@@ -38,7 +44,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a nonexistent get audio application request")]
         public void GivenIHaveANonexistentGetAudioApplicationRequest()
         {
-            _context.Request = _context.Get(GetAudioApplication(_hearingId));
+            _context.Request = _context.Get(GetAudioApplication(_context.Config.AudioRecordingTestIds.NonExistent));
+        }
+
+        [Given(@"I have a valid delete audio application request that has no application")]
+        public void GivenIHaveAValidDeleteAudioApplicationRequestThatHasNoApplication()
+        {
+            _context.Request = _context.Delete(DeleteAudioApplication(_context.Config.AudioRecordingTestIds.NonExistent));
         }
 
         [Given(@"I have a valid delete audio application request")]
@@ -61,16 +73,34 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Post(CreateAudioApplicationAndStream(_hearingId));
         }
 
+        [Given(@"I have a valid create audio application and stream request for an existing hearing")]
+        public void GivenIHaveAValidCreateAudioApplicationAndStreamRequestForAnExistingHearing()
+        {
+            _context.Request = _context.Post(CreateAudioApplicationAndStream(_context.Config.AudioRecordingTestIds.Existing));
+        }
+
         [Given(@"I have a valid get audio stream request")]
         public void GivenIHaveAValidGetAudioStreamRequest()
         {
             _context.Request = _context.Get(GetAudioStream(_hearingId));
         }
-
+        
+        [Given(@"I have a valid get audio stream request that has no stream")]
+        public void GivenIHaveAValidGetAudioStreamRequestThatHasNoStream()
+        {
+            _context.Request = _context.Get(GetAudioStream(_context.Config.AudioRecordingTestIds.NonExistent));
+        }
+        
         [Given(@"I have a valid create audio stream request")]
         public void GivenIHaveAValidCreateAudioStreamRequest()
         {
             _context.Request = _context.Post(CreateAudioStream(_hearingId));
+        }
+
+        [Given(@"I have a valid create audio stream request for an existing hearing")]
+        public void GivenIHaveAValidCreateAudioStreamRequestForAnExistingHearing()
+        {
+            _context.Request = _context.Post(CreateAudioStream(_context.Config.AudioRecordingTestIds.Existing));
         }
 
         [Given(@"I have a valid delete audio stream request")]
@@ -79,12 +109,24 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Delete(DeleteAudioStream(_hearingId));
         }
 
+        [Given(@"I have a valid delete audio stream request that has no audio stream")]
+        public void GivenIHaveAValidDeleteAudioApplicationRequestThatHasNoAudioStream()
+        {
+            _context.Request = _context.Delete(DeleteAudioApplication(_context.Config.AudioRecordingTestIds.NonExistent));
+        }
+
         [Given(@"I have a valid get audio stream monitoring request")]
         public void GivenIHaveAValidGetAudioStreamMonitoringRequest()
         {
             _context.Request = _context.Get(GetAudioMonitoringStream(_hearingId));
         }
 
+        [Given(@"I have a valid get audio stream monitoring request that has no audio stream")]
+        public void GivenIHaveAValidGetAudioStreamMonitoringRequestThatHasNoAudioStream()
+        {
+            _context.Request = _context.Get(GetAudioMonitoringStream(_context.Config.AudioRecordingTestIds.NonExistent));
+        }
+        
         [Given(@"the conference has an audio stream")]
         public void GivenTheConferenceHasAnAudioStream()
         {
@@ -113,6 +155,12 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidGetAudioRecordingLinkRequest()
         {
             _context.Request = _context.Get(GetAudioRecordingLink(_context.Test.ConferenceResponse.HearingId));
+        }
+
+        [Given(@"I have a valid get audio recording link request for non existing hearing")]
+        public void GivenIHaveAValidGetAudioRecordingLinkRequestForNonExistingHearing()
+        {
+            _context.Request = _context.Get(GetAudioRecordingLink(_context.Config.AudioRecordingTestIds.NonExistent));
         }
 
         [Then(@"the audio application details are retrieved")]
