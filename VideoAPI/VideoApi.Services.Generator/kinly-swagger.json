@@ -118,6 +118,37 @@
           }
         }
       },
+      "patch": {
+        "operationId": "updateHearing",
+        "description": "Update single hearing",
+        "tags": [
+          "hearing"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "virtual_courtroom_id",
+            "type": "string",
+            "required": true,
+            "description": "Hearing ID"
+          },
+          {
+            "name": "UpdateHearingParams",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/updateHearingParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Hearing does not exist - Invalid virtual_courtroom_id. (When virtual_courtroom_id does not exist or the hearing is already closed.)"
+          }
+        }
+      },
       "delete": {
         "operationId": "deleteHearing",
         "description": "Delete single hearing",
@@ -231,6 +262,18 @@
         "streaming_url": {
           "type": "string",
           "description": "Streaming url"
+        }
+      }
+    },
+    "updateHearingParams": {
+      "type": "object",
+      "required": [
+        "recording_enabled"
+      ],
+      "properties": {
+        "recording_enabled": {
+          "type": "boolean",
+          "description": "Should record conference"
         }
       }
     },

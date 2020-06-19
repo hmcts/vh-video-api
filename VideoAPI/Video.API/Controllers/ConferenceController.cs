@@ -72,27 +72,20 @@ namespace Video.API.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
-            string ingestUrl = null;
-            
-            if (request.AudioRecordingRequired)
-            {
-                var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationWithStreamAsync
-                (
-                    request.HearingRefId
-                );
+            var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationWithStreamAsync
+            (
+                request.HearingRefId
+            );
 
-                ingestUrl = createAudioRecordingResponse.IngestUrl;
-                
-                if (!createAudioRecordingResponse.Success)
-                {
-                    _logger.LogWarning($"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");    
-                }
+            if (!createAudioRecordingResponse.Success)
+            {
+                _logger.LogWarning($"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");
             }
             
-            var conferenceId = await CreateConferenceAsync(request, ingestUrl);
+            var conferenceId = await CreateConferenceAsync(request, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Conference Created");
             
-            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, ingestUrl);
+            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Kinly Room Booked");
             
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
@@ -116,6 +109,20 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateConferenceAsync(UpdateConferenceRequest request)
         {
+            _logger.LogDebug("UpdateConference");
+
+            var query = new GetConferenceByHearingRefIdQuery(request.HearingRefId);
+            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+
+            if (conference == null)
+            {
+                _logger.LogWarning($"Unable to find conference with hearing id {request.HearingRefId}");
+
+                return NotFound();
+            }
+            
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired);
+            
             try
             {
                 var command = new UpdateConferenceDetailsCommand(request.HearingRefId, request.CaseNumber,

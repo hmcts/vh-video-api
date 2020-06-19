@@ -182,5 +182,13 @@ namespace VideoApi.UnitTests.Services
             result.ParticipantUri.Should().Be(uris.Participant);
             result.PexipNode.Should().Be(uris.Pexip_node);
         }
+
+        [Test]
+        public async Task Should_update_virtual_court_room()
+        {
+            _kinlyApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
+
+            await _kinlyPlatformService.UpdateVirtualCourtRoomAsync(Guid.NewGuid(), true);
+        }
     }
 }

@@ -36,5 +36,13 @@ namespace VideoApi.Services.Contracts
         /// <param name="conferenceId">Conference Id</param>
         /// <returns></returns>
         Task DeleteVirtualCourtRoomAsync(Guid conferenceId);
+
+        /// <summary>
+        /// Update virtual court room
+        /// </summary>
+        /// <param name="conferenceId"></param>
+        /// <param name="audioRecordingRequired"></param>
+        /// <returns></returns>
+        Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired);
     }
 }

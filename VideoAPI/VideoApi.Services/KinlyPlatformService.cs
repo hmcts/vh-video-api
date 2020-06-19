@@ -189,5 +189,10 @@ namespace VideoApi.Services
         {
             await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString());
         }
+
+        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired)
+        {
+            await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(), new UpdateHearingParams {Recording_enabled = audioRecordingRequired});
+        }
     }
 }

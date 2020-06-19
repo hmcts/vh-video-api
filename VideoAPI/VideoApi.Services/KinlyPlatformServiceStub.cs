@@ -58,6 +58,11 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
+        public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired)
+        {
+            return Task.CompletedTask;
+        }
+
         private static MeetingRoom Create()
         {
             var adminUri = $"https://ext-node02.com/webapp/#/?conference=user@email.com";
