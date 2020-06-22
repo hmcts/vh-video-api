@@ -34,6 +34,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
+                .WithAudioRecordingRequired(false)
                 .Build();
 
             foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FluentAssertions;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
@@ -53,6 +53,8 @@ namespace Testing.Common.Assertions
             {
                 conference.ClosedDateTime.Should().HaveValue().And.NotBe(DateTime.MinValue);
             }
+
+            conference.AudioRecordingRequired.Should().BeFalse();
         }
     }
 }

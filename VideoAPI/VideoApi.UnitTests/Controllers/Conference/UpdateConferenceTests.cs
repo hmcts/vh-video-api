@@ -6,6 +6,7 @@ using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
+using VideoApi.DAL.Queries;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Conference
@@ -25,9 +26,30 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 CaseNumber = "CaseNo"
             };
 
+            VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>()));
+
             await Controller.UpdateConferenceAsync(request);
 
+            VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>()));
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_return_notfound_with_no_matching_conference()
+        {
+            var request = new UpdateConferenceRequest
+            {
+                HearingRefId = Guid.NewGuid(),
+            };
+            
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync((VideoApi.Domain.Conference) null);
+
+
+            var result = await Controller.UpdateConferenceAsync(request);
+            var typedResult = (NotFoundResult) result;
+            typedResult.Should().NotBeNull();
         }
 
         [Test]

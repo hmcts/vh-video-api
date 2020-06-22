@@ -66,6 +66,22 @@ namespace VideoApi.Services.Kinly
         System.Threading.Tasks.Task<Hearing> GetHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
     
         /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>successful operation</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams);
+    
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>successful operation</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        void UpdateHearing(string virtual_courtroom_id, UpdateHearingParams updateHearingParams);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>successful operation</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams, System.Threading.CancellationToken cancellationToken);
+    
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Deleted</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteHearingAsync(string virtual_courtroom_id);
@@ -396,6 +412,92 @@ namespace VideoApi.Services.Kinly
                         }
             
                         return default(Hearing);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>successful operation</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams)
+        {
+            return UpdateHearingAsync(virtual_courtroom_id, updateHearingParams, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>successful operation</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        public void UpdateHearing(string virtual_courtroom_id, UpdateHearingParams updateHearingParams)
+        {
+            System.Threading.Tasks.Task.Run(async () => await UpdateHearingAsync(virtual_courtroom_id, updateHearingParams, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>successful operation</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams, System.Threading.CancellationToken cancellationToken)
+        {
+            if (virtual_courtroom_id == null)
+                throw new System.ArgumentNullException("virtual_courtroom_id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearing/{virtual_courtroom_id}");
+            urlBuilder_.Replace("{virtual_courtroom_id}", System.Uri.EscapeDataString(ConvertToString(virtual_courtroom_id, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(updateHearingParams, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new KinlyApiException("Hearing does not exist - Invalid virtual_courtroom_id. (When virtual_courtroom_id does not exist or the hearing is already closed.)", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
                     }
                     finally
                     {
@@ -784,6 +886,25 @@ namespace VideoApi.Services.Kinly
         public static CreateHearingParams FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<CreateHearingParams>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class UpdateHearingParams 
+    {
+        /// <summary>Should record conference</summary>
+        [Newtonsoft.Json.JsonProperty("recording_enabled", Required = Newtonsoft.Json.Required.Always)]
+        public bool Recording_enabled { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static UpdateHearingParams FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<UpdateHearingParams>(data);
         }
     
     }
