@@ -291,6 +291,18 @@ namespace VideoApi.IntegrationTests.Steps
             removedConference.Should().BeNull();
         }
 
+        [Then(@"the conference should be updated")]
+        public async Task ThenTheHearingShouldBeUpdated()
+        {
+            Conference updatedConference;
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
+            {
+                updatedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
+            }
+            updatedConference.Should().NotBeNull();
+            updatedConference.AudioRecordingRequired.Should().BeTrue();
+        }
+
         [Then(@"an empty list is retrieved")]
         public async Task ThenAnEmptyListIsRetrieved()
         {
@@ -337,7 +349,8 @@ namespace VideoApi.IntegrationTests.Steps
                         CaseNumber = _context.Test.Conference.CaseNumber,
                         HearingRefId = _context.Test.Conference.HearingRefId,
                         ScheduledDuration = _context.Test.Conference.ScheduledDuration + 10,
-                        CaseType = _context.Test.Conference.CaseType
+                        CaseType = _context.Test.Conference.CaseType,
+                        AudioRecordingRequired = true
                     };
                     break;
                 }

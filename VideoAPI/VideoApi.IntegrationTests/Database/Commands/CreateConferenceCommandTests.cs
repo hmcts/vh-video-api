@@ -35,14 +35,27 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = new ParticipantBuilder(true).Build();
             var participants = new List<Participant> {participant};
             const string hearingVenueName = "MyVenue";
-            string ingestUrl = $"https://localhost/ingesturl";
+            const string ingestUrl = "https://localhost/ingesturl";
+            const bool audioRecordingRequired = true;
 
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
-                    scheduledDuration, participants, hearingVenueName, true, ingestUrl);
+                    scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl);
             await _handler.Handle(command);
 
             command.NewConferenceId.Should().NotBeEmpty();
+            command.HearingRefId.Should().Be(hearingRefId);
+            command.CaseType.Should().Be(caseType);
+            command.ScheduledDateTime.Should().Be(scheduledDateTime);
+            command.CaseNumber.Should().Be(caseNumber);
+            command.CaseName.Should().Be(caseName);
+            command.ScheduledDuration.Should().Be(scheduledDuration);
+            command.HearingVenueName.Should().Be(hearingVenueName);
+            command.AudioRecordingRequired.Should().Be(audioRecordingRequired);
+            command.IngestUrl.Should().Be(ingestUrl);
+            command.Participants.Should().NotBeNullOrEmpty();
+            command.Participants.Count.Should().Be(1);
+            command.Participants[0].Should().BeEquivalentTo(participant);
             _newConferenceId = command.NewConferenceId;
         }
 

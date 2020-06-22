@@ -22,6 +22,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.CaseName = $"{caseName} {GenerateRandom.Letters(fromRandomNumber)}")
                 .With(x => x.ScheduledDuration = 120)
                 .With(x => x.Participants = new List<ParticipantRequest>())
+                .With(x => x.AudioRecordingRequired = false)
                 .Build();
         }
 

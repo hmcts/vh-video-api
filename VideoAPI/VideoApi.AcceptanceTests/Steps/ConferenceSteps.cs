@@ -43,7 +43,8 @@ namespace VideoApi.AcceptanceTests.Steps
                 HearingRefId = _context.Test.ConferenceResponse.HearingId,
                 ScheduledDateTime = DateTime.Now.AddDays(1),
                 ScheduledDuration = 12,
-                HearingVenueName = "MyVenue"
+                HearingVenueName = "MyVenue",
+                AudioRecordingRequired = true
             };
 
             _scenarioContext.Add(UpdatedKey, request);
@@ -168,6 +169,7 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.ScheduledDateTime.Day.Should().Be(DateTime.Today.AddDays(1).Day);
             conference.ScheduledDuration.Should().Be(expected.ScheduledDuration);
             conference.HearingVenueName.Should().Be(expected.HearingVenueName);
+            conference.AudioRecordingRequired.Should().Be(expected.AudioRecordingRequired);
         }
 
         [Then(@"the conference details should be retrieved")]

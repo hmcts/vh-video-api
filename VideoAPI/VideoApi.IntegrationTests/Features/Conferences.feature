@@ -81,13 +81,18 @@ Feature: Conferences
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
   
-  
-
   Scenario: Update a conference with valid request
     Given I have a conference
     And I have a valid update a conference request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
+
+  Scenario: Update a conference with audio recording required for a valid request
+    Given I have a conference
+    And I have a valid update a conference request
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the conference should be updated
 
   Scenario: Update a conference with invalid request
     Given I have a invalid update a conference request

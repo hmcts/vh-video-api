@@ -123,5 +123,11 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
+
+        public ConferenceBuilder WithAudioRecordingRequired(bool required)
+        {
+            _conference.AudioRecordingRequired = required;
+            return this;
+        }
     }
 }
