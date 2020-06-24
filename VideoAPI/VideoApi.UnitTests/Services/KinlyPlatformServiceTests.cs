@@ -190,5 +190,11 @@ namespace VideoApi.UnitTests.Services
 
             await _kinlyPlatformService.UpdateVirtualCourtRoomAsync(Guid.NewGuid(), true);
         }
+
+        [Test]
+        public async Task SHould_get_kinly_virtual_court_room()
+        {
+            
+        }
     }
 }
