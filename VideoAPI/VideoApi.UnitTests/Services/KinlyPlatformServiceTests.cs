@@ -9,11 +9,11 @@ using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 using VideoApi.Services;
+using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
@@ -23,12 +23,12 @@ namespace VideoApi.UnitTests.Services
     public class KinlyPlatformServiceTests
     {
         private Mock<IKinlyApiClient> _kinlyApiClientMock;
-        private Mock<ICustomJwtTokenProvider> _customJwtTokenProviderMock;
         private Mock<ILogger<KinlyPlatformService>> _loggerMock;
         private IOptions<ServicesConfiguration> _servicesConfigOptions;
 
         private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
         private IRoomReservationService _roomReservationService;
+        private Mock<IKinlySelfTestHttpClient> _kinlySelfTestHttpClient;
         private IMemoryCache _memoryCache;
         private KinlyPlatformService _kinlyPlatformService;
         private Conference _testConference;
@@ -37,12 +37,12 @@ namespace VideoApi.UnitTests.Services
         public void Setup()
         {
             _kinlyApiClientMock = new Mock<IKinlyApiClient>();
-            _customJwtTokenProviderMock = new Mock<ICustomJwtTokenProvider>();
             _loggerMock = new Mock<ILogger<KinlyPlatformService>>();
             
             _loggerRoomReservationMock = new Mock<ILogger<IRoomReservationService>>();
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
             _roomReservationService = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
+            _kinlySelfTestHttpClient = new Mock<IKinlySelfTestHttpClient>();
             
             _servicesConfigOptions = Options.Create(new ServicesConfiguration
             {
@@ -52,9 +52,9 @@ namespace VideoApi.UnitTests.Services
             _kinlyPlatformService = new KinlyPlatformService(
                 _kinlyApiClientMock.Object,
                 _servicesConfigOptions,
-                _customJwtTokenProviderMock.Object,
                 _loggerMock.Object,
-                _roomReservationService
+                _roomReservationService,
+                _kinlySelfTestHttpClient.Object
             );
             
             _testConference = new ConferenceBuilder()
@@ -192,7 +192,46 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task SHould_get_kinly_virtual_court_room()
+        public async Task Should_get_kinly_virtual_court_room()
+        {
+            var hearing = new Hearing
+            {
+                Uris = new Uris {Admin = "https://Admin.com", Judge = "https://Judge.com", 
+                    Participant = "https://Participant.com", Pexip_node = "https://Pexip_node.com"}
+            };
+
+            _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).ReturnsAsync(hearing);
+
+            var result = await _kinlyPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
+
+            result.Should().NotBeNull();
+            result.AdminUri.Should().Be(hearing.Uris.Admin);
+            result.JudgeUri.Should().Be(hearing.Uris.Judge);
+            result.ParticipantUri.Should().Be(hearing.Uris.Participant);
+        }
+
+        [Test]
+        public async Task Should_return_null_for_kinly_virtual_court_room_when_not_found()
+        {
+            var exception = new KinlyApiException("notfound", StatusCodes.Status404NotFound, "", null, null);
+            _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
+
+            var result = await _kinlyPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
+
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Should_throw_for_kinly_virtual_court_room_when_other_status()
+        {
+            var exception = new KinlyApiException("BadGateway", StatusCodes.Status502BadGateway, "", null, null);
+            _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
+
+            Assert.ThrowsAsync<KinlyApiException>(() => _kinlyPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>()));
+        }
+
+        [Test]
+        public async Task Should_throw_exception_after_exhausting_polly_retry()
         {
             
         }

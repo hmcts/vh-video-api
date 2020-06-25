@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -13,6 +12,7 @@ namespace VideoApi.Services
     public class AudioPlatformServiceStub : IAudioPlatformService
     {
         private readonly AudioRecordingTestIdConfiguration _audioRecordingTestIdConfiguration;
+        
         public AudioPlatformServiceStub()
         {
             _audioRecordingTestIdConfiguration = new AudioRecordingTestIdConfiguration();
@@ -50,7 +50,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); ;
+                });
             }
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
@@ -63,7 +63,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); ;
+                });
             }
             return await Task.FromResult(new AudioPlatformServiceResponse(true)
             {
@@ -79,7 +79,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); ;
+                });
             }
 
             var applicationName = Guid.NewGuid();
