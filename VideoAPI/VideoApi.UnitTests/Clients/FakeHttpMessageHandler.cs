@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace VideoApi.UnitTests.Clients
 {
-    public class FakeHttpMessageHandler : HttpMessageHandler
+    public sealed class FakeHttpMessageHandler : HttpMessageHandler
     {
-        protected virtual HttpResponseMessage Send(HttpRequestMessage request)
+        private static HttpResponseMessage Send(HttpRequestMessage request)
         {
             if (request.RequestUri.Host.StartsWith($"{nameof(Exception).ToLower()}.com"))
             {
