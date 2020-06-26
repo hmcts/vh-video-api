@@ -50,8 +50,10 @@ namespace VideoApi.Services
 
         private async Task<string> GenerateSasToken(BlobSasBuilder builder)
         {
+            var userDelegationStart = DateTimeOffset.UtcNow.AddHours(-1);
+            var userDelegationEnd = userDelegationStart.AddDays(7);
             var blobSasQueryParameters = _useUserDelegation
-                ? builder.ToSasQueryParameters(await _serviceClient.GetUserDelegationKeyAsync(DateTimeOffset.UtcNow.AddHours(-1), DateTimeOffset.UtcNow.AddDays(1)), _configuration.StorageAccountName)
+                ? builder.ToSasQueryParameters(await _serviceClient.GetUserDelegationKeyAsync(userDelegationStart, userDelegationEnd), _configuration.StorageAccountName)
                 : builder.ToSasQueryParameters(new StorageSharedKeyCredential(_configuration.StorageAccountName, _configuration.StorageAccountKey));
 
             return blobSasQueryParameters.ToString();
