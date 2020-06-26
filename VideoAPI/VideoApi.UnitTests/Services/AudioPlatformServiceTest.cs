@@ -65,43 +65,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().NotBeNull();
         }
-        
-        [Test]
-        public async Task GetAllAudioApplicationsInfoAsync_Returns_Null_When_AudioPlatformException_Thrown_which_is_NotFound()
-        {
-            _wowzaClient
-                .Setup(x => x.GetApplicationsAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.NotFound));
 
-            var result = await _audioPlatformService.GetAllAudioApplicationsInfoAsync();
-
-            result.Should().BeNull();
-        }
-        
-        [Test]
-        public async Task GetAllAudioApplicationsInfoAsync_Returns_Null_When_AudioPlatformException_Thrown()
-        {
-            _wowzaClient
-                .Setup(x => x.GetApplicationsAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
-
-            var result = await _audioPlatformService.GetAllAudioApplicationsInfoAsync();
-
-            result.Should().BeNull();
-        }
-        
-        [Test]
-        public async Task GetAllAudioApplicationsInfoAsync_Returns_Response()
-        {
-            _wowzaClient
-                .Setup(x => x.GetApplicationsAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new WowzaGetApplicationsResponse());
-
-            var result = await _audioPlatformService.GetAllAudioApplicationsInfoAsync();
-
-            result.Should().NotBeNull();
-        }
-        
         [Test]
         public async Task CreateAudioApplicationAsync_Returns_False_AudioPlatformServiceResponse_When_AudioPlatformException_Thrown()
         {

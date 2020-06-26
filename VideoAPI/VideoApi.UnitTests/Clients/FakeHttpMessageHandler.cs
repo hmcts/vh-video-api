@@ -7,7 +7,9 @@ namespace VideoApi.UnitTests.Clients
 {
     public sealed class FakeHttpMessageHandler : HttpMessageHandler
     {
-        private static HttpResponseMessage Send(HttpRequestMessage request)
+        public string ReturnContent { get; set; } = "{}";
+        
+        private HttpResponseMessage Send(HttpRequestMessage request)
         {
             if (request.RequestUri.Host.StartsWith($"{nameof(Exception).ToLower()}.com"))
             {
@@ -23,7 +25,16 @@ namespace VideoApi.UnitTests.Clients
                 };
             }
 
-            return new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("{}") };
+            if (request.RequestUri.Host.StartsWith($"{HttpStatusCode.NotFound.ToString().ToLower()}.com"))
+            {
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    Content = new StringContent("Not Found")
+                };
+            }
+
+            return new HttpResponseMessage {StatusCode = HttpStatusCode.OK, Content = new StringContent(ReturnContent)};
         }
         
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)

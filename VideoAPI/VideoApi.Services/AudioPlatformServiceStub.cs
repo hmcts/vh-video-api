@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
 using VideoApi.Common.Configuration;
@@ -9,6 +10,7 @@ using VideoApi.Services.Responses;
 
 namespace VideoApi.Services
 {
+    [ExcludeFromCodeCoverage]
     public class AudioPlatformServiceStub : IAudioPlatformService
     {
         private readonly AudioRecordingTestIdConfiguration _audioRecordingTestIdConfiguration;
@@ -28,17 +30,6 @@ namespace VideoApi.Services
             return await Task.FromResult(new WowzaGetApplicationResponse
             {
                 Name = "MyApplicationName"
-            });
-        }
-
-        public async Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsInfoAsync()
-        {
-            return await Task.FromResult(new WowzaGetApplicationsResponse
-            {
-                ServerName = "Server", Applications = new List<Application>
-                {
-                    new Application{Id = "one"}, new Application{Id = "two"}, new Application{Id = "three"}
-                }.ToArray()
             });
         }
 

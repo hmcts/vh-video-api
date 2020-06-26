@@ -10,7 +10,6 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
-using Polly;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Services
@@ -22,15 +21,18 @@ namespace VideoApi.Services
         private readonly ServicesConfiguration _servicesConfigOptions;
         private readonly IRoomReservationService _roomReservationService;
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
+        private readonly IPollyRetryService _pollyRetryService;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient, IOptions<ServicesConfiguration> servicesConfigOptions,
-            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService, IKinlySelfTestHttpClient kinlySelfTestHttpClient)
+            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService, IKinlySelfTestHttpClient kinlySelfTestHttpClient,
+            IPollyRetryService pollyRetryService)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
             _servicesConfigOptions = servicesConfigOptions.Value;
             _roomReservationService = roomReservationService;
             _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
+            _pollyRetryService = pollyRetryService;
         }
 
 
@@ -91,17 +93,16 @@ namespace VideoApi.Services
             const int maxRetryAttempts = 2;
             var pauseBetweenFailures = TimeSpan.FromSeconds(5);
 
-            var policy = Policy
-                .Handle<Exception>()
-                .OrResult<TestCallResult>(r => r == null)
-                .WaitAndRetryAsync(maxRetryAttempts, x => pauseBetweenFailures,
-                    (ex, ts, retryAttempt, context) =>
-                    {
-                        _logger.LogWarning(
-                            $"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}");
-                    });
+            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, TestCallResult>
+            (
+                maxRetryAttempts, 
+                _ => pauseBetweenFailures,
+                retryAttempt => _logger.LogWarning($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}"),
+                callResult => callResult == null, 
+                () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
+            );
 
-            return await policy.ExecuteAsync(async () => await _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId));
+            return result;
         }
 
         public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,

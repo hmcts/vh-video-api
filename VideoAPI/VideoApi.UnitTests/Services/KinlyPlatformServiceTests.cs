@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -29,6 +30,7 @@ namespace VideoApi.UnitTests.Services
         private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
         private IRoomReservationService _roomReservationService;
         private Mock<IKinlySelfTestHttpClient> _kinlySelfTestHttpClient;
+        private Mock<IPollyRetryService> _pollyRetryService;
         private IMemoryCache _memoryCache;
         private KinlyPlatformService _kinlyPlatformService;
         private Conference _testConference;
@@ -43,6 +45,7 @@ namespace VideoApi.UnitTests.Services
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
             _roomReservationService = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
             _kinlySelfTestHttpClient = new Mock<IKinlySelfTestHttpClient>();
+            _pollyRetryService = new Mock<IPollyRetryService>();
             
             _servicesConfigOptions = Options.Create(new ServicesConfiguration
             {
@@ -54,7 +57,8 @@ namespace VideoApi.UnitTests.Services
                 _servicesConfigOptions,
                 _loggerMock.Object,
                 _roomReservationService,
-                _kinlySelfTestHttpClient.Object
+                _kinlySelfTestHttpClient.Object,
+                _pollyRetryService.Object
             );
             
             _testConference = new ConferenceBuilder()
@@ -231,9 +235,39 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_throw_exception_after_exhausting_polly_retry()
+        public async Task Should_return_result_from_get_test_call_score()
         {
+            var participantId = Guid.NewGuid();
+            var expectedTestCallResult = new TestCallResult(true, TestScore.Good);
             
+            _pollyRetryService.Setup(x => x.WaitAndRetryAsync<Exception, TestCallResult>
+            (
+                It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(), It.IsAny<Func<TestCallResult, bool>>(), It.IsAny<Func<Task<TestCallResult>>>()
+            ))
+            .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction, Func<TestCallResult, bool> handleResultCondition, Func<Task<TestCallResult>> executeFunction) =>
+            {
+                sleepDuration(1);
+                retryAction(1);
+                handleResultCondition(expectedTestCallResult);
+                await executeFunction();
+            })
+            .ReturnsAsync(expectedTestCallResult);
+
+            var result = await _kinlyPlatformService.GetTestCallScoreAsync(participantId);
+            
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(expectedTestCallResult);
+        }
+
+        [Test]
+        public async Task Should_delete_virtual_court_room()
+        {
+            var conferenceId = Guid.NewGuid();
+            _kinlyApiClientMock.Setup(x => x.DeleteHearingAsync(conferenceId.ToString()));
+
+            await _kinlyPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
+            
+            _kinlyApiClientMock.Verify(x => x.DeleteHearingAsync(conferenceId.ToString()), Times.Once);
         }
     }
 }

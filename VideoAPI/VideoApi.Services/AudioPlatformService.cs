@@ -45,27 +45,6 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsInfoAsync()
-        {
-            try
-            {
-                var response = await _wowzaClient.GetApplicationsAsync(_configuration.ServerName, _configuration.HostName);
-
-                _logger.LogInformation("Got all Wowza applications info");
-
-                return response;
-            }
-            catch (AudioPlatformException ex)
-            {
-                var errorMessage = $"Failed to get all Wowza applications info, StatusCode: {ex.StatusCode}, " +
-                                   $"Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
-                return null;
-            }
-        }
-
         public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId)
         {
             try

@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Services.Handlers
         }
 
         [Test]
-        public async Task Should_throw_exception_when_property_not_in_request_dictionary()
+        public void Should_throw_exception_when_property_not_in_request_dictionary()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "http://somesite.com");
 

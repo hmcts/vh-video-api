@@ -8,7 +8,6 @@ namespace VideoApi.Services.Contracts
     public interface IAudioPlatformService
     {
         Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId);
-        Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsInfoAsync();
         
         Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId);
