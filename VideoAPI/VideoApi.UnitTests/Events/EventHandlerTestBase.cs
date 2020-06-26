@@ -12,6 +12,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Services;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -20,7 +21,7 @@ namespace VideoApi.UnitTests.Events
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected List<IEventHandler> EventHandlersList;
         protected Mock<IQueryHandler> QueryHandlerMock;
-        protected IRoomReservationService RoomReservationServiceMock;
+        protected IRoomReservationService RoomReservationService;
         private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
         private IMemoryCache _memoryCache;
 
@@ -34,7 +35,7 @@ namespace VideoApi.UnitTests.Events
             _loggerRoomReservationMock = new Mock<ILogger<IRoomReservationService>>();
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
 
-            RoomReservationServiceMock = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
+            RoomReservationService = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
 
             EventHandlersList = new List<IEventHandler>
             {
@@ -47,7 +48,7 @@ namespace VideoApi.UnitTests.Events
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationServiceMock),
+                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService),
                 new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
             };

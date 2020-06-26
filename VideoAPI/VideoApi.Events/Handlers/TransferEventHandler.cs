@@ -7,6 +7,7 @@ using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using VideoApi.Services;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.Events.Handlers
 {
