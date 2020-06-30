@@ -83,8 +83,12 @@ namespace Video.API.Controllers
 
             try
             {
-                await _audioPlatformService.GetAudioStreamInfoAsync(Guid.Empty);
-                response.WowzaHealth.Successful = true;
+                response.WowzaHealth.Successful = false;
+                var wowzaResponse = await _audioPlatformService.GetDiagnosticsAsync();
+                if (wowzaResponse != null && !string.IsNullOrEmpty(wowzaResponse.ServerVersion))
+                {
+                    response.WowzaHealth.Successful = true;
+                }
             }
             catch (Exception ex)
             {

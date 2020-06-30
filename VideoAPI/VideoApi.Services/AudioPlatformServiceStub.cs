@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -50,7 +49,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); ;
+                });
             }
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
@@ -63,7 +62,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); ;
+                });
             }
             return await Task.FromResult(new AudioPlatformServiceResponse(true)
             {
@@ -79,7 +78,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); ;
+                });
             }
 
             var applicationName = Guid.NewGuid();
@@ -139,6 +138,14 @@ namespace VideoApi.Services
             }
 
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
+        }
+
+        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync()
+        {
+            return await Task.FromResult(new WowzaGetDiagnosticsResponse
+            {
+                ServerVersion = "4.18.0"
+            });
         }
     }
 }

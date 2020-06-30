@@ -383,5 +383,43 @@ namespace VideoApi.UnitTests.Clients
             result.IsCompleted.Should().BeTrue();
             result.IsFaulted.Should().BeFalse();
         }
+
+        [Test]
+        public async Task GetApplicationsDisgnosticsAsync_Success()
+        {
+            // Case 1
+            var wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
+            {
+                BaseAddress = new Uri($"http://{HttpStatusCode.OK}.com/")
+            });
+
+            var result = await wowzaHttpClient.GetDiagnosticsAsync
+            (
+                It.IsAny<string>()
+            );
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public void GetApplicationsDisgnosticsAsync_Throws_AudioPlatformException_On_Http_Failure()
+        {
+            WowzaHttpClient wowzaHttpClient;
+            Exception exception;
+
+            // Case 1
+            wowzaHttpClient = new WowzaHttpClient(new HttpClient(new FakeHttpMessageHandler())
+            {
+                BaseAddress = new Uri($"http://{nameof(Exception)}.com/")
+            });
+
+            exception = Assert.ThrowsAsync<Exception>
+            (
+                () => wowzaHttpClient.GetDiagnosticsAsync
+                (
+                    It.IsAny<string>()
+                )
+            );
+            exception.Message.Should().Be("Exception thrown");
+        }
     }
 }

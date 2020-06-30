@@ -234,6 +234,18 @@ namespace VideoApi.Services.Clients
             await HandleUnsuccessfulResponse(response);
         }
 
+        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync(string server)
+        {
+            var response = await _httpClient.GetAsync
+            (
+                $"v2/servers/{server}/status"
+            );
+
+            await HandleUnsuccessfulResponse(response);
+
+            return JsonConvert.DeserializeObject<WowzaGetDiagnosticsResponse>(await response.Content.ReadAsStringAsync());
+        }
+
         private static async Task HandleUnsuccessfulResponse(HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)

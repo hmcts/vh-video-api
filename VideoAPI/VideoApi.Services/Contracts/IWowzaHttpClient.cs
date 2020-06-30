@@ -13,6 +13,7 @@ namespace VideoApi.Services.Contracts
         Task<WowzaGetApplicationsResponse> GetApplicationsAsync(string server, string host);
         Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host);
         Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host); 
-        Task StopStreamRecorderAsync(string applicationName, string server, string host); 
+        Task StopStreamRecorderAsync(string applicationName, string server, string host);
+        Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync(string server);
     }
 }
