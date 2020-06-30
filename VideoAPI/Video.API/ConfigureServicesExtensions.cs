@@ -141,7 +141,6 @@ namespace Video.API
 
                 services
                     .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()
-                    .AddTypedClient(httpClient => BuildKinlyClient(servicesConfiguration.KinlySelfTestApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
 
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
