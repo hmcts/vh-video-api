@@ -4,15 +4,10 @@ using VideoApi.Domain;
 using Microsoft.Extensions.Logging;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.Services
 {
-    public interface IRoomReservationService
-    {
-        RoomType GetNextAvailableConsultationRoom(Conference conference);
-        void RemoveRoomReservation(Guid conferenceId, RoomType roomType);
-    }
-
     public class RoomReservationService : IRoomReservationService
     {
         private readonly IMemoryCache _memoryCache;

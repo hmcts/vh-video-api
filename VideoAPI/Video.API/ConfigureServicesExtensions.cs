@@ -104,6 +104,8 @@ namespace Video.API
 
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
             services.AddTransient<KinlyApiTokenDelegatingHandler>();
+            services.AddTransient<KinlySelfTestApiDelegatingHandler>();
+            services.AddSingleton<IPollyRetryService, PollyRetryService>();
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);
@@ -117,7 +119,7 @@ namespace Video.API
             {
                 services
                     .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
-                    .AddTypedClient(httpClient => BuildKinlyClient(httpClient, servicesConfiguration))
+                    .AddTypedClient(httpClient => BuildKinlyClient(servicesConfiguration.KinlyApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
 
                 services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
@@ -136,6 +138,10 @@ namespace Video.API
                         }
                     }
                 });
+
+                services
+                    .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()
+                    .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
 
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
@@ -174,9 +180,9 @@ namespace Video.API
             return services;
         }
 
-        private static IKinlyApiClient BuildKinlyClient(HttpClient httpClient, ServicesConfiguration servicesConfiguration)
+        private static IKinlyApiClient BuildKinlyClient(string url, HttpClient httpClient)
         {
-            var client = new KinlyApiClient(servicesConfiguration.KinlyApiUrl, httpClient);
+            var client = new KinlyApiClient(url, httpClient);
             var contractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()};
 
             client.JsonSerializerSettings.ContractResolver = contractResolver;
