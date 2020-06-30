@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,31 +10,29 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
-using Polly;
-using VideoApi.Common.Security.Kinly;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Helpers;
 
 namespace VideoApi.Services
 {
     public class KinlyPlatformService : IVideoPlatformService
     {
         private readonly IKinlyApiClient _kinlyApiClient;
-        private readonly ICustomJwtTokenProvider _customJwtTokenProvider;
         private readonly ILogger<KinlyPlatformService> _logger;
         private readonly ServicesConfiguration _servicesConfigOptions;
         private readonly IRoomReservationService _roomReservationService;
+        private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
+        private readonly IPollyRetryService _pollyRetryService;
 
-        public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
-            IOptions<ServicesConfiguration> servicesConfigOptions,
-            ICustomJwtTokenProvider customJwtTokenProvider, ILogger<KinlyPlatformService> logger,
-            IRoomReservationService roomReservationService)
+        public KinlyPlatformService(IKinlyApiClient kinlyApiClient, IOptions<ServicesConfiguration> servicesConfigOptions,
+            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService, IKinlySelfTestHttpClient kinlySelfTestHttpClient,
+            IPollyRetryService pollyRetryService)
         {
             _kinlyApiClient = kinlyApiClient;
-            _customJwtTokenProvider = customJwtTokenProvider;
             _logger = logger;
             _servicesConfigOptions = servicesConfigOptions.Value;
             _roomReservationService = roomReservationService;
+            _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
+            _pollyRetryService = pollyRetryService;
         }
 
 
@@ -94,52 +90,19 @@ namespace VideoApi.Services
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            var maxRetryAttempts = 2;
+            const int maxRetryAttempts = 2;
             var pauseBetweenFailures = TimeSpan.FromSeconds(5);
 
-            var policy = Policy
-                .Handle<Exception>()
-                .OrResult<TestCallResult>(r => r == null)
-                .WaitAndRetryAsync(maxRetryAttempts, x => pauseBetweenFailures,
-                    (ex, ts, retryAttempt, context) =>
-                    {
-                        _logger.LogWarning(
-                            $"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}");
-                    });
+            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, TestCallResult>
+            (
+                maxRetryAttempts, 
+                _ => pauseBetweenFailures,
+                retryAttempt => _logger.LogWarning($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}"),
+                callResult => callResult == null, 
+                () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
+            );
 
-            return await policy.ExecuteAsync(async () => await GetSelfTestCallScore(participantId));
-        }
-
-        public async Task<TestCallResult> GetSelfTestCallScore(Guid participantId)
-        {
-            _logger.LogInformation(
-                $"Retrieving test call score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}");
-            HttpResponseMessage responseMessage;
-            using (var httpClient = new HttpClient())
-            {
-                var requestUri = $"{_servicesConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
-                var request = new HttpRequestMessage
-                {
-                    RequestUri = new Uri(requestUri),
-                    Method = HttpMethod.Get,
-                };
-
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
-                    _customJwtTokenProvider.GenerateSelfTestApiToken(participantId.ToString(), 2));
-
-                responseMessage = await httpClient.SendAsync(request);
-            }
-
-            if (responseMessage.StatusCode == HttpStatusCode.NotFound)
-            {
-                _logger.LogWarning($" { responseMessage.StatusCode } : Failed to retrieve self test score for participant {participantId} ");
-                return null;
-            }
-
-            var content = await responseMessage.Content.ReadAsStringAsync();
-            var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
-            _logger.LogWarning($" { responseMessage.StatusCode } : Successfully retrieved self test score for participant {participantId} ");
-            return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
+            return result;
         }
 
         public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,

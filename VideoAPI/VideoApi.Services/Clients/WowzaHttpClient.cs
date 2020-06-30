@@ -185,18 +185,6 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaMonitorStreamResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<WowzaGetApplicationsResponse> GetApplicationsAsync(string server, string host)
-        {
-            var response = await _httpClient.GetAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications"
-            );
-
-            await HandleUnsuccessfulResponse(response);
-
-            return JsonConvert.DeserializeObject<WowzaGetApplicationsResponse>(await response.Content.ReadAsStringAsync());
-        }
-
         public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host)
         {
             var response = await _httpClient.GetAsync

@@ -10,6 +10,7 @@ using VideoApi.Services;
 using FluentAssertions;
 using System;
 using System.Linq;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.UnitTests.Services
 {
