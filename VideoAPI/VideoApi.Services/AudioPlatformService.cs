@@ -207,9 +207,6 @@ namespace VideoApi.Services
             try
             {
                 var response = await _wowzaClient.GetDiagnosticsAsync(_configuration.ServerName);
-
-                _logger.LogInformation($"Got Wowza server version for application: {_configuration.ServerName}");
-
                 return response;
             }
             catch (AudioPlatformException ex)
@@ -221,6 +218,7 @@ namespace VideoApi.Services
 
                 return null;
             }
+        
         }
 
         private async Task CreateAndUpdateApplicationAsync(string applicationName)
