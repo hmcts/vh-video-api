@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -9,6 +10,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services
 {
+    [ExcludeFromCodeCoverage]
     public class KinlyPlatformServiceStub : IVideoPlatformService
     {
         private readonly List<Guid> _bookedGuids;

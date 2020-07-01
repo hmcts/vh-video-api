@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
 using VideoApi.Common.Configuration;
@@ -9,9 +10,11 @@ using VideoApi.Services.Responses;
 
 namespace VideoApi.Services
 {
+    [ExcludeFromCodeCoverage]
     public class AudioPlatformServiceStub : IAudioPlatformService
     {
         private readonly AudioRecordingTestIdConfiguration _audioRecordingTestIdConfiguration;
+        
         public AudioPlatformServiceStub()
         {
             _audioRecordingTestIdConfiguration = new AudioRecordingTestIdConfiguration();
@@ -30,17 +33,6 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<WowzaGetApplicationsResponse> GetAllAudioApplicationsInfoAsync()
-        {
-            return await Task.FromResult(new WowzaGetApplicationsResponse
-            {
-                ServerName = "Server", Applications = new List<Application>
-                {
-                    new Application{Id = "one"}, new Application{Id = "two"}, new Application{Id = "three"}
-                }.ToArray()
-            });
-        }
-
         public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId)
         {
             if (hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
@@ -49,7 +41,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); 
+                });
             }
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
@@ -62,7 +54,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); 
+                });
             }
             return await Task.FromResult(new AudioPlatformServiceResponse(true)
             {
@@ -78,7 +70,7 @@ namespace VideoApi.Services
                 {
                     StatusCode = HttpStatusCode.Conflict,
                     Message = "Conflict"
-                }); 
+                });
             }
 
             var applicationName = Guid.NewGuid();
@@ -129,7 +121,15 @@ namespace VideoApi.Services
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId)
         {
-            return await DeleteAudioApplicationAsync(hearingId);
+            if (hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))
+            {
+                return await Task.FromResult(new AudioPlatformServiceResponse(false)
+                {
+                    StatusCode = HttpStatusCode.NotFound
+                });
+            }
+
+            return await Task.FromResult(new AudioPlatformServiceResponse(true));
         }
     }
 }
