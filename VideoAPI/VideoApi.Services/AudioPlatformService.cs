@@ -202,6 +202,25 @@ namespace VideoApi.Services
             }
         }
 
+        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync()
+        {
+            try
+            {
+                var response = await _wowzaClient.GetDiagnosticsAsync(_configuration.ServerName);
+                return response;
+            }
+            catch (AudioPlatformException ex)
+            {
+                var errorMessage = $"Failed to get the Wowza server version for application: {_configuration.ServerName}, " +
+                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+
+                LogError(ex, errorMessage);
+
+                return null;
+            }
+        
+        }
+
         private async Task CreateAndUpdateApplicationAsync(string applicationName)
         {
             await _wowzaClient.CreateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.StorageDirectory);
@@ -220,5 +239,6 @@ namespace VideoApi.Services
         }
 
         private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
+
     }
 }

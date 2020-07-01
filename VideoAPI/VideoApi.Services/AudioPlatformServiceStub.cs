@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
@@ -130,6 +129,14 @@ namespace VideoApi.Services
             }
 
             return await Task.FromResult(new AudioPlatformServiceResponse(true));
+        }
+
+        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync()
+        {
+            return await Task.FromResult(new WowzaGetDiagnosticsResponse
+            {
+                ServerVersion = "4.18.0"
+            });
         }
     }
 }

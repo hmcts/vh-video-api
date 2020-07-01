@@ -291,5 +291,29 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
             result.Success.Should().BeTrue();
         }
+
+        [Test]
+        public async Task GetApplicationDisgnosticsAsync_Returns_Null_When_AudioPlatformException_Thrown()
+        {
+            _wowzaClient
+                .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
+                .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
+
+            var result = await _audioPlatformService.GetDiagnosticsAsync();
+
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public async Task GetApplicationDisgnosticsAsync_Returns_Response()
+        {
+            _wowzaClient
+                .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WowzaGetDiagnosticsResponse());
+
+            var result = await _audioPlatformService.GetDiagnosticsAsync();
+
+            result.Should().NotBeNull();
+        }
     }
 }
