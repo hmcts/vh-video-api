@@ -19,7 +19,7 @@ namespace VideoApi.AcceptanceTests.Steps
         private const string MessageBody = "A message";
         private readonly TestContext _context;
         private readonly string _toUsername = "Receiver Username";
-        private string _nonExistentUser = "nonExistentUserName";
+        private readonly string _nonExistentUser = "nonExistentUserName";
 
         public InstantMessagesSteps(TestContext injectedContext)
         {
