@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FluentAssertions;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
@@ -17,8 +17,8 @@ namespace Testing.Common.Assertions
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.Id.Should().NotBeEmpty();
             conference.Status.Should().NotBeNull();
-            
-            if (conference.Status > ConferenceState.NotStarted)
+
+            if (conference.Status > ConferenceState.NotStarted && conference.Status < ConferenceState.Closed)
             {
                 conference.StartedDateTime.Should().HaveValue().And.NotBe(DateTime.MinValue);
             }
