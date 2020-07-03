@@ -8,6 +8,8 @@ namespace VideoApi.Domain.Enums
         HearingFacilitationSupport = 3,
         Judge = 4,
         Individual = 5,
-        Representative = 6
+        Representative = 6,
+        Observer = 7,
+        PanelMember = 8
     }
 }
