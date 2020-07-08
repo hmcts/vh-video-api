@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Responses;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Exceptions;
 
 namespace Video.API.Controllers
 {
@@ -107,15 +108,22 @@ namespace Video.API.Controllers
         public async Task<IActionResult> DeleteAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("DeleteAudioApplication");
-            
-            var response = await _audioPlatformService.DeleteAudioApplicationAsync(hearingId);
 
-            if (!response.Success)
+            if (await CheckAudioRecordingFile(hearingId))
             {
-                return StatusCode((int) response.StatusCode, response.Message);
-            }
+                var response = await _audioPlatformService.DeleteAudioApplicationAsync(hearingId);
 
-            return NoContent();
+                if (!response.Success)
+                {
+                    return StatusCode((int)response.StatusCode, response.Message);
+                }
+
+                return NoContent();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         /// <summary>
@@ -219,7 +227,9 @@ namespace Video.API.Controllers
             
             if (!await _storageService.FileExistsAsync(filePath))
             {
-                _logger.LogWarning($"Audio recording file not found for hearing: {hearingId}");
+                var msg = $"Audio recording file not found for hearing: {hearingId}";
+                var ex = new AudioPlatformException(msg, HttpStatusCode.NotFound);
+                _logger.LogError(ex, msg);
 
                 return NotFound();
             }
@@ -227,6 +237,20 @@ namespace Video.API.Controllers
             var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
 
             return Ok(new AudioRecordingResponse {AudioFileLink = audioFileLink});
+        }
+
+         private async Task<bool> CheckAudioRecordingFile(Guid hearingId)
+        {
+            var filePath = $"{hearingId}.mp4";
+            if(!await _storageService.FileExistsAsync(filePath))
+            {
+                var msg = $"Audio recording file not found for hearing: {hearingId}";
+                var ex = new AudioPlatformException(msg, HttpStatusCode.NotFound);
+                _logger.LogError(ex, msg);
+                return false;
+            }
+       
+            return true;
         }
     }
 }

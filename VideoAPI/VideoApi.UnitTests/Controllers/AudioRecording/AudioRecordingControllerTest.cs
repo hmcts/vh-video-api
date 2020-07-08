@@ -154,6 +154,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task DeleteAudioApplicationAsync_Returns_Conflict()
         {
+            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
             _audioPlatformService
                 .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new AudioPlatformServiceResponse(false)
@@ -171,6 +172,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task DeleteAudioApplicationAsync_Returns_NoContent()
         {
+            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
             _audioPlatformService
                 .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new AudioPlatformServiceResponse(true));
@@ -179,7 +182,18 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status204NoContent);
         }
-        
+
+        [Test]
+        public async Task Should_not_delete_audio_application_if_audio_file_not_exists_returns_notFound()
+        {
+            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+            _audioPlatformService.Reset();
+            var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+            _audioPlatformService.Verify(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
+        }
+
         [Test]
         public async Task GetAudioStreamInfoAsync_Returns_NotFound()
         {
