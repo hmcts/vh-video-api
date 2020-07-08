@@ -38,9 +38,22 @@ Scenario: Delete Audio Application - Ok
 	Then the response should have the status NoContent and success status True
 
 @VIH-5868
+Scenario: Delete Audio Application with audio recording file - Ok
+	Given I have a conference with an audio application and audio recording file
+	And I have a valid delete audio application request
+	When I send the request to the endpoint
+	Then the response should have the status NoContent and success status True
+
+@VIH-5868
 Scenario: Delete Audio Application - Not Found
 	Given I have a valid delete audio application request that has no application
-	And I have a valid get audio recording link request
+	When I send the request to the endpoint
+	Then the response should have the status NotFound and success status False
+
+  @VIH-5868
+Scenario: Delete Audio Application without audio recording file - Not Found
+	Given the conference has an audio application
+	And I have a valid delete audio application request
 	When I send the request to the endpoint
 	Then the response should have the status NotFound and success status False
 
@@ -128,22 +141,3 @@ Scenario: Get Audio Recording Link - Not Found
 	And I have a valid get audio recording link request for non existing hearing
 	When I send the request to the endpoint
 	Then the response should have the status NotFound and success status False
-
-@VIH-5868
-Scenario: Delete Audio Application with not existing audio recording file
-	Given I have a conference
-	And I have a valid get audio recording link request for non existing hearing
-	And the conference has an audio application
-	And I have a valid delete audio application request
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
-
-@VIH-5868
-Scenario: Delete Audio Application with existing audio recording file
-	Given I have a conference
-	And the conference has an audio recording
-	And the conference has an audio application
-	And I have a valid get audio recording link request
-	And I have a valid delete audio application request
-	When I send the request to the endpoint
-	Then the response should have the status NoContent and success status True

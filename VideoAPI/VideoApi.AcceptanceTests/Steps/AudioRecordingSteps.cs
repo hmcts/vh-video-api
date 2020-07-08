@@ -15,12 +15,14 @@ namespace VideoApi.AcceptanceTests.Steps
     public class AudioRecordingSteps
     {
         private readonly TestContext _context;
-        private readonly Guid _hearingId;
+        private Guid _hearingId;
+        private readonly ConferenceSteps _conferenceSteps;
 
-        public AudioRecordingSteps(TestContext context)
+        public AudioRecordingSteps(TestContext context, ConferenceSteps conferenceSteps)
         {
             _context = context;
             _hearingId = Guid.NewGuid();
+            _conferenceSteps = conferenceSteps;
         }
 
         [Given(@"I have a valid create audio application request")]
@@ -161,6 +163,15 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidGetAudioRecordingLinkRequestForNonExistingHearing()
         {
             _context.Request = _context.Get(GetAudioRecordingLink(_context.Config.AudioRecordingTestIds.NonExistent));
+        }
+
+        [Given(@"I have a conference with an audio application and audio recording file")]
+        public async Task GivenIHaveAConferenceWithAnAudioApplicationAndAudioRecordingFile()
+        {
+            _conferenceSteps.GivenIHaveAConference();
+            _hearingId = _context.Test.ConferenceResponse.HearingId;
+            GivenTheConferenceHasAnAudioApplication();
+            await GivenTheConferenceHasAnAudioRecording();
         }
 
         [Then(@"the audio application details are retrieved")]
