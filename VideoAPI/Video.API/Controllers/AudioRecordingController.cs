@@ -222,18 +222,14 @@ namespace Video.API.Controllers
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
             _logger.LogInformation($"Getting audio recording link for hearing: {hearingId}");
-
             var filePath = $"{hearingId}.mp4";
-            
-            if (!await _storageService.FileExistsAsync(filePath))
-            {
-                var msg = $"Audio recording file not found for hearing: {hearingId}";
-                var ex = new AudioPlatformException(msg, HttpStatusCode.NotFound);
-                _logger.LogError(ex, msg);
 
+            var result = await CheckAudioRecordingFile(hearingId);
+            if (!result)
+            {
                 return NotFound();
             }
-
+            
             var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
 
             return Ok(new AudioRecordingResponse {AudioFileLink = audioFileLink});
