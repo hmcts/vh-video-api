@@ -31,14 +31,7 @@ Scenario: Create Audio Application - Conflict
 	Then the response should have the status Conflict and success status False
 
 @VIH-5868
-Scenario: Delete Audio Application - Ok
-	Given the conference has an audio application
-	And I have a valid delete audio application request
-	When I send the request to the endpoint
-	Then the response should have the status NoContent and success status True
-
-@VIH-5868
-Scenario: Delete Audio Application with audio recording file - Ok
+Scenario: Delete Audio Application with audio recording file - No Content
 	Given I have a conference with an audio application and audio recording file
 	And I have a valid delete audio application request
 	When I send the request to the endpoint
