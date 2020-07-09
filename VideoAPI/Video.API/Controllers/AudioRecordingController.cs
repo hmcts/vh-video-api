@@ -109,7 +109,7 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("DeleteAudioApplication");
 
-            if (await CheckAudioRecordingFile(hearingId))
+            if (await EnsureAudioFileExists(hearingId))
             {
                 var response = await _audioPlatformService.DeleteAudioApplicationAsync(hearingId);
 
@@ -120,10 +120,8 @@ namespace Video.API.Controllers
 
                 return NoContent();
             }
-            else
-            {
-                return NotFound();
-            }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -224,7 +222,7 @@ namespace Video.API.Controllers
             _logger.LogInformation($"Getting audio recording link for hearing: {hearingId}");
             var filePath = $"{hearingId}.mp4";
 
-            var result = await CheckAudioRecordingFile(hearingId);
+            var result = await EnsureAudioFileExists(hearingId);
             if (!result)
             {
                 return NotFound();
@@ -234,7 +232,7 @@ namespace Video.API.Controllers
             return Ok(new AudioRecordingResponse {AudioFileLink = audioFileLink});
         }
 
-         private async Task<bool> CheckAudioRecordingFile(Guid hearingId)
+         private async Task<bool> EnsureAudioFileExists(Guid hearingId)
         {
             var filePath = $"{hearingId}.mp4";
             if(!await _storageService.FileExistsAsync(filePath))
