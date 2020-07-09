@@ -109,8 +109,8 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("DeleteAudioApplication");
 
-            if (await CheckAudioRecordingFile(hearingId))
-            {
+          //  if (await CheckAudioRecordingFile(hearingId))
+          //  {
                 var response = await _audioPlatformService.DeleteAudioApplicationAsync(hearingId);
 
                 if (!response.Success)
@@ -119,11 +119,11 @@ namespace Video.API.Controllers
                 }
 
                 return NoContent();
-            }
-            else
-            {
-                return NotFound();
-            }
+          //  }
+         //   else
+         //   {
+         //       return NotFound();
+         //   }
         }
 
         /// <summary>
