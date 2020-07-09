@@ -61,7 +61,7 @@ namespace Video.API.Controllers
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewConference")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
         {
             _logger.LogDebug("BookNewConference");
@@ -149,9 +149,9 @@ namespace Video.API.Controllers
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpGet("{conferenceId}")]
         [SwaggerOperation(OperationId = "GetConferenceDetailsById")]
-        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsByIdAsync(Guid conferenceId)
         {
             _logger.LogDebug($"GetConferenceDetailsById {conferenceId}");
@@ -177,9 +177,9 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpDelete("{conferenceId}")]
         [SwaggerOperation(OperationId = "RemoveConference")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveConferenceAsync(Guid conferenceId)
         {
             _logger.LogDebug($"RemoveConference {conferenceId}");
@@ -207,7 +207,7 @@ namespace Video.API.Controllers
         /// <returns>Conference details</returns>
         [HttpGet("today/vho")]
         [SwaggerOperation(OperationId = "GetConferencesTodayForAdmin")]
-        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetConferencesTodayForAdminByUsernameAsync(
             [FromQuery] ConferenceForAdminRequest request)
         {
@@ -232,8 +232,8 @@ namespace Video.API.Controllers
         /// <returns>List of conferences for judge</returns>
         [HttpGet("today/judge")]
         [SwaggerOperation(OperationId = "GetConferencesTodayForJudgeByUsername")]
-        [ProducesResponseType(typeof(List<ConferenceForJudgeResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(List<ConferenceForJudgeResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug($"GetConferencesTodayForJudgeByUsername {username}");
@@ -261,8 +261,8 @@ namespace Video.API.Controllers
         /// <returns>List of non-closed conferences for judge</returns>
         [HttpGet("today/individual")]
         [SwaggerOperation(OperationId = "GetConferencesTodayForIndividualByUsername")]
-        [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug($"GetConferencesTodayForIndividualByUsername {username}");
@@ -290,8 +290,8 @@ namespace Video.API.Controllers
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpGet("hearings/{hearingRefId}")]
         [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
-        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId)
         {
             _logger.LogDebug($"GetConferenceByHearingRefId {hearingRefId}");
@@ -318,7 +318,7 @@ namespace Video.API.Controllers
 
         [HttpGet("expired")]
         [SwaggerOperation(OperationId = "GetExpiredOpenConferences")]
-        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetExpiredOpenConferencesAsync()
         {
             _logger.LogDebug("GetExpiredOpenConferences");
@@ -337,8 +337,8 @@ namespace Video.API.Controllers
         /// <returns>No Content status</returns>
         [HttpPut("{conferenceId}/close")]
         [SwaggerOperation(OperationId = "CloseConference")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloseConferenceAsync(Guid conferenceId)
         {
             try
@@ -365,7 +365,7 @@ namespace Video.API.Controllers
         /// <returns>Conference details</returns>
         [HttpGet("today/judgesinhearings")]
         [SwaggerOperation(OperationId = "GetJudgesInHearingsToday")]
-        [ProducesResponseType(typeof(List<JudgeInHearingResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<JudgeInHearingResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
         {
             _logger.LogDebug("GetJudgesInHearingsToday");
@@ -393,23 +393,28 @@ namespace Video.API.Controllers
 
             if (queriedConference != null && queriedConference.AudioRecordingRequired)
             {
-                if (await CheckAudioRecordingFile(queriedConference.HearingRefId))
+                try
                 {
+                    await EnsureAudioFileExists(queriedConference.HearingRefId);
                     await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
                 }
-                else
+                catch (AudioPlatformException ex)
                 {
-                    var msg = $"Audio recording file not found for hearing: {queriedConference.HearingRefId}";
-                    var ex = new AudioPlatformException(msg, HttpStatusCode.NotFound);
-                    _logger.LogError(ex, msg);
+                    _logger.LogError(ex, ex.Message);
                 }
+
             }
         }
 
-        private async Task<bool> CheckAudioRecordingFile(Guid hearingId)
+
+        private async Task EnsureAudioFileExists(Guid hearingId)
         {
             var filePath = $"{hearingId}.mp4";
-            return await _storageService.FileExistsAsync(filePath);
+            if (!await _storageService.FileExistsAsync(filePath))
+            {
+                var msg = $"Audio recording file not found for hearing: {hearingId}";
+                throw new AudioPlatformException(msg, HttpStatusCode.NotFound);
+            }
         }
 
         private async Task BookKinlyMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)

@@ -71,6 +71,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
                .ReturnsAsync(TestConference);
 
             StorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+            AudioPlatformServiceMock.Reset();
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
