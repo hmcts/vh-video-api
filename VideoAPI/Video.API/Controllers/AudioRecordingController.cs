@@ -231,7 +231,6 @@ namespace Video.API.Controllers
             }
             
             var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
-
             return Ok(new AudioRecordingResponse {AudioFileLink = audioFileLink});
         }
 
