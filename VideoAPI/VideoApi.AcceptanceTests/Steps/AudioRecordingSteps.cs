@@ -15,12 +15,14 @@ namespace VideoApi.AcceptanceTests.Steps
     public class AudioRecordingSteps
     {
         private readonly TestContext _context;
-        private readonly Guid _hearingId;
+        private Guid _hearingId;
+        private readonly ConferenceSteps _conferenceSteps;
 
-        public AudioRecordingSteps(TestContext context)
+        public AudioRecordingSteps(TestContext context, ConferenceSteps conferenceSteps)
         {
             _context = context;
             _hearingId = Guid.NewGuid();
+            _conferenceSteps = conferenceSteps;
         }
 
         [Given(@"I have a valid create audio application request")]
@@ -139,13 +141,14 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"the conference has an audio recording")]
         public async Task GivenTheConferenceHasAnAudioRecording()
         {
-            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.ConferenceResponse.HearingId);
+            var hearingId = _context.Test.ConferenceResponse != null ? _context.Test.ConferenceResponse.HearingId : _hearingId;
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", hearingId);
             
             _context.AzureStorage = new AzureStorageManager()
                 .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
-                .CreateBlobClient(_context.Test.ConferenceResponse.HearingId);
+                .CreateBlobClient(hearingId);
 
             await _context.AzureStorage.UploadAudioFileToStorage(file);
             FileManager.RemoveLocalAudioFile(file);
@@ -161,6 +164,13 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidGetAudioRecordingLinkRequestForNonExistingHearing()
         {
             _context.Request = _context.Get(GetAudioRecordingLink(_context.Config.AudioRecordingTestIds.NonExistent));
+        }
+
+        [Given(@"I have a conference with an audio application and audio recording file")]
+        public async Task GivenIHaveAConferenceWithAnAudioApplicationAndAudioRecordingFile()
+        {
+            GivenTheConferenceHasAnAudioApplication();
+            await GivenTheConferenceHasAnAudioRecording();
         }
 
         [Then(@"the audio application details are retrieved")]
