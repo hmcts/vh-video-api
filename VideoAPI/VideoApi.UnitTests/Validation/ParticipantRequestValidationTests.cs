@@ -148,7 +148,7 @@ namespace VideoApi.UnitTests.Validation
         {
             var request = BuildRequest();
             request.UserRole = UserRole.Representative;
-            request.Representee = string.Empty;
+            request.Representee = null;
 
             var result = await _validator.ValidateAsync(request);
 
@@ -156,6 +156,18 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Count.Should().Be(1);
             result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoRepresenteeErrorMessage)
                 .Should().BeTrue();
+        }
+        [Test]
+        public async Task Should_allow_representee_with_blank_space()
+        {
+            var request = BuildRequest();
+            request.UserRole = UserRole.Representative;
+            request.Representee = " ";
+
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeTrue();
+            result.Errors.Count.Should().Be(0);
         }
 
         private ParticipantRequest BuildRequest()

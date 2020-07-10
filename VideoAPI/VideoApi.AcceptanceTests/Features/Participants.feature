@@ -10,6 +10,13 @@ Feature: Participants
     Then the response should have the status NoContent and success status True
     And the participant is added
 
+  Scenario: Add representative participant
+    Given I have a conference
+    And I have an add representative participant to a valid conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the participant is added
+
   Scenario: Remove participant
     Given I have a conference
     And I have an remove participant from a valid conference request

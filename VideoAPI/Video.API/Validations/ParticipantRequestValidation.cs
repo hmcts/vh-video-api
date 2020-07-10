@@ -26,7 +26,7 @@ namespace Video.API.Validations
             RuleFor(x => x.Username).NotEmpty().WithMessage(NoUsernameErrorMessage);
             RuleFor(x => x.UserRole).NotEmpty().WithMessage(NoHearingRoleErrorMessage);
             RuleFor(x => x.CaseTypeGroup).NotEmpty().WithMessage(NoCaseTypeGroupErrorMessage);
-            RuleFor(x => x.Representee).NotEmpty().When(x => x.UserRole == UserRole.Representative)
+            RuleFor(x => x.Representee).NotNull().When(x => x.UserRole == UserRole.Representative)
                 .WithMessage(NoRepresenteeErrorMessage);
         }
     }

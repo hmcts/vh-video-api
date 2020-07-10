@@ -55,6 +55,32 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
+        [Given(@"I have an add representative participant to a (.*) conference request")]
+        public void GivenIHaveAnAddRepresentativeParticipantToAValidConferenceRequest(Scenario scenario)
+        {
+            var request = new AddParticipantsToConferenceRequest()
+            {
+                Participants = new List<ParticipantRequest>
+                {
+                    new ParticipantRequestBuilder(UserRole.Representative).Build()
+                }
+            };
+            request.Participants[0].Representee = " ";
+
+            var conferenceId = scenario switch
+            {
+                Scenario.Valid => _context.Test.Conference.Id,
+                Scenario.Nonexistent => Guid.NewGuid(),
+                Scenario.Invalid => Guid.Empty,
+                _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null)
+            };
+
+            _context.Uri = AddParticipantsToConference(conferenceId);
+            _context.HttpMethod = HttpMethod.Put;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
         [Given(@"I have an update participant to a (.*) conference request")]
         public void GivenIHaveAnUpdateParticipantToConferenceRequest(Scenario scenario)
         {
