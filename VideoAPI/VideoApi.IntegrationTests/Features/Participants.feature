@@ -9,12 +9,6 @@ Feature: Participants
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 
-  Scenario: Add representative participant
-    Given I have a conference
-    And I have an add representative participant to a valid conference request
-    When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
-
   Scenario: Add participant to an invalid conference
     Given I have an add participant to an invalid conference request
     When I send the request to the endpoint

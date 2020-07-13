@@ -42,18 +42,6 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
         }
 
-        [Given(@"I have an add representative participant to a valid conference request")]
-        public void GivenIHaveAnAddRepresentativeParticipantToAValidConferenceRequest()
-        {
-            var request = new AddParticipantsToConferenceRequest
-            {
-                Participants = new List<ParticipantRequest> { new ParticipantRequestBuilder(UserRole.Representative).Build() }
-            };
-            request.Participants[0].Representee = " ";
-            _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
-            _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
-        }
-
         [Given(@"I have an remove participant from a valid conference request")]
         public void GivenIHaveAnRemoveParticipantFromAValidConferenceRequest()
         {

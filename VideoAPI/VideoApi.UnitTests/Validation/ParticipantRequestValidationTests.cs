@@ -142,33 +142,6 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoHearingRoleErrorMessage)
                 .Should().BeTrue();
         }
-        
-        [Test]
-        public async Task Should_return_missing_representee_error()
-        {
-            var request = BuildRequest();
-            request.UserRole = UserRole.Representative;
-            request.Representee = null;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoRepresenteeErrorMessage)
-                .Should().BeTrue();
-        }
-        [Test]
-        public async Task Should_allow_representee_with_blank_space()
-        {
-            var request = BuildRequest();
-            request.UserRole = UserRole.Representative;
-            request.Representee = " ";
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeTrue();
-            result.Errors.Count.Should().Be(0);
-        }
 
         private ParticipantRequest BuildRequest()
         {
