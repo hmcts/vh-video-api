@@ -113,7 +113,7 @@ namespace Video.API.Controllers
             {
                 await EnsureAudioFileExists(hearingId);
             }
-            catch (AudioPlatformException ex)
+            catch (AudioPlatformFileNotFoundException ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return NotFound();
@@ -234,7 +234,7 @@ namespace Video.API.Controllers
                 return Ok(new AudioRecordingResponse { AudioFileLink = audioFileLink });
 
             }
-            catch (AudioPlatformException ex)
+            catch (AudioPlatformFileNotFoundException ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return NotFound();
@@ -248,7 +248,7 @@ namespace Video.API.Controllers
             if (!await _storageService.FileExistsAsync(filePath))
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
-                throw new AudioPlatformException(msg, HttpStatusCode.NotFound);
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
         }
     }
