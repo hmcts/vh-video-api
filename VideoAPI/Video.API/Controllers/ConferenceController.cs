@@ -331,6 +331,25 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
+        /// Jet list of close conferences that have audiorecording app
+        /// </summary>
+        /// <returns>List of conferences</returns>
+        [HttpGet("audiorecording/expired")]
+        [SwaggerOperation(OperationId = "GetExpiredAudiorecordingClosedConferences")]
+        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int)HttpStatusCode.OK)]
+
+        public async Task<IActionResult> GetExpiredAudiorecordingClosedConferencesAsync()
+        {
+            _logger.LogDebug("GetExpiredAudiorecordingClosedConferences");
+            var query = new GetExpiredAudiorecordingClosedConferencesQuery();
+            var conferences = await _queryHandler.Handle<GetExpiredAudiorecordingClosedConferencesQuery, List<Conference>>(query);
+            var response = conferences.Select(ConferenceToExpiredConferenceMapper.MapConferenceToExpiredResponse);
+
+            return Ok(response);
+
+        }
+
+        /// <summary>
         /// Close a conference, set its state to closed
         /// </summary>
         /// <param name="conferenceId">conference id</param>

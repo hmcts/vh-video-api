@@ -10,7 +10,7 @@ namespace Testing.Common.Helper.Builders.Api
     public class BookNewConferenceRequestBuilder
     {
         private readonly BookNewConferenceRequest _bookNewConferenceRequest;
-
+     
         public BookNewConferenceRequestBuilder(string caseName)
         {
             var fromRandomNumber = new Random();
@@ -44,7 +44,7 @@ namespace Testing.Common.Helper.Builders.Api
             }
 
             _bookNewConferenceRequest.Participants.Add(participant);
-            
+
             return this;
         }
 
@@ -65,11 +65,11 @@ namespace Testing.Common.Helper.Builders.Api
             {
                 participant.CaseTypeGroup = caseTypeGroup;
             }
-            
+
             _bookNewConferenceRequest.Participants.Add(participant);
             return this;
         }
-        
+
         public BookNewConferenceRequestBuilder WithIndividual(string caseTypeGroup = null)
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
@@ -86,11 +86,11 @@ namespace Testing.Common.Helper.Builders.Api
             {
                 participant.CaseTypeGroup = caseTypeGroup;
             }
-            
+
             _bookNewConferenceRequest.Participants.Add(participant);
             return this;
         }
-        
+
         public BookNewConferenceRequestBuilder WithHearingRefId(Guid hearingRefId)
         {
             _bookNewConferenceRequest.HearingRefId = hearingRefId;
@@ -106,6 +106,12 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequest Build()
         {
             return _bookNewConferenceRequest;
+        }
+
+        public BookNewConferenceRequestBuilder WithAudiorecordingRequired(bool audioRecordingRequired = true)
+        {
+            _bookNewConferenceRequest.AudioRecordingRequired = audioRecordingRequired;
+            return this;
         }
     }
 }
