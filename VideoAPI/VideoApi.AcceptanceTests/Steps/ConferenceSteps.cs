@@ -79,7 +79,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAnotherConference()
         {
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
-            CreateConference(DateTime.Ut);
+            CreateConference(DateTime.UtcNow);
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
         }
 
@@ -168,10 +168,10 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetExpiredOpenConferences);
         }
 
-        [Given(@"I have a get expired audiorecording closed conferences request")]
-        public void GivenIHaveAGetExpiredAudiorecordingClosedConferencesRequest()
+        [Given(@"I have a get expired audiorecording conferences request")]
+        public void GivenIHaveAGetExpiredAudiorecordingConferencesRequest()
         {
-            _context.Request = _context.Get(GetExpiredAudiorecordingClosedConferences);
+            _context.Request = _context.Get(GetExpiredAudiorecordingConferences);
         }
 
         [Given(@"I have a get details for a conference request by hearing id with a valid username")]

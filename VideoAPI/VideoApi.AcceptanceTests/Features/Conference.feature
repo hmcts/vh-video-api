@@ -88,7 +88,7 @@ Feature: Conference
 	  And I have another conference with audiorecording
 	  And I have a conference for tomorrow with audiorecording
 	  And I close all conferences
-	  And I have a get expired audiorecording closed conferences request
+	  And I have a get expired audiorecording conferences request
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
 	  And a list containing the expired hearings with audiorecording should be retrieved
