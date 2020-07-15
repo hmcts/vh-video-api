@@ -79,7 +79,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAnotherConference()
         {
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
-            CreateConference(DateTime.Now);
+            CreateConference(DateTime.Ut);
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
         }
 
@@ -87,7 +87,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have another conference with audiorecording")]
         public void GivenIHaveAnotherConferenceWithAudiorecording()
         {
-            CreateConference(DateTime.Now, null, true);
+            CreateConference(DateTime.UtcNow, null, true);
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
         }
 
