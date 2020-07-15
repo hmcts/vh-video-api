@@ -11,9 +11,9 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetExpiredAudiorecordingClosedConferencesQueryTests : DatabaseTestsBase
+    public class GetExpiredAudiorecordingConferencesQueryTests : DatabaseTestsBase
     {
-        private GetExpiredAudiorecordingClosedConferencesHandler _handler;
+        private GetExpiredAudiorecordingConferencesHandler _handler;
         private Guid _conference1Id;
         private Guid _conference2Id;
         private Guid _conference3Id;
@@ -23,7 +23,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetExpiredAudiorecordingClosedConferencesHandler(context);
+            _handler = new GetExpiredAudiorecordingConferencesHandler(context);
             _conference1Id = Guid.Empty;
             _conference2Id = Guid.Empty;
             _conference3Id = Guid.Empty;
@@ -33,7 +33,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [TearDown]
         public async Task TearDown()
         {
-            TestContext.WriteLine("Cleaning conferences for GetExpiredAudiorecordingClosedConferencesHandler");
+            TestContext.WriteLine("Cleaning conferences for GetExpiredAudiorecordingConferencesHandler");
             await TestDataManager.RemoveConference(_conference1Id);
             await TestDataManager.RemoveConference(_conference2Id);
             await TestDataManager.RemoveConference(_conference3Id);
@@ -41,7 +41,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task Should_return_conferences_with_audiorecording_closed_14_hours_ago()
+        public async Task Should_return_conferences_with_audiorecording_expired_14_hours_ago()
         {
             var utcDate = DateTime.UtcNow;
             var expired = utcDate.AddHours(-15);
@@ -74,6 +74,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
+                .WithAudioRecordingRequired(true)
                 .Build();
             _conference4Id = conference4.Id;
 
@@ -82,16 +83,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference3);
             await TestDataManager.SeedConference(conference4);
 
-            var conferences = await _handler.Handle(new GetExpiredAudiorecordingClosedConferencesQuery());
+            var conferences = await _handler.Handle(new GetExpiredAudiorecordingConferencesQuery());
             var confIds = conferences.Select(x => x.Id).ToList();
             confIds.Should().Contain(conference1.Id);
+            confIds.Should().Contain(conference4.Id);
 
-            var notExpectedConferences = new List<Guid> { conference2.Id, conference3.Id, conference4.Id };
+            var notExpectedConferences = new List<Guid> { conference2.Id, conference3.Id };
             confIds.Should()
                 .NotContain(notExpectedConferences);
         }
-
-
-
     }
 }

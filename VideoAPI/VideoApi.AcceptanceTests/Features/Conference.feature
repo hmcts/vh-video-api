@@ -91,7 +91,7 @@ Scenario: Get audiorecording expired closed conferences
 	And I have a get expired audiorecording closed conferences request
 	When I send the request to the endpoint
 	Then the response should have the status OK and success status True
-	And a list containing the closed hearings with audiorecording should be retrieved
+	And a list containing the expired hearings with audiorecording should be retrieved
 
 @VIH-5827
 Scenario: Get the judges in hearings today

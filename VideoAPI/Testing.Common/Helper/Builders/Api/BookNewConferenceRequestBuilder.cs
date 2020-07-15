@@ -10,7 +10,7 @@ namespace Testing.Common.Helper.Builders.Api
     public class BookNewConferenceRequestBuilder
     {
         private readonly BookNewConferenceRequest _bookNewConferenceRequest;
-     
+
         public BookNewConferenceRequestBuilder(string caseName)
         {
             var fromRandomNumber = new Random();

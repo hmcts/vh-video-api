@@ -66,7 +66,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a conference with audiorecording")]
         public void GivenIHaveAConferenceWithAudiorecording()
         {
-            CreateConference(DateTime.Now.ToLocalTime().AddHours(-14).AddMinutes(-2),null, true);
+            CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2),null, true);
         }
 
         [Given(@"I have multiple conferences with duplicate first names for judges")]
@@ -236,8 +236,8 @@ namespace VideoApi.AcceptanceTests.Steps
             ValidateListOfConferences();
         }
 
-        [Then(@"a list containing the closed hearings with audiorecording should be retrieved")]
-        public void ThenAListContainingTheClosedHearingsWithAudiorecordingShouldBeRetrieved()
+        [Then(@"a list containing the expired hearings with audiorecording should be retrieved")]
+        public void ThenAListContainingTheExpiredHearingsWithAudiorecordingShouldBeRetrieved()
         {
             ValidateListOfConferences();
         }
