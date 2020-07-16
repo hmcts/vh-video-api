@@ -66,7 +66,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a conference with audiorecording")]
         public void GivenIHaveAConferenceWithAudiorecording()
         {
-            CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2),null, true);
+            CreateConference(DateTime.UtcNow.AddMinutes(2),null, true);
         }
 
         [Given(@"I have multiple conferences with duplicate first names for judges")]
@@ -84,10 +84,12 @@ namespace VideoApi.AcceptanceTests.Steps
         }
 
 
-        [Given(@"I have another conference with audiorecording")]
-        public void GivenIHaveAnotherConferenceWithAudiorecording()
+        [Given(@"I have another conference with no audiorecording")]
+        public void GivenIHaveAnotherConferenceWithNoAudiorecording()
         {
-            CreateConference(DateTime.UtcNow, null, true);
+            _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
+
+            CreateConference(DateTime.UtcNow, null, false);
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
         }
 
@@ -243,8 +245,8 @@ namespace VideoApi.AcceptanceTests.Steps
             ValidateListOfConferences();
         }
 
-        [Then(@"a list containing the expired hearings with audiorecording should be retrieved")]
-        public void ThenAListContainingTheExpiredHearingsWithAudiorecordingShouldBeRetrieved()
+        [Then(@"retrieved list should not include not expired hearings or without audiorecording")]
+        public void ThenRetrievedListShouldNotIncludeNotExpiredHearingsOrWithoutAudiorecording()
         {
             ValidateListOfConferences();
         }

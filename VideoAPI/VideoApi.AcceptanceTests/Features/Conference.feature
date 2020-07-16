@@ -85,13 +85,13 @@ Feature: Conference
 
   Scenario: Get audiorecording expired closed conferences
 	  Given I have a conference with audiorecording
-	  And I have another conference with audiorecording
+	  And I have another conference with no audiorecording
 	  And I have a conference for tomorrow with audiorecording
 	  And All conferences have status greater then zero
 	  And I have a get expired audiorecording conferences request
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
-	  And a list containing the expired hearings with audiorecording should be retrieved
+	  And retrieved list should not include not expired hearings or without audiorecording
 
   @VIH-5827
   Scenario: Get the judges in hearings today
