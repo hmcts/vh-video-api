@@ -87,7 +87,7 @@ Feature: Conference
 	  Given I have a conference with audiorecording
 	  And I have another conference with no audiorecording
 	  And I have a conference for tomorrow with audiorecording
-	  And All conferences have status greater then zero
+	  And All conferences have started
 	  And I have a get expired audiorecording conferences request
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True

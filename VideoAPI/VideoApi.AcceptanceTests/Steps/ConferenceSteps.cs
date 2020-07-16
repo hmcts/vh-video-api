@@ -111,8 +111,8 @@ namespace VideoApi.AcceptanceTests.Steps
             });
         }
 
-        [Given(@"All conferences have status greater then zero")]
-        public void GivenAllConferencesHaveStatusGreaterThenZero()
+        [Given(@"All conferences have started")]
+        public void GivenAllConferencesHaveStarted()
         {
             GivenICloseAllConferences();
         }
