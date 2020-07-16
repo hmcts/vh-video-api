@@ -331,6 +331,25 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
+        /// Get list of expired conferences that have audiorecording option on
+        /// </summary>
+        /// <returns>List of expired conferences</returns>
+        [HttpGet("audiorecording/expired")]
+        [SwaggerOperation(OperationId = "GetExpiredAudiorecordingConferences")]
+        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int)HttpStatusCode.OK)]
+
+        public async Task<IActionResult> GetExpiredAudiorecordingConferencesAsync()
+        {
+            _logger.LogDebug("GetExpiredAudiorecordingConferences");
+            var query = new GetExpiredAudiorecordingConferencesQuery();
+            var conferences = await _queryHandler.Handle<GetExpiredAudiorecordingConferencesQuery, List<Conference>>(query);
+            var response = conferences.Select(ConferenceToExpiredConferenceMapper.MapConferenceToExpiredResponse);
+
+            return Ok(response);
+
+        }
+
+        /// <summary>
         /// Close a conference, set its state to closed
         /// </summary>
         /// <param name="conferenceId">conference id</param>

@@ -63,7 +63,12 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2));
         }
 
-        
+        [Given(@"I have a conference with audiorecording")]
+        public void GivenIHaveAConferenceWithAudiorecording()
+        {
+            CreateConference(DateTime.UtcNow.AddMinutes(2),null, true);
+        }
+
         [Given(@"I have multiple conferences with duplicate first names for judges")]
         public void GivenIHaveMultipleConferencesWithDuplicateFirstNamesForJudges ()
         {
@@ -74,7 +79,17 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAnotherConference()
         {
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
-            CreateConference(DateTime.Now);
+            CreateConference(DateTime.UtcNow);
+            _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
+        }
+
+
+        [Given(@"I have another conference with no audiorecording")]
+        public void GivenIHaveAnotherConferenceWithNoAudiorecording()
+        {
+            _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
+
+            CreateConference(DateTime.UtcNow, null, false);
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
         }
 
@@ -96,10 +111,24 @@ namespace VideoApi.AcceptanceTests.Steps
             });
         }
 
+        [Given(@"All conferences have started")]
+        public void GivenAllConferencesHaveStarted()
+        {
+            GivenICloseAllConferences();
+        }
+
+
         [Given(@"I have a conference for tomorrow")]
         public void GivenIHaveAConferenceForTomorrow()
         {
             CreateConference(DateTime.Today.AddDays(1));
+            _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
+        }
+
+        [Given(@"I have a conference for tomorrow with audiorecording")]
+        public void GivenIHaveAConferenceForTomorrowWithAudiorecording()
+        {
+            CreateConference(DateTime.Today.AddDays(1), null, true);
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
         }
 
@@ -146,6 +175,12 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAGetExpiredConferencesRequest()
         {
             _context.Request = _context.Get(GetExpiredOpenConferences);
+        }
+
+        [Given(@"I have a get expired audiorecording conferences request")]
+        public void GivenIHaveAGetExpiredAudiorecordingConferencesRequest()
+        {
+            _context.Request = _context.Get(GetExpiredAudiorecordingConferences);
         }
 
         [Given(@"I have a get details for a conference request by hearing id with a valid username")]
@@ -206,6 +241,17 @@ namespace VideoApi.AcceptanceTests.Steps
 
         [Then(@"a list not containing the closed hearings should be retrieved")]
         public void ThenAListNotContainingTheClosedHearingsShouldBeRetrieved()
+        {
+            ValidateListOfConferences();
+        }
+
+        [Then(@"retrieved list should not include not expired hearings or without audiorecording")]
+        public void ThenRetrievedListShouldNotIncludeNotExpiredHearingsOrWithoutAudiorecording()
+        {
+            ValidateListOfConferences();
+        }
+
+        private void ValidateListOfConferences()
         {
             var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Select(x => x.Id).Should().NotContain(_context.Test.ConferenceIds);
@@ -278,9 +324,9 @@ namespace VideoApi.AcceptanceTests.Steps
             }
         }
 
-        private void CreateConference(DateTime date, string judgeFirstName = null)
-        {
-            CreateNewConferenceRequest(date, judgeFirstName);
+        private void CreateConference(DateTime date, string judgeFirstName = null, bool audioRequired = false)
+        { 
+            CreateNewConferenceRequest(date, judgeFirstName, audioRequired);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
             var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
@@ -295,7 +341,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference is closed");
         }
 
-        private void CreateNewConferenceRequest(DateTime date, string judgeFirstName = null)
+        private void CreateNewConferenceRequest(DateTime date, string judgeFirstName = null, bool audioRequired = false)
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge(judgeFirstName)
@@ -303,6 +349,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .WithRepresentative("Defendant").WithIndividual("Defendant")
                 .WithHearingRefId(Guid.NewGuid())
                 .WithDate(date)
+                .WithAudiorecordingRequired(audioRequired)
                 .Build();
             _context.Request = _context.Post(BookNewConference, request);
         }

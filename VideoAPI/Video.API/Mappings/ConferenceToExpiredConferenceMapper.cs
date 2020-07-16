@@ -10,7 +10,8 @@ namespace Video.API.Mappings
             return new ExpiredConferencesResponse
             {
                 Id = conference.Id,
-                CurrentStatus = conference.State
+                CurrentStatus = conference.State,
+                HearingId = conference.HearingRefId
             };
         }
     }

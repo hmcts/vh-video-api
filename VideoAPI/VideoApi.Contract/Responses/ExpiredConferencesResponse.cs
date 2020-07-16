@@ -14,5 +14,10 @@ namespace VideoApi.Contract.Responses
         /// The current conference status
         /// </summary>
         public ConferenceState CurrentStatus { get; set; }
+
+        /// <summary>
+        /// The hearing Id
+        /// </summary>
+        public Guid HearingId { get; set; }
     }
 }
