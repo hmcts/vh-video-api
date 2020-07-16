@@ -131,6 +131,7 @@ namespace VideoApi.IntegrationTests.Steps
                     new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
                     new Participant(Guid.NewGuid(),"", "IndividualOne", "Brown", "IndividualOne Brown", "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct")
                 })
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             today = DateTime.Today.AddMinutes(20);
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
@@ -139,6 +140,7 @@ namespace VideoApi.IntegrationTests.Steps
                     new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
                     new Participant(Guid.NewGuid(),"", "RepresentativeOne", "Green", "RepresentativeOne Green", "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct")
                 })
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             today = DateTime.Today.AddMinutes(30);
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: today)
@@ -147,6 +149,7 @@ namespace VideoApi.IntegrationTests.Steps
                     new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
                     new Participant(Guid.NewGuid(),"", "RepresentativeTwo", "Brown", "RepresentativeTwo Brown", "RepresentativeTwo.Brown@email.com", UserRole.Individual, "ChildrenAct")
                 })
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             today = DateTime.Today.AddMinutes(35);
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: today)
@@ -155,6 +158,7 @@ namespace VideoApi.IntegrationTests.Steps
                     new Participant(Guid.NewGuid(),"", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@email.com", UserRole.Judge, "ChildrenAct"),
                     new Participant(Guid.NewGuid(),"", "RepresentativeOne", "Green", "RepresentativeOne Green", "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct")
                 })
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             today = DateTime.Today.AddMinutes(40);
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: today)
@@ -163,6 +167,7 @@ namespace VideoApi.IntegrationTests.Steps
                     new Participant(Guid.NewGuid(),"", "JudgeFour", "Matt", "JudgeFour Matt", "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct"),
                     new Participant(Guid.NewGuid(),"", "RepresentativeTwo", "Dredd", "RepresentativeTwo Dredd", "RepresentativeTwo.Dredd@email.com", UserRole.Individual, "ChildrenAct")
                 })
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             today = DateTime.Today.AddMinutes(45);
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
@@ -171,6 +176,7 @@ namespace VideoApi.IntegrationTests.Steps
                     new Participant(Guid.NewGuid(),"", "JudgeFour", "Matt", "JudgeFour Matt", "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct"),
                     new Participant(Guid.NewGuid(),"", "IndividualOne", "Brown", "IndividualOne Brown", "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct")
                 })
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             await _context.TestDataManager.SeedConference(conference1);
             await _context.TestDataManager.SeedConference(conference2);

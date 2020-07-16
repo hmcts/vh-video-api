@@ -17,6 +17,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithConferenceStatus(ConferenceState.Closed)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .WithParticipants(3)
                 .WithMessages(5)
                 .Build();

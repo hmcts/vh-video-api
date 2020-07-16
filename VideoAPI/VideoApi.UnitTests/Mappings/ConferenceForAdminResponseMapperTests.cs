@@ -15,6 +15,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithConferenceStatus(ConferenceState.Closed)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .WithParticipant(UserRole.Judge, "Judge")
                 .WithParticipants(3)
                 .Build();
@@ -30,6 +31,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.AudioRecordingRequired)
                 .Excluding(x => x.Id)
                 .Excluding(x => x.ActualStartTime)
+                .Excluding(x => x.MeetingRoom)
             );
             
             response.StartedDateTime.Should().Be(conference.ActualStartTime);

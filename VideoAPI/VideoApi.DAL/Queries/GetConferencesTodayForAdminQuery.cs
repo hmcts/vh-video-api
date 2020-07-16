@@ -42,6 +42,8 @@ namespace VideoApi.DAL.Queries
             }
 
             return await adminQuery
+                .Where(x => x.MeetingRoom != null && x.MeetingRoom.AdminUri != null && x.MeetingRoom.JudgeUri != null
+                            && x.MeetingRoom.ParticipantUri != null && x.MeetingRoom.PexipNode != null)
                 .OrderBy(x => x.ScheduledDateTime)
                 .ToListAsync();
         }

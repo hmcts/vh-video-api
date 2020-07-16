@@ -21,6 +21,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private Guid _newConferenceId4;
         private Guid _newConferenceId5;
         private Guid _newConferenceId6;
+        private Guid _newConferenceId7;
+        private Guid _newConferenceId8;
 
         [SetUp]
         public void Setup()
@@ -33,16 +35,19 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _newConferenceId4 = Guid.Empty;
             _newConferenceId5 = Guid.Empty;
             _newConferenceId6 = Guid.Empty;
+            _newConferenceId7 = Guid.Empty;
+            _newConferenceId8 = Guid.Empty;
         }
 
         [Test]
-        public async Task Should_get_conference_for_username()
+        public async Task Should_get_conference_with_meeting_room_for_judge()
         {
             var username = "Automation_knownuser@email.com";
             var conference1 = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId1 = conference1.Id;
 
@@ -50,6 +55,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId2 = conference2.Id;
 
@@ -57,6 +63,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId3 = conference3.Id;
 
@@ -64,6 +71,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId4 = conference4.Id;
 
@@ -71,14 +79,31 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Defendant", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId5 = conference5.Id;
 
             var conference6 = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId6 = conference6.Id;
+
+            var conference7 = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .Build();
+            _newConferenceId7 = conference7.Id;
+
+            var conference8 = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.InSession)
+                .Build();
+            _newConferenceId8 = conference8.Id;
 
             await TestDataManager.SeedConference(conference1);
             await TestDataManager.SeedConference(conference2);
@@ -86,8 +111,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference4);
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
+            await TestDataManager.SeedConference(conference7);
+            await TestDataManager.SeedConference(conference8);
 
-            var expectedConferences = new List<Conference> {conference1, conference2, conference3, conference4};
+            var expectedConferences = new List<Conference> {conference1, conference2, conference3, conference4, conference7};
             var conferences = await _handler.Handle(new GetConferencesForTodayByJudgeQuery(username));
 
             conferences.Should().NotBeEmpty();
@@ -104,6 +131,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.RemoveConference(_newConferenceId4);
             await TestDataManager.RemoveConference(_newConferenceId5);
             await TestDataManager.RemoveConference(_newConferenceId6);
+            await TestDataManager.RemoveConference(_newConferenceId7);
+            await TestDataManager.RemoveConference(_newConferenceId8);
         }
     }
 }

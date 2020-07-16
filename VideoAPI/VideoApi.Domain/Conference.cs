@@ -37,7 +37,7 @@ namespace VideoApi.Domain
         public DateTime? ClosedDateTime { get; private set; }
         public string CaseNumber { get; private set; }
         public string CaseName { get; private set; }
-        protected virtual MeetingRoom MeetingRoom { get; private set; }
+        public MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
         public ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; }
