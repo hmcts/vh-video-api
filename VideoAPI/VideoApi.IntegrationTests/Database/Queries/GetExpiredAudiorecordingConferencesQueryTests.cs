@@ -18,6 +18,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private Guid _conference2Id;
         private Guid _conference3Id;
         private Guid _conference4Id;
+        private Guid _conference5Id;
 
         [SetUp]
         public void Setup()
@@ -28,6 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _conference2Id = Guid.Empty;
             _conference3Id = Guid.Empty;
             _conference4Id = Guid.Empty;
+            _conference5Id = Guid.Empty;
         }
 
         [TearDown]
@@ -38,6 +40,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.RemoveConference(_conference2Id);
             await TestDataManager.RemoveConference(_conference3Id);
             await TestDataManager.RemoveConference(_conference4Id);
+            await TestDataManager.RemoveConference(_conference5Id);
         }
 
         [Test]
@@ -47,50 +50,50 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var expired = utcDate.AddHours(-15);
             var withinTimeLimit = utcDate.AddHours(-10);
             var beyondTimeLimit = utcDate.AddHours(10);
+            var beyondTimeLimitMax = utcDate.AddHours(-39);
 
-            var conference1 = new ConferenceBuilder(true, scheduledDateTime: expired)
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
-                .WithConferenceStatus(ConferenceState.Closed)
-                .WithAudioRecordingRequired(true)
-                .Build();
+            var conference1 = GetTestDataConference(expired, true, ConferenceState.Closed);
             _conference1Id = conference1.Id;
 
-            var conference2 = new ConferenceBuilder(true, scheduledDateTime: withinTimeLimit)
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
-                .WithConferenceStatus(ConferenceState.InSession)
-                .Build();
+            var conference2 = GetTestDataConference(withinTimeLimit, false, ConferenceState.InSession);
             _conference2Id = conference2.Id;
 
-            var conference3 = new ConferenceBuilder(true, scheduledDateTime: beyondTimeLimit)
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
-                .WithConferenceStatus(ConferenceState.Paused)
-                .Build();
+            var conference3 = GetTestDataConference(beyondTimeLimit, false, ConferenceState.Paused);
             _conference3Id = conference3.Id;
 
-            var conference4 = new ConferenceBuilder(true, scheduledDateTime: expired)
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
-                .WithConferenceStatus(ConferenceState.Paused)
-                .WithAudioRecordingRequired(true)
-                .Build();
+            var conference4 = GetTestDataConference(expired, true, ConferenceState.Paused);
             _conference4Id = conference4.Id;
+
+            var conference5 = GetTestDataConference(beyondTimeLimitMax, true, ConferenceState.Closed);
+            _conference5Id = conference5.Id;
 
             await TestDataManager.SeedConference(conference1);
             await TestDataManager.SeedConference(conference2);
             await TestDataManager.SeedConference(conference3);
             await TestDataManager.SeedConference(conference4);
+            await TestDataManager.SeedConference(conference5);
 
             var conferences = await _handler.Handle(new GetExpiredAudiorecordingConferencesQuery());
             var confIds = conferences.Select(x => x.Id).ToList();
             confIds.Should().Contain(conference1.Id);
             confIds.Should().Contain(conference4.Id);
 
-            var notExpectedConferences = new List<Guid> { conference2.Id, conference3.Id };
+            var notExpectedConferences = new List<Guid> { conference2.Id, conference3.Id, conference5.Id };
             confIds.Should()
                 .NotContain(notExpectedConferences);
+        }
+
+
+        private Domain.Conference GetTestDataConference(DateTime startTime, bool audioRecording, ConferenceState conferenceStatus)
+        {
+            var conference = new ConferenceBuilder(true, scheduledDateTime: startTime)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(conferenceStatus)
+                .WithAudioRecordingRequired(audioRecording)
+                .Build();
+
+            return conference;
         }
     }
 }
