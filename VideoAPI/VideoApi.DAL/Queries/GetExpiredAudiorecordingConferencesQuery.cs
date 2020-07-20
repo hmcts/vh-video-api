@@ -24,7 +24,8 @@ namespace VideoApi.DAL.Queries
         public async Task<List<Conference>> Handle(GetExpiredAudiorecordingConferencesQuery query)
         {
             return await _context.Conferences
-                .Where(x => x.ScheduledDateTime.AddHours(14) <= DateTime.UtcNow
+                .Where(x => x.ScheduledDateTime.AddHours(14) <= DateTime.UtcNow 
+                && x.ScheduledDateTime >= DateTime.UtcNow.AddHours(-38)
                 && x.AudioRecordingRequired
                 && x.State > 0)
                 .OrderBy(x => x.ScheduledDateTime)
