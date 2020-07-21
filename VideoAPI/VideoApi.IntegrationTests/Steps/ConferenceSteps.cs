@@ -254,6 +254,25 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails.CurrentStatus.Should().Be(ConferenceState.Closed);
         }
 
+        [Then(@"the conference data should be anonymised")]
+        public async Task ThenTheConferenceDataShouldBeAnonymised()
+        {
+            Conference updatedConference;
+            var representative = _context.Test.Conference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
+            {
+                updatedConference = await db.Conferences.Include(p=>p.Participants).SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
+            }
+            updatedConference.Should().NotBeNull();
+            updatedConference.CaseName.Should().NotBe(_context.Test.Conference.CaseName);
+            var updatedParticipant = updatedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            updatedParticipant.DisplayName.Should().NotBe(representative.DisplayName);
+            updatedParticipant.FirstName.Should().NotBe(representative.FirstName);
+            updatedParticipant.LastName.Should().NotBe(representative.LastName);
+            updatedParticipant.Username.Should().NotBe(representative.Username);
+            updatedParticipant.Representee.Should().NotBe(representative.Representee);
+        }
+
         [Then(@"the summary of conference details should be retrieved")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
@@ -384,6 +403,13 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Count.Should().Be(number);
+        }
+
+        [Given(@"I have a request to anonymise the data")]
+        public void GivenIHaveARequestToAnonymiseTheData()
+        {
+            _context.Uri = AnonymiseConferences;
+            _context.HttpMethod = HttpMethod.Patch;
         }
     }
 }
