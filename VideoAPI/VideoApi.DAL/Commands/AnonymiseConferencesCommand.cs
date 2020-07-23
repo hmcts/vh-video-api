@@ -36,7 +36,7 @@ namespace VideoApi.DAL.Commands
                 "SET @anonymiseBeforeDate = (SELECT DATEADD(MONTH, @months, GETUTCDATE())) " +
 
                 "DECLARE conference_cursor CURSOR FOR " +
-                "SELECT distinct c.Id FROM [dbo].[Participant] p JOIN[dbo].[Conference] c ON p.ConferenceId = c.Id AND [ScheduledDateTime] < @anonymiseBeforeDate " +
+                "SELECT distinct c.Id FROM [dbo].[Participant] p JOIN [dbo].[Conference] c ON p.ConferenceId = c.Id AND [ScheduledDateTime] < @anonymiseBeforeDate " +
                 "OPEN conference_cursor " +
                 "FETCH NEXT FROM conference_cursor " +
                 "INTO @conferenceId " +
@@ -44,7 +44,7 @@ namespace VideoApi.DAL.Commands
                 "WHILE @@FETCH_STATUS = 0 " +
                 "BEGIN " +
                     "SELECT @randomString = SUBSTRING(CONVERT(varchar(40), NEWID()), 0, 9); " +
-                    "UPDATE[dbo].[Conference] SET CaseName = @randomString WHERE Id = @conferenceId " +
+                    "UPDATE [dbo].[Conference] SET CaseName = @randomString WHERE Id = @conferenceId " +
 
                     "FETCH NEXT FROM conference_cursor " +
                     "INTO @conferenceId " +
@@ -64,10 +64,10 @@ namespace VideoApi.DAL.Commands
                     "SELECT @randomString = SUBSTRING(CONVERT(varchar(40), NEWID()), 0, 9); " +
                        " IF @userRole = 4 " +
                             "BEGIN " +
-                                "UPDATE[dbo].[Participant] " +
+                                "UPDATE [dbo].[Participant] " +
                                 "SET " +
                                     "[DisplayName] = @randomString + ' ' + @randomString, " +
-                                    "[Username] = @randomString + '@hearings.reform.hmcts.net', " +
+                                    "[Username] = @randomString + '@email.net', " +
                                     "[FirstName] = @randomString, " +
                                     "[LastName] = @randomString, " +
                                     "[Representee] = CASE WHEN Representee = '' THEN '' ELSE @randomString END " +
@@ -76,11 +76,11 @@ namespace VideoApi.DAL.Commands
 
                         "IF @userRole <> 4 " +
                             "BEGIN " +
-                                "UPDATE[dbo].[Participant] " +
+                                "UPDATE [dbo].[Participant] " +
                                 "SET " +
                                     "[Name] = @randomString, " +
                                     "[DisplayName] = @randomString + ' ' + @randomString, " +
-                                    "[Username] = @randomString + '@hearings.reform.hmcts.net', " +
+                                    "[Username] = @randomString + '@email.net', " +
                                     "[FirstName] = @randomString, " +
                                     "[LastName] = @randomString, " +
                                     "[Representee] = CASE WHEN Representee = '' THEN '' ELSE @randomString END " +
