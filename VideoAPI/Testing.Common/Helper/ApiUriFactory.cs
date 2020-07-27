@@ -90,5 +90,11 @@ namespace Testing.Common.Helper
             public static string RemoveInstantMessagesForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
             public static string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
         }
+
+        public static class ConferenceManagementEndpoints
+        {
+            private const string ApiRoot = "conferences";
+            public static string StartVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/start";
+        }
     }
 }
