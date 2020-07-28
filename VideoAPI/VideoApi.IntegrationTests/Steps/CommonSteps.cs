@@ -365,6 +365,29 @@ namespace VideoApi.IntegrationTests.Steps
             });
         }
 
+        [Given(@"I have a conference closed over (.*) months ago")]
+        public async Task GivenIHaveAConferenceClosedOverMonthsAgo(int p0)
+        {
+            var conferenceList = new List<Domain.Conference>();
+            var conferenceType = typeof(Domain.Conference);
+            var utcDate = DateTime.UtcNow;
+            var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
+
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingClosed3Months)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
+            conferenceList.Add(conference1);
+            _context.Test.Conference = conference1;
+
+            foreach (var c in conferenceList)
+            {
+                _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
+            }
+        }
+
         [Given(@"I have a many open conferences with messages")]
         public async Task GivenIHaveAManyOpenConferencesWithMessages()
         {
