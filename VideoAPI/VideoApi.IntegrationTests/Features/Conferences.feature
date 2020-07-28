@@ -127,3 +127,10 @@ Feature: Conferences
     Given I have an invalid close conference request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
+
+Scenario: Anonymise Conference and Participant data for hearing older than 3 months
+  Given I have a conference closed over 3 months ago
+  And I have a request to anonymise the data
+  When I send the request to the endpoint
+  Then the response should have the status NoContent and success status True
+  And the conference data should be anonymised

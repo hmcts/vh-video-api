@@ -396,6 +396,24 @@ namespace Video.API.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Anonymises the Conference and Participant data.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPatch("anonymiseconferences")]
+        [SwaggerOperation(OperationId = "AnonymiseConferences")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> AnonymiseConferencesAsync()
+        {
+            _logger.LogDebug("AnonymiseConferencesAndParticipantInformation");
+
+            var anonymiseConferenceCommand = new AnonymiseConferencesCommand();
+            await _commandHandler.Handle(anonymiseConferenceCommand);
+
+            _logger.LogInformation($"Records updated: {anonymiseConferenceCommand.RecordsUpdated}");
+            return NoContent();
+        }
+
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
@@ -424,7 +442,6 @@ namespace Video.API.Controllers
 
             }
         }
-
 
         private async Task EnsureAudioFileExists(Guid hearingId)
         {
