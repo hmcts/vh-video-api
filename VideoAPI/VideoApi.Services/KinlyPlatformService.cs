@@ -157,5 +157,10 @@ namespace VideoApi.Services
         {
             await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(), new UpdateHearingParams {Recording_enabled = audioRecordingRequired});
         }
+
+        public async Task StartHearingAsync(Guid conferenceId)
+        {
+            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString());
+        }
     }
 }
