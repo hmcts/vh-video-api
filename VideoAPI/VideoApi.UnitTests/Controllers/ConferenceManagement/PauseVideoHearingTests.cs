@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         {
             var conferenceId = Guid.NewGuid();
             var message = "Auto Test Error";
-            var response = "You're not allowed to start this hearing";
+            var response = "You're not allowed to pause this hearing";
             var statusCode = (int) HttpStatusCode.Unauthorized;
             var exception =
                 new KinlyApiException(message, statusCode, response, null, null);
