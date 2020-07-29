@@ -1244,10 +1244,6 @@ namespace VideoApi.Services.Kinly
         [Newtonsoft.Json.JsonProperty("pexip_node", Required = Newtonsoft.Json.Required.Always)]
         public string Pexip_node { get; set; }
     
-        /// <summary>prepackaged URL for judge iframe</summary>
-        [Newtonsoft.Json.JsonProperty("judge", Required = Newtonsoft.Json.Required.Always)]
-        public string Judge { get; set; }
-    
         /// <summary>prepackaged URL for admin iframe</summary>
         [Newtonsoft.Json.JsonProperty("admin", Required = Newtonsoft.Json.Required.Always)]
         public string Admin { get; set; }
