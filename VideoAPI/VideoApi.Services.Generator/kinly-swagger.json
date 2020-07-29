@@ -375,7 +375,6 @@
       "type": "object",
       "required": [
         "pexip_node",
-        "judge",
         "admin",
         "participant"
       ],
@@ -383,10 +382,6 @@
         "pexip_node": {
           "type": "string",
           "description": "URL of the pexip node"
-        },
-        "judge": {
-          "type": "string",
-          "description": "prepackaged URL for judge iframe"
         },
         "admin": {
           "type": "string",

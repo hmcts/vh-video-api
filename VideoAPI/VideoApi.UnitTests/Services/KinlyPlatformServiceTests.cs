@@ -161,7 +161,7 @@ namespace VideoApi.UnitTests.Services
 
             var uris = new Uris
             {
-                Admin = "admin", Judge = "judge", Participant = "participant", Pexip_node = "pexip"
+                Admin = "admin", Participant = "participant", Pexip_node = "pexip"
             };
             
             _kinlyApiClientMock
@@ -182,7 +182,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);
-            result.JudgeUri.Should().Be(uris.Judge);
+            result.JudgeUri.Should().Be(uris.Participant);
             result.ParticipantUri.Should().Be(uris.Participant);
             result.PexipNode.Should().Be(uris.Pexip_node);
         }
@@ -200,8 +200,11 @@ namespace VideoApi.UnitTests.Services
         {
             var hearing = new Hearing
             {
-                Uris = new Uris {Admin = "https://Admin.com", Judge = "https://Judge.com", 
-                    Participant = "https://Participant.com", Pexip_node = "https://Pexip_node.com"}
+                Uris = new Uris
+                {
+                    Admin = "https://Admin.com", Participant = "https://Participant.com",
+                    Pexip_node = "https://Pexip_node.com"
+                }
             };
 
             _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).ReturnsAsync(hearing);
@@ -210,7 +213,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(hearing.Uris.Admin);
-            result.JudgeUri.Should().Be(hearing.Uris.Judge);
+            result.JudgeUri.Should().Be(hearing.Uris.Participant);
             result.ParticipantUri.Should().Be(hearing.Uris.Participant);
         }
 
