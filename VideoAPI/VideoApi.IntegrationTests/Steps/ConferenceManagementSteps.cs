@@ -38,5 +38,13 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = ApiUriFactory.ConferenceManagementEndpoints.EndVideoHearing(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
         }
+        
+        [Given(@"I have a technical assistance request")]
+        public void GivenIHaveATechnicalAssistanceRequest()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            _context.Uri = ApiUriFactory.ConferenceManagementEndpoints.RequestTechnicalAssistance(conferenceId);
+            _context.HttpMethod = HttpMethod.Post;
+        }
     }
 }

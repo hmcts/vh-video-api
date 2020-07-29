@@ -20,3 +20,9 @@ Feature: Conference Management
     And I have a end video hearing request
     When I send the request to the endpoint
     Then the response should have the status Accepted and success status True
+
+  Scenario: Request technical assistance in a video hearing
+    Given I have a conference
+    And I have a technical assistance request
+    When I send the request to the endpoint
+    Then the response should have the status Accepted and success status True

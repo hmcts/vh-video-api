@@ -9,33 +9,33 @@ using VideoApi.Services.Kinly;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
-    public class EndVideoHearingTests : ConferenceManagementControllerTestBase
+    public class RequestTechnicalAssistanceTests : ConferenceManagementControllerTestBase
     {
         [Test]
-        public async Task should_return_accepted_when_end_hearing_has_been_requested()
+        public async Task should_return_accepted_when_technical_assistance_has_been_requested()
         {
             var conferenceId = Guid.NewGuid();
             
-            var result = await Controller.EndVideoHearingAsync(conferenceId);
+            var result = await Controller.RequestTechnicalAssistanceAsync(conferenceId);
 
             var typedResult = (AcceptedResult) result;
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
-            VideoPlatformServiceMock.Verify(x => x.EndHearingAsync(conferenceId), Times.Once);
+            VideoPlatformServiceMock.Verify(x => x.RequestTechnicalAssistanceAsync(conferenceId), Times.Once);
         }
 
         [Test] public async Task should_return_kinly_status_code_on_error()
         {
             var conferenceId = Guid.NewGuid();
             var message = "Auto Test Error";
-            var response = "You're not allowed to end this hearing";
+            var response = "Unable to request technical assistance";
             var statusCode = (int) HttpStatusCode.Unauthorized;
             var exception =
                 new KinlyApiException(message, statusCode, response, null, null);
-            VideoPlatformServiceMock.Setup(x => x.EndHearingAsync(It.IsAny<Guid>()))
+            VideoPlatformServiceMock.Setup(x => x.RequestTechnicalAssistanceAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(exception);
             
-            var result = await Controller.EndVideoHearingAsync(conferenceId);
+            var result = await Controller.RequestTechnicalAssistanceAsync(conferenceId);
             var typedResult = (ObjectResult) result;
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be(statusCode);

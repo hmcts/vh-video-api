@@ -71,7 +71,7 @@ namespace Video.API.Controllers
         }
         
         /// <summary>
-        /// Pause a video hearing
+        /// End a video hearing
         /// </summary>
         /// <param name="conferenceId">conference id</param>
         /// <returns>No Content status</returns>
@@ -87,7 +87,29 @@ namespace Video.API.Controllers
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to pause video hearing {conferenceId}");
+                _logger.LogError(ex, $"Unable to end video hearing {conferenceId}");
+                return StatusCode(ex.StatusCode, ex.Response);
+            }
+        }
+        
+        /// <summary>
+        /// Request technical assistance. This will suspend a hearing.
+        /// </summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>No Content status</returns>
+        [HttpPost("{conferenceId}/technicalassistance")]
+        [SwaggerOperation(OperationId = "RequestTechnicalAssistance")]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        public async Task<IActionResult> RequestTechnicalAssistanceAsync(Guid conferenceId)
+        {
+            try
+            {
+                await _videoPlatformService.RequestTechnicalAssistanceAsync(conferenceId);
+                return Accepted();
+            }
+            catch (KinlyApiException ex)
+            {
+                _logger.LogError(ex, $"Unable to request technical assistance for video hearing {conferenceId}");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
