@@ -96,6 +96,8 @@ namespace Testing.Common.Helper
         {
             private const string ApiRoot = "conferences";
             public static string StartVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/start";
+            public static string PauseVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/pause";
+            public static string EndVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/end";
         }
     }
 }

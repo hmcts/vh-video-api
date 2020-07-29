@@ -46,5 +46,9 @@ namespace VideoApi.Services.Contracts
         Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired);
         
         Task StartHearingAsync(Guid conferenceId);
+        
+        Task PauseHearingAsync(Guid conferenceId);
+        
+        Task EndHearingAsync(Guid conferenceId);
     }
 }

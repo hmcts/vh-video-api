@@ -47,5 +47,49 @@ namespace Video.API.Controllers
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
+        
+        /// <summary>
+        /// Pause a video hearing
+        /// </summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>No Content status</returns>
+        [HttpPost("{conferenceId}/pause")]
+        [SwaggerOperation(OperationId = "PauseVideoHearing")]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        public async Task<IActionResult> PauseVideoHearingAsync(Guid conferenceId)
+        {
+            try
+            {
+                await _videoPlatformService.PauseHearingAsync(conferenceId);
+                return Accepted();
+            }
+            catch (KinlyApiException ex)
+            {
+                _logger.LogError(ex, $"Unable to pause video hearing {conferenceId}");
+                return StatusCode(ex.StatusCode, ex.Response);
+            }
+        }
+        
+        /// <summary>
+        /// Pause a video hearing
+        /// </summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>No Content status</returns>
+        [HttpPost("{conferenceId}/end")]
+        [SwaggerOperation(OperationId = "EndVideoHearing")]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        public async Task<IActionResult> EndVideoHearingAsync(Guid conferenceId)
+        {
+            try
+            {
+                await _videoPlatformService.EndHearingAsync(conferenceId);
+                return Accepted();
+            }
+            catch (KinlyApiException ex)
+            {
+                _logger.LogError(ex, $"Unable to pause video hearing {conferenceId}");
+                return StatusCode(ex.StatusCode, ex.Response);
+            }
+        }
     }
 }

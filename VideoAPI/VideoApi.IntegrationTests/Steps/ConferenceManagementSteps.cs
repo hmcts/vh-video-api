@@ -9,12 +9,10 @@ namespace VideoApi.IntegrationTests.Steps
     public class ConferenceManagementSteps: BaseSteps
     {
         private readonly TestContext _context;
-        private readonly CommonSteps _commonSteps;
         
         public ConferenceManagementSteps(TestContext context, CommonSteps commonSteps)
         {
             _context = context;
-            _commonSteps = commonSteps;
         }
         
         [Given(@"I have a start video hearing request")]
@@ -22,6 +20,22 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferenceId = _context.Test.Conference.Id;
             _context.Uri = ApiUriFactory.ConferenceManagementEndpoints.StartVideoHearing(conferenceId);
+            _context.HttpMethod = HttpMethod.Post;
+        }
+        
+        [Given(@"I have a pause video hearing request")]
+        public void GivenIHaveAPauseVideoHearingRequest()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            _context.Uri = ApiUriFactory.ConferenceManagementEndpoints.PauseVideoHearing(conferenceId);
+            _context.HttpMethod = HttpMethod.Post;
+        }
+        
+        [Given(@"I have a end video hearing request")]
+        public void GivenIHaveAEndVideoHearingRequest()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            _context.Uri = ApiUriFactory.ConferenceManagementEndpoints.EndVideoHearing(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
         }
     }
