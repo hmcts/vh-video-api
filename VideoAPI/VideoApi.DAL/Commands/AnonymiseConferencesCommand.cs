@@ -36,7 +36,8 @@ namespace VideoApi.DAL.Commands
                 "SET @anonymiseBeforeDate = (SELECT DATEADD(MONTH, @months, GETUTCDATE())) " +
 
                 "DECLARE conference_cursor CURSOR FOR " +
-                "SELECT distinct c.Id FROM [dbo].[Participant] p JOIN [dbo].[Conference] c ON p.ConferenceId = c.Id AND [ScheduledDateTime] < @anonymiseBeforeDate " +
+                "SELECT distinct c.Id FROM [dbo].[Participant] p JOIN [dbo].[Conference] c ON p.ConferenceId = c.Id " +
+                "AND [ScheduledDateTime] < @anonymiseBeforeDate AND p.Username not like '%@email.net%' " +
                 "OPEN conference_cursor " +
                 "FETCH NEXT FROM conference_cursor " +
                 "INTO @conferenceId " +
@@ -53,7 +54,8 @@ namespace VideoApi.DAL.Commands
                 "DEALLOCATE conference_cursor; " +
 
                 "DECLARE participant_cursor CURSOR FOR " +
-                "SELECT p.Id, p.userrole, p.casetypegroup FROM [dbo].[Participant] p JOIN[dbo].[Conference] c ON p.ConferenceId = c.Id AND [ScheduledDateTime] < @anonymiseBeforeDate " +
+                "SELECT p.Id, p.userrole, p.casetypegroup FROM [dbo].[Participant] p JOIN[dbo].[Conference] c ON p.ConferenceId = c.Id " +
+                "AND [ScheduledDateTime] < @anonymiseBeforeDate AND p.Username not like '%@email.net%' " +
 
                 "OPEN participant_cursor " +
                 "FETCH NEXT FROM participant_cursor " +

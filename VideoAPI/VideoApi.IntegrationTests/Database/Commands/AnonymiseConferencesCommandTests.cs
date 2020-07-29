@@ -139,6 +139,61 @@ namespace VideoApi.IntegrationTests.Database.Commands
             representative.DisplayName.Should().Be(conference3Rep.DisplayName);
         }
 
+        [Test]
+        public async Task Should_not_anonymise_data_that_has_been_anonymised()
+        {
+            conferenceList = new List<Domain.Conference>();
+            var conferenceType = typeof(Domain.Conference);
+            var utcDate = DateTime.UtcNow;
+            var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
+
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingClosed3Months)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .Build();
+            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
+            _conference1Id = conference1.Id;
+            conferenceList.Add(conference1);
+            var conference1Rep = conference1.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+
+            foreach (var c in conferenceList)
+            {
+                await TestDataManager.SeedConference(c);
+            }
+            var command = new AnonymiseConferencesCommand();
+            await _handler.Handle(command);
+
+            command.RecordsUpdated.Should().Be(3);
+
+            var anonymisedConference = await _handlerGetConferenceByIdQueryHandler.Handle(new GetConferenceByIdQuery(conference1.Id));
+            anonymisedConference.Should().NotBeNull();
+
+            anonymisedConference.CaseName.Should().NotBe(conference1.CaseName);
+            var anonymisedRepresentative = anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            anonymisedRepresentative.DisplayName.Should().NotBe(conference1Rep.DisplayName);
+            anonymisedRepresentative.FirstName.Should().NotBe(conference1Rep.FirstName);
+            anonymisedRepresentative.LastName.Should().NotBe(conference1Rep.LastName);
+            anonymisedRepresentative.Username.Should().NotBe(conference1Rep.Username);
+            anonymisedRepresentative.Representee.Should().NotBe(conference1Rep.Representee);
+
+            command = new AnonymiseConferencesCommand();
+            await _handler.Handle(command);
+
+            command.RecordsUpdated.Should().Be(-1);
+
+            var notAnonymisedConference = await _handlerGetConferenceByIdQueryHandler.Handle(new GetConferenceByIdQuery(conference1.Id));
+            notAnonymisedConference.Should().NotBeNull();
+
+            notAnonymisedConference.CaseName.Should().Be(anonymisedConference.CaseName);
+            var notAnonymisedRepresentative = anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            notAnonymisedRepresentative.DisplayName.Should().Be(anonymisedRepresentative.DisplayName);
+            notAnonymisedRepresentative.FirstName.Should().Be(anonymisedRepresentative.FirstName);
+            notAnonymisedRepresentative.LastName.Should().Be(anonymisedRepresentative.LastName);
+            notAnonymisedRepresentative.Username.Should().Be(anonymisedRepresentative.Username);
+            notAnonymisedRepresentative.Representee.Should().Be(anonymisedRepresentative.Representee);
+        }
+
         [TearDown]
         public async Task TearDown()
         {
