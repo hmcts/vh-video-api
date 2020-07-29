@@ -162,5 +162,15 @@ namespace VideoApi.Services
         {
             await _kinlyApiClient.StartHearingAsync(conferenceId.ToString());
         }
+
+        public async Task PauseHearingAsync(Guid conferenceId)
+        {
+            await _kinlyApiClient.PauseHearingAsync(conferenceId.ToString());
+        }
+
+        public async Task EndHearingAsync(Guid conferenceId)
+        {
+            await _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
+        }
     }
 }
