@@ -36,7 +36,7 @@ namespace VideoApi.Events.Handlers
                 _roomReservationService.RemoveRoomReservation(SourceConference.Id, (RoomType)callbackEvent.TransferTo);
             }
             
-            if (SourceParticipant.IsJudge()) await PublishLiveEventMessage();
+            if (SourceParticipant.IsJudge() && participantStatus == ParticipantState.InHearing) await PublishLiveEventMessage();
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
