@@ -47,3 +47,10 @@ Feature: Participants
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
     And the judge names should be retrieved
+
+  Scenario: Get participants for an existing conference
+    Given I have a conference
+    And I have a get participants for a participants request with a conference id
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the participants should be retrieved

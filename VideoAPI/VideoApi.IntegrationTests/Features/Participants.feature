@@ -95,3 +95,15 @@ Feature: Participants
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
     And the heartbeats should be saved
+
+  Scenario: Get participants for an existing conference
+    Given I have a conference
+    And I have a get participants for a participants request with a valid conference id
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the participants should be retrieved
+
+  Scenario: Get participants for a non-existent conference
+    Given I have a get participants for a participants request with an nonexistent conference id
+    When I send the request to the endpoint
+    Then the response should have the status NotFound and success status False
