@@ -289,7 +289,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"the judge status is in hearing")]
         public void GivenTheConferenceIsInSession()
         {
-            _callbackSteps.GivenIHaveAValidConferenceEventRequestForAJudge(EventType.Joined);
+            _callbackSteps.GivenIHaveAValidConferenceEventRequestForAJudge(EventType.Transfer);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }

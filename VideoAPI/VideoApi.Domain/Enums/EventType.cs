@@ -11,13 +11,11 @@ namespace VideoApi.Domain.Enums
         Close,
         Leave,
         Consultation,
-        JudgeAvailable,
         MediaPermissionDenied,
         ParticipantJoining,
         SelfTestFailed,
         Suspend,
         VhoCall,
-        JudgeUnavailable,
         ParticipantNotSignedIn
     }
 }

@@ -6,7 +6,6 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
-using VideoApi.Services;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Events.Handlers
@@ -36,6 +35,8 @@ namespace VideoApi.Events.Handlers
             {
                 _roomReservationService.RemoveRoomReservation(SourceConference.Id, (RoomType)callbackEvent.TransferTo);
             }
+            
+            if (SourceParticipant.IsJudge()) await PublishLiveEventMessage();
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
@@ -65,6 +66,12 @@ namespace VideoApi.Events.Handlers
                     throw new RoomTransferException(callbackEvent.TransferFrom.GetValueOrDefault(),
                         callbackEvent.TransferTo.GetValueOrDefault());
             }
+        }
+        
+        private async Task PublishLiveEventMessage()
+        {
+            var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
+            await CommandHandler.Handle(command);
         }
     }
 }

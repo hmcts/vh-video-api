@@ -45,7 +45,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
-                .With(x => x.TransferTo = RoomType.WaitingRoom)
+                .With(x => x.TransferTo = RoomType.HearingRoom)
                 .With(x => x.Reason = "Automated")
                 .Build();
 
@@ -61,9 +61,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var participant = conference.Participants.First(x => x.Id == _context.Test.ParticipantId);
-            participant.CurrentStatus.Should().Be(participant.UserRole == UserRole.Judge
-                ? ParticipantState.InHearing
-                : ParticipantState.Available);
+            participant.CurrentStatus.Should().Be(ParticipantState.Available);
         }
     }
 }
