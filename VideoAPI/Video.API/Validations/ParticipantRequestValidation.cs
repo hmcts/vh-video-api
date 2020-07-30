@@ -1,6 +1,5 @@
 using FluentValidation;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
 
 namespace Video.API.Validations
 {

@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Events
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            
+
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Joined,
@@ -42,34 +42,6 @@ namespace VideoApi.UnitTests.Events
                     command.ParticipantId == participantForEvent.Id &&
                     command.ParticipantState == ParticipantState.Available &&
                     command.Room == RoomType.WaitingRoom)), Times.Once);
-        }
-
-        [Test]
-        public async Task
-            Should_send_in_hearing_message_to_participants_and_live_message_to_service_bus_when_judge_joins()
-        {
-            _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
-            var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
-            
-            var callbackEvent = new CallbackEvent
-            {
-                EventType = EventType.Joined,
-                EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id,
-                ParticipantId = participantForEvent.Id,
-                TimeStampUtc = DateTime.UtcNow
-            };
-
-            await _eventHandler.HandleAsync(callbackEvent);
-
-            CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
-                    command.ConferenceId == conference.Id &&
-                    command.ParticipantId == participantForEvent.Id &&
-                    command.ParticipantState == ParticipantState.InHearing &&
-                    command.Room == RoomType.HearingRoom)), Times.Once);
         }
     }
 }
