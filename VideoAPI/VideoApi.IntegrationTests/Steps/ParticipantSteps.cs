@@ -16,6 +16,7 @@ using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;
 using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;
+using Testing.Common.Assertions;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -255,6 +256,45 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Post;
             _context.HttpContent = RequestBody.Set(new AddHeartbeatRequest { BrowserName = "firefox" });
         }
+
+        [Given(@"I have a get participants for a participants request with a (.*) conference id")]
+        [Given(@"I have a get participants for a participants request with an (.*) conference id")]
+        public void GivenIHaveAGetParticipantsForConferenceRequest(Scenario scenario)
+        {
+            var conferenceId = GetConferenceIdForRequest(scenario);
+            _context.Uri = GetParticipantsByConferenceId(conferenceId);
+            _context.HttpMethod = HttpMethod.Get;
+
+        }
+
+        private Guid GetConferenceIdForRequest(Scenario scenario)
+        {
+            Guid conferenceId;
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                    {
+                        conferenceId = _context.Test.Conference.Id;
+                        break;
+                    }
+
+                case Scenario.Nonexistent:
+                    conferenceId = Guid.NewGuid();
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+
+            return conferenceId;
+        }
+
+        [Then(@"the participants should be retrieved")]
+        public async Task ThenTheParticipantsShouldBeRetrieved()
+        {
+            var result = await Response.GetResponses<List<ParticipantSummaryResponse>>(_context.Response.Content);
+            result.Should().NotBeNull();
+            AssertParticipantSummaryResponse.ForParticipant(result[1]);
+        }
+
 
         [Then(@"(.*) heartbeats should be retrieved")]
         [Then(@"(.*) heartbeat should be retrieved")]

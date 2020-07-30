@@ -281,5 +281,30 @@ namespace Video.API.Controllers
             var judgeFirstNames = await _queryHandler.Handle<GetDistinctJudgeListByFirstNameQuery, List<string>>(query);
             return Ok(new JudgeNameListResponse { FirstNames = judgeFirstNames });
         }
+
+        /// <summary>
+        /// Get a list of participants for a given conference Id
+        /// </summary>
+        /// <param name="conferenceId">The conference Id</param>
+        /// <returns>The list of participants</returns>
+        [HttpGet("{conferenceId}/participants")]
+        [SwaggerOperation(OperationId = "GetParticipantsByConferenceId")]
+        [ProducesResponseType(typeof(List<ParticipantSummaryResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetParticipantsByConferenceId(Guid conferenceId)
+        {
+            _logger.LogDebug("GetParticipantsByConferenceId");
+
+            var query = new GetConferenceByIdQuery(conferenceId);
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
+            if (conference == null)
+            {
+                _logger.LogWarning($"Unable to find conference {conferenceId}");
+                return NotFound();
+            }
+
+            var participants = conference.Participants.Select(x => ParticipantToSummaryResponseMapper.MapParticipantToSummary(x)).ToList();
+            return Ok(participants);
+        }
     }
 }

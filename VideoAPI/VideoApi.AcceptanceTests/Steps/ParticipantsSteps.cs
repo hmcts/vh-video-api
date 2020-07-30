@@ -5,6 +5,7 @@ using System.Net;
 using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using Testing.Common.Assertions;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
@@ -164,6 +165,20 @@ namespace VideoApi.AcceptanceTests.Steps
             {
                 judgesList.Count(x => x.Contains(judge.FirstName)).Should().Be(1);
             }
+        }
+
+        [Given(@"I have a get participants for a participants request with a conference id")]
+        public void GivenIHaveAGetParticipantsForConferenceRequest()
+        {
+            _context.Request = _context.Get(GetParticipantsByConferenceId(_context.Test.ConferenceResponse.Id));
+        }
+
+        [Then(@"the participants should be retrieved")]
+        public void ThenTheParticipantsShouldBeRetrieved()
+        {
+            var participants = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ParticipantSummaryResponse>>(_context.Response.Content);
+            participants.Should().NotBeNull();
+            AssertParticipantSummaryResponse.ForParticipant(participants[1]);
         }
     }
 }
