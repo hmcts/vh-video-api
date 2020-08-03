@@ -35,8 +35,6 @@ namespace VideoApi.Events.Handlers
             {
                 _roomReservationService.RemoveRoomReservation(SourceConference.Id, (RoomType)callbackEvent.TransferTo);
             }
-            
-            if (SourceParticipant.IsJudge() && participantStatus == ParticipantState.InHearing) await PublishLiveEventMessage();
         }
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
@@ -66,12 +64,6 @@ namespace VideoApi.Events.Handlers
                     throw new RoomTransferException(callbackEvent.TransferFrom.GetValueOrDefault(),
                         callbackEvent.TransferTo.GetValueOrDefault());
             }
-        }
-        
-        private async Task PublishLiveEventMessage()
-        {
-            var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
-            await CommandHandler.Handle(command);
         }
     }
 }

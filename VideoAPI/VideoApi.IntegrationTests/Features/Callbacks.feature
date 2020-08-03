@@ -32,6 +32,8 @@ Feature: Callbacks
     | Joined                 |
     | Disconnected           |
     | Transfer               |
+    | Start                  |
+    | CountdownFinished      |
     | Pause                  |
     | Close                  |
     | Leave                  |

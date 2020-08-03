@@ -21,6 +21,7 @@ namespace VideoApi.Events.Handlers.Core
 
         public IEventHandler Get(EventType eventType)
         {
+            var eventHandlers = _eventHandlers.Where(x => x.EventType == eventType);
             var eventHandler = _eventHandlers.SingleOrDefault(x => x.EventType == eventType);
             if (eventHandler == null)
                 throw new ArgumentOutOfRangeException(nameof(eventType),
