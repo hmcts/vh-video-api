@@ -14,7 +14,7 @@ namespace VideoApi.UnitTests.Events
         private StartEventHandler _eventHandler;
         
         [Test]
-        public async Task Should_send_messages_to_participants_and_service_bus_on_pause()
+        public async Task Should_send_messages_to_participants_and_service_bus_on_start()
         {
             _eventHandler = new StartEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
