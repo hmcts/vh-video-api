@@ -27,6 +27,8 @@ Feature: Events
       | EventType              |
       | Joined                 |
       | Disconnected           |
+      | Start                  |
+      | CountdownFinished      |
       | Pause                  |
       | Close                  |
       | Leave                  |

@@ -9,20 +9,20 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class PauseEventHandlerTests : EventHandlerTestBase
+    public class StartEventHandlerTests : EventHandlerTestBase
     {
-        private PauseEventHandler _eventHandler;
-
+        private StartEventHandler _eventHandler;
+        
         [Test]
-        public async Task Should_send_messages_to_participants_and_service_bus_on_pause()
+        public async Task Should_send_messages_to_participants_and_service_bus_on_start()
         {
-            _eventHandler = new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
+            _eventHandler = new StartEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             
             var callbackEvent = new CallbackEvent
             {
-                EventType = EventType.Pause,
+                EventType = EventType.Start,
                 EventId = Guid.NewGuid().ToString(),
                 ConferenceId = conference.Id,
                 TimeStampUtc = DateTime.UtcNow
@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Events
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&
-                    command.ConferenceState == ConferenceState.Paused)), Times.Once);
+                    command.ConferenceState == ConferenceState.InSession)), Times.Once);
         }
     }
 }

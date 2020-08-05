@@ -44,6 +44,8 @@ namespace VideoApi.UnitTests.Events
                 new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
 
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new StartEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new CountdownFinishedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService),
