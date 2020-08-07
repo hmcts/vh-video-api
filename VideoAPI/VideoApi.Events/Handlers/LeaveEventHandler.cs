@@ -19,9 +19,8 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var participantState = SourceParticipant.IsJudge() ? ParticipantState.NotSignedIn : ParticipantState.Disconnected;
-
-            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id,
+                ParticipantState.Disconnected);
             await CommandHandler.Handle(command);
         }
     }
