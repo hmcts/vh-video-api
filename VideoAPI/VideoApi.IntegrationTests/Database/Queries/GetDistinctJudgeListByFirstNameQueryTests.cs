@@ -67,6 +67,40 @@ namespace VideoApi.IntegrationTests.Database.Queries
             judgelist.Should().NotBeEmpty();
         }
 
+        [Test]
+        public async Task Should_get_list_of_judges_excluding_anonymised_and_automation_test_users()
+        {
+            var newConference = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Judge, "Judge", "Judge.James@email.com", "JudgeManchester", null, ParticipantState.None)
+                .WithParticipant(UserRole.Representative, "Claimant", "Claimaint.Smith@email.com", "Claimaint", null, ParticipantState.None)
+                .WithParticipant(UserRole.Individual, "Claimant", "ClaimaintLIP.Green@email.com", "Claimaint", null, ParticipantState.None)
+                .Build();
+            _conferenceIds.Add(newConference.Id);
+            await TestDataManager.SeedConference(newConference);
+
+            // automation test
+            newConference = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Judge, "Judge", "Automation_Judge.James@email.com", "JudgeBirmingham", null, ParticipantState.None)
+                .WithParticipant(UserRole.Representative, "Claimant", "Automation_Claimaint.Smith@email.com", "Claimaint", null, ParticipantState.None)
+                .WithParticipant(UserRole.Individual, "Claimant", "Automation_ClaimaintLIP.Green@email.com", "Claimaint", null, ParticipantState.None)
+                .Build();
+            _conferenceIds.Add(newConference.Id);
+            await TestDataManager.SeedConference(newConference);
+
+            // anonymised data
+            newConference = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Judge, "Judge", "Judge.James1@email.net", "JudgeLondon", null, ParticipantState.None)
+                .WithParticipant(UserRole.Representative, "Claimant", "Claimaint.Smith1@email.com", "Claimaint", null, ParticipantState.None)
+                .WithParticipant(UserRole.Individual, "Claimant", "ClaimaintLIP.Green1@email.com", "Claimaint", null, ParticipantState.None)
+                .Build();
+            _conferenceIds.Add(newConference.Id);
+            await TestDataManager.SeedConference(newConference);
+
+            var judgelist = await _handler.Handle(new GetDistinctJudgeListByFirstNameQuery());
+            judgelist.Should().NotBeEmpty();
+            judgelist.Count.Should().Be(1);
+            judgelist[0].Should().Be("JudgeManchester");
+        }
 
         private async Task CreateConference(string judge)
         {
