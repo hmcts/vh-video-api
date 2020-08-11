@@ -72,6 +72,8 @@ namespace VideoApi.DAL.Commands
                                     "[Username] = @randomString + '@email.net', " +
                                     "[FirstName] = @randomString, " +
                                     "[LastName] = @randomString, " +
+                                    "[ContactEmail] = @randomString, " +
+                                    "[ContactTelephone] = @randomString, " +
                                     "[Representee] = CASE WHEN Representee = '' THEN '' ELSE @randomString END " +
                                " WHERE Id = @participantId " +
                             "END " +
@@ -85,6 +87,8 @@ namespace VideoApi.DAL.Commands
                                     "[Username] = @randomString + '@email.net', " +
                                     "[FirstName] = @randomString, " +
                                     "[LastName] = @randomString, " +
+                                    "[ContactEmail] = @randomString, " +
+                                    "[ContactTelephone] = @randomString, " +
                                     "[Representee] = CASE WHEN Representee = '' THEN '' ELSE @randomString END " +
                                 "WHERE Id = @participantId " +
                             "END " +

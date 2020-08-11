@@ -128,6 +128,20 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoCaseTypeGroupErrorMessage)
                 .Should().BeTrue();
         }
+        
+        [Test]
+        public async Task Should_return_missing_contact_email_error()
+        {
+            var request = BuildRequest();
+            request.ContactEmail = string.Empty;
+
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoContactEmailErrorMessage)
+                .Should().BeTrue();
+        }
 
         [Test]
         public async Task Should_return_missing_hearing_role_error()

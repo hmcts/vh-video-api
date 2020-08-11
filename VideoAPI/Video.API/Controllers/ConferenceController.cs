@@ -486,7 +486,7 @@ namespace Video.API.Controllers
 
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name, x.FirstName, x.LastName, x.DisplayName, x.Username, x.UserRole,
-                        x.CaseTypeGroup)
+                        x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
                     {
                         Representee = x.Representee
                     })

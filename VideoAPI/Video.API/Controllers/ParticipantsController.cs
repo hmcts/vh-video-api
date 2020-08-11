@@ -50,14 +50,14 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, 
+        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId,
             AddParticipantsToConferenceRequest request)
         {
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(), x.DisplayName.Trim(),
-                        x.Username.ToLowerInvariant().Trim(), x.UserRole,
-                        x.CaseTypeGroup)
+                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
+                        x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole, x.CaseTypeGroup,
+                        x.ContactEmail, x.ContactTelephone)
                     {
                         Representee = x.Representee
                     })
@@ -95,8 +95,8 @@ namespace Video.API.Controllers
             try
             {
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
-                    request.Fullname, request.FirstName, request.LastName,
-                    request.DisplayName, request.Representee);
+                    request.Fullname, request.FirstName, request.LastName, request.DisplayName, request.Representee,
+                    request.ContactEmail, request.ContactTelephone);
                 await _commandHandler.Handle(updateParticipantDetailsCommand);
 
                 return NoContent();

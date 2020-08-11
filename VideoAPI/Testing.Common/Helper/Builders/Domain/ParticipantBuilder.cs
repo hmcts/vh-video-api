@@ -18,10 +18,10 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             _userRole = UserRole.Individual;
             _caseTypeGroup = "Claimant";
-                
+
             _builderSettings = new BuilderSettings();
             if (!ignoreId) return;
-            
+
             _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.TestCallResultId);
             _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
             _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
@@ -32,13 +32,13 @@ namespace Testing.Common.Helper.Builders.Domain
             _userRole = userRole;
             return this;
         }
-        
+
         public ParticipantBuilder WithCaseTypeGroup(string caseTypeGroup)
         {
             _caseTypeGroup = caseTypeGroup;
             return this;
         }
-        
+
         public ParticipantBuilder WithSelfTestScore(bool passed, TestScore score)
         {
             _testCallResult = new TestCallResult(passed, score);
@@ -48,10 +48,10 @@ namespace Testing.Common.Helper.Builders.Domain
         public Participant Build()
         {
             var name = Name.FullName();
-            
+
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), name, Name.First(), Name.Last(), name, Internet.Email(), _userRole,
-                    _caseTypeGroup))
+                    new Participant(Guid.NewGuid(), name, Name.First(), Name.Last(), name, Internet.Email(), _userRole,
+                        _caseTypeGroup, Internet.Email(), Phone.Number()))
                 .With(x => x.CurrentRoom = null)
                 .Build();
 
@@ -59,7 +59,7 @@ namespace Testing.Common.Helper.Builders.Domain
             {
                 participant.UpdateTestCallResult(_testCallResult.Passed, _testCallResult.Score);
             }
-            
+
             return participant;
         }
     }

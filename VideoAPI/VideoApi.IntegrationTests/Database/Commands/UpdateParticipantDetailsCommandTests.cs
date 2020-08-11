@@ -30,8 +30,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var conferenceId = Guid.NewGuid();
             var participantId = Guid.NewGuid();
-            
-            var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "firstName", "lastName", "displayname", String.Empty);
+
+            var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "firstName",
+                "lastName", "displayname", String.Empty, "failed@test.com", "1234");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -43,7 +44,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participantId = Guid.NewGuid();
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "firstName", "lastName", "displayname", String.Empty);
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "firstName",
+                "lastName", "displayname", String.Empty, "failed@test.com", "1234");
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -55,7 +57,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants().First();
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName", "lastName", "displayname", String.Empty);
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
+                "lastName", "displayname", String.Empty, "new@test.com", "0123456789");
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
@@ -65,6 +68,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.Name.Should().Be("fullname");
             updatedParticipant.FirstName.Should().Be("firstName");
             updatedParticipant.LastName.Should().Be("lastName");
+            updatedParticipant.ContactEmail.Should().Be("new@test.com");
+            updatedParticipant.ContactTelephone.Should().Be("0123456789");
         }
 
 

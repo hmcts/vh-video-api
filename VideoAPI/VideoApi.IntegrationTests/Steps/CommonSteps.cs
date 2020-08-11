@@ -101,12 +101,15 @@ namespace VideoApi.IntegrationTests.Steps
             await _context.TestDataManager.SeedConference(tomorrowConference2);
             _context.Test.ClosedConferences.Add(await _context.TestDataManager.SeedConference(yesterdayConference2));
 
-            var alert1 = new Alert(yesterdayClosedConference.Id,yesterdayClosedConference.Id, "Disconnected", TaskType.Participant);
-            var alert2 = new Alert(todayConference1.Id,todayConference1.Id, "Disconnected", TaskType.Participant);
-            var alert3 = new Alert(tomorrowConference1.Id,tomorrowConference1.Id, "Disconnected", TaskType.Participant);
-            var alert4 = new Alert(todayConference2.Id,todayConference2.Id, "Disconnected", TaskType.Participant);
-            var alert5 = new Alert(todayConference2.Id,todayConference2.Id, "Disconnected", TaskType.Participant);
-            var alert6 = new Alert(yesterdayConference2.Id,yesterdayConference2.Id, "Disconnected", TaskType.Participant);
+            var alert1 = new Alert(yesterdayClosedConference.Id, yesterdayClosedConference.Id, "Disconnected",
+                TaskType.Participant);
+            var alert2 = new Alert(todayConference1.Id, todayConference1.Id, "Disconnected", TaskType.Participant);
+            var alert3 = new Alert(tomorrowConference1.Id, tomorrowConference1.Id, "Disconnected",
+                TaskType.Participant);
+            var alert4 = new Alert(todayConference2.Id, todayConference2.Id, "Disconnected", TaskType.Participant);
+            var alert5 = new Alert(todayConference2.Id, todayConference2.Id, "Disconnected", TaskType.Participant);
+            var alert6 = new Alert(yesterdayConference2.Id, yesterdayConference2.Id, "Disconnected",
+                TaskType.Participant);
 
             _context.Test.Conferences.Add(yesterdayClosedConference);
             _context.Test.Conferences.Add(todayConference1);
@@ -128,8 +131,11 @@ namespace VideoApi.IntegrationTests.Steps
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
-                    new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
-                    new Participant(Guid.NewGuid(),"", "IndividualOne", "Brown", "IndividualOne Brown", "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct")
+                    new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
+                        "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct", "judge1@test.com", "01234"),
+                    new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
+                        "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct", "individual1@test.com",
+                        "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -137,8 +143,11 @@ namespace VideoApi.IntegrationTests.Steps
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
-                    new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
-                    new Participant(Guid.NewGuid(),"", "RepresentativeOne", "Green", "RepresentativeOne Green", "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct")
+                    new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
+                        "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct", "judge1@test.com", "01234"),
+                    new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
+                        "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct", "individual2@test.com",
+                        "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -146,8 +155,11 @@ namespace VideoApi.IntegrationTests.Steps
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
-                    new Participant(Guid.NewGuid(),"", "JudgeOne", "Smith", "JudgeOne Smith", "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct"),
-                    new Participant(Guid.NewGuid(),"", "RepresentativeTwo", "Brown", "RepresentativeTwo Brown", "RepresentativeTwo.Brown@email.com", UserRole.Individual, "ChildrenAct")
+                    new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
+                        "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct", "judge1@test.com", "01234"),
+                    new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Brown", "RepresentativeTwo Brown",
+                        "RepresentativeTwo.Brown@email.com", UserRole.Individual, "ChildrenAct", "individual3@test.com",
+                        "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -155,8 +167,11 @@ namespace VideoApi.IntegrationTests.Steps
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
-                    new Participant(Guid.NewGuid(),"", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@email.com", UserRole.Judge, "ChildrenAct"),
-                    new Participant(Guid.NewGuid(),"", "RepresentativeOne", "Green", "RepresentativeOne Green", "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct")
+                    new Participant(Guid.NewGuid(), "", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@email.com",
+                        UserRole.Judge, "ChildrenAct", "judge2@test.com", "01234"),
+                    new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
+                        "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct", "individual2@test.com",
+                        "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -164,8 +179,11 @@ namespace VideoApi.IntegrationTests.Steps
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
-                    new Participant(Guid.NewGuid(),"", "JudgeFour", "Matt", "JudgeFour Matt", "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct"),
-                    new Participant(Guid.NewGuid(),"", "RepresentativeTwo", "Dredd", "RepresentativeTwo Dredd", "RepresentativeTwo.Dredd@email.com", UserRole.Individual, "ChildrenAct")
+                    new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
+                        "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct", "judge4@test.com", "01234"),
+                    new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Dredd", "RepresentativeTwo Dredd",
+                        "RepresentativeTwo.Dredd@email.com", UserRole.Individual, "ChildrenAct", "rep2@test.com",
+                        "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -173,8 +191,11 @@ namespace VideoApi.IntegrationTests.Steps
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
-                    new Participant(Guid.NewGuid(),"", "JudgeFour", "Matt", "JudgeFour Matt", "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct"),
-                    new Participant(Guid.NewGuid(),"", "IndividualOne", "Brown", "IndividualOne Brown", "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct")
+                    new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
+                        "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct", "judge4@test.com", "01234"),
+                    new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
+                        "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct", "individual1@test.com",
+                        "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -255,12 +276,12 @@ namespace VideoApi.IntegrationTests.Steps
                 _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
             }
 
-            var alert1 = new Alert(conference1.Id,conference1.Id, "Disconnected", TaskType.Participant);
-            var alert2 = new Alert(conference2.Id,conference2.Id, "Disconnected", TaskType.Participant);
-            var alert3 = new Alert(conference3.Id,conference3.Id, "Disconnected", TaskType.Participant);
-            var alert4 = new Alert(conference4.Id,conference4.Id, "Disconnected", TaskType.Participant);
-            var alert5 = new Alert(conference5.Id,conference5.Id, "Disconnected", TaskType.Participant);
-            var alert6 = new Alert(conference6.Id,conference6.Id, "Disconnected", TaskType.Participant);
+            var alert1 = new Alert(conference1.Id, conference1.Id, "Disconnected", TaskType.Participant);
+            var alert2 = new Alert(conference2.Id, conference2.Id, "Disconnected", TaskType.Participant);
+            var alert3 = new Alert(conference3.Id, conference3.Id, "Disconnected", TaskType.Participant);
+            var alert4 = new Alert(conference4.Id, conference4.Id, "Disconnected", TaskType.Participant);
+            var alert5 = new Alert(conference5.Id, conference5.Id, "Disconnected", TaskType.Participant);
+            var alert6 = new Alert(conference6.Id, conference6.Id, "Disconnected", TaskType.Participant);
 
             _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
             {
@@ -310,7 +331,7 @@ namespace VideoApi.IntegrationTests.Steps
             var alert1 = new Alert(conference1.Id, conference1.Id, "Disconnected", TaskType.Participant);
             var alert2 = new Alert(conference2.Id, conference2.Id, "Disconnected", TaskType.Participant);
             var alert3 = new Alert(conference3.Id, conference3.Id, "Disconnected", TaskType.Participant);
-            
+
             _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
             {
                 alert1, alert2, alert3
@@ -378,7 +399,8 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
-            conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
+            conferenceType.GetProperty("ClosedDateTime")
+                .SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
             conferenceList.Add(conference1);
             _context.Test.Conference = conference1;
 

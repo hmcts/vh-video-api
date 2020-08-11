@@ -29,7 +29,16 @@ namespace VideoApi.Contract.Responses
         /// The last name of a participant
         /// </summary>
         public string LastName { get; set; }
+        
+        /// <summary>
+        /// The participant contact email
+        /// </summary>
+        public string ContactEmail { get; set; }
 
+        /// <summary>
+        /// The participant contact telephone
+        /// </summary>
+        public string ContactTelephone { get; set; }
 
         /// <summary>
         /// The display name
