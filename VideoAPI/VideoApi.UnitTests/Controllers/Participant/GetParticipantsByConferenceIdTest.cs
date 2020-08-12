@@ -39,6 +39,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
             participant.Status.Should().Be(exspectedParticipant.State);
             participant.UserRole.Should().Be(exspectedParticipant.UserRole);
             participant.Representee.Should().Be(exspectedParticipant.Representee);
+            participant.ContactEmail.Should().Be(exspectedParticipant.ContactEmail);
+            participant.ContactTelephone.Should().Be(exspectedParticipant.ContactTelephone);
         }
 
         [Test]

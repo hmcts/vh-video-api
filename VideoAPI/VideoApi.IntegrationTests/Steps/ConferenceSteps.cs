@@ -271,6 +271,8 @@ namespace VideoApi.IntegrationTests.Steps
             updatedParticipant.LastName.Should().NotBe(representative.LastName);
             updatedParticipant.Username.Should().NotBe(representative.Username);
             updatedParticipant.Representee.Should().NotBe(representative.Representee);
+            updatedParticipant.ContactEmail.Should().NotBe(representative.ContactEmail);
+            updatedParticipant.ContactTelephone.Should().NotBe(representative.ContactTelephone);
         }
 
         [Then(@"the summary of conference details should be retrieved")]

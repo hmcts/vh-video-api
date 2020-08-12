@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Faker;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -148,44 +149,50 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var participants1 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "firstJudge", "James", "Judge James",
-                    "judge.james@email.com", UserRole.Judge, "Children Act"),
+                    "judge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "firstname", "lastname", "firstname lastname",
-                    "firstname.lastname@email.com", UserRole.Individual, "Children Act"),
+                    "firstname.lastname@email.com", UserRole.Individual, "Children Act", Internet.Email(),
+                    Phone.Number()),
             };
             var participants2 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
-                    "secondJudge.james@email.com", UserRole.Judge, "Children Act"),
+                    "secondJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "individualFirst", "lastname", "individualFirst lastname",
-                    "individualFirst.lastname@email.com", UserRole.Individual, "Children Act"),
+                    "individualFirst.lastname@email.com", UserRole.Individual, "Children Act", Internet.Email(),
+                    Phone.Number()),
             };
             var participants3 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "firstJudge", "James", "firstJudge James",
-                    "firstJudge.james@email.com", UserRole.Judge, "Children Act"),
+                    "firstJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
-                    "representativeFirst.lastname@email.com", UserRole.Representative, "Children Act"),
+                    "representativeFirst.lastname@email.com", UserRole.Representative, "Children Act", Internet.Email(),
+                    Phone.Number()),
             };
             var participants4 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@email.com", UserRole.Judge, "Children Act"),
+                    "thirdJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
-                    "representativeFirst.lastname@email.com", UserRole.Representative, "Children Act"),
+                    "representativeFirst.lastname@email.com", UserRole.Representative, "Children Act", Internet.Email(),
+                    Phone.Number()),
             };
             var participants5 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@email.com", UserRole.Judge, "Children Act"),
+                    "thirdJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeSecond", "lastname", "representativeSecond lastname",
-                    "representativeSecond.lastname@email.com", UserRole.Representative, "Children Act"),
+                    "representativeSecond.lastname@email.com", UserRole.Representative, "Children Act",
+                    Internet.Email(), Phone.Number()),
             };
             var participants6 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
-                    "secondJudge.james@email.com", UserRole.Judge, "Children Act"),
+                    "secondJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeThird", "lastname", "representativeThird lastname",
-                    "representativeThird.lastname@email.com", UserRole.Representative, "Children Act"),
+                    "representativeThird.lastname@email.com", UserRole.Representative, "Children Act", Internet.Email(),
+                    Phone.Number()),
             };
 
             var conference1 = new ConferenceBuilder(true, venueName: venue1)
@@ -193,31 +200,31 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId1 = conference1.Id;
-            
+
             var conference2 = new ConferenceBuilder(true, venueName: venue1)
                 .WithParticipants(participants2)
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId2 = conference2.Id;
-            
+
             var conference3 = new ConferenceBuilder(true, venueName: venue2)
                 .WithParticipants(participants3)
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId3 = conference3.Id;
-            
+
             var conference4 = new ConferenceBuilder(true, venueName: venue2)
                 .WithParticipants(participants4)
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId4 = conference4.Id;
-            
+
             var conference5 = new ConferenceBuilder(true, venueName: venue3)
                 .WithParticipants(participants5)
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
             _newConferenceId5 = conference5.Id;
-            
+
             var conference6 = new ConferenceBuilder(true, venueName: venue3)
                 .WithParticipants(participants6)
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
@@ -233,16 +240,20 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var result = await _handler.Handle(new GetConferencesTodayForAdminQuery
             {
-                UserNames = new List<string> { participants1[0].FirstName, participants4[0].FirstName }
+                UserNames = new List<string> {participants1[0].FirstName, participants4[0].FirstName}
             });
             result.Should().NotBeEmpty();
             result.Count.Should().Be(4);
             result.Should().BeInAscendingOrder(c => c.ScheduledDateTime);
 
-            result[0].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should().Be(participants1[0].FirstName);
-            result[1].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should().Be(participants1[0].FirstName);
-            result[2].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should().Be(participants4[0].FirstName);
-            result[3].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should().Be(participants4[0].FirstName);
+            result[0].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should()
+                .Be(participants1[0].FirstName);
+            result[1].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should()
+                .Be(participants1[0].FirstName);
+            result[2].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should()
+                .Be(participants4[0].FirstName);
+            result[3].Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge)?.FirstName.Should()
+                .Be(participants4[0].FirstName);
 
             TestContext.WriteLine("Cleaning conferences for GetConferencesTodayForAdminQueryHandler");
             await TestDataManager.RemoveConference(_newConferenceId1);

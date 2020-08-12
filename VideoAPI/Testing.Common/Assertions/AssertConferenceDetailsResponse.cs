@@ -30,6 +30,9 @@ namespace Testing.Common.Assertions
                 participant.Username.Should().NotBeNullOrEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
+                participant.FirstName.Should().NotBeNullOrWhiteSpace();
+                participant.LastName.Should().NotBeNullOrWhiteSpace();
+                participant.ContactEmail.Should().NotBeNullOrWhiteSpace();
                 participant.CurrentStatus.Should().NotBe(ParticipantState.None);
                 if (participant.UserRole == UserRole.Representative)
                 {

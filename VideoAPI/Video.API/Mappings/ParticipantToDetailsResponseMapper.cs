@@ -21,7 +21,9 @@ namespace Video.API.Mappings
                 UserRole = participant.UserRole,
                 CaseTypeGroup = participant.CaseTypeGroup,
                 Representee = participant.Representee,
-                CurrentStatus = participant.State
+                CurrentStatus = participant.State,
+                ContactEmail = participant.ContactEmail,
+                ContactTelephone = participant.ContactTelephone
             })
             .ToList();
         }

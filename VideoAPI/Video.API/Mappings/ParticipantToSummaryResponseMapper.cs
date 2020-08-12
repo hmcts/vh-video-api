@@ -28,7 +28,9 @@ namespace Video.API.Mappings
                 Representee = participant.Representee,
                 CaseGroup = caseGroup,
                 FirstName = participant.FirstName,
-                LastName = participant.LastName
+                LastName = participant.LastName,
+                ContactEmail = participant.ContactEmail,
+                ContactTelephone = participant.ContactTelephone
             };
         }
     }

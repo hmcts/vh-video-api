@@ -26,5 +26,15 @@ namespace VideoApi.Contract.Requests
         ///     Representee
         /// </summary>
         public string Representee { get; set; }
+
+        /// <summary>
+        /// The participant contact email
+        /// </summary>
+        public string ContactEmail { get; set; }
+
+        /// <summary>
+        /// The participant contact telephone
+        /// </summary>
+        public string ContactTelephone { get; set; }
     }
 }

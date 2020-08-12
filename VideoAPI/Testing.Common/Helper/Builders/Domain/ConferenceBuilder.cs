@@ -13,7 +13,8 @@ namespace Testing.Common.Helper.Builders.Domain
         private readonly Conference _conference;
         private readonly BuilderSettings _builderSettings;
 
-        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null, DateTime? scheduledDateTime = null, string venueName = "MyVenue")
+        public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null,
+            DateTime? scheduledDateTime = null, string venueName = "MyVenue")
         {
             _builderSettings = new BuilderSettings();
             if (ignoreId)
@@ -23,32 +24,34 @@ namespace Testing.Common.Helper.Builders.Domain
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<Task, long>(x => x.Id);
             }
-            
+
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
-            
+
             var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
             const string caseType = "Civil Money Claims";
             var caseNumber = $"{GenerateRandom.CaseNumber(new Random())}";
             const string caseName = CaseName;
             const int scheduledDuration = 120;
-            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName, 
+            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
                 scheduledDuration, venueName, false, string.Empty);
         }
-        
+
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
         {
-            var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(), Internet.Email(), UserRole.Individual,
-                    "Claimant")).Build();
+            var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
+                .WithFactory(() =>
+                    new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
+                        Internet.Email(), UserRole.Individual,
+                        "Claimant", Internet.Email(), Phone.Number())).Build();
 
             foreach (var participant in participants)
             {
                 _conference.AddParticipant(participant);
             }
-            
+
             return this;
         }
-        
+
         public ConferenceBuilder WithParticipants(IEnumerable<Participant> participants)
         {
             foreach (var participant in participants)
@@ -59,33 +62,38 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null, string firstName = null, RoomType? roomType = null, 
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null,
+            string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
                 username = Internet.Email();
             }
+
             if (string.IsNullOrWhiteSpace(firstName))
             {
                 firstName = Name.First();
             }
 
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username, userRole,
-                    caseTypeGroup)).Build();
+                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
+                    userRole,
+                    caseTypeGroup, Internet.Email(), Phone.Number())).Build();
 
             if (userRole == UserRole.Representative)
             {
                 participant.Representee = "Person";
             }
 
-            if(roomType.HasValue)
+            if (roomType.HasValue)
             {
                 participant.UpdateCurrentRoom(roomType);
             }
-            
-            participant.UpdateParticipantStatus(participantState == ParticipantState.None ? ParticipantState.Available : participantState);
+
+            participant.UpdateParticipantStatus(participantState == ParticipantState.None
+                ? ParticipantState.Available
+                : participantState);
             _conference.AddParticipant(participant);
 
             return this;
@@ -113,8 +121,9 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public ConferenceBuilder WithMessages(int numberOfMessages)
         {
-            var messages = new Builder(_builderSettings).CreateListOfSize<InstantMessage>(numberOfMessages).All().WithFactory(() =>
-                new InstantMessage("Username", "Test InstantMessage", "ReceiverUsername")).Build();
+            var messages = new Builder(_builderSettings).CreateListOfSize<InstantMessage>(numberOfMessages).All()
+                .WithFactory(() =>
+                    new InstantMessage("Username", "Test InstantMessage", "ReceiverUsername")).Build();
 
             foreach (var message in messages)
             {

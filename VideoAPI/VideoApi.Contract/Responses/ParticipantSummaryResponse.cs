@@ -31,6 +31,16 @@ namespace VideoApi.Contract.Responses
         public string LastName { get; set; }
         
         /// <summary>
+        /// The participant contact email
+        /// </summary>
+        public string ContactEmail { get; set; }
+
+        /// <summary>
+        /// The participant contact telephone
+        /// </summary>
+        public string ContactTelephone { get; set; }
+        
+        /// <summary>
         /// The current participant status
         /// </summary>
         public ParticipantState Status { get; set; }

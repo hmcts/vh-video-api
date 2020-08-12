@@ -13,6 +13,9 @@ namespace Testing.Common.Assertions
             participant.Username.Should().NotBeNullOrWhiteSpace();
             participant.UserRole.Should().NotBeNull();
             participant.DisplayName.Should().NotBeNullOrWhiteSpace();
+            participant.FirstName.Should().NotBeNullOrWhiteSpace();
+            participant.LastName.Should().NotBeNullOrWhiteSpace();
+            participant.ContactEmail.Should().NotBeNullOrWhiteSpace();
             if (participant.UserRole == UserRole.Representative)
             {
                 participant.Representee.Should().NotBeEmpty();
