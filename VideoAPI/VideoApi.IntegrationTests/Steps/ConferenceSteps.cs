@@ -19,6 +19,7 @@ using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
+using NUnit.Framework.Internal;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -412,6 +413,35 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = AnonymiseConferences;
             _context.HttpMethod = HttpMethod.Patch;
+        }
+
+        [Given(@"I have a request to remove heartbeats for conferences")]
+        public void GivenIHaveARequestToRemoveHeartbeatsForConferences()
+        {
+            _context.Uri = RemoveHeartbeatsForconferences;
+            _context.HttpMethod = HttpMethod.Delete;
+        }
+
+        [Then(@"the heartbeats should be deleted")]
+        public async Task ThenTheHeartbeatsShouldBeDeleted()
+        {
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
+            {
+                var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
+                heartbeats.Should().NotBeNull();
+                heartbeats.Count.Should().Be(0);
+            }
+        }
+
+        [Then(@"the heartbeats should not be deleted")]
+        public async Task ThenTheHeartbeatsShouldNotBeDeleted()
+        {
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
+            {
+                var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
+                heartbeats.Should().NotBeNull();
+                heartbeats.Count.Should().Be(3);
+            }
         }
     }
 }

@@ -414,6 +414,20 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        [HttpDelete("expiredHearbeats")]
+        [SwaggerOperation(OperationId = "RemoveHeartbeatsForConferences")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
+        {
+            _logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
+
+            var removeHeartbeatsCommand = new RemoveHeartbeatsForConferencesCommand();
+            await _commandHandler.Handle(removeHeartbeatsCommand);
+
+            _logger.LogInformation($"Successfully removed heartbeats for conferences");
+            return NoContent();
+        }
+
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
