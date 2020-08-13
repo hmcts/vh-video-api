@@ -9,7 +9,9 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetJudgesInHearingsTodayQuery : IQuery {}
+    public class GetJudgesInHearingsTodayQuery : IQuery
+    {
+    }
 
     public class GetJudgesInHearingsTodayQueryHandler : IQueryHandler<GetJudgesInHearingsTodayQuery, List<Conference>>
     {
@@ -29,7 +31,9 @@ namespace VideoApi.DAL.Queries
                 .Include(x => x.Participants)
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
-                .Where(x => x.Participants.Any(p => p.UserRole == UserRole.Judge && p.State == ParticipantState.InHearing))
+                .Where(x => x.Participants.Any(p =>
+                    p.UserRole == UserRole.Judge &&
+                    (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)))
                 .OrderBy(x => x.ScheduledDateTime)
                 .ToListAsync();
         }
