@@ -45,49 +45,49 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
         [Test]
-        public async Task Should_return_no_conferences_as_no_judges_in_hearing()
+        public async Task Should_return_no_conferences_as_no_judges_in_hearing_or_available()
         {
             var today = DateTime.Today.AddHours(10);
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
             var yesterday = DateTime.Today.AddDays(-1).AddHours(10);
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
                 .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             _newConferenceId1 = conference1.Id;
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.InConsultation)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             _newConferenceId2 = conference2.Id;
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
                 .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.NotSignedIn)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .Build();
             _newConferenceId3 = conference3.Id;
 
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
                 .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
             _newConferenceId4 = conference4.Id;
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
                 .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
             _newConferenceId5 = conference5.Id;
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .Build();
             _newConferenceId6 = conference6.Id;
 
@@ -104,7 +104,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
         
                 [Test]
-        public async Task Should_return_conferences_with_judges_in_hearing()
+        public async Task Should_return_conferences_with_judges_in_hearing_or_available()
         {
             var today = DateTime.Today.AddHours(10);
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
@@ -146,7 +146,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.InHearing)
+                .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Available)
                 .Build();
             _newConferenceId6 = conference6.Id;
 
