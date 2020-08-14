@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -228,17 +229,26 @@ namespace Video.API.Controllers
         /// <returns> AudioRecordingResponse with the link - AudioFileLink</returns>
         [HttpGet("audio/{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLink")]
-        [ProducesResponseType(typeof(AudioRecordingResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(AudioRecordingResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
             _logger.LogInformation($"Getting audio recording link for hearing: {hearingId}");
+            var conference =
+                await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
+                    new GetConferenceByHearingRefIdQuery(hearingId));
+            if (conference == null)
+            {
+                _logger.LogWarning($"Unable to find a conference for hearingref: {hearingId}");
+                return NotFound();
+            }
+
             var filePath = $"{hearingId}.mp4";
             try
             {
                 await EnsureAudioFileExists(hearingId);
                 var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
-                return Ok(new AudioRecordingResponse { AudioFileLink = audioFileLink });
+                return Ok(new AudioRecordingResponse {AudioFileLink = audioFileLink});
 
             }
             catch (AudioPlatformFileNotFoundException ex)
@@ -253,8 +263,8 @@ namespace Video.API.Controllers
         {
             var filePath = $"{hearingId}.mp4";
             var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(new GetConferenceByHearingRefIdQuery(hearingId));
-            
-            if (conference.ActualStartTime.HasValue && !await _storageService.FileExistsAsync(filePath))
+
+            if (conference?.ActualStartTime != null && !await _storageService.FileExistsAsync(filePath))
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
