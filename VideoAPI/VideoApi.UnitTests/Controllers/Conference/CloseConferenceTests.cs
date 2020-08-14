@@ -47,6 +47,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
         [Test]
         public async Task Should_close_conference_and_delete_audio_recording_application_if_audio_required_set_to_true_for_given_conference()
         {
+            var conferenceType = typeof(VideoApi.Domain.Conference);
+            conferenceType.GetProperty(nameof(TestConference.ActualStartTime)).SetValue(TestConference, DateTime.UtcNow.AddHours(-1));
             TestConference.AudioRecordingRequired = true;
             QueryHandlerMock
               .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
@@ -61,11 +63,32 @@ namespace VideoApi.UnitTests.Controllers.Conference
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
             AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Once);
         }
+        
+        [Test]
+        public async Task Should_close_conference_and_not_delete_audio_recording_application_conference_has_not_started()
+        {
+            TestConference.AudioRecordingRequired = true;
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
+            var response = new AudioPlatformServiceResponse(true);
+            AudioPlatformServiceMock.Setup(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>())).ReturnsAsync(response);
+            StorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+
+            await Controller.CloseConferenceAsync(Guid.NewGuid());
+
+            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
+            AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
+        }
 
         [Test]
         public async Task Should_close_conference_and_not_call_delete_audio_recording_application_if_audio_recording_file_not_found()
         {
             TestConference.AudioRecordingRequired = true;
+            var conferenceType = typeof(VideoApi.Domain.Conference);
+            conferenceType.GetProperty(nameof(TestConference.ActualStartTime)).SetValue(TestConference, DateTime.UtcNow.AddHours(-1));
+            
             QueryHandlerMock
                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                .ReturnsAsync(TestConference);

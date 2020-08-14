@@ -7,8 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Queries;
+using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Responses;
 
@@ -21,16 +25,35 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         private readonly Mock<IStorageService> _storageService;
 
         private readonly AudioRecordingController _controller;
-        
+
         public AudioRecordingControllerTest()
         {
+            var testConference = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom1)
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Defendant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .Build();
+            
+            var queryHandler = new Mock<IQueryHandler>();
             _audioPlatformService = new Mock<IAudioPlatformService>();
             _storageService = new Mock<IStorageService>();
 
             _controller = new AudioRecordingController
             (
-                _audioPlatformService.Object, _storageService.Object, new Mock<ILogger<AudioRecordingController>>().Object
-            );    
+                _audioPlatformService.Object, _storageService.Object,
+                new Mock<ILogger<AudioRecordingController>>().Object, queryHandler.Object
+            );
+
+            var conferenceType = typeof(VideoApi.Domain.Conference);
+            conferenceType.GetProperty(nameof(testConference.ActualStartTime))
+                ?.SetValue(testConference, DateTime.UtcNow.AddHours(-1));
+            queryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                        It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync(testConference);
         }
 
         [Test]

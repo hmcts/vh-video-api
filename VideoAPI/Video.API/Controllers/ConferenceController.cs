@@ -440,9 +440,11 @@ namespace Video.API.Controllers
         private async Task DeleteAudioRecordingApplication(Guid conferenceId)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            if (queriedConference != null && queriedConference.AudioRecordingRequired)
+            if (queriedConference != null && queriedConference.AudioRecordingRequired &&
+                queriedConference.ActualStartTime.HasValue)
             {
                 try
                 {

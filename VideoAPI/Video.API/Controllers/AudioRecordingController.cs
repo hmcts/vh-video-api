@@ -7,8 +7,12 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Queries;
+using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
+using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
 {
@@ -18,15 +22,18 @@ namespace Video.API.Controllers
     [ApiController]
     public class AudioRecordingController : ControllerBase
     {
+        private readonly IQueryHandler _queryHandler;
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IStorageService _storageService;
         private readonly ILogger<AudioRecordingController> _logger;
 
-        public AudioRecordingController(IAudioPlatformService audioPlatformService, IStorageService storageService, ILogger<AudioRecordingController> logger)
+        public AudioRecordingController(IAudioPlatformService audioPlatformService, IStorageService storageService,
+            ILogger<AudioRecordingController> logger, IQueryHandler queryHandler)
         {
             _audioPlatformService = audioPlatformService;
             _storageService = storageService;
             _logger = logger;
+            _queryHandler = queryHandler;
         }
 
         /// <summary>
@@ -245,7 +252,9 @@ namespace Video.API.Controllers
         private async Task EnsureAudioFileExists(Guid hearingId)
         {
             var filePath = $"{hearingId}.mp4";
-            if (!await _storageService.FileExistsAsync(filePath))
+            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(new GetConferenceByHearingRefIdQuery(hearingId));
+            
+            if (conference.ActualStartTime.HasValue && !await _storageService.FileExistsAsync(filePath))
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
