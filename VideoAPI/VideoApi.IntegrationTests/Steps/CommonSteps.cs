@@ -466,6 +466,27 @@ namespace VideoApi.IntegrationTests.Steps
             });
         }
 
+        [Given(@"I have a conference over (.*) days old")]
+        public async Task GivenIHaveAConferenceOverDaysOld(int days)
+        {
+            var conferenceList = new List<Conference>();
+            var utcDate = DateTime.UtcNow;
+            var hearingClosed3Months = utcDate.AddDays(days);
+
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingClosed3Months)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Paused)
+                .Build();
+            conferenceList.Add(conference1);
+            _context.Test.Conference = conference1;
+
+            foreach (var c in conferenceList)
+            {
+                _context.Test.Conferences.Add(await _context.TestDataManager.SeedConference(c));
+            }
+        }
+
         [When(@"I send the request to the endpoint")]
         [When(@"I send the same request twice")]
         public async Task WhenISendTheRequestToTheEndpoint()
