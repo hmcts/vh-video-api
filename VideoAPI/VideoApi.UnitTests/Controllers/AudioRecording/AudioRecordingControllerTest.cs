@@ -21,12 +21,14 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
     [TestFixture]
     public class AudioRecordingControllerTest
     {
-        private readonly Mock<IAudioPlatformService> _audioPlatformService;
-        private readonly Mock<IStorageService> _storageService;
+        private Mock<IAudioPlatformService> _audioPlatformService;
+        private Mock<IStorageService> _storageService;
+        private Mock<IQueryHandler> _queryHandler;
 
-        private readonly AudioRecordingController _controller;
+        private AudioRecordingController _controller;
 
-        public AudioRecordingControllerTest()
+        [SetUp]
+        public void Setup()
         {
             var testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -36,20 +38,21 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .Build();
             
-            var queryHandler = new Mock<IQueryHandler>();
+           
+            _queryHandler = new Mock<IQueryHandler>();
             _audioPlatformService = new Mock<IAudioPlatformService>();
             _storageService = new Mock<IStorageService>();
 
             _controller = new AudioRecordingController
             (
                 _audioPlatformService.Object, _storageService.Object,
-                new Mock<ILogger<AudioRecordingController>>().Object, queryHandler.Object
+                new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object
             );
 
             var conferenceType = typeof(VideoApi.Domain.Conference);
             conferenceType.GetProperty(nameof(testConference.ActualStartTime))
                 ?.SetValue(testConference, DateTime.UtcNow.AddHours(-1));
-            queryHandler
+            _queryHandler
                 .Setup(x =>
                     x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                         It.IsAny<GetConferenceByHearingRefIdQuery>()))
@@ -362,6 +365,21 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task GetAudioRecordingLinkAsync_return_notfound()
         {
+            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+            
+            var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as NotFoundResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        }
+        
+        [Test]
+        public async Task GetAudioRecordingLinkAsync_return_notfound_when_conference_does_not_exist()
+        {
+            _queryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                        It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync((VideoApi.Domain.Conference) null);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
             
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as NotFoundResult;

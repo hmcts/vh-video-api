@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Responses;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -259,10 +258,11 @@ namespace Video.API.Controllers
 
         }
 
-        private async Task EnsureAudioFileExists(Guid hearingId)
+        private async Task EnsureAudioFileExists(Guid hearingId, Conference conference = null)
         {
             var filePath = $"{hearingId}.mp4";
-            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(new GetConferenceByHearingRefIdQuery(hearingId));
+            conference ??= await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
+                new GetConferenceByHearingRefIdQuery(hearingId));
 
             if (conference?.ActualStartTime != null && !await _storageService.FileExistsAsync(filePath))
             {
