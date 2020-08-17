@@ -99,6 +99,14 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
+        public ConferenceBuilder WithEndpoint(string displayName, string sipAddress)
+        {
+            var endpoint = new Endpoint(displayName, sipAddress, "1234");
+            _conference.AddEndpoint(endpoint);
+
+            return this;
+        }
+        
         public ConferenceBuilder WithMeetingRoom(string pexipNode, string conferenceUsername)
         {
             var adminUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";

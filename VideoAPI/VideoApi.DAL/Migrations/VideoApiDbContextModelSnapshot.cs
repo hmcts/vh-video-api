@@ -89,6 +89,37 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("ConferenceStatus");
                 });
 
+            modelBuilder.Entity("VideoApi.Domain.Endpoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pin")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SipAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.ToTable("Endpoint");
+                });
+
             modelBuilder.Entity("VideoApi.Domain.Event", b =>
                 {
                     b.Property<long>("Id")
@@ -387,6 +418,14 @@ namespace VideoApi.DAL.Migrations
                 {
                     b.HasOne("VideoApi.Domain.Conference", null)
                         .WithMany("ConferenceStatuses")
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.Endpoint", b =>
+                {
+                    b.HasOne("VideoApi.Domain.Conference", null)
+                        .WithMany("Endpoints")
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
