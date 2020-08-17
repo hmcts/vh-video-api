@@ -169,6 +169,8 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a conference with an audio application and audio recording file")]
         public async Task GivenIHaveAConferenceWithAnAudioApplicationAndAudioRecordingFile()
         {
+            _conferenceSteps.GivenIHaveAConference();
+            _hearingId = _context.Test.ConferenceResponse.HearingId;
             GivenTheConferenceHasAnAudioApplication();
             await GivenTheConferenceHasAnAudioRecording();
         }
