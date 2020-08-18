@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory.EPEndpoints;
@@ -94,6 +96,28 @@ namespace VideoApi.IntegrationTests.Steps
             SetupAddEndpointRequest(conferenceId, request);
         }
         
+        [Given(@"I have remove endpoint from a conference request")]
+        public async Task GivenIHaveRemoveEndpointFromAConferenceRequest()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            Guid endpointId;
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
+            {
+                var conf = await db.Conferences.Include(x => x.Endpoints).SingleAsync(x => x.Id == conferenceId);
+                endpointId = conf.Endpoints[0].Id;
+            }
+            
+            SetupRemoveEndpointRequest(conferenceId, endpointId);
+        }
+        
+        [Given(@"I have remove non-existent endpoint from a conference request")]
+        public void GivenIHaveRemoveNon_ExistentEndpointFromAConferenceRequest()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var endpointId = Guid.NewGuid();
+            SetupRemoveEndpointRequest(conferenceId, endpointId);
+        }
+        
         [Then(@"the endpoint response should be (.*)")]
         public async Task ThenTheEndpointResponseShould(int number)
         {
@@ -130,6 +154,12 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             _context.Uri = AddEndpointsToConference(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
+        }
+        
+        private void SetupRemoveEndpointRequest(Guid conferenceId, Guid endpointId)
+        {
+            _context.Uri = RemoveEndpointsFromConference(conferenceId, endpointId);
+            _context.HttpMethod = HttpMethod.Delete;
         }
     }
 }

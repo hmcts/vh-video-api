@@ -9,4 +9,11 @@ namespace VideoApi.DAL.Exceptions
         {
         }
     }
+
+    public class EndpointNotFoundException : Exception
+    {
+        public EndpointNotFoundException(Guid endpointId) : base($"Endpoint {endpointId} does not exist")
+        {
+        }
+    }
 }

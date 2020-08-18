@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
@@ -10,12 +11,12 @@ namespace VideoApi.DAL.Commands
     public class RemoveEndpointCommand : ICommand
     {
         public Guid ConferenceId { get; }
-        public string EndpointAddress { get; }
+        public Guid EndpointId { get; }
         
-        public RemoveEndpointCommand(Guid conferenceId, string endpointAddress)
+        public RemoveEndpointCommand(Guid conferenceId, Guid endpointId)
         {
             ConferenceId = conferenceId;
-            EndpointAddress = endpointAddress;
+            EndpointId = endpointId;
         }
     }
 
@@ -38,7 +39,13 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.RemoveEndpoint(new Endpoint(string.Empty, command.EndpointAddress, string.Empty));
+            var ep = conference.GetEndpoints().SingleOrDefault(x => x.Id == command.EndpointId);
+            if (ep == null)
+            {
+                throw new EndpointNotFoundException(command.EndpointId);
+            }
+
+            conference.RemoveEndpoint(ep);
             await _context.SaveChangesAsync();
         }
     }

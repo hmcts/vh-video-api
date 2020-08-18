@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -7,7 +8,6 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
-using VideoApi.Domain.Validations;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
@@ -39,7 +39,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var command = new RemoveEndpointCommand(conferenceId, "sip");
+            var endpointId = Guid.NewGuid();
+            var command = new RemoveEndpointCommand(conferenceId, endpointId);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
         
@@ -47,10 +48,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_throw_exception_when_endpoint_does_not_exist()
         {
             var seededConference = await TestDataManager.SeedConference();
+            var endpointId = Guid.NewGuid();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var command = new RemoveEndpointCommand(_newConferenceId, "sip");
-            Assert.ThrowsAsync<DomainRuleException>(() => _handler.Handle(command));
+            var command = new RemoveEndpointCommand(_newConferenceId, endpointId);
+
+            Assert.ThrowsAsync<EndpointNotFoundException>(async () =>await _handler.Handle(command));
         }
         
         [Test]
@@ -59,10 +62,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conference1 = new ConferenceBuilder()
                 .WithEndpoint("Display1", "sip@123.com").Build();
             var seededConference = await TestDataManager.SeedConference(conference1);
+            var endpointId = conference1.Endpoints.First().Id;
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             
-            var command = new RemoveEndpointCommand(_newConferenceId, "sip@123.com");
+            var command = new RemoveEndpointCommand(_newConferenceId, endpointId);
             await _handler.Handle(command);
             
             Conference updatedConference;
