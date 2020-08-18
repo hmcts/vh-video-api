@@ -94,6 +94,12 @@ namespace Testing.Common.Helper
             public static string RemoveInstantMessagesForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
             public static string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
         }
+        
+        public static class EPEndpoints
+        {
+            private const string ApiRoot = "conferences";
+            public static string GetEndpointsForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/endpoints";
+        }
 
         public static class ConferenceManagementEndpoints
         {
