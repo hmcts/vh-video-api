@@ -6,7 +6,7 @@ namespace VideoApi.Domain
 {
     public sealed class Endpoint : Entity<Guid>
     {
-        public string DisplayName { get; set; }
+        public string DisplayName { get; private set; }
         public string SipAddress { get; }
         public string Pin { get; }
         public EndpointState State { get; private set; }
