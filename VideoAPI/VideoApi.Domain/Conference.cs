@@ -107,7 +107,7 @@ namespace VideoApi.Domain
                 throw new DomainRuleException(nameof(endpoint), "Endpoint does not exist in conference");
             }
 
-            var existingEndpoint = Endpoints.Single(x => x.DisplayName == endpoint.DisplayName);
+            var existingEndpoint = Endpoints.Single(x => x.SipAddress == endpoint.SipAddress);
             Endpoints.Remove(existingEndpoint);
         }
 
