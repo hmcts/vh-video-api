@@ -29,6 +29,7 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(RemoveConferenceCommand command)
         {
             var conference = await _context.Conferences
+                .Include("Endpoints")
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses")
                 .Include(x => x.Participants).ThenInclude(x => x.TestCallResult)

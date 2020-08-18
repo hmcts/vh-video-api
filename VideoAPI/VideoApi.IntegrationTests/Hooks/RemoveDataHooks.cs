@@ -15,11 +15,6 @@ namespace VideoApi.IntegrationTests.Hooks
         [AfterScenario(Order = (int)HooksSequence.RemoveDataCreatedDuringTest)]
         public static async Task RemoveDataCreatedDuringTest(TestContext context)
         {
-            if (context.Test.Conference != null)
-            {
-                await context.TestDataManager.RemoveConference(context.Test.Conference.Id);
-            }
-            
             await context.TestDataManager.RemoveConferences(context.Test.Conferences);
             await context.TestDataManager.RemoveEvents();
         }
