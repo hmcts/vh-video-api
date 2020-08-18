@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithEndpoint("Display1", "sip@123.com")
                 .WithEndpoint("Display2", "sip@321.com").Build();
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
-            _context.Test.ConferenceIds.Add(conference1.Id);
+            _context.Test.Conferences.Add(_context.Test.Conference);
             NUnit.Framework.TestContext.WriteLine($"New seeded conference id: {_context.Test.Conference.Id}");
 
             SetupEndpointRequest(conference1.Id);
