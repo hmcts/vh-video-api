@@ -119,7 +119,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            _context.Uri = UpdateEndpointForConference(conferenceId, endpointId);
+            _context.Uri = UpdateDisplayNameForEndpoint(conferenceId, endpointId);
             _context.HttpMethod = HttpMethod.Patch;
         }
     }

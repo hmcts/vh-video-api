@@ -48,16 +48,16 @@ namespace Video.API.Controllers
 
 
         /// <summary>
-        /// Update the display name of an endpoint of a conference
+        /// Update the display name of an endpoint
         /// </summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="endpointId">the endpoint id to be updated</param>
         /// <param name="request">the display name to be updated</param>
         /// <returns>an OK status</returns>
         [HttpPatch("{conferenceId}/endpoints/{endpointId}/displayname")]
-        [SwaggerOperation(OperationId = "UpdateEndpointForConference")]
+        [SwaggerOperation(OperationId = "UpdateDisplayNameForEndpoint ")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateEndpointForConference(Guid conferenceId, Guid endpointId, 
+        public async Task<IActionResult> UpdateDisplayNameForEndpoint(Guid conferenceId, Guid endpointId, 
             [FromBody] UpdateEndpointRequest request)
         {
             _logger.LogDebug($"Attempting to update endpoint {endpointId} for conference {conferenceId} with displayname {request.DisplayName}");
