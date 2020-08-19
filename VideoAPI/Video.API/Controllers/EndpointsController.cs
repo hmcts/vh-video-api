@@ -54,7 +54,7 @@ namespace Video.API.Controllers
         /// <param name="endpointId">the endpoint id to be updated</param>
         /// <param name="request">the display name to be updated</param>
         /// <returns>an OK status</returns>
-        [HttpPut("{conferenceId}/endpoints/{endpointId}/displayname")]
+        [HttpPatch("{conferenceId}/endpoints/{endpointId}/displayname")]
         [SwaggerOperation(OperationId = "UpdateEndpointForConference")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateEndpointForConference(Guid conferenceId, Guid endpointId, 
