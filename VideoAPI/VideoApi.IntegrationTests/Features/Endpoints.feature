@@ -58,8 +58,6 @@ Feature: Endpoints
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 
-
-
 Scenario: Update non-existent endpoint
     Given I have a conference with no endpoints
     And I have update to a non-existent endpoint for a conference request

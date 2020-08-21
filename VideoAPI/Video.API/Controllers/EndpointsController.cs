@@ -90,8 +90,6 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
-
-
         /// <summary>
         /// Update the display name of an endpoint
         /// </summary>

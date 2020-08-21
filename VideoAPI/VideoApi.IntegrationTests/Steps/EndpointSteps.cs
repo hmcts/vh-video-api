@@ -144,9 +144,6 @@ namespace VideoApi.IntegrationTests.Steps
             }
         }
 
-
-
-
         [Given(@"I have update to a non-existent endpoint for a conference request")]
         public void GivenIHaveUpdateToANon_ExistentEndpointForAConferenceRequest()
         {
@@ -196,8 +193,6 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = RemoveEndpointsFromConference(conferenceId, endpointId);
             _context.HttpMethod = HttpMethod.Delete;
         }
-
-
 
         private void SetupUpdateEndpointRequest(Guid conferenceId, Guid endpointId, UpdateEndpointRequest request)
         {
