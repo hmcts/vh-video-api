@@ -29,7 +29,7 @@ namespace VideoApi.DAL.Queries
         public async Task<IList<Endpoint>> Handle(GetEndpointsForConferenceQuery query)
         {
             var conference = await _context.Conferences.Include(x => x.Endpoints)
-                .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
+                .AsNoTracking().SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
 
             return conference == null ? new List<Endpoint>() : conference.GetEndpoints();
         }

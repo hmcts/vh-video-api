@@ -33,6 +33,11 @@ namespace Video.API.Controllers
             _commandHandler = commandHandler;
         }
 
+        /// <summary>
+        /// Get all endpoints for a conference
+        /// </summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>List of endpoints</returns>
         [HttpGet("{conferenceId}/endpoints")]
         [SwaggerOperation(OperationId = "GetEndpointsForConference")]
         [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.OK)]
@@ -45,7 +50,45 @@ namespace Video.API.Controllers
             return Ok(endpoints);
         }
 
+        /// <summary>
+        /// Add an endpoint to a conference
+        /// </summary>
+        /// <param name="conferenceId">Id of conference</param>
+        /// <param name="request">Endpoint details</param>
+        [HttpPost("{conferenceId}/endpoints")]
+        [SwaggerOperation(OperationId = "AddEndpointToConference")]
+        [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
+        public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId,
+            [FromBody] AddEndpointRequest request)
+        {
+            _logger.LogDebug($"Attempting to add endpoint {request.DisplayName} to conference {conferenceId}");
 
+            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin);
+            await _commandHandler.Handle(command);
+
+            _logger.LogDebug($"Successfully added endpoint {request.DisplayName} to conference {conferenceId}");
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Remove an endpoint from a conference
+        /// </summary>
+        /// <param name="conferenceId"></param>
+        /// <param name="endpointId"></param>
+        /// <returns></returns>
+        [HttpDelete("{conferenceId}/endpoints/{endpointId}")]
+        [SwaggerOperation(OperationId = "RemoveEndpointFromConference")]
+        [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
+        public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, Guid endpointId)
+        {
+            _logger.LogDebug($"Attempting to remove endpoint {endpointId} from conference {conferenceId}");
+
+            var command = new RemoveEndpointCommand(conferenceId, endpointId);
+            await _commandHandler.Handle(command);
+
+            _logger.LogDebug($"Successfully removed endpoint {endpointId} from conference {conferenceId}");
+            return NoContent();
+        }
 
         /// <summary>
         /// Update the display name of an endpoint

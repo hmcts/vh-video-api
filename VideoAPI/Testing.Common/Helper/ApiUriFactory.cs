@@ -99,8 +99,8 @@ namespace Testing.Common.Helper
         {
             private const string ApiRoot = "conferences";
             public static string GetEndpointsForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/endpoints";
-
-
+            public static string AddEndpointsToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/endpoints";
+            public static string RemoveEndpointsFromConference(Guid conferenceId, Guid endpointId) => $"{ApiRoot}/{conferenceId}/endpoints/{endpointId}";
             public static string UpdateDisplayNameForEndpoint(Guid conferenceId, Guid endpointId) => $"{ApiRoot}/{conferenceId}/endpoints/{endpointId}/displayname";
         }
 
