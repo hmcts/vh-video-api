@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -133,9 +134,43 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the endpoint response should be empty")]
         public async Task ThenTheEndpointResponseShouldBeEmpty()
         {
-            await AssertEndpointLength(0);
+            if (_context.Test.Conference == null)
+            {
+                await AssertEndpointLength(0);
+            }
+            else
+            {
+                await AssertEndpointLength(_context.Test.Conference.Endpoints.Count);
+            }
         }
-        
+
+
+
+
+        [Given(@"I have update to a non-existent endpoint for a conference request")]
+        public void GivenIHaveUpdateToANon_ExistentEndpointForAConferenceRequest()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var endpointId = Guid.NewGuid();
+            var request = new UpdateEndpointRequest
+            {
+                DisplayName = "Automated Add EP test"
+            };
+            SetupUpdateEndpointRequest(conferenceId, endpointId, request);
+        }
+
+        [Given(@"I have update endpoint for a conference request")]
+        public void GivenIHaveUpdateEndpointForAConferenceRequest()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var endpointId = _context.Test.Conference.Endpoints.FirstOrDefault().Id;
+            var request = new UpdateEndpointRequest
+            {
+                DisplayName = "Automated Add EP test"
+            };
+            SetupUpdateEndpointRequest(conferenceId, endpointId, request);
+        }
+
         private async Task AssertEndpointLength(int length)
         {
             var result = await Response.GetResponses<IList<EndpointResponse>>(_context.Response.Content);
@@ -160,6 +195,16 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = RemoveEndpointsFromConference(conferenceId, endpointId);
             _context.HttpMethod = HttpMethod.Delete;
+        }
+
+
+
+        private void SetupUpdateEndpointRequest(Guid conferenceId, Guid endpointId, UpdateEndpointRequest request)
+        {
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            _context.Uri = UpdateDisplayNameForEndpoint(conferenceId, endpointId);
+            _context.HttpMethod = HttpMethod.Patch;
         }
     }
 }

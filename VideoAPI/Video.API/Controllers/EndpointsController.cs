@@ -89,5 +89,29 @@ namespace Video.API.Controllers
             _logger.LogDebug($"Successfully removed endpoint {endpointId} from conference {conferenceId}");
             return NoContent();
         }
+
+
+
+        /// <summary>
+        /// Update the display name of an endpoint
+        /// </summary>
+        /// <param name="conferenceId">the conference id</param>
+        /// <param name="endpointId">the endpoint id to be updated</param>
+        /// <param name="request">the display name to be updated</param>
+        /// <returns>an OK status</returns>
+        [HttpPatch("{conferenceId}/endpoints/{endpointId}/displayname")]
+        [SwaggerOperation(OperationId = "UpdateDisplayNameForEndpoint ")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateDisplayNameForEndpoint(Guid conferenceId, Guid endpointId, 
+            [FromBody] UpdateEndpointRequest request)
+        {
+            _logger.LogDebug($"Attempting to update endpoint {endpointId} for conference {conferenceId} with displayname {request.DisplayName}");
+
+            var command = new UpdateEndpointCommand(conferenceId, endpointId, request.DisplayName);
+            await _commandHandler.Handle(command);
+
+            _logger.LogDebug($"Successfully updated endpoint {endpointId} from conference {conferenceId} with displayname {request.DisplayName}");
+            return Ok();
+        }
     }
 }
