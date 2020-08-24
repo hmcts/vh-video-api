@@ -5,7 +5,8 @@ Feature: Audio Recording
 
 @VIH-5868
 Scenario: Get Audio Application - OK
-	Given the conference has an audio application
+  Given I have a conference
+  And the conference has an audio application
 	And I have a valid get audio application request
 	When I send the request to the endpoint
 	Then the response should have the status Ok and success status True
@@ -13,19 +14,21 @@ Scenario: Get Audio Application - OK
 
 @VIH-5868
 Scenario: Get Audio Application - Not Found
-	Given I have a nonexistent get audio application request
+  Given I have a nonexistent get audio application request
 	When I send the request to the endpoint
 	Then the response should have the status NotFound and success status False
 
 @VIH-5868
 Scenario: Create Audio Application - Created
-	Given I have a valid create audio application request
+  Given I have a conference
+	And I have a valid create audio application request
 	When I send the request to the endpoint
 	Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Create Audio Application - Conflict
-	Given I have a valid create audio application request for an existing hearing
+  Given I have a conference
+  And I have a valid create audio application request
 	When I send the request to the endpoint
 	And I resend the request to the endpoint
 	Then the response should have the status Conflict and success status False
@@ -45,8 +48,8 @@ Scenario: Delete Audio Application - Not Found
 
   @VIH-5868
 Scenario: Delete Audio Application without audio recording file - Not Found
-	Given the conference has an audio application
-	And I have a valid delete audio application request
+  Given I have a conference
+	And I have a valid non-existent delete audio application request
 	When I send the request to the endpoint
 	Then the response should have the status NotFound and success status False
 
@@ -58,14 +61,16 @@ Scenario: Create Audio Application and Stream - Created
 
 @VIH-5868
 Scenario: Create Audio Application and Stream - Conflict
-	Given I have a valid create audio application and stream request for an existing hearing
+  Given I have a conference
+	And I have a valid create audio application and stream request for an existing hearing
 	When I send the request to the endpoint
 	And I resend the request to the endpoint
 	Then the response should have the status Conflict and success status False
 
 @VIH-5868
 Scenario: Get Audio Stream - Ok
-	Given the conference has an audio stream
+  Given I have a conference
+  And the conference has an audio stream
 	And I have a valid get audio stream request
 	When I send the request to the endpoint
 	Then the response should have the status Ok and success status True
@@ -79,14 +84,15 @@ Scenario: Get Audio Stream - Not Found
 
 @VIH-5868
 Scenario: Create Audio Stream - Created
-	Given the conference has an audio application
+  Given I have a conference
+  And the conference has an audio application
 	And I have a valid create audio stream request
 	When I send the request to the endpoint
 	Then the response should have the status Ok and success status True
 
 @VIH-5868
 Scenario: Create Audio Stream - Conflict
-	Given the conference has an audio application
+	Given I have a conference
 	And I have a valid create audio stream request for an existing hearing
 	When I send the request to the endpoint
 	And I resend the request to the endpoint
@@ -94,7 +100,8 @@ Scenario: Create Audio Stream - Conflict
 
 @VIH-5868
 Scenario: Delete Audio Stream - Ok
-	Given the conference has an audio stream
+  Given I have a conference
+  And the conference has an audio stream
 	And I have a valid delete audio stream request
 	When I send the request to the endpoint
 	Then the response should have the status NoContent and success status True
@@ -107,7 +114,8 @@ Scenario: Delete Audio Stream - Not Found
 
 @VIH-5868
 Scenario: Get Audio Stream Monitoring - Ok
-	Given the conference has an audio stream
+  Given I have a conference
+  And the conference has an audio stream
 	And I have a valid get audio stream monitoring request
 	When I send the request to the endpoint
 	Then the response should have the status Ok and success status True
