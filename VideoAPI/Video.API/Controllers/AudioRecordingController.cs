@@ -7,8 +7,13 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Exceptions;
+using VideoApi.DAL.Queries;
+using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
+using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
 {
@@ -21,12 +26,15 @@ namespace Video.API.Controllers
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IStorageService _storageService;
         private readonly ILogger<AudioRecordingController> _logger;
+        private readonly IQueryHandler _queryHandler;
 
-        public AudioRecordingController(IAudioPlatformService audioPlatformService, IStorageService storageService, ILogger<AudioRecordingController> logger)
+        public AudioRecordingController(IAudioPlatformService audioPlatformService, IStorageService storageService,
+            ILogger<AudioRecordingController> logger, IQueryHandler queryHandler)
         {
             _audioPlatformService = audioPlatformService;
             _storageService = storageService;
             _logger = logger;
+            _queryHandler = queryHandler;
         }
 
         /// <summary>
@@ -113,7 +121,7 @@ namespace Video.API.Controllers
             {
                 await EnsureAudioFileExists(hearingId);
             }
-            catch (AudioPlatformFileNotFoundException ex)
+            catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
             {
                 _logger.LogError(ex, ex.Message);
                 return NotFound();
@@ -234,7 +242,7 @@ namespace Video.API.Controllers
                 return Ok(new AudioRecordingResponse { AudioFileLink = audioFileLink });
 
             }
-            catch (AudioPlatformFileNotFoundException ex)
+            catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
             {
                 _logger.LogError(ex, ex.Message);
                 return NotFound();
@@ -244,8 +252,14 @@ namespace Video.API.Controllers
 
         private async Task EnsureAudioFileExists(Guid hearingId)
         {
+            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
+                new GetConferenceByHearingRefIdQuery(hearingId));
+            if (conference == null)
+            {
+                throw new ConferenceNotFoundException(hearingId);
+            }
             var filePath = $"{hearingId}.mp4";
-            if (!await _storageService.FileExistsAsync(filePath))
+            if (conference.ActualStartTime.HasValue && !await _storageService.FileExistsAsync(filePath))
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
