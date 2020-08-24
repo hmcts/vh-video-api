@@ -259,8 +259,10 @@ namespace Video.API.Controllers
             {
                 throw new ConferenceNotFoundException(hearingId);
             }
+
+            var fileExists = await _storageService.FileExistsAsync(filePath);
             
-            if (conference.ActualStartTime != null && !await _storageService.FileExistsAsync(filePath))
+            if (conference.ActualStartTime.HasValue && !fileExists)
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
