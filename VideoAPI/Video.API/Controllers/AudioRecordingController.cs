@@ -259,6 +259,7 @@ namespace Video.API.Controllers
                 throw new ConferenceNotFoundException(hearingId);
             }
             var filePath = $"{hearingId}.mp4";
+            
             if (conference.ActualStartTime.HasValue && !await _storageService.FileExistsAsync(filePath))
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";

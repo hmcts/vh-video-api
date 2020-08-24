@@ -21,13 +21,13 @@ namespace VideoApi.AcceptanceTests.Steps
         public AudioRecordingSteps(TestContext context, ConferenceSteps conferenceSteps)
         {
             _context = context;
-            _hearingId = Guid.NewGuid();
             _conferenceSteps = conferenceSteps;
         }
 
         [Given(@"I have a valid create audio application request")]
         public void GivenIHaveACreateAudioApplicationRequest()
         {
+            _hearingId = _context.Test.ConferenceResponse != null ? _context.Test.ConferenceResponse.HearingId : Guid.NewGuid();
             _context.Request = _context.Post(CreateAudioApplication(_hearingId));
         }
 
@@ -52,7 +52,8 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid delete audio application request that has no application")]
         public void GivenIHaveAValidDeleteAudioApplicationRequestThatHasNoApplication()
         {
-            _context.Request = _context.Delete(DeleteAudioApplication(_context.Config.AudioRecordingTestIds.NonExistent));
+            _hearingId = Guid.NewGuid();
+            _context.Request = _context.Delete(DeleteAudioApplication(_hearingId));
         }
 
         [Given(@"I have a valid delete audio application request")]
@@ -72,6 +73,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid create audio application and stream request")]
         public void GivenIHaveAValidCreateAudioApplicationAndStreamRequest()
         {
+            _hearingId = Guid.NewGuid();
             _context.Request = _context.Post(CreateAudioApplicationAndStream(_hearingId));
         }
 

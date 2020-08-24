@@ -39,7 +39,7 @@ Scenario: Delete Audio Application with audio recording file - No Content
 
 @VIH-5868
 Scenario: Delete Audio Application - Not Found
-	Given I have a valid delete audio application request that has no application
+  Given I have a valid delete audio application request that has no application
 	When I send the request to the endpoint
 	Then the response should have the status NotFound and success status False
 
