@@ -68,6 +68,7 @@ namespace VideoApi.IntegrationTests.Helper
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var conference = await db.Conferences
+                .Include("Endpoints")
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses")
                 .SingleAsync(x => x.Id == conferenceId);
@@ -83,6 +84,7 @@ namespace VideoApi.IntegrationTests.Helper
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var conferenceIds = conferences.Select(conference => conference.Id).ToList();
             var allConferences = await db.Conferences
+                .Include("Endpoints")
                 .Include("Participants.ParticipantStatuses")
                 .Include("ConferenceStatuses")
                 .Where(x => conferenceIds.Contains(x.Id)).ToListAsync();

@@ -17,6 +17,7 @@ namespace VideoApi.Domain
             ConferenceStatuses = new List<ConferenceStatus>();
             InstantMessageHistory = new List<InstantMessage>();
             MeetingRoom = new MeetingRoom();
+            Endpoints = new List<Endpoint>();
 
             HearingRefId = hearingRefId;
             CaseType = caseType;
@@ -41,6 +42,7 @@ namespace VideoApi.Domain
         public int ScheduledDuration { get; set; }
         public ConferenceState State { get; private set; }
         public virtual IList<Participant> Participants { get; }
+        public virtual IList<Endpoint> Endpoints { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
         public virtual IList<InstantMessage> InstantMessageHistory { get; }
         public string HearingVenueName { get; private set; }
@@ -86,6 +88,37 @@ namespace VideoApi.Domain
         public IList<Participant> GetParticipants()
         {
             return Participants;
+        }
+        
+        public void AddEndpoint(Endpoint endpoint)
+        {
+            if (DoesEndpointExist(endpoint.SipAddress))
+            {
+                throw new DomainRuleException(nameof(endpoint), "Endpoint already exists in conference");
+            }
+
+            Endpoints.Add(endpoint);
+        }
+
+        public void RemoveEndpoint(Endpoint endpoint)
+        {
+            if (!DoesEndpointExist(endpoint.SipAddress))
+            {
+                throw new DomainRuleException(nameof(endpoint), "Endpoint does not exist in conference");
+            }
+
+            var existingEndpoint = Endpoints.Single(x => x.SipAddress == endpoint.SipAddress);
+            Endpoints.Remove(existingEndpoint);
+        }
+
+        private bool DoesEndpointExist(string sipAddress)
+        {
+            return Endpoints.Any(x => x.SipAddress == sipAddress);
+        }
+
+        public IList<Endpoint> GetEndpoints()
+        {
+            return Endpoints;
         }
 
         public void UpdateConferenceStatus(ConferenceState status)

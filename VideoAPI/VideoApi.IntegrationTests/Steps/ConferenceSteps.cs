@@ -19,7 +19,6 @@ using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
-using NUnit.Framework.Internal;
 
 namespace VideoApi.IntegrationTests.Steps
 {

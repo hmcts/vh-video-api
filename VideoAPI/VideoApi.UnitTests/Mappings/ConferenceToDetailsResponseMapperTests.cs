@@ -33,6 +33,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => ExcludeIdFromMessage(x))
                 .Excluding(x => x.IngestUrl)
                 .Excluding(x => x.ActualStartTime)
+                .Excluding(x => x.Endpoints)
              );
 
             response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);

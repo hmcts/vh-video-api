@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace VideoApi.DAL.Exceptions
 {
@@ -6,6 +6,13 @@ namespace VideoApi.DAL.Exceptions
     public class ConferenceNotFoundException : Exception
     {
         public ConferenceNotFoundException(Guid conferenceId) : base($"Conference {conferenceId} does not exist")
+        {
+        }
+    }
+
+    public class EndpointNotFoundException : Exception
+    {
+        public EndpointNotFoundException(Guid endpointId) : base($"Endpoint {endpointId} does not exist")
         {
         }
     }
