@@ -7,8 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Queries;
+using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Responses;
 
@@ -17,20 +21,40 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
     [TestFixture]
     public class AudioRecordingControllerTest
     {
-        private readonly Mock<IAudioPlatformService> _audioPlatformService;
-        private readonly Mock<IStorageService> _storageService;
+        private Mock<IAudioPlatformService> _audioPlatformService;
+        private Mock<IStorageService> _storageService;
+        private Mock<IQueryHandler> _queryHandler;
+        private VideoApi.Domain.Conference _testConference;
 
-        private readonly AudioRecordingController _controller;
+        private AudioRecordingController _controller;
         
-        public AudioRecordingControllerTest()
+        [SetUp]
+        public void Setup()
         {
+            _queryHandler = new Mock<IQueryHandler>();
             _audioPlatformService = new Mock<IAudioPlatformService>();
             _storageService = new Mock<IStorageService>();
 
             _controller = new AudioRecordingController
             (
-                _audioPlatformService.Object, _storageService.Object, new Mock<ILogger<AudioRecordingController>>().Object
-            );    
+                _audioPlatformService.Object, _storageService.Object,
+                new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object
+            );
+            
+            
+            _testConference = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom1)
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Defendant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .Build();
+
+            _queryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                        It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync(_testConference);
         }
 
         [Test]
@@ -186,6 +210,15 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task Should_not_delete_audio_application_if_audio_file_not_exists_returns_notFound()
         {
+            var conferenceType = typeof(VideoApi.Domain.Conference);
+            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))
+                ?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            _queryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                        It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync(_testConference);
+            
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
             _audioPlatformService.Reset();
             var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
@@ -339,6 +372,15 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task GetAudioRecordingLinkAsync_return_notfound()
         {
+            var conferenceType = typeof(VideoApi.Domain.Conference);
+            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))
+                ?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            _queryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                        It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync(_testConference);
+            
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
             
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as NotFoundResult;

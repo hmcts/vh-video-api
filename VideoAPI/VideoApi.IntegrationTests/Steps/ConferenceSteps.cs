@@ -258,14 +258,14 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheConferenceDataShouldBeAnonymised()
         {
             Conference updatedConference;
-            var representative = _context.Test.Conference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            var representative = _context.Test.Conference.Participants.First(p => p.UserRole == UserRole.Representative);
             await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
             {
                 updatedConference = await db.Conferences.Include(p=>p.Participants).SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
             }
             updatedConference.Should().NotBeNull();
             updatedConference.CaseName.Should().NotBe(_context.Test.Conference.CaseName);
-            var updatedParticipant = updatedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            var updatedParticipant = updatedConference.Participants.First(p => p.UserRole == UserRole.Representative);
             updatedParticipant.DisplayName.Should().NotBe(representative.DisplayName);
             updatedParticipant.FirstName.Should().NotBe(representative.FirstName);
             updatedParticipant.LastName.Should().NotBe(representative.LastName);
@@ -360,7 +360,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 case Scenario.Valid:
                 {
-                    var scheduledDateTime = _context.Test.Conference.ScheduledDateTime.AddDays(1);
+                    var scheduledDateTime = _context.Test.Conference.ScheduledDateTime.AddMinutes(1);
                     request = new UpdateConferenceRequest
                     {
                         CaseName = _context.Test.Conference.CaseName,
