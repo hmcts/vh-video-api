@@ -1,16 +1,10 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using Video.API.Controllers;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
