@@ -75,7 +75,7 @@ namespace Video.API.Controllers
 
             var response = await _audioPlatformService.CreateAudioApplicationAsync(hearingId);
 
-            if (!response.Success)
+            if (!response.Success || response.StatusCode == HttpStatusCode.Conflict)
             {
                 return StatusCode((int)response.StatusCode, response.Message);
             }

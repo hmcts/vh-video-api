@@ -88,7 +88,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get audio stream request that has no stream")]
         public void GivenIHaveAValidGetAudioStreamRequestThatHasNoStream()
         {
-            _context.Request = _context.Get(GetAudioStream(_context.Config.AudioRecordingTestIds.NonExistent));
+            _context.Request = _context.Get(GetAudioStream(Guid.NewGuid()));
         }
         
         [Given(@"I have a valid create audio stream request")]
@@ -168,7 +168,6 @@ namespace VideoApi.AcceptanceTests.Steps
         public async Task GivenIHaveAConferenceWithAnAudioApplicationAndAudioRecordingFile()
         {
             _conferenceSteps.GivenIHaveAConference();
-            GivenTheConferenceHasAnAudioApplication();
             await GivenTheConferenceHasAnAudioRecording();
         }
 
