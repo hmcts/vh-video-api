@@ -19,5 +19,7 @@ namespace VideoApi.Domain.Enums
         Suspend = 13,
         VhoCall = 14,
         ParticipantNotSignedIn = 16,
+        EndpointJoined = 19,
+        EndpointDisconnected = 20,
     }
 }

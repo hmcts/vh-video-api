@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -19,6 +18,7 @@ namespace VideoApi.DAL.Commands
             TransferredFrom = transferredFrom;
             TransferredTo = transferredTo;
             Reason = reason;
+            IsEndpoint = eventType == EventType.EndpointJoined || eventType == EventType.EndpointDisconnected;
         }
 
         public Guid ConferenceId { get; }
@@ -29,6 +29,7 @@ namespace VideoApi.DAL.Commands
         public RoomType? TransferredFrom { get; }
         public RoomType? TransferredTo { get; }
         public string Reason { get; }
+        public bool IsEndpoint { get; }
     }
 
     public class SaveEventCommandHandler : ICommandHandler<SaveEventCommand>
@@ -45,7 +46,8 @@ namespace VideoApi.DAL.Commands
             var @event = new Event(command.ConferenceId, command.ExternalEventId, command.EventType,
                 command.ExternalTimestamp, command.TransferredFrom, command.TransferredTo, command.Reason)
             {
-                ParticipantId = command.ParticipantId
+                ParticipantId = command.ParticipantId,
+                EndpointFlag = command.IsEndpoint
             };
 
             await _context.Events.AddAsync(@event);

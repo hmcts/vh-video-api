@@ -20,6 +20,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.TransferredFrom);
             builder.Property(x => x.TransferredTo);
             builder.Property(x => x.Reason);
+            builder.Property(x => x.EndpointFlag).HasDefaultValue(false);
         }
     }
 }
