@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -8,7 +9,7 @@ namespace VideoApi.Services.Contracts
 {
     public interface IVideoPlatformService
     {
-        Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl);
+        Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl, IEnumerable<Endpoint> endpoints);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId);
         Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);

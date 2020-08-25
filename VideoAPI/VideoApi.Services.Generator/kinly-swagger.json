@@ -343,6 +343,12 @@
         "streaming_url": {
           "type": "string",
           "description": "Streaming url"
+        },
+        "jvs_endpoint": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/endpoint"
+          }
         }
       }
     },
@@ -434,6 +440,33 @@
         "from": {
           "type": "string",
           "description": "Room label transfering participant to"
+        }
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "required": [
+        "address",
+        "display_name",
+        "pin",
+        "id"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "The address or SIP"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "The display name"
+        },
+        "pin": {
+          "type": "string",
+          "description": "The PIN"
+        },
+        "id": {
+          "type": "string",
+          "description": "The Id"
         }
       }
     }

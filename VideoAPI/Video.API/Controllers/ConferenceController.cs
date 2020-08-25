@@ -88,11 +88,11 @@ namespace Video.API.Controllers
             var conferenceId = await CreateConferenceAsync(request, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Conference Created");
 
-            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl);
-            _logger.LogDebug("Kinly Room Booked");
-
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            
+            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl, queriedConference.Endpoints);
+            _logger.LogDebug("Kinly Room Booked");
 
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
 
@@ -467,12 +467,15 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task BookKinlyMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)
+        private async Task BookKinlyMeetingRoomAsync(Guid conferenceId,
+            bool audioRecordingRequired,
+            string ingestUrl,
+            IList<Endpoint> endpoints)
         {
             MeetingRoom meetingRoom;
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId, audioRecordingRequired, ingestUrl);
+                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints);
             }
             catch (DoubleBookingException ex)
             {
@@ -506,10 +509,13 @@ namespace Video.API.Controllers
                     })
                 .ToList();
 
+            var endpoints = request.Endpoints.Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin)).ToList();
+
             var createConferenceCommand = new CreateConferenceCommand
             (
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
-                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName, request.AudioRecordingRequired, ingestUrl
+                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName, 
+                request.AudioRecordingRequired, ingestUrl, endpoints
             );
 
             await _commandHandler.Handle(createConferenceCommand);
