@@ -41,7 +41,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 CaseNumber = $"{_context.Test.ConferenceResponse.CaseNumber} UPDATED",
                 CaseType = "Financial Remedy",
                 HearingRefId = _context.Test.ConferenceResponse.HearingId,
-                ScheduledDateTime = DateTime.Now.AddDays(1),
+                ScheduledDateTime = DateTime.Now.AddHours(1),
                 ScheduledDuration = 12,
                 HearingVenueName = "MyVenue",
                 AudioRecordingRequired = true
@@ -201,7 +201,7 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.CaseName.Should().Be(expected.CaseName);
             conference.CaseNumber.Should().Be(expected.CaseNumber);
             conference.CaseType.Should().Be(expected.CaseType);
-            conference.ScheduledDateTime.Day.Should().Be(DateTime.Today.AddDays(1).Day);
+            conference.ScheduledDateTime.Should().Be(expected.ScheduledDateTime.ToUniversalTime());
             conference.ScheduledDuration.Should().Be(expected.ScheduledDuration);
             conference.HearingVenueName.Should().Be(expected.HearingVenueName);
             conference.AudioRecordingRequired.Should().Be(expected.AudioRecordingRequired);
