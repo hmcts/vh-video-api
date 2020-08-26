@@ -27,7 +27,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId1 = seededConference.Id;
 
-            var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(seededConference.HearingRefId));
+            var conference = await _handler.Handle(new GetConferenceByHearingRefIdQuery(seededConference.HearingRefId));
 
             conference.Should().NotBeNull();
 

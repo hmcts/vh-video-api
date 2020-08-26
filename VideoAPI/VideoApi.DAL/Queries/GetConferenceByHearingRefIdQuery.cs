@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
@@ -19,7 +17,7 @@ namespace VideoApi.DAL.Queries
     }
 
     public class GetConferenceByHearingRefIdQueryHandler :
-        IQueryHandler<GetNonClosedConferenceByHearingRefIdQuery, Conference>
+        IQueryHandler<GetConferenceByHearingRefIdQuery, Conference>
     {
         private readonly VideoApiDbContext _context;
 
@@ -28,7 +26,7 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
 
-        public async Task<Conference> Handle(GetNonClosedConferenceByHearingRefIdQuery query)
+        public async Task<Conference> Handle(GetConferenceByHearingRefIdQuery query)
         {
             return await _context.Conferences
                 .AsNoTracking()
