@@ -19,7 +19,8 @@ namespace Video.API.Mappings
                 ScheduledDuration = conference.ScheduledDuration,
                 ScheduledDateTime = conference.ScheduledDateTime,
                 Participants = conference.Participants
-                    .Select(ParticipantForJudgeResponseMapper.MapParticipantSummaryToModel).ToList()
+                    .Select(ParticipantForJudgeResponseMapper.MapParticipantSummaryToModel).ToList(),
+                NumberOfEndpoints = conference.Endpoints.Count
             };
         }
         

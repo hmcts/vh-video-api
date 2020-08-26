@@ -17,6 +17,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithParticipant(UserRole.Judge, "Judge")
                 .WithParticipants(3)
+                .WithEndpoint("3000","sip address")
                 .Build();
 
             var response = ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel(conference);
@@ -29,7 +30,22 @@ namespace VideoApi.UnitTests.Mappings
             response.CaseNumber.Should().Be(conference.CaseNumber);
             response.Status.ToString().Should().Be(conference.State.ToString());
             response.Participants.Count.Should().Be(conference.Participants.Count);
+            response.NumberOfEndpoints.Should().Be(conference.Endpoints.Count);
         }
-        
+
+        [Test]
+        public void should_map_number_of_endpoints_to_zero()
+        {
+            var conference = new ConferenceBuilder()
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithParticipant(UserRole.Judge, "Judge")
+                .WithParticipants(1)
+                .Build();
+
+            var response = ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel(conference);
+
+            response.Id.Should().Be(conference.Id);
+            response.NumberOfEndpoints.Should().Be(0);
+        }
     }
 }
