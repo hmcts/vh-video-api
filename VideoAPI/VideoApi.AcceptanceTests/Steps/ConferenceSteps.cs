@@ -232,6 +232,36 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Test.ConferenceResponses = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
         }
 
+        [Then(@"a list containing only judge todays hearings conference details should be retrieved")]
+        public void ThenAListOfTheConferenceDetailsForJudgeShouldBeRetrieved()
+        {
+            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForJudgeResponse>>(_context.Response.Content);
+            conferences.Should().NotBeNull();
+            foreach (var conference in conferences)
+            {
+                AssertConferenceForJudgeResponse.ForConference(conference);
+                foreach (var participant in conference.Participants)
+                    AssertParticipantForJudgeResponse.ForParticipant(participant);
+                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
+            }
+
+            _context.Test.ConferenceJudgeResponses = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
+        }
+
+        [Then(@"a list containing only individual todays hearings conference details should be retrieved")]
+        public void ThenAListOfTheConferenceDetailsForIndividualShouldBeRetrieved()
+        {
+            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForIndividualResponse>>(_context.Response.Content);
+            conferences.Should().NotBeNull();
+            foreach (var conference in conferences)
+            {
+                AssertConferenceForIndividualResponse.ForConference(conference);
+                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
+            }
+
+            _context.Test.ConferenceIndividualResponses = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
+        }
+
         [Then(@"I have an empty list of expired conferences")]
         public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
         {

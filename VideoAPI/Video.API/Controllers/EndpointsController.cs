@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -46,8 +48,8 @@ namespace Video.API.Controllers
             _logger.LogDebug($"Retrieving endpoints for conference {conferenceId}");
             var query = new GetEndpointsForConferenceQuery(conferenceId);
             var endpoints = await _queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(query);
-
-            return Ok(endpoints);
+            var response = endpoints.Select(EndpointToResponseMapper.MapEndpointResponse).ToList();
+            return Ok(response);
         }
 
         /// <summary>

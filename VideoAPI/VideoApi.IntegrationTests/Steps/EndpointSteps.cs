@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
+using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
@@ -46,8 +47,8 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveAConferenceWithEndpoints()
         {
             var conference1 = new ConferenceBuilder()
-                .WithEndpoint("Display1", "sip@123.com")
-                .WithEndpoint("Display2", "sip@321.com").Build();
+                .WithEndpoint("Display1", Internet.FreeEmail())
+                .WithEndpoint("Display2", Internet.FreeEmail()).Build();
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
             _context.Test.Conferences.Add(_context.Test.Conference);
             NUnit.Framework.TestContext.WriteLine($"New seeded conference id: {_context.Test.Conference.Id}");
