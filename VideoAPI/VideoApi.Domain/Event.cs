@@ -17,6 +17,7 @@ namespace VideoApi.Domain
             Reason = reason;
             ConferenceId = conferenceId;
             Timestamp = DateTime.UtcNow;
+            EndpointFlag = false;
         }
 
         public Guid ConferenceId { get; set; }
@@ -28,5 +29,6 @@ namespace VideoApi.Domain
         public RoomType? TransferredTo { get; set; }
         public string Reason { get; set; }
         public DateTime Timestamp { get; set; }
+        public bool EndpointFlag { get; set; }
     }
 }

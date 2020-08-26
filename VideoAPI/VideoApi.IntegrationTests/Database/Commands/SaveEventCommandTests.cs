@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
@@ -57,7 +57,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             await _handler.Handle(command);
 
             Event savedEvent;
-            using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
                 savedEvent = await db.Events.FirstOrDefaultAsync(x =>
                     x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
@@ -70,6 +70,46 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedEvent.TransferredFrom.Should().Be(transferredFrom);
             savedEvent.TransferredTo.Should().Be(transferredTo);
             savedEvent.Reason.Should().Be(reason);
+            savedEvent.EndpointFlag.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task should_set_endpoint_flag_to_true_when_endpoint_event()
+        {
+            var conference = new ConferenceBuilder()
+                .WithEndpoint("Display1", "sip@123.com")
+                .WithEndpoint("Display2", "sip@321.com").Build();
+            
+            var seededConference = await TestDataManager.SeedConference(conference);
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            
+            var externalEventId = "AutomatedEventTestIdSuccessfulSave";
+            var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
+            var participantId = seededConference.GetEndpoints().First().Id;
+            var reason = "Automated";
+            var eventType = EventType.EndpointJoined;
+            
+            var command = new SaveEventCommand(_newConferenceId, externalEventId, eventType, externalTimeStamp,
+                null, null, reason) {ParticipantId = participantId};
+            await _handler.Handle(command);
+
+            Event savedEvent;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                    x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
+            }
+
+            savedEvent.Should().NotBeNull();
+            savedEvent.ExternalEventId.Should().Be(externalEventId);
+            savedEvent.EventType.Should().Be(eventType);
+            savedEvent.ExternalTimestamp.Should().Be(externalTimeStamp);
+            savedEvent.TransferredFrom.Should().BeNull();
+            savedEvent.TransferredTo.Should().BeNull();
+            savedEvent.Reason.Should().Be(reason);
+            savedEvent.ParticipantId.Should().Be(participantId);
+            savedEvent.EndpointFlag.Should().BeTrue();
         }
     }
 }
