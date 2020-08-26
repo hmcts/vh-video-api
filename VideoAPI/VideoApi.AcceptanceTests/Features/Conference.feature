@@ -46,7 +46,7 @@ Feature: Conference
 	  And I have a get conferences today for a judge
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
-	  And a list containing only todays hearings conference details should be retrieved
+	  And a list containing only judge todays hearings conference details should be retrieved
 
   Scenario: Get conferences today for individual
 	  Given I have a conference
@@ -55,7 +55,7 @@ Feature: Conference
 	  And I have a get conferences today for an individual
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
-	  And a list containing only todays hearings conference details should be retrieved
+	  And a list containing only individual todays hearings conference details should be retrieved
 
   Scenario: Get conference details by hearing id
 	  Given I have a conference
