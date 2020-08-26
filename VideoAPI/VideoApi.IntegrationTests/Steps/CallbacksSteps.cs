@@ -77,8 +77,9 @@ namespace VideoApi.IntegrationTests.Steps
             if (conference == null) return request;
 
             request.ConferenceId = conference.Id.ToString();
-            var participant = conference.GetParticipants().First();
-            request.ParticipantId = participant.Id.ToString();
+            var isEndpointEvent = eventType == EventType.EndpointJoined || eventType == EventType.EndpointDisconnected;
+            var participantId = isEndpointEvent ? conference.GetEndpoints().First().Id: conference.GetParticipants().First().Id;
+            request.ParticipantId = participantId.ToString();
             return request;
         }
 

@@ -41,3 +41,12 @@ Feature: Callbacks
     | ParticipantJoining     |
     | Help                   |
     | ParticipantNotSignedIn |
+
+  Scenario Outline: Should accept and process a endpoint event request
+    Given I have a conference with endpoints
+    And I have a valid conference event request for event type <EventType>
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    Examples:
+      | EventType              |
+      | EndpointJoined         |

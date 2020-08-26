@@ -9,7 +9,7 @@ using VideoApi.AcceptanceTests.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
-using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
+using VideoApi.Domain.Enums;
 using static Testing.Common.Helper.ApiUriFactory.EPEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
@@ -19,17 +19,15 @@ namespace VideoApi.AcceptanceTests.Steps
     {
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
-        private readonly CommonSteps _commonSteps;
         private static string _addEndPointRequest = "AddEndPointRequest";
         private static string _removedEndPointId = "RemovedEndPointId";
         private static string _updatedEndPointId = "UpdatedEndPointId";
         private static string _updateEndPointRequest = "UpdateEndPointRequest";
 
-        public EndPointsSteps(TestContext injectedContext, ScenarioContext scenarioContext, CommonSteps commonSteps)
+        public EndPointsSteps(TestContext injectedContext, ScenarioContext scenarioContext)
         {
             _context = injectedContext;
             _scenarioContext = scenarioContext;
-            _commonSteps = commonSteps;
         }
 
         [Given(@"I have add endpoint to a conference request with a (.*) conference id")]
@@ -126,7 +124,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var endpoints = GetEndPoints();
             var requestUsed = _scenarioContext.Get<AddEndpointRequest>(_addEndPointRequest);
-            var endpointAdded = endpoints.FirstOrDefault(ep => ep.DisplayName == requestUsed.DisplayName);
+            var endpointAdded = endpoints.First(ep => ep.DisplayName == requestUsed.DisplayName);
 
             endpointAdded.Should().NotBeNull();
             endpointAdded.DisplayName.Should().Be(requestUsed.DisplayName);
@@ -149,7 +147,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var updatedEndPointId = _scenarioContext.Get<Guid>(_updatedEndPointId);
             var requestUsed = _scenarioContext.Get<UpdateEndpointRequest>(_updateEndPointRequest);
             
-            var endpointUpdated = endpoints.FirstOrDefault(ep => ep.Id == updatedEndPointId);
+            var endpointUpdated = endpoints.First(ep => ep.Id == updatedEndPointId);
             endpointUpdated.Should().NotBeNull();
             endpointUpdated.DisplayName.Should().Be(requestUsed.DisplayName);
         }
@@ -159,6 +157,13 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var endpoints = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<Endpoint>>(_context.Response.Content);
             endpoints.Should().NotBeNull();
+        }
+        
+        [Then(@"the endpoint status should be (.*)")]
+        public void ThenTheEndpointsStateShouldBe(EndpointState state)
+        {
+            var endpoint = GetEndPoints().First(x => x.Id == _context.Test.ParticipantId);
+            endpoint.Status.Should().Be(state);
         }
 
         private Guid GetConferenceIdForTest(Scenario scenario)
@@ -181,17 +186,7 @@ namespace VideoApi.AcceptanceTests.Steps
             return conferenceId;
         }
 
-        private ConferenceDetailsResponse GetConference()
-        {
-            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
-            _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.IsSuccessful.Should().BeTrue();
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
-            conference.Should().NotBeNull();
-            return conference;
-        }
-
-        private IList<EndpointResponse> GetEndPoints()
+        public IList<EndpointResponse> GetEndPoints()
         {
             _context.Request = _context.Get(GetEndpointsForConference(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
