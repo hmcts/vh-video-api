@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         public async Task Should_return_notfound_with_no_matching_conference()
         {
             QueryHandlerMock
-             .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
+             .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
              .ReturnsAsync((VideoApi.Domain.Conference) null);
 
 

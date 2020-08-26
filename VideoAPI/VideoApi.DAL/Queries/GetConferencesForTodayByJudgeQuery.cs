@@ -35,6 +35,7 @@ namespace VideoApi.DAL.Queries
 
             return await _context.Conferences
                 .Include(x => x.Participants)
+                .Include(x => x.Endpoints)
                 .Include(x => x.MeetingRoom)
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)

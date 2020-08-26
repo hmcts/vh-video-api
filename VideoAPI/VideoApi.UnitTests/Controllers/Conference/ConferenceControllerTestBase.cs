@@ -54,7 +54,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .ReturnsAsync(TestConference);
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(TestConference);
             QueryHandlerMock
               .Setup(x => x.Handle<GetExpiredAudiorecordingConferencesQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetExpiredAudiorecordingConferencesQuery>()))

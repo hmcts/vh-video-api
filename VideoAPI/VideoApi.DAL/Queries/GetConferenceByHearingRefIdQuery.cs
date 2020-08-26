@@ -1,16 +1,14 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
     public class GetConferenceByHearingRefIdQuery : IQuery
     {
-        public Guid HearingRefId { get; set; }
+        public Guid HearingRefId { get; }
 
         public GetConferenceByHearingRefIdQuery(Guid hearingRefId)
         {
@@ -31,8 +29,6 @@ namespace VideoApi.DAL.Queries
         public async Task<Conference> Handle(GetConferenceByHearingRefIdQuery query)
         {
             return await _context.Conferences
-                .Include(x => x.Participants)
-                .Where(x => x.State != ConferenceState.Closed)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.HearingRefId == query.HearingRefId);
         }

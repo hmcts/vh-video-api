@@ -45,6 +45,11 @@ namespace VideoApi.Contract.Responses
         /// The conference participants
         /// </summary>
         public List<ParticipantForJudgeResponse> Participants { get; set; }
+
+        /// <summary>
+        /// The number of video access endpoints for the hearing
+        /// </summary>
+        public int NumberOfEndpoints { get; set; }
     }
 
     public class ParticipantForJudgeResponse

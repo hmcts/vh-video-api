@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             };
             
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync((VideoApi.Domain.Conference) null);
 
 
