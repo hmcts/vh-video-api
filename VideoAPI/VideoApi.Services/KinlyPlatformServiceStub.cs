@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
@@ -24,7 +24,7 @@ namespace VideoApi.Services
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<Endpoint> endpoints)
+            IEnumerable<EndpointDto> endpoints)
         {
             if (_bookedGuids.Contains(conferenceId))
                 throw new DoubleBookingException(conferenceId, "Meeting room already exists");

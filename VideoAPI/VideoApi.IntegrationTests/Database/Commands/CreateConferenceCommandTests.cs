@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -37,10 +38,16 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string hearingVenueName = "MyVenue";
             const string ingestUrl = "https://localhost/ingesturl";
             const bool audioRecordingRequired = true;
+            var endpoints = new List<Endpoint>
+            {
+                new Endpoint("name1", "0987654321", "1234"),
+                new Endpoint("name2", "1234567890", "5678")
+            };
 
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
-                    scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl);
+                    scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl, endpoints);
+            
             await _handler.Handle(command);
 
             command.NewConferenceId.Should().NotBeEmpty();

@@ -19,7 +19,9 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
+using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -88,12 +90,15 @@ namespace Video.API.Controllers
             var conferenceId = await CreateConferenceAsync(request, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Conference Created");
 
+            var conferenceEndpoints = await _queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(new GetEndpointsForConferenceQuery(conferenceId));
+            var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
+            
+            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl, endpointDtos);
+            _logger.LogDebug("Kinly Room Booked");
+
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             
-            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl, queriedConference.Endpoints);
-            _logger.LogDebug("Kinly Room Booked");
-
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
 
             _logger.LogInformation($"Created conference {response.Id} for hearing {request.HearingRefId}");
@@ -124,6 +129,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
+            // TODO - need to pass in endpoints otherwise kinly will delete all current endpoints
             await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired);
 
             try
@@ -470,12 +476,15 @@ namespace Video.API.Controllers
         private async Task BookKinlyMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IList<Endpoint> endpoints)
+            IEnumerable<EndpointDto> endpoints)
         {
             MeetingRoom meetingRoom;
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints);
+                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
+                    audioRecordingRequired,
+                    ingestUrl,
+                    endpoints);
             }
             catch (DoubleBookingException ex)
             {

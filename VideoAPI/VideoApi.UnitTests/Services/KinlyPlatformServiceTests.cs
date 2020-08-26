@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,8 +16,11 @@ using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
+using VideoApi.Services.Mappers;
+using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Services
@@ -130,7 +134,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new KinlyApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, ""));
+                _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>()));
         }
         
         [Test]
@@ -141,7 +145,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new KinlyApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<KinlyApiException>(() =>
-                _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, ""));
+                _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>()));
         }
         
         [Test]
@@ -149,6 +153,12 @@ namespace VideoApi.UnitTests.Services
         {
             const bool audioRecordingRequired = false;
             const string ingestUrl = null;
+            var endpoints = new List<EndpointDto>
+            {
+                new EndpointDto{Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919"},
+                new EndpointDto{Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832"}
+            };
+            
             var hearingParams = new CreateHearingParams
             {
                 Virtual_courtroom_id = _testConference.Id.ToString(),
@@ -156,7 +166,8 @@ namespace VideoApi.UnitTests.Services
                 Recording_enabled = audioRecordingRequired,
                 Recording_url = ingestUrl,
                 Streaming_enabled = false,
-                Streaming_url = null
+                Streaming_url = null,
+                Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
             };
 
             var uris = new Uris
@@ -178,13 +189,26 @@ namespace VideoApi.UnitTests.Services
                     Uris = uris
                 });
 
-            var result = await _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, audioRecordingRequired, ingestUrl);
+            var result = await _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
+                audioRecordingRequired,
+                ingestUrl,
+                endpoints);
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);
             result.JudgeUri.Should().Be(uris.Participant);
             result.ParticipantUri.Should().Be(uris.Participant);
             result.PexipNode.Should().Be(uris.Pexip_node);
+            
+            _kinlyApiClientMock.Verify(x => x.CreateHearingAsync(It.Is<CreateHearingParams>(param =>
+                param.Virtual_courtroom_id == hearingParams.Virtual_courtroom_id &&
+                param.Callback_uri == hearingParams.Callback_uri &&
+                param.Recording_enabled == hearingParams.Recording_enabled &&
+                param.Recording_url == hearingParams.Recording_url &&
+                param.Streaming_enabled == hearingParams.Streaming_enabled &&
+                param.Streaming_url == hearingParams.Streaming_url &&
+                param.Jvs_endpoint != null && param.Jvs_endpoint.Count == hearingParams.Jvs_endpoint.Count
+            )), Times.Once);
         }
 
         [Test]

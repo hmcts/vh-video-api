@@ -12,7 +12,8 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
-using Endpoint = VideoApi.Domain.Endpoint;
+using VideoApi.Services.Dtos;
+using VideoApi.Services.Mappers;
 
 namespace VideoApi.Services
 {
@@ -41,7 +42,7 @@ namespace VideoApi.Services
         public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<Endpoint> endpoints)
+            IEnumerable<EndpointDto> endpoints)
         {
             _logger.LogInformation($"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
             
@@ -55,10 +56,7 @@ namespace VideoApi.Services
                     Recording_url = ingestUrl,
                     Streaming_enabled = false,
                     Streaming_url = null,
-                    Jvs_endpoint = endpoints.Select(x => new VideoApi.Services.Kinly.Endpoint
-                    {
-                        Id = x.Id.ToString(), Address = x.SipAddress, Display_name= x.DisplayName, Pin = x.Pin
-                    }).ToList()
+                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
                 });
 
                 return new MeetingRoom

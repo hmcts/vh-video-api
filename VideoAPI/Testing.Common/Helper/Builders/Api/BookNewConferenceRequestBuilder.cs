@@ -113,5 +113,13 @@ namespace Testing.Common.Helper.Builders.Api
             _bookNewConferenceRequest.AudioRecordingRequired = audioRecordingRequired;
             return this;
         }
+
+        public BookNewConferenceRequestBuilder WithEndpoint(string displayName, string sip, string pin)
+        {
+            _bookNewConferenceRequest.Endpoints ??= new List<AddEndpointRequest>();
+            
+            _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest {DisplayName = displayName, SipAddress = sip, Pin = pin});
+            return this;
+        }
     }
 }

@@ -24,8 +24,7 @@ namespace VideoApi.UnitTests.Services
             _pollyRetryService.WaitAndRetryAsync<Exception, object>
             (
                 3, i => TimeSpan.FromMilliseconds(1), retryAttempt => retryInvoked = true,
-                () => throw new Exception("What")
-            );
+                () => throw new Exception("What"));
 
             Assert.True(retryInvoked);
         }

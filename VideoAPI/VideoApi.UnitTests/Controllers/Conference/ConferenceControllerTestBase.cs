@@ -29,6 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected VideoApi.Domain.Conference TestConference;
         protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
         protected Mock<IStorageService> StorageServiceMock;
+        protected List<Endpoint> TestEndpoints;
 
         [SetUp]
         public void Setup()
@@ -48,10 +49,20 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .Build();
+            
+            TestEndpoints = new List<Endpoint>
+            {
+                new Endpoint("one", "44564", "1234"),
+                new Endpoint("two", "867744", "5678")
+            };
 
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
+
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(It.IsAny<GetEndpointsForConferenceQuery>()))
+                .ReturnsAsync(TestEndpoints);
 
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByHearingRefIdQuery>()))
