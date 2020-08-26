@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Events
                 new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-
+                new EndpointJoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new StartEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new CountdownFinishedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
@@ -54,6 +54,8 @@ namespace VideoApi.UnitTests.Events
             };
 
             TestConference = new ConferenceBuilder()
+                .WithEndpoint("Endpoint1", "Endpoint1234@sip.com")
+                .WithEndpoint("Endpoint2", "Endpoint2345@sip.com")
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Claimant")
                 .WithParticipant(UserRole.Representative, "Claimant")

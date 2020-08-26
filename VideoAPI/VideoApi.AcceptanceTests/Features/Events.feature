@@ -36,3 +36,15 @@ Feature: Events
       | ParticipantJoining     |
       | Help                   |
       | ParticipantNotSignedIn |
+
+  Scenario Outline: Endpoint Event
+    Given I have a conference
+    And I have endpoints stored against a conference
+    And I have a valid endpoint event request for event type <EventType>
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the endpoint status should be <EndpointStatus>
+
+    Examples:
+      | EventType      | EndpointStatus |
+      | EndpointJoined | Connected      |

@@ -16,32 +16,36 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class CallbackSteps
     {
         private readonly TestContext _context;
+        private readonly EndPointsSteps _endPointsSteps;
 
-        public CallbackSteps(TestContext injectedContext)
+        public CallbackSteps(TestContext injectedContext, EndPointsSteps endPointsSteps)
         {
             _context = injectedContext;
+            _endPointsSteps = endPointsSteps;
         }
 
         [Given(@"I have a valid conference event request for a Judge with event type (.*)")]
+        [Given(@"I have a valid conference event request for event type (.*)")]
         public void GivenIHaveAValidConferenceEventRequestForAJudge(EventType eventType)
         {
-            var participant = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
-            CreateConferenceEventRequest(participant, eventType);
+            var participantId = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge)
+                .Id;
+            CreateConferenceEventRequest(participantId, eventType);
         }
         
-        [Given(@"I have a valid conference event request for event type (.*)")]
-        public void GivenIHaveAValidConferenceEventRequest(EventType eventType)
+        [Given(@"I have a valid endpoint event request for event type (.*)")]
+        public void GivenIHaveAValidEndpointEventRequestForAConference(EventType eventType)
         {
-            var participant = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole != UserRole.Judge);
-            CreateConferenceEventRequest(participant, eventType);
+            var endpointId = _endPointsSteps.GetEndPoints().First().Id;
+            CreateConferenceEventRequest(endpointId, eventType);
         }
 
-        private void CreateConferenceEventRequest(ParticipantDetailsResponse participant, EventType eventType)
+        private void CreateConferenceEventRequest(Guid participantId, EventType eventType)
         {
-            _context.Test.ParticipantId = participant.Id;
+            _context.Test.ParticipantId = participantId;
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = _context.Test.ConferenceResponse.Id.ToString())
-                .With(x => x.ParticipantId = participant.Id.ToString())
+                .With(x => x.ParticipantId = participantId.ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)

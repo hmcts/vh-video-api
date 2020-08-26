@@ -23,6 +23,7 @@ namespace VideoApi.Events.Handlers.Core
 
         public Conference SourceConference { get; set; }
         public Participant SourceParticipant { get; set; }
+        public Endpoint SourceEndpoint { get; set; }
 
         public abstract EventType EventType { get; }
 #pragma warning disable S4457 // Parameter validation in "async/await" methods should be wrapped
@@ -36,6 +37,8 @@ namespace VideoApi.Events.Handlers.Core
 
             SourceParticipant = SourceConference.GetParticipants()
                 .SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
+
+            SourceEndpoint = SourceConference.GetEndpoints().SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
 
             await PublishStatusAsync(callbackEvent);
         }
