@@ -10,28 +10,28 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class EndpointJoinedHandlerTests : EventHandlerTestBase
+    public class EndpointDisconnectedHandlerTests : EventHandlerTestBase
     {
-        private EndpointJoinedEventHandler _eventHandler;
+        private EndpointDisconnectedEventHandler _eventHandler;
         
         [Test]
-        public async Task Should_update_endpoint_status_to_connected()
+        public async Task Should_update_endpoint_status_to_disconnected()
         {
-            _eventHandler = new EndpointJoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
+            _eventHandler = new EndpointDisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetEndpoints().First();
 
             var callbackEvent = new CallbackEvent
             {
-                EventType = EventType.EndpointJoined,
+                EventType = EventType.EndpointDisconnected,
                 EventId = Guid.NewGuid().ToString(),
                 ConferenceId = conference.Id,
                 ParticipantId = participantForEvent.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
             var updateStatusCommand = new UpdateEndpointStatusCommand(conference.Id, participantForEvent.Id,
-                EndpointState.Connected);
+                EndpointState.Disconnected);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
             await _eventHandler.HandleAsync(callbackEvent);
@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Events
                 x => x.Handle(It.Is<UpdateEndpointStatusCommand>(command =>
                     command.ConferenceId == conference.Id &&
                     command.EndpointId == participantForEvent.Id &&
-                    command.Status == EndpointState.Connected)), Times.Once);
+                    command.Status == EndpointState.Disconnected)), Times.Once);
         }
     }
 }

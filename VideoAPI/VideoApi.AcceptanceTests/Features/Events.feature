@@ -46,5 +46,6 @@ Feature: Events
     And the endpoint status should be <EndpointStatus>
 
     Examples:
-      | EventType      | EndpointStatus |
-      | EndpointJoined | Connected      |
+      | EventType            | EndpointStatus  |
+      | EndpointJoined       | Connected       |
+      | EndpointDisconnected | Disconnected    |
