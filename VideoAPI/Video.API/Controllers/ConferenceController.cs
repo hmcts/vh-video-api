@@ -114,8 +114,8 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("UpdateConference");
 
-            var query = new GetConferenceByHearingRefIdQuery(request.HearingRefId);
-            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefId);
+            var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
 
             if (conference == null)
             {
@@ -296,8 +296,8 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug($"GetConferenceByHearingRefId {hearingRefId}");
 
-            var query = new GetConferenceByHearingRefIdQuery(hearingRefId);
-            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId);
+            var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
 
             if (conference == null)
             {

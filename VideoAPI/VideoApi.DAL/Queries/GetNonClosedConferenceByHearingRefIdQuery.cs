@@ -8,22 +8,22 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetConferenceByHearingRefIdQuery : IQuery
+    public class GetNonClosedConferenceByHearingRefIdQuery : IQuery
     {
         public Guid HearingRefId { get; }
 
-        public GetConferenceByHearingRefIdQuery(Guid hearingRefId)
+        public GetNonClosedConferenceByHearingRefIdQuery(Guid hearingRefId)
         {
             HearingRefId = hearingRefId;
         }
     }
 
-    public class GetConferenceByHearingRefIdQueryHandler :
+    public class GetNonClosedConferenceByHearingRefIdQueryHandler :
         IQueryHandler<GetNonClosedConferenceByHearingRefIdQuery, Conference>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetConferenceByHearingRefIdQueryHandler(VideoApiDbContext context)
+        public GetNonClosedConferenceByHearingRefIdQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
@@ -31,6 +31,8 @@ namespace VideoApi.DAL.Queries
         public async Task<Conference> Handle(GetNonClosedConferenceByHearingRefIdQuery query)
         {
             return await _context.Conferences
+                .Include(x => x.Participants)
+                .Where(x => x.State != ConferenceState.Closed)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.HearingRefId == query.HearingRefId);
         }
