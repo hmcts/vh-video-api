@@ -13,6 +13,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
+using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory.EPEndpoints;
@@ -47,8 +48,15 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveAConferenceWithEndpoints()
         {
             var conference1 = new ConferenceBuilder()
+                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Defendant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
                 .WithEndpoint("Display1", Internet.FreeEmail())
-                .WithEndpoint("Display2", Internet.FreeEmail()).Build();
+                .WithEndpoint("Display2", Internet.FreeEmail())
+                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithAudioRecordingRequired(false).Build();
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
             _context.Test.Conferences.Add(_context.Test.Conference);
             NUnit.Framework.TestContext.WriteLine($"New seeded conference id: {_context.Test.Conference.Id}");
@@ -161,7 +169,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveUpdateEndpointForAConferenceRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
-            var endpointId = _context.Test.Conference.Endpoints.FirstOrDefault().Id;
+            var endpointId = _context.Test.Conference.Endpoints.First().Id;
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test"
@@ -169,6 +177,18 @@ namespace VideoApi.IntegrationTests.Steps
             SetupUpdateEndpointRequest(conferenceId, endpointId, request);
         }
 
+        [Then(@"the endpoint status should be (.*)")]
+        public async Task ThenTheEndpointsStateShouldBe(EndpointState state)
+        {
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
+            {
+                var conf = await db.Conferences.Include(x => x.Endpoints)
+                    .SingleAsync(x => x.Id == _context.Test.Conference.Id);
+                var endpoint = conf.GetEndpoints().First(x => x.Id == _context.Test.ParticipantId);
+                endpoint.State.Should().Be(state);
+            }
+        }
+        
         private async Task AssertEndpointLength(int length)
         {
             var result = await Response.GetResponses<IList<EndpointResponse>>(_context.Response.Content);

@@ -43,6 +43,7 @@ namespace VideoApi.UnitTests.Events
                 new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new EndpointJoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new EndpointDisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new StartEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new CountdownFinishedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
