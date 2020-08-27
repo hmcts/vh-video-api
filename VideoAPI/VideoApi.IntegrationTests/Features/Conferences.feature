@@ -8,6 +8,12 @@ Feature: Conferences
     When I send the request to the endpoint
     Then the response should have the status Created and success status True
     And the conference details should be retrieved
+
+  Scenario: Create a new conference with jvs endpoints
+    Given I have a valid book a new conference request with jvs endpoints
+    When I send the request to the endpoint
+    Then the response should have the status Created and success status True
+    And the conference details should be retrieved with jvs endpoints
     
   Scenario: Create a new conference twice
     Given I have a valid book a new conference request
@@ -23,7 +29,7 @@ Feature: Conferences
     And the error response message should also contain 'HearingRefId is required'
     And the error response message should also contain 'CaseType is required'
     And the error response message should also contain 'CaseNumber is required'
-	And the error response message should also contain 'ScheduledDuration is required'
+	  And the error response message should also contain 'ScheduledDuration is required'
     And the error response message should also contain 'ScheduledDateTime cannot be in the past'
     And the error response message should also contain 'Please provide at least one participant'
 

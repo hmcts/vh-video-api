@@ -20,7 +20,6 @@ using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using VideoApi.Services.Mappers;
-using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Services

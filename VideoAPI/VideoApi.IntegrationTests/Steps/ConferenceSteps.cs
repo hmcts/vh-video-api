@@ -203,6 +203,26 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
+        [Given(@"I have a valid book a new conference request with jvs endpoints")]
+        public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpoints()
+        {
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
+                .WithJudge()
+                .WithRepresentative("Claimant").WithIndividual("Claimant")
+                .WithRepresentative("Defendant").WithIndividual("Defendant")
+                .WithEndpoints(new List<AddEndpointRequest>
+                {
+                    new AddEndpointRequest{DisplayName = "one", SipAddress = "1234567890", Pin = "1234"},
+                    new AddEndpointRequest{DisplayName = "two", SipAddress = "0987654321", Pin = "5678"}
+                })
+                .Build();
+
+            _context.Uri = BookNewConference;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
         [Given(@"I have a (.*) remove conference request")]
         [Given(@"I have an (.*) remove conference request")]
         public void GivenIHaveAValidRemoveHearingRequest(Scenario scenario)
@@ -242,6 +262,15 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
+        }
+
+        [Then(@"the conference details should be retrieved with jvs endpoints")]
+        public async Task ThenAConferenceDetailsShouldBeRetrievedWithJvsEndpoints()
+        {
+            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails.Should().NotBeNull();
+            AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
+            AssertConferenceDetailsResponse.ForConferenceEndpoints(_conferenceDetails);
         }
 
         [Then(@"the conference should be closed")]

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using VideoApi.Common.Configuration;
@@ -42,19 +43,21 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock = new Mock<IAudioPlatformService>();
             StorageServiceMock = new Mock<IStorageService>();
 
+            TestEndpoints = new List<Endpoint>
+            {
+                new Endpoint("one", "44564", "1234"),
+                new Endpoint("two", "867744", "5678")
+            };
+            
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom1)
                 .WithParticipant(UserRole.Representative, "Claimant")
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
+                .WithEndpoints(TestEndpoints)
                 .Build();
-            
-            TestEndpoints = new List<Endpoint>
-            {
-                new Endpoint("one", "44564", "1234"),
-                new Endpoint("two", "867744", "5678")
-            };
+
 
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))

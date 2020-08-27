@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Api;
@@ -25,7 +27,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
                .WithJudge()
                .WithRepresentative("Claimant").WithIndividual("Claimant")
                .WithRepresentative("Defendant").WithIndividual("Defendant")
-               .WithEndpoint("DisplayName", "1234567890", "1234")
+               .WithEndpoint("DisplayName1", "1234567890", "1234")
+               .WithEndpoint("DisplayName2", "0987654321", "5678")
                .Build();
         }
 
@@ -117,6 +120,25 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock.Verify(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_book_kinly_conference_room_for_given_conference_id_with_endpoints()
+        {
+            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
+            AudioPlatformServiceMock.Setup(x => x.CreateAudioApplicationWithStreamAsync(_request.HearingRefId)).ReturnsAsync(audioPlatformServiceResponse);
+            VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync((MeetingRoom) null);
+
+            var response = await Controller.BookNewConferenceAsync(_request) as CreatedAtActionResult;
+
+            response.Should().NotBeNull();
+            var result = response.Value as ConferenceDetailsResponse;
+            result.Should().NotBeNull();
+            result.Endpoints.Should().NotBeNullOrEmpty().And.HaveCount(_request.Endpoints.Count);
+
+            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
         }
     }

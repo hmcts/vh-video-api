@@ -59,5 +59,17 @@ namespace Testing.Common.Assertions
 
             conference.AudioRecordingRequired.Should().BeFalse();
         }
+
+        public static void ForConferenceEndpoints(ConferenceDetailsResponse conference)
+        {
+            conference.Endpoints.Should().NotBeNullOrEmpty();
+            foreach (var endpoint in conference.Endpoints)
+            {
+                endpoint.Id.Should().NotBeEmpty();
+                endpoint.DisplayName.Should().NotBeEmpty();
+                endpoint.SipAddress.Should().NotBeEmpty();
+                endpoint.Pin.Should().NotBeEmpty();
+            }
+        }
     }
 }
