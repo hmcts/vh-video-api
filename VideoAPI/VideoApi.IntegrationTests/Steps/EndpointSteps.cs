@@ -169,7 +169,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveUpdateEndpointForAConferenceRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
-            var endpointId = _context.Test.Conference.Endpoints.FirstOrDefault().Id;
+            var endpointId = _context.Test.Conference.Endpoints.First().Id;
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test"
@@ -177,6 +177,18 @@ namespace VideoApi.IntegrationTests.Steps
             SetupUpdateEndpointRequest(conferenceId, endpointId, request);
         }
 
+        [Then(@"the endpoint status should be (.*)")]
+        public async Task ThenTheEndpointsStateShouldBe(EndpointState state)
+        {
+            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
+            {
+                var conf = await db.Conferences.Include(x => x.Endpoints)
+                    .SingleAsync(x => x.Id == _context.Test.Conference.Id);
+                var endpoint = conf.GetEndpoints().First(x => x.Id == _context.Test.ParticipantId);
+                endpoint.State.Should().Be(state);
+            }
+        }
+        
         private async Task AssertEndpointLength(int length)
         {
             var result = await Response.GetResponses<IList<EndpointResponse>>(_context.Response.Content);
