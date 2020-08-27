@@ -62,7 +62,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
-        private static ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null)
+        private ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null)
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = Guid.NewGuid().ToString())
@@ -80,6 +80,7 @@ namespace VideoApi.IntegrationTests.Steps
             var isEndpointEvent = eventType == EventType.EndpointJoined || eventType == EventType.EndpointDisconnected;
             var participantId = isEndpointEvent ? conference.GetEndpoints().First().Id: conference.GetParticipants().First().Id;
             request.ParticipantId = participantId.ToString();
+            _context.Test.ParticipantId = participantId;
             return request;
         }
 
