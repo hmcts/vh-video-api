@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -215,7 +216,7 @@ namespace VideoApi.UnitTests.Services
         {
             _kinlyApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
 
-            await _kinlyPlatformService.UpdateVirtualCourtRoomAsync(Guid.NewGuid(), true);
+            await _kinlyPlatformService.UpdateVirtualCourtRoomAsync(Guid.NewGuid(), true, new List<EndpointDto>());
         }
 
         [Test]

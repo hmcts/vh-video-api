@@ -355,12 +355,19 @@
     "updateHearingParams": {
       "type": "object",
       "required": [
-        "recording_enabled"
+        "recording_enabled",
+        "jvs_endpoint"
       ],
       "properties": {
         "recording_enabled": {
           "type": "boolean",
           "description": "Should record conference"
+        },
+        "jvs_endpoint": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/endpoint"
+          }
         }
       }
     },

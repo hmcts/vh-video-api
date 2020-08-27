@@ -1206,6 +1206,9 @@ namespace VideoApi.Services.Kinly
         [Newtonsoft.Json.JsonProperty("recording_enabled", Required = Newtonsoft.Json.Required.Always)]
         public bool Recording_enabled { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Always)]
+        public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; } = new System.Collections.Generic.List<Endpoint>();
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);

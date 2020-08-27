@@ -129,8 +129,8 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            // TODO - need to pass in endpoints otherwise kinly will delete all current endpoints
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired);
+            var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired, endpointDtos);
 
             try
             {

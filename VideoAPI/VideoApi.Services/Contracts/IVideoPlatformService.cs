@@ -45,7 +45,7 @@ namespace VideoApi.Services.Contracts
         /// <param name="conferenceId"></param>
         /// <param name="audioRecordingRequired"></param>
         /// <returns></returns>
-        Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired);
+        Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints);
         
         Task StartHearingAsync(Guid conferenceId);
         

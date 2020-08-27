@@ -160,9 +160,14 @@ namespace VideoApi.Services
             await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString());
         }
 
-        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired)
+        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints)
         {
-            await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(), new UpdateHearingParams {Recording_enabled = audioRecordingRequired});
+            await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(),
+                new UpdateHearingParams
+                {
+                    Recording_enabled = audioRecordingRequired,
+                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+                });
         }
 
         public async Task StartHearingAsync(Guid conferenceId)

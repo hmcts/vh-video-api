@@ -64,7 +64,7 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
-        public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired)
+        public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints)
         {
             return Task.CompletedTask;
         }
