@@ -80,7 +80,5 @@ namespace VideoApi.Contract.Responses
         /// The option to indicate hearing audio recording
         /// </summary>
         public bool AudioRecordingRequired { get; set; }
-
-        public List<EndpointResponse> Endpoints { get; set; }
     }
 }

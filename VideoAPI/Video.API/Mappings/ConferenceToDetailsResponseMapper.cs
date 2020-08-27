@@ -27,7 +27,6 @@ namespace Video.API.Mappings
                 Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
                 HearingVenueName = conference.HearingVenueName,
                 AudioRecordingRequired = conference.AudioRecordingRequired,
-                Endpoints = conference.Endpoints.Select(EndpointToResponseMapper.MapEndpointResponse).ToList()
             };
 
             if (response.MeetingRoom != null)
