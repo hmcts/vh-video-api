@@ -58,6 +58,14 @@ namespace Testing.Common.Assertions
             }
 
             conference.AudioRecordingRequired.Should().BeFalse();
+            
+            foreach (var endpoint in conference.Endpoints)
+            {
+                endpoint.Id.Should().NotBeEmpty();
+                endpoint.DisplayName.Should().NotBeNullOrWhiteSpace();
+                endpoint.SipAddress.Should().NotBeNullOrWhiteSpace();
+                endpoint.Pin.Should().NotBeNullOrWhiteSpace();
+            }
         }
     }
 }

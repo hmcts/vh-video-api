@@ -1,3 +1,4 @@
+using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 
@@ -23,6 +24,7 @@ namespace Video.API.Mappings
                 Participants =
                     ParticipantToDetailsResponseMapper.MapParticipantsToResponse(conference.GetParticipants()),
                 MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom()),
+                Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
                 HearingVenueName = conference.HearingVenueName,
                 AudioRecordingRequired = conference.AudioRecordingRequired
             };

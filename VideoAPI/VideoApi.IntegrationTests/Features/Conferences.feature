@@ -28,7 +28,7 @@ Feature: Conferences
     And the error response message should also contain 'Please provide at least one participant'
 
   Scenario: Get details for an existing conference
-    Given I have a conference
+    Given I have a conference with endpoints
     And I have a get details for a conference request with a valid conference id
     When I send the request to the endpoint
     Then the response should have the status OK and success status True

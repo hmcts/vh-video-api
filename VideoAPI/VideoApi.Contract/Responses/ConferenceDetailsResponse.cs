@@ -65,6 +65,11 @@ namespace VideoApi.Contract.Responses
         public List<ParticipantDetailsResponse> Participants { get; set; }
         
         /// <summary>
+        /// List of endpoints in conference
+        /// </summary>
+        public List<EndpointResponse> Endpoints { get; set; }
+        
+        /// <summary>
         /// The Kinly meeting room details
         /// </summary>
         public MeetingRoomResponse MeetingRoom { get; set; }
