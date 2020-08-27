@@ -20,7 +20,7 @@ namespace VideoApi.DAL.Commands
         }
         public async Task Handle(RemoveHeartbeatsForConferencesCommand command)
         {
-            var expiredConferences = _context.Conferences.Where(c => c.ScheduledDateTime.AddDays(14) <= DateTime.UtcNow).Select(c => c.Id);
+            var expiredConferences = _context.Conferences.Where(c => c.ScheduledDateTime <= DateTime.UtcNow.AddDays(-14)).Select(c => c.Id);
             var expiredHeartbeats = await _context.Heartbeats.Where(x => expiredConferences.Contains(x.ConferenceId)).ToListAsync();
             _context.RemoveRange(expiredHeartbeats);
             await _context.SaveChangesAsync();
