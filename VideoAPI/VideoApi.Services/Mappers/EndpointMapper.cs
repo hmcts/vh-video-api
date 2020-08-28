@@ -16,13 +16,15 @@ namespace VideoApi.Services.Mappers
             };
         }
 
-        public static Kinly.Endpoint MapToEndpoint(EndpointDto source)
+        public static Kinly.Endpoint MapToEndpoint(EndpointDto source, int index)
         {
+            var kinlyDisplayName = $"T{100 + index};{source.DisplayName};{source.Id}";
+            
             return new Kinly.Endpoint
             {
                 Id = source.Id.ToString(),
                 Address = source.SipAddress,
-                Display_name = source.DisplayName,
+                Display_name = kinlyDisplayName,
                 Pin = source.Pin
             };
         }
