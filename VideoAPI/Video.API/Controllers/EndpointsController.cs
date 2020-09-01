@@ -76,19 +76,19 @@ namespace Video.API.Controllers
         /// Remove an endpoint from a conference
         /// </summary>
         /// <param name="conferenceId"></param>
-        /// <param name="endpointId"></param>
+        /// <param name="sipAddress"></param>
         /// <returns></returns>
-        [HttpDelete("{conferenceId}/endpoints/{endpointId}")]
+        [HttpDelete("{conferenceId}/endpoints/{sipAddress}")]
         [SwaggerOperation(OperationId = "RemoveEndpointFromConference")]
         [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, Guid endpointId)
+        public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, string sipAddress)
         {
-            _logger.LogDebug($"Attempting to remove endpoint {endpointId} from conference {conferenceId}");
+            _logger.LogDebug($"Attempting to remove endpoint {sipAddress} from conference {conferenceId}");
 
-            var command = new RemoveEndpointCommand(conferenceId, endpointId);
+            var command = new RemoveEndpointCommand(conferenceId, sipAddress);
             await _commandHandler.Handle(command);
 
-            _logger.LogDebug($"Successfully removed endpoint {endpointId} from conference {conferenceId}");
+            _logger.LogDebug($"Successfully removed endpoint {sipAddress} from conference {conferenceId}");
             return NoContent();
         }
 
@@ -96,21 +96,21 @@ namespace Video.API.Controllers
         /// Update the display name of an endpoint
         /// </summary>
         /// <param name="conferenceId">the conference id</param>
-        /// <param name="endpointId">the endpoint id to be updated</param>
+        /// <param name="sipAddress">the endpoint sip address to be updated</param>
         /// <param name="request">the display name to be updated</param>
         /// <returns>an OK status</returns>
-        [HttpPatch("{conferenceId}/endpoints/{endpointId}/displayname")]
+        [HttpPatch("{conferenceId}/endpoints/{sipAddress}/displayname")]
         [SwaggerOperation(OperationId = "UpdateDisplayNameForEndpoint ")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateDisplayNameForEndpoint(Guid conferenceId, Guid endpointId, 
+        public async Task<IActionResult> UpdateDisplayNameForEndpoint(Guid conferenceId, string sipAddress, 
             [FromBody] UpdateEndpointRequest request)
         {
-            _logger.LogDebug($"Attempting to update endpoint {endpointId} for conference {conferenceId} with displayname {request.DisplayName}");
+            _logger.LogDebug($"Attempting to update endpoint {sipAddress} for conference {conferenceId} with displayname {request.DisplayName}");
 
-            var command = new UpdateEndpointCommand(conferenceId, endpointId, request.DisplayName);
+            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName);
             await _commandHandler.Handle(command);
 
-            _logger.LogDebug($"Successfully updated endpoint {endpointId} from conference {conferenceId} with displayname {request.DisplayName}");
+            _logger.LogDebug($"Successfully updated endpoint {sipAddress} from conference {conferenceId} with displayname {request.DisplayName}");
             return Ok();
         }
     }
