@@ -22,7 +22,6 @@ namespace VideoApi.Services.Mappers
             
             return new Kinly.Endpoint
             {
-                Id = source.Id.ToString(),
                 Address = source.SipAddress,
                 Display_name = kinlyDisplayName,
                 Pin = source.Pin

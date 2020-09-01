@@ -455,8 +455,7 @@
       "required": [
         "address",
         "display_name",
-        "pin",
-        "id"
+        "pin"
       ],
       "properties": {
         "address": {
@@ -470,10 +469,6 @@
         "pin": {
           "type": "string",
           "description": "The PIN"
-        },
-        "id": {
-          "type": "string",
-          "description": "The Id"
         }
       }
     }

@@ -1339,10 +1339,6 @@ namespace VideoApi.Services.Kinly
         [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Always)]
         public string Pin { get; set; }
     
-        /// <summary>The Id</summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
-        public string Id { get; set; }
-    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
