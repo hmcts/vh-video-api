@@ -33,6 +33,19 @@ Feature: Endpoints
     Then the response should have the status OK and success status True
     And the endpoint response should be 1
 
+  Scenario: Add multiple endpoints to an existing conference
+    Given I have a conference with no endpoints
+    And I have an add endpoint to conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And I have an add endpoint to conference request
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    Given I have get endpoints for conference request
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the endpoint response should be 2
+
   Scenario: Failed request to add an endpoint
     Given I have an invalid add endpoint to conference request
     When I send the request to the endpoint

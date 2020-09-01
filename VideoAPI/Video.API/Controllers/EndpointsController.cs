@@ -14,6 +14,8 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Services.Contracts;
+using VideoApi.Services.Mappers;
 
 namespace Video.API.Controllers
 {
@@ -25,14 +27,18 @@ namespace Video.API.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
+        private readonly IVideoPlatformService _videoPlatformService;
         private readonly ILogger<EndpointsController> _logger;
 
-        public EndpointsController(IQueryHandler queryHandler, ICommandHandler commandHandler,
+        public EndpointsController(IQueryHandler queryHandler, 
+            ICommandHandler commandHandler, 
+            IVideoPlatformService videoPlatformService,
             ILogger<EndpointsController> logger)
         {
             _queryHandler = queryHandler;
             _logger = logger;
             _commandHandler = commandHandler;
+            _videoPlatformService = videoPlatformService;
         }
 
         /// <summary>
@@ -64,10 +70,14 @@ namespace Video.API.Controllers
             [FromBody] AddEndpointRequest request)
         {
             _logger.LogDebug($"Attempting to add endpoint {request.DisplayName} to conference {conferenceId}");
-
+            
             var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin);
             await _commandHandler.Handle(command);
 
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            
             _logger.LogDebug($"Successfully added endpoint {request.DisplayName} to conference {conferenceId}");
             return NoContent();
         }
@@ -88,6 +98,10 @@ namespace Video.API.Controllers
             var command = new RemoveEndpointCommand(conferenceId, sipAddress);
             await _commandHandler.Handle(command);
 
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            
             _logger.LogDebug($"Successfully removed endpoint {sipAddress} from conference {conferenceId}");
             return NoContent();
         }
@@ -109,6 +123,10 @@ namespace Video.API.Controllers
 
             var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName);
             await _commandHandler.Handle(command);
+
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
 
             _logger.LogDebug($"Successfully updated endpoint {sipAddress} from conference {conferenceId} with displayname {request.DisplayName}");
             return Ok();
