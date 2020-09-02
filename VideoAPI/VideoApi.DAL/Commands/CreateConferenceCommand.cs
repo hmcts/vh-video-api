@@ -20,10 +20,11 @@ namespace VideoApi.DAL.Commands
         public string HearingVenueName { get; }
         public bool AudioRecordingRequired { get; set; }
         public string IngestUrl { get; set; }
+        public List<Endpoint> Endpoints { get; set; }
 
         public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
             string caseNumber, string caseName, int scheduledDuration, List<Participant> participants,
-            string hearingVenueName, bool audioRecordingRequired, string ingestUrl)
+            string hearingVenueName, bool audioRecordingRequired, string ingestUrl, List<Endpoint> endpoints)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
@@ -35,6 +36,7 @@ namespace VideoApi.DAL.Commands
             HearingVenueName = hearingVenueName;
             AudioRecordingRequired = audioRecordingRequired;
             IngestUrl = ingestUrl;
+            Endpoints = endpoints;
         }
     }
 
@@ -55,6 +57,11 @@ namespace VideoApi.DAL.Commands
             foreach (var participant in command.Participants)
             {
                 conference.AddParticipant(participant);
+            }
+
+            foreach (var endpoint in command.Endpoints)
+            {
+                conference.AddEndpoint(endpoint);
             }
             
             _context.Conferences.Add(conference);

@@ -1,14 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Services.Dtos;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services.Contracts
 {
     public interface IVideoPlatformService
     {
-        Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl);
+        Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl, IEnumerable<EndpointDto> endpoints);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId);
         Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);
@@ -43,7 +45,7 @@ namespace VideoApi.Services.Contracts
         /// <param name="conferenceId"></param>
         /// <param name="audioRecordingRequired"></param>
         /// <returns></returns>
-        Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired);
+        Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints);
         
         Task StartHearingAsync(Guid conferenceId);
         

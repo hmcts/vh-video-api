@@ -23,6 +23,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.ScheduledDuration = 120)
                 .With(x => x.Participants = new List<ParticipantRequest>())
                 .With(x => x.AudioRecordingRequired = false)
+                .With(x => x.Endpoints = new List<AddEndpointRequest>())
                 .Build();
         }
 
@@ -111,6 +112,18 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithAudiorecordingRequired(bool audioRecordingRequired = true)
         {
             _bookNewConferenceRequest.AudioRecordingRequired = audioRecordingRequired;
+            return this;
+        }
+
+        public BookNewConferenceRequestBuilder WithEndpoint(string displayName, string sip, string pin)
+        {
+            _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest {DisplayName = displayName, SipAddress = sip, Pin = pin});
+            return this;
+        }
+
+        public BookNewConferenceRequestBuilder WithEndpoints(List<AddEndpointRequest> endpoints)
+        {
+            _bookNewConferenceRequest.Endpoints.AddRange(endpoints);
             return this;
         }
     }

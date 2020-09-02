@@ -19,7 +19,9 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
+using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -88,12 +90,15 @@ namespace Video.API.Controllers
             var conferenceId = await CreateConferenceAsync(request, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Conference Created");
 
-            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl);
+            var conferenceEndpoints = await _queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(new GetEndpointsForConferenceQuery(conferenceId));
+            var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
+            
+            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl, endpointDtos);
             _logger.LogDebug("Kinly Room Booked");
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
+            
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
 
             _logger.LogInformation($"Created conference {response.Id} for hearing {request.HearingRefId}");
@@ -124,7 +129,8 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired);
+            var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired, endpointDtos);
 
             try
             {
@@ -467,12 +473,18 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task BookKinlyMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)
+        private async Task BookKinlyMeetingRoomAsync(Guid conferenceId,
+            bool audioRecordingRequired,
+            string ingestUrl,
+            IEnumerable<EndpointDto> endpoints)
         {
             MeetingRoom meetingRoom;
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId, audioRecordingRequired, ingestUrl);
+                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
+                    audioRecordingRequired,
+                    ingestUrl,
+                    endpoints);
             }
             catch (DoubleBookingException ex)
             {
@@ -506,10 +518,13 @@ namespace Video.API.Controllers
                     })
                 .ToList();
 
+            var endpoints = request.Endpoints.Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin)).ToList();
+
             var createConferenceCommand = new CreateConferenceCommand
             (
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
-                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName, request.AudioRecordingRequired, ingestUrl
+                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName, 
+                request.AudioRecordingRequired, ingestUrl, endpoints
             );
 
             await _commandHandler.Handle(createConferenceCommand);

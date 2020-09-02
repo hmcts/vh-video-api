@@ -57,6 +57,18 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2));
         }
 
+        [Given(@"I have a valid book a new conference request with jvs endpoints")]
+        public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpoints()
+        {
+            var endpoints = new List<AddEndpointRequest>
+            {
+                new AddEndpointRequest {DisplayName = "one", SipAddress = "1234567890@test.com", Pin = "1234"},
+                new AddEndpointRequest {DisplayName = "two", SipAddress = "0987654321@test.com", Pin = "5678"}
+            };
+            
+            CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), endpoints: endpoints);
+        }
+
         [Given(@"I have a conference")]
         public void GivenIHaveAConference()
         {
@@ -216,6 +228,16 @@ namespace VideoApi.AcceptanceTests.Steps
             AssertConferenceDetailsResponse.ForConference(conference);
         }
 
+        [Then(@"the conference details should be retrieved with jvs endpoints")]
+        public void ThenTheConferenceDetailsShouldBeRetrievedWithJvsEndpoints()
+        {
+            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            conference.Should().NotBeNull();
+            _context.Test.ConferenceResponse = conference;
+            AssertConferenceDetailsResponse.ForConference(conference);
+            AssertConferenceDetailsResponse.ForConferenceEndpoints(conference);
+        }
+
         [Then(@"a list containing only todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
         {
@@ -371,7 +393,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference is closed");
         }
 
-        private void CreateNewConferenceRequest(DateTime date, string judgeFirstName = null, bool audioRequired = false)
+        private void CreateNewConferenceRequest(DateTime date, string judgeFirstName = null, bool audioRequired = false, List<AddEndpointRequest> endpoints = null)
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge(judgeFirstName)
@@ -380,6 +402,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .WithHearingRefId(Guid.NewGuid())
                 .WithDate(date)
                 .WithAudiorecordingRequired(audioRequired)
+                .WithEndpoints(endpoints ?? new List<AddEndpointRequest>())
                 .Build();
             _context.Request = _context.Post(BookNewConference, request);
         }

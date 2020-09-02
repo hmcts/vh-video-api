@@ -5,6 +5,11 @@ namespace VideoApi.Contract.Requests
 {
     public class BookNewConferenceRequest
     {
+        public BookNewConferenceRequest()
+        {
+            Endpoints = new List<AddEndpointRequest>();   
+        }
+        
         public Guid HearingRefId { get; set; }
         public string CaseType { get; set; }
         public DateTime ScheduledDateTime { get; set; }
@@ -14,5 +19,6 @@ namespace VideoApi.Contract.Requests
         public List<ParticipantRequest> Participants { get; set; }
         public string HearingVenueName { get; set; }
         public bool AudioRecordingRequired { get; set; }
+        public List<AddEndpointRequest> Endpoints { get; set; }
     }
 }

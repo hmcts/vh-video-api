@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Dtos;
+using VideoApi.Services.Mappers;
 
 namespace VideoApi.Services
 {
@@ -36,7 +39,10 @@ namespace VideoApi.Services
         }
 
 
-        public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl)
+        public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
+            bool audioRecordingRequired,
+            string ingestUrl,
+            IEnumerable<EndpointDto> endpoints)
         {
             _logger.LogInformation($"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
             
@@ -49,7 +55,8 @@ namespace VideoApi.Services
                     Recording_enabled = audioRecordingRequired,
                     Recording_url = ingestUrl,
                     Streaming_enabled = false,
-                    Streaming_url = null
+                    Streaming_url = null,
+                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
                 });
 
                 return new MeetingRoom
@@ -153,9 +160,14 @@ namespace VideoApi.Services
             await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString());
         }
 
-        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired)
+        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints)
         {
-            await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(), new UpdateHearingParams {Recording_enabled = audioRecordingRequired});
+            await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(),
+                new UpdateHearingParams
+                {
+                    Recording_enabled = audioRecordingRequired,
+                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+                });
         }
 
         public async Task StartHearingAsync(Guid conferenceId)
