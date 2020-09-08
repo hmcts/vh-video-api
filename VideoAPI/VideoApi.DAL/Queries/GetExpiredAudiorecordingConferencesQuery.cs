@@ -26,7 +26,6 @@ namespace VideoApi.DAL.Queries
             return await _context.Conferences
                 .Where(x => x.ScheduledDateTime.AddHours(14) <= DateTime.UtcNow 
                 && x.ScheduledDateTime >= DateTime.UtcNow.AddHours(-38)
-                && x.AudioRecordingRequired
                 && x.State > 0)
                 .OrderBy(x => x.ScheduledDateTime)
                 .AsNoTracking()
