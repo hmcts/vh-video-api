@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Services
             blobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>())).Returns(blobContainerClient.Object);
             blobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClient.Object);
             blobClient.Setup(x => x.ExistsAsync(CancellationToken.None)).ReturnsAsync(Response.FromValue<bool>(true, null));
-            var service = new AzureStorageService(blobServiceClient.Object, new WowzaConfiguration(), false);
+            var service = new VhAzureStorageService(blobServiceClient.Object, new WowzaConfiguration(), false);
 
             var result = await service.FileExistsAsync(It.IsAny<string>());
 
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Services
                 StorageAccountName = "accountName", StorageAccountKey = "YWNjb3VudEtleQ=="
             };
             var blobServiceClient = new Mock<BlobServiceClient>();
-            var service = new AzureStorageService(blobServiceClient.Object, config, false);
+            var service = new VhAzureStorageService(blobServiceClient.Object, config, false);
 
             var result = await service.CreateSharedAccessSignature("myFilePath", It.IsAny<TimeSpan>());
 
@@ -64,7 +64,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetUserDelegationKeyAsync(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Response.FromValue(BlobsModelFactory.UserDelegationKey("","","","","", DateTimeOffset.Now, DateTimeOffset.Now), null));
             
-            var service = new AzureStorageService(blobServiceClient.Object, config, true);
+            var service = new VhAzureStorageService(blobServiceClient.Object, config, true);
 
             var result = await service.CreateSharedAccessSignature("myFilePath", TimeSpan.FromDays(7));
 

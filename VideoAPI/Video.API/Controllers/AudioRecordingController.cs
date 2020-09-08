@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using Video.API.Factories;
 using Video.API.Mappings;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Exceptions;
@@ -23,16 +25,18 @@ namespace Video.API.Controllers
     [ApiController]
     public class AudioRecordingController : ControllerBase
     {
+        private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
         private readonly IAudioPlatformService _audioPlatformService;
-        private readonly IStorageService _storageService;
         private readonly ILogger<AudioRecordingController> _logger;
         private readonly IQueryHandler _queryHandler;
 
-        public AudioRecordingController(IAudioPlatformService audioPlatformService, IStorageService storageService,
-            ILogger<AudioRecordingController> logger, IQueryHandler queryHandler)
+        public AudioRecordingController(IAzureStorageServiceFactory azureStorageServiceFactory, 
+            IAudioPlatformService audioPlatformService, 
+            ILogger<AudioRecordingController> logger, 
+            IQueryHandler queryHandler)
         {
+            _azureStorageServiceFactory = azureStorageServiceFactory;
             _audioPlatformService = audioPlatformService;
-            _storageService = storageService;
             _logger = logger;
             _queryHandler = queryHandler;
         }
@@ -119,7 +123,7 @@ namespace Video.API.Controllers
 
             try
             {
-                await EnsureAudioFileExists(hearingId);
+                await EnsureAudioFileExists(hearingId, _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh));
             }
             catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
             {
@@ -237,8 +241,9 @@ namespace Video.API.Controllers
             var filePath = $"{hearingId}.mp4";
             try
             {
-                await EnsureAudioFileExists(hearingId);
-                var audioFileLink = await _storageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
+                var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+                await EnsureAudioFileExists(hearingId, azureStorageService);
+                var audioFileLink = await azureStorageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
                 return Ok(new AudioRecordingResponse { AudioFileLink = audioFileLink });
 
             }
@@ -247,10 +252,84 @@ namespace Video.API.Controllers
                 _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
-        private async Task EnsureAudioFileExists(Guid hearingId)
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// </summary>
+        /// <param name="cloudRoomName"></param>
+        /// <param name="date"></param>
+        /// <param name="caseReference"></param>
+        [HttpGet("audio/{cloudRoomName}/{date}/{caseReference}")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvp")]
+        [ProducesResponseType(typeof(CvpAudioRecordingResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date, string caseReference)
+        {
+            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoomName}, for date: {date} and case number: {caseReference}");
+            
+            try
+            {
+                var responses = await GetCvpAudioFiles(cloudRoomName, date, caseReference);
+
+                return Ok(new CvpAudioRecordingResponse { Results =  responses});
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return NotFound();
+            }
+        }
+
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// </summary>
+        /// <param name="cloudRoomName"></param>
+        /// <param name="date"></param>
+        [HttpGet("audio/{cloudRoomName}/{date}")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpWithCaseReference")]
+        [ProducesResponseType(typeof(CvpAudioRecordingResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date)
+        {
+            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoomName}, for date: {date}");
+
+            try
+            {
+                var responses = await GetCvpAudioFiles(cloudRoomName, date);
+
+                return Ok(new CvpAudioRecordingResponse {Results = responses});
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return NotFound();
+            }
+        }
+
+        private async Task<List<CvpAudioFile>> GetCvpAudioFiles(string cloudRoomName, string date, string caseReference = null)
+        {
+            var responses = new List<CvpAudioFile>();
+            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
+            await foreach (var blob in azureStorageService.GetAllBlobsAsync(cloudRoomName.ToLower()))
+            {
+                var blobName = blob.Name.ToLower();
+                if (!blobName.Contains(date.ToLower()) || !blobName.Contains(caseReference != null ? caseReference.ToLower() : ""))
+                {
+                    continue;
+                }
+
+                responses.Add(new CvpAudioFile
+                {
+                    FileName = blob.Name.Substring(blob.Name.LastIndexOf("/") + 1),
+                    SasTokenUrl = await azureStorageService.CreateSharedAccessSignature(blob.Name, TimeSpan.FromDays(3))
+                });
+            }
+
+            return responses;
+        }
+
+        private async Task EnsureAudioFileExists(Guid hearingId, IAzureStorageService azureStorageService)
         {
             var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
                 new GetConferenceByHearingRefIdQuery(hearingId));
@@ -260,7 +339,7 @@ namespace Video.API.Controllers
             }
             var filePath = $"{hearingId}.mp4";
             
-            if (conference.ActualStartTime.HasValue && !await _storageService.FileExistsAsync(filePath))
+            if (conference.ActualStartTime.HasValue && !await azureStorageService.FileExistsAsync(filePath))
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);

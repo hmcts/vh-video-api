@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -8,19 +9,21 @@ using VideoApi.Services.Contracts;
 
 namespace VideoApi.Services
 {
-    public class AzureStorageService : IStorageService
+    public class VhAzureStorageService : IAzureStorageService
     {
         private readonly BlobServiceClient _serviceClient;
         private readonly WowzaConfiguration _configuration;
         private readonly bool _useUserDelegation;
 
-        public AzureStorageService(BlobServiceClient serviceClient, WowzaConfiguration configuration, bool useUserDelegation)
+        public VhAzureStorageService(BlobServiceClient serviceClient, WowzaConfiguration configuration, bool useUserDelegation)
         {
             _serviceClient = serviceClient;
             _configuration = configuration;
             _useUserDelegation = useUserDelegation;
         }
-        
+
+        public AzureStorageServiceType AzureStorageServiceType { get; } = AzureStorageServiceType.Vh;
+
         public async Task<bool> FileExistsAsync(string filePath)
         {
             var containerClient = _serviceClient.GetBlobContainerClient(_configuration.StorageContainerName);
@@ -48,10 +51,19 @@ namespace VideoApi.Services
             return $"{_configuration.StorageEndpoint}{_configuration.StorageContainerName}/{filePath}?{await GenerateSasToken(builder)}";
         }
 
+        public async IAsyncEnumerable<BlobClient> GetAllBlobsAsync(string filePathPrefix)
+        {
+            var container = _serviceClient.GetBlobContainerClient(_configuration.StorageContainerName);
+            await foreach (var page in container.GetBlobsAsync(prefix: filePathPrefix))
+            {
+                yield return container.GetBlobClient(page.Name);
+            }
+        }
+
         private async Task<string> GenerateSasToken(BlobSasBuilder builder)
         {
             var userDelegationStart = DateTimeOffset.UtcNow.AddHours(-1);
-            var userDelegationEnd = userDelegationStart.AddDays(7);
+            var userDelegationEnd = userDelegationStart.AddDays(3);
             var blobSasQueryParameters = _useUserDelegation
                 ? builder.ToSasQueryParameters(await _serviceClient.GetUserDelegationKeyAsync(userDelegationStart, userDelegationEnd), _configuration.StorageAccountName)
                 : builder.ToSasQueryParameters(new StorageSharedKeyCredential(_configuration.StorageAccountName, _configuration.StorageAccountKey));

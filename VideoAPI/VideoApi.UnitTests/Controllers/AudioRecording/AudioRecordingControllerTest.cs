@@ -9,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
+using Video.API.Factories;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -22,7 +23,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
     public class AudioRecordingControllerTest
     {
         private Mock<IAudioPlatformService> _audioPlatformService;
-        private Mock<IStorageService> _storageService;
+        private Mock<IAzureStorageServiceFactory> _storageServiceFactory;
+        private Mock<IAzureStorageService> _storageService;
         private Mock<IQueryHandler> _queryHandler;
         private VideoApi.Domain.Conference _testConference;
 
@@ -33,11 +35,12 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         {
             _queryHandler = new Mock<IQueryHandler>();
             _audioPlatformService = new Mock<IAudioPlatformService>();
-            _storageService = new Mock<IStorageService>();
+            _storageServiceFactory = new Mock<IAzureStorageServiceFactory>();
+            _storageService = new Mock<IAzureStorageService>();
 
             _controller = new AudioRecordingController
             (
-                _audioPlatformService.Object, _storageService.Object,
+               _storageServiceFactory.Object,  _audioPlatformService.Object,
                 new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object
             );
             
@@ -178,6 +181,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task DeleteAudioApplicationAsync_Returns_Conflict()
         {
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
             _audioPlatformService
                 .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
@@ -196,6 +200,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task DeleteAudioApplicationAsync_Returns_NoContent()
         {
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
             _audioPlatformService
@@ -218,7 +223,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                     x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                         It.IsAny<GetConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(_testConference);
-            
+
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
             _audioPlatformService.Reset();
             var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
@@ -380,7 +386,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                     x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                         It.IsAny<GetConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(_testConference);
-            
+
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
             
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as NotFoundResult;
@@ -391,6 +398,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
         {
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
             _storageService
                 .Setup(x => x.CreateSharedAccessSignature(It.IsAny<string>(), It.IsAny<TimeSpan>()))
