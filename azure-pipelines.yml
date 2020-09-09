@@ -39,7 +39,12 @@ variables:
       "WowzaConfiguration/StorageAccountKey":"$(wowza_storageAccountKey)",
       "WowzaConfiguration/StorageContainerName":"$(wowza_storageContainerName)",
       "WowzaConfiguration/StorageEndpoint":"$(wowza_storageEndpoint)",
-      "WowzaConfiguration/ManagedIdentityClientId":"$(wowza_managedIdentityClientId)"
+      "WowzaConfiguration/ManagedIdentityClientId":"$(wowza_managedIdentityClientId)",
+      "CvpConfiguration/StorageAccountName":"$(cvp_storageAccountName)",
+      "CvpConfiguration/StorageAccountKey":"$(cvp_storageAccountKey)",
+      "CvpConfiguration/StorageContainerName":"$(cvp_storageContainerName)",
+      "CvpConfiguration/StorageEndpoint":"$(cvp_storageEndpoint)",
+      "CvpConfiguration/ManagedIdentityClientId":"$(cvp_managedIdentityClientId)"
       '
   - name: dalWorkingDirectory
     value : 'VideoAPI/VideoApi.DAL'
