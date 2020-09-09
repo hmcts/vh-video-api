@@ -56,8 +56,8 @@ namespace Video.API.Controllers
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
-                        x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole, x.CaseTypeGroup,
-                        x.ContactEmail, x.ContactTelephone)
+                        x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole, x.HearingRole,
+                        x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
                     {
                         Representee = x.Representee
                     })

@@ -148,50 +148,64 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var participants1 = new List<Participant>
             {
-                new Participant(Guid.NewGuid(), "", "firstJudge", "James", "Judge James",
-                    "judge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
+                new Participant(Guid.NewGuid(), "", "firstJudge", "James", "Judge James", "judge.james@email.com",
+                    UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"),
+                    "Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "firstname", "lastname", "firstname lastname",
-                    "firstname.lastname@email.com", UserRole.Individual, "Children Act", Internet.Email(),
-                    Phone.Number()),
+                    "firstname.lastname@email.com", UserRole.Individual,
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"), "Children Act",
+                    Internet.Email(), Phone.Number())
             };
             var participants2 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
-                    "secondJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
+                    "secondJudge.james@email.com", UserRole.Judge,
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
+                    Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "individualFirst", "lastname", "individualFirst lastname",
-                    "individualFirst.lastname@email.com", UserRole.Individual, "Children Act", Internet.Email(),
+                    "individualFirst.lastname@email.com", UserRole.Individual,
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"), "Children Act",
+                    Internet.Email(),
                     Phone.Number()),
             };
             var participants3 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "firstJudge", "James", "firstJudge James",
-                    "firstJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
+                    "firstJudge.james@email.com", UserRole.Judge,
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
+                    Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
-                    "representativeFirst.lastname@email.com", UserRole.Representative, "Children Act", Internet.Email(),
+                    "representativeFirst.lastname@email.com", UserRole.Representative,
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
+                    Internet.Email(),
                     Phone.Number()),
             };
             var participants4 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
+                    "thirdJudge.james@email.com", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
-                    "representativeFirst.lastname@email.com", UserRole.Representative, "Children Act", Internet.Email(),
+                    "representativeFirst.lastname@email.com", UserRole.Representative, ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"),"Children Act", Internet.Email(),
                     Phone.Number()),
             };
             var participants5 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
+                    "thirdJudge.james@email.com", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeSecond", "lastname", "representativeSecond lastname",
-                    "representativeSecond.lastname@email.com", UserRole.Representative, "Children Act",
+                    "representativeSecond.lastname@email.com", UserRole.Representative,ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
                     Internet.Email(), Phone.Number()),
             };
             var participants6 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
-                    "secondJudge.james@email.com", UserRole.Judge, "Children Act", Internet.Email(), Phone.Number()),
+                    "secondJudge.james@email.com", UserRole.Judge,
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
+                    Internet.Email(), Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeThird", "lastname", "representativeThird lastname",
-                    "representativeThird.lastname@email.com", UserRole.Representative, "Children Act", Internet.Email(),
+                    "representativeThird.lastname@email.com", UserRole.Representative,
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
+                    Internet.Email(),
                     Phone.Number()),
             };
 

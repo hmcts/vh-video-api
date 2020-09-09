@@ -341,3 +341,5 @@ ASALocalRun/
 # azds
 values.dev.yaml
 secrets.dev.yaml
+
+.DS_Store

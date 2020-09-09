@@ -38,6 +38,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
             participant.LastName.Should().Be(exspectedParticipant.LastName);
             participant.Status.Should().Be(exspectedParticipant.State);
             participant.UserRole.Should().Be(exspectedParticipant.UserRole);
+            participant.HearingRole.Should().Be(exspectedParticipant.HearingRole);
             participant.Representee.Should().Be(exspectedParticipant.Representee);
             participant.ContactEmail.Should().Be(exspectedParticipant.ContactEmail);
             participant.ContactTelephone.Should().Be(exspectedParticipant.ContactTelephone);
