@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
-using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
@@ -11,12 +10,12 @@ namespace VideoApi.DAL.Commands
     public class RemoveEndpointCommand : ICommand
     {
         public Guid ConferenceId { get; }
-        public Guid EndpointId { get; }
+        public string SipAddress { get; }
         
-        public RemoveEndpointCommand(Guid conferenceId, Guid endpointId)
+        public RemoveEndpointCommand(Guid conferenceId, string sipAddress)
         {
             ConferenceId = conferenceId;
-            EndpointId = endpointId;
+            SipAddress = sipAddress;
         }
     }
 
@@ -39,10 +38,10 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var ep = conference.GetEndpoints().SingleOrDefault(x => x.Id == command.EndpointId);
+            var ep = conference.GetEndpoints().SingleOrDefault(x => x.SipAddress == command.SipAddress);
             if (ep == null)
             {
-                throw new EndpointNotFoundException(command.EndpointId);
+                throw new EndpointNotFoundException(command.SipAddress);
             }
 
             conference.RemoveEndpoint(ep);

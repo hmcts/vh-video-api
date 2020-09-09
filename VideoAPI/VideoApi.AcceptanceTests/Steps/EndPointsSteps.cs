@@ -55,16 +55,16 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conferenceId = GetConferenceIdForTest(scenario);
             var endpoints = GetEndPoints();
-            var removedEndPointId = endpoints.First().Id;
-            _scenarioContext.Add(_removedEndPointId, removedEndPointId);
-            _context.Request = _context.Delete(RemoveEndpointsFromConference(conferenceId, removedEndPointId));
+            var sipAddress = endpoints.First().SipAddress;
+            _scenarioContext.Add(_removedEndPointId, sipAddress);
+            _context.Request = _context.Delete(RemoveEndpointsFromConference(conferenceId, sipAddress));
         }
 
         [Given(@"I have remove nonexistent endpoint to a conference request with a (.*) conference id")]
         public void GivenIHaveRemoveNonexistentEndpointToAConferenceRequestWithAValidConferenceId(Scenario scenario)
         {
             var conferenceId = GetConferenceIdForTest(scenario);
-            _context.Request = _context.Delete(RemoveEndpointsFromConference(conferenceId, Guid.NewGuid()));
+            _context.Request = _context.Delete(RemoveEndpointsFromConference(conferenceId, "sip@sip.com"));
         }
 
         [Given(@"I have update nonexistent endpoint to a conference request with a (.*) conference id")]
@@ -73,7 +73,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var conferenceId = GetConferenceIdForTest(scenario);
             var updatedEndpointRequest = PrepareUpdateEndpointRequest();
             _scenarioContext.Add(_updateEndPointRequest, updatedEndpointRequest);
-            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, Guid.NewGuid()), updatedEndpointRequest);
+            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, "sip@sip.com"), updatedEndpointRequest);
         }
 
 
@@ -91,13 +91,13 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conferenceId = GetConferenceIdForTest(scenario);
             var endpoints = GetEndPoints();
-            var endpointBeingUpdated = endpoints.First().Id;
-            _scenarioContext.Add(_updatedEndPointId, endpointBeingUpdated);
+            var sipAddress = endpoints.First().SipAddress;
+            _scenarioContext.Add(_updatedEndPointId, sipAddress);
 
             var updateEndpointRequest = PrepareUpdateEndpointRequest();
             _scenarioContext.Add(_updateEndPointRequest, updateEndpointRequest);
             
-            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, endpointBeingUpdated), updateEndpointRequest);
+            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, sipAddress), updateEndpointRequest);
         }
 
         [Given(@"I have update endpoint with invalid data to a conference request with a (.*) conference id")]
@@ -105,8 +105,8 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conferenceId = GetConferenceIdForTest(scenario);
             var endpoints = GetEndPoints();
-            var updatedEndPointId = endpoints.First().Id;
-            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, updatedEndPointId), new UpdateEndpointRequest()
+            var sipAddress = endpoints.First().SipAddress;
+            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, sipAddress), new UpdateEndpointRequest()
             {
                 DisplayName = string.Empty,
             });
@@ -136,18 +136,18 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenTheEndpointShouldBeDeleted()
         {
             var endpoints = GetEndPoints();
-            var removedEndpointId = _scenarioContext.Get<Guid>(_removedEndPointId);
-            endpoints.FirstOrDefault(ep => ep.Id == removedEndpointId).Should().BeNull();
+            var sipAddress = _scenarioContext.Get<string>(_removedEndPointId);
+            endpoints.FirstOrDefault(ep => ep.SipAddress == sipAddress).Should().BeNull();
         }
 
         [Then(@"the endpoint should be updated")]
         public void ThenTheEndpointShouldBeUpdated()
         {
             var endpoints = GetEndPoints();
-            var updatedEndPointId = _scenarioContext.Get<Guid>(_updatedEndPointId);
+            var sipAddress = _scenarioContext.Get<string>(_updatedEndPointId);
             var requestUsed = _scenarioContext.Get<UpdateEndpointRequest>(_updateEndPointRequest);
             
-            var endpointUpdated = endpoints.First(ep => ep.Id == updatedEndPointId);
+            var endpointUpdated = endpoints.First(ep => ep.SipAddress == sipAddress);
             endpointUpdated.Should().NotBeNull();
             endpointUpdated.DisplayName.Should().Be(requestUsed.DisplayName);
         }

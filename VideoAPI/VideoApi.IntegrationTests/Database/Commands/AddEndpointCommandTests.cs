@@ -39,7 +39,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var command = new AddEndpointCommand(conferenceId, "display", "sip", "pin");
+            var command = new AddEndpointCommand(conferenceId, "display", "sip@test.com", "pin");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 

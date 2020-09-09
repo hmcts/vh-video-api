@@ -39,9 +39,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var endpointId = Guid.NewGuid();
             var displayName = "new endpoint";
-            var command = new UpdateEndpointCommand(conferenceId, endpointId, displayName);
+            var command = new UpdateEndpointCommand(conferenceId, "sip@sip.com", displayName);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -49,11 +48,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_throw_exception_when_endpoint_does_not_exist()
         {
             var seededConference = await TestDataManager.SeedConference();
-            var endpointId = Guid.NewGuid();
             var displayName = "new endpoint";
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var command = new UpdateEndpointCommand(_newConferenceId, endpointId, displayName);
+            var command = new UpdateEndpointCommand(_newConferenceId, "sip@sip.com", displayName);
 
             Assert.ThrowsAsync<EndpointNotFoundException>(async () => await _handler.Handle(command));
         }
@@ -64,12 +62,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conference1 = new ConferenceBuilder()
                 .WithEndpoint("DisplayName", "sip@123.com").Build();
             var seededConference = await TestDataManager.SeedConference(conference1);
-            var endpointId = conference1.Endpoints.First().Id;
+            var sipAddress = conference1.Endpoints.First().SipAddress;
             var displayName = "Alternate Display Name";
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, endpointId, displayName);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, displayName);
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -78,7 +76,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 updatedConference = await db.Conferences.Include(x => x.Endpoints)
                     .AsNoTracking().SingleOrDefaultAsync(x => x.Id == _newConferenceId);
             }
-            Endpoint updatedEndpoint = updatedConference.GetEndpoints().SingleOrDefault(x => x.Id == endpointId);
+            
+            var updatedEndpoint = updatedConference.GetEndpoints().SingleOrDefault(x => x.SipAddress == sipAddress);
             updatedEndpoint.DisplayName.Should().Be(displayName);
         }
     }

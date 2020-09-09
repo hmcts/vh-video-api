@@ -1184,6 +1184,9 @@ namespace VideoApi.Services.Kinly
         [Newtonsoft.Json.JsonProperty("streaming_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Streaming_url { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
@@ -1202,6 +1205,9 @@ namespace VideoApi.Services.Kinly
         /// <summary>Should record conference</summary>
         [Newtonsoft.Json.JsonProperty("recording_enabled", Required = Newtonsoft.Json.Required.Always)]
         public bool Recording_enabled { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Always)]
+        public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; } = new System.Collections.Generic.List<Endpoint>();
     
         public string ToJson() 
         {
@@ -1314,6 +1320,33 @@ namespace VideoApi.Services.Kinly
         public static TransferParticipantParams FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<TransferParticipantParams>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class Endpoint 
+    {
+        /// <summary>The address or SIP</summary>
+        [Newtonsoft.Json.JsonProperty("address", Required = Newtonsoft.Json.Required.Always)]
+        public string Address { get; set; }
+    
+        /// <summary>The display name</summary>
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Always)]
+        public string Display_name { get; set; }
+    
+        /// <summary>The PIN</summary>
+        [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Always)]
+        public string Pin { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static Endpoint FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Endpoint>(data);
         }
     
     }

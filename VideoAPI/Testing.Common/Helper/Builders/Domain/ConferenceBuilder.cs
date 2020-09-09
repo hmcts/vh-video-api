@@ -106,6 +106,13 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
+
+        public ConferenceBuilder WithEndpoints(List<Endpoint> endpoints)
+        {
+            endpoints.ForEach(x => _conference.AddEndpoint(x));
+
+            return this;
+        }
         
         public ConferenceBuilder WithMeetingRoom(string pexipNode, string conferenceUsername)
         {

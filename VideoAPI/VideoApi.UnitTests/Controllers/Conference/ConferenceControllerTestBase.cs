@@ -29,6 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected VideoApi.Domain.Conference TestConference;
         protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
         protected Mock<IStorageService> StorageServiceMock;
+        protected List<Endpoint> TestEndpoints;
 
         [SetUp]
         public void Setup()
@@ -41,21 +42,34 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock = new Mock<IAudioPlatformService>();
             StorageServiceMock = new Mock<IStorageService>();
 
+            TestEndpoints = new List<Endpoint>
+            {
+                new Endpoint("one", "44564", "1234"),
+                new Endpoint("two", "867744", "5678")
+            };
+            
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom1)
                 .WithParticipant(UserRole.Representative, "Claimant")
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
+                .WithEndpoints(TestEndpoints)
                 .Build();
+
 
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
 
             QueryHandlerMock
+                .Setup(x => x.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(It.IsAny<GetEndpointsForConferenceQuery>()))
+                .ReturnsAsync(TestEndpoints);
+
+            QueryHandlerMock
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(TestConference);
+            
             QueryHandlerMock
               .Setup(x => x.Handle<GetExpiredAudiorecordingConferencesQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetExpiredAudiorecordingConferencesQuery>()))
               .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });

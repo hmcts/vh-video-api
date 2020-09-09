@@ -10,12 +10,13 @@ namespace VideoApi.DAL.Commands
     public class UpdateEndpointCommand : ICommand
     {
         public Guid ConferenceId { get; set; }
-        public Guid EndpointId { get; set; }
+        public string SipAddress { get; set; }
         public string DisplayName { get; set; }
-        public UpdateEndpointCommand(Guid conferenceId, Guid endpointId, string displayName)
+        
+        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName)
         {
             ConferenceId = conferenceId;
-            EndpointId = endpointId;
+            SipAddress = sipAddress;
             DisplayName = displayName;
         }
     }
@@ -37,10 +38,10 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == command.EndpointId);
+            var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.SipAddress == command.SipAddress);
             if (endpoint == null)
             {
-                throw new EndpointNotFoundException(command.EndpointId);
+                throw new EndpointNotFoundException(command.SipAddress);
             }
 
             endpoint.UpdateDisplayName(command.DisplayName);

@@ -110,22 +110,22 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveRemoveEndpointFromAConferenceRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
-            Guid endpointId;
+            string sipAddress;
             await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
             {
                 var conf = await db.Conferences.Include(x => x.Endpoints).SingleAsync(x => x.Id == conferenceId);
-                endpointId = conf.Endpoints[0].Id;
+                sipAddress = conf.Endpoints[0].SipAddress;
             }
             
-            SetupRemoveEndpointRequest(conferenceId, endpointId);
+            SetupRemoveEndpointRequest(conferenceId, sipAddress);
         }
         
         [Given(@"I have remove non-existent endpoint from a conference request")]
         public void GivenIHaveRemoveNon_ExistentEndpointFromAConferenceRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
-            var endpointId = Guid.NewGuid();
-            SetupRemoveEndpointRequest(conferenceId, endpointId);
+            var sipAddress = "sip@sip.com";
+            SetupRemoveEndpointRequest(conferenceId, sipAddress);
         }
         
         [Then(@"the endpoint response should be (.*)")]
@@ -157,24 +157,24 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveUpdateToANon_ExistentEndpointForAConferenceRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
-            var endpointId = Guid.NewGuid();
+            var sipAddress = "sip@sip.com";
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test"
             };
-            SetupUpdateEndpointRequest(conferenceId, endpointId, request);
+            SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
 
         [Given(@"I have update endpoint for a conference request")]
         public void GivenIHaveUpdateEndpointForAConferenceRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
-            var endpointId = _context.Test.Conference.Endpoints.First().Id;
+            var sipAddress = _context.Test.Conference.Endpoints.First().SipAddress;
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test"
             };
-            SetupUpdateEndpointRequest(conferenceId, endpointId, request);
+            SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
 
         [Then(@"the endpoint status should be (.*)")]
@@ -209,17 +209,17 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Post;
         }
         
-        private void SetupRemoveEndpointRequest(Guid conferenceId, Guid endpointId)
+        private void SetupRemoveEndpointRequest(Guid conferenceId, string sipAddress)
         {
-            _context.Uri = RemoveEndpointsFromConference(conferenceId, endpointId);
+            _context.Uri = RemoveEndpointsFromConference(conferenceId, sipAddress);
             _context.HttpMethod = HttpMethod.Delete;
         }
 
-        private void SetupUpdateEndpointRequest(Guid conferenceId, Guid endpointId, UpdateEndpointRequest request)
+        private void SetupUpdateEndpointRequest(Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
         {
             var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            _context.Uri = UpdateDisplayNameForEndpoint(conferenceId, endpointId);
+            _context.Uri = UpdateDisplayNameForEndpoint(conferenceId, sipAddress);
             _context.HttpMethod = HttpMethod.Patch;
         }
     }
