@@ -262,7 +262,7 @@ namespace Video.API.Controllers
         /// <param name="caseReference"></param>
         [HttpGet("audio/{cloudRoomName}/{date}/{caseReference}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvp")]
-        [ProducesResponseType(typeof(CvpAudioRecordingResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference)
         {
@@ -272,7 +272,7 @@ namespace Video.API.Controllers
             {
                 var responses = await GetCvpAudioFiles(cloudRoomName, date, caseReference);
 
-                return Ok(new CvpAudioRecordingResponse { Results =  responses});
+                return Ok(responses);
             }
             catch (Exception ex)
             {
@@ -288,7 +288,7 @@ namespace Video.API.Controllers
         /// <param name="date"></param>
         [HttpGet("audio/{cloudRoomName}/{date}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpWithCaseReference")]
-        [ProducesResponseType(typeof(CvpAudioRecordingResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date)
         {
@@ -298,7 +298,7 @@ namespace Video.API.Controllers
             {
                 var responses = await GetCvpAudioFiles(cloudRoomName, date);
 
-                return Ok(new CvpAudioRecordingResponse {Results = responses});
+                return Ok(responses);
             }
             catch (Exception ex)
             {
@@ -307,9 +307,9 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task<List<CvpAudioFile>> GetCvpAudioFiles(string cloudRoomName, string date, string caseReference = null)
+        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoomName, string date, string caseReference = null)
         {
-            var responses = new List<CvpAudioFile>();
+            var responses = new List<CvpAudioFileResponse>();
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
             var allBlobsAsync = azureStorageService.GetAllBlobsAsync(cloudRoomName.ToLower());
             await foreach (var blob in allBlobsAsync)
@@ -320,7 +320,7 @@ namespace Video.API.Controllers
                     continue;
                 }
 
-                responses.Add(new CvpAudioFile
+                responses.Add(new CvpAudioFileResponse
                 {
                     FileName = blob.Name.Substring(blob.Name.LastIndexOf("/") + 1),
                     SasTokenUrl = await azureStorageService.CreateSharedAccessSignature(blob.Name, TimeSpan.FromDays(3))

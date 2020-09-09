@@ -439,10 +439,9 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var result = await _controller.GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoom, date, caseReference) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            var item = result.Value.As<CvpAudioRecordingResponse>();
-            item.Should().NotBeNull();
-            item.Results.Should().NotBeNullOrEmpty();
-            var firstItem = item.Results.FirstOrDefault();
+            var item = result.Value.As<List<CvpAudioFileResponse>>();
+            item.Should().NotBeNullOrEmpty();
+            var firstItem = item.FirstOrDefault();
             firstItem.Should().NotBeNull();
             firstItem.FileName.Should().Be(blobName);
             firstItem.SasTokenUrl.Should().Be("sas");
@@ -469,9 +468,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var result = await _controller.GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoom, date, caseReference) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            var item = result.Value.As<CvpAudioRecordingResponse>();
-            item.Should().NotBeNull();
-            item.Results.Should().BeNullOrEmpty();
+            var item = result.Value.As<List<CvpAudioFileResponse>>();
+            item.Should().BeNullOrEmpty();
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
         }
@@ -516,10 +514,9 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var result = await _controller.GetAudioRecordingLinkCvpAsync(cloudRoom, date) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            var item = result.Value.As<CvpAudioRecordingResponse>();
-            item.Should().NotBeNull();
-            item.Results.Should().NotBeNullOrEmpty();
-            var firstItem = item.Results.FirstOrDefault();
+            var item = result.Value.As<List<CvpAudioFileResponse>>();
+            item.Should().NotBeNullOrEmpty();
+            var firstItem = item.FirstOrDefault();
             firstItem.Should().NotBeNull();
             firstItem.FileName.Should().Be(blobName);
             firstItem.SasTokenUrl.Should().Be("sas");
@@ -534,7 +531,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             const string date = "2020-09-01";
 
             _blobClientMock = new Mock<BlobClient>();
-            var blobName = $"TotallyNonMatchingNameWIthSearchParameters";
+            var blobName = "TotallyNonMatchingNameWIthSearchParameters";
             var blobFullName = $"{cloudRoom}/{blobName}";
             _blobClientMock.Setup(x => x.Name).Returns(blobFullName);
 
@@ -545,9 +542,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var result = await _controller.GetAudioRecordingLinkCvpAsync(cloudRoom, date) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            var item = result.Value.As<CvpAudioRecordingResponse>();
-            item.Should().NotBeNull();
-            item.Results.Should().BeNullOrEmpty();
+            var item = result.Value.As<List<CvpAudioFileResponse>>();
+            item.Should().BeNullOrEmpty();
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
         }
