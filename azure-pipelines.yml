@@ -1,6 +1,7 @@
 # Set variables once
 variables:
   - group: vh-wowza-dev
+  - group: cvp-wowza-sbox
   - name: solutionType
     value : DotNetCore # angularDotNetCore, dotNetCore, angular
   - name: apiDirectory
