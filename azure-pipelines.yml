@@ -1,6 +1,7 @@
 # Set variables once
 variables:
   - group: vh-wowza-dev
+  - group: cvp-wowza-sbox
   - name: solutionType
     value : DotNetCore # angularDotNetCore, dotNetCore, angular
   - name: apiDirectory
@@ -44,7 +45,7 @@ variables:
       "CvpConfiguration/StorageAccountKey":"$(cvp_storageAccountKey)",
       "CvpConfiguration/StorageContainerName":"$(cvp_storageContainerName)",
       "CvpConfiguration/StorageEndpoint":"$(cvp_storageEndpoint)",
-      "CvpConfiguration/ManagedIdentityClientId":"$(cvp_managedIdentityClientId)"
+      "CvpConfiguration/ManagedIdentityClientId":"$(wowza_managedIdentityClientId)"
       '
   - name: dalWorkingDirectory
     value : 'VideoAPI/VideoApi.DAL'
