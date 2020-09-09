@@ -264,7 +264,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvp")]
         [ProducesResponseType(typeof(CvpAudioRecordingResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date, string caseReference)
+        public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference)
         {
             _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoomName}, for date: {date} and case number: {caseReference}");
             
@@ -290,7 +290,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpWithCaseReference")]
         [ProducesResponseType(typeof(CvpAudioRecordingResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date)
+        public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date)
         {
             _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoomName}, for date: {date}");
 
@@ -311,7 +311,8 @@ namespace Video.API.Controllers
         {
             var responses = new List<CvpAudioFile>();
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
-            await foreach (var blob in azureStorageService.GetAllBlobsAsync(cloudRoomName.ToLower()))
+            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(cloudRoomName.ToLower());
+            await foreach (var blob in allBlobsAsync)
             {
                 var blobName = blob.Name.ToLower();
                 if (!blobName.Contains(date.ToLower()) || !blobName.Contains(caseReference != null ? caseReference.ToLower() : ""))
