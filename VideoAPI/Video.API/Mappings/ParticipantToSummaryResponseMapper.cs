@@ -25,6 +25,7 @@ namespace Video.API.Mappings
                 DisplayName = participant.DisplayName,
                 Status = participantStatus,
                 UserRole = participant.UserRole,
+                HearingRole = participant.HearingRole,
                 Representee = participant.Representee,
                 CaseGroup = caseGroup,
                 FirstName = participant.FirstName,

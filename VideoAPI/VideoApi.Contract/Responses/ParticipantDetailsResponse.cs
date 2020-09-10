@@ -61,6 +61,11 @@ namespace VideoApi.Contract.Responses
         public string CaseTypeGroup { get; set; }
         
         /// <summary>
+        /// The hearing role for a participant
+        /// </summary>
+        public string HearingRole { get; set; }
+        
+        /// <summary>
         /// The representee (if participant is a representative)
         /// </summary>
         public string Representee { get; set; }

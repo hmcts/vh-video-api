@@ -12,13 +12,13 @@ namespace Testing.Common.Helper.Builders.Domain
 
         private UserRole _userRole;
         private string _caseTypeGroup;
+        private string _hearingRole;
         private TestCallResult _testCallResult;
 
         public ParticipantBuilder(bool ignoreId = false)
         {
             _userRole = UserRole.Individual;
             _caseTypeGroup = "Claimant";
-
             _builderSettings = new BuilderSettings();
             if (!ignoreId) return;
 
@@ -38,6 +38,22 @@ namespace Testing.Common.Helper.Builders.Domain
             _caseTypeGroup = caseTypeGroup;
             return this;
         }
+        
+        public ParticipantBuilder WithHearingRole(string hearingRole)
+        {
+            _hearingRole = hearingRole;
+            return this;
+        }
+
+        public static  string DetermineHearingRole(UserRole role, string caseTypeGroup)
+        {
+            return role switch
+            {
+                UserRole.Judge => "Judge",
+                UserRole.Representative => $"{caseTypeGroup} LIP",
+                _ => caseTypeGroup
+            };
+        }
 
         public ParticipantBuilder WithSelfTestScore(bool passed, TestScore score)
         {
@@ -47,11 +63,12 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public Participant Build()
         {
+            _hearingRole ??= DetermineHearingRole(_userRole, _caseTypeGroup);
             var name = Name.FullName();
 
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                     new Participant(Guid.NewGuid(), name, Name.First(), Name.Last(), name, Internet.Email(), _userRole,
-                        _caseTypeGroup, Internet.Email(), Phone.Number()))
+                        _hearingRole, _caseTypeGroup, Internet.Email(), Phone.Number()))
                 .With(x => x.CurrentRoom = null)
                 .Build();
 

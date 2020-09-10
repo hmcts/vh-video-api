@@ -1,8 +1,8 @@
-using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
@@ -127,15 +127,19 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have several conferences with users")]
         public async Task GivenIHaveSeveralConferencesWithUsers()
         {
+            var caseGroup = "ChildrenAct";
             var today = DateTime.Today.AddMinutes(10);
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct", "judge1@test.com", "01234"),
+                        "JudgeOne.Smith@email.com", UserRole.Judge,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "judge1@test.com", "01234"),
                     new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
-                        "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct", "individual1@test.com",
-                        "01234")
+                        "IndividualOne.Smith@email.com", UserRole.Individual,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "individual1@test.com", "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -144,10 +148,13 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct", "judge1@test.com", "01234"),
+                        "JudgeOne.Smith@email.com", UserRole.Judge,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "judge1@test.com", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
-                        "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct", "individual2@test.com",
-                        "01234")
+                        "RepresentativeOne.Green@email.com", UserRole.Individual,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "individual2@test.com", "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -156,10 +163,13 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@email.com", UserRole.Judge, "ChildrenAct", "judge1@test.com", "01234"),
+                        "JudgeOne.Smith@email.com", UserRole.Judge,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "judge1@test.com", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Brown", "RepresentativeTwo Brown",
-                        "RepresentativeTwo.Brown@email.com", UserRole.Individual, "ChildrenAct", "individual3@test.com",
-                        "01234")
+                        "RepresentativeTwo.Brown@email.com", UserRole.Individual,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "individual3@test.com", "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -168,10 +178,12 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@email.com",
-                        UserRole.Judge, "ChildrenAct", "judge2@test.com", "01234"),
+                        UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "judge2@test.com", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
-                        "RepresentativeOne.Green@email.com", UserRole.Individual, "ChildrenAct", "individual2@test.com",
-                        "01234")
+                        "RepresentativeOne.Green@email.com", UserRole.Individual,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "individual2@test.com", "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -180,9 +192,12 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
-                        "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct", "judge4@test.com", "01234"),
+                        "JudgeFour.Matt@email.com", UserRole.Judge,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "judge4@test.com", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Dredd", "RepresentativeTwo Dredd",
-                        "RepresentativeTwo.Dredd@email.com", UserRole.Individual, "ChildrenAct", "rep2@test.com",
+                        "RepresentativeTwo.Dredd@email.com", UserRole.Individual,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup, "rep2@test.com",
                         "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
@@ -192,10 +207,13 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
-                        "JudgeFour.Matt@email.com", UserRole.Judge, "ChildrenAct", "judge4@test.com", "01234"),
+                        "JudgeFour.Matt@email.com", UserRole.Judge,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "judge4@test.com", "01234"),
                     new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
-                        "IndividualOne.Smith@email.com", UserRole.Individual, "ChildrenAct", "individual1@test.com",
-                        "01234")
+                        "IndividualOne.Smith@email.com", UserRole.Individual,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
+                        "individual1@test.com", "01234")
                 })
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .Build();
@@ -210,8 +228,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have several closed conferences with messages")]
         public async Task GivenIHaveSeveralClosedConferencesWithMessages()
         {
-            var conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            var conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var currentHearing = utcDate.AddMinutes(-40);
             var oldHearing = utcDate.AddMinutes(-180);
@@ -292,8 +310,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a many very old closed conferences with messages")]
         public async Task GivenIHaveAManyVeryOldClosedConferencesWithMessages()
         {
-            var conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            var conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var oldHearing = utcDate.AddMonths(-4);
 
@@ -341,8 +359,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a many closed conferences with no messages")]
         public async Task GivenIHaveAManyClosedConferencesWithNoMessages()
         {
-            var conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            var conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var currentHearing = utcDate.AddMinutes(-40);
             var oldHearing = utcDate.AddMinutes(-180);
@@ -389,8 +407,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a conference closed over (.*) months ago")]
         public async Task GivenIHaveAConferenceClosedOverMonthsAgo(int p0)
         {
-            var conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            var conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
 
@@ -400,7 +418,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime")
-                .SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
+                ?.SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
             conferenceList.Add(conference1);
             _context.Test.Conference = conference1;
 
@@ -413,8 +431,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a many open conferences with messages")]
         public async Task GivenIHaveAManyOpenConferencesWithMessages()
         {
-            var conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            var conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var oldHearing = utcDate.AddMinutes(-180);
 

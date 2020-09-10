@@ -38,9 +38,12 @@ namespace VideoApi.UnitTests.Domain.Conference
                 .Build();
 
             var beforeCount = conference.GetParticipants().Count;
+            var userRole = UserRole.Representative;
+            var caseGroup = "Claimant";
+            var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseGroup);
             var participant = Builder<Participant>.CreateNew().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                    Internet.Email(), UserRole.Representative, "Claimant", Internet.Email(), Phone.Number())).Build();
+                    Internet.Email(), userRole, hearingRole,caseGroup, Internet.Email(), Phone.Number())).Build();
 
             Action action = () => conference.RemoveParticipant(participant);
 
