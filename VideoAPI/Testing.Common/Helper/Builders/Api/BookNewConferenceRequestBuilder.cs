@@ -114,7 +114,8 @@ namespace Testing.Common.Helper.Builders.Api
 
         public BookNewConferenceRequestBuilder WithEndpoint(string displayName, string sip, string pin)
         {
-            _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest {DisplayName = displayName, SipAddress = sip, Pin = pin});
+            _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest
+                {DisplayName = displayName, SipAddress = sip, Pin = pin, DefenceAdvocate = "Defence Sol"});
             return this;
         }
 

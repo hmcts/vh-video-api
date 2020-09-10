@@ -39,8 +39,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", "0987654321", "1234"),
-                new Endpoint("name2", "1234567890", "5678")
+                new Endpoint("name1", "0987654321", "1234", "Defence Sol"),
+                new Endpoint("name2", "1234567890", "5678", "Defence Old")
             };
 
             var command =

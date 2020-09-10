@@ -15,14 +15,15 @@ namespace VideoApi.Domain
         private Endpoint()
         {
             Id = Guid.NewGuid();
+            State = EndpointState.NotYetJoined;
         }
 
-        public Endpoint(string displayName, string sipAddress, string pin): this()
+        public Endpoint(string displayName, string sipAddress, string pin, string defenceAdvocate) : this()
         {
             DisplayName = displayName;
             SipAddress = sipAddress;
             Pin = pin;
-            State = EndpointState.NotYetJoined;
+            DefenceAdvocate = defenceAdvocate;
         }
 
         public void UpdateDisplayName(string displayName)

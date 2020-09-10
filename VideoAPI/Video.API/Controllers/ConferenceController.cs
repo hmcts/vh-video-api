@@ -62,8 +62,8 @@ namespace Video.API.Controllers
         /// <returns>Details of the new conference</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewConference")]
-        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.Created)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
         {
             _logger.LogDebug("BookNewConference");
@@ -84,26 +84,33 @@ namespace Video.API.Controllers
 
             if (!createAudioRecordingResponse.Success)
             {
-                _logger.LogWarning($"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");
+                _logger.LogWarning(
+                    $"Error creating audio recording for caseNumber: {request.CaseNumber} and hearingId: {request.HearingRefId}");
             }
 
             var conferenceId = await CreateConferenceAsync(request, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Conference Created");
 
-            var conferenceEndpoints = await _queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(new GetEndpointsForConferenceQuery(conferenceId));
+            var conferenceEndpoints =
+                await _queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
+                    new GetEndpointsForConferenceQuery(conferenceId));
             var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
-            
-            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired, createAudioRecordingResponse.IngestUrl, endpointDtos);
+
+            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired,
+                createAudioRecordingResponse.IngestUrl, endpointDtos);
             _logger.LogDebug("Kinly Room Booked");
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-            
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            var response =
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference,
+                    _servicesConfiguration.PexipSelfTestNode);
 
             _logger.LogInformation($"Created conference {response.Id} for hearing {request.HearingRefId}");
 
-            return CreatedAtAction(nameof(GetConferenceDetailsByIdAsync), new { conferenceId = response.Id }, response);
+            return CreatedAtAction(nameof(GetConferenceDetailsByIdAsync), new {conferenceId = response.Id}, response);
         }
 
         /// <summary>
@@ -113,8 +120,8 @@ namespace Video.API.Controllers
         /// <returns>Ok status</returns>
         [HttpPut]
         [SwaggerOperation(OperationId = "UpdateConference")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateConferenceAsync(UpdateConferenceRequest request)
         {
             _logger.LogDebug("UpdateConference");
@@ -130,7 +137,8 @@ namespace Video.API.Controllers
             }
 
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired, endpointDtos);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
+                endpointDtos);
 
             try
             {
@@ -155,15 +163,16 @@ namespace Video.API.Controllers
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpGet("{conferenceId}")]
         [SwaggerOperation(OperationId = "GetConferenceDetailsById")]
-        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsByIdAsync(Guid conferenceId)
         {
             _logger.LogDebug($"GetConferenceDetailsById {conferenceId}");
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (queriedConference == null)
             {
@@ -172,7 +181,9 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _servicesConfiguration.PexipSelfTestNode);
+            var response =
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference,
+                    _servicesConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
 
@@ -183,9 +194,9 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpDelete("{conferenceId}")]
         [SwaggerOperation(OperationId = "RemoveConference")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveConferenceAsync(Guid conferenceId)
         {
             _logger.LogDebug($"RemoveConference {conferenceId}");
@@ -213,7 +224,7 @@ namespace Video.API.Controllers
         /// <returns>Conference details</returns>
         [HttpGet("today/vho")]
         [SwaggerOperation(OperationId = "GetConferencesTodayForAdmin")]
-        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetConferencesTodayForAdminByUsernameAsync(
             [FromQuery] ConferenceForAdminRequest request)
         {
@@ -238,8 +249,8 @@ namespace Video.API.Controllers
         /// <returns>List of conferences for judge</returns>
         [HttpGet("today/judge")]
         [SwaggerOperation(OperationId = "GetConferencesTodayForJudgeByUsername")]
-        [ProducesResponseType(typeof(List<ConferenceForJudgeResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(List<ConferenceForJudgeResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug($"GetConferencesTodayForJudgeByUsername {username}");
@@ -267,8 +278,8 @@ namespace Video.API.Controllers
         /// <returns>List of non-closed conferences for judge</returns>
         [HttpGet("today/individual")]
         [SwaggerOperation(OperationId = "GetConferencesTodayForIndividualByUsername")]
-        [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug($"GetConferencesTodayForIndividualByUsername {username}");
@@ -283,7 +294,8 @@ namespace Video.API.Controllers
             }
 
             var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
+            var conferences =
+                await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel);
 
             return Ok(response);
@@ -296,8 +308,8 @@ namespace Video.API.Controllers
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpGet("hearings/{hearingRefId}")]
         [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
-        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId)
         {
             _logger.LogDebug($"GetConferenceByHearingRefId {hearingRefId}");
@@ -312,7 +324,9 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _servicesConfiguration.PexipSelfTestNode);
+            var response =
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference,
+                    _servicesConfiguration.PexipSelfTestNode);
 
             return Ok(response);
         }
@@ -324,7 +338,7 @@ namespace Video.API.Controllers
 
         [HttpGet("expired")]
         [SwaggerOperation(OperationId = "GetExpiredOpenConferences")]
-        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetExpiredOpenConferencesAsync()
         {
             _logger.LogDebug("GetExpiredOpenConferences");
@@ -342,13 +356,14 @@ namespace Video.API.Controllers
         /// <returns>List of expired conferences</returns>
         [HttpGet("audiorecording/expired")]
         [SwaggerOperation(OperationId = "GetExpiredAudiorecordingConferences")]
-        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
 
         public async Task<IActionResult> GetExpiredAudiorecordingConferencesAsync()
         {
             _logger.LogDebug("GetExpiredAudiorecordingConferences");
             var query = new GetExpiredAudiorecordingConferencesQuery();
-            var conferences = await _queryHandler.Handle<GetExpiredAudiorecordingConferencesQuery, List<Conference>>(query);
+            var conferences =
+                await _queryHandler.Handle<GetExpiredAudiorecordingConferencesQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceToExpiredConferenceMapper.MapConferenceToExpiredResponse);
 
             return Ok(response);
@@ -362,8 +377,8 @@ namespace Video.API.Controllers
         /// <returns>No Content status</returns>
         [HttpPut("{conferenceId}/close")]
         [SwaggerOperation(OperationId = "CloseConference")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloseConferenceAsync(Guid conferenceId)
         {
             try
@@ -390,14 +405,17 @@ namespace Video.API.Controllers
         /// <returns>Conference details</returns>
         [HttpGet("today/judgesinhearings")]
         [SwaggerOperation(OperationId = "GetJudgesInHearingsToday")]
-        [ProducesResponseType(typeof(List<JudgeInHearingResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<JudgeInHearingResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
         {
             _logger.LogDebug("GetJudgesInHearingsToday");
 
-            var conferences = await _queryHandler.Handle<GetJudgesInHearingsTodayQuery, List<Conference>>(new GetJudgesInHearingsTodayQuery());
+            var conferences =
+                await _queryHandler.Handle<GetJudgesInHearingsTodayQuery, List<Conference>>(
+                    new GetJudgesInHearingsTodayQuery());
 
-            var response = conferences.SelectMany(ConferenceForJudgeResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
+            var response =
+                conferences.SelectMany(ConferenceForJudgeResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
 
             return Ok(response);
         }
@@ -408,7 +426,7 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPatch("anonymiseconferences")]
         [SwaggerOperation(OperationId = "AnonymiseConferences")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> AnonymiseConferencesAsync()
         {
             _logger.LogDebug("AnonymiseConferencesAndParticipantInformation");
@@ -422,7 +440,7 @@ namespace Video.API.Controllers
 
         [HttpDelete("expiredHearbeats")]
         [SwaggerOperation(OperationId = "RemoveHeartbeatsForConferences")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
         {
             _logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
@@ -446,7 +464,8 @@ namespace Video.API.Controllers
         private async Task DeleteAudioRecordingApplication(Guid conferenceId)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (queriedConference != null && queriedConference.AudioRecordingRequired)
             {
@@ -497,7 +516,8 @@ namespace Video.API.Controllers
 
             var command = new UpdateMeetingRoomCommand
             (
-                conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri, meetingRoom.ParticipantUri, meetingRoom.PexipNode
+                conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri, meetingRoom.ParticipantUri,
+                meetingRoom.PexipNode
             );
 
             await _commandHandler.Handle(command);
@@ -518,12 +538,13 @@ namespace Video.API.Controllers
                     })
                 .ToList();
 
-            var endpoints = request.Endpoints.Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin)).ToList();
+            var endpoints = request.Endpoints
+                .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate)).ToList();
 
             var createConferenceCommand = new CreateConferenceCommand
             (
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
-                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName, 
+                request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
                 request.AudioRecordingRequired, ingestUrl, endpoints
             );
 
