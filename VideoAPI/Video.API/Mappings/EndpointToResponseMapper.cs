@@ -13,7 +13,8 @@ namespace Video.API.Mappings
                 Pin = endpoint.Pin,
                 Status = endpoint.State,
                 DisplayName = endpoint.DisplayName,
-                SipAddress = endpoint.SipAddress
+                SipAddress = endpoint.SipAddress,
+                DefenceAdvocate = endpoint.DefenceAdvocate
             };
         }
     }

@@ -73,7 +73,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var conferenceId = GetConferenceIdForTest(scenario);
             var updatedEndpointRequest = PrepareUpdateEndpointRequest();
             _scenarioContext.Add(_updateEndPointRequest, updatedEndpointRequest);
-            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, "sip@sip.com"), updatedEndpointRequest);
+            _context.Request = _context.Patch(UpdateEndpoint(conferenceId, "sip@sip.com"), updatedEndpointRequest);
         }
 
 
@@ -97,7 +97,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var updateEndpointRequest = PrepareUpdateEndpointRequest();
             _scenarioContext.Add(_updateEndPointRequest, updateEndpointRequest);
             
-            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, sipAddress), updateEndpointRequest);
+            _context.Request = _context.Patch(UpdateEndpoint(conferenceId, sipAddress), updateEndpointRequest);
         }
 
         [Given(@"I have update endpoint with invalid data to a conference request with a (.*) conference id")]
@@ -106,7 +106,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var conferenceId = GetConferenceIdForTest(scenario);
             var endpoints = GetEndPoints();
             var sipAddress = endpoints.First().SipAddress;
-            _context.Request = _context.Patch(UpdateDisplayNameForEndpoint(conferenceId, sipAddress), new UpdateEndpointRequest()
+            _context.Request = _context.Patch(UpdateEndpoint(conferenceId, sipAddress), new UpdateEndpointRequest()
             {
                 DisplayName = string.Empty,
             });

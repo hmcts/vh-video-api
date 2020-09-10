@@ -172,7 +172,8 @@ namespace VideoApi.IntegrationTests.Steps
             var sipAddress = _context.Test.Conference.Endpoints.First().SipAddress;
             var request = new UpdateEndpointRequest
             {
-                DisplayName = "Automated Add EP test"
+                DisplayName = "Automated Add EP test",
+                DefenceAdvocate = "Sol One"
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
@@ -219,7 +220,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            _context.Uri = UpdateDisplayNameForEndpoint(conferenceId, sipAddress);
+            _context.Uri = UpdateEndpoint(conferenceId, sipAddress);
             _context.HttpMethod = HttpMethod.Patch;
         }
     }

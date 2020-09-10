@@ -101,7 +101,7 @@ namespace Testing.Common.Helper
             public static string GetEndpointsForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/endpoints";
             public static string AddEndpointsToConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/endpoints";
             public static string RemoveEndpointsFromConference(Guid conferenceId, string sipAddress) => $"{ApiRoot}/{conferenceId}/endpoints/{sipAddress}";
-            public static string UpdateDisplayNameForEndpoint(Guid conferenceId, string sipAddress) => $"{ApiRoot}/{conferenceId}/endpoints/{sipAddress}/displayname";
+            public static string UpdateEndpoint(Guid conferenceId, string sipAddress) => $"{ApiRoot}/{conferenceId}/endpoints/{sipAddress}";
         }
 
         public static class ConferenceManagementEndpoints

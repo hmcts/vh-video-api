@@ -64,7 +64,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             var result = response.As<OkObjectResult>();
             result.Should().NotBeNull();
             result.Value.Should().NotBeNull().And.Subject.Should().BeAssignableTo<List<EndpointResponse>>();
-            var responseEndpoints = result.Value as List<EndpointResponse>;
+            var responseEndpoints = (List<EndpointResponse>)result.Value;
             responseEndpoints.Should().HaveCount(endpoints.Count);
             responseEndpoints[0].DisplayName.Should().Be("one");
         }
@@ -197,7 +197,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                         .Select(EndpointMapper.MapToEndpoint)))
                 .Returns(Task.CompletedTask);
 
-            var response = await _controller.UpdateDisplayNameForEndpoint(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
+            var response = await _controller.UpdateDisplayNameForEndpointAsync(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
             {
                 DisplayName = newDisplayName
             });
@@ -214,6 +214,58 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+        }
+
+        [Test]
+        public async Task should_not_update_kinly_when_endpoint_display_name_is_not_updated()
+        {
+            const string defenceAdvocate = "Sol One";
+            var testEndpoints = new List<Endpoint>
+            {
+                new Endpoint("one", "44564", "1234"),
+                new Endpoint("two", "867744", "5678")
+            };
+
+            var testConference = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom1)
+                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Defendant")
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithEndpoints(testEndpoints)
+                .Build();
+
+            _queryHandlerMock
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
+                    (
+                        It.Is<GetConferenceByIdQuery>(y => y.ConferenceId == testConference.Id))
+                )
+                .ReturnsAsync(testConference);
+
+            _videoPlatformServiceMock
+                .Setup(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
+                    testConference.AudioRecordingRequired,
+                    testConference.GetEndpoints()
+                        .Select(EndpointMapper.MapToEndpoint)))
+                .Returns(Task.CompletedTask);
+
+            var response = await _controller.UpdateDisplayNameForEndpointAsync(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
+            {
+                DefenceAdvocate = defenceAdvocate
+            });
+
+            response.Should().NotBeNull();
+            response.Should().BeAssignableTo<OkResult>();
+            ((OkResult) response).StatusCode.Should().Be((int) HttpStatusCode.OK);
+
+            _commandHandlerMock.Verify(x => x.Handle(It.Is<UpdateEndpointCommand>
+            (
+                y => y.ConferenceId == testConference.Id && y.SipAddress == "sip@sip.com" && y.DefenceAdvocate == defenceAdvocate
+            )), Times.Once);
+
+            _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
+                testConference.AudioRecordingRequired,
+                It.IsAny<IEnumerable<EndpointDto>>()), Times.Never);
         }
     }
 }

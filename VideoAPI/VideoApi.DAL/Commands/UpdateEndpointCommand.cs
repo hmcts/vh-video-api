@@ -9,15 +9,17 @@ namespace VideoApi.DAL.Commands
 {
     public class UpdateEndpointCommand : ICommand
     {
-        public Guid ConferenceId { get; set; }
-        public string SipAddress { get; set; }
-        public string DisplayName { get; set; }
-        
-        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName)
+        public Guid ConferenceId { get; }
+        public string SipAddress { get; }
+        public string DisplayName { get; }
+        public string DefenceAdvocate { get; }
+
+        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName, string defenceAdvocate)
         {
             ConferenceId = conferenceId;
             SipAddress = sipAddress;
             DisplayName = displayName;
+            DefenceAdvocate = defenceAdvocate;
         }
     }
 
@@ -44,7 +46,8 @@ namespace VideoApi.DAL.Commands
                 throw new EndpointNotFoundException(command.SipAddress);
             }
 
-            endpoint.UpdateDisplayName(command.DisplayName);
+            if (!string.IsNullOrWhiteSpace(command.DisplayName)) endpoint.UpdateDisplayName(command.DisplayName);
+            if (!string.IsNullOrWhiteSpace(command.DefenceAdvocate)) endpoint.AssignDefenceAdvocate(command.DefenceAdvocate);
             await _context.SaveChangesAsync();
         }
     }

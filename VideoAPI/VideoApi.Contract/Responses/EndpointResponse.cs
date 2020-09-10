@@ -29,5 +29,10 @@ namespace VideoApi.Contract.Responses
         /// The current endpoint status
         /// </summary>
         public EndpointState Status { get; set; }
+        
+        /// <summary>
+        /// The defence advocate
+        /// </summary>
+        public string DefenceAdvocate { get; set; }
     }
 }

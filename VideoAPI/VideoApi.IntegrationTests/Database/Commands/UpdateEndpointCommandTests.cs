@@ -40,7 +40,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var conferenceId = Guid.NewGuid();
             var displayName = "new endpoint";
-            var command = new UpdateEndpointCommand(conferenceId, "sip@sip.com", displayName);
+            var command = new UpdateEndpointCommand(conferenceId, "sip@sip.com", displayName, null);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -51,13 +51,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var displayName = "new endpoint";
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var command = new UpdateEndpointCommand(_newConferenceId, "sip@sip.com", displayName);
+            var command = new UpdateEndpointCommand(_newConferenceId, "sip@sip.com", displayName, null);
 
             Assert.ThrowsAsync<EndpointNotFoundException>(async () => await _handler.Handle(command));
         }
 
         [Test]
-        public async Task Should_update_existing_endpoint_with_new_displayname()
+        public async Task Should_update_existing_endpoint_with_new_display_name()
         {
             var conference1 = new ConferenceBuilder()
                 .WithEndpoint("DisplayName", "sip@123.com").Build();
@@ -67,18 +67,46 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, displayName);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, displayName, null);
             await _handler.Handle(command);
 
             Conference updatedConference;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
                 updatedConference = await db.Conferences.Include(x => x.Endpoints)
-                    .AsNoTracking().SingleOrDefaultAsync(x => x.Id == _newConferenceId);
+                    .AsNoTracking().SingleAsync(x => x.Id == _newConferenceId);
             }
             
-            var updatedEndpoint = updatedConference.GetEndpoints().SingleOrDefault(x => x.SipAddress == sipAddress);
+            var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
             updatedEndpoint.DisplayName.Should().Be(displayName);
+            updatedEndpoint.DefenceAdvocate.Should().BeNull();
+        }
+
+        [Test]
+        public async Task Should_update_existing_endpoint_with_defence_advocate()
+        {
+            var conference1 = new ConferenceBuilder()
+                .WithEndpoint("DisplayName", "sip@123.com").Build();
+            var seededConference = await TestDataManager.SeedConference(conference1);
+            var ep = conference1.Endpoints.First();
+            var sipAddress = ep.SipAddress;
+            var defenceAdvocate = "Sol Defence";
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, null, defenceAdvocate);
+            await _handler.Handle(command);
+
+            Conference updatedConference;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                updatedConference = await db.Conferences.Include(x => x.Endpoints)
+                    .AsNoTracking().SingleAsync(x => x.Id == _newConferenceId);
+            }
+            
+            var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
+            updatedEndpoint.DisplayName.Should().Be(ep.DisplayName);
+            updatedEndpoint.DefenceAdvocate.Should().Be(defenceAdvocate);
         }
     }
 }
