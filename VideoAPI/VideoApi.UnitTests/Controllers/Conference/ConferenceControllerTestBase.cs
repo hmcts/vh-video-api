@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected MeetingRoom MeetingRoom;
         protected VideoApi.Domain.Conference TestConference;
         protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
-        protected Mock<IStorageService> StorageServiceMock;
+        protected Mock<IAzureStorageService> StorageServiceMock;
         protected List<Endpoint> TestEndpoints;
 
         [SetUp]
@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
             ServicesConfiguration = new Mock<IOptions<ServicesConfiguration>>();
             AudioPlatformServiceMock = new Mock<IAudioPlatformService>();
-            StorageServiceMock = new Mock<IStorageService>();
+            StorageServiceMock = new Mock<IAzureStorageService>();
 
             TestEndpoints = new List<Endpoint>
             {
