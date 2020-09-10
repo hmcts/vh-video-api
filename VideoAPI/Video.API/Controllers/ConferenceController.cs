@@ -38,13 +38,13 @@ namespace Video.API.Controllers
         private readonly ServicesConfiguration _servicesConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
-        private readonly IStorageService _storageService;
+        private readonly IAzureStorageService _azureStorageService;
 
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
             ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
-            IStorageService storageService)
+            IAzureStorageService azureStorageService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -52,7 +52,7 @@ namespace Video.API.Controllers
             _servicesConfiguration = servicesConfiguration.Value;
             _logger = logger;
             _audioPlatformService = audioPlatformService;
-            _storageService = storageService;
+            _azureStorageService = azureStorageService;
         }
 
         /// <summary>
@@ -466,7 +466,7 @@ namespace Video.API.Controllers
         private async Task EnsureAudioFileExists(Guid hearingId)
         {
             var filePath = $"{hearingId}.mp4";
-            if (!await _storageService.FileExistsAsync(filePath))
+            if (!await _azureStorageService.FileExistsAsync(filePath))
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);

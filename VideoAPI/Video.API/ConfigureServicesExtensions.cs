@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using Video.API.Factories;
 using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
@@ -88,6 +89,7 @@ namespace Video.API
             var container = services.BuildServiceProvider();
             var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
+            var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
 
             services.AddMemoryCache();
             services.AddScoped<IRoomReservationService, RoomReservationService>();
@@ -152,31 +154,32 @@ namespace Video.API
 
             if (environment.IsDevelopment())
             {
-                services.AddSingleton
-                (
-                    x =>
-                    {
-                        var credentials = new StorageSharedKeyCredential(wowzaConfiguration.StorageAccountName, wowzaConfiguration.StorageAccountKey);
-                        return new BlobServiceClient(new Uri(wowzaConfiguration.StorageEndpoint), credentials);
-                    }
-                );
+                var vhBlobServiceClient = new BlobServiceClient(new Uri(wowzaConfiguration.StorageEndpoint),
+                    new StorageSharedKeyCredential(wowzaConfiguration.StorageAccountName, wowzaConfiguration.StorageAccountKey));
+
+                var cvpBlobServiceClient = new BlobServiceClient(new Uri(cvpConfiguration.StorageEndpoint),
+                    new StorageSharedKeyCredential(cvpConfiguration.StorageAccountName, cvpConfiguration.StorageAccountKey));
+
+                services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, wowzaConfiguration, false));
+                services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, cvpConfiguration, false));
+
             }
             else
             {
-                services.AddSingleton
-                (
-                    x =>
-                    {
-                        var defaultAzureCredential = new DefaultAzureCredential();
-                        var managedIdentityCredential = new ManagedIdentityCredential(wowzaConfiguration.ManagedIdentityClientId);
-                        var chainedTokenCredential = new ChainedTokenCredential(managedIdentityCredential, defaultAzureCredential);
-                        return new BlobServiceClient(new Uri(wowzaConfiguration.StorageEndpoint), chainedTokenCredential);
-                    }
-                );
+                var vhBlobServiceClient = new BlobServiceClient(new Uri(wowzaConfiguration.StorageEndpoint),
+                    new ChainedTokenCredential(new ManagedIdentityCredential(wowzaConfiguration.ManagedIdentityClientId),
+                        new DefaultAzureCredential()));
+
+                var cvpBlobServiceClient = new BlobServiceClient(new Uri(cvpConfiguration.StorageEndpoint),
+                    new ChainedTokenCredential(new ManagedIdentityCredential(cvpConfiguration.ManagedIdentityClientId),
+                        new DefaultAzureCredential()));
+
+                services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, wowzaConfiguration, true));
+                services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, cvpConfiguration, true));
             }
 
-            services.AddScoped<IStorageService>(x => new AzureStorageService(x.GetService<BlobServiceClient>(), wowzaConfiguration, environment.IsProduction()));
-
+            services.AddSingleton<IAzureStorageServiceFactory, AzureStorageServiceFactory>();
+            
             return services;
         }
 
