@@ -83,3 +83,18 @@ Scenario: Get Audio Recording Link - Not Found
 	Given I have a nonexistent get audio recording link request
 	When I send the request to the endpoint
 	Then the response should have the status NotFound and success status False
+  
+  @VIH-6385
+  Scenario Outline: Get Audio Recordings for CVP - has files
+    Given Cvp has audio recordings
+    | CloudRoomName | Date | CaseReference     |
+    | CloudRoom1    | 2020-01-01 | MyReference1|
+    | CloudRoom1    | 2020-01-01 | MyReference2|
+    | CloudRoom1    | 2020-01-02 | MyReference3|
+    And I have a valid get cvp audio recordings request for <CloudRoomName> <Date> <CaseReference>
+    When I send the request to the endpoint
+    Then the response should have the status Ok and success status True
+    And <Results> audio recordings from cvp are retrieved
+    Examples:
+      | CloudRoomName | Date       | CaseReference | Results |
+      | CloudRoom1    | 2020-01-01 | MyReference1  | 1       |

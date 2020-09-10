@@ -311,7 +311,7 @@ namespace Video.API.Controllers
         {
             var responses = new List<CvpAudioFileResponse>();
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
-            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(cloudRoomName.ToLower());
+            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(cloudRoomName);
             await foreach (var blob in allBlobsAsync)
             {
                 var blobName = blob.Name.ToLower();
