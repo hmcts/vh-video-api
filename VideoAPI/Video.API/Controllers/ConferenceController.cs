@@ -511,8 +511,8 @@ namespace Video.API.Controllers
             if (existingConference != null) return existingConference.Id;
 
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name, x.FirstName, x.LastName, x.DisplayName, x.Username, x.UserRole,
-                        x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
+                    new Participant(x.ParticipantRefId, x.Name, x.FirstName, x.LastName, x.DisplayName, x.Username,
+                        x.UserRole, x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
                     {
                         Representee = x.Representee
                     })

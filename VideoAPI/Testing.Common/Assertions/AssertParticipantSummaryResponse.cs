@@ -11,6 +11,7 @@ namespace Testing.Common.Assertions
             participant.Should().NotBeNull();
             participant.Id.Should().NotBeEmpty();
             participant.Username.Should().NotBeNullOrWhiteSpace();
+            participant.HearingRole.Should().NotBeNull();
             participant.UserRole.Should().NotBeNull();
             participant.DisplayName.Should().NotBeNullOrWhiteSpace();
             participant.FirstName.Should().NotBeNullOrWhiteSpace();

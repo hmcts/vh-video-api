@@ -14,13 +14,14 @@ namespace VideoApi.Domain
         }
 
         public Participant(Guid participantRefId, string name, string firstName, string lastName, string displayName,
-            string username, UserRole userRole, string caseTypeGroup, string contactEmail,
+            string username, UserRole userRole, string hearingRole, string caseTypeGroup, string contactEmail,
             string contactTelephone) : this()
         {
             ParticipantRefId = participantRefId;
             DisplayName = displayName;
             Username = username;
             UserRole = userRole;
+            HearingRole = hearingRole;
             CaseTypeGroup = caseTypeGroup;
             Name = name;
             FirstName = firstName;
@@ -38,6 +39,7 @@ namespace VideoApi.Domain
         public string DisplayName { get; set; }
         public string Username { get; set; }
         public UserRole UserRole { get; set; }
+        public string HearingRole { get; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
         public RoomType? CurrentRoom { get; set; }

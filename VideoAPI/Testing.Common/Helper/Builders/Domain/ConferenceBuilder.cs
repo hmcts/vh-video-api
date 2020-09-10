@@ -41,8 +41,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
                 .WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                        Internet.Email(), UserRole.Individual,
-                        "Claimant", Internet.Email(), Phone.Number())).Build();
+                        Internet.Email(), UserRole.Individual, "Claimant LIP", "Claimant", Internet.Email(),
+                        Phone.Number())).Build();
 
             foreach (var participant in participants)
             {
@@ -62,8 +62,8 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup, string username = null,
-            string firstName = null, RoomType? roomType = null,
+        public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup,
+            string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -76,10 +76,10 @@ namespace Testing.Common.Helper.Builders.Domain
                 firstName = Name.First();
             }
 
+            var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
-                    userRole,
-                    caseTypeGroup, Internet.Email(), Phone.Number())).Build();
+                    userRole,  hearingRole, caseTypeGroup, Internet.Email(), Phone.Number())).Build();
 
             if (userRole == UserRole.Representative)
             {

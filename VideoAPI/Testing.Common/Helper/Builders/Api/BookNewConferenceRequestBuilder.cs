@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Faker;
 using FizzWare.NBuilder;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
 
@@ -30,12 +31,13 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithJudge(string firstName = null)
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.Name = $"Automation_{Name.First()}{Faker.RandomNumber.Next()}")
+                .With(x => x.Name = $"Automation_{Name.First()}{RandomNumber.Next()}")
                 .With(x => x.FirstName = $"Automation_{Name.First()}")
                 .With(x => x.LastName = $"Automation_{Name.Last()}")
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Judge)
+                .With(x => x.HearingRole = "Judge")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .Build();
 
@@ -49,7 +51,7 @@ namespace Testing.Common.Helper.Builders.Api
             return this;
         }
 
-        public BookNewConferenceRequestBuilder WithRepresentative(string caseTypeGroup = null)
+        public BookNewConferenceRequestBuilder WithRepresentative(string caseTypeGroup = "Claimant")
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
@@ -58,20 +60,17 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Representative)
+                .With(x => x.CaseTypeGroup = caseTypeGroup)
+                .With(x => x.HearingRole =
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
                 .With(x => x.Representee = "Person")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .Build();
-
-            if (!string.IsNullOrWhiteSpace(caseTypeGroup))
-            {
-                participant.CaseTypeGroup = caseTypeGroup;
-            }
-
             _bookNewConferenceRequest.Participants.Add(participant);
             return this;
         }
 
-        public BookNewConferenceRequestBuilder WithIndividual(string caseTypeGroup = null)
+        public BookNewConferenceRequestBuilder WithIndividual(string caseTypeGroup = "Claimant")
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
@@ -80,13 +79,11 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Individual)
+                .With(x => x.CaseTypeGroup = caseTypeGroup)
+                .With(x => x.HearingRole =
+                    ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .Build();
-
-            if (!string.IsNullOrWhiteSpace(caseTypeGroup))
-            {
-                participant.CaseTypeGroup = caseTypeGroup;
-            }
 
             _bookNewConferenceRequest.Participants.Add(participant);
             return this;

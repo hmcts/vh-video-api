@@ -15,6 +15,7 @@ namespace VideoApi.Contract.Requests
         public string ContactEmail { get; set; }
         public string ContactTelephone { get; set; }
         public UserRole UserRole { get; set; }
+        public string HearingRole { get; set; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
     }
