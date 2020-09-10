@@ -10,6 +10,7 @@ namespace VideoApi.Domain
         public string SipAddress { get; }
         public string Pin { get; }
         public EndpointState State { get; private set; }
+        public string DefenceAdvocate { get; private set; }
 
         private Endpoint()
         {
@@ -32,6 +33,11 @@ namespace VideoApi.Domain
         public void UpdateStatus(EndpointState status)
         {
             State = status;
+        }
+
+        public void AssignDefenceAdvocate(string username)
+        {
+            DefenceAdvocate = username;
         }
     }
 }
