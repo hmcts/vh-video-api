@@ -69,13 +69,14 @@ namespace VideoApi.IntegrationTests.Steps
         }
         
         [Given(@"I have an add endpoint to conference request")]
+        [Then(@"I have an add endpoint to conference request")]
         public void IHaveAValidAddEndpointRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
             var request = new AddEndpointRequest
             {
                 Pin = "1234",
-                SipAddress = "1234add_auto_test@sip.com",
+                SipAddress = $"{Guid.NewGuid()}@sip.com",
                 DisplayName = "Automated Add EP test"
             };
             SetupAddEndpointRequest(conferenceId, request);
