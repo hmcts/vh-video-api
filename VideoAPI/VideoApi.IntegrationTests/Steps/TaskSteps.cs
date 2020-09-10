@@ -68,7 +68,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheListOfTasksShouldBeRetrieved()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var tasks = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(json);
+            var tasks = RequestHelper.Deserialise<List<TaskResponse>>(json);
             tasks.Should().NotBeNullOrEmpty();
             tasks.Should().BeInDescendingOrder(x => x.Created);
             foreach (var task in tasks)
@@ -83,7 +83,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheTaskShouldBeRetrievedWithUpdatedDetails()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var updatedTask = RequestHelper.DeserialiseSnakeCaseJsonToResponse<TaskResponse>(json);
+            var updatedTask = RequestHelper.Deserialise<TaskResponse>(json);
             updatedTask.Should().NotBeNull();
             updatedTask.Updated.Should().NotBeNull();
             updatedTask.UpdatedBy.Should().Be(_context.Test.UpdateTaskRequest.UpdatedBy);
@@ -117,7 +117,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateTaskStatus(conferenceId, taskId);
             _context.HttpMethod = HttpMethod.Patch;
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(_context.Test.UpdateTaskRequest);
+            var jsonBody = RequestHelper.Serialise(_context.Test.UpdateTaskRequest);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
     }

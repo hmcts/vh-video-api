@@ -39,7 +39,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Request = context.Get(GetConferencesTodayForAdmin);
             context.Response = context.Client().Execute(context.Request);
             context.Response.IsSuccessful.Should().BeTrue($"conferences for today were retrieved, but status code was {context.Response.StatusCode} with error message '{context.Response.Content}'");
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ConferenceForAdminResponse>>(context.Response.Content);
             if (conferences == null || conferences.Count <= 0) return;
             foreach (var conference in conferences.Where(conference => conference.CaseName.Contains(context.Test.CaseName)))
             {

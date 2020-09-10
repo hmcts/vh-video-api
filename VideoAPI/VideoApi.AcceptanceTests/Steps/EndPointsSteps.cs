@@ -155,7 +155,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the endpoints should be retrieved")]
         public void ThenTheEndpointsShouldBeRetrieved()
         {
-            var endpoints = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<Endpoint>>(_context.Response.Content);
+            var endpoints = RequestHelper.Deserialise<List<Endpoint>>(_context.Response.Content);
             endpoints.Should().NotBeNull();
         }
         
@@ -191,7 +191,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetEndpointsForConference(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
-            var endpoints = RequestHelper.DeserialiseSnakeCaseJsonToResponse<IList<EndpointResponse>> (_context.Response.Content);
+            var endpoints = RequestHelper.Deserialise<IList<EndpointResponse>> (_context.Response.Content);
             endpoints.Should().NotBeNull();
             return endpoints;
         }

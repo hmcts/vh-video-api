@@ -30,7 +30,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheApplicationVersionShouldBeRetrieved()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var getResponseModel = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(json);
+            var getResponseModel = RequestHelper.Deserialise<HealthCheckResponse>(json);
             getResponseModel.AppVersion.Should().NotBeNull();
             getResponseModel.AppVersion.FileVersion.Should().NotBeNull();
             getResponseModel.AppVersion.InformationVersion.Should().NotBeNull();
@@ -40,7 +40,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheWowzaHealthShouldBeRetrieved()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var getResponseModel = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(json);
+            var getResponseModel = RequestHelper.Deserialise<HealthCheckResponse>(json);
             getResponseModel.WowzaHealth.Should().NotBeNull();
             getResponseModel.WowzaHealth.Successful.Should().BeTrue();
         }

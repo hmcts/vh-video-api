@@ -52,7 +52,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = AddParticipantsToConference(conferenceId);
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -108,7 +108,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateParticipantFromConference(conferenceId, participantId);
             _context.HttpMethod = HttpMethod.Patch;
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -122,7 +122,7 @@ namespace VideoApi.IntegrationTests.Steps
             };
             _context.Uri = AddParticipantsToConference(_context.Test.Conference.Id);
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 

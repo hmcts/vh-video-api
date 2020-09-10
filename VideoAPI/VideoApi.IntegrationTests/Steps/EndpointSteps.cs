@@ -69,7 +69,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
         
         [Given(@"I have an add endpoint to conference request")]
-        public void GivenIHaveAValidAddEndpointRequest()
+        public void IHaveAValidAddEndpointRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
             var request = new AddEndpointRequest
@@ -203,7 +203,7 @@ namespace VideoApi.IntegrationTests.Steps
         
         private void SetupAddEndpointRequest(Guid conferenceId, AddEndpointRequest request)
         {
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             _context.Uri = AddEndpointsToConference(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
@@ -217,7 +217,7 @@ namespace VideoApi.IntegrationTests.Steps
 
         private void SetupUpdateEndpointRequest(Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
         {
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             _context.Uri = UpdateDisplayNameForEndpoint(conferenceId, sipAddress);
             _context.HttpMethod = HttpMethod.Patch;

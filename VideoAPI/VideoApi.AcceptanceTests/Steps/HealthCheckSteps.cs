@@ -26,7 +26,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the application version should be retrieved")]
         public void ThenTheApplicationVersionShouldBeRetrieved()
         {
-            var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Response.Content);
+            var model = RequestHelper.Deserialise<HealthCheckResponse>(_context.Response.Content);
             model.Should().NotBeNull();
             model.AppVersion.Should().NotBeNull();
             model.AppVersion.FileVersion.Should().NotBeNull();
@@ -36,7 +36,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the Wowza health should be retrieved")]
         public void ThenTheWowzaHealthShouldBeRetrieved()
         {
-            var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HealthCheckResponse>(_context.Response.Content);
+            var model = RequestHelper.Deserialise<HealthCheckResponse>(_context.Response.Content);
             model.Should().NotBeNull();
             model.WowzaHealth.Should().NotBeNull();
         }

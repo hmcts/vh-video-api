@@ -140,13 +140,13 @@ namespace VideoApi.AcceptanceTests.Steps
         public async Task GivenTheConferenceHasAnAudioRecording()
         {
             var hearingId = _context.Test.ConferenceResponse.HearingId;
-            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", hearingId);
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", hearingId.ToString());
             
             _context.AzureStorage = new AzureStorageManager()
                 .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
-                .CreateBlobClient(hearingId);
+                .CreateBlobClient(hearingId.ToString());
 
             await _context.AzureStorage.UploadAudioFileToStorage(file);
             FileManager.RemoveLocalAudioFile(file);
@@ -174,28 +174,28 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the audio application details are retrieved")]
         public void ThenTheAudioApplicationDetailsAreRetrieved()
         {
-            var audioApplication = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioApplicationInfoResponse>(_context.Response.Content);
+            var audioApplication = RequestHelper.Deserialise<AudioApplicationInfoResponse>(_context.Response.Content);
             audioApplication.Should().NotBeNull();
         }
 
         [Then(@"the audio stream details are retrieved")]
         public void ThenTheAudioStreamDetailsAreRetrieved()
         {
-            var audioStream = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioStreamInfoResponse>(_context.Response.Content);
+            var audioStream = RequestHelper.Deserialise<AudioStreamInfoResponse>(_context.Response.Content);
             audioStream.Should().NotBeNull();
         }
 
         [Then(@"the audio stream monitoring details are retrieved")]
         public void ThenTheAudioStreamMonitoringDetailsAreRetrieved()
         {
-            var audioMonitoring = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioStreamMonitoringInfo>(_context.Response.Content);
+            var audioMonitoring = RequestHelper.Deserialise<AudioStreamMonitoringInfo>(_context.Response.Content);
             audioMonitoring.Should().NotBeNull();
         }
 
         [Then(@"the audio recording link is retrieved")]
         public void ThenTheAudioRecordingLinkIsRetrieved()
         {
-            var audioLink = RequestHelper.DeserialiseSnakeCaseJsonToResponse<AudioRecordingResponse>(_context.Response.Content);
+            var audioLink = RequestHelper.Deserialise<AudioRecordingResponse>(_context.Response.Content);
             audioLink.Should().NotBeNull();
         }
     }

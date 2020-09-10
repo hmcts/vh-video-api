@@ -8,7 +8,7 @@ namespace VideoApi.IntegrationTests.Helper
     {
         public static HttpContent Set<T>(T request)
         {
-            return new StringContent(RequestHelper.SerialiseRequestToSnakeCaseJson(request), Encoding.UTF8, "application/json");
+            return new StringContent(RequestHelper.Serialise(request), Encoding.UTF8, "application/json");
         }
     }
 }

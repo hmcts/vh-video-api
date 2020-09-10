@@ -207,7 +207,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var expected = _scenarioContext.Get<UpdateConferenceRequest>(UpdatedKey);
             conference.CaseName.Should().Be(expected.CaseName);
@@ -222,7 +222,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the conference details should be retrieved")]
         public void ThenTheConferenceDetailsShouldBeRetrieved()
         {
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.Test.ConferenceResponse = conference;
             AssertConferenceDetailsResponse.ForConference(conference);
@@ -231,7 +231,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the conference details should be retrieved with jvs endpoints")]
         public void ThenTheConferenceDetailsShouldBeRetrievedWithJvsEndpoints()
         {
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.Test.ConferenceResponse = conference;
             AssertConferenceDetailsResponse.ForConference(conference);
@@ -241,7 +241,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"a list containing only todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -257,7 +257,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"a list containing only judge todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsForJudgeShouldBeRetrieved()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForJudgeResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ConferenceForJudgeResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -273,7 +273,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"a list containing only individual todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsForIndividualShouldBeRetrieved()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForIndividualResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ConferenceForIndividualResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {
@@ -287,7 +287,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"I have an empty list of expired conferences")]
         public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Should().NotContain(x => x.CurrentStatus == ConferenceState.Closed);
         }
 
@@ -305,14 +305,14 @@ namespace VideoApi.AcceptanceTests.Steps
 
         private void ValidateListOfConferences()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ExpiredConferencesResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Select(x => x.Id).Should().NotContain(_context.Test.ConferenceIds);
         }
 
         [Then(@"the summary of conference details should be retrieved")]
         public void ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceForAdminResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             _context.Test.ConferenceResponse.Id = conferences.First().Id;
             foreach (var conference in conferences)
@@ -349,7 +349,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the Judges in hearings should be retrieved")]
         public void ThenTheJudgeInHearingResponseShouldBeRetrieved()
         {
-            var judgeInHearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<JudgeInHearingResponse>>(_context.Response.Content);
+            var judgeInHearings = RequestHelper.Deserialise<List<JudgeInHearingResponse>>(_context.Response.Content);
             judgeInHearings.Should().NotBeNull();
             var judge = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
             var expectedHearing = judgeInHearings.First(x => x.ConferenceId.Equals(_context.Test.ConferenceResponse.Id));
@@ -381,7 +381,7 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateNewConferenceRequest(date, judgeFirstName, audioRequired);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             _context.Test.ConferenceResponse = conference;
         }
@@ -413,7 +413,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetConferenceDetailsById(conferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.CurrentStatus.Should().Be(ConferenceState.Closed);
         }
     }

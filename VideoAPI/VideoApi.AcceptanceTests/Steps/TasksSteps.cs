@@ -60,7 +60,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the tasks are retrieved")]
         public void ThenTheTaskIsRetrieved()
         {
-            var tasks = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<TaskResponse>>(_context.Response.Content);
+            var tasks = RequestHelper.Deserialise<List<TaskResponse>>(_context.Response.Content);
             tasks.Should().NotBeNull();
             tasks.First().Id.Should().BeGreaterThan(-1);
             tasks.First().Created.Should().BeBefore(DateTime.Now);
@@ -72,7 +72,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the task is updated")]
         public void ThenTheStatusIsUpdated()
         {
-            var task = RequestHelper.DeserialiseSnakeCaseJsonToResponse<TaskResponse>(_context.Response.Content);
+            var task = RequestHelper.Deserialise<TaskResponse>(_context.Response.Content);
             task.Updated.HasValue.Should().BeTrue();
             task.UpdatedBy.Should().Be(UpdatedBy);
             task.Status.Should().Be(TaskStatus.Done);
