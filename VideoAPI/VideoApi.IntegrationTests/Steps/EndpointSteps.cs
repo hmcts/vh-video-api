@@ -76,7 +76,8 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 Pin = "1234",
                 SipAddress = "1234add_auto_test@sip.com",
-                DisplayName = "Automated Add EP test"
+                DisplayName = "Automated Add EP test", 
+                DefenceAdvocate = "Defence Sol"
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -89,7 +90,8 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 Pin = "1234",
                 SipAddress = "1234add_auto_test@sip.com",
-                DisplayName = "Automated Add EP test"
+                DisplayName = "Automated Add EP test",
+                DefenceAdvocate = "Defence Sol"
             };
             SetupAddEndpointRequest(conferenceId, request);
         }

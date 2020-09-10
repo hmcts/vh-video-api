@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             var conference = new ConferenceBuilder().WithEndpoint(displayName, sipAddress).Build();
 
             var beforeCount = conference.GetEndpoints().Count;
-            var endpoint = new Endpoint("Display", "test@sip.com", "1234");
+            var endpoint = new Endpoint("Display", "test@sip.com", "1234", "Defence Sol");
             Action action = () =>  conference.RemoveEndpoint(endpoint);
             
             action.Should().Throw<DomainRuleException>().Where(x =>

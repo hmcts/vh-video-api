@@ -9,13 +9,13 @@ namespace VideoApi.UnitTests.Domain.Endpoints
         [Test]
         public void should_assign_defence_advocate()
         {
-            var endpoint = new Endpoint("old name", "123@sip.com", "1234");
-            endpoint.DefenceAdvocate.Should().BeNull();
+            var defenceAdvocate = "Defence Sol";
+            var endpoint = new Endpoint("old name", "123@sip.com", "1234", defenceAdvocate);
 
-            var defenceUsername = "a@test.com";
-            endpoint.AssignDefenceAdvocate(defenceUsername);
+            var newDefenceAdvocate = "a@test.com";
+            endpoint.AssignDefenceAdvocate(newDefenceAdvocate);
 
-            endpoint.DefenceAdvocate.Should().Be(defenceUsername);
+            endpoint.DefenceAdvocate.Should().Be(newDefenceAdvocate);
         }
     }
 }

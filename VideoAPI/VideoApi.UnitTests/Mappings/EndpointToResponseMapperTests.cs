@@ -10,8 +10,7 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void should_map_endpoint_to_response()
         {
-            var endpoint = new Endpoint("Display", "sip123", "1245");
-            endpoint.AssignDefenceAdvocate("Test1");
+            var endpoint = new Endpoint("Display", "sip123", "1245", "Defence Sol");
             var response = EndpointToResponseMapper.MapEndpointResponse(endpoint);
             
             response.Id.Should().Be(endpoint.Id);

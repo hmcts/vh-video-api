@@ -62,12 +62,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conference1 = new ConferenceBuilder()
                 .WithEndpoint("DisplayName", "sip@123.com").Build();
             var seededConference = await TestDataManager.SeedConference(conference1);
-            var sipAddress = conference1.Endpoints.First().SipAddress;
-            var displayName = "Alternate Display Name";
+            var ep = conference1.Endpoints.First();
+            var sipAddress = ep.SipAddress;
+            var newDisplayName = "Alternate Display Name";
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, displayName, null);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, newDisplayName, null);
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -78,8 +79,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
             
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
-            updatedEndpoint.DisplayName.Should().Be(displayName);
-            updatedEndpoint.DefenceAdvocate.Should().BeNull();
+            updatedEndpoint.DisplayName.Should().Be(newDisplayName);
+            updatedEndpoint.DefenceAdvocate.Should().Be(ep.DefenceAdvocate);
         }
 
         [Test]

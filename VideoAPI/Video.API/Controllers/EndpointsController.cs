@@ -72,7 +72,7 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug($"Attempting to add endpoint {request.DisplayName} to conference {conferenceId}");
             
-            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin);
+            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin, request.DefenceAdvocate);
             await _commandHandler.Handle(command);
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));

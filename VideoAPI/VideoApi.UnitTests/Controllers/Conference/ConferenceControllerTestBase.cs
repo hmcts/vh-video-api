@@ -44,8 +44,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             TestEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234"),
-                new Endpoint("two", "867744", "5678")
+                new Endpoint("one", "44564", "1234", "Defence Sol"),
+                new Endpoint("two", "867744", "5678", "Defence Sol")
             };
             
             TestConference = new ConferenceBuilder()

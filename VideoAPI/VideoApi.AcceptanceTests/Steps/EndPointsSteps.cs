@@ -130,6 +130,7 @@ namespace VideoApi.AcceptanceTests.Steps
             endpointAdded.DisplayName.Should().Be(requestUsed.DisplayName);
             endpointAdded.SipAddress.Should().Be(requestUsed.SipAddress);
             endpointAdded.Pin.Should().Be(requestUsed.Pin);
+            endpointAdded.DefenceAdvocate.Should().Be(requestUsed.DefenceAdvocate);
         }
 
         [Then(@"the endpoint should be deleted")]
@@ -198,11 +199,12 @@ namespace VideoApi.AcceptanceTests.Steps
 
         private AddEndpointRequest PrepareAddEndpointRequest()
         {
-            return new AddEndpointRequest()
+            return new AddEndpointRequest
             {
                 DisplayName = $"DisplayName{Guid.NewGuid()}",
                 SipAddress = $"{Guid.NewGuid()}@videohearings.net",
-                Pin = "1234"
+                Pin = "1234", 
+                DefenceAdvocate = "Defence Sol"
             };
         }
 

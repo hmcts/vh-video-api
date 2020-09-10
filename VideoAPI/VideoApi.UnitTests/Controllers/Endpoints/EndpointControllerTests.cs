@@ -50,7 +50,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
         {
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("one", "sip@sip.com", "1234")
+                new Endpoint("one", "sip@sip.com", "1234","Defence Sol")
             };
 
             _queryHandlerMock
@@ -75,8 +75,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             var conferenceId = Guid.NewGuid();
             var testEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234"),
-                new Endpoint("two", "867744", "5678")
+                new Endpoint("one", "44564", "1234","Defence Sol"),
+                new Endpoint("two", "867744", "5678", "Defence Bol")
             };
 
             var testConference = new ConferenceBuilder()
@@ -121,8 +121,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             var conferenceId = Guid.NewGuid();
             var testEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234"),
-                new Endpoint("two", "867744", "5678")
+                new Endpoint("one", "44564", "1234", "Defence Sol"),
+                new Endpoint("two", "867744", "5678", "Defence Bol")
             };
 
             var testConference = new ConferenceBuilder()
@@ -170,8 +170,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             const string newDisplayName = "new display name";
             var testEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234"),
-                new Endpoint("two", "867744", "5678")
+                new Endpoint("one", "44564", "1234", "Defence Sol"),
+                new Endpoint("two", "867744", "5678", "Defence Bol")
             };
 
             var testConference = new ConferenceBuilder()
@@ -222,8 +222,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             const string defenceAdvocate = "Sol One";
             var testEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234"),
-                new Endpoint("two", "867744", "5678")
+                new Endpoint("one", "44564", "1234", "Defence Sol"),
+                new Endpoint("two", "867744", "5678", "Defence Bol")
             };
 
             var testConference = new ConferenceBuilder()
