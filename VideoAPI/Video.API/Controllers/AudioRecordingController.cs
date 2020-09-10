@@ -261,7 +261,7 @@ namespace Video.API.Controllers
         /// <param name="date"></param>
         /// <param name="caseReference"></param>
         [HttpGet("audio/{cloudRoomName}/{date}/{caseReference}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvp")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpWithCaseReference")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference)
@@ -287,7 +287,7 @@ namespace Video.API.Controllers
         /// <param name="cloudRoomName"></param>
         /// <param name="date"></param>
         [HttpGet("audio/{cloudRoomName}/{date}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpWithCaseReference")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvp")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date)
