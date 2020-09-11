@@ -222,7 +222,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-            _context.Uri = UpdateDisplayNameForEndpoint(conferenceId, sipAddress);
+            _context.Uri = UpdateEndpoint(conferenceId, sipAddress);
             _context.HttpMethod = HttpMethod.Patch;
         }
     }
