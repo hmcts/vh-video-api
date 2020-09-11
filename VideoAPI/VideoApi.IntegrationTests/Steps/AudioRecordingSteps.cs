@@ -82,7 +82,7 @@ namespace VideoApi.IntegrationTests.Steps
             
             foreach (var cvp in parameters)
             {
-                var filePathOnStorage = $"{cvp.CloudRoomName}/{cvp.CaseReference}-{cvp.Date}-something.mp4";
+                var filePathOnStorage = $"{cvp.CloudRoomName}/{cvp.CaseReference}-{cvp.Date}-{Guid.NewGuid()}.mp4";
                 _context.Test.CvpFileNamesOnStorage.Add(filePathOnStorage);
 
                 await _context.AzureStorage.UploadFileToStorage(file, filePathOnStorage);
@@ -261,15 +261,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheCountAudioRecordingFromCvpAreRetrieved(int count)
         {
             var audioRecordings = await Response.GetResponses<List<CvpAudioFileResponse>>(_context.Response.Content);
-            audioRecordings.Should().NotBeNullOrEmpty().And.HaveCount(count);
-
-            foreach (var cvpFilesOnStorage in _context.Test.CvpFileNamesOnStorage)
-            {
-                await foreach (var file in _context.AzureStorage.GetAllBlobsAsync(cvpFilesOnStorage))
-                {
-                    await file.DeleteAsync();
-                }
-            }
+            audioRecordings.Should().HaveCount(count);
         }
     }
 }
