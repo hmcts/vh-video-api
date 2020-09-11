@@ -69,15 +69,15 @@ namespace VideoApi.IntegrationTests.Steps
         }
         
         [Given(@"I have an add endpoint to conference request")]
-        [Then(@"I have an add endpoint to conference request")]
-        public void IHaveAValidAddEndpointRequest()
+        public void GivenIHaveAValidAddEndpointRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
             var request = new AddEndpointRequest
             {
                 Pin = "1234",
                 SipAddress = $"{Guid.NewGuid()}@sip.com",
-                DisplayName = "Automated Add EP test"
+                DisplayName = "Automated Add EP test", 
+                DefenceAdvocate = "Defence Sol"
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -90,7 +90,8 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 Pin = "1234",
                 SipAddress = "1234add_auto_test@sip.com",
-                DisplayName = "Automated Add EP test"
+                DisplayName = "Automated Add EP test",
+                DefenceAdvocate = "Defence Sol"
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -173,7 +174,8 @@ namespace VideoApi.IntegrationTests.Steps
             var sipAddress = _context.Test.Conference.Endpoints.First().SipAddress;
             var request = new UpdateEndpointRequest
             {
-                DisplayName = "Automated Add EP test"
+                DisplayName = "Automated Add EP test",
+                DefenceAdvocate = "Sol One"
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }

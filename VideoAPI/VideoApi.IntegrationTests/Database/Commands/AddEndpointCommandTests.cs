@@ -39,7 +39,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var command = new AddEndpointCommand(conferenceId, "display", "sip@test.com", "pin");
+            var command = new AddEndpointCommand(conferenceId, "display", "sip@test.com", "pin", "Defence Sol");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -53,8 +53,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var displayName = "display1";
             var sip = "123@sip.com";
             var pin = "123";
+            var defenceAdvocate = "Defence Sol";
             
-            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin);
+            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin, defenceAdvocate);
             await _handler.Handle(command);
             
             Conference updatedConference;
@@ -69,6 +70,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             ep.SipAddress.Should().Be(sip);
             ep.DisplayName.Should().Be(displayName);
             ep.Id.Should().NotBeEmpty();
+            ep.DefenceAdvocate.Should().Be(defenceAdvocate);
             ep.State.Should().Be(EndpointState.NotYetJoined);
         }
     }

@@ -16,6 +16,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Mappers;
+using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
 {
@@ -71,7 +72,7 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug($"Attempting to add endpoint {request.DisplayName} to conference {conferenceId}");
             
-            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin);
+            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin, request.DefenceAdvocate);
             await _commandHandler.Handle(command);
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
@@ -107,29 +108,43 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Update the display name of an endpoint
+        /// Update an endpoint's display name or assign the defence advocate
         /// </summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="sipAddress">the endpoint sip address to be updated</param>
-        /// <param name="request">the display name to be updated</param>
+        /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
-        [HttpPatch("{conferenceId}/endpoints/{sipAddress}/displayname")]
-        [SwaggerOperation(OperationId = "UpdateDisplayNameForEndpoint ")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateDisplayNameForEndpoint(Guid conferenceId, string sipAddress, 
+        [HttpPatch("{conferenceId}/endpoints/{sipAddress}")]
+        [SwaggerOperation(OperationId = "UpdateDisplayNameForEndpoint")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateDisplayNameForEndpointAsync(Guid conferenceId, string sipAddress,
             [FromBody] UpdateEndpointRequest request)
         {
-            _logger.LogDebug($"Attempting to update endpoint {sipAddress} for conference {conferenceId} with displayname {request.DisplayName}");
+            _logger.LogDebug(
+                $"Attempting to update endpoint {sipAddress} for conference {conferenceId} with display name {request.DisplayName}");
 
-            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName);
+            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate);
             await _commandHandler.Handle(command);
 
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-            var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            if (!string.IsNullOrWhiteSpace(request.DisplayName))
+            {
+                await UpdateDisplayNameInKinly(conferenceId);
+            }
 
-            _logger.LogDebug($"Successfully updated endpoint {sipAddress} from conference {conferenceId} with displayname {request.DisplayName}");
+            _logger.LogDebug(
+                $"Successfully updated endpoint {sipAddress} from conference {conferenceId} with display name {request.DisplayName}");
             return Ok();
+        }
+
+        private async Task UpdateDisplayNameInKinly(Guid conferenceId)
+        {
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
+            var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id,
+                conference.AudioRecordingRequired,
+                endpointDtos);
         }
     }
 }
