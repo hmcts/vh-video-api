@@ -99,7 +99,7 @@ namespace VideoApi.IntegrationTests.Steps
                 MessageText = Internet.DomainWord(),
                 To = to
             };
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(_context.Test.Message);
+            var jsonBody = RequestHelper.Serialise(_context.Test.Message);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -113,7 +113,7 @@ namespace VideoApi.IntegrationTests.Steps
                 From = "non-existent-participant",
                 MessageText = Internet.DomainWord()
             };
-            var jsonBody = RequestHelper.SerialiseRequestToSnakeCaseJson(request);
+            var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 

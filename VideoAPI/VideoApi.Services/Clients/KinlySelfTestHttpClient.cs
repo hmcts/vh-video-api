@@ -47,7 +47,7 @@ namespace VideoApi.Services.Clients
             }
 
             var content = await responseMessage.Content.ReadAsStringAsync();
-            var testCall = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<Testcall>(content);
+            var testCall = ApiRequestHelper.Deserialise<Testcall>(content);
             _logger.LogWarning($" {responseMessage.StatusCode} : Successfully retrieved self test score for participant {participantId} ");
             
             return new TestCallResult(testCall.Passed, (TestScore) testCall.Score);

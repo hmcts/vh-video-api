@@ -9,6 +9,11 @@ namespace Testing.Common.Configuration
 {
     public class Test
     {
+        public Test()
+        {
+            CvpFileNamesOnStorage = new List<string>();    
+        }
+        
         public string CaseName { get; set; }
         public List<Conference> ClosedConferences { get; set; }
         public List<Conference> ClosedConferencesWithMessages { get; set; }
@@ -30,5 +35,6 @@ namespace Testing.Common.Configuration
         public UpdateTaskRequest UpdateTaskRequest { get; set; }
         public Conference YesterdayClosedConference { get; set; }
         public List<JudgeInHearingResponse> JudgeInHearings { get; set; }
+        public List<string> CvpFileNamesOnStorage { get; set; }
     }
 }

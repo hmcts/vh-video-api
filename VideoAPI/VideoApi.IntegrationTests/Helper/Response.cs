@@ -9,7 +9,7 @@ namespace VideoApi.IntegrationTests.Helper
         public static async Task<T> GetResponses<T>(HttpContent content)
         {
             var json = await content.ReadAsStringAsync();
-            return RequestHelper.DeserialiseSnakeCaseJsonToResponse<T>(json);
+            return RequestHelper.Deserialise<T>(json);
         }
     }
 }

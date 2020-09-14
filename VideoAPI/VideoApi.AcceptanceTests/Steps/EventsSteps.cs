@@ -62,7 +62,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(ConferenceEndpoints.GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var participant = conference.Participants.First(x => x.Id == _context.Test.ParticipantId);
             participant.CurrentStatus.Should().Be(ParticipantState.Available);

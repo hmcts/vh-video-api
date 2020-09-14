@@ -5,7 +5,7 @@ namespace VideoApi.Services.Helpers
 {
     public static class ApiRequestHelper
     {
-        public static T DeserialiseSnakeCaseJsonToResponse<T>(string response)
+        public static T Deserialise<T>(string response)
         {
             var contractResolver = new DefaultContractResolver
             {

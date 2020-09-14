@@ -36,7 +36,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Post(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.POST);            
-            request.AddParameter("Application/json", RequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
+            request.AddParameter("Application/json", RequestHelper.Serialise(requestBody),
                 ParameterType.RequestBody);
             return request;
         }
@@ -49,7 +49,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Put(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.PUT);
-            request.AddParameter("Application/json", RequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
+            request.AddParameter("Application/json", RequestHelper.Serialise(requestBody),
                 ParameterType.RequestBody);
             return request;
         }
@@ -57,7 +57,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Patch(string path, object requestBody = null)
         {
             var request = new RestRequest(path, Method.PATCH);
-            request.AddParameter("Application/json", RequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
+            request.AddParameter("Application/json", RequestHelper.Serialise(requestBody),
                 ParameterType.RequestBody);
             return request;
         }

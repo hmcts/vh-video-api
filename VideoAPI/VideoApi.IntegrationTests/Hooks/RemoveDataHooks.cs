@@ -39,7 +39,7 @@ namespace VideoApi.IntegrationTests.Hooks
             using var client = context.CreateClient();
             var response = await client.GetAsync(endpoint);
             var json = await response.Content.ReadAsStringAsync();
-            return RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<ConferenceDetailsResponse>>(json);
+            return RequestHelper.Deserialise<List<ConferenceDetailsResponse>>(json);
         }
 
         [AfterScenario(Order = (int)HooksSequence.RemoveServer)]

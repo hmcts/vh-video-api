@@ -40,6 +40,7 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterWowzaSettings(context);
+            RegisterCvpSettings(context);
             RegisterDatabaseSettings(context);
             RegisterServer(context);
             RegisterApiSettings(context);
@@ -79,6 +80,14 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Wowza.StorageAccountKey.Should().NotBeNullOrEmpty();
             context.Config.Wowza.StorageAccountName.Should().NotBeNullOrEmpty();
             context.Config.Wowza.StorageContainerName.Should().NotBeNullOrEmpty();
+        }
+
+        private void RegisterCvpSettings(TestContext context)
+        {
+            context.Config.Cvp = Options.Create(_configRoot.GetSection("CvpConfiguration").Get<CvpConfiguration>()).Value;
+            context.Config.Cvp.StorageAccountKey.Should().NotBeNullOrEmpty();
+            context.Config.Cvp.StorageAccountName.Should().NotBeNullOrEmpty();
+            context.Config.Cvp.StorageContainerName.Should().NotBeNullOrEmpty();
         }
 
         private void RegisterDatabaseSettings(TestContext context)

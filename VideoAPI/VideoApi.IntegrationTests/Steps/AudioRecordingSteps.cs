@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.AudioRecordings;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TechTalk.SpecFlow.Assist;
+using Testing.Common.Configuration;
 using VideoApi.Contract.Responses;
 using VideoApi.IntegrationTests.Contexts;
 using static Testing.Common.Helper.ApiUriFactory.AudioRecordingEndpoints;
@@ -51,15 +54,40 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have an audio recording")]
         public async Task GivenIHaveAnAudioRecording()
         {
-            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.Conference.HearingRefId);
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _context.Test.Conference.HearingRefId.ToString());
 
             _context.AzureStorage = new AzureStorageManager()
                 .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
-                .CreateBlobClient(_context.Test.Conference.HearingRefId);
+                .CreateBlobClient(_context.Test.Conference.HearingRefId.ToString());
 
             await _context.AzureStorage.UploadAudioFileToStorage(file);
+            FileManager.RemoveLocalAudioFile(file);
+        }
+
+        [Given(@"Cvp has audio recordings")]
+        public async Task CvpHasAudioRecordings(Table table)
+        {
+            var parameters = table.CreateSet<CvpGetAudioFileParameters>();
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", Guid.NewGuid().ToString());
+
+            _context.AzureStorage = new AzureStorageManager()
+                .SetStorageAccountName(_context.Config.Cvp.StorageAccountName)
+                .SetStorageAccountKey(_context.Config.Cvp.StorageAccountKey)
+                .SetStorageContainerName(_context.Config.Cvp.StorageContainerName)
+                .CreateBlobContainerClient();
+
+            _context.Test.CvpFileNamesOnStorage = new List<string>();
+            
+            foreach (var cvp in parameters)
+            {
+                var filePathOnStorage = $"{cvp.CloudRoomName}/{cvp.CaseReference}-{cvp.Date}-{Guid.NewGuid()}.mp4";
+                _context.Test.CvpFileNamesOnStorage.Add(filePathOnStorage);
+
+                await _context.AzureStorage.UploadFileToStorage(file, filePathOnStorage);
+            }
+            
             FileManager.RemoveLocalAudioFile(file);
         }
 
@@ -185,6 +213,15 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
 
+        [Given(@"I have a valid get cvp audio recordings request for (.*) (.*) (.*)")]
+        public void GivenIHaveAValidGetCvpAudioRecordingRequest(string cloudRoomName, string date, string caseReference)
+        {
+            _context.Uri = !string.IsNullOrWhiteSpace(caseReference) 
+                ? GetCvpAudioRecordings(cloudRoomName, date, caseReference)
+                : GetCvpAudioRecordings(cloudRoomName, date);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
         [Given(@"I have a nonexistent get audio recording link request")]
         public void GivenIHaveANonexistentGetAudioRecordingLinkRequest()
         {
@@ -218,6 +255,13 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var audioRecording = await Response.GetResponses<AudioRecordingResponse>(_context.Response.Content);
             audioRecording.Should().NotBeNull();
+        }
+
+        [Then(@"(.*) audio recordings from cvp are retrieved")]
+        public async Task ThenTheCountAudioRecordingFromCvpAreRetrieved(int count)
+        {
+            var audioRecordings = await Response.GetResponses<List<CvpAudioFileResponse>>(_context.Response.Content);
+            audioRecordings.Should().HaveCount(count);
         }
     }
 }

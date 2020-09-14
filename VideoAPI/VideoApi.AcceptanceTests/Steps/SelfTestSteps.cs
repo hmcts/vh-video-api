@@ -25,7 +25,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the pexip service configuration should be retrieved")]
         public void ThenThePexipServiceConfigurationShouldBeRetrieved()
         {
-            var pexipConfig = RequestHelper.DeserialiseSnakeCaseJsonToResponse<PexipConfigResponse>(_context.Response.Content);
+            var pexipConfig = RequestHelper.Deserialise<PexipConfigResponse>(_context.Response.Content);
             pexipConfig.PexipSelfTestNode.Should().NotBeNullOrWhiteSpace();
         }
     }
