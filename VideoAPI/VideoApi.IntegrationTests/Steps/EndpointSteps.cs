@@ -49,11 +49,11 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference1 = new ConferenceBuilder()
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant", "rep@hearings.reform.hmcts.net")
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Internet.FreeEmail())
+                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hearings.reform.hmcts.net")
                 .WithEndpoint("Display2", Internet.FreeEmail())
                 .WithMeetingRoom("https://poc.node.com", "user@email.com")
                 .WithAudioRecordingRequired(false).Build();
