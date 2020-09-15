@@ -184,14 +184,20 @@ namespace VideoApi.Domain
                 throw new DomainRuleException("No Participants", "This conference has no participants");
             }
 
-            var consultationRoom1Occupied = GetParticipants().Any(x => x.CurrentRoom == RoomType.ConsultationRoom1);
-            if (!consultationRoom1Occupied)
+            var endpoints = GetEndpoints() ?? new List<Endpoint>();
+
+            var endpointRooms = endpoints.Select(x => x.CurrentRoom);
+            var participantRooms = GetParticipants().Select(x => x.CurrentRoom);
+            var allRooms = new List<RoomType?>(endpointRooms).Concat(participantRooms).ToList();
+            
+            var consultationRoomOneOccupied = allRooms.Any(x => x == RoomType.ConsultationRoom1);
+            if (!consultationRoomOneOccupied)
             {
                 return RoomType.ConsultationRoom1;
             }
 
-            var consultationRoomOccupied = GetParticipants().Any(x => x.CurrentRoom == RoomType.ConsultationRoom2);
-            if (!consultationRoomOccupied)
+            var consultationRoomTwoOccupied = allRooms.Any(x => x == RoomType.ConsultationRoom2);
+            if (!consultationRoomTwoOccupied)
             {
                 return RoomType.ConsultationRoom2;
             }
