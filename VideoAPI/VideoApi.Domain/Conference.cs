@@ -184,9 +184,7 @@ namespace VideoApi.Domain
                 throw new DomainRuleException("No Participants", "This conference has no participants");
             }
 
-            var endpoints = GetEndpoints() ?? new List<Endpoint>();
-
-            var endpointRooms = endpoints.Select(x => x.CurrentRoom);
+            var endpointRooms = GetEndpoints().Select(x => x.CurrentRoom);
             var participantRooms = GetParticipants().Select(x => x.CurrentRoom);
             var allRooms = new List<RoomType?>(endpointRooms).Concat(participantRooms).ToList();
             
