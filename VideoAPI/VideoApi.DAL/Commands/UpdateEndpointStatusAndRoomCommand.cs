@@ -8,29 +8,33 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateEndpointStatusCommand : ICommand
+    public class UpdateEndpointStatusAndRoomCommand : ICommand
     {
         public Guid ConferenceId { get; }
         public Guid EndpointId { get; }
         public EndpointState Status { get; }
-        public UpdateEndpointStatusCommand(Guid conferenceId, Guid endpointId, EndpointState status)
+        public RoomType? Room { get; }
+
+        public UpdateEndpointStatusAndRoomCommand(Guid conferenceId, Guid endpointId, EndpointState status,
+            RoomType? room)
         {
             ConferenceId = conferenceId;
             EndpointId = endpointId;
             Status = status;
+            Room = room;
         }
     }
 
-    public class UpdateEndpointStatusCommandHandler : ICommandHandler<UpdateEndpointStatusCommand>
+    public class UpdateEndpointStatusAndRoomCommandHandler : ICommandHandler<UpdateEndpointStatusAndRoomCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public UpdateEndpointStatusCommandHandler(VideoApiDbContext context)
+        public UpdateEndpointStatusAndRoomCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(UpdateEndpointStatusCommand command)
+        public async Task Handle(UpdateEndpointStatusAndRoomCommand command)
         {
             var conference = await _context.Conferences.Include(x => x.Endpoints)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
@@ -45,8 +49,10 @@ namespace VideoApi.DAL.Commands
             {
                 throw new EndpointNotFoundException(command.EndpointId);
             }
-            
+
             endpoint.UpdateStatus(command.Status);
+            endpoint.UpdateCurrentRoom(command.Room);
+
             await _context.SaveChangesAsync();
         }
     }
