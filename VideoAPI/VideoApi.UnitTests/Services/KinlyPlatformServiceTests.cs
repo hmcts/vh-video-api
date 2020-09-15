@@ -67,9 +67,11 @@ namespace VideoApi.UnitTests.Services
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Representative, "Claimant", "rep1@dA.com")
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
+                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@test.hearings.com", "rep1@dA.com")
+                .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@test.hearings.com")
                 .Build();
         }
 
@@ -133,9 +135,11 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new KinlyApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>()));
+                    _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "",
+                        new List<EndpointDto>()))
+                .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
-        
+
         [Test]
         public void Should_throw_kinly_api_exception_when_booking_courtroom()
         {
@@ -215,7 +219,10 @@ namespace VideoApi.UnitTests.Services
         {
             _kinlyApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
 
-            await _kinlyPlatformService.UpdateVirtualCourtRoomAsync(Guid.NewGuid(), true, new List<EndpointDto>());
+            var conferenceId = Guid.NewGuid();
+            await _kinlyPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>());
+            
+            _kinlyApiClientMock.Verify(x => x.UpdateHearingAsync(conferenceId.ToString(), It.Is<UpdateHearingParams>(p => p.Recording_enabled)), Times.Once);
         }
 
         [Test]
@@ -294,6 +301,73 @@ namespace VideoApi.UnitTests.Services
             await _kinlyPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
             
             _kinlyApiClientMock.Verify(x => x.DeleteHearingAsync(conferenceId.ToString()), Times.Once);
+        }
+
+        [Test]
+        public async Task should_start_hearing()
+        {
+            var conferenceId = Guid.NewGuid();
+            await _kinlyPlatformService.StartHearingAsync(conferenceId);
+            _kinlyApiClientMock.Verify(x => x.StartHearingAsync(conferenceId.ToString()), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_pause_hearing()
+        {
+            var conferenceId = Guid.NewGuid();
+            await _kinlyPlatformService.PauseHearingAsync(conferenceId);
+            _kinlyApiClientMock.Verify(x => x.PauseHearingAsync(conferenceId.ToString()), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_end_hearing()
+        {
+            var conferenceId = Guid.NewGuid();
+            await _kinlyPlatformService.EndHearingAsync(conferenceId);
+            _kinlyApiClientMock.Verify(x => x.EndHearingAsync(conferenceId.ToString()), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_suspend_hearing()
+        {
+            var conferenceId = Guid.NewGuid();
+            await _kinlyPlatformService.RequestTechnicalAssistanceAsync(conferenceId);
+            _kinlyApiClientMock.Verify(x => x.TechnicalAssistanceAsync(conferenceId.ToString()), Times.Once);
+        }
+
+        [Test]
+        public async Task should_start_private_consultation_with_endpoint()
+        {
+            var room = RoomType.ConsultationRoom1;
+            var endpointWithDefenceAdvocate = _testConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var defenceAdvocate = _testConference.GetParticipants().First(x =>
+                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
+                    StringComparison.CurrentCultureIgnoreCase));
+
+            endpointWithDefenceAdvocate.UpdateCurrentRoom(RoomType.WaitingRoom);
+            defenceAdvocate.UpdateCurrentRoom(RoomType.WaitingRoom);
+
+            
+            await _kinlyPlatformService.StartEndpointPrivateConsultationAsync(_testConference, endpointWithDefenceAdvocate,
+                defenceAdvocate);
+
+            _kinlyApiClientMock.Verify(x =>
+                    x.TransferParticipantAsync(_testConference.Id.ToString(),
+                        It.Is<TransferParticipantParams>(r =>
+                            r.Part_id == endpointWithDefenceAdvocate.Id.ToString() &&
+                            r.From == endpointWithDefenceAdvocate.GetCurrentRoom().ToString() &&
+                            r.To == room.ToString())
+                    )
+                , Times.Once);
+
+            _kinlyApiClientMock.Verify(x =>
+                    x.TransferParticipantAsync(_testConference.Id.ToString(),
+                        It.Is<TransferParticipantParams>(r =>
+                            r.Part_id == defenceAdvocate.Id.ToString() &&
+                            r.From == endpointWithDefenceAdvocate.GetCurrentRoom().ToString() &&
+                            r.To == room.ToString())
+                    )
+                , Times.Once);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace VideoApi.Services
             {
                 if (e.StatusCode == (int)HttpStatusCode.Conflict)
                 {
-                    throw new DoubleBookingException(conferenceId, e.Message);
+                    throw new DoubleBookingException(conferenceId);
                 }
 
                 throw;

@@ -12,7 +12,7 @@ namespace VideoApi.Services.Mappers
                 Id = source.Id,
                 SipAddress = source.SipAddress,
                 DisplayName = source.DisplayName,
-                Pin = source.Pin
+                Pin = source.Pin,
             };
         }
 
