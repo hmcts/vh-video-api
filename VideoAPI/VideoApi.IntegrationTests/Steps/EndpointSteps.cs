@@ -69,6 +69,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
         
         [Given(@"I have an add endpoint to conference request")]
+        [Then(@"I have an add endpoint to conference request")]
         public void GivenIHaveAValidAddEndpointRequest()
         {
             var conferenceId = _context.Test.Conference.Id;
