@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Domain.Participants
                 .Build();
             participant.UpdateCurrentRoom(null);
             Assert.Throws<DomainRuleException>(() => participant.GetCurrentRoom()).ValidationFailures
-                .Any(x => x.Message == "Endpoint is not in a room").Should().BeTrue();
+                .Any(x => x.Message == "Participant is not in a room").Should().BeTrue();
         }
     }
 }

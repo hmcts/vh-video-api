@@ -54,6 +54,11 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
+        public Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint, Participant defenceAdvocate)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
         {
             return Task.CompletedTask;
