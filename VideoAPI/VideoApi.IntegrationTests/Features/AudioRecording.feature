@@ -87,42 +87,42 @@ Feature: Audio Recording
   @VIH-6385
   Scenario Outline: Get Audio Recordings for CVP With case reference number
     Given Cvp has audio recordings
-      | CloudRoomName  | Date       | CaseReference |
-      | TestCloudRoom1 | 2020-01-01 | MyReference1  |
-      | TestCloudRoom1 | 2020-01-01 | MyReference1  |
-      | TestCloudRoom1 | 2020-01-02 | MyReference3  |
-      | TestCloudRoom1 | 2020-01-02 | MyReference4  |
-      | TestCloudRoom1 | 2020-01-02 | MyReference5  |
-    And I have a valid get cvp audio recordings request for <CloudRoomName> <Date> <CaseReference>
+      | CloudRoom | Date       | CaseReference |
+      | 1001      | 2020-01-01 | MyReference1  |
+      | 1001      | 2020-01-01 | MyReference1  |
+      | 1001      | 2020-01-02 | MyReference3  |
+      | 1001      | 2020-01-02 | MyReference4  |
+      | 1001      | 2020-01-02 | MyReference5  |
+    And I have a valid get cvp audio recordings request for <CloudRoom> <Date> <CaseReference>
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
     And <Results> audio recordings from cvp are retrieved
     Examples:
-      | CloudRoomName  | Date       | CaseReference         | Results |
-      | TestCloudRoom1 | 2020-01-01 | MyReference1          | 2       |
-      | TestCloudRoom1 | 2020-01-02 | MyReference3          | 1       |
-      | TestCloudRoom1 | 2020-01-02 | MyReference4          | 1       |
-      | TestCloudRoom1 | 2020-01-02 | MyReference5          | 1       |
-      | TestCloudRoom1 | 2020-01-02 | MyReference99999xxxxx | 0       |
-      | NoExist        | 2020-01-09 | NoExist               | 0       |
+      | CloudRoom | Date       | CaseReference         | Results |
+      | 1001      | 2020-01-01 | MyReference1          | 2       |
+      | 1001      | 2020-01-02 | MyReference3          | 1       |
+      | 1001      | 2020-01-02 | MyReference4          | 1       |
+      | 1001      | 2020-01-02 | MyReference5          | 1       |
+      | 1001      | 2020-01-02 | MyReference99999xxxxx | 0       |
+      | NoExist   | 2020-01-09 | NoExist               | 0       |
 
   @VIH-6385
   Scenario Outline: Get Audio Recordings for CVP without case reference number
     Given Cvp has audio recordings
-      | CloudRoomName  | Date       |
-      | TestCloudRoom1 | 2020-01-01 |
-      | TestCloudRoom1 | 2020-01-01 |
-      | TestCloudRoom1 | 2020-01-02 |
-      | TestCloudRoom1 | 2020-01-02 |
-      | TestCloudRoom1 | 2020-01-02 |
-      | TestCloudRoom1 | 2020-01-03 |
-    And I have a valid get cvp audio recordings request for <CloudRoomName> <Date>
+      | CloudRoom | Date       |
+      | 1001      | 2020-01-01 |
+      | 1001      | 2020-01-01 |
+      | 1001      | 2020-01-02 |
+      | 1001      | 2020-01-02 |
+      | 1001      | 2020-01-02 |
+      | 1001      | 2020-01-03 |
+    And I have a valid get cvp audio recordings request for <CloudRoom> <Date>
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
     And <Results> audio recordings from cvp are retrieved
     Examples:
-      | CloudRoomName  | Date       |  Results |
-      | TestCloudRoom1 | 2020-01-01 |  2       |
-      | TestCloudRoom1 | 2020-01-02 |  3       |
-      | TestCloudRoom1 | 2020-01-03 |  1       |
-      | TestCloudRoom1 | 2020-01-04 |  0       |
+      | CloudRoom | Date       | Results |
+      | 1001      | 2020-01-01 | 2       |
+      | 1001      | 2020-01-02 | 3       |
+      | 1001      | 2020-01-03 | 1       |
+      | 1001      | 2020-01-04 | 0       |
