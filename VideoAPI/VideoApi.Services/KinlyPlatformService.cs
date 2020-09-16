@@ -159,11 +159,20 @@ namespace VideoApi.Services
         public async Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
         {
             var participants = conference.GetParticipants()
-                .Where(x => x.GetCurrentRoom() == consultationRoom);
+                .Where(x => x.GetCurrentStatus().ParticipantState == ParticipantState.InConsultation &&
+                            x.GetCurrentRoom() == consultationRoom);
 
             foreach (var participant in participants)
             {
                 await TransferParticipantAsync(conference.Id, participant.Id, consultationRoom,
+                    RoomType.WaitingRoom);
+            }
+
+            var endpoints = conference.GetEndpoints()
+                .Where(x => x.State == EndpointState.InConsultation && x.GetCurrentRoom() == consultationRoom);
+            foreach (var endpoint in endpoints)
+            {
+                await TransferParticipantAsync(conference.Id, endpoint.Id, consultationRoom,
                     RoomType.WaitingRoom);
             }
         }

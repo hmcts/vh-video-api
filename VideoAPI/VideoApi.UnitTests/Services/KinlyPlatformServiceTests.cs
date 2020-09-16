@@ -112,6 +112,8 @@ namespace VideoApi.UnitTests.Services
         public async Task Should_remove_all_participants_in_room()
         {
             var room = RoomType.ConsultationRoom1;
+            _testConference.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
+            _testConference.Participants[4].UpdateParticipantStatus(ParticipantState.InConsultation);
             _testConference.Participants[1].UpdateCurrentRoom(room);
             _testConference.Participants[4].UpdateCurrentRoom(room);
             
@@ -124,6 +126,27 @@ namespace VideoApi.UnitTests.Services
                             r.To == RoomType.WaitingRoom.ToString()
                             )
                         )
+                , Times.Exactly(2));
+        }
+        
+        [Test]
+        public async Task Should_remove_all_participants_and_endpoints_in_room()
+        {
+            var room = RoomType.ConsultationRoom1;
+            _testConference.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
+            _testConference.Participants[1].UpdateCurrentRoom(room);
+            _testConference.Endpoints[0].UpdateStatus(EndpointState.InConsultation);
+            _testConference.Endpoints[0].UpdateCurrentRoom(room);
+
+            await _kinlyPlatformService.StopPrivateConsultationAsync(_testConference, room);
+            
+            _kinlyApiClientMock.Verify(x =>
+                    x.TransferParticipantAsync(_testConference.Id.ToString(), 
+                        It.Is<TransferParticipantParams>(r => 
+                            r.From == room.ToString() && 
+                            r.To == RoomType.WaitingRoom.ToString()
+                        )
+                    )
                 , Times.Exactly(2));
         }
 
