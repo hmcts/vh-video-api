@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
@@ -67,6 +68,11 @@ namespace VideoApi.Domain
         public void UpdateTestCallResult(bool passed, TestScore score)
         {
             TestCallResult = new TestCallResult(passed, score);
+        }
+
+        public RoomType GetCurrentRoom()
+        {
+            return CurrentRoom ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)

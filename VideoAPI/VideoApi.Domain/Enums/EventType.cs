@@ -21,5 +21,6 @@ namespace VideoApi.Domain.Enums
         ParticipantNotSignedIn = 16,
         EndpointJoined = 19,
         EndpointDisconnected = 20,
+        EndpointTransfer = 21
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using VideoApi.Common;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -18,7 +19,7 @@ namespace VideoApi.DAL.Commands
             TransferredFrom = transferredFrom;
             TransferredTo = transferredTo;
             Reason = reason;
-            IsEndpoint = eventType == EventType.EndpointJoined || eventType == EventType.EndpointDisconnected;
+            IsEndpoint = eventType.IsEndpointEvent();
         }
 
         public Guid ConferenceId { get; }

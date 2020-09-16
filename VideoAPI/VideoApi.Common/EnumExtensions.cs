@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.Common
 {
@@ -24,6 +25,12 @@ namespace VideoApi.Common
             {
                 return value.ToString();
             }
+        }
+
+        public static bool IsEndpointEvent(this EventType eventType)
+        {
+            return eventType == EventType.EndpointJoined || eventType == EventType.EndpointDisconnected ||
+                   eventType == EventType.EndpointTransfer;
         }
     }
 }

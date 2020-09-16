@@ -72,6 +72,7 @@ namespace Testing.Common.Helper
             public static string HandleConsultationRequest => $"{ApiRoot}";
             public static string LeaveConsultationRequest => $"{ApiRoot}/leave";
             public static string RespondToAdminConsultationRequest => $"{ApiRoot}/vhofficer/respond";
+            public static string EndpointConsultationRequest => $"{ApiRoot}/endpoint";
         }
 
         public static class SelfTestEndpoints
