@@ -21,8 +21,8 @@ namespace Testing.Common.Helper
             public static string DeleteAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
             public static string GetAudioMonitoringStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}/monitoring";
             public static string GetAudioRecordingLink(Guid hearingId) => $"{ApiRoot}/audio/{hearingId}";
-            public static string GetCvpAudioRecordings(string cloudRoomName, string date, string caseReference) => $"{ApiRoot}/audio/{cloudRoomName}/{date}/{caseReference}";
-            public static string GetCvpAudioRecordings(string cloudRoomName, string date) => $"{ApiRoot}/audio/{cloudRoomName}/{date}";
+            public static string GetCvpAudioRecordings(string cloudRoom, string date, string caseReference) => $"{ApiRoot}/audio/{cloudRoom}/{date}/{caseReference}";
+            public static string GetCvpAudioRecordings(string cloudRoom, string date) => $"{ApiRoot}/audio/{cloudRoom}/{date}";
         }
 
         public static class ParticipantsEndpoints
