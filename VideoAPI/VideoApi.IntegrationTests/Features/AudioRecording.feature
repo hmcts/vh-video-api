@@ -116,7 +116,7 @@ Feature: Audio Recording
       | 1001      | 2020-01-02 |
       | 1001      | 2020-01-02 |
       | 1001      | 2020-01-03 |
-    And I have a valid get cvp audio recordings request for <CloudRoom> <Date>
+    And I have a valid default get cvp audio recordings request for <CloudRoom> <Date>
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
     And <Results> audio recordings from cvp are retrieved

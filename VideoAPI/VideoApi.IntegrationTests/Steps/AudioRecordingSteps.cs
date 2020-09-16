@@ -213,12 +213,17 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
 
+        [Given(@"I have a valid default get cvp audio recordings request for (.*) (.*)")]
+        public void GivenIHaveAValidDefaultGetCvpAudioRecordingRequest(string cloudRoom, string date)
+        {
+            _context.Uri = GetCvpAudioRecordings(cloudRoom, date);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
         [Given(@"I have a valid get cvp audio recordings request for (.*) (.*) (.*)")]
         public void GivenIHaveAValidGetCvpAudioRecordingRequest(string cloudRoom, string date, string caseReference)
         {
-            _context.Uri = !string.IsNullOrWhiteSpace(caseReference) 
-                ? GetCvpAudioRecordings(cloudRoom, date, caseReference)
-                : GetCvpAudioRecordings(cloudRoom, date);
+            _context.Uri = GetCvpAudioRecordings(cloudRoom, date, caseReference);
             _context.HttpMethod = HttpMethod.Get;
         }
 
