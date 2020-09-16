@@ -90,5 +90,16 @@ namespace VideoApi.UnitTests.Services
                             And.ValidationFailures.Any(x => x.Name == "Unavailable room")
                 .Should().BeTrue();
         }
+
+        [Test]
+        public void should_remove_reservation_if_reserved()
+        {
+            var conferenceId = _testConference.Id;
+            var roomType = RoomType.ConsultationRoom1;
+            var reservationKey = $"{conferenceId}:{roomType}";
+            _memoryCache.Set(reservationKey, roomType);
+            _roomReservationService.RemoveRoomReservation(conferenceId, roomType);
+            _memoryCache.TryGetValue(reservationKey, out _).Should().BeFalse();
+        }
     }
 }

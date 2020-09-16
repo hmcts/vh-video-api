@@ -5,6 +5,7 @@ using System.Text;
 using AcceptanceTests.Common.Api.Helpers;
 using FizzWare.NBuilder;
 using TechTalk.SpecFlow;
+using VideoApi.Common;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -77,7 +78,7 @@ namespace VideoApi.IntegrationTests.Steps
             if (conference == null) return request;
 
             request.ConferenceId = conference.Id.ToString();
-            var isEndpointEvent = eventType == EventType.EndpointJoined || eventType == EventType.EndpointDisconnected;
+            var isEndpointEvent = eventType.IsEndpointEvent();
             var participantId = isEndpointEvent ? conference.GetEndpoints().First().Id: conference.GetParticipants().First().Id;
             request.ParticipantId = participantId.ToString();
             _context.Test.ParticipantId = participantId;

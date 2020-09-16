@@ -23,6 +23,9 @@ namespace VideoApi.Services.Contracts
         /// <param name="requestedFor">Second participant</param>
         /// <returns></returns>
         Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor);
+
+        Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint,
+            Participant defenceAdvocate);
         
         /// <summary>
         /// Returns participants in a given room to waiting room

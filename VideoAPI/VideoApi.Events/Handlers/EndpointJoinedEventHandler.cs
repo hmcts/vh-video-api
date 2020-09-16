@@ -18,7 +18,9 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             const EndpointState endpointState = EndpointState.Connected;
-            var command = new UpdateEndpointStatusCommand(SourceConference.Id, SourceEndpoint.Id, endpointState);
+            const RoomType room = RoomType.WaitingRoom;
+            var command =
+                new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, room);
             await CommandHandler.Handle(command);
         }
     }

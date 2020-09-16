@@ -30,17 +30,16 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = participantForEvent.Id,
                 TimeStampUtc = DateTime.UtcNow
             };
-            var updateStatusCommand = new UpdateEndpointStatusCommand(conference.Id, participantForEvent.Id,
-                EndpointState.Disconnected);
+            var updateStatusCommand = new UpdateEndpointStatusAndRoomCommand(conference.Id, participantForEvent.Id,
+                EndpointState.Disconnected, null);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
             await _eventHandler.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateEndpointStatusCommand>(command =>
-                    command.ConferenceId == conference.Id &&
-                    command.EndpointId == participantForEvent.Id &&
-                    command.Status == EndpointState.Disconnected)), Times.Once);
+                x => x.Handle(It.Is<UpdateEndpointStatusAndRoomCommand>(command =>
+                    command.ConferenceId == conference.Id && command.EndpointId == participantForEvent.Id &&
+                    command.Status == EndpointState.Disconnected && command.Room == null)), Times.Once);
         }
     }
 }

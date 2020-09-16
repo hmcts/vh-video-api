@@ -1,6 +1,7 @@
 using System;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
@@ -11,6 +12,7 @@ namespace VideoApi.Domain
         public string Pin { get; }
         public EndpointState State { get; private set; }
         public string DefenceAdvocate { get; private set; }
+        public RoomType? CurrentRoom { get; private set; }
 
         private Endpoint()
         {
@@ -39,6 +41,16 @@ namespace VideoApi.Domain
         public void AssignDefenceAdvocate(string username)
         {
             DefenceAdvocate = username;
+        }
+
+        public RoomType GetCurrentRoom()
+        {
+            return CurrentRoom ?? throw new DomainRuleException(nameof(CurrentRoom), "Endpoint is not in a room");
+        }
+
+        public void UpdateCurrentRoom(RoomType? currentRoom)
+        {
+            CurrentRoom = currentRoom;
         }
     }
 }
