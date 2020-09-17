@@ -3,6 +3,7 @@ namespace VideoApi.Common.Configuration
     public class WowzaConfiguration
     {
         public string RestApiEndpoint { get; set; }
+        public string RestApiEndpoint1 { get; set; }
         public string StreamingEndpoint { get; set; }
         public string ServerName { get; set; }
         public string HostName { get; set; }

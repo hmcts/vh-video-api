@@ -124,22 +124,9 @@ namespace Video.API
                     .AddTypedClient(httpClient => BuildKinlyClient(servicesConfiguration.KinlyApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
 
-                services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
-                {
-                    x.BaseAddress = new Uri(wowzaConfiguration.RestApiEndpoint);
-                    x.DefaultRequestHeaders.Add("Accept", "application/json");
-                    x.DefaultRequestHeaders.Add("ContentType", "application/json");
-                }).ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler
-                {
-                    Credentials = new CredentialCache
-                    {
-                        {
-                            new Uri(wowzaConfiguration.RestApiEndpoint),
-                            "Digest",
-                            new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
-                        }
-                    }
-                });
+                services.AddScoped<IWowzaHttpClient, WowzaHttpClient>();
+                services.AddScoped<ICreateHttpClientFactory, CreateHttpClientFactory>();
+              
 
                 services
                     .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()

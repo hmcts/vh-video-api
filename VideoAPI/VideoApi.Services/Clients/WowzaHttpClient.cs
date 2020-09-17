@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,14 +12,16 @@ namespace VideoApi.Services.Clients
 {
     public class WowzaHttpClient : IWowzaHttpClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly List<WowzaClientModel> _httpClientModels;
 
-        public WowzaHttpClient(HttpClient httpClient)
+        public WowzaHttpClient(ICreateHttpClientFactory createHttpClientFactory)
         {
-            _httpClient = httpClient;
+            var _createHttpClientFactory = createHttpClientFactory;
+            _httpClientModels = _createHttpClientFactory.GetHttpClients();
         }
 
-        public async Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory)
+
+        public async Task CreateApplicationAsync(string applicationName, string storageDirectory)
         {
             var request = new CreateApplicationRequest
             {
@@ -41,16 +44,20 @@ namespace VideoApi.Services.Clients
                 }
             };
 
-            var response = await _httpClient.PostAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications",
-                new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
-            );
+            foreach (var client in _httpClientModels)
+            {
+                var response = await client.HttpClientForNode.PostAsync
+                   (
+                       $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications",
+                       new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
+                   );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+            }
+
         }
 
-        public async Task UpdateApplicationAsync(string applicationName, string server, string host, string azureStorageDirectory)
+        public async Task UpdateApplicationAsync(string applicationName, string azureStorageDirectory)
         {
             var request = new ApplicationConfigAdvRequest
             {
@@ -127,26 +134,33 @@ namespace VideoApi.Services.Clients
                 }
             };
 
-            var response = await _httpClient.PostAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}/adv",
-                new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
-            );
+            foreach (var client in _httpClientModels)
+            {
+                var response = await client.HttpClientForNode.PostAsync
+                    (
+                        $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications/{applicationName}/adv",
+                        new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
+                    );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+
+            }
         }
 
-        public async Task DeleteApplicationAsync(string applicationName, string server, string host)
+        public async Task DeleteApplicationAsync(string applicationName)
         {
-            var response = await _httpClient.DeleteAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
-            );
+            foreach (var client in _httpClientModels)
+            {
+                var response = await client.HttpClientForNode.DeleteAsync
+                (
+                    $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications/{applicationName}"
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+            }
         }
 
-        public async Task AddStreamRecorderAsync(string applicationName, string server, string host)
+        public async Task AddStreamRecorderAsync(string applicationName)
         {
             var request = new AddStreamRecorderRequest
             {
@@ -162,21 +176,25 @@ namespace VideoApi.Services.Clients
                 Option = "APPEND_FILE"
             };
 
-            var response = await _httpClient.PostAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders",
-                new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
-            );
+            foreach (var client in _httpClientModels)
+            {
+                var response = await client.HttpClientForNode.PostAsync
+                (
+                    $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications/" +
+                    $"{applicationName}/instances/_definst_/streamrecorders",
+                    new StringContent(ApiRequestHelper.SerialiseRequestToCamelCaseJson(request), Encoding.UTF8, "application/json")
+                );
 
-            await HandleUnsuccessfulResponse(response);
+                await HandleUnsuccessfulResponse(response);
+            }
         }
 
-        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host)
+        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName)
         {
-            var response = await _httpClient.GetAsync
+            var client = _httpClientModels[0];
+            var response = await client.HttpClientForNode.GetAsync
             (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
+                $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications/" +
                 $"{applicationName}/instances/_definst_/incomingstreams/{applicationName}/monitoring/current"
             );
 
@@ -185,11 +203,13 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaMonitorStreamResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host)
+        public async Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName)
         {
-            var response = await _httpClient.GetAsync
+            var client = _httpClientModels[0];
+
+            var response = await client.HttpClientForNode.GetAsync
             (
-                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}"
+                $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications/{applicationName}"
             );
 
             await HandleUnsuccessfulResponse(response);
@@ -197,11 +217,13 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetApplicationResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host)
+        public async Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName)
         {
-            var response = await _httpClient.GetAsync
+            var client = _httpClientModels[0];
+
+            var response = await client.HttpClientForNode.GetAsync
             (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
+                $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications/" +
                 $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}"
             );
 
@@ -210,11 +232,13 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task StopStreamRecorderAsync(string applicationName, string server, string host)
+        public async Task StopStreamRecorderAsync(string applicationName)
         {
-            var response = await _httpClient.PutAsync
+            var client = _httpClientModels[0];
+
+            var response = await client.HttpClientForNode.PutAsync
             (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
+                $"v2/servers/{client.ServerName}/vhosts/{client.HostName}/applications/" +
                 $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}/actions/stopRecording",
                 new StringContent("")
             );
@@ -222,11 +246,13 @@ namespace VideoApi.Services.Clients
             await HandleUnsuccessfulResponse(response);
         }
 
-        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync(string server)
+        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync()
         {
-            var response = await _httpClient.GetAsync
+            var client = _httpClientModels[0];
+
+            var response = await client.HttpClientForNode.GetAsync
             (
-                $"v2/servers/{server}/status"
+                $"v2/servers/{client.ServerName}/status"
             );
 
             await HandleUnsuccessfulResponse(response);
