@@ -9,6 +9,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
     {
         [TestCase(EndpointState.Connected)]
         [TestCase(EndpointState.Disconnected)]
+        [TestCase(EndpointState.InConsultation)]
         public void should_update_status(EndpointState newState)
         {
             var endpoint = new Endpoint("old name", "123@sip.com", "1234", "Defence Sol");

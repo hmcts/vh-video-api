@@ -257,20 +257,20 @@ namespace Video.API.Controllers
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
         /// </summary>
-        /// <param name="cloudRoomName"></param>
+        /// <param name="cloudRoom"></param>
         /// <param name="date"></param>
         /// <param name="caseReference"></param>
-        [HttpGet("audio/{cloudRoomName}/{date}/{caseReference}")]
+        [HttpGet("audio/{cloudRoom}/{date}/{caseReference}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpWithCaseReference")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference)
+        public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoom, string date, string caseReference)
         {
-            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoomName}, for date: {date} and case number: {caseReference}");
+            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoom}, for date: {date} and case number: {caseReference}");
             
             try
             {
-                var responses = await GetCvpAudioFiles(cloudRoomName, date, caseReference);
+                var responses = await GetCvpAudioFiles(cloudRoom, date, caseReference);
 
                 return Ok(responses);
             }
@@ -284,19 +284,19 @@ namespace Video.API.Controllers
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
         /// </summary>
-        /// <param name="cloudRoomName"></param>
+        /// <param name="cloudRoom"></param>
         /// <param name="date"></param>
-        [HttpGet("audio/{cloudRoomName}/{date}")]
+        [HttpGet("audio/{cloudRoom}/{date}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvp")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date)
+        public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoom, string date)
         {
-            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoomName}, for date: {date}");
+            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoom}, for date: {date}");
 
             try
             {
-                var responses = await GetCvpAudioFiles(cloudRoomName, date);
+                var responses = await GetCvpAudioFiles(cloudRoom, date);
 
                 return Ok(responses);
             }
@@ -307,11 +307,11 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoomName, string date, string caseReference = null)
+        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoom, string date, string caseReference = null)
         {
             var responses = new List<CvpAudioFileResponse>();
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
-            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(cloudRoomName);
+            var allBlobsAsync = azureStorageService.GetAllBlobsAsync($"audiostream{cloudRoom}");
             await foreach (var blob in allBlobsAsync)
             {
                 var blobName = blob.Name.ToLower();

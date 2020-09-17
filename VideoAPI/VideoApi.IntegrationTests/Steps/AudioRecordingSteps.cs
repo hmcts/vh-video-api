@@ -82,7 +82,7 @@ namespace VideoApi.IntegrationTests.Steps
             
             foreach (var cvp in parameters)
             {
-                var filePathOnStorage = $"{cvp.CloudRoomName}/{cvp.CaseReference}-{cvp.Date}-{Guid.NewGuid()}.mp4";
+                var filePathOnStorage = $"audiostream{cvp.CloudRoom}/{cvp.CaseReference}-{cvp.Date}-{Guid.NewGuid()}.mp4";
                 _context.Test.CvpFileNamesOnStorage.Add(filePathOnStorage);
 
                 await _context.AzureStorage.UploadFileToStorage(file, filePathOnStorage);
@@ -213,12 +213,17 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
 
-        [Given(@"I have a valid get cvp audio recordings request for (.*) (.*) (.*)")]
-        public void GivenIHaveAValidGetCvpAudioRecordingRequest(string cloudRoomName, string date, string caseReference)
+        [Given(@"I have a valid default get cvp audio recordings request for (.*) (.*)")]
+        public void GivenIHaveAValidDefaultGetCvpAudioRecordingRequest(string cloudRoom, string date)
         {
-            _context.Uri = !string.IsNullOrWhiteSpace(caseReference) 
-                ? GetCvpAudioRecordings(cloudRoomName, date, caseReference)
-                : GetCvpAudioRecordings(cloudRoomName, date);
+            _context.Uri = GetCvpAudioRecordings(cloudRoom, date);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+        [Given(@"I have a valid get cvp audio recordings request for (.*) (.*) (.*)")]
+        public void GivenIHaveAValidGetCvpAudioRecordingRequest(string cloudRoom, string date, string caseReference)
+        {
+            _context.Uri = GetCvpAudioRecordings(cloudRoom, date, caseReference);
             _context.HttpMethod = HttpMethod.Get;
         }
 

@@ -21,9 +21,9 @@ namespace VideoApi.Events.Handlers.Core
             CommandHandler = commandHandler;
         }
 
-        public Conference SourceConference { get; set; }
-        public Participant SourceParticipant { get; set; }
-        public Endpoint SourceEndpoint { get; set; }
+        protected Conference SourceConference { get; set; }
+        protected Participant SourceParticipant { get; set; }
+        protected Endpoint SourceEndpoint { get; set; }
 
         public abstract EventType EventType { get; }
 #pragma warning disable S4457 // Parameter validation in "async/await" methods should be wrapped

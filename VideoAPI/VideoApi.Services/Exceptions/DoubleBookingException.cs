@@ -9,12 +9,7 @@ namespace VideoApi.Services.Exceptions
         public DoubleBookingException(Guid conferenceId) : base(
             $"Meeting room for conference {conferenceId} has already been booked")
         {
-        }
-        
-        public DoubleBookingException(Guid conferenceId, string message) : this(
-            conferenceId)
-        {
-            ErrorMessage = message;
+            ErrorMessage = $"Meeting room for conference {conferenceId} has already been booked";
         }
     }
 }

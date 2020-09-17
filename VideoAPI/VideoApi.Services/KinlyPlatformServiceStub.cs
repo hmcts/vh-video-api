@@ -27,7 +27,7 @@ namespace VideoApi.Services
             IEnumerable<EndpointDto> endpoints)
         {
             if (_bookedGuids.Contains(conferenceId))
-                throw new DoubleBookingException(conferenceId, "Meeting room already exists");
+                throw new DoubleBookingException(conferenceId);
 
             var meetingRoom = Create();
             _bookedGuids.Add(conferenceId);
@@ -50,6 +50,11 @@ namespace VideoApi.Services
         }
 
         public Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint, Participant defenceAdvocate)
         {
             return Task.CompletedTask;
         }

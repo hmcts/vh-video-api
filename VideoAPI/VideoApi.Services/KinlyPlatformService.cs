@@ -14,6 +14,7 @@ using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Mappers;
+using Endpoint = VideoApi.Domain.Endpoint;
 
 namespace VideoApi.Services
 {
@@ -68,7 +69,7 @@ namespace VideoApi.Services
             {
                 if (e.StatusCode == (int)HttpStatusCode.Conflict)
                 {
-                    throw new DoubleBookingException(conferenceId, e.Message);
+                    throw new DoubleBookingException(conferenceId);
                 }
 
                 throw;
@@ -137,20 +138,41 @@ namespace VideoApi.Services
                 $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
 
             await TransferParticipantAsync(conference.Id, requestedBy.Id,
-                requestedBy.CurrentRoom.Value, targetRoom);
+                requestedBy.GetCurrentRoom(), targetRoom);
 
             await TransferParticipantAsync(conference.Id, requestedFor.Id,
-                requestedFor.CurrentRoom.Value, targetRoom);
+                requestedFor.GetCurrentRoom(), targetRoom);
+        }
+
+        public async Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint, Participant defenceAdvocate)
+        {
+            var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
+            _logger.LogInformation(
+                $"Conference: {conference.Id} - Attempting to transfer endpoint {endpoint.Id} and participant {defenceAdvocate.Id} into room {targetRoom}");
+            await TransferParticipantAsync(conference.Id, endpoint.Id,
+                endpoint.GetCurrentRoom(), targetRoom);
+
+            await TransferParticipantAsync(conference.Id, defenceAdvocate.Id,
+                defenceAdvocate.GetCurrentRoom(), targetRoom);
         }
 
         public async Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
         {
             var participants = conference.GetParticipants()
-                .Where(x => x.CurrentRoom.HasValue && x.CurrentRoom == consultationRoom);
+                .Where(x => x.GetCurrentStatus().ParticipantState == ParticipantState.InConsultation &&
+                            x.GetCurrentRoom() == consultationRoom);
 
             foreach (var participant in participants)
             {
                 await TransferParticipantAsync(conference.Id, participant.Id, consultationRoom,
+                    RoomType.WaitingRoom);
+            }
+
+            var endpoints = conference.GetEndpoints()
+                .Where(x => x.State == EndpointState.InConsultation && x.GetCurrentRoom() == consultationRoom);
+            foreach (var endpoint in endpoints)
+            {
+                await TransferParticipantAsync(conference.Id, endpoint.Id, consultationRoom,
                     RoomType.WaitingRoom);
             }
         }

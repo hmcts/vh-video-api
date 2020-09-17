@@ -49,6 +49,7 @@ Feature: Callbacks
     Then the response should have the status NoContent and success status True
     And the endpoint status should be <EndpointStatus>
     Examples:
-      | EventType              | EndpointStatus  |
-      | EndpointJoined         | Connected       |
-      | EndpointDisconnected   | Disconnected    |
+      | EventType             | EndpointStatus  |
+      | EndpointJoined        | Connected       |
+      | EndpointDisconnected  | Disconnected    |
+      | EndpointTransfer      | InConsultation  |

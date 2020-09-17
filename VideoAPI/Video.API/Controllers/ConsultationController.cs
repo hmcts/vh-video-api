@@ -97,6 +97,11 @@ namespace Video.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Leave a private consultation
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("leave")]
         [SwaggerOperation(OperationId = "LeavePrivateConsultation")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
@@ -135,6 +140,11 @@ namespace Video.API.Controllers
 
         }
 
+        /// <summary>
+        /// Respond to a private consultation with a video hearings officer
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("vhofficer/respond")]
         [SwaggerOperation(OperationId = "RespondToAdminConsultationRequest")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
@@ -171,10 +181,70 @@ namespace Video.API.Controllers
             if (request.Answer.Value == ConsultationAnswer.Accepted)
             {
                 await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id,
-                    participant.CurrentRoom.Value, request.ConsultationRoom);
+                    participant.GetCurrentRoom(), request.ConsultationRoom);
             }
 
             return NoContent();
+        }
+        
+        /// <summary>
+        /// Start a private consultation with a video endpoint
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("endpoint")]
+        [SwaggerOperation(OperationId = "StartPrivateConsultationWithEndpoint")]
+        [ProducesResponseType((int) HttpStatusCode.Accepted)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest request)
+        {
+            _logger.LogDebug($"StartPrivateConsultationWithEndpoint");
+
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
+            if (conference == null)
+            {
+                var message = $"Unable to find conference {request.ConferenceId}";
+                _logger.LogWarning(message);
+                return NotFound(message);
+            }
+
+            var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == request.EndpointId);
+            if (endpoint == null)
+            {
+                var message = $"Unable to find endpoint {request.EndpointId}";
+                _logger.LogWarning(message);
+                return NotFound(message);
+            }
+            
+            var defenceAdvocate = conference.GetParticipants().SingleOrDefault(x => x.Id == request.DefenceAdvocateId);
+            if (defenceAdvocate == null)
+            {
+                var message = $"Unable to find defence advocate {request.DefenceAdvocateId}";
+                _logger.LogWarning(message);
+                return NotFound(message);
+            }
+
+            if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
+            {
+                var message = "Endpoint does not have a defence advocate linked";
+                _logger.LogWarning(message);
+                return Unauthorized(message);
+            }
+            
+            if (!endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
+            {
+                var message = "Defence advocate is not allowed to speak to requested endpoint";
+                _logger.LogWarning(message);
+                return Unauthorized(message);
+            }
+            
+            await _videoPlatformService.StartEndpointPrivateConsultationAsync(conference, endpoint, defenceAdvocate);
+
+            return Accepted();
         }
         
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
