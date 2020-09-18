@@ -17,7 +17,7 @@ namespace VideoApi.Services.Clients
         public List<WowzaClientModel> GetHttpClients()
         {
             var httpClients = new List<WowzaClientModel>();
-            var restApiEndpoints = new List<string> { _configuration.RestApiEndpoint, _configuration.RestApiEndpoint1 };
+            var restApiEndpoints = _configuration.RestApiEndpoint;
             foreach (var node in restApiEndpoints)
             {
                 var httpClient = CreateClient(node);
