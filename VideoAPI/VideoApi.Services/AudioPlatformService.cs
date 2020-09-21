@@ -69,9 +69,16 @@ namespace VideoApi.Services
         }
 
         public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId)
-        {            
+        {
+            try
+            {
                 await CreateAndUpdateApplicationAsync(hearingId.ToString());
                 return await CreateStreamAsync(hearingId);
+            }catch(AudioPlatformException ex)
+            {
+                return new AudioPlatformServiceResponse(false) { Message = ex.Message, StatusCode = ex.StatusCode };
+
+            }
         }
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId)

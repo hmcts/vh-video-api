@@ -122,7 +122,7 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
             result.Success.Should().BeFalse();
             result.Message.Should().Contain("SomeError");
-            result.IngestUrl.Should().Be(" ");
+            result.IngestUrl.Should().Be(null);
             result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
 
@@ -138,7 +138,7 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
             result.Success.Should().BeFalse();
             result.Message.Should().Contain("SomeError");
-            result.IngestUrl.Should().Be(" ");
+            result.IngestUrl.Should().Be(null);
             result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
 
