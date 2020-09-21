@@ -38,14 +38,18 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             var hearingId = Guid.NewGuid();
             var conference = new ConferenceBuilder().Build();
             var query = new GetConferenceByIdQuery(hearingId);
-            var wowzaresponse = new WowzaGetDiagnosticsResponse() { ServerVersion = "1.18.4" };
+            var wowzaResponse = new []
+            {
+                new WowzaGetDiagnosticsResponse {ServerVersion = "1.0.0.1"},
+                new WowzaGetDiagnosticsResponse {ServerVersion = "1.0.0.2"}
+            };
 
             _controller = new HealthCheckController(_mockQueryHandler.Object, _mockVideoPlatformService.Object,
                 _mockAudioPlatformService.Object);
             _mockQueryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(query))
                 .Returns(Task.FromResult(conference));
             _mockAudioPlatformService.Setup(x => x.GetDiagnosticsAsync())
-                .ReturnsAsync(wowzaresponse);
+                .ReturnsAsync(wowzaResponse);
 
             var result = await _controller.HealthAsync();
             var typedResult = (OkObjectResult)result;

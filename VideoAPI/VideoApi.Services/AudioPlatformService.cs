@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -12,23 +14,27 @@ namespace VideoApi.Services
 {
     public class AudioPlatformService : IAudioPlatformService
     {
-        private readonly IWowzaHttpClient _wowzaClient;
+        private readonly IEnumerable<IWowzaHttpClient> _wowzaClients;
         private readonly WowzaConfiguration _configuration;
         private readonly ILogger<AudioPlatformService> _logger;
         private const string DefaultEmptyIngestUrl = " ";
 
-        public AudioPlatformService(IWowzaHttpClient wowzaClient, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
+        public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
-            _wowzaClient = wowzaClient;
+            _wowzaClients = wowzaClients;
             _configuration = configuration;
             _logger = logger;
         }
-        
+
         public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId)
         {
             try
             {
-                var response = await _wowzaClient.GetApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
+                var tasks = _wowzaClients
+                    .Select(x => x.GetApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName))
+                    .ToList();
+
+                var response = await WaitAnyFirstValidResult(tasks);
 
                 _logger.LogInformation($"Got Wowza application info: {hearingId}");
 
@@ -74,7 +80,9 @@ namespace VideoApi.Services
             {
                 await CreateAndUpdateApplicationAsync(hearingId.ToString());
 
-                await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
+                var tasks = _wowzaClients.Select(x => x.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
+                await Task.WhenAll(tasks);
+                
                 _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
 
                 return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(hearingId.ToString()) };
@@ -98,8 +106,9 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.DeleteApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
-
+                var tasks = _wowzaClients.Select(x => x.DeleteApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
+                await Task.WhenAll(tasks);
+                
                 _logger.LogInformation($"Deleted Wowza application: {hearingId}");
 
                 return new AudioPlatformServiceResponse(true);
@@ -119,7 +128,11 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _wowzaClient.MonitoringStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
+                var tasks = _wowzaClients
+                    .Select(x => x.MonitoringStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName))
+                    .ToList();
+
+                var response = await WaitAnyFirstValidResult(tasks);
 
                 _logger.LogInformation($"Got Wowza monitor stream data for application: {hearingId}");
 
@@ -140,7 +153,11 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _wowzaClient.GetStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
+                var tasks = _wowzaClients
+                    .Select(x => x.GetStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName))
+                    .ToList();
+
+                var response = await WaitAnyFirstValidResult(tasks);
 
                 _logger.LogInformation($"Got Wowza stream recorder for application: {hearingId}");
 
@@ -161,7 +178,9 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
+                var tasks = _wowzaClients.Select(x => x.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
+                await Task.WhenAll(tasks);
+                
                 _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
 
                 return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(hearingId.ToString()) };
@@ -185,7 +204,8 @@ namespace VideoApi.Services
         {
             try
             {
-                await _wowzaClient.StopStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName);
+                var tasks = _wowzaClients.Select(x => x.StopStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
+                await Task.WhenAll(tasks);
 
                 _logger.LogInformation($"Stopped Wowza stream recorder for application: {hearingId}");
 
@@ -202,11 +222,16 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync()
+        public async Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync()
         {
             try
             {
-                var response = await _wowzaClient.GetDiagnosticsAsync(_configuration.ServerName);
+                var tasks = _wowzaClients
+                    .Select(x => x.GetDiagnosticsAsync(_configuration.ServerName))
+                    .ToList();
+
+                var response = await Task.WhenAll(tasks);
+                
                 return response;
             }
             catch (AudioPlatformException ex)
@@ -218,16 +243,19 @@ namespace VideoApi.Services
 
                 return null;
             }
-        
         }
 
         private async Task CreateAndUpdateApplicationAsync(string applicationName)
         {
-            await _wowzaClient.CreateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.StorageDirectory);
-            _logger.LogInformation($"Created a Wowza application for: {applicationName}");
+            foreach (var client in _wowzaClients)
+            {
+                await client.CreateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.StorageDirectory);
+                _logger.LogInformation($"Created a Wowza application for: {applicationName}");
 
-            await _wowzaClient.UpdateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.AzureStorageDirectory);
-            _logger.LogInformation($"Updating Wowza application for: {applicationName}");
+                await client.UpdateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.AzureStorageDirectory);
+                _logger.LogInformation($"Updating Wowza application for: {applicationName}");
+            }
+            
         }
 
         private void LogError(AudioPlatformException ex, string errorMessage)
@@ -240,5 +268,21 @@ namespace VideoApi.Services
 
         private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
 
+        private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
+        {
+            while (tasks.Any())
+            {
+                var task = await Task.WhenAny(tasks);
+
+                if (task != null && !task.IsCanceled && !task.IsFaulted)
+                {
+                    return await task;
+                }
+
+                tasks.Remove(task);
+            }
+
+            return default;
+        }
     }
 }
