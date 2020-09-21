@@ -116,26 +116,6 @@ namespace Video.API
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
-                foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)
-                {
-                    var handler = new HttpClientHandler
-                    {
-                        Credentials = new CredentialCache
-                        {
-                            {
-                                new Uri(restApiEndpoint), "Digest", new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
-                            }
-                        }
-                    };
-
-                    var client = new WowzaHttpClient(new HttpClient(handler)
-                    {
-                        BaseAddress = new Uri(restApiEndpoint), DefaultRequestHeaders = {{"Accept", "application/json"}, {"ContentType", "application/json"}}
-                    });
-
-                    services.AddSingleton<IWowzaHttpClient>(client);
-                }
-                
             }
             else
             {
