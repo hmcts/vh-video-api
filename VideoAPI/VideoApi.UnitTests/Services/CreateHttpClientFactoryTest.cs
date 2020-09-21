@@ -1,6 +1,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using VideoApi.Common.Configuration;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
@@ -16,8 +17,8 @@ namespace VideoApi.UnitTests.Services
         {
             var _configuration = new WowzaConfiguration
             {
-                RestApiEndpoint = "http://one.endpoint",
-                RestApiEndpoint1 = "http://two.endpoint",
+                RestApiEndpoint = new string[]{"http://one.endpoint",
+                "http://two.endpoint" },
                 HostName = "host",
                 ServerName = "server"
             };
@@ -31,8 +32,8 @@ namespace VideoApi.UnitTests.Services
             result[0].ServerName.Should().Be("server");
             result[0].HttpClientForNode.Should().NotBeNull();
             result[1].HttpClientForNode.Should().NotBeNull();
-            result[0].HttpClientForNode.BaseAddress.Should().Be(new Uri(_configuration.RestApiEndpoint));
-            result[1].HttpClientForNode.BaseAddress.Should().Be(new Uri(_configuration.RestApiEndpoint1));
+            result[0].HttpClientForNode.BaseAddress.Should().Be(new Uri(_configuration.RestApiEndpoint[0]));
+            result[1].HttpClientForNode.BaseAddress.Should().Be(new Uri(_configuration.RestApiEndpoint[1]));
 
         }
     }
