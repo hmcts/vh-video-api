@@ -163,23 +163,6 @@ namespace Video.API
 
                     services.AddSingleton<IWowzaHttpClient>(client);
                 }
-                
-                // services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
-                // {
-                //     x.BaseAddress = new Uri(wowzaConfiguration.RestApiEndpoint);
-                //     x.DefaultRequestHeaders.Add("Accept", "application/json");
-                //     x.DefaultRequestHeaders.Add("ContentType", "application/json");
-                // }).ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler
-                // {
-                //     Credentials = new CredentialCache
-                //     {
-                //         {
-                //             new Uri(wowzaConfiguration.RestApiEndpoint),
-                //             "Digest",
-                //             new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
-                //         }
-                //     }
-                // });
 
                 services
                     .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()
