@@ -69,29 +69,9 @@ namespace VideoApi.Services
         }
 
         public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId)
-        {
-            try
-            {
+        {            
                 await CreateAndUpdateApplicationAsync(hearingId.ToString());
-
-                await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString());
-                _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
-
-                return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(hearingId.ToString()) };
-            }
-            catch (AudioPlatformException ex)
-            {
-                var errorMessage = "Failed to create the Wowza application and/or stream recorder for: " +
-                                   $"{hearingId}, StatusCode: {ex.StatusCode}, " +
-                                   $"Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
-                return new AudioPlatformServiceResponse(false)
-                {
-                    Message = errorMessage, StatusCode = ex.StatusCode, IngestUrl = DefaultEmptyIngestUrl
-                };
-            }
+                return await CreateStreamAsync(hearingId);
         }
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId)
@@ -159,6 +139,11 @@ namespace VideoApi.Services
 
         public async Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(Guid hearingId)
         {
+            return await CreateStreamAsync(hearingId);
+        }
+
+        private async Task<AudioPlatformServiceResponse> CreateStreamAsync(Guid hearingId)
+        {
             try
             {
                 await _wowzaClient.AddStreamRecorderAsync(hearingId.ToString());
@@ -168,10 +153,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = "Failed to create the Wowza stream recorder for: " +
+                var errorMessage = "Failed to create the Wowza application and/or stream recorder for: " +
                                    $"{hearingId}, StatusCode: {ex.StatusCode}, " +
                                    $"Error: {ex.Message}";
-                
+
                 LogError(ex, errorMessage);
 
                 return new AudioPlatformServiceResponse(false)
