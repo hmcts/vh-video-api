@@ -29,7 +29,7 @@ variables:
       "Services/UserApiResourceId":"$(vh-user-api-identifieruris)",
       "Services/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
       "Services/VhVideoWebClientId":"$(vh-video-web-appid)",
-      "WowzaConfiguration/RestApiEndpoint":"$(wowza_restApiEndpoint)",
+      "WowzaConfiguration/RestApiEndpoints":"$(wowza_restApiEndpoints)",
       "WowzaConfiguration/StreamingEndpoint":"$(wowza_streamingEndpoint)",
       "WowzaConfiguration/ServerName":"$(wowza_serverName)",
       "WowzaConfiguration/HostName":"$(wowza_hostName)",

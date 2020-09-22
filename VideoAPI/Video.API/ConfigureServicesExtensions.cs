@@ -124,22 +124,25 @@ namespace Video.API
                     .AddTypedClient(httpClient => BuildKinlyClient(servicesConfiguration.KinlyApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
 
-                services.AddHttpClient<IWowzaHttpClient, WowzaHttpClient>(x =>
+                foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)
                 {
-                    x.BaseAddress = new Uri(wowzaConfiguration.RestApiEndpoint);
-                    x.DefaultRequestHeaders.Add("Accept", "application/json");
-                    x.DefaultRequestHeaders.Add("ContentType", "application/json");
-                }).ConfigurePrimaryHttpMessageHandler(x => new HttpClientHandler
-                {
-                    Credentials = new CredentialCache
+                    var handler = new HttpClientHandler
                     {
+                        Credentials = new CredentialCache
                         {
-                            new Uri(wowzaConfiguration.RestApiEndpoint),
-                            "Digest",
-                            new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
+                            {
+                                new Uri(restApiEndpoint), "Digest", new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
+                            }
                         }
-                    }
-                });
+                    };
+
+                    var client = new WowzaHttpClient(new HttpClient(handler)
+                    {
+                        BaseAddress = new Uri(restApiEndpoint), DefaultRequestHeaders = {{"Accept", "application/json"}, {"ContentType", "application/json"}}
+                    });
+
+                    services.AddSingleton<IWowzaHttpClient>(client);
+                }
 
                 services
                     .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()

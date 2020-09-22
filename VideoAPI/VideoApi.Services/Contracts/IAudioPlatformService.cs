@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Contract.Responses;
 using VideoApi.Services.Responses;
@@ -18,6 +19,6 @@ namespace VideoApi.Services.Contracts
         Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId);
-        Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync();
+        Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync();
     }
 }

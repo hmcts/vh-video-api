@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -85,7 +86,7 @@ namespace Video.API.Controllers
             {
                 response.WowzaHealth.Successful = false;
                 var wowzaResponse = await _audioPlatformService.GetDiagnosticsAsync();
-                if (wowzaResponse != null && !string.IsNullOrEmpty(wowzaResponse.ServerVersion))
+                if (wowzaResponse != null && !wowzaResponse.All(x => string.IsNullOrWhiteSpace(x.ServerVersion)))
                 {
                     response.WowzaHealth.Successful = true;
                 }
