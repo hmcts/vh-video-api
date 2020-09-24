@@ -11,13 +11,11 @@ namespace VideoApi.Services.Contracts
         Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId);
         
         Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId);
-        Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId);
         
         Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(Guid hearingId);
         
         Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId);
-        Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId);
         Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync();
     }

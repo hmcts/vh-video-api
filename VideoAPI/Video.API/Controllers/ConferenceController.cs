@@ -77,7 +77,7 @@ namespace Video.API.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
-            var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationWithStreamAsync
+            var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationAsync
             (
                 request.HearingRefId
             );

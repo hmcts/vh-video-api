@@ -153,36 +153,6 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
         
         [Test]
-        public async Task CreateAudioApplicationWithStreamAsync_Returns_Conflict()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            
-            var result = await _controller.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status409Conflict);
-            result.Value.Should().Be("Conflict");
-        }
-        
-        [Test]
-        public async Task CreateAudioApplicationWithStreamAsync_Returns_IngestUrl()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(true) { IngestUrl = "IngestUrl"});
-            
-            var result = await _controller.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()) as OkObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().Be("IngestUrl");
-        }
-        
-        [Test]
         public async Task DeleteAudioApplicationAsync_Returns_Conflict()
         {
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
@@ -321,36 +291,6 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
         
         [Test]
-        public async Task CreateAudioStreamAsync_Returns_Conflict()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            
-            var result = await _controller.CreateAudioStreamAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status409Conflict);
-            result.Value.Should().Be("Conflict");
-        }
-        
-        [Test]
-        public async Task CreateAudioStreamAsync_Returns_IngestUrl()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(true) { IngestUrl = "IngestUrl"});
-            
-            var result = await _controller.CreateAudioStreamAsync(It.IsAny<Guid>()) as OkObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().Be("IngestUrl");
-        }
-        
-        [Test]
         public async Task DeleteAudioStreamAsync_Returns_Conflict()
         {
             _audioPlatformService
@@ -415,8 +355,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var item = result.Value.As<AudioRecordingResponse>();
             item.Should().NotBeNull();
-            item.AudioFileLink.Should().NotBeNullOrEmpty();
-            item.AudioFileLink.Should().Be("fileLink");
+            item.AudioFileLinks.Should().NotBeNullOrEmpty();
+            item.AudioFileLinks.First().Should().Be("fileLink");
             _storageService.Verify(c=>c.CreateSharedAccessSignature(filePath, It.IsAny<TimeSpan>()));
         }
 
