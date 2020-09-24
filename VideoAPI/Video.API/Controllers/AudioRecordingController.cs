@@ -212,7 +212,7 @@ namespace Video.API.Controllers
                 });
 
             }
-            catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
+            catch (ConferenceNotFoundException ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return NotFound();
@@ -315,17 +315,17 @@ namespace Video.API.Controllers
 
         private static async Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, IAzureStorageService azureStorageService, string fileExtension = ".mp4")
         {
-            var audioFileLinks = new List<string>();
+            var blobFullNames = new List<string>();
             var allBlobsAsync = azureStorageService.GetAllBlobsAsync(filePathPrefix);
             await foreach (var blob in allBlobsAsync)
             {
                 if (blob.Name.ToLower().EndsWith(fileExtension))
                 {
-                    audioFileLinks.Add(blob.Name);
+                    blobFullNames.Add(blob.Name);
                 }
             }
 
-            return audioFileLinks;
+            return blobFullNames;
         }
     }
 }
