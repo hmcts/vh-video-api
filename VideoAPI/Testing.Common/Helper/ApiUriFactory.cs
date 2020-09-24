@@ -15,10 +15,7 @@ namespace Testing.Common.Helper
             public static string GetAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
             public static string CreateAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
             public static string DeleteAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
-            public static string CreateAudioApplicationAndStream(Guid hearingId) => $"{ApiRoot}/audioapplications/audiostream/{hearingId}";
             public static string GetAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
-            public static string CreateAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
-            public static string DeleteAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
             public static string GetAudioMonitoringStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}/monitoring";
             public static string GetAudioRecordingLink(Guid hearingId) => $"{ApiRoot}/audio/{hearingId}";
             public static string GetCvpAudioRecordings(string cloudRoom, string date, string caseReference) => $"{ApiRoot}/audio/{cloudRoom}/{date}/{caseReference}";

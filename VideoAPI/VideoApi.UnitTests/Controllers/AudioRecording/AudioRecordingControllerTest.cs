@@ -300,35 +300,6 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
         
         [Test]
-        public async Task DeleteAudioStreamAsync_Returns_Conflict()
-        {
-            _audioPlatformService
-                .Setup(x => x.DeleteAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            
-            var result = await _controller.DeleteAudioStreamAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status409Conflict);
-            result.Value.Should().Be("Conflict");
-        }
-        
-        [Test]
-        public async Task DeleteAudioStreamAsync_Returns_NoContent()
-        {
-            _audioPlatformService
-                .Setup(x => x.DeleteAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(true));
-            
-            var result = await _controller.DeleteAudioStreamAsync(It.IsAny<Guid>()) as NoContentResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status204NoContent);
-        }
-        
-        [Test]
         public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
         {
             var hearingId = Guid.NewGuid();

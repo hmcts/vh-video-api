@@ -163,29 +163,6 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Deletes the audio stream for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio stream</param>
-        /// <returns></returns>
-        [HttpDelete("audiostreams/{hearingId}")]
-        [SwaggerOperation(OperationId = "DeleteAudioStream")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAudioStreamAsync(Guid hearingId)
-        {
-            _logger.LogDebug("DeleteAudioStream");
-
-            var response = await _audioPlatformService.DeleteAudioStreamAsync(hearingId);
-
-            if (!response.Success)
-            {
-                return StatusCode((int)response.StatusCode, response.Message);
-            }
-
-            return NoContent();
-        }
-
-        /// <summary>
         /// Get the audio recording link for a given hearing.
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
