@@ -29,17 +29,5 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeTrue();
         }
-        
-        [Test]
-        public async Task should_fail_validation_when_layout_is_not_set()
-        {
-            var request = new StartHearingRequest();
-            
-            var result = await _validator.ValidateAsync(request);
-            
-            result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == StartHearingRequestValidation.LayoutError)
-                .Should().BeTrue();
-        }
     }
 }
