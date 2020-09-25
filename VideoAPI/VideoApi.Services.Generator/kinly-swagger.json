@@ -185,17 +185,24 @@
             "type": "string",
             "required": true,
             "description": "Hearing ID"
+          },
+          {
+            "name": "StartHearingParams",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/startHearingParams"
+            }
           }
         ],
         "responses": {
           "202": {
             "description": "Start hearing backend processes"
           },
-          "409": {
-            "description": "The hearing is started/starting."
-          },
           "401": {
             "description": "Unauthorized"
+          },
+          "409": {
+            "description": "The hearing is started/starting."
           }
         }
       }
@@ -371,6 +378,21 @@
         }
       }
     },
+    "startHearingParams": {
+      "type": "object",
+      "required": [
+        "layout"
+      ],
+      "properties": {
+        "layout": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/layout"
+            }
+          ]
+        }
+      }
+    },
     "hearing": {
       "type": "object",
       "properties": {
@@ -471,6 +493,16 @@
           "description": "The PIN"
         }
       }
+    },
+    "layout": {
+      "enum": [
+        "AUTOMATIC",
+        "SINGLE",
+        "FOUR_EQUAL",
+        "ONE_PLUS_SEVEN",
+        "TWO_PLUS_TWENTYONE"
+      ],
+      "type": "string"
     }
   }
 }

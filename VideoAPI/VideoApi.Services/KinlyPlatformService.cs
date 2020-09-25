@@ -27,8 +27,10 @@ namespace VideoApi.Services
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
 
-        public KinlyPlatformService(IKinlyApiClient kinlyApiClient, IOptions<ServicesConfiguration> servicesConfigOptions,
-            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService, IKinlySelfTestHttpClient kinlySelfTestHttpClient,
+        public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
+            IOptions<ServicesConfiguration> servicesConfigOptions,
+            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService,
+            IKinlySelfTestHttpClient kinlySelfTestHttpClient,
             IPollyRetryService pollyRetryService)
         {
             _kinlyApiClient = kinlyApiClient;
@@ -45,8 +47,9 @@ namespace VideoApi.Services
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
         {
-            _logger.LogInformation($"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
-            
+            _logger.LogInformation(
+                $"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
+
             try
             {
                 var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
@@ -67,7 +70,7 @@ namespace VideoApi.Services
             }
             catch (KinlyApiException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.Conflict)
+                if (e.StatusCode == (int) HttpStatusCode.Conflict)
                 {
                     throw new DoubleBookingException(conferenceId);
                 }
@@ -81,13 +84,14 @@ namespace VideoApi.Services
             try
             {
                 var response = await _kinlyApiClient.GetHearingAsync(conferenceId.ToString());
-                var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Participant, response.Uris.Participant,
+                var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Participant,
+                    response.Uris.Participant,
                     response.Uris.Pexip_node);
                 return meetingRoom;
             }
             catch (KinlyApiException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -103,10 +107,12 @@ namespace VideoApi.Services
 
             var result = await _pollyRetryService.WaitAndRetryAsync<Exception, TestCallResult>
             (
-                maxRetryAttempts, 
+                maxRetryAttempts,
                 _ => pauseBetweenFailures,
-                retryAttempt => _logger.LogWarning($"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}"),
-                callResult => callResult == null, 
+                retryAttempt =>
+                    _logger.LogWarning(
+                        $"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}"),
+                callResult => callResult == null,
                 () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
             );
 
@@ -144,7 +150,8 @@ namespace VideoApi.Services
                 requestedFor.GetCurrentRoom(), targetRoom);
         }
 
-        public async Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint, Participant defenceAdvocate)
+        public async Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint,
+            Participant defenceAdvocate)
         {
             var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
             _logger.LogInformation(
@@ -182,7 +189,8 @@ namespace VideoApi.Services
             await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString());
         }
 
-        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints)
+        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
+            IEnumerable<EndpointDto> endpoints)
         {
             await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(),
                 new UpdateHearingParams
@@ -192,9 +200,9 @@ namespace VideoApi.Services
                 });
         }
 
-        public async Task StartHearingAsync(Guid conferenceId)
+        public async Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
         {
-            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString());
+            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString(), new StartHearingParams {Layout = layout});
         }
 
         public async Task PauseHearingAsync(Guid conferenceId)

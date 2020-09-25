@@ -100,18 +100,18 @@ namespace VideoApi.Services.Kinly
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Start hearing backend processes</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id);
+        System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id, StartHearingParams startHearingParams);
     
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Start hearing backend processes</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        void StartHearing(string virtual_courtroom_id);
+        void StartHearing(string virtual_courtroom_id, StartHearingParams startHearingParams);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Start hearing backend processes</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id, StartHearingParams startHearingParams, System.Threading.CancellationToken cancellationToken);
     
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Pause hearing backend processes</returns>
@@ -639,24 +639,24 @@ namespace VideoApi.Services.Kinly
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Start hearing backend processes</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id)
+        public System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id, StartHearingParams startHearingParams)
         {
-            return StartHearingAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
+            return StartHearingAsync(virtual_courtroom_id, startHearingParams, System.Threading.CancellationToken.None);
         }
     
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Start hearing backend processes</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public void StartHearing(string virtual_courtroom_id)
+        public void StartHearing(string virtual_courtroom_id, StartHearingParams startHearingParams)
         {
-            System.Threading.Tasks.Task.Run(async () => await StartHearingAsync(virtual_courtroom_id, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            System.Threading.Tasks.Task.Run(async () => await StartHearingAsync(virtual_courtroom_id, startHearingParams, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Start hearing backend processes</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task StartHearingAsync(string virtual_courtroom_id, StartHearingParams startHearingParams, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
                 throw new System.ArgumentNullException("virtual_courtroom_id");
@@ -670,7 +670,9 @@ namespace VideoApi.Services.Kinly
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(startHearingParams, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
     
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -696,16 +698,16 @@ namespace VideoApi.Services.Kinly
                             return;
                         }
                         else
-                        if (status_ == "409") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The hearing is started/starting.", (int)response_.StatusCode, responseText_, headers_, null);
-                        }
-                        else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new KinlyApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == "409") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new KinlyApiException("The hearing is started/starting.", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
@@ -1222,6 +1224,25 @@ namespace VideoApi.Services.Kinly
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class StartHearingParams 
+    {
+        [Newtonsoft.Json.JsonProperty("layout", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Layout Layout { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static StartHearingParams FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<StartHearingParams>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class Hearing 
     {
         /// <summary>The conference's UUID</summary>
@@ -1348,6 +1369,26 @@ namespace VideoApi.Services.Kinly
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<Endpoint>(data);
         }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum Layout
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"AUTOMATIC")]
+        AUTOMATIC = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SINGLE")]
+        SINGLE = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"FOUR_EQUAL")]
+        FOUR_EQUAL = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ONE_PLUS_SEVEN")]
+        ONE_PLUS_SEVEN = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TWO_PLUS_TWENTYONE")]
+        TWO_PLUS_TWENTYONE = 4,
     
     }
     
