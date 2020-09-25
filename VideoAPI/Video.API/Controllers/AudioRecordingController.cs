@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -88,27 +89,6 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Creates the audio application and associated stream for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to create the audio recording stream</param>
-        /// <returns>The ingest url for other applications to stream to the endpoint</returns>
-        [HttpPost("audioapplications/audiostream/{hearingId}")]
-        [SwaggerOperation(OperationId = "CreateAudioApplicationWithStream")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAudioApplicationWithStreamAsync(Guid hearingId)
-        {
-            _logger.LogDebug("CreateAudioApplicationWithStream");
-
-            var response = await _audioPlatformService.CreateAudioApplicationWithStreamAsync(hearingId);
-
-            return response.Success ? Ok(response.IngestUrl) : StatusCode((int)response.StatusCode, response.Message);
-        }
-
-        /// <summary>
         /// Deletes the audio application for the conference by hearingId
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
@@ -183,50 +163,6 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Creates the audio stream for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to create the audio recording stream</param>
-        /// <returns></returns>
-        [HttpPost("audiostreams/{hearingId}")]
-        [SwaggerOperation(OperationId = "CreateAudioStream")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAudioStreamAsync(Guid hearingId)
-        {
-            _logger.LogDebug("CreateAudioStream");
-
-            var response = await _audioPlatformService.CreateAudioStreamAsync(hearingId);
-
-            return response.Success ? Ok(response.IngestUrl) : StatusCode((int)response.StatusCode, response.Message);
-        }
-
-        /// <summary>
-        /// Deletes the audio stream for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio stream</param>
-        /// <returns></returns>
-        [HttpDelete("audiostreams/{hearingId}")]
-        [SwaggerOperation(OperationId = "DeleteAudioStream")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAudioStreamAsync(Guid hearingId)
-        {
-            _logger.LogDebug("DeleteAudioStream");
-
-            var response = await _audioPlatformService.DeleteAudioStreamAsync(hearingId);
-
-            if (!response.Success)
-            {
-                return StatusCode((int)response.StatusCode, response.Message);
-            }
-
-            return NoContent();
-        }
-
-        /// <summary>
         /// Get the audio recording link for a given hearing.
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
@@ -238,16 +174,22 @@ namespace Video.API.Controllers
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
             _logger.LogInformation($"Getting audio recording link for hearing: {hearingId}");
-            var filePath = $"{hearingId}.mp4";
             try
             {
                 var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-                await EnsureAudioFileExists(hearingId, azureStorageService);
-                var audioFileLink = await azureStorageService.CreateSharedAccessSignature(filePath, TimeSpan.FromDays(14));
-                return Ok(new AudioRecordingResponse { AudioFileLink = audioFileLink });
+                var allBlobNames = await GetAllBlobNamesByFilePathPrefix(hearingId.ToString(), azureStorageService);
+                
+                return Ok(new AudioRecordingResponse
+                {
+                    AudioFileLinks = allBlobNames
+                        .Select(async x => await azureStorageService.CreateSharedAccessSignature(x, TimeSpan.FromDays(3)))
+                        .Select(x => x.Result)
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .ToList()
+                });
 
             }
-            catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
+            catch (ConferenceNotFoundException ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return NotFound();
@@ -338,13 +280,29 @@ namespace Video.API.Controllers
             {
                 throw new ConferenceNotFoundException(hearingId);
             }
-            var filePath = $"{hearingId}.mp4";
             
-            if (conference.ActualStartTime.HasValue && !await azureStorageService.FileExistsAsync(filePath))
+            var allBlobs = await GetAllBlobNamesByFilePathPrefix(hearingId.ToString(), azureStorageService);
+            
+            if (conference.ActualStartTime.HasValue && !allBlobs.Any())
             {
                 var msg = $"Audio recording file not found for hearing: {hearingId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
+        }
+
+        private static async Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, IAzureStorageService azureStorageService, string fileExtension = ".mp4")
+        {
+            var blobFullNames = new List<string>();
+            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(filePathPrefix);
+            await foreach (var blob in allBlobsAsync)
+            {
+                if (blob.Name.ToLower().EndsWith(fileExtension))
+                {
+                    blobFullNames.Add(blob.Name);
+                }
+            }
+
+            return blobFullNames;
         }
     }
 }

@@ -67,18 +67,6 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        [Given(@"I have a valid create audio application and stream request")]
-        public void GivenIHaveAValidCreateAudioApplicationAndStreamRequest()
-        {
-            _context.Request = _context.Post(CreateAudioApplicationAndStream(Guid.NewGuid()));
-        }
-
-        [Given(@"I have a valid create audio application and stream request for an existing hearing")]
-        public void GivenIHaveAValidCreateAudioApplicationAndStreamRequestForAnExistingHearing()
-        {
-            _context.Request = _context.Post(CreateAudioApplicationAndStream(_context.Test.ConferenceResponse.HearingId));
-        }
-
         [Given(@"I have a valid get audio stream request")]
         public void GivenIHaveAValidGetAudioStreamRequest()
         {
@@ -89,24 +77,6 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidGetAudioStreamRequestThatHasNoStream()
         {
             _context.Request = _context.Get(GetAudioStream(Guid.NewGuid()));
-        }
-        
-        [Given(@"I have a valid create audio stream request")]
-        public void GivenIHaveAValidCreateAudioStreamRequest()
-        {
-            _context.Request = _context.Post(CreateAudioStream(_context.Test.ConferenceResponse.HearingId));
-        }
-
-        [Given(@"I have a valid create audio stream request for an existing hearing")]
-        public void GivenIHaveAValidCreateAudioStreamRequestForAnExistingHearing()
-        {
-            _context.Request = _context.Post(CreateAudioStream(_context.Test.ConferenceResponse.HearingId));
-        }
-
-        [Given(@"I have a valid delete audio stream request")]
-        public void GivenIHaveAValidDeleteAudioStreamRequest()
-        {
-            _context.Request = _context.Delete(DeleteAudioStream(_context.Test.ConferenceResponse.HearingId));
         }
 
         [Given(@"I have a valid delete audio stream request that has no audio stream")]
@@ -125,15 +95,6 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAValidGetAudioStreamMonitoringRequestThatHasNoAudioStream()
         {
             _context.Request = _context.Get(GetAudioMonitoringStream(_context.Config.AudioRecordingTestIds.NonExistent));
-        }
-        
-        [Given(@"the conference has an audio stream")]
-        public void GivenTheConferenceHasAnAudioStream()
-        {
-            GivenTheConferenceHasAnAudioApplication();
-            GivenIHaveAValidCreateAudioStreamRequest();
-            _context.Response = _context.Client().Execute(_context.Request);
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Given(@"the conference has an audio recording")]
@@ -197,6 +158,15 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var audioLink = RequestHelper.Deserialise<AudioRecordingResponse>(_context.Response.Content);
             audioLink.Should().NotBeNull();
+            audioLink.AudioFileLinks.Should().NotBeNullOrEmpty();
+        }
+
+        [Then(@"the audio recording links are empty")]
+        public void ThenTheAudioRecordingLinksAreEmpty()
+        {
+            var audioLink = RequestHelper.Deserialise<AudioRecordingResponse>(_context.Response.Content);
+            audioLink.Should().NotBeNull();
+            audioLink.AudioFileLinks.Should().BeNullOrEmpty();
         }
     }
 }

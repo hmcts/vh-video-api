@@ -35,22 +35,6 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        [Given(@"the conference has an application and an audio stream")]
-        public async Task GivenTheConferenceHasAnApplicationAndAnAudioStream()
-        {
-            GivenIHaveAValidCreateAudioApplicationAndStreamRequest();
-            await _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
-        [Given(@"the conference has an audio stream")]
-        public async Task GivenTheConferenceHasAnAudioStream()
-        {
-            GivenIHaveAValidCreateAudioStreamRequest();
-            await _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
         [Given(@"I have an audio recording")]
         public async Task GivenIHaveAnAudioRecording()
         {
@@ -134,21 +118,6 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Delete;
         }
 
-        [Given(@"I have a valid create audio application and stream request")]
-        [When(@"I have a duplicate create audio application and stream request")]
-        public void GivenIHaveAValidCreateAudioApplicationAndStreamRequest()
-        {
-            _context.Uri = CreateAudioApplicationAndStream(_context.Test.Conference.HearingRefId);
-            _context.HttpMethod = HttpMethod.Post;
-        }
-
-        [Given(@"I have a nonexistent create audio application and stream request")]
-        public void GivenIHaveANonexistentCreateAudioApplicationAndStreamRequest()
-        {
-            _context.Uri = CreateAudioApplicationAndStream(Guid.NewGuid());
-            _context.HttpMethod = HttpMethod.Post;
-        }
-
         [Given(@"I have a valid get audio stream request")]
         public void GivenIHaveAValidGetAudioStreamRequest()
         {
@@ -161,35 +130,6 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = GetAudioStream(Guid.NewGuid());
             _context.HttpMethod = HttpMethod.Get;
-        }
-
-        [Given(@"I have a valid create audio stream request")]
-        [When(@"I have a duplicate create audio stream request")]
-        public void GivenIHaveAValidCreateAudioStreamRequest()
-        {
-            _context.Uri = CreateAudioStream(_context.Test.Conference.HearingRefId);
-            _context.HttpMethod = HttpMethod.Post;
-        }
-
-        [Given(@"I have a nonexistent create audio stream request")]
-        public void GivenIHaveANonexistentCreateAudioStreamRequest()
-        {
-            _context.Uri = CreateAudioStream(Guid.NewGuid());
-            _context.HttpMethod = HttpMethod.Post;
-        }
-
-        [Given(@"I have a valid delete audio stream request")]
-        public void GivenIHaveAValidDeleteAudioStreamRequest()
-        {
-            _context.Uri = DeleteAudioStream(_context.Test.Conference.HearingRefId);
-            _context.HttpMethod = HttpMethod.Delete;
-        }
-
-        [Given(@"I have a nonexistent delete audio stream request")]
-        public void GivenIHaveANonexistentDeleteAudioStreamRequest()
-        {
-            _context.Uri = DeleteAudioStream(Guid.NewGuid());
-            _context.HttpMethod = HttpMethod.Delete;
         }
 
         [Given(@"I have a valid get audio monitoring stream request")]
@@ -260,6 +200,15 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var audioRecording = await Response.GetResponses<AudioRecordingResponse>(_context.Response.Content);
             audioRecording.Should().NotBeNull();
+            audioRecording.AudioFileLinks.Should().NotBeNullOrEmpty();
+        }
+
+        [Then(@"the audio recording link details are empty")]
+        public async Task ThenTheAudioRecordingLinkDetailsAreEmpty()
+        {
+            var audioRecording = await Response.GetResponses<AudioRecordingResponse>(_context.Response.Content);
+            audioRecording.Should().NotBeNull();
+            audioRecording.AudioFileLinks.Should().BeNullOrEmpty();
         }
 
         [Then(@"(.*) audio recordings from cvp are retrieved")]

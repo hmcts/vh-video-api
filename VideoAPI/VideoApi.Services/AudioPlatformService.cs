@@ -56,8 +56,8 @@ namespace VideoApi.Services
             try
             {
                await CreateAndUpdateApplicationAsync(hearingId.ToString());
-                
-               return new AudioPlatformServiceResponse(true);
+
+               return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(hearingId.ToString())};
             }
             catch (AudioPlatformException ex)
             {
@@ -70,34 +70,6 @@ namespace VideoApi.Services
                 return new AudioPlatformServiceResponse(false)
                 {
                     Message = errorMessage, StatusCode = ex.StatusCode
-                };
-            }
-        }
-
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId)
-        {
-            try
-            {
-                await CreateAndUpdateApplicationAsync(hearingId.ToString());
-
-                var tasks = _wowzaClients.Select(x => x.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
-                await Task.WhenAll(tasks);
-                
-                _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
-
-                return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(hearingId.ToString()) };
-            }
-            catch (AudioPlatformException ex)
-            {
-                var errorMessage = "Failed to create the Wowza application and/or stream recorder for: " +
-                                   $"{hearingId}, StatusCode: {ex.StatusCode}, " +
-                                   $"Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
-                return new AudioPlatformServiceResponse(false)
-                {
-                    Message = errorMessage, StatusCode = ex.StatusCode, IngestUrl = DefaultEmptyIngestUrl
                 };
             }
         }
@@ -171,32 +143,6 @@ namespace VideoApi.Services
                 LogError(ex, errorMessage);
 
                 return null;
-            }
-        }
-
-        public async Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(Guid hearingId)
-        {
-            try
-            {
-                var tasks = _wowzaClients.Select(x => x.AddStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
-                await Task.WhenAll(tasks);
-                
-                _logger.LogInformation($"Created a Wowza stream recorder for: {hearingId}");
-
-                return new AudioPlatformServiceResponse(true) { IngestUrl = GetAudioIngestUrl(hearingId.ToString()) };
-            }
-            catch (AudioPlatformException ex)
-            {
-                var errorMessage = "Failed to create the Wowza stream recorder for: " +
-                                   $"{hearingId}, StatusCode: {ex.StatusCode}, " +
-                                   $"Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
-                return new AudioPlatformServiceResponse(false)
-                {
-                    Message = errorMessage, StatusCode = ex.StatusCode, IngestUrl = DefaultEmptyIngestUrl
-                };
             }
         }
 

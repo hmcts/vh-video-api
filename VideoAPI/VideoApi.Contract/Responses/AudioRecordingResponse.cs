@@ -1,7 +1,9 @@
-﻿﻿namespace VideoApi.Contract.Responses
+﻿using System.Collections.Generic;
+
+namespace VideoApi.Contract.Responses
 {
     public class AudioRecordingResponse
     {
-        public string AudioFileLink { get; set; }
+        public List<string> AudioFileLinks { get; set; }
     }
 }

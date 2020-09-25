@@ -153,40 +153,13 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
         
         [Test]
-        public async Task CreateAudioApplicationWithStreamAsync_Returns_Conflict()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            
-            var result = await _controller.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status409Conflict);
-            result.Value.Should().Be("Conflict");
-        }
-        
-        [Test]
-        public async Task CreateAudioApplicationWithStreamAsync_Returns_IngestUrl()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(true) { IngestUrl = "IngestUrl"});
-            
-            var result = await _controller.CreateAudioApplicationWithStreamAsync(It.IsAny<Guid>()) as OkObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().Be("IngestUrl");
-        }
-        
-        [Test]
         public async Task DeleteAudioApplicationAsync_Returns_Conflict()
         {
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
-            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+            
+            _blobClientMock = new Mock<BlobClient>();
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
+            _storageService.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
             _audioPlatformService
                 .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new AudioPlatformServiceResponse(false)
@@ -207,6 +180,10 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
+            _blobClientMock = new Mock<BlobClient>();
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
+            _storageService.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
+            
             _audioPlatformService
                 .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new AudioPlatformServiceResponse(true));
@@ -229,7 +206,9 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                 .ReturnsAsync(_testConference);
 
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
-            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+            _blobClientMock = new Mock<BlobClient>();
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
+            _storageService.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
             _audioPlatformService.Reset();
             var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
             result.Should().NotBeNull();
@@ -321,102 +300,27 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
         
         [Test]
-        public async Task CreateAudioStreamAsync_Returns_Conflict()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            
-            var result = await _controller.CreateAudioStreamAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status409Conflict);
-            result.Value.Should().Be("Conflict");
-        }
-        
-        [Test]
-        public async Task CreateAudioStreamAsync_Returns_IngestUrl()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(true) { IngestUrl = "IngestUrl"});
-            
-            var result = await _controller.CreateAudioStreamAsync(It.IsAny<Guid>()) as OkObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().Be("IngestUrl");
-        }
-        
-        [Test]
-        public async Task DeleteAudioStreamAsync_Returns_Conflict()
-        {
-            _audioPlatformService
-                .Setup(x => x.DeleteAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            
-            var result = await _controller.DeleteAudioStreamAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status409Conflict);
-            result.Value.Should().Be("Conflict");
-        }
-        
-        [Test]
-        public async Task DeleteAudioStreamAsync_Returns_NoContent()
-        {
-            _audioPlatformService
-                .Setup(x => x.DeleteAudioStreamAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(true));
-            
-            var result = await _controller.DeleteAudioStreamAsync(It.IsAny<Guid>()) as NoContentResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status204NoContent);
-        }
-
-        [Test]
-        public async Task GetAudioRecordingLinkAsync_return_notfound()
-        {
-            var conferenceType = typeof(VideoApi.Domain.Conference);
-            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))
-                ?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
-            _queryHandler
-                .Setup(x =>
-                    x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
-                        It.IsAny<GetConferenceByHearingRefIdQuery>()))
-                .ReturnsAsync(_testConference);
-
-            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
-            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
-            
-            var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>()) as NotFoundResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
-        }
-        
-        [Test]
         public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
         {
+            var hearingId = Guid.NewGuid();
+            var filePath = $"{hearingId}_2020-01-01.mp4";
+            
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
-            _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+            _blobClientMock = new Mock<BlobClient>();
+            _blobClientMock.Setup(x => x.Name).Returns(filePath);
+            _storageService.Setup(x => x.GetAllBlobsAsync(hearingId.ToString())).Returns(GetMockBlobClients);
             _storageService
-                .Setup(x => x.CreateSharedAccessSignature(It.IsAny<string>(), It.IsAny<TimeSpan>()))
+                .Setup(x => x.CreateSharedAccessSignature(filePath, It.IsAny<TimeSpan>()))
                 .ReturnsAsync("fileLink");
 
-            var hearingId = Guid.NewGuid();
-            var filePath = $"{hearingId}.mp4";
+            
             var result = await _controller.GetAudioRecordingLinkAsync(hearingId) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var item = result.Value.As<AudioRecordingResponse>();
             item.Should().NotBeNull();
-            item.AudioFileLink.Should().NotBeNullOrEmpty();
-            item.AudioFileLink.Should().Be("fileLink");
+            item.AudioFileLinks.Should().NotBeNullOrEmpty();
+            item.AudioFileLinks.First().Should().Be("fileLink");
             _storageService.Verify(c=>c.CreateSharedAccessSignature(filePath, It.IsAny<TimeSpan>()));
         }
 

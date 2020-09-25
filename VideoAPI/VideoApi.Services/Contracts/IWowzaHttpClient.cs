@@ -8,7 +8,6 @@ namespace VideoApi.Services.Contracts
         Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory);
         Task UpdateApplicationAsync(string applicationName, string server, string host, string azureStorageDirectory);
         Task DeleteApplicationAsync(string applicationName, string server, string host);
-        Task AddStreamRecorderAsync(string applicationName, string server, string host);
         Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host);
         Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host);
         Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host); 

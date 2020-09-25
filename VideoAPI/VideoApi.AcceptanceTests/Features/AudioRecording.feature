@@ -45,44 +45,8 @@ Scenario: Delete Audio Application without audio recording file - Not Found
 	Then the response should have the status NotFound and success status False
 
 @VIH-5868
-Scenario: Create Audio Application and Stream - Conflict
-  Given I have a conference
-	And I have a valid create audio application and stream request for an existing hearing
-	When I send the request to the endpoint
-	And I resend the request to the endpoint
-	Then the response should have the status Conflict and success status False
-
-@VIH-5868
-Scenario: Get Audio Stream - Ok
-  Given I have a conference with audiorecording
-	And I have a valid get audio stream request
-	When I send the request to the endpoint
-	Then the response should have the status Ok and success status True
-	And the audio stream details are retrieved
-
-@VIH-5868
 Scenario: Get Audio Stream - Not Found
 	Given I have a valid get audio stream request that has no stream
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
-  
-@VIH-5868
-Scenario: Create Audio Stream - Conflict
-	Given I have a conference
-	And I have a valid create audio stream request for an existing hearing
-	When I send the request to the endpoint
-	Then the response should have the status Conflict and success status False
-
-@VIH-5868
-Scenario: Delete Audio Stream - Ok
-  Given I have a conference with audiorecording
-	And I have a valid delete audio stream request
-	When I send the request to the endpoint
-	Then the response should have the status NoContent and success status True
-
-@VIH-5868
-Scenario: Delete Audio Stream - Not Found
-	Given I have a valid delete audio stream request that has no audio stream
 	When I send the request to the endpoint
 	Then the response should have the status NotFound and success status False
 
@@ -114,4 +78,5 @@ Scenario: Get Audio Recording Link - Not Found
 	Given I have a conference
 	And I have a valid get audio recording link request for non existing hearing
 	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
+  Then the response should have the status Ok and success status True
+  And the audio recording links are empty
