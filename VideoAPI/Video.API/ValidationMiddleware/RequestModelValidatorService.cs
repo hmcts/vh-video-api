@@ -17,6 +17,11 @@ namespace Video.API.ValidationMiddleware
         public IList<ValidationFailure> Validate(Type requestModel, object modelValue)
         {
             var validator = _validatorFactory.GetValidator(requestModel);
+            if (validator == null)
+            {
+                var failure = new ValidationFailure(modelValue.GetType().ToString(), "Validator not found for request");
+                return new List<ValidationFailure>{failure};
+            }
             var result = validator.Validate(modelValue);
             return result.Errors;
         }
