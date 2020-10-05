@@ -30,9 +30,7 @@ namespace VideoApi.DAL.Queries
             return await _context.Conferences
                 .Include(x => x.Participants)
                 .AsNoTracking()
-                .Where(x => 
-                    !x.IsClosed() && 
-                    x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
+                .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
                 .Where(x => x.Participants.Any(p =>
                     p.UserRole == UserRole.Judge &&
                     (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)))
