@@ -110,7 +110,6 @@ namespace Testing.Common.Helper
             public static string StartVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/start";
             public static string PauseVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/pause";
             public static string EndVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/end";
-            public static string RequestTechnicalAssistance(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/technicalassistance";
         }
     }
 }
