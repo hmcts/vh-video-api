@@ -214,10 +214,5 @@ namespace VideoApi.Services
         {
             await _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
         }
-
-        public async Task RequestTechnicalAssistanceAsync(Guid conferenceId)
-        {
-            await _kinlyApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
-        }
     }
 }

@@ -57,7 +57,5 @@ namespace VideoApi.Services.Contracts
         Task PauseHearingAsync(Guid conferenceId);
         
         Task EndHearingAsync(Guid conferenceId);
-        
-        Task RequestTechnicalAssistanceAsync(Guid conferenceId);
     }
 }
