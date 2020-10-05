@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using Video.API.Mappings;
+using VideoApi.Contract.Requests;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 
@@ -30,15 +32,19 @@ namespace Video.API.Controllers
         /// Start or resume a video hearing
         /// </summary>
         /// <param name="conferenceId">conference id</param>
+        /// <param name="request"></param>
         /// <returns>No Content status</returns>
         [HttpPost("{conferenceId}/start")]
         [SwaggerOperation(OperationId = "StartOrResumeVideoHearing")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
-        public async Task<IActionResult> StartVideoHearingAsync(Guid conferenceId)
+        public async Task<IActionResult> StartVideoHearingAsync(Guid conferenceId, StartHearingRequest request)
         {
             try
             {
-                await _videoPlatformService.StartHearingAsync(conferenceId);
+                var hearingLayout =
+                    HearingLayoutMapper.MapLayoutToVideoHearingLayout(
+                        request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
+                await _videoPlatformService.StartHearingAsync(conferenceId, hearingLayout);
                 return Accepted();
             }
             catch (KinlyApiException ex)

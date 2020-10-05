@@ -7,6 +7,8 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
+using VideoApi.Services.Kinly;
+using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services
@@ -74,7 +76,7 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
-        public Task StartHearingAsync(Guid conferenceId)
+        public Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
         {
             return Task.CompletedTask;
         }

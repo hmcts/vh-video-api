@@ -89,7 +89,14 @@ namespace VideoApi.Services.Clients
                         Name = "ModuleMediaWriterFileMover",
                         Description = "ModuleMediaWriterFileMover",
                         Class = "com.wowza.wms.module.ModuleMediaWriterFileMover",
-                        Order = 3
+                        Order = 4
+                    },
+                    new ModuleConfig
+                    {
+                        Name = "ModuleAutoRecord",
+                        Description = "ModuleAutoRecord",
+                        Class = "com.wowza.wms.plugin.ModuleAutoRecord",
+                        Order = 5
                     }
                 },
                 AdvancedSettings = new[]

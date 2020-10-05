@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Dtos;
+using VideoApi.Services.Kinly;
+using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services.Contracts
@@ -50,7 +52,7 @@ namespace VideoApi.Services.Contracts
         /// <returns></returns>
         Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints);
         
-        Task StartHearingAsync(Guid conferenceId);
+        Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC);
         
         Task PauseHearingAsync(Guid conferenceId);
         

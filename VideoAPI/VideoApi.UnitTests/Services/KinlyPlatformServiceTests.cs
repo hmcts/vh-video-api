@@ -327,11 +327,24 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task should_start_hearing()
+        public async Task should_start_hearing_with_automatic_layout_as_default()
         {
             var conferenceId = Guid.NewGuid();
             await _kinlyPlatformService.StartHearingAsync(conferenceId);
-            _kinlyApiClientMock.Verify(x => x.StartHearingAsync(conferenceId.ToString()), Times.Once);
+            _kinlyApiClientMock.Verify(
+                x => x.StartHearingAsync(conferenceId.ToString(),
+                    It.Is<StartHearingParams>(l => l.Layout == Layout.AUTOMATIC)), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_start_hearing_with_provided_layout()
+        {
+            var conferenceId = Guid.NewGuid();
+            var layout = Layout.ONE_PLUS_SEVEN;
+            await _kinlyPlatformService.StartHearingAsync(conferenceId, layout);
+            _kinlyApiClientMock.Verify(
+                x => x.StartHearingAsync(conferenceId.ToString(),
+                    It.Is<StartHearingParams>(l => l.Layout == layout)), Times.Once);
         }
         
         [Test]
