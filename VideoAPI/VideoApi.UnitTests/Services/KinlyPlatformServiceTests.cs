@@ -333,7 +333,7 @@ namespace VideoApi.UnitTests.Services
             await _kinlyPlatformService.StartHearingAsync(conferenceId);
             _kinlyApiClientMock.Verify(
                 x => x.StartHearingAsync(conferenceId.ToString(),
-                    It.Is<StartHearingParams>(l => l.Layout == Layout.AUTOMATIC)), Times.Once);
+                    It.Is<StartHearingParams>(l => l.Hearing_layout == Layout.AUTOMATIC)), Times.Once);
         }
         
         [Test]
@@ -344,7 +344,7 @@ namespace VideoApi.UnitTests.Services
             await _kinlyPlatformService.StartHearingAsync(conferenceId, layout);
             _kinlyApiClientMock.Verify(
                 x => x.StartHearingAsync(conferenceId.ToString(),
-                    It.Is<StartHearingParams>(l => l.Layout == layout)), Times.Once);
+                    It.Is<StartHearingParams>(l => l.Hearing_layout == layout)), Times.Once);
         }
         
         [Test]

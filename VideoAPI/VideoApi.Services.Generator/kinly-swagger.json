@@ -355,10 +355,10 @@
     "startHearingParams": {
       "type": "object",
       "required": [
-        "layout"
+        "hearing_layout"
       ],
       "properties": {
-        "layout": {
+        "hearing_layout": {
           "allOf": [
             {
               "$ref": "#/definitions/layout"

@@ -202,7 +202,7 @@ namespace VideoApi.Services
 
         public async Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
         {
-            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString(), new StartHearingParams {Layout = layout});
+            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString(), new StartHearingParams {Hearing_layout = layout});
         }
 
         public async Task PauseHearingAsync(Guid conferenceId)
