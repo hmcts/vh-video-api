@@ -22,6 +22,6 @@ namespace VideoApi.Domain.Enums
         EndpointJoined = 19,
         EndpointDisconnected = 20,
         EndpointTransfer = 21,
-        PrivateConsultationRejected = 212
+        PrivateConsultationRejected = 22
     }
 }
