@@ -53,6 +53,7 @@ namespace VideoApi.UnitTests.Events
                 new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService),
                 new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
                 new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
+                new PrivateConsultationRejectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object)
             };
 
             TestConference = new ConferenceBuilder()

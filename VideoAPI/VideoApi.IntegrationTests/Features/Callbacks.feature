@@ -28,19 +28,20 @@ Feature: Callbacks
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 	Examples: 
-    | EventType              |
-    | Joined                 |
-    | Disconnected           |
-    | Transfer               |
-    | Start                  |
-    | CountdownFinished      |
-    | Pause                  |
-    | Close                  |
-    | Leave                  |
-    | MediaPermissionDenied  |
-    | ParticipantJoining     |
-    | Help                   |
-    | ParticipantNotSignedIn |
+    | EventType                   |
+    | Joined                      |
+    | Disconnected                |
+    | Transfer                    |
+    | Start                       |
+    | CountdownFinished           |
+    | Pause                       |
+    | Close                       |
+    | Leave                       |
+    | MediaPermissionDenied       |
+    | ParticipantJoining          |
+    | Help                        |
+    | ParticipantNotSignedIn      |
+    | PrivateConsultationRejected |
 
   Scenario Outline: Should accept and process a endpoint event request
     Given I have a conference with endpoints

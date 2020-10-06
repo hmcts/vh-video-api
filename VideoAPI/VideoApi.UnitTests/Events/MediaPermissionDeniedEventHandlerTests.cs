@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Moq;
 using NUnit.Framework;
 using VideoApi.DAL.Commands;
@@ -24,10 +23,10 @@ namespace VideoApi.UnitTests.Events
             _eventHandler = new MediaPermissionDeniedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First();
+            var participantForEvent = conference.GetJudge();
             var callbackEvent = new CallbackEvent
             {
-                EventType = EventType.Help,
+                EventType = EventType.MediaPermissionDenied,
                 EventId = Guid.NewGuid().ToString(),
                 ParticipantId = participantForEvent.Id,
                 ConferenceId = conference.Id,
@@ -56,10 +55,10 @@ namespace VideoApi.UnitTests.Events
             _eventHandler = new MediaPermissionDeniedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First();
+            var participantForEvent = conference.GetJudge();
             var callbackEvent = new CallbackEvent
             {
-                EventType = EventType.Help,
+                EventType = EventType.MediaPermissionDenied,
                 EventId = Guid.NewGuid().ToString(),
                 ParticipantId = participantForEvent.Id,
                 ConferenceId = conference.Id,

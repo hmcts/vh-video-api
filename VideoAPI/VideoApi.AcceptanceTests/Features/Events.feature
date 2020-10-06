@@ -24,18 +24,19 @@ Feature: Events
     Then the response should have the status NoContent and success status True
 
     Examples:
-      | EventType              |
-      | Joined                 |
-      | Disconnected           |
-      | Start                  |
-      | CountdownFinished      |
-      | Pause                  |
-      | Close                  |
-      | Leave                  |
-      | MediaPermissionDenied  |
-      | ParticipantJoining     |
-      | Help                   |
-      | ParticipantNotSignedIn |
+      | EventType                   |
+      | Joined                      |
+      | Disconnected                |
+      | Start                       |
+      | CountdownFinished           |
+      | Pause                       |
+      | Close                       |
+      | Leave                       |
+      | MediaPermissionDenied       |
+      | ParticipantJoining          |
+      | Help                        |
+      | ParticipantNotSignedIn      |
+      | PrivateConsultationRejected |
 
   Scenario Outline: Endpoint Event
     Given I have a conference
