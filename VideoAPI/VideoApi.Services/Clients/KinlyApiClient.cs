@@ -1126,9 +1126,9 @@ namespace VideoApi.Services.Kinly
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class StartHearingParams 
     {
-        [Newtonsoft.Json.JsonProperty("layout", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("hearing_layout", Required = Newtonsoft.Json.Required.Always)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Layout Layout { get; set; }
+        public Layout Hearing_layout { get; set; }
     
         public string ToJson() 
         {
