@@ -100,9 +100,9 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
+        public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2)
         {
-            const int maxRetryAttempts = 2;
+            var maxRetryAttempts = retryAttempts;
             var pauseBetweenFailures = TimeSpan.FromSeconds(5);
 
             var result = await _pollyRetryService.WaitAndRetryAsync<Exception, TestCallResult>
@@ -213,6 +213,11 @@ namespace VideoApi.Services
         public async Task EndHearingAsync(Guid conferenceId)
         {
             await _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
+        }
+
+        public async Task<HealthCheckResponse> GetPlatformHealthAsync()
+        {
+            return await _kinlyApiClient.HealthCheckAsync();
         }
     }
 }

@@ -11,6 +11,8 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Kinly;
+using HealthCheckResponse = VideoApi.Contract.Responses.HealthCheckResponse;
 
 namespace Video.API.Controllers
 {
@@ -42,38 +44,37 @@ namespace Video.API.Controllers
         [ProducesResponseType(typeof(HealthCheckResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> HealthAsync()
         {
-            var response = new HealthCheckResponse();
-            response.AppVersion = GetApplicationVersion();
-            try
-            {
-                var hearingId = Guid.NewGuid();
-                var query = new GetConferenceByIdQuery(hearingId);
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
-                response.DatabaseHealth.Successful = true;
-            }
-            catch (Exception ex)
-            {
-                response.DatabaseHealth.Successful = false;
-                response.DatabaseHealth.ErrorMessage = ex.Message;
-                response.DatabaseHealth.Data = ex.Data;
-            }
+            var response = new HealthCheckResponse {AppVersion = GetApplicationVersion()};
+            // try
+            // {
+            //     var hearingId = Guid.NewGuid();
+            //     var query = new GetConferenceByIdQuery(hearingId);
+            //     await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
+            //     response.DatabaseHealth.Successful = true;
+            // }
+            // catch (Exception ex)
+            // {
+            //     response.DatabaseHealth.Successful = false;
+            //     response.DatabaseHealth.ErrorMessage = ex.Message;
+            //     response.DatabaseHealth.Data = ex.Data;
+            // }
+            //
+            // try
+            // {
+            //     await _videoPlatformService.GetTestCallScoreAsync(Guid.Empty, 0);
+            //     response.KinlySelfTestHealth.Successful = true;
+            // }
+            // catch (Exception ex)
+            // {
+            //     response.KinlySelfTestHealth.Successful = false;
+            //     response.KinlySelfTestHealth.ErrorMessage = ex.Message;
+            //     response.KinlySelfTestHealth.Data = ex.Data;
+            // }
 
             try
             {
-                await _videoPlatformService.GetTestCallScoreAsync(Guid.Empty);
-                response.KinlySelfTestHealth.Successful = true;
-            }
-            catch (Exception ex)
-            {
-                response.KinlySelfTestHealth.Successful = false;
-                response.KinlySelfTestHealth.ErrorMessage = ex.Message;
-                response.KinlySelfTestHealth.Data = ex.Data;
-            }
-
-            try
-            {
-                await _videoPlatformService.GetVirtualCourtRoomAsync(Guid.Empty);
-                response.KinlyApiHealth.Successful = true;
+                var apiHealth = await _videoPlatformService.GetPlatformHealthAsync();
+                response.KinlyApiHealth.Successful = apiHealth.Health_status == PlatformHealth.HEALTHY;
             }
             catch (Exception ex)
             {
@@ -84,7 +85,7 @@ namespace Video.API.Controllers
 
             try
             {
-                response.WowzaHealth.Successful = false;
+               response.WowzaHealth.Successful = false;
                 var wowzaResponse = await _audioPlatformService.GetDiagnosticsAsync();
                 if (wowzaResponse != null && !wowzaResponse.All(x => string.IsNullOrWhiteSpace(x.ServerVersion)))
                 {
