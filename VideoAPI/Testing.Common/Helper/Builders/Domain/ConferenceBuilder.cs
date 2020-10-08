@@ -41,7 +41,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
                 .WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                        Internet.Email(), UserRole.Individual, "Claimant LIP", "Claimant", Internet.Email(),
+                        $"Video_Api_Integration_Test_{Internet.Email()}", UserRole.Individual, "Claimant LIP", "Claimant", $"Video_Api_Integration_Test_{Internet.Email()}",
                         Phone.Number())).Build();
 
             foreach (var participant in participants)
@@ -68,7 +68,7 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                username = Internet.Email();
+                username = $"Video_Api_Integration_Test_{Internet.Email()}";
             }
 
             if (string.IsNullOrWhiteSpace(firstName))
@@ -79,7 +79,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
-                    userRole,  hearingRole, caseTypeGroup, Internet.Email(), Phone.Number())).Build();
+                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Internet.Email()}", Phone.Number())).Build();
 
             if (userRole == UserRole.Representative)
             {
