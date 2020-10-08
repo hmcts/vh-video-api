@@ -45,31 +45,31 @@ namespace Video.API.Controllers
         public async Task<IActionResult> HealthAsync()
         {
             var response = new HealthCheckResponse {AppVersion = GetApplicationVersion()};
-            // try
-            // {
-            //     var hearingId = Guid.NewGuid();
-            //     var query = new GetConferenceByIdQuery(hearingId);
-            //     await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
-            //     response.DatabaseHealth.Successful = true;
-            // }
-            // catch (Exception ex)
-            // {
-            //     response.DatabaseHealth.Successful = false;
-            //     response.DatabaseHealth.ErrorMessage = ex.Message;
-            //     response.DatabaseHealth.Data = ex.Data;
-            // }
-            //
-            // try
-            // {
-            //     await _videoPlatformService.GetTestCallScoreAsync(Guid.Empty, 0);
-            //     response.KinlySelfTestHealth.Successful = true;
-            // }
-            // catch (Exception ex)
-            // {
-            //     response.KinlySelfTestHealth.Successful = false;
-            //     response.KinlySelfTestHealth.ErrorMessage = ex.Message;
-            //     response.KinlySelfTestHealth.Data = ex.Data;
-            // }
+            try
+            {
+                var hearingId = Guid.NewGuid();
+                var query = new GetConferenceByIdQuery(hearingId);
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
+                response.DatabaseHealth.Successful = true;
+            }
+            catch (Exception ex)
+            {
+                response.DatabaseHealth.Successful = false;
+                response.DatabaseHealth.ErrorMessage = ex.Message;
+                response.DatabaseHealth.Data = ex.Data;
+            }
+            
+            try
+            {
+                await _videoPlatformService.GetTestCallScoreAsync(Guid.Empty, 0);
+                response.KinlySelfTestHealth.Successful = true;
+            }
+            catch (Exception ex)
+            {
+                response.KinlySelfTestHealth.Successful = false;
+                response.KinlySelfTestHealth.ErrorMessage = ex.Message;
+                response.KinlySelfTestHealth.Data = ex.Data;
+            }
 
             try
             {
