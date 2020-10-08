@@ -65,7 +65,7 @@ resources:
     type: github
     name: hmcts/azure-devops-templates
     ref: refs/heads/master # ref name to use, defaults to 'refs/heads/master'
-    endpoint: hmcts
+    endpoint: hmcts_shaed
 
 trigger:
   branches:
