@@ -20,13 +20,13 @@ namespace VideoApi.UnitTests.Controllers.Participant
                 .WithFactory(() => new TestCallResult(true, TestScore.Good)).Build();
 
             MockVideoPlatformService
-                .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>(), It.IsAny<int>()))
                 .Returns(Task.FromResult(testResult));
 
             var participantId = Guid.NewGuid();
 
             var response = await Controller.GetIndependentTestCallResultAsync(participantId);
-            var typedResult = (OkObjectResult)response;
+            var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
         }
 
@@ -34,11 +34,11 @@ namespace VideoApi.UnitTests.Controllers.Participant
         public async Task Should_return_not_found()
         {
             MockVideoPlatformService
-                .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetTestCallScoreAsync(It.IsAny<Guid>(), It.IsAny<int>()))
                 .Returns(Task.FromResult<TestCallResult>(null));
 
             var response = await Controller.GetIndependentTestCallResultAsync(Guid.NewGuid());
-            var typedResult = (NotFoundResult)response;
+            var typedResult = (NotFoundResult) response;
             typedResult.Should().NotBeNull();
         }
     }

@@ -188,7 +188,7 @@ namespace Video.API
 
         private static IKinlyApiClient BuildKinlyClient(string url, HttpClient httpClient)
         {
-            var client = new KinlyApiClient(url, httpClient);
+            var client = new KinlyApiClient(url, httpClient){ ReadResponseAsString = true};
             var contractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()};
 
             client.JsonSerializerSettings.ContractResolver = contractResolver;

@@ -14,7 +14,7 @@ namespace VideoApi.Services.Contracts
     {
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl, IEnumerable<EndpointDto> endpoints);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
-        Task<TestCallResult> GetTestCallScoreAsync(Guid participantId);
+        Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
         Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);
         
         /// <summary>
@@ -57,5 +57,7 @@ namespace VideoApi.Services.Contracts
         Task PauseHearingAsync(Guid conferenceId);
         
         Task EndHearingAsync(Guid conferenceId);
+
+        Task<HealthCheckResponse> GetPlatformHealthAsync();
     }
 }
