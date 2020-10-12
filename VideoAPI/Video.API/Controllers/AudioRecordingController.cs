@@ -202,11 +202,11 @@ namespace Video.API.Controllers
         /// <param name="cloudRoom"></param>
         /// <param name="date"></param>
         /// <param name="caseReference"></param>
-        [HttpGet("audio/{cloudRoom}/{date}/{caseReference}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpWithCaseReference")]
+        [HttpGet("audio/cvp/all/{cloudRoom}/{date}/{caseReference}")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLinkAllCvp")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoom, string date, string caseReference)
+        public async Task<IActionResult> GetAudioRecordingLinkCvpAllAsync(string cloudRoom, string date, string caseReference)
         {
             _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoom}, for date: {date} and case number: {caseReference}");
             
@@ -228,17 +228,17 @@ namespace Video.API.Controllers
         /// </summary>
         /// <param name="cloudRoom"></param>
         /// <param name="date"></param>
-        [HttpGet("audio/{cloudRoom}/{date}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvp")]
+        [HttpGet("audio/cvp/cloudroom/{cloudRoom}/{date}")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpByCloudRoom")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAudioRecordingLinkCvpAsync(string cloudRoom, string date)
+        public async Task<IActionResult> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date)
         {
             _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoom}, for date: {date}");
 
             try
             {
-                var responses = await GetCvpAudioFiles(cloudRoom, date);
+                var responses = await GetCvpAudioFiles(cloudRoom, date, null);
 
                 return Ok(responses);
             }
@@ -249,11 +249,37 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoom, string date, string caseReference = null)
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="caseReference"></param>
+        [HttpGet("audio/cvp/date/{date}/{caseReference}")]
+        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpByDate")]
+        [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference)
+        {
+            _logger.LogInformation($"Getting audio recording link for CVP date: {date}, CaseReference: {caseReference}");
+
+            try
+            {
+                var responses = await GetCvpAudioFiles(null, date, caseReference);
+
+                return Ok(responses);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return NotFound();
+            }
+        }
+
+        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoom, string date, string caseReference)
         {
             var responses = new List<CvpAudioFileResponse>();
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
-            var allBlobsAsync = azureStorageService.GetAllBlobsAsync($"audiostream{cloudRoom}");
+            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(!string.IsNullOrWhiteSpace(cloudRoom) ? $"audiostream{cloudRoom}" : string.Empty);
             await foreach (var blob in allBlobsAsync)
             {
                 var blobName = blob.Name.ToLower();

@@ -153,17 +153,24 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
 
-        [Given(@"I have a valid default get cvp audio recordings request for (.*) (.*)")]
-        public void GivenIHaveAValidDefaultGetCvpAudioRecordingRequest(string cloudRoom, string date)
+        [Given(@"I have a valid get cvp audio recordings by all request for (.*) (.*) (.*)")]
+        public void GivenIHaveAValidGetCvpAudioRecordingByAllRequest(string cloudRoom, string date, string caseReference)
         {
-            _context.Uri = GetCvpAudioRecordings(cloudRoom, date);
+            _context.Uri = GetCvpAudioRecordingsAll(cloudRoom, date, caseReference);
             _context.HttpMethod = HttpMethod.Get;
         }
 
-        [Given(@"I have a valid get cvp audio recordings request for (.*) (.*) (.*)")]
-        public void GivenIHaveAValidGetCvpAudioRecordingRequest(string cloudRoom, string date, string caseReference)
+        [Given(@"I have a valid get cvp audio recordings by cloud room request for (.*) (.*)")]
+        public void GivenIHaveAValidGetCvpAudioRecordingByCloudRoomRequest(string cloudRoom, string date)
         {
-            _context.Uri = GetCvpAudioRecordings(cloudRoom, date, caseReference);
+            _context.Uri = GetCvpAudioRecordingsByCloudRoom(cloudRoom, date);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+
+        [Given(@"I have a valid get cvp audio recordings by date request for (.*) (.*)")]
+        public void GivenIHaveAValidGetCvpAudioRecordingByDateRequest(string date, string caseReference)
+        {
+            _context.Uri = GetCvpAudioRecordingsByDate(date, caseReference);
             _context.HttpMethod = HttpMethod.Get;
         }
 
