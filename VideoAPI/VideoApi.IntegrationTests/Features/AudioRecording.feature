@@ -45,7 +45,7 @@ Feature: Audio Recording
     And the audio recording link details are empty
 
   @VIH-6385
-  Scenario Outline: Get Audio Recordings for CVP With case reference number
+  Scenario Outline: Get Audio Recordings for CVP by all
     Given Cvp has audio recordings
       | CloudRoom | Date       | CaseReference |
       | 1001      | 2020-01-01 | MyReference1  |
@@ -53,7 +53,7 @@ Feature: Audio Recording
       | 1001      | 2020-01-02 | MyReference3  |
       | 1001      | 2020-01-02 | MyReference4  |
       | 1001      | 2020-01-02 | MyReference5  |
-    And I have a valid get cvp audio recordings request for <CloudRoom> <Date> <CaseReference>
+    And I have a valid get cvp audio recordings by all request for <CloudRoom> <Date> <CaseReference>
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
     And <Results> audio recordings from cvp are retrieved
@@ -67,7 +67,7 @@ Feature: Audio Recording
       | NoExist   | 2020-01-09 | NoExist               | 0       |
 
   @VIH-6385
-  Scenario Outline: Get Audio Recordings for CVP without case reference number
+  Scenario Outline: Get Audio Recordings for CVP by cloud room and date
     Given Cvp has audio recordings
       | CloudRoom | Date       |
       | 1001      | 2020-01-01 |
@@ -76,7 +76,7 @@ Feature: Audio Recording
       | 1001      | 2020-01-02 |
       | 1001      | 2020-01-02 |
       | 1001      | 2020-01-03 |
-    And I have a valid default get cvp audio recordings request for <CloudRoom> <Date>
+    And I have a valid get cvp audio recordings by cloud room request for <CloudRoom> <Date>
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
     And <Results> audio recordings from cvp are retrieved
@@ -86,3 +86,25 @@ Feature: Audio Recording
       | 1001      | 2020-01-02 | 3       |
       | 1001      | 2020-01-03 | 1       |
       | 1001      | 2020-01-04 | 0       |
+
+  @VIH-6385
+  Scenario Outline: Get Audio Recordings for CVP by date with case reference number
+    Given Cvp has audio recordings
+      | Date       | CaseReference |
+      | 2020-01-01 | MyReference1  |
+      | 2020-01-01 | MyReference1  |
+      | 2020-01-02 | MyReference3  |
+      | 2020-01-02 | MyReference4  |
+      | 2020-01-02 | MyReference5  |
+    And I have a valid get cvp audio recordings by date request for <Date> <CaseReference>
+    When I send the request to the endpoint
+    Then the response should have the status Ok and success status True
+    And <Results> audio recordings from cvp are retrieved
+    Examples:
+      | Date       | CaseReference         | Results |
+      | 2020-01-01 | MyReference1          | 2       |
+      | 2020-01-02 | MyReference3          | 1       |
+      | 2020-01-02 | MyReference4          | 1       |
+      | 2020-01-02 | MyReference5          | 1       |
+      | 2020-01-02 | MyReference99999xxxxx | 0       |
+      | 2020-01-09 | NoExist               | 0       |

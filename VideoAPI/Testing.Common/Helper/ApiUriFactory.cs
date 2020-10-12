@@ -18,8 +18,9 @@ namespace Testing.Common.Helper
             public static string GetAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
             public static string GetAudioMonitoringStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}/monitoring";
             public static string GetAudioRecordingLink(Guid hearingId) => $"{ApiRoot}/audio/{hearingId}";
-            public static string GetCvpAudioRecordings(string cloudRoom, string date, string caseReference) => $"{ApiRoot}/audio/{cloudRoom}/{date}/{caseReference}";
-            public static string GetCvpAudioRecordings(string cloudRoom, string date) => $"{ApiRoot}/audio/{cloudRoom}/{date}";
+            public static string GetCvpAudioRecordingsAll(string cloudRoom, string date, string caseReference) => $"{ApiRoot}/audio/cvp/all/{cloudRoom}/{date}/{caseReference}";
+            public static string GetCvpAudioRecordingsByCloudRoom(string cloudRoom, string date) => $"{ApiRoot}/audio/cvp/cloudroom/{cloudRoom}/{date}";
+            public static string GetCvpAudioRecordingsByDate(string date, string caseReference) => $"{ApiRoot}/audio/cvp/date/{date}/{caseReference}";
         }
 
         public static class ParticipantsEndpoints
