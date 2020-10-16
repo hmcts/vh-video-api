@@ -51,7 +51,8 @@ namespace Video.API.Mappings
                 Role = participant.UserRole,
                 DisplayName = participant.DisplayName,
                 Representee = participant.Representee,
-                CaseTypeGroup = participant.CaseTypeGroup
+                CaseTypeGroup = participant.CaseTypeGroup,
+                HearingRole = participant.HearingRole
             };
         }
     }
