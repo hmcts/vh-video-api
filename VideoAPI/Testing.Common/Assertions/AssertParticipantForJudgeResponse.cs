@@ -12,6 +12,7 @@ namespace Testing.Common.Assertions
             participant.Role.Should().NotBeNull();
             participant.DisplayName.Should().NotBeNullOrWhiteSpace();
             participant.CaseTypeGroup.Should().NotBeNullOrWhiteSpace();
+            participant.HearingRole.Should().NotBeNullOrWhiteSpace();
             if (participant.Role == UserRole.Representative)
             {
                 participant.Representee.Should().NotBeEmpty();

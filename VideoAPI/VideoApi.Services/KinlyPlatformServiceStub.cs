@@ -41,7 +41,7 @@ namespace VideoApi.Services
             return Task.FromResult(Create());
         }
 
-        public Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
+        public Task<TestCallResult> GetTestCallScoreAsync(Guid participantId,int retryAttempts = 2)
         {
             return Task.FromResult<TestCallResult>(null);
         }
@@ -89,6 +89,14 @@ namespace VideoApi.Services
         public Task EndHearingAsync(Guid conferenceId)
         {
             return Task.CompletedTask;
+        }
+
+        public Task<HealthCheckResponse> GetPlatformHealthAsync()
+        {
+            return Task.FromResult(new HealthCheckResponse
+            {
+                Health_status = PlatformHealth.HEALTHY
+            });
         }
 
         private static MeetingRoom Create()

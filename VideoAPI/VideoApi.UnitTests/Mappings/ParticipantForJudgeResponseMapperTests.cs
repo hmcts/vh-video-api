@@ -29,6 +29,7 @@ namespace VideoApi.UnitTests.Mappings
             response.Role.Should().BeEquivalentTo(participant.UserRole);
             response.Representee.Should().BeEquivalentTo(participant.Representee);
             response.CaseTypeGroup.Should().BeEquivalentTo(participant.CaseTypeGroup);
+            response.HearingRole.Should().BeEquivalentTo(participant.HearingRole);
         }
     }
 }

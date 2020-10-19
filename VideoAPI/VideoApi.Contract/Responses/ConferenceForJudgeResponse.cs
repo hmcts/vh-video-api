@@ -73,5 +73,10 @@ namespace VideoApi.Contract.Responses
         /// The group a participant belongs to
         /// </summary>
         public string CaseTypeGroup { get; set; }
+        
+        /// <summary>
+        /// The participant hearing role in conference
+        /// </summary>
+        public string HearingRole { get; set; }
     }
 }

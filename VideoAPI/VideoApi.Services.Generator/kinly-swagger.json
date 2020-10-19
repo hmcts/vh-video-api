@@ -291,6 +291,23 @@
           }
         }
       }
+    },
+    "/health": {
+      "get": {
+        "operationId": "healthCheck",
+        "description": "Check API health",
+        "tags": [
+          "Health Check"
+        ],
+        "responses": {
+          "200": {
+            "description": "Health Check",
+            "schema": {
+              "$ref": "#/definitions/healthCheckResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -475,6 +492,26 @@
         "FOUR_EQUAL",
         "ONE_PLUS_SEVEN",
         "TWO_PLUS_TWENTYONE"
+      ],
+      "type": "string"
+    },
+    "healthCheckResponse": {
+      "type": "object",
+      "properties": {
+        "health_status": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/platformHealth"
+            }
+          ],
+          "description": "The platform health"
+        }
+      }
+    },
+    "platformHealth": {
+      "enum": [
+        "HEALTHY",
+        "UNHEALTHY"
       ],
       "type": "string"
     }

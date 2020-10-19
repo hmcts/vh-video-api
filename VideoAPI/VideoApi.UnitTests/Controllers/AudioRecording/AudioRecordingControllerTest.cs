@@ -325,7 +325,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
 
         [Test]
-        public async Task GetAudioRecordingLinkCvpWithCaseReferenceAsync_returns_ok_with_results()
+        public async Task GetAudioRecordingLinkCvpAllWithCaseReferenceAsync_returns_ok_with_results()
         {
             const string cloudRoom = "001";
             const string date = "2020-09-01";
@@ -340,7 +340,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageService.Setup(x => x.GetAllBlobsAsync($"audiostream{cloudRoom}")).Returns(GetMockBlobClients);
             _storageService.Setup(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>())).ReturnsAsync("sas");
 
-            var result = await _controller.GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoom, date, caseReference) as OkObjectResult;
+            var result = await _controller.GetAudioRecordingLinkCvpAllAsync(cloudRoom, date, caseReference) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var item = result.Value.As<List<CvpAudioFileResponse>>();
@@ -354,7 +354,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
 
         [Test]
-        public async Task GetAudioRecordingLinkCvpWithCaseReferenceAsync_returns_ok_with_no_results()
+        public async Task GetAudioRecordingLinkCvpAllWithCaseReferenceAsync_returns_ok_with_no_results()
         {
             const string cloudRoom = "001";
             const string date = "2020-09-01";
@@ -369,7 +369,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageService.Setup(x => x.GetAllBlobsAsync($"audiostream{cloudRoom}")).Returns(GetMockBlobClients);
             _storageService.Setup(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>())).ReturnsAsync("sas");
 
-            var result = await _controller.GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoom, date, caseReference) as OkObjectResult;
+            var result = await _controller.GetAudioRecordingLinkCvpAllAsync(cloudRoom, date, caseReference) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var item = result.Value.As<List<CvpAudioFileResponse>>();
@@ -379,7 +379,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
 
         [Test]
-        public async Task GetAudioRecordingLinkCvpWithCaseReferenceAsync_returns_not_found_when_exception_thrown()
+        public async Task GetAudioRecordingLinkCvpAllWithCaseReferenceAsync_returns_not_found_when_exception_thrown()
         {
             const string cloudRoom = "001";
             const string date = "2020-09-01";
@@ -393,7 +393,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Cvp)).Returns(_storageService.Object);
             _storageService.Setup(x => x.GetAllBlobsAsync($"audiostream{cloudRoom}")).Throws<Exception>();
 
-            var result = await _controller.GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoom, date, caseReference) as NotFoundResult;
+            var result = await _controller.GetAudioRecordingLinkCvpAllAsync(cloudRoom, date, caseReference) as NotFoundResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
 
@@ -401,7 +401,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
         
         [Test]
-        public async Task GetAudioRecordingLinkCvpAsync_returns_ok_with_results()
+        public async Task GetAudioRecordingLinkCvpByCloudRoomAsync_returns_ok_with_results()
         {
             const string cloudRoom = "001";
             const string date = "2020-09-01";
@@ -415,7 +415,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageService.Setup(x => x.GetAllBlobsAsync($"audiostream{cloudRoom}")).Returns(GetMockBlobClients);
             _storageService.Setup(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>())).ReturnsAsync("sas");
 
-            var result = await _controller.GetAudioRecordingLinkCvpAsync(cloudRoom, date) as OkObjectResult;
+            var result = await _controller.GetAudioRecordingLinkCvpByCloudRoomAsync(cloudRoom, date) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var item = result.Value.As<List<CvpAudioFileResponse>>();
@@ -429,7 +429,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
 
         [Test]
-        public async Task GetAudioRecordingLinkCvpAsync_returns_ok_with_no_results()
+        public async Task GetAudioRecordingLinkCvpByCloudRoomAsync_returns_ok_with_no_results()
         {
             const string cloudRoom = "001";
             const string date = "2020-09-01";
@@ -443,7 +443,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageService.Setup(x => x.GetAllBlobsAsync($"audiostream{cloudRoom}")).Returns(GetMockBlobClients);
             _storageService.Setup(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>())).ReturnsAsync("sas");
 
-            var result = await _controller.GetAudioRecordingLinkCvpAsync(cloudRoom, date) as OkObjectResult;
+            var result = await _controller.GetAudioRecordingLinkCvpByCloudRoomAsync(cloudRoom, date) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var item = result.Value.As<List<CvpAudioFileResponse>>();
@@ -453,7 +453,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
 
         [Test]
-        public async Task GetAudioRecordingLinkCvpAsync_returns_not_found_when_exception_thrown()
+        public async Task GetAudioRecordingLinkCvpByCloudRoomAsync_returns_not_found_when_exception_thrown()
         {
             const string cloudRoom = "audiostream001";
             const string date = "2020-09-01";
@@ -466,7 +466,79 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Cvp)).Returns(_storageService.Object);
             _storageService.Setup(x => x.GetAllBlobsAsync(cloudRoom)).Throws<Exception>();
 
-            var result = await _controller.GetAudioRecordingLinkCvpAsync(cloudRoom, date) as NotFoundResult;
+            var result = await _controller.GetAudioRecordingLinkCvpByCloudRoomAsync(cloudRoom, date) as NotFoundResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+
+            _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
+        }
+        
+        [Test]
+        public async Task GetAudioRecordingLinkCvpByDateAsync_returns_ok_with_results()
+        {
+            const string date = "2020-09-01";
+            
+            _blobClientMock = new Mock<BlobClient>();
+            var blobName = $"caseNumber-someBlobName-{date}";
+            var blobFullName = $"someCloudRoom/{blobName}";
+            _blobClientMock.Setup(x => x.Name).Returns(blobFullName);
+            
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Cvp)).Returns(_storageService.Object);
+            _storageService.Setup(x => x.GetAllBlobsAsync(string.Empty)).Returns(GetMockBlobClients);
+            _storageService.Setup(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>())).ReturnsAsync("sas");
+
+            var result = await _controller.GetAudioRecordingLinkCvpByDateAsync(date, "caseNumber") as OkObjectResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            var item = result.Value.As<List<CvpAudioFileResponse>>();
+            item.Should().NotBeNullOrEmpty();
+            var firstItem = item.FirstOrDefault();
+            firstItem.Should().NotBeNull();
+            firstItem.FileName.Should().Be(blobName);
+            firstItem.SasTokenUrl.Should().Be("sas");
+            
+            _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Once);
+        }
+
+        [Test]
+        public async Task GetAudioRecordingLinkCvpByDateAsync_returns_ok_with_no_results()
+        {
+            const string cloudRoom = "001";
+            const string date = "2020-09-01";
+
+            _blobClientMock = new Mock<BlobClient>();
+            var blobName = "TotallyNonMatchingNameWIthSearchParameters";
+            var blobFullName = $"audiostream{cloudRoom}/{blobName}";
+            _blobClientMock.Setup(x => x.Name).Returns(blobFullName);
+
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Cvp)).Returns(_storageService.Object);
+            _storageService.Setup(x => x.GetAllBlobsAsync(string.Empty)).Returns(GetMockBlobClients);
+            _storageService.Setup(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>())).ReturnsAsync("sas");
+
+            var result = await _controller.GetAudioRecordingLinkCvpByDateAsync(date, "someCaseReference") as OkObjectResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            var item = result.Value.As<List<CvpAudioFileResponse>>();
+            item.Should().BeNullOrEmpty();
+
+            _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
+        }
+
+        [Test]
+        public async Task GetAudioRecordingLinkCvpByDateAsync_returns_not_found_when_exception_thrown()
+        {
+            const string cloudRoom = "audiostream001";
+            const string date = "2020-09-01";
+
+            _blobClientMock = new Mock<BlobClient>();
+            var blobName = "TotallyNonMatchingNameWIthSearchParameters";
+            var blobFullName = $"{cloudRoom}/{blobName}";
+            _blobClientMock.Setup(x => x.Name).Returns(blobFullName);
+
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Cvp)).Returns(_storageService.Object);
+            _storageService.Setup(x => x.GetAllBlobsAsync(string.Empty)).Throws<Exception>();
+
+            var result = await _controller.GetAudioRecordingLinkCvpByDateAsync(date, "caseReference") as NotFoundResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
 
