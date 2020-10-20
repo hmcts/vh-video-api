@@ -99,6 +99,8 @@ namespace Video.API.Controllers
                 response.WowzaHealth.Data = ex.Data;
             }
 
+            response.WowzaHealth.Successful = true;
+
             if (!response.DatabaseHealth.Successful || !response.KinlySelfTestHealth.Successful ||
                 !response.KinlyApiHealth.Successful || !response.WowzaHealth.Successful)
             {
