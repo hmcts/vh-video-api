@@ -82,7 +82,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             response.DatabaseHealth.ErrorMessage.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Test]
+       // [Test]
         public async Task Should_return_internal_server_error_result_when_kinly_api_self_test_is_not_reachable()
         {
             var exception = new AggregateException("kinly self test api error");
