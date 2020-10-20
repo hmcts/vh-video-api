@@ -194,11 +194,12 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         }
 
         [Test]
-        public async Task Should_not_delete_audio_application_if_audio_file_not_exists_returns_notFound()
+        public async Task Should_not_delete_audio_application_if_audio_file_not_exists_and_audio_required_returns_notFound()
         {
             var conferenceType = typeof(VideoApi.Domain.Conference);
             conferenceType.GetProperty(nameof(_testConference.ActualStartTime))
                 ?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            _testConference.AudioRecordingRequired = true;
             _queryHandler
                 .Setup(x =>
                     x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
@@ -214,6 +215,32 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
             _audioPlatformService.Verify(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_delete_audio_application_if_audio_file_not_exists_and_audio_not_reqired_returns_noContent()
+        {
+            var conferenceType = typeof(VideoApi.Domain.Conference);
+            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))
+                ?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            _testConference.AudioRecordingRequired = false;
+
+            _queryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                        It.IsAny<GetConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync(_testConference);
+
+            _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
+            
+            _audioPlatformService
+              .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
+              .ReturnsAsync(new AudioPlatformServiceResponse(true));
+
+            var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NoContentResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status204NoContent);
+            _audioPlatformService.Verify(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Once);
         }
 
         [Test]
