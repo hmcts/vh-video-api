@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Linq;
@@ -25,13 +26,15 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly IAudioPlatformService _audioPlatformService;
+        private readonly ILogger<HealthCheckController> _logger;
 
         public HealthCheckController(IQueryHandler queryHandler, IVideoPlatformService videoPlatformService,
-            IAudioPlatformService audioPlatformService)
+            IAudioPlatformService audioPlatformService, ILogger<HealthCheckController> logger)
         {
             _queryHandler = queryHandler;
             _videoPlatformService = videoPlatformService;
             _audioPlatformService = audioPlatformService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -54,6 +57,8 @@ namespace Video.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogInformation("##### DatabaseHealth - CheckServiceHealth Failed : " + ex.Message);
+                _logger.LogError(ex, ex.Message);
                 response.DatabaseHealth.Successful = false;
                 response.DatabaseHealth.ErrorMessage = ex.Message;
                 response.DatabaseHealth.Data = ex.Data;
@@ -66,9 +71,13 @@ namespace Video.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogInformation("##### KinlySelfTestHealth - CheckServiceHealth Failed : " + ex.Message);
+                _logger.LogError(ex, ex.Message);
                 response.KinlySelfTestHealth.Successful = false;
+                /*
                 response.KinlySelfTestHealth.ErrorMessage = ex.Message;
                 response.KinlySelfTestHealth.Data = ex.Data;
+                */
             }
 
             try
@@ -78,9 +87,13 @@ namespace Video.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogInformation("##### KinlyApiHealth - CheckServiceHealth Failed : " + ex.Message);
+                _logger.LogError(ex, ex.Message);
                 response.KinlyApiHealth.Successful = false;
+                /*
                 response.KinlyApiHealth.ErrorMessage = ex.Message;
                 response.KinlyApiHealth.Data = ex.Data;
+                */
             }
 
             try
@@ -94,19 +107,34 @@ namespace Video.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogInformation("##### WowzaHealth - CheckServiceHealth Failed : " + ex.Message);
+                _logger.LogError(ex, ex.Message);
                 response.WowzaHealth.Successful = false;
+                /*
                 response.WowzaHealth.ErrorMessage = ex.Message;
                 response.WowzaHealth.Data = ex.Data;
+                */
             }
 
-            
+            if (!response.DatabaseHealth.Successful || !response.KinlySelfTestHealth.Successful ||
+                !response.KinlyApiHealth.Successful || !response.WowzaHealth.Successful)
+            {
+                _logger.LogInformation(
+                    $"##### CheckServiceHealth DB: {response.DatabaseHealth.Successful} KST: {response.KinlySelfTestHealth.Successful}" +
+                    $"KAPI: {response.KinlyApiHealth.Successful} WOW: {response.WowzaHealth.Successful}");
+            }
+
             response.KinlySelfTestHealth.Successful = true;
-            
+            response.KinlyApiHealth.Successful = true;
+            response.WowzaHealth.Successful = true;
+
             if (!response.DatabaseHealth.Successful || !response.KinlySelfTestHealth.Successful ||
                 !response.KinlyApiHealth.Successful || !response.WowzaHealth.Successful)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, response);
             }
+
+            
 
             return Ok(response);
         }
