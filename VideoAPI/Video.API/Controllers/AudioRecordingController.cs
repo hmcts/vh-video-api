@@ -306,13 +306,16 @@ namespace Video.API.Controllers
             {
                 throw new ConferenceNotFoundException(hearingId);
             }
-            
-            var allBlobs = await GetAllBlobNamesByFilePathPrefix(hearingId.ToString(), azureStorageService);
-            
-            if (conference.ActualStartTime.HasValue && !allBlobs.Any())
+
+            if (conference.AudioRecordingRequired)
             {
-                var msg = $"Audio recording file not found for hearing: {hearingId}";
-                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+                var allBlobs = await GetAllBlobNamesByFilePathPrefix(hearingId.ToString(), azureStorageService);
+
+                if (conference.ActualStartTime.HasValue && !allBlobs.Any())
+                {
+                    var msg = $"Audio recording file not found for hearing: {hearingId}";
+                    throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+                }
             }
         }
 
