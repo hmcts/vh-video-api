@@ -11,7 +11,6 @@ namespace VideoApi.Contract.Requests
         public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        
         public string ContactEmail { get; set; }
         public string ContactTelephone { get; set; }
         public UserRole UserRole { get; set; }

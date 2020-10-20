@@ -34,11 +34,12 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Name = $"Automation_{Name.First()}{RandomNumber.Next()}")
                 .With(x => x.FirstName = $"Automation_{Name.First()}")
                 .With(x => x.LastName = $"Automation_{Name.Last()}")
-                .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Judge)
                 .With(x => x.HearingRole = "Judge")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
                 .Build();
 
             if (!string.IsNullOrWhiteSpace(firstName))
@@ -57,14 +58,15 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
                 .With(x => x.FirstName = $"Automation_{Name.First()}")
                 .With(x => x.LastName = $"Automation_{Name.Last()}")
-                .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.CaseTypeGroup = caseTypeGroup)
-                .With(x => x.HearingRole =
-                    ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
+                .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
                 .With(x => x.Representee = "Person")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
+
                 .Build();
             _bookNewConferenceRequest.Participants.Add(participant);
             return this;
@@ -76,13 +78,13 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
                 .With(x => x.FirstName = $"Automation_{Name.First()}")
                 .With(x => x.LastName = $"Automation_{Name.Last()}")
-                .With(x => x.Username = $"Automation_{Internet.Email()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Individual)
                 .With(x => x.CaseTypeGroup = caseTypeGroup)
-                .With(x => x.HearingRole =
-                    ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
+                .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
                 .Build();
 
             _bookNewConferenceRequest.Participants.Add(participant);
