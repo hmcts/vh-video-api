@@ -7,7 +7,6 @@ namespace VideoApi.Contract.Responses
         public decimal RecentPacketLoss { get; set; }
         public string BrowserName { get; set; }
         public string BrowserVersion { get; set; }
-        
         public string OperatingSystem { get; set; }
         public string OperatingSystemVersion { get; set; }
         public DateTime Timestamp { get; set; }
