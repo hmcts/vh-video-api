@@ -17,9 +17,12 @@ namespace VideoApi.UnitTests.Mappings
         {
             var heartbeats = new List<Heartbeat>
             {
-                new Heartbeat(Guid.Empty, Guid.Empty, 1,2,3,4,5,6,7,8, DateTime.MaxValue, "chrome", "1"),
-                new Heartbeat(Guid.Empty, Guid.Empty, 8,7,6,5,4,3,2,1, DateTime.MaxValue, "chrome", "1"),
-                new Heartbeat(Guid.Empty, Guid.Empty, 5456,4495,5642,9795,5653,8723,4242,3343, DateTime.MaxValue, "chrome", "1")
+                new Heartbeat(Guid.Empty, Guid.Empty, 1, 2, 3, 4, 5, 6, 7, 8, DateTime.MaxValue, "chrome", "1",
+                    "Mac OS X", "10.15.7"),
+                new Heartbeat(Guid.Empty, Guid.Empty, 8, 7, 6, 5, 4, 3, 2, 1, DateTime.MaxValue, "chrome", "1",
+                    "Mac OS X", "10.15.7"),
+                new Heartbeat(Guid.Empty, Guid.Empty, 5456, 4495, 5642, 9795, 5653, 8723, 4242, 3343, DateTime.MaxValue,
+                    "chrome", "1", "Mac OS X", "10.15.7")
             };
             
             var result = HeartbeatToParticipantHeartbeatResponseMapper
@@ -31,6 +34,8 @@ namespace VideoApi.UnitTests.Mappings
             result.Should().ContainItemsAssignableTo<ParticipantHeartbeatResponse>();
             result.Should().OnlyContain(x => x.BrowserName == "chrome");
             result.Should().OnlyContain(x => x.BrowserVersion == "1");
+            result.Should().OnlyContain(x => x.OperatingSystem == "Mac OS X");
+            result.Should().OnlyContain(x => x.OperatingSystemVersion == "10.15.7");
             result.Should()
                 .OnlyContain(x => x.RecentPacketLoss == 8 || x.RecentPacketLoss == 7 || x.RecentPacketLoss == 9795);
         }

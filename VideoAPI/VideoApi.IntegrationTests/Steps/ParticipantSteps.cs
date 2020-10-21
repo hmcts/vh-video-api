@@ -192,11 +192,12 @@ namespace VideoApi.IntegrationTests.Steps
             var heartbeats = new List<Heartbeat>
             {
                 new Heartbeat(_context.Test.Conference.Id, participantId,
-                    1,2,3,4,5,6,7,8, DateTime.UtcNow.AddMinutes(5), "chrome", "1"),
+                    1, 2, 3, 4, 5, 6, 7, 8, DateTime.UtcNow.AddMinutes(5), "chrome", "1", "Mac OS X", "10.15.7"),
                 new Heartbeat(_context.Test.Conference.Id, participantId,
-                    8,7,6,5,4,3,2,1, DateTime.UtcNow.AddMinutes(2), "chrome", "1"),
+                    8, 7, 6, 5, 4, 3, 2, 1, DateTime.UtcNow.AddMinutes(2), "chrome", "1", "Mac OS X", "10.15.7"),
                 new Heartbeat(_context.Test.Conference.Id, participantId,
-                    5456,4495,5642,9795,5653,8723,4242,3343, DateTime.UtcNow.AddMinutes(1), "chrome", "1")
+                    5456, 4495, 5642, 9795, 5653, 8723, 4242, 3343, DateTime.UtcNow.AddMinutes(1), "chrome", "1",
+                    "Mac OS X", "10.15.7")
             };
 
             await _context.TestDataManager.SeedHeartbeats(heartbeats);

@@ -17,12 +17,14 @@ namespace VideoApi.Domain
         public decimal IncomingVideoPercentageLostRecent { get; set; }
         public string BrowserName { get; set; }
         public string BrowserVersion { get; set; }
+        public string OperatingSystem { get; }
+        public string OperatingSystemVersion { get; }
         public DateTime Timestamp { get; set; }
 
         public Heartbeat(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
             decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
             decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
-            DateTime timestamp, string browserName, string browserVersion)
+            DateTime timestamp, string browserName, string browserVersion, string operatingSystem, string operatingSystemVersion)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -37,6 +39,8 @@ namespace VideoApi.Domain
             Timestamp = timestamp;
             BrowserName = browserName;
             BrowserVersion = browserVersion;
+            OperatingSystem = operatingSystem;
+            OperatingSystemVersion = operatingSystemVersion;
         }
     }
 }

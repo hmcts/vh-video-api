@@ -96,7 +96,9 @@ namespace VideoApi.AcceptanceTests.Steps
                 IncomingVideoPercentageLost = LossPercentage,
                 IncomingVideoPercentageLostRecent = LossPercentage,
                 BrowserName = "Chrome",
-                BrowserVersion = "80.0"
+                BrowserVersion = "80.0",
+                OperatingSystem = "Mac OS X",
+                OperatingSystemVersion = "10.15.7"
             };
             _context.Test.HeartbeatData = request;
             _context.Request = _context.Post(SetHeartbeats(_context.Test.ConferenceResponse.Id, participantId), request);
@@ -108,6 +110,8 @@ namespace VideoApi.AcceptanceTests.Steps
             var heartbeatData = RequestHelper.Deserialise<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
             heartbeatData.First().BrowserName.Should().Be(_context.Test.HeartbeatData.BrowserName);
             heartbeatData.First().BrowserVersion.Should().Be(_context.Test.HeartbeatData.BrowserVersion);
+            heartbeatData.First().OperatingSystem.Should().Be(_context.Test.HeartbeatData.OperatingSystem);
+            heartbeatData.First().OperatingSystemVersion.Should().Be(_context.Test.HeartbeatData.OperatingSystemVersion);
             heartbeatData.First().RecentPacketLoss.Should().Be(LossPercentage);
             heartbeatData.First().Timestamp.Minute.Should().BeOneOf(DateTime.Now.Minute, DateTime.Now.AddMinutes(-1).Minute);
         }
