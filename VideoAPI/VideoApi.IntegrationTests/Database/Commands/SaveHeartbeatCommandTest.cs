@@ -30,8 +30,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             var participantId = seededConference.GetParticipants().First().Id;
-            
-            var command = new SaveHeartbeatCommand(_newConferenceId, participantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1");
+
+            var command = new SaveHeartbeatCommand(_newConferenceId, participantId, 1, 1, 1, 1, 1, 1, 1, 1,
+                DateTime.UtcNow, "chrome", "1", "Mac OS X", "10.15.7");
             await _handler.Handle(command);
 
             Heartbeat savedHeartbeat;

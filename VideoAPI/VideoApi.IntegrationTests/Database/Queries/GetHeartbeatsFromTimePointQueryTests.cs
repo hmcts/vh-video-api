@@ -30,14 +30,19 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             _newConferenceId = Guid.NewGuid();
             _newParticipantId = Guid.NewGuid();
-            
+
             var heartbeats = new List<Heartbeat>
             {
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
             };
 
             await AddHeartbeatsToDb(heartbeats);
@@ -75,14 +80,19 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             _newConferenceId = Guid.NewGuid();
             _newParticipantId = Guid.NewGuid();
-            
+
             var heartbeats = new List<Heartbeat>
             {
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow.AddMinutes(-30), "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1,1,1,1,1,1,1,1, DateTime.UtcNow, "chrome", "1"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1,
+                    DateTime.UtcNow.AddMinutes(-30), "chrome", "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
+                    "1", "Mac OS X", "10.15.7"),
             };
 
             await AddHeartbeatsToDb(heartbeats);

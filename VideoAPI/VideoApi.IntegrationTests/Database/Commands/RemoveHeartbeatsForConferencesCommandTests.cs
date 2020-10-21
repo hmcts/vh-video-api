@@ -15,24 +15,24 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class RemoveHeartbeatsForConferencesCommandTests : DatabaseTestsBase
     {
-        private SaveHeartbeatCommandHandler _saveHeartbeathandler;
+        private SaveHeartbeatCommandHandler _saveHeartbeatHandler;
         private RemoveHeartbeatsForConferencesCommandHandler _handler;
         private Guid _conference1Id;
-        private List<Conference> conferenceList;
+        private List<Conference> _conferenceList;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new RemoveHeartbeatsForConferencesCommandHandler(context);
-            _saveHeartbeathandler = new SaveHeartbeatCommandHandler(context);
+            _saveHeartbeatHandler = new SaveHeartbeatCommandHandler(context);
             _conference1Id = Guid.Empty;
         }
 
         [Test]
         public async Task Should_remove_heartbeats_for_conferences_older_than_14_days()
         {
-            conferenceList = new List<Conference>();
+            _conferenceList = new List<Conference>();
             var utcDate = DateTime.UtcNow;
             var hearingOlderThan14Days = utcDate.AddDays(-14);
 
@@ -43,17 +43,19 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 .Build();
             _conference1Id = conference1.Id;
             var conference1ParticipantId = conference1.GetParticipants().First().Id;
-            conferenceList.Add(conference1);
+            _conferenceList.Add(conference1);
 
-            foreach (var c in conferenceList)
+            foreach (var c in _conferenceList)
             {
                 await TestDataManager.SeedConference(c);
             }
 
-            var command = new SaveHeartbeatCommand(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.40M, 0.10M, 0.00M, 0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105");
-            await _saveHeartbeathandler.Handle(command);
-            command = new SaveHeartbeatCommand(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.50M, 1.50M, 0.00M, 0.00M, 0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105");
-            await _saveHeartbeathandler.Handle(command);
+            var command = new SaveHeartbeatCommand(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.40M, 0.10M,
+                0.00M, 0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7");
+            await _saveHeartbeatHandler.Handle(command);
+            command = new SaveHeartbeatCommand(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.50M, 1.50M,
+                0.00M, 0.00M, 0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7");
+            await _saveHeartbeatHandler.Handle(command);
 
             var removeCommand = new RemoveHeartbeatsForConferencesCommand();
             await _handler.Handle(removeCommand);
@@ -71,7 +73,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task Should_not_remove_heartbeats_for_conferences_within_14_days()
         {
-            conferenceList = new List<Conference>();
+            _conferenceList = new List<Conference>();
             var utcDate = DateTime.UtcNow;
             var hearingWithin14Days = utcDate.AddDays(-13);
 
@@ -82,18 +84,21 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 .Build();
             _conference1Id = conference1.Id;
             var participantId = conference1.GetParticipants().First().Id;
-            conferenceList.Add(conference1);
-            foreach (var c in conferenceList)
+            _conferenceList.Add(conference1);
+            foreach (var c in _conferenceList)
             {
                 await TestDataManager.SeedConference(c);
             }
 
-            var command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.00M, 0.00M, 0.40M, 0.10M, 0.00M, 0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105");
-            await _saveHeartbeathandler.Handle(command);
-            command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.00M, 0.00M, 0.50M, 1.50M, 0.00M, 0.00M, 0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105");
-            await _saveHeartbeathandler.Handle(command);
-            command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.30M, 0.15M, 0.60M, 1.50M, 0.00M, 0.00M, 0.80M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105");
-            await _saveHeartbeathandler.Handle(command);
+            var command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.00M, 0.00M, 0.40M, 0.10M, 0.00M,
+                0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7");
+            await _saveHeartbeatHandler.Handle(command);
+            command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.00M, 0.00M, 0.50M, 1.50M, 0.00M, 0.00M,
+                0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7");
+            await _saveHeartbeatHandler.Handle(command);
+            command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.30M, 0.15M, 0.60M, 1.50M, 0.00M, 0.00M,
+                0.80M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7");
+            await _saveHeartbeatHandler.Handle(command);
 
             var removeCommand = new RemoveHeartbeatsForConferencesCommand();
             await _handler.Handle(removeCommand);

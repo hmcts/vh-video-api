@@ -10,7 +10,7 @@ namespace VideoApi.DAL.Commands
         public SaveHeartbeatCommand(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
             decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
             decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
-            DateTime timestamp, string browserName, string browserVersion)
+            DateTime timestamp, string browserName, string browserVersion, string operatingSystem, string operatingSystemVersion)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -25,6 +25,8 @@ namespace VideoApi.DAL.Commands
             Timestamp = timestamp;
             BrowserName = browserName;
             BrowserVersion = browserVersion;
+            OperatingSystem = operatingSystem;
+            OperatingSystemVersion = operatingSystemVersion;
         }
 
         public Guid ConferenceId { get; }
@@ -40,6 +42,8 @@ namespace VideoApi.DAL.Commands
         public DateTime Timestamp { get; }
         public string BrowserName { get; set; }
         public string BrowserVersion { get; set; }
+        public string OperatingSystem { get; }
+        public string OperatingSystemVersion { get; }
     }
 
     public class SaveHeartbeatCommandHandler : ICommandHandler<SaveHeartbeatCommand>
@@ -53,10 +57,12 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(SaveHeartbeatCommand command)
         {
-            var @event = new Heartbeat(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost, command.OutgoingAudioPercentageLostRecent,
-                command.IncomingAudioPercentageLost, command.IncomingAudioPercentageLostRecent, command.OutgoingVideoPercentageLost, 
-                command.OutgoingVideoPercentageLostRecent, command.IncomingVideoPercentageLost, command.IncomingVideoPercentageLostRecent,
-                command.Timestamp, command.BrowserName, command.BrowserVersion)
+            var @event = new Heartbeat(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost,
+                command.OutgoingAudioPercentageLostRecent, command.IncomingAudioPercentageLost,
+                command.IncomingAudioPercentageLostRecent, command.OutgoingVideoPercentageLost,
+                command.OutgoingVideoPercentageLostRecent, command.IncomingVideoPercentageLost,
+                command.IncomingVideoPercentageLostRecent, command.Timestamp, command.BrowserName,
+                command.BrowserVersion, command.OperatingSystem, command.OperatingSystemVersion)
             {
                 ParticipantId = command.ParticipantId
             };

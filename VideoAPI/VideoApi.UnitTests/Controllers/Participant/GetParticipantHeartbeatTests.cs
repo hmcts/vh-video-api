@@ -20,10 +20,11 @@ namespace VideoApi.UnitTests.Controllers.Participant
             MockQueryHandler
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
-            
+
             var heartbeats = new List<Heartbeat>
             {
-                new Heartbeat(TestConference.Id, TestConference.Participants.First().Id, 1,2,3,4,5,6,7,8, DateTime.MaxValue, "chrome", "1")
+                new Heartbeat(TestConference.Id, TestConference.Participants.First().Id, 1, 2, 3, 4, 5, 6, 7, 8,
+                    DateTime.MaxValue, "chrome", "1", "Mac OS X", "10.15.7")
             };
 
             MockQueryHandler
@@ -46,9 +47,12 @@ namespace VideoApi.UnitTests.Controllers.Participant
             result.Should().BeAssignableTo<OkObjectResult>();
             var responses = result.As<OkObjectResult>().Value.As<IEnumerable<ParticipantHeartbeatResponse>>().ToList();
             responses.Should().NotBeNull().And.NotBeEmpty().And.NotContainNulls();
-            responses.First().As<ParticipantHeartbeatResponse>().BrowserName.Should().Be("chrome");
-            responses.First().As<ParticipantHeartbeatResponse>().BrowserVersion.Should().Be("1");
-            responses.First().As<ParticipantHeartbeatResponse>().RecentPacketLoss.Should().Be(8);
+            var heartbeatResponse = responses.First().As<ParticipantHeartbeatResponse>();
+            heartbeatResponse.BrowserName.Should().Be("chrome");
+            heartbeatResponse.BrowserVersion.Should().Be("1");
+            heartbeatResponse.RecentPacketLoss.Should().Be(8);
+            heartbeatResponse.OperatingSystem.Should().Be("Mac OS X");
+            heartbeatResponse.OperatingSystemVersion.Should().Be("10.15.7");
         }
     }
 }

@@ -11,6 +11,8 @@ namespace VideoApi.Contract.Requests
         public decimal IncomingVideoPercentageLost { get; set; }
         public decimal IncomingVideoPercentageLostRecent { get; set; }
         public string BrowserName { get; set; }
-        public string BrowserVersion { get; set; }    
+        public string BrowserVersion { get; set; }  
+        public string OperatingSystem { get; set; }
+        public string OperatingSystemVersion { get; set; }
     }
 }

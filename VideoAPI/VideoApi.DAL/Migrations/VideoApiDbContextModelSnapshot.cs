@@ -202,6 +202,12 @@ namespace VideoApi.DAL.Migrations
                     b.Property<decimal>("IncomingVideoPercentageLostRecent")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("OperatingSystem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OperatingSystemVersion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("OutgoingAudioPercentageLost")
                         .HasColumnType("decimal(18,2)");
 
