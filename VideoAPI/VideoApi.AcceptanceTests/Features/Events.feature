@@ -36,6 +36,9 @@ Feature: Events
       | ParticipantJoining     |
       | Help                   |
       | ParticipantNotSignedIn |
+      | ConnectingToEventHub   |
+      | SelectingMedia         |
+      | ConnectingToConference |
 
   Scenario Outline: Endpoint Event
     Given I have a conference
