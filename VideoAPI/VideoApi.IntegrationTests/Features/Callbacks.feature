@@ -41,6 +41,9 @@ Feature: Callbacks
     | ParticipantJoining     |
     | Help                   |
     | ParticipantNotSignedIn |
+    | ConnectingToEventHub   |
+    | SelectingMedia         |
+    | ConnectingToConference |
 
   Scenario Outline: Should accept and process a endpoint event request
     Given I have a conference with endpoints
@@ -53,3 +56,4 @@ Feature: Callbacks
       | EndpointJoined        | Connected       |
       | EndpointDisconnected  | Disconnected    |
       | EndpointTransfer      | InConsultation  |
+
