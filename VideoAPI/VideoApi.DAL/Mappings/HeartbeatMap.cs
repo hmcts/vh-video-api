@@ -24,6 +24,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.IncomingVideoPercentageLostRecent).HasColumnType("decimal(18,2)");
             builder.Property(x => x.BrowserName);
             builder.Property(x => x.BrowserVersion);
+            builder.Property(x => x.OperatingSystem);
+            builder.Property(x => x.OperatingSystemVersion);
             builder.Property(x => x.Timestamp);
         }
     }
