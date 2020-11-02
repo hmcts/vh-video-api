@@ -176,7 +176,7 @@ namespace VideoApi.UnitTests.Validation
             return Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.CaseTypeGroup = "Claimant")
                 .With(x => x.UserRole = UserRole.Representative)
-                .With(x => x.HearingRole = "Claimant LIP")
+                .With(x => x.HearingRole = "Litigant in person")
                 .With(x => x.Name = Name.FullName())
                 .With(x => x.Username = Internet.Email())
                 .Build();
