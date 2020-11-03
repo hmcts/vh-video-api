@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
+using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 
@@ -90,6 +91,46 @@ namespace Video.API.Controllers
             {
                 await _videoPlatformService.EndHearingAsync(conferenceId);
                 return Accepted();
+            }
+            catch (KinlyApiException ex)
+            {
+                _logger.LogError(ex, $"Unable to end video hearing {conferenceId}");
+                return StatusCode(ex.StatusCode, ex.Response);
+            }
+        }
+        
+        /// <summary>
+        /// Transfer a participant in or out of a hearing
+        /// </summary>
+        /// <param name="conferenceId">Id for conference</param>
+        /// <param name="transferRequest">Participant and direction of transfer</param>
+        /// <returns></returns>
+        [HttpPost("{conferenceId}/transfer")]
+        [SwaggerOperation(OperationId = "TransferParticipant")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId, TransferParticipantRequest transferRequest)
+        {
+            _logger.LogDebug("TransferParticipant");
+            try
+            {
+                switch (transferRequest.TransferType)
+                {
+                    case TransferType.Call:
+                        _logger.LogDebug($"Transferring participant {transferRequest.ParticipantId} into hearing room");
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId,
+                            transferRequest.ParticipantId,
+                            RoomType.WaitingRoom, RoomType.HearingRoom);
+                        break;
+                    case TransferType.Dismiss:
+                        _logger.LogDebug(
+                            $"Transferring participant {transferRequest.ParticipantId} out of hearing room");
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId,
+                            transferRequest.ParticipantId,
+                            RoomType.HearingRoom, RoomType.WaitingRoom);
+                        break;
+                }
+                
+                return Ok();
             }
             catch (KinlyApiException ex)
             {
