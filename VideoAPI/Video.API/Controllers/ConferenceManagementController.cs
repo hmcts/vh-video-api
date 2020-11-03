@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -17,6 +18,7 @@ namespace Video.API.Controllers
     [SwaggerTag("Conference Management")]
     [Route("conferences")]
     [ApiController]
+    [AllowAnonymous]
     public class ConferenceManagementController : ControllerBase
     {
         private readonly IVideoPlatformService _videoPlatformService;
@@ -42,6 +44,7 @@ namespace Video.API.Controllers
         {
             try
             {
+                _logger.LogDebug("Attempting to start hearing {Conference}", conferenceId);
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
@@ -50,7 +53,7 @@ namespace Video.API.Controllers
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to find start video hearing {conferenceId}");
+                _logger.LogError(ex, "Error from Kinly API. Unable to start video hearing {conferenceId}", conferenceId);
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -67,12 +70,13 @@ namespace Video.API.Controllers
         {
             try
             {
+                _logger.LogDebug("Attempting to pause hearing {Conference}", conferenceId);
                 await _videoPlatformService.PauseHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to pause video hearing {conferenceId}");
+                _logger.LogError(ex, "Error from Kinly API. Unable to pause video hearing {conferenceId}", conferenceId);
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -89,12 +93,13 @@ namespace Video.API.Controllers
         {
             try
             {
+                _logger.LogDebug("Attempting to end hearing {Conference}", conferenceId);
                 await _videoPlatformService.EndHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to end video hearing {conferenceId}");
+                _logger.LogError(ex, "Error from Kinly API. Unable to end video hearing {conferenceId}", conferenceId);
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -107,34 +112,42 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPost("{conferenceId}/transfer")]
         [SwaggerOperation(OperationId = "TransferParticipant")]
-        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.Accepted)]
         public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId, TransferParticipantRequest transferRequest)
         {
-            _logger.LogDebug("TransferParticipant");
+            var participantId = transferRequest.ParticipantId;
+            var transferType = transferRequest.TransferType;
             try
             {
-                switch (transferRequest.TransferType)
+                switch (transferType)
                 {
                     case TransferType.Call:
-                        _logger.LogDebug($"Transferring participant {transferRequest.ParticipantId} into hearing room");
+                        _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
+                            participantId, conferenceId);
                         await _videoPlatformService.TransferParticipantAsync(conferenceId,
                             transferRequest.ParticipantId,
                             RoomType.WaitingRoom, RoomType.HearingRoom);
                         break;
                     case TransferType.Dismiss:
-                        _logger.LogDebug(
-                            $"Transferring participant {transferRequest.ParticipantId} out of hearing room");
+                        _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
+                            participantId, conferenceId);
                         await _videoPlatformService.TransferParticipantAsync(conferenceId,
                             transferRequest.ParticipantId,
                             RoomType.HearingRoom, RoomType.WaitingRoom);
                         break;
+                    default:
+                        _logger.LogWarning("Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
+                             participantId, conferenceId, transferType);
+                        throw new InvalidOperationException($"Unsupported transfer type: {transferType}");
                 }
-                
-                return Ok();
+
+                return Accepted();
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to end video hearing {conferenceId}");
+                _logger.LogError(ex,
+                    "Error from Kinly API. Unable to {TransferType} Participant {Participant} in/from {Conference}",
+                    transferType, participantId, conferenceId);
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }

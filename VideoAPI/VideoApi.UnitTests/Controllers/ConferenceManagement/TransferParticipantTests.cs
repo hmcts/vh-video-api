@@ -24,9 +24,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             };
             
             var result = await Controller.TransferParticipantAsync(conferenceId, request);
-            var typedResult = (OkResult) result;
-            typedResult.Should().NotBeNull();
-            typedResult.StatusCode.Should().Be((int) HttpStatusCode.OK);
+            result.Should().BeOfType<AcceptedResult>();
             
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.WaitingRoom,
@@ -44,16 +42,38 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             };
             
             var result = await Controller.TransferParticipantAsync(conferenceId, request);
-            var typedResult = (OkResult) result;
-            typedResult.Should().NotBeNull();
-            typedResult.StatusCode.Should().Be((int) HttpStatusCode.OK);
+            result.Should().BeOfType<AcceptedResult>();
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.HearingRoom,
                     RoomType.WaitingRoom), Times.Once);
         }
         
-        [Test] public async Task should_return_kinly_status_code_on_error()
+        [Test]
+        public void should_return_internal_server_error_when_transfer_type_is_not_handled()
+        {
+            var conferenceId = Guid.NewGuid();
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = Guid.NewGuid(),
+                TransferType = null
+            };
+
+            Assert.ThrowsAsync<InvalidOperationException>(() =>
+                Controller.TransferParticipantAsync(conferenceId, request));
+            
+            // var result = await ;
+            // result.Should().BeOfType<ObjectResult>();
+            // var typedResult = (ObjectResult) result;
+            // typedResult.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
+            
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, It.IsAny<RoomType>(),
+                    It.IsAny<RoomType>()), Times.Never);
+        }
+
+        [Test]
+        public async Task should_return_kinly_status_code_on_error()
         {
             var conferenceId = Guid.NewGuid();
             var request = new TransferParticipantRequest
@@ -61,18 +81,18 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 ParticipantId = Guid.NewGuid(),
                 TransferType = TransferType.Call
             };
-            var message = "Auto Test Error";
-            var response = "You're not allowed to start this hearing";
+            var message = "Transfer Error";
+            var response = "Unable to transfer participant";
             var statusCode = (int) HttpStatusCode.Unauthorized;
             var exception =
                 new KinlyApiException(message, statusCode, response, null, null);
             VideoPlatformServiceMock
                 .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<RoomType>(),
                     It.IsAny<RoomType>())).ThrowsAsync(exception);
-            
+
             var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<ObjectResult>();
             var typedResult = (ObjectResult) result;
-            typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be(statusCode);
             typedResult.Value.Should().Be(response);
         }
