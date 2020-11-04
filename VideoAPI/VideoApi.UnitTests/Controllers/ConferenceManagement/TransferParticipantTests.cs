@@ -62,11 +62,6 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             Assert.ThrowsAsync<InvalidOperationException>(() =>
                 Controller.TransferParticipantAsync(conferenceId, request));
             
-            // var result = await ;
-            // result.Should().BeOfType<ObjectResult>();
-            // var typedResult = (ObjectResult) result;
-            // typedResult.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
-            
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, It.IsAny<RoomType>(),
                     It.IsAny<RoomType>()), Times.Never);
