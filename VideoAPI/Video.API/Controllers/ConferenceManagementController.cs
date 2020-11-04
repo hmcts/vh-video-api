@@ -18,7 +18,6 @@ namespace Video.API.Controllers
     [SwaggerTag("Conference Management")]
     [Route("conferences")]
     [ApiController]
-    [AllowAnonymous]
     public class ConferenceManagementController : ControllerBase
     {
         private readonly IVideoPlatformService _videoPlatformService;
