@@ -49,7 +49,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a transfer participant into a hearing request")]
         public void GivenIHaveATransferParticipantIntoHearingRequest()
         {
-            SetupTransferRequest(TransferType.Dismiss);
+            SetupTransferRequest(TransferType.Call);
         }
         
         [Given(@"I have a transfer participant out of a hearing request")]
