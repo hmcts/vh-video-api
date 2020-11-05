@@ -8,19 +8,15 @@ namespace Testing.Common.Assertions
     {
         public static void ForParticipant(ParticipantSummaryResponse participant)
         {
-            participant.Should().NotBeNull();
-            participant.Id.Should().NotBeEmpty();
-            participant.Username.Should().NotBeNullOrWhiteSpace();
-            participant.HearingRole.Should().NotBeNull();
-            participant.UserRole.Should().NotBeNull();
-            participant.DisplayName.Should().NotBeNullOrWhiteSpace();
-            participant.FirstName.Should().NotBeNullOrWhiteSpace();
-            participant.LastName.Should().NotBeNullOrWhiteSpace();
-            participant.ContactEmail.Should().NotBeNullOrWhiteSpace();
-            if (participant.UserRole == UserRole.Representative)
-            {
-                participant.Representee.Should().NotBeEmpty();
-            }
+            participant.Should().NotBeNull("Participant is null");
+            participant.Id.Should().NotBeEmpty($"Id is '{participant.Id}'");
+            participant.Username.Should().NotBeNullOrWhiteSpace($"Username is '{participant.Username}'");
+            participant.HearingRole.Should().NotBeNullOrWhiteSpace($"HearingRole is '{participant.HearingRole}'");
+            participant.UserRole.ToString().Should().NotBeNullOrWhiteSpace($"UserRole is '{participant.UserRole}'");
+            participant.DisplayName.Should().NotBeNullOrWhiteSpace($"DisplayName is '{participant.DisplayName}'");
+            participant.FirstName.Should().NotBeNullOrWhiteSpace($"FirstName is '{participant.FirstName}'");
+            participant.LastName.Should().NotBeNullOrWhiteSpace($"LastName is '{participant.LastName}'");
+            participant.ContactEmail.Should().NotBeNullOrWhiteSpace($"ContactEmail is '{participant.ContactEmail}'");
         }
     }
 }
