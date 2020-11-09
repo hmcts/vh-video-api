@@ -362,6 +362,14 @@ namespace VideoApi.UnitTests.Services
             await _kinlyPlatformService.EndHearingAsync(conferenceId);
             _kinlyApiClientMock.Verify(x => x.EndHearingAsync(conferenceId.ToString()), Times.Once);
         }
+        
+        [Test]	
+        public async Task should_suspend_hearing()	
+        {	
+            var conferenceId = Guid.NewGuid();	
+            await _kinlyPlatformService.SuspendHearingAsync(conferenceId);	
+            _kinlyApiClientMock.Verify(x => x.TechnicalAssistanceAsync(conferenceId.ToString()), Times.Once);	
+        }
 
         [Test]
         public async Task should_start_private_consultation_with_endpoint()

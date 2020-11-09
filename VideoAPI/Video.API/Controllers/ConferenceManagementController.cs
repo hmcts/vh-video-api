@@ -102,6 +102,27 @@ namespace Video.API.Controllers
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
+        /// <summary>	
+        /// Request technical assistance. This will suspend a hearing.	
+        /// </summary>	
+        /// <param name="conferenceId">conference id</param>	
+        /// <returns>No Content status</returns>	
+        [HttpPost("{conferenceId}/suspend")]	
+        [SwaggerOperation(OperationId = "SuspendHearing")]	
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]	
+        public async Task<IActionResult> SuspendHearingAsync(Guid conferenceId)	
+        {	
+            try	
+            {	
+                await _videoPlatformService.SuspendHearingAsync(conferenceId);	
+                return Accepted();	
+            }	
+            catch (KinlyApiException ex)	
+            {	
+                _logger.LogError(ex, $"Unable to request technical assistance for video hearing {conferenceId}");	
+                return StatusCode(ex.StatusCode, ex.Response);	
+            }	
+        }
         
         /// <summary>
         /// Transfer a participant in or out of a hearing

@@ -91,6 +91,11 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
+        public Task SuspendHearingAsync(Guid conferenceId)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<HealthCheckResponse> GetPlatformHealthAsync()
         {
             return Task.FromResult(new HealthCheckResponse

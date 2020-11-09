@@ -202,7 +202,8 @@ namespace VideoApi.Services
 
         public async Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
         {
-            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString(), new StartHearingParams {Hearing_layout = layout});
+            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString(),
+                new StartHearingParams {Hearing_layout = layout});
         }
 
         public async Task PauseHearingAsync(Guid conferenceId)
@@ -213,6 +214,11 @@ namespace VideoApi.Services
         public async Task EndHearingAsync(Guid conferenceId)
         {
             await _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
+        }
+
+        public async Task SuspendHearingAsync(Guid conferenceId)
+        {
+            await _kinlyApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
         }
 
         public async Task<HealthCheckResponse> GetPlatformHealthAsync()
