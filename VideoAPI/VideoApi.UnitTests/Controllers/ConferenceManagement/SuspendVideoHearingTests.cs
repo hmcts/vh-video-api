@@ -12,7 +12,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
     public class SuspendVideoHearingTests : ConferenceManagementControllerTestBase
     {
         [Test]
-        public async Task should_return_accepted_when_end_hearing_has_been_requested()
+        public async Task should_return_accepted_when_suspend_hearing_has_been_requested()
         {
             var conferenceId = Guid.NewGuid();
             
