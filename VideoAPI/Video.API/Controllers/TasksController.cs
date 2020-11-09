@@ -41,7 +41,7 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpGet("{conferenceId}/tasks")]
         [SwaggerOperation(OperationId = "GetTasksForConference")]
-        [ProducesResponseType(typeof(List<TaskResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<TaskResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTasksForConferenceAsync(Guid conferenceId)
         {
             _logger.LogDebug("GetTasksForConference");
@@ -68,9 +68,9 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPatch("{conferenceId}/tasks/{taskId}")]
         [SwaggerOperation(OperationId = "UpdateTaskStatus")]
-        [ProducesResponseType(typeof(TaskResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(TaskResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateTaskStatusAsync(Guid conferenceId, long taskId,
             [FromBody] UpdateTaskRequest updateTaskRequest)
         {
@@ -85,7 +85,7 @@ namespace Video.API.Controllers
                 _logger.LogError(ex, $"Unable to find task {taskId} in conference {conferenceId}");
                 return NotFound();
             }
-            
+
             var query = new GetTasksForConferenceQuery(conferenceId);
             var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
             _logger.LogInformation(
@@ -98,6 +98,35 @@ namespace Video.API.Controllers
             }
             var response = TaskToResponseMapper.MapTaskToResponse(task);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Adds a task (alert) for a participant in the conference.
+        /// </summary>
+        /// <param name="conferenceId">The conference Id to add the task</param>
+        /// <param name="participantId">The participant Id to add the task for.</param>
+        /// <param name="addTaskRequest">The task request containing the task type and the alert (task name)</param>
+        /// <returns></returns>
+        [HttpPost("{conferenceId}/participant/{participantId}/task")]
+        [SwaggerOperation(OperationId = "AddTask")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> AddTaskAsync([FromRoute] Guid conferenceId, [FromRoute] Guid participantId, [FromBody] AddTaskRequest addTaskRequest)
+        {
+            _logger.LogDebug($"Adding a task {addTaskRequest.Body} for participant {participantId} in conference {conferenceId}");
+
+            try
+            {
+                var command = new AddTaskCommand(conferenceId, participantId, addTaskRequest.Body, addTaskRequest.TaskType);
+                await _commandHandler.Handle(command);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Unable to add a task {addTaskRequest.Body} for participant {participantId} in conference {conferenceId}");
+                return BadRequest();
+            }
         }
     }
 }
