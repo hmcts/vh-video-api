@@ -58,6 +58,8 @@ namespace VideoApi.Services.Contracts
         
         Task EndHearingAsync(Guid conferenceId);
 
+        Task SuspendHearingAsync(Guid conferenceId);
+
         Task<HealthCheckResponse> GetPlatformHealthAsync();
     }
 }
