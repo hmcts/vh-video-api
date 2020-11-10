@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
@@ -72,7 +73,15 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
         }
 
-              
+        [Test]
+        public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
+        {
+            var conferenceId = Guid.NewGuid();
+            var participantId = Guid.NewGuid();
+            var command = new AddTaskCommand(conferenceId, participantId, "alert", TaskType.Participant);
+            Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
+        }
+
         [TearDown]
         public async Task TearDown()
         {
