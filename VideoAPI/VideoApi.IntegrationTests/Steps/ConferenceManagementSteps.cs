@@ -46,6 +46,14 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Post;
         }
         
+        [Given(@"I have a suspend video hearing request")]	
+        public void GivenIHaveATechnicalAssistanceRequest()	
+        {	
+            var conferenceId = _context.Test.Conference.Id;	
+            _context.Uri = ApiUriFactory.ConferenceManagementEndpoints.SuspendVideoHearing(conferenceId);	
+            _context.HttpMethod = HttpMethod.Post;	
+        }
+        
         [Given(@"I have a transfer participant into a hearing request")]
         public void GivenIHaveATransferParticipantIntoHearingRequest()
         {
