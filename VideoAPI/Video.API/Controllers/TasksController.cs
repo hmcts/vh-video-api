@@ -111,7 +111,7 @@ namespace Video.API.Controllers
         [SwaggerOperation(OperationId = "AddTask")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> AddTaskAsync([FromRoute] Guid conferenceId, [FromRoute] Guid participantId, [FromBody] AddTaskRequest addTaskRequest)
+        public async Task<IActionResult> AddTaskAsync(Guid conferenceId, Guid participantId, [FromBody] AddTaskRequest addTaskRequest)
         {
             _logger.LogDebug($"Adding a task {addTaskRequest.Body} for participant {participantId} in conference {conferenceId}");
 
