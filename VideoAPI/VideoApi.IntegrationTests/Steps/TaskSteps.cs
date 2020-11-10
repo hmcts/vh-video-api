@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Steps
             var alert1 = new Alert(conferenceId, conferenceId, "Automated Test", TaskType.Hearing);
             var alert2 = new Alert(conferenceId, participantId, "Automated Test", TaskType.Participant);
             var alert3 = new Alert(conferenceId, judgeId, "Automated Test", TaskType.Judge);
-            
+
             _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
             {
                 alert1, alert2, alert3
@@ -127,21 +127,17 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferenceId = _context.Test.Conference.Id;
             var participantId = _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            var addTaskRequest = new AddTaskRequest { ParticipantId = participantId, Body = "Witness dismissed", TaskType = TaskType.Participant };
             switch (scenario)
             {
                 case Scenario.Valid:
                     break;
                 case Scenario.Invalid:
-                    conferenceId = Guid.Empty;
-                    break;
-                case Scenario.Nonexistent:
-                    participantId = Guid.Empty;
+                    conferenceId = Guid.NewGuid();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
-            var addTaskRequest = new AddTaskRequest { ParticipantId = participantId, Body = "Witness dismissed", TaskType = TaskType.Participant };
-
             _context.Uri = AddTask(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(addTaskRequest);

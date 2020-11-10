@@ -52,8 +52,3 @@ Feature: Tasks
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
 
-  Scenario: Add a task for a participant in a conference with invalid particpant id
-    Given I have a conference
-    And I have an nonexistent add task for a participant in a conference request
-    When I send the request to the endpoint
-    Then the response should have the status BadRequest and success status False
