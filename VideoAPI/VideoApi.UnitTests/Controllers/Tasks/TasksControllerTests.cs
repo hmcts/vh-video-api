@@ -68,28 +68,5 @@ namespace VideoApi.UnitTests.Controllers.Tasks
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
             commandHandler.Verify(c => c.Handle(It.IsAny<UpdateTaskCommand>()), Times.Once);
         }
-
-        [Test]
-        public async Task Should_return_no_content_on_add_a_task_for_the_participant_in_a_conference()
-        {
-            var addTaskRequest = new AddTaskRequest { Body = "alert", TaskType = VideoApi.Domain.Enums.TaskType.Participant };
-            var result = await tasksController.AddTaskAsync(Guid.NewGuid(), Guid.NewGuid(), addTaskRequest);
-
-            var typedResult = (NoContentResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
-            commandHandler.Verify(c => c.Handle(It.IsAny<AddTaskCommand>()), Times.Once);
-        }
-        [Test]
-        public async Task Should_return_a_bad_request_on_add_a_task_for_the_participant_in_an_invalid_conference()
-        {
-            commandHandler.Setup(x => x.Handle(It.IsAny<AddTaskCommand>())).ThrowsAsync(new Exception());
-
-            var addTaskRequest = new AddTaskRequest { Body = "alert", TaskType = VideoApi.Domain.Enums.TaskType.Participant };
-            var result = await tasksController.AddTaskAsync(Guid.Empty, Guid.NewGuid(), addTaskRequest);
-
-            var typedResult = (BadRequestResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            commandHandler.Verify(c => c.Handle(It.IsAny<AddTaskCommand>()), Times.Once);
-        }
     }
 }

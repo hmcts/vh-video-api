@@ -121,14 +121,12 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
-        [Given(@"I have a (.*) add Task for a participant in a conference request")]
-        [Given(@"I have an (.*) add Task for a participant in a conference request")]
+        [Given(@"I have a (.*) add task for a participant in a conference request")]
+        [Given(@"I have an (.*) add task for a participant in a conference request")]
         public void GivenIHaveAValidAddTaskForAParticipantInAConferenceRequest(Scenario scenario)
         {
             var conferenceId = _context.Test.Conference.Id;
             var participantId = _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
-            var addTaskRequest = new AddTaskRequest { Body = "Witness dismissed", TaskType = TaskType.Participant };
-
             switch (scenario)
             {
                 case Scenario.Valid:
@@ -136,11 +134,15 @@ namespace VideoApi.IntegrationTests.Steps
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
                     break;
+                case Scenario.Nonexistent:
+                    participantId = Guid.Empty;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
+            var addTaskRequest = new AddTaskRequest { ParticipantId = participantId, Body = "Witness dismissed", TaskType = TaskType.Participant };
 
-            _context.Uri = AddTask(conferenceId, participantId);
+            _context.Uri = AddTask(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(addTaskRequest);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");

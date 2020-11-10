@@ -42,12 +42,18 @@ Feature: Tasks
 
   Scenario: Add a task for a participant in a conference
     Given I have a conference
-    And I have a valid add Task for a participant in a conference request
+    And I have a valid add task for a participant in a conference request
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
 
-  Scenario: Add a task for a participant in a conference with invalid details
+  Scenario: Add a task for a participant in a conference with invalid conference id
     Given I have a conference
-    And I have an invalid add Task for a participant in a conference request
+    And I have an invalid add task for a participant in a conference request
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
+
+  Scenario: Add a task for a participant in a conference with invalid particpant id
+    Given I have a conference
+    And I have an nonexistent add task for a participant in a conference request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False

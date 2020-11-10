@@ -104,27 +104,25 @@ namespace Video.API.Controllers
         /// Adds a task (alert) for a participant in the conference.
         /// </summary>
         /// <param name="conferenceId">The conference Id to add the task</param>
-        /// <param name="participantId">The participant Id to add the task for.</param>
         /// <param name="addTaskRequest">The task request containing the task type and the alert (task name)</param>
         /// <returns></returns>
-        [HttpPost("{conferenceId}/participant/{participantId}/task")]
+        [HttpPost("{conferenceId}/task")]
         [SwaggerOperation(OperationId = "AddTask")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> AddTaskAsync(Guid conferenceId, Guid participantId, [FromBody] AddTaskRequest addTaskRequest)
+        public async Task<IActionResult> AddTaskAsync(Guid conferenceId, [FromBody] AddTaskRequest addTaskRequest)
         {
-            _logger.LogDebug($"Adding a task {addTaskRequest.Body} for participant {participantId} in conference {conferenceId}");
-
+            _logger.LogDebug($"Adding a task {addTaskRequest.Body} for participant {addTaskRequest.ParticipantId} in conference {conferenceId}");
             try
             {
-                var command = new AddTaskCommand(conferenceId, participantId, addTaskRequest.Body, addTaskRequest.TaskType);
+                var command = new AddTaskCommand(conferenceId, addTaskRequest.ParticipantId, addTaskRequest.Body, addTaskRequest.TaskType);
                 await _commandHandler.Handle(command);
-
                 return NoContent();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Unable to add a task {addTaskRequest.Body} for participant {participantId} in conference {conferenceId}");
+                _logger.LogError(e, "Unable to add a task {taskBody} for participant {participant} in conference {conference}", 
+                    addTaskRequest.Body, addTaskRequest.ParticipantId, conferenceId);
                 return BadRequest();
             }
         }

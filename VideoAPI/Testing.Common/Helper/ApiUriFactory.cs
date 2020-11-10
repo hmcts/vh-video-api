@@ -84,7 +84,7 @@ namespace Testing.Common.Helper
             private const string ApiRoot = "conferences";
             public static string GetTasks(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/tasks";
             public static string UpdateTaskStatus(Guid conferenceId, long taskId) => $"{ApiRoot}/{conferenceId}/tasks/{taskId}";
-            public static string AddTask(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/task";
+            public static string AddTask(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/task";
         }
 
         public static class InstantMessageEndpoints
