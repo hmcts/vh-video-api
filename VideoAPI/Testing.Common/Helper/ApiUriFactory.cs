@@ -84,6 +84,7 @@ namespace Testing.Common.Helper
             private const string ApiRoot = "conferences";
             public static string GetTasks(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/tasks";
             public static string UpdateTaskStatus(Guid conferenceId, long taskId) => $"{ApiRoot}/{conferenceId}/tasks/{taskId}";
+            public static string AddTask(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/task";
         }
 
         public static class InstantMessageEndpoints
@@ -111,6 +112,8 @@ namespace Testing.Common.Helper
             public static string StartVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/start";
             public static string PauseVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/pause";
             public static string EndVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/end";
+            public static string SuspendVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/suspend";
+            public static string TransferParticipant(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/transfer";
         }
     }
 }

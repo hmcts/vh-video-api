@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Steps
             var alert1 = new Alert(conferenceId, conferenceId, "Automated Test", TaskType.Hearing);
             var alert2 = new Alert(conferenceId, participantId, "Automated Test", TaskType.Participant);
             var alert3 = new Alert(conferenceId, judgeId, "Automated Test", TaskType.Judge);
-            
+
             _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new List<Alert>
             {
                 alert1, alert2, alert3
@@ -118,6 +118,29 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = UpdateTaskStatus(conferenceId, taskId);
             _context.HttpMethod = HttpMethod.Patch;
             var jsonBody = RequestHelper.Serialise(_context.Test.UpdateTaskRequest);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
+        [Given(@"I have a (.*) add task for a participant in a conference request")]
+        [Given(@"I have an (.*) add task for a participant in a conference request")]
+        public void GivenIHaveAValidAddTaskForAParticipantInAConferenceRequest(Scenario scenario)
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var participantId = _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
+            var addTaskRequest = new AddTaskRequest { ParticipantId = participantId, Body = "Witness dismissed", TaskType = TaskType.Participant };
+            switch (scenario)
+            {
+                case Scenario.Valid:
+                    break;
+                case Scenario.Invalid:
+                    conferenceId = Guid.NewGuid();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
+            }
+            _context.Uri = AddTask(conferenceId);
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(addTaskRequest);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
     }

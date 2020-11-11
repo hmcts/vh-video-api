@@ -199,7 +199,8 @@ namespace VideoApi.Services
 
         public Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
         {
-            return _kinlyApiClient.StartHearingAsync(conferenceId.ToString(), new StartHearingParams {Hearing_layout = layout});
+            return _kinlyApiClient.StartHearingAsync(conferenceId.ToString(),
+                new StartHearingParams { Hearing_layout = layout });
         }
 
         public Task PauseHearingAsync(Guid conferenceId)
@@ -212,7 +213,12 @@ namespace VideoApi.Services
             return _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
         }
 
-        public Task<HealthCheckResponse> GetPlatformHealthAsync()
+        public Task SuspendHearingAsync(Guid conferenceId)
+        {
+            return _kinlyApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
+        }
+
+        public async Task<HealthCheckResponse> GetPlatformHealthAsync()
         {
             return _kinlyApiClient.HealthCheckAsync();
         }

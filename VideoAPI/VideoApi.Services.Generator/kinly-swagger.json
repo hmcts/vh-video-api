@@ -259,6 +259,32 @@
         }
       }
     },
+    "/hearing/{virtual_courtroom_id}/assistance": {
+      "post": {
+        "operationId": "technicalAssistance",
+        "description": "Suspends the hearing whilst awaiting technical assistance, triggers related events and operations.",
+        "tags": [
+          "hearing"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "virtual_courtroom_id",
+            "type": "string",
+            "required": true,
+            "description": "Hearing ID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Requested technical assistance"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/hearing/{virtual_courtroom_id}/transfer": {
       "post": {
         "operationId": "transferParticipant",

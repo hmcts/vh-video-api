@@ -41,7 +41,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
                 .WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                        $"Video_Api_Integration_Test_{Internet.Email()}", UserRole.Individual, "Claimant LIP", "Claimant", $"Video_Api_Integration_Test_{Internet.Email()}",
+                        $"Video_Api_Integration_Test_{Internet.Email()}", UserRole.Individual, "Litigant in person", "Claimant", $"Video_Api_Integration_Test_{Internet.Email()}",
                         Phone.Number())).Build();
 
             foreach (var participant in participants)
