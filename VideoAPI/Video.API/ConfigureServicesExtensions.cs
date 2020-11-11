@@ -235,40 +235,15 @@ namespace Video.API
 
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
         {
-            var eventHandlers = GetAllTypesOf<IEventHandler>();
-
-            foreach (var eventHandler in eventHandlers)
-            {
-                if (eventHandler.IsInterface || eventHandler.IsAbstract) continue;
-                var serviceType = eventHandler.GetInterfaces()[0];
-                serviceCollection.AddScoped(serviceType, eventHandler);
-            }
-        }
-
-        private static IEnumerable<Type> GetAllTypesOf<T>()
-        {
-            var platform = Environment.OSVersion.Platform.ToString();
-            var runtimeAssemblyNames = DependencyContext.Default.GetRuntimeAssemblyNames(platform);
-
-            return runtimeAssemblyNames
-                .Select(Assembly.Load)
-                .SelectMany(a => a.ExportedTypes)
-                .Where(t => typeof(T).IsAssignableFrom(t));
+            serviceCollection.Scan(scan => scan.FromAssemblyOf<IEventHandler>()
+                .AddClasses(classes => classes.AssignableTo(typeof(IEventHandler))
+                .Where(_ => !_.IsGenericType))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
         }
 
         private static void RegisterCommandHandlers(IServiceCollection serviceCollection)
         {
-            //var commandHandlers = typeof(ICommand).Assembly.GetTypes().Where(t =>
-            //    t.GetInterfaces().Any(x =>
-            //        x.IsGenericType &&
-            //        x.GetGenericTypeDefinition() == typeof(ICommandHandler<>)));
-
-            //foreach (var queryHandler in commandHandlers)
-            //{
-            //    var serviceType = queryHandler.GetInterfaces()[0];
-            //    serviceCollection.AddScoped(serviceType, queryHandler);
-            //}
-
             serviceCollection.Scan(scan => scan.FromAssemblyOf<ICommand>()
                 .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>))
                 .Where(_ => !_.IsGenericType))
@@ -285,17 +260,6 @@ namespace Video.API
                 .AsImplementedInterfaces()
                 .WithTransientLifetime());
             serviceCollection.Decorate(typeof(IQueryHandler<,>), typeof(QueryHandlerLoggingDecorator<,>));
-
-            //var queryHandlers = typeof(IQuery).Assembly.GetTypes().Where(t =>
-            //    t.GetInterfaces().Any(x =>
-            //        x.IsGenericType &&
-            //        x.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)));
-
-            //foreach (var queryHandler in queryHandlers)
-            //{
-            //    var serviceType = queryHandler.GetInterfaces()[0];
-            //    serviceCollection.AddScoped(serviceType, queryHandler);
-            //}
         }
 
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)
