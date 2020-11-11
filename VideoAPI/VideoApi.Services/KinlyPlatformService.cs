@@ -218,7 +218,7 @@ namespace VideoApi.Services
             return _kinlyApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
         }
 
-        public async Task<HealthCheckResponse> GetPlatformHealthAsync()
+        public Task<HealthCheckResponse> GetPlatformHealthAsync()
         {
             return _kinlyApiClient.HealthCheckAsync();
         }

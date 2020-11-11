@@ -34,7 +34,10 @@ namespace VideoApi.UnitTests.Events
                     _mocker.Create<SuspendEventHandler>(),
                     _mocker.Create<TransferEventHandler>(),
                     _mocker.Create<ParticipantJoiningEventHandler>(),
-                    _mocker.Create<SelfTestFailedEventHandler>()
+                    _mocker.Create<SelfTestFailedEventHandler>(),
+                    _mocker.Create<ConnectingToEventHubEventHandler>(),
+                    _mocker.Create<SelectingMediaEventHandler>(),
+                    _mocker.Create<ConnectingToConferenceEventHandler>()
                 };
             _sut = _mocker.Create<EventHandlerFactory>(new TypedParameter(typeof(IEnumerable<IEventHandler>), eventHandlers));
         }
