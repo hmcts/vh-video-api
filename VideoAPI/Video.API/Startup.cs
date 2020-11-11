@@ -130,7 +130,6 @@ namespace Video.API
 
             app.UseRouting();
 
-            //app.UseMiddleware<LoggingMiddleware>();
             app.UseAuthorization();
             
             app.UseAuthentication();
