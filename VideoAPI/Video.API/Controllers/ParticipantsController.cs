@@ -72,7 +72,7 @@ namespace Video.API.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, "Unable to find conference");
                 return NotFound();
             }
         }
@@ -103,12 +103,12 @@ namespace Video.API.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, $"Unable to find conference {conferenceId}");
+                _logger.LogError(ex, "Unable to find conference");
                 return NotFound();
             }
             catch (ParticipantNotFoundException ex)
             {
-                _logger.LogError(ex, $"Unable to find participant {participantId}");
+                _logger.LogError(ex, "Unable to find participant");
                 return NotFound();
             }
         }
@@ -133,14 +133,14 @@ namespace Video.API.Controllers
 
             if (queriedConference == null)
             {
-                _logger.LogWarning($"Unable to find conference {conferenceId}");
+                _logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
 
             var participant = queriedConference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
             if (participant == null)
             {
-                _logger.LogWarning($"Unable to find participant {participantId}");
+                _logger.LogWarning("Unable to find participant");
                 return NotFound();
             }
 
@@ -168,8 +168,7 @@ namespace Video.API.Controllers
             
             if (testCallResult == null)
             {
-                _logger.LogWarning(
-                    $"Unable to find test call result for participant {participantId} in conference {conferenceId}");
+                _logger.LogWarning("Unable to find test call result");
                 return NotFound();
             }
 
@@ -199,8 +198,7 @@ namespace Video.API.Controllers
             var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
             if (testCallResult == null)
             {
-                _logger.LogWarning(
-                    $"Unable to find test call result for participant {participantId}");
+                _logger.LogWarning("Unable to find test call result");
                 return NotFound();
             }
             var response = TaskCallResultResponseMapper.MapTaskToResponse(testCallResult);
@@ -299,7 +297,7 @@ namespace Video.API.Controllers
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
             if (conference == null)
             {
-                _logger.LogWarning($"Unable to find conference {conferenceId}");
+                _logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
 

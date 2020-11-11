@@ -46,7 +46,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
         {
-            _logger.LogDebug($"Retrieving instant message history for conference {conferenceId}");
+            _logger.LogDebug("Retrieving instant message history");
             var query = new GetInstantMessagesForConferenceQuery(conferenceId, null);
 
             return await GetInstantMessageHistoryAsync(query);
@@ -64,7 +64,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInstantMessageHistoryForParticipantAsync(Guid conferenceId, string participantUsername)
         {
-            _logger.LogDebug($"Retrieving instant message history for conference {conferenceId} and participant {participantUsername}");
+            _logger.LogDebug("Retrieving instant message history");
             var query = new GetInstantMessagesForConferenceQuery(conferenceId, participantUsername);
 
             return await GetInstantMessageHistoryAsync(query);
@@ -82,7 +82,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddInstantMessageToConferenceAsync(Guid conferenceId, AddInstantMessageRequest request)
         {
-            _logger.LogDebug($"Saving instant message for conference {conferenceId}");
+            _logger.LogDebug("Saving instant message");
 
             try
             {
@@ -93,7 +93,7 @@ namespace Video.API.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Unable to add instant messages to conference {conferenceId}");
+                _logger.LogError(e, "Unable to add instant messages");
                 return BadRequest();
             }
         }
@@ -115,7 +115,7 @@ namespace Video.API.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Unable to remove instant messages for conference {conferenceId}");
+                _logger.LogError(e, "Unable to remove instant messages");
                 return BadRequest();
             }
         }
@@ -145,7 +145,7 @@ namespace Video.API.Controllers
 
         private async Task<IActionResult> GetInstantMessageHistoryAsync(GetInstantMessagesForConferenceQuery query)
         {
-            _logger.LogDebug($"Retrieving instant message history for conference {query.ConferenceId}");
+            _logger.LogDebug("Retrieving instant message history");
             try
             {
                 var messages =
@@ -156,7 +156,7 @@ namespace Video.API.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Unable to find instant messages for conference {query.ConferenceId}");
+                _logger.LogError(e, "Unable to find instant messages");
                 return NotFound();
             }
         }

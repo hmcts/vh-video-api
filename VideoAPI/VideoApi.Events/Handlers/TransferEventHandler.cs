@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -10,12 +11,12 @@ using VideoApi.Services.Contracts;
 
 namespace VideoApi.Events.Handlers
 {
-    public class TransferEventHandler : EventHandlerBase
+    public class TransferEventHandler : EventHandlerBase<TransferEventHandler>
     {
         private readonly IRoomReservationService _roomReservationService;
-        public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
+        public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<TransferEventHandler> logger,
             IRoomReservationService roomReservationService) : base(
-            queryHandler, commandHandler)
+            queryHandler, commandHandler, logger)
         {
             _roomReservationService = roomReservationService;
         }

@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -25,13 +27,16 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly IAudioPlatformService _audioPlatformService;
+        private readonly ILogger<HealthCheckController> _logger;
 
         public HealthCheckController(IQueryHandler queryHandler, IVideoPlatformService videoPlatformService,
-            IAudioPlatformService audioPlatformService)
+            IAudioPlatformService audioPlatformService,
+            ILogger<HealthCheckController> logger)
         {
             _queryHandler = queryHandler;
             _videoPlatformService = videoPlatformService;
             _audioPlatformService = audioPlatformService;
+            _logger = logger;
         }
 
         /// <summary>

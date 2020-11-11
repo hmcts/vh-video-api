@@ -14,15 +14,11 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class SelfTestFailedEventHandlerTests : EventHandlerTestBase
+    public class SelfTestFailedEventHandlerTests : EventHandlerTestBase<SelfTestFailedEventHandler>
     {
-        private SelfTestFailedEventHandler _eventHandler;
-
         [Test]
         public async Task Should_call_command_handler_with_addtaskcommand_object()
         {
-            _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
             var callbackEvent = new CallbackEvent
@@ -42,15 +38,13 @@ namespace VideoApi.UnitTests.Events
             QueryHandlerMock.Setup(x => x.Handle<GetTasksForConferenceQuery, List<VideoApi.Domain.Task>>(
                 It.IsAny<GetTasksForConferenceQuery>())).ReturnsAsync(tasks);
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
             CommandHandlerMock.Verify(x => x.Handle(It.IsAny<AddTaskCommand>()), Times.Once);
         }
 
         [Test]
         public async Task Should_not_call_command_handler_with_addtaskcommand_object_if_a_task_exists()
         {
-            _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
             var callbackEvent = new CallbackEvent
@@ -71,7 +65,7 @@ namespace VideoApi.UnitTests.Events
             QueryHandlerMock.Setup(x => x.Handle<GetTasksForConferenceQuery, List<VideoApi.Domain.Task>>(
                 It.IsAny<GetTasksForConferenceQuery>())).ReturnsAsync(tasks);
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
             CommandHandlerMock.Verify(x => x.Handle(It.IsAny<AddTaskCommand>()), Times.Never);
         }
 
@@ -81,8 +75,6 @@ namespace VideoApi.UnitTests.Events
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync((Conference) null);
-
-            _eventHandler = new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
 
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First();
@@ -96,7 +88,7 @@ namespace VideoApi.UnitTests.Events
             };
 
             Assert.ThrowsAsync<ConferenceNotFoundException>(() =>
-                _eventHandler.HandleAsync(callbackEvent));
+                _sut.HandleAsync(callbackEvent));
         }
     }
 }

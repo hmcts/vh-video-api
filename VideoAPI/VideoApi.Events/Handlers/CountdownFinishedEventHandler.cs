@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -7,9 +8,9 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.Events.Handlers
 {
-    public class CountdownFinishedEventHandler : EventHandlerBase
+    public class CountdownFinishedEventHandler : EventHandlerBase<CountdownFinishedEventHandler>
     {
-        public CountdownFinishedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(queryHandler, commandHandler)
+        public CountdownFinishedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<CountdownFinishedEventHandler> logger) : base(queryHandler, commandHandler, logger)
         {
         }
 

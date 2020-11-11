@@ -59,9 +59,11 @@ namespace Video.API
             RegisterAuth(services);
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
 
+            services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
+
 
             services.AddDbContextPool<VideoApiDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("VhVideoApi")));
@@ -127,14 +129,14 @@ namespace Video.API
             }
 
             app.UseRouting();
-            
+
+            //app.UseMiddleware<LoggingMiddleware>();
             app.UseAuthorization();
             
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
             
             app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
-            
 
             app.UseMiddleware<LogResponseBodyMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();

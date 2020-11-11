@@ -10,15 +10,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class SuspendEventHandlerTests : EventHandlerTestBase
+    public class SuspendEventHandlerTests : EventHandlerTestBase<SuspendEventHandler>
     {
-        private SuspendEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_messages_to_participants_on_suspended()
         {
-            _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             
             var callbackEvent = new CallbackEvent
@@ -30,7 +26,7 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = conference.Participants.First().Id
             };
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>
@@ -46,8 +42,6 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_send_messages_to_participants_on_suspended_for_technical_assistance()
         {
-            _eventHandler = new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             
             var callbackEvent = new CallbackEvent
@@ -58,7 +52,7 @@ namespace VideoApi.UnitTests.Events
                 TimeStampUtc = DateTime.UtcNow,
             };
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>

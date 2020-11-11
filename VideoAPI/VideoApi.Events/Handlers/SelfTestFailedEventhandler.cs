@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
@@ -12,10 +13,10 @@ using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.Events.Handlers
 {
-    public class SelfTestFailedEventHandler : EventHandlerBase
+    public class SelfTestFailedEventHandler : EventHandlerBase<SelfTestFailedEventHandler>
     {
-        public SelfTestFailedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
-            queryHandler, commandHandler)
+        public SelfTestFailedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<SelfTestFailedEventHandler> logger) : base(
+            queryHandler, commandHandler, logger)
         {
         }
 

@@ -10,15 +10,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class EndpointDisconnectedHandlerTests : EventHandlerTestBase
-    {
-        private EndpointDisconnectedEventHandler _eventHandler;
-        
+    public class EndpointDisconnectedHandlerTests : EventHandlerTestBase<EndpointDisconnectedEventHandler>
+    {        
         [Test]
         public async Task Should_update_endpoint_status_to_disconnected()
         {
-            _eventHandler = new EndpointDisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetEndpoints().First();
 
@@ -34,7 +30,7 @@ namespace VideoApi.UnitTests.Events
                 EndpointState.Disconnected, null);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateEndpointStatusAndRoomCommand>(command =>

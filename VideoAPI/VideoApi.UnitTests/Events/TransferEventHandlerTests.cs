@@ -11,75 +11,8 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class EndpointTransferredEventHandlerTests : EventHandlerTestBase
+    public class TransferEventHandlerTests : EventHandlerTestBase<TransferEventHandler>
     {
-        private EndpointTransferredEventHandler _eventHandler;
-        
-        [TestCase(RoomType.WaitingRoom, RoomType.HearingRoom, EndpointState.Connected)]
-        [TestCase(RoomType.HearingRoom, RoomType.WaitingRoom, EndpointState.Connected)]
-        [TestCase(RoomType.ConsultationRoom1, RoomType.WaitingRoom, EndpointState.Connected)]
-        [TestCase(RoomType.ConsultationRoom2, RoomType.WaitingRoom, EndpointState.Connected)]
-        [TestCase(RoomType.ConsultationRoom1, RoomType.HearingRoom, EndpointState.Connected)]
-        [TestCase(RoomType.ConsultationRoom2, RoomType.HearingRoom, EndpointState.Connected)]
-        [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom1, EndpointState.InConsultation)]
-        [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom2, EndpointState.InConsultation)]
-        public async Task Should_send_participant__status_messages_to_clients_and_asb_when_transfer_occurs(RoomType from, RoomType to, EndpointState status)
-        {
-            _eventHandler = new EndpointTransferredEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService);
-
-            var conference = TestConference;
-            var endpointForEvent = conference.GetEndpoints().First();
-            
-            var callbackEvent = new CallbackEvent
-            {
-                EventType = EventType.EndpointTransfer,
-                EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id,
-                ParticipantId = endpointForEvent.Id,
-                TransferFrom = from,
-                TransferTo = to,
-                TimeStampUtc = DateTime.UtcNow
-            };
-            await _eventHandler.HandleAsync(callbackEvent);
-
-            CommandHandlerMock.Verify(
-                x => x.Handle(It.Is<UpdateEndpointStatusAndRoomCommand>(command =>
-                    command.ConferenceId == conference.Id &&
-                    command.EndpointId == endpointForEvent.Id &&
-                    command.Status == status &&
-                    command.Room == to)), Times.Once);
-        }
-        
-        [Test]
-        public void Should_throw_exception_when_transfer_cannot_be_mapped_to_endpoint_status()
-        {
-            _eventHandler = new EndpointTransferredEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService);
-
-            var conference = TestConference;
-            var endpointForEvent = conference.GetEndpoints().First();
-
-            var callbackEvent = new CallbackEvent
-            {
-                EventType = EventType.Transfer,
-                EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id,
-                ParticipantId = endpointForEvent.Id,
-                TransferFrom = RoomType.WaitingRoom,
-                TransferTo = RoomType.WaitingRoom,
-                TimeStampUtc = DateTime.UtcNow
-            };
-
-            Assert.ThrowsAsync<RoomTransferException>(() =>
-                _eventHandler.HandleAsync(callbackEvent));
-
-            CommandHandlerMock.Verify(
-                x => x.Handle(It.IsAny<UpdateEndpointStatusAndRoomCommand>()), Times.Never);
-        }
-    }
-    public class TransferEventHandlerTests : EventHandlerTestBase
-    {
-        private TransferEventHandler _eventHandler;
-
         [TestCase(RoomType.WaitingRoom, RoomType.HearingRoom, ParticipantState.InHearing)]
         [TestCase(RoomType.HearingRoom, RoomType.WaitingRoom, ParticipantState.Available)]
         [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom1, ParticipantState.InConsultation)]
@@ -91,8 +24,6 @@ namespace VideoApi.UnitTests.Events
         public async Task Should_send_participant__status_messages_to_clients_and_asb_when_transfer_occurs(
             RoomType from, RoomType to, ParticipantState status)
         {
-            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
             
@@ -106,7 +37,7 @@ namespace VideoApi.UnitTests.Events
                 TransferTo = to,
                 TimeStampUtc = DateTime.UtcNow
             };
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
@@ -119,8 +50,6 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public void Should_throw_exception_when_transfer_cannot_be_mapped_to_participant_status()
         {
-            _eventHandler = new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
 
@@ -136,7 +65,7 @@ namespace VideoApi.UnitTests.Events
             };
 
             Assert.ThrowsAsync<RoomTransferException>(() =>
-                _eventHandler.HandleAsync(callbackEvent));
+                _sut.HandleAsync(callbackEvent));
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>

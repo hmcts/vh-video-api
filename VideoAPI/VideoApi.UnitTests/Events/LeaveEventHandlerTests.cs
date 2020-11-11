@@ -10,15 +10,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class LeaveEventHandlerTests : EventHandlerTestBase
+    public class LeaveEventHandlerTests : EventHandlerTestBase<LeaveEventHandler>
     {
-        private LeaveEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_disconnected_message_to_participants_and_service_bus_when_participant_leave()
         {
-            _eventHandler = new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
 
@@ -32,7 +28,7 @@ namespace VideoApi.UnitTests.Events
                 Reason = "Automated"
             };
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>

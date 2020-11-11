@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
+using Autofac.Extras.Moq;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -9,51 +7,27 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Events.Handlers;
-using VideoApi.Events.Handlers.Core;
-using VideoApi.Services;
-using VideoApi.Services.Contracts;
 
 namespace VideoApi.UnitTests.Events
 {
-    public abstract class EventHandlerTestBase
+    public abstract class EventHandlerTestBase<TSystemUnderTest>
     {
+        protected TSystemUnderTest _sut;
+        protected AutoMock _mocker;
+
         protected Mock<ICommandHandler> CommandHandlerMock;
-        protected List<IEventHandler> EventHandlersList;
         protected Mock<IQueryHandler> QueryHandlerMock;
-        protected IRoomReservationService RoomReservationService;
-        private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
-        private IMemoryCache _memoryCache;
 
         protected Conference TestConference;
 
         [SetUp]
         public void Setup()
         {
-            QueryHandlerMock = new Mock<IQueryHandler>();
-            CommandHandlerMock = new Mock<ICommandHandler>();
-            _loggerRoomReservationMock = new Mock<ILogger<IRoomReservationService>>();
-            _memoryCache = new MemoryCache(new MemoryCacheOptions());
+            _mocker = AutoMock.GetLoose();
+            _sut = _mocker.Create<TSystemUnderTest>();
 
-            RoomReservationService = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
-
-            EventHandlersList = new List<IEventHandler>
-            {
-                new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new EndpointJoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new EndpointTransferredEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService),
-                new EndpointDisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new LeaveEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new StartEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new CountdownFinishedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new SuspendEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new TransferEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object, RoomReservationService),
-                new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-                new SelfTestFailedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object),
-            };
+            QueryHandlerMock = _mocker.Mock<IQueryHandler>();
+            CommandHandlerMock = _mocker.Mock<ICommandHandler>();
 
             TestConference = new ConferenceBuilder()
                 .WithEndpoint("Endpoint1", "Endpoint1234@sip.com")

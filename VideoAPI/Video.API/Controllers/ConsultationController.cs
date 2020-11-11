@@ -50,28 +50,26 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> HandleConsultationRequestAsync(ConsultationRequest request)
         {
-            _logger.LogDebug($"HandleConsultationRequest");
+            _logger.LogDebug("HandleConsultationRequest");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             if (conference == null)
             {
-                _logger.LogWarning($"Unable to find conference {request.ConferenceId}");
+                _logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
             if (requestedBy == null)
             {
-                _logger.LogWarning($"Unable to find participant request by with id {request.RequestedBy}");
+                _logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
                 return NotFound();
             }
 
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
             if (requestedFor == null)
             {
-                _logger.LogWarning($"Unable to find participant request for with id {request.RequestedFor}");
+                _logger.LogWarning("Unable to find participant request for with id {RequestedFor}", request.RequestedFor);
                 return NotFound();
             }
 
@@ -84,12 +82,11 @@ namespace Video.API.Controllers
 
             try
             {
-             await InitiateStartConsultationAsync(conference, requestedBy, requestedFor,
-                    request.Answer.GetValueOrDefault());
+                await InitiateStartConsultationAsync(conference, requestedBy, requestedFor, request.Answer.GetValueOrDefault());
             }
             catch (DomainRuleException ex)
             {
-                _logger.LogError(ex, $"No consultation room available for conference {conference.Id}");
+                _logger.LogError(ex, "No consultation room available for conference");
                 ModelState.AddModelError("ConsultationRoom", "No consultation room available");
                 return BadRequest(ModelState);
             }
@@ -109,20 +106,20 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeavePrivateConsultationAsync(LeaveConsultationRequest request)
         {
-            _logger.LogDebug($"LeavePrivateConsultation");
+            _logger.LogDebug("LeavePrivateConsultation");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (conference == null)
             {
-                _logger.LogWarning($"Unable to find conference {request.ConferenceId}");
+                _logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
             if (participant == null)
             {
-                _logger.LogWarning($"Unable to find participant request by with id {request.ParticipantId}");
+                _logger.LogWarning("Unable to find participant request by id");
                 return NotFound();
             }
 
@@ -131,7 +128,7 @@ namespace Video.API.Controllers
                                           currentRoom != RoomType.ConsultationRoom2))
             {
                 // This could only happen when both the participants press 'Close' button at the same time to end the call
-                _logger.LogWarning($"Participant {request.ParticipantId} is not in a consultation to leave from");
+                _logger.LogWarning("Participant is not in a consultation to leave from");
                 return NoContent();
             }
 
@@ -152,7 +149,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RespondToAdminConsultationRequestAsync(AdminConsultationRequest request)
         {
-            _logger.LogDebug($"RespondToAdminConsultationRequest");
+            _logger.LogDebug("RespondToAdminConsultationRequest");
 
             const string modelErrorMessage = "Response to consultation is missing";
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
@@ -167,14 +164,14 @@ namespace Video.API.Controllers
             
             if (conference == null)
             {
-                _logger.LogWarning($"Unable to find conference {request.ConferenceId}");
+                _logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
             if (participant == null)
             {
-                _logger.LogWarning($"Unable to find participant request by with id {request.ParticipantId}");
+                _logger.LogWarning("Unable to find participant request by id");
                 return NotFound();
             }
 
@@ -199,7 +196,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
-            _logger.LogDebug($"StartPrivateConsultationWithEndpoint");
+            _logger.LogDebug("StartPrivateConsultationWithEndpoint");
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference =
@@ -207,25 +204,22 @@ namespace Video.API.Controllers
 
             if (conference == null)
             {
-                var message = $"Unable to find conference {request.ConferenceId}";
-                _logger.LogWarning(message);
-                return NotFound(message);
+                _logger.LogWarning("Unable to find conference");
+                return NotFound($"Unable to find conference {request.ConferenceId}");
             }
 
             var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == request.EndpointId);
             if (endpoint == null)
             {
-                var message = $"Unable to find endpoint {request.EndpointId}";
-                _logger.LogWarning(message);
-                return NotFound(message);
+                _logger.LogWarning("Unable to find endpoint");
+                return NotFound($"Unable to find endpoint {request.EndpointId}");
             }
             
             var defenceAdvocate = conference.GetParticipants().SingleOrDefault(x => x.Id == request.DefenceAdvocateId);
             if (defenceAdvocate == null)
             {
-                var message = $"Unable to find defence advocate {request.DefenceAdvocateId}";
-                _logger.LogWarning(message);
-                return NotFound(message);
+                _logger.LogWarning("Unable to find defence advocate");
+                return NotFound($"Unable to find defence advocate {request.DefenceAdvocateId}");
             }
 
             if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
@@ -253,7 +247,7 @@ namespace Video.API.Controllers
             if (answer == ConsultationAnswer.Accepted)
             {
                 _logger.LogInformation(
-                    $"Conference: {conference.Id} - Attempting to start private consultation between {requestedBy.Id} and {requestedFor.Id}");
+                    "Conference: {conferenceId} - Attempting to start private consultation between {requestedById} and {requestedForId}", conference.Id, requestedBy.Id, requestedFor.Id);
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
         }

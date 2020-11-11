@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -7,23 +8,23 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.Events.Handlers
 {
-    public class HelpEventHandler : EventHandlerBase
+    public class HelpEventHandler : EventHandlerBase<HelpEventHandler>
     {
-        public HelpEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
-            queryHandler, commandHandler)
+        public HelpEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<HelpEventHandler> logger) : base(
+            queryHandler, commandHandler, logger)
         {
         }
+
         public override EventType EventType => EventType.Help;
 
-        public override async Task HandleAsync(CallbackEvent callbackEvent)
+        public override Task HandleAsync(CallbackEvent callbackEvent)
         {
-            await PublishStatusAsync(callbackEvent);
+            return PublishStatusAsync(callbackEvent);
         }
 
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            // We don't do anything with this
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
     }

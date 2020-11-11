@@ -65,8 +65,8 @@ namespace VideoApi.DAL.Commands
             }
             
             _context.Conferences.Add(conference);
-            
-            await _context.SaveChangesAsync();
+
+            await _context.SaveChangesAsync();           
             
             command.NewConferenceId = conference.Id;
         }

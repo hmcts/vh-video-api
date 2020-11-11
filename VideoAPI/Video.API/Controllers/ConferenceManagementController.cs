@@ -49,7 +49,7 @@ namespace Video.API.Controllers
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to find start video hearing {conferenceId}");
+                _logger.LogError(ex, "Unable to find start video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -71,7 +71,7 @@ namespace Video.API.Controllers
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to pause video hearing {conferenceId}");
+                _logger.LogError(ex, "Unable to pause video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -93,7 +93,7 @@ namespace Video.API.Controllers
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Unable to end video hearing {conferenceId}");
+                _logger.LogError(ex, "Unable to end video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }

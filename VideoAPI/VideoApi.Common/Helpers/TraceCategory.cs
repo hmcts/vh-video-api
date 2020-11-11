@@ -1,4 +1,4 @@
-﻿namespace VideoApi.Common.Helpers
+namespace VideoApi.Common.Helpers
 {
     public enum TraceCategory
     {

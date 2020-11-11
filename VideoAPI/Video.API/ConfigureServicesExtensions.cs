@@ -23,6 +23,7 @@ using Video.API.Factories;
 using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Requests;
@@ -92,6 +93,7 @@ namespace Video.API
             var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
 
             services.AddMemoryCache();
+            services.AddScoped<ILoggingDataExtractor, LoggingDataExtractor>();
             services.AddScoped<IRoomReservationService, RoomReservationService>();
 
             services.AddScoped<ITokenProvider, AzureTokenProvider>();
@@ -256,30 +258,44 @@ namespace Video.API
 
         private static void RegisterCommandHandlers(IServiceCollection serviceCollection)
         {
-            var commandHandlers = typeof(ICommand).Assembly.GetTypes().Where(t =>
-                t.GetInterfaces().Any(x =>
-                    x.IsGenericType &&
-                    x.GetGenericTypeDefinition() == typeof(ICommandHandler<>)));
+            //var commandHandlers = typeof(ICommand).Assembly.GetTypes().Where(t =>
+            //    t.GetInterfaces().Any(x =>
+            //        x.IsGenericType &&
+            //        x.GetGenericTypeDefinition() == typeof(ICommandHandler<>)));
 
-            foreach (var queryHandler in commandHandlers)
-            {
-                var serviceType = queryHandler.GetInterfaces()[0];
-                serviceCollection.AddScoped(serviceType, queryHandler);
-            }
+            //foreach (var queryHandler in commandHandlers)
+            //{
+            //    var serviceType = queryHandler.GetInterfaces()[0];
+            //    serviceCollection.AddScoped(serviceType, queryHandler);
+            //}
+
+            serviceCollection.Scan(scan => scan.FromAssemblyOf<ICommand>()
+                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>))
+                .Where(_ => !_.IsGenericType))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
+            serviceCollection.Decorate(typeof(ICommandHandler<>), typeof(CommandHandlerLoggingDecorator<>));
         }
 
         private static void RegisterQueryHandlers(IServiceCollection serviceCollection)
         {
-            var queryHandlers = typeof(IQuery).Assembly.GetTypes().Where(t =>
-                t.GetInterfaces().Any(x =>
-                    x.IsGenericType &&
-                    x.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)));
+            serviceCollection.Scan(scan => scan.FromAssemblyOf<IQuery>()
+                .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>))
+                .Where(_ => !_.IsGenericType))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
+            serviceCollection.Decorate(typeof(IQueryHandler<,>), typeof(QueryHandlerLoggingDecorator<,>));
 
-            foreach (var queryHandler in queryHandlers)
-            {
-                var serviceType = queryHandler.GetInterfaces()[0];
-                serviceCollection.AddScoped(serviceType, queryHandler);
-            }
+            //var queryHandlers = typeof(IQuery).Assembly.GetTypes().Where(t =>
+            //    t.GetInterfaces().Any(x =>
+            //        x.IsGenericType &&
+            //        x.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)));
+
+            //foreach (var queryHandler in queryHandlers)
+            //{
+            //    var serviceType = queryHandler.GetInterfaces()[0];
+            //    serviceCollection.AddScoped(serviceType, queryHandler);
+            //}
         }
 
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)

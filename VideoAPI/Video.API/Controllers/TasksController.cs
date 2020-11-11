@@ -54,7 +54,7 @@ namespace Video.API.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Unable to find tasks for conference {conferenceId}");
+                _logger.LogError(e, "Unable to find tasks");
                 return BadRequest();
             }
         }
@@ -82,18 +82,16 @@ namespace Video.API.Controllers
             }
             catch (TaskNotFoundException ex)
             {
-                _logger.LogError(ex, $"Unable to find task {taskId} in conference {conferenceId}");
+                _logger.LogError(ex, "Unable to find task");
                 return NotFound();
             }
             
             var query = new GetTasksForConferenceQuery(conferenceId);
             var tasks = await _queryHandler.Handle<GetTasksForConferenceQuery, List<Task>>(query);
-            _logger.LogInformation(
-                $"Completed task {taskId} in conference {conferenceId} by {updateTaskRequest.UpdatedBy}");
             var task = tasks.SingleOrDefault(x => x.Id == taskId);
             if (task == null)
             {
-                _logger.LogError($"Unable to find task {taskId} in conference {conferenceId}");
+                _logger.LogError("Unable to find task");
                 return NotFound();
             }
             var response = TaskToResponseMapper.MapTaskToResponse(task);

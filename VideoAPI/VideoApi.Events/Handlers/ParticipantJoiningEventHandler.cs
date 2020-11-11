@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -8,10 +9,10 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.Events.Handlers
 {
-    public class ParticipantJoiningEventHandler : EventHandlerBase
+    public class ParticipantJoiningEventHandler : EventHandlerBase<ParticipantJoiningEventHandler>
     {
-        public ParticipantJoiningEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
-            queryHandler, commandHandler)
+        public ParticipantJoiningEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<ParticipantJoiningEventHandler> logger) : base(
+            queryHandler, commandHandler, logger)
         {
         }
 
