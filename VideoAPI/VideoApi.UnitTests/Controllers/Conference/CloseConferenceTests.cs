@@ -5,6 +5,7 @@ using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
+using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Conference
@@ -53,7 +54,9 @@ namespace VideoApi.UnitTests.Controllers.Conference
               .ReturnsAsync(TestConference);
             var response = new AudioPlatformServiceResponse(true);
             AudioPlatformServiceMock.Setup(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>())).ReturnsAsync(response);
-            StorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+            AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
+
+            AzureStorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
@@ -66,17 +69,23 @@ namespace VideoApi.UnitTests.Controllers.Conference
         public async Task Should_close_conference_and_not_call_delete_audio_recording_application_if_audio_recording_file_not_found()
         {
             TestConference.AudioRecordingRequired = true;
+            TestConference.UpdateConferenceStatus(VideoApi.Domain.Enums.ConferenceState.InSession);
+
             QueryHandlerMock
                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                .ReturnsAsync(TestConference);
+            AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
 
-            StorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+            AzureStorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
             AudioPlatformServiceMock.Reset();
+            AzureStorageServiceMock.Reset();
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            StorageServiceMock.Verify(x => x.FileExistsAsync(It.IsAny<string>()), Times.Once);
+            AzureStorageServiceMock.Verify(x => x.FileExistsAsync(It.IsAny<string>()), Times.Once);
+
             AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
         }
 

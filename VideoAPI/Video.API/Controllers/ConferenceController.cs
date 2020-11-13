@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
+using Video.API.Factories;
 using Video.API.Mappings;
 using Video.API.Validations;
 using VideoApi.Common.Configuration;
@@ -38,13 +39,13 @@ namespace Video.API.Controllers
         private readonly ServicesConfiguration _servicesConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
-        private readonly IAzureStorageService _azureStorageService;
+        private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
 
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
             ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
-            IAzureStorageService azureStorageService)
+            IAzureStorageServiceFactory azureStorageServiceFactory)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -52,7 +53,7 @@ namespace Video.API.Controllers
             _servicesConfiguration = servicesConfiguration.Value;
             _logger = logger;
             _audioPlatformService = audioPlatformService;
-            _azureStorageService = azureStorageService;
+            _azureStorageServiceFactory = azureStorageServiceFactory;
         }
 
         /// <summary>
@@ -471,7 +472,7 @@ namespace Video.API.Controllers
             {
                 try
                 {
-                    await EnsureAudioFileExists(queriedConference.HearingRefId);
+                    await EnsureAudioFileExists(queriedConference);
                     await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
                 }
                 catch (AudioPlatformFileNotFoundException ex)
@@ -482,16 +483,18 @@ namespace Video.API.Controllers
             }
         }
 
-        private async Task EnsureAudioFileExists(Guid hearingId)
+        private async Task EnsureAudioFileExists(Conference conference)
         {
-            var filePath = $"{hearingId}.mp4";
-            if (!await _azureStorageService.FileExistsAsync(filePath))
+            var filePath = $"{conference.HearingRefId}.mp4";
+            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+
+            if (!await azureStorageService.FileExistsAsync(filePath) && conference.ActualStartTime.HasValue)
             {
-                var msg = $"Audio recording file not found for hearing: {hearingId}";
+                var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
         }
-
+       
         private async Task BookKinlyMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
