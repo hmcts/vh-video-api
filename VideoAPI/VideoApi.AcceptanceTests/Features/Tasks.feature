@@ -1,4 +1,4 @@
-﻿Feature: Tasks
+Feature: Tasks
   In order to action specific VH events
   As an API service
   I want to handle tasks
@@ -24,3 +24,16 @@
     Given I have a valid get tasks request
     When I send the request to the endpoint
     Then the tasks are retrieved
+
+  Scenario: Add a Task to a valid conference
+    Given I have a conference
+    And I have add task to a conference request with a valid conference id
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the task should be added
+
+  Scenario: Add a Task to an invalid conference
+    Given I have a conference
+    And I have add task to a conference request with a invalid conference id
+    When I send the request to the endpoint
+    Then the response should have the status BadRequest and success status False
