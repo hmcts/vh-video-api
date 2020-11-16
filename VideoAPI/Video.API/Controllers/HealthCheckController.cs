@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Linq;
@@ -26,16 +25,13 @@ namespace Video.API.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly IAudioPlatformService _audioPlatformService;
-        private readonly ILogger<HealthCheckController> _logger;
 
         public HealthCheckController(IQueryHandler queryHandler, IVideoPlatformService videoPlatformService,
-            IAudioPlatformService audioPlatformService,
-            ILogger<HealthCheckController> logger)
+            IAudioPlatformService audioPlatformService)
         {
             _queryHandler = queryHandler;
             _videoPlatformService = videoPlatformService;
             _audioPlatformService = audioPlatformService;
-            _logger = logger;
         }
 
         /// <summary>
