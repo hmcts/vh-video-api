@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,10 +13,10 @@ using TaskStatus = VideoApi.Domain.Enums.TaskStatus;
 
 namespace VideoApi.Events.Handlers
 {
-    public class MediaPermissionDeniedEventHandler : EventHandlerBase
+    public class MediaPermissionDeniedEventHandler : EventHandlerBase<MediaPermissionDeniedEventHandler>
     {
-        public MediaPermissionDeniedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
-            queryHandler, commandHandler)
+        public MediaPermissionDeniedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<MediaPermissionDeniedEventHandler> logger) : base(
+            queryHandler, commandHandler, logger)
         {
         }
 

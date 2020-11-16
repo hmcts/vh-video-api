@@ -10,15 +10,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class DisconnectedEventHandlerTests : EventHandlerTestBase
+    public class DisconnectedEventHandlerTests : EventHandlerTestBase<DisconnectedEventHandler>
     {
-        private DisconnectedEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_disconnect_messages_to_participants_and_service_bus_on_participant_disconnect()
         {
-            _eventHandler = new DisconnectedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
             var callbackEvent = new CallbackEvent
@@ -38,7 +34,7 @@ namespace VideoApi.UnitTests.Events
                 new AddTaskCommand(conference.Id, conference.Id, "Disconnected", TaskType.Participant);
             CommandHandlerMock.Setup(x => x.Handle(addParticipantDisconnectedTask));
             
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
 
             CommandHandlerMock.Verify(

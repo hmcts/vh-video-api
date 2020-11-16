@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
+using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
@@ -10,10 +11,11 @@ using VideoApi.Services.Contracts;
 
 namespace VideoApi.Events.Handlers
 {
-    public class EndpointTransferredEventHandler : EventHandlerBase
+    public class EndpointTransferredEventHandler : EventHandlerBase<EndpointTransferredEventHandler>
     {
         private readonly IRoomReservationService _roomReservationService;
-        public EndpointTransferredEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, IRoomReservationService roomReservationService) : base(queryHandler, commandHandler)
+        public EndpointTransferredEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<EndpointTransferredEventHandler> logger, IRoomReservationService roomReservationService) : base(
+            queryHandler, commandHandler, logger)
         {
             _roomReservationService = roomReservationService;
         }

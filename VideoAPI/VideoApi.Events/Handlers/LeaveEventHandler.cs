@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -8,10 +9,10 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.Events.Handlers
 {
-    public class LeaveEventHandler : EventHandlerBase
+    public class LeaveEventHandler : EventHandlerBase<LeaveEventHandler>
     {
-        public LeaveEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
-            queryHandler, commandHandler)
+        public LeaveEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<LeaveEventHandler> logger) : base(
+            queryHandler, commandHandler, logger)
         {
         }
 

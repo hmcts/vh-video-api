@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
@@ -10,15 +10,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class ParticipantJoiningEventHandlerTests : EventHandlerTestBase
+    public class ParticipantJoiningEventHandlerTests : EventHandlerTestBase<ParticipantJoiningEventHandler>
     {
-        private ParticipantJoiningEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_joining_message_to_participants_and_service_bus_when_a_participant_is_joining()
         {
-            _eventHandler = new ParticipantJoiningEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
 
@@ -34,7 +30,7 @@ namespace VideoApi.UnitTests.Events
                 ParticipantState.Joining);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>

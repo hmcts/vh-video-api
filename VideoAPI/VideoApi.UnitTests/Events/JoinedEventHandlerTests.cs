@@ -10,15 +10,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class JoinedEventHandlerTests : EventHandlerTestBase
+    public class JoinedEventHandlerTests : EventHandlerTestBase<JoinedEventHandler>
     {
-        private JoinedEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_available_message_to_participants_and_service_bus_when_participant_joins()
         {
-            _eventHandler = new JoinedEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
 
@@ -34,7 +30,7 @@ namespace VideoApi.UnitTests.Events
                 ParticipantState.Available, RoomType.WaitingRoom);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>

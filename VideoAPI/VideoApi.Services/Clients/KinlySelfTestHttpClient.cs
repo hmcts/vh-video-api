@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ namespace VideoApi.Services.Clients
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            _logger.LogInformation($"Retrieving test call score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}");
+            _logger.LogInformation("Retrieving test call score for participant {participantId} at {KinlySelfTestApiUrl}", participantId, _servicesConfigOptions.KinlySelfTestApiUrl);
             
             var requestUri = $"{_servicesConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
             var request = new HttpRequestMessage
@@ -42,13 +42,13 @@ namespace VideoApi.Services.Clients
 
             if (responseMessage.StatusCode == HttpStatusCode.NotFound)
             {
-                _logger.LogWarning($" {responseMessage.StatusCode} : Failed to retrieve self test score for participant {participantId} ");
+                _logger.LogWarning(" {StatusCode} : Failed to retrieve self test score for participant {participantId}", responseMessage.StatusCode, participantId);
                 return null;
             }
 
             var content = await responseMessage.Content.ReadAsStringAsync();
             var testCall = ApiRequestHelper.Deserialise<Testcall>(content);
-            _logger.LogWarning($" {responseMessage.StatusCode} : Successfully retrieved self test score for participant {participantId} ");
+            _logger.LogWarning(" {StatusCode} : Successfully retrieved self test score for participant {participantId}", responseMessage.StatusCode, participantId);
             
             return new TestCallResult(testCall.Passed, (TestScore) testCall.Score);
         }

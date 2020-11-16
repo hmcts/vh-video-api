@@ -52,7 +52,7 @@ namespace Video.API.Controllers
         [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetEndpointsForConference(Guid conferenceId)
         {
-            _logger.LogDebug($"Retrieving endpoints for conference {conferenceId}");
+            _logger.LogDebug("Retrieving endpoints for conference {conferenceId}", conferenceId);
             var query = new GetEndpointsForConferenceQuery(conferenceId);
             var endpoints = await _queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(query);
             var response = endpoints.Select(EndpointToResponseMapper.MapEndpointResponse).ToList();
@@ -70,7 +70,7 @@ namespace Video.API.Controllers
         public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId,
             [FromBody] AddEndpointRequest request)
         {
-            _logger.LogDebug($"Attempting to add endpoint {request.DisplayName} to conference {conferenceId}");
+            _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
             
             var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin, request.DefenceAdvocate);
             await _commandHandler.Handle(command);
@@ -79,7 +79,7 @@ namespace Video.API.Controllers
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
             
-            _logger.LogDebug($"Successfully added endpoint {request.DisplayName} to conference {conferenceId}");
+            _logger.LogDebug("Successfully added endpoint {DisplayName} to conference", request.DisplayName);
             return NoContent();
         }
 
@@ -94,7 +94,7 @@ namespace Video.API.Controllers
         [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, string sipAddress)
         {
-            _logger.LogDebug($"Attempting to remove endpoint {sipAddress} from conference {conferenceId}");
+            _logger.LogDebug("Attempting to remove endpoint {sipAddress} from conference", sipAddress);
 
             var command = new RemoveEndpointCommand(conferenceId, sipAddress);
             await _commandHandler.Handle(command);
@@ -103,7 +103,7 @@ namespace Video.API.Controllers
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
             
-            _logger.LogDebug($"Successfully removed endpoint {sipAddress} from conference {conferenceId}");
+            _logger.LogDebug("Successfully removed endpoint {sipAddress} from conference", sipAddress);
             return NoContent();
         }
 
@@ -121,7 +121,7 @@ namespace Video.API.Controllers
             [FromBody] UpdateEndpointRequest request)
         {
             _logger.LogDebug(
-                $"Attempting to update endpoint {sipAddress} for conference {conferenceId} with display name {request.DisplayName}");
+                "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
 
             var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate);
             await _commandHandler.Handle(command);
@@ -132,7 +132,7 @@ namespace Video.API.Controllers
             }
 
             _logger.LogDebug(
-                $"Successfully updated endpoint {sipAddress} from conference {conferenceId} with display name {request.DisplayName}");
+                "Successfully updated endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
             return Ok();
         }
 

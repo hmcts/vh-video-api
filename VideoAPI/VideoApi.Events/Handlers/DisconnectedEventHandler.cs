@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -8,10 +9,10 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.Events.Handlers
 {
-    public class DisconnectedEventHandler : EventHandlerBase
+    public class DisconnectedEventHandler : EventHandlerBase<DisconnectedEventHandler>
     {
-        public DisconnectedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler) : base(
-            queryHandler, commandHandler)
+        public DisconnectedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<DisconnectedEventHandler> logger) : base(
+            queryHandler, commandHandler, logger)
         {
         }
 

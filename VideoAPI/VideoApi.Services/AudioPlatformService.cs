@@ -17,7 +17,6 @@ namespace VideoApi.Services
         private readonly IEnumerable<IWowzaHttpClient> _wowzaClients;
         private readonly WowzaConfiguration _configuration;
         private readonly ILogger<AudioPlatformService> _logger;
-        private const string DefaultEmptyIngestUrl = " ";
 
         public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
@@ -36,16 +35,15 @@ namespace VideoApi.Services
 
                 var response = await WaitAnyFirstValidResult(tasks);
 
-                _logger.LogInformation($"Got Wowza application info: {hearingId}");
+                _logger.LogInformation("Got Wowza application info: {hearingId}", hearingId);
 
                 return response;
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = $"Failed to get info for Wowza application: {hearingId}, " +
-                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                var errorMessageTemplate = "Failed to get info for Wowza application: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
 
-                LogError(ex, errorMessage);
+                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
 
                 return null;
             }
@@ -61,16 +59,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = "Failed to create the Wowza application for: " +
-                                   $"{hearingId}, StatusCode: {ex.StatusCode}, " +
-                                   $"Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
-                return new AudioPlatformServiceResponse(false)
-                {
-                    Message = errorMessage, StatusCode = ex.StatusCode
-                };
+                var errorMessageTemplate = "Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                var errorMessage = $"Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
+                return new AudioPlatformServiceResponse(false) { Message = errorMessage, StatusCode = ex.StatusCode };
             }
         }
 
@@ -81,17 +73,15 @@ namespace VideoApi.Services
                 var tasks = _wowzaClients.Select(x => x.DeleteApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
                 await Task.WhenAll(tasks);
                 
-                _logger.LogInformation($"Deleted Wowza application: {hearingId}");
+                _logger.LogInformation("Deleted Wowza application: {hearingId}", hearingId);
 
                 return new AudioPlatformServiceResponse(true);
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = $"Failed to delete the Wowza application: {hearingId}, " +
-                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
+                var errorMessageTemplate = "Failed to delete the Wowza application: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                var errorMessage = $"Failed to delete the Wowza application: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
         }
@@ -106,17 +96,14 @@ namespace VideoApi.Services
 
                 var response = await WaitAnyFirstValidResult(tasks);
 
-                _logger.LogInformation($"Got Wowza monitor stream data for application: {hearingId}");
+                _logger.LogInformation("Got Wowza monitor stream data for application: {hearingId}", hearingId);
 
                 return response;
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = $"Failed to get Wowza monitor stream data for application {hearingId}, " +
-                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
+                var errorMessageTemplate = "Failed to get Wowza monitor stream data for application {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
                 return null;
             }
         }
@@ -131,17 +118,14 @@ namespace VideoApi.Services
 
                 var response = await WaitAnyFirstValidResult(tasks);
 
-                _logger.LogInformation($"Got Wowza stream recorder for application: {hearingId}");
+                _logger.LogInformation("Got Wowza stream recorder for application: {hearingId}", hearingId);
 
                 return response;
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = $"Failed to get the Wowza stream recorder for application: {hearingId}, " +
-                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
+                var errorMessageTemplate = "Failed to get the Wowza stream recorder for application: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";                
+                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
                 return null;
             }
         }
@@ -153,17 +137,15 @@ namespace VideoApi.Services
                 var tasks = _wowzaClients.Select(x => x.StopStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
                 await Task.WhenAll(tasks);
 
-                _logger.LogInformation($"Stopped Wowza stream recorder for application: {hearingId}");
+                _logger.LogInformation("Stopped Wowza stream recorder for application: {hearingId}", hearingId);
 
                 return new AudioPlatformServiceResponse(true);
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = $"Failed to get the Wowza stream recorder for application: {hearingId}, " +
-                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-                
-                LogError(ex, errorMessage);
-
+                var errorMessageTemplate = "Failed to get the Wowza stream recorder for application: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                var errorMessage = $"Failed to get the Wowza stream recorder for application: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
         }
@@ -182,11 +164,8 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessage = $"Failed to get the Wowza server version for application: {_configuration.ServerName}, " +
-                                   $"StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-
-                LogError(ex, errorMessage);
-
+                var errorMessageTemplate = "Failed to get the Wowza server version for application: {_configuration.ServerName}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+                LogError(ex, errorMessageTemplate, _configuration.ServerName, ex.StatusCode, ex.Message);
                 return null;
             }
         }
@@ -196,19 +175,19 @@ namespace VideoApi.Services
             foreach (var client in _wowzaClients)
             {
                 await client.CreateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.StorageDirectory);
-                _logger.LogInformation($"Created a Wowza application for: {applicationName}");
+                _logger.LogInformation("Created a Wowza application for: {applicationName}", applicationName);
 
                 await client.UpdateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.AzureStorageDirectory);
-                _logger.LogInformation($"Updating Wowza application for: {applicationName}");
+                _logger.LogInformation("Updating Wowza application for: {applicationName}", applicationName);
             }
             
         }
 
-        private void LogError(AudioPlatformException ex, string errorMessage)
+        private void LogError(AudioPlatformException ex, string errorMessageTemplate, params object[] args)
         {
             if (ex.StatusCode != HttpStatusCode.NotFound)
             {
-                _logger.LogError(ex, errorMessage);
+                _logger.LogError(ex, errorMessageTemplate, args);
             }
         }
 

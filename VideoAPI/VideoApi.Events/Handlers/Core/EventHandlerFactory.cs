@@ -24,7 +24,7 @@ namespace VideoApi.Events.Handlers.Core
             var eventHandler = _eventHandlers.SingleOrDefault(x => x.EventType == eventType);
             if (eventHandler == null)
                 throw new ArgumentOutOfRangeException(nameof(eventType),
-                    $"EventHandler cannot be found for eventType: {eventType.ToString()}");
+                    $"EventHandler cannot be found for eventType: {eventType}");
             return eventHandler;
         }
     }

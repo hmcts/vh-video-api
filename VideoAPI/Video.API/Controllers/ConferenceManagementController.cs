@@ -42,7 +42,7 @@ namespace Video.API.Controllers
         {
             try
             {
-                _logger.LogDebug("Attempting to start hearing {Conference}", conferenceId);
+                _logger.LogDebug("Attempting to start hearing");
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
@@ -51,7 +51,7 @@ namespace Video.API.Controllers
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, "Error from Kinly API. Unable to start video hearing {conferenceId}", conferenceId);
+                _logger.LogError(ex, "Error from Kinly API. Unable to start video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -68,13 +68,13 @@ namespace Video.API.Controllers
         {
             try
             {
-                _logger.LogDebug("Attempting to pause hearing {Conference}", conferenceId);
+                _logger.LogDebug("Attempting to pause hearing");
                 await _videoPlatformService.PauseHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, "Error from Kinly API. Unable to pause video hearing {conferenceId}", conferenceId);
+                _logger.LogError(ex, $"Error from Kinly API. Unable to pause video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -91,13 +91,13 @@ namespace Video.API.Controllers
         {
             try
             {
-                _logger.LogDebug("Attempting to end hearing {Conference}", conferenceId);
+                _logger.LogDebug("Attempting to end hearing");
                 await _videoPlatformService.EndHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, "Error from Kinly API. Unable to end video hearing {conferenceId}", conferenceId);
+                _logger.LogError(ex, "Error from Kinly API. Unable to end video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -118,7 +118,7 @@ namespace Video.API.Controllers
             }	
             catch (KinlyApiException ex)	
             {	
-                _logger.LogError(ex, $"Unable to request technical assistance for video hearing {conferenceId}");	
+                _logger.LogError(ex, "Unable to request technical assistance for video hearing");	
                 return StatusCode(ex.StatusCode, ex.Response);	
             }	
         }

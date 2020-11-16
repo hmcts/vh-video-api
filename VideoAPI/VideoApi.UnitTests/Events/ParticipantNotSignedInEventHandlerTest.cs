@@ -10,15 +10,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class ParticipantNotSignedInEventHandlerTest : EventHandlerTestBase
+    public class ParticipantNotSignedInEventHandlerTest : EventHandlerTestBase<ParticipantNotSignedInEventHandler>
     {
-        private ParticipantNotSignedInEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_not_signed_in_message_to_participants_and_service_bus_when_a_participant_is_not_signed_in()
         {
-            _eventHandler = new ParticipantNotSignedInEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
 
@@ -34,7 +30,7 @@ namespace VideoApi.UnitTests.Events
                 ParticipantState.NotSignedIn);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateParticipantStatusCommand>(command =>

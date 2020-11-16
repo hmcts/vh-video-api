@@ -9,15 +9,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class CloseEventHandlerTests : EventHandlerTestBase
+    public class CloseEventHandlerTests : EventHandlerTestBase<CloseEventHandler>
     {
-        private CloseEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_messages_to_participants_and_service_bus_on_close()
         {
-            _eventHandler = new CloseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             var callbackEvent = new CallbackEvent
             {
@@ -27,7 +23,7 @@ namespace VideoApi.UnitTests.Events
                 TimeStampUtc = DateTime.UtcNow
             };
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>

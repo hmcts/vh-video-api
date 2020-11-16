@@ -173,7 +173,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
-            _logger.LogInformation($"Getting audio recording link for hearing: {hearingId}");
+            _logger.LogInformation("Getting audio recording link");
             try
             {
                 var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
@@ -208,7 +208,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpAllAsync(string cloudRoom, string date, string caseReference)
         {
-            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoom}, for date: {date} and case number: {caseReference}");
+            _logger.LogInformation("Getting audio recording link for CVP cloud room");
             
             try
             {
@@ -234,7 +234,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date)
         {
-            _logger.LogInformation($"Getting audio recording link for CVP cloud room: {cloudRoom}, for date: {date}");
+            _logger.LogInformation("Getting audio recording link for CVP cloud room");
 
             try
             {
@@ -260,7 +260,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference)
         {
-            _logger.LogInformation($"Getting audio recording link for CVP date: {date}, CaseReference: {caseReference}");
+            _logger.LogInformation("Getting audio recording link for CVP");
 
             try
             {

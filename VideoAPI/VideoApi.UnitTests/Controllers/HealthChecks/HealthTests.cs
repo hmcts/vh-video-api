@@ -1,3 +1,4 @@
+using Autofac.Extras.Moq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -23,13 +24,15 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
         private Mock<IQueryHandler> _mockQueryHandler;
         private Mock<IVideoPlatformService> _mockVideoPlatformService;
         private Mock<IAudioPlatformService> _mockAudioPlatformService;
+        private AutoMock _mocker;
 
         [SetUp]
         public void Setup()
         {
-            _mockQueryHandler = new Mock<IQueryHandler>();
-            _mockVideoPlatformService = new Mock<IVideoPlatformService>();
-            _mockAudioPlatformService = new Mock<IAudioPlatformService>();
+            _mocker = AutoMock.GetLoose();
+            _mockQueryHandler = _mocker.Mock<IQueryHandler>();
+            _mockVideoPlatformService = _mocker.Mock<IVideoPlatformService>();
+            _mockAudioPlatformService = _mocker.Mock<IAudioPlatformService>();
             
             // set all positive
             var conference = new ConferenceBuilder().Build();
@@ -53,9 +56,8 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             };
             _mockAudioPlatformService.Setup(x => x.GetDiagnosticsAsync())
                 .ReturnsAsync(wowzaResponse);
-            
-            _controller = new HealthCheckController(_mockQueryHandler.Object, _mockVideoPlatformService.Object,
-                _mockAudioPlatformService.Object);
+
+            _controller = _mocker.Create<HealthCheckController>();
         }
 
         [Test]

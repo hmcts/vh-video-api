@@ -41,7 +41,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostEventAsync(ConferenceEventRequest request)
         {
-            _logger.LogInformation($"Handling {request.EventType.ToString()} event for conference {request.ConferenceId}");
             Guid.TryParse(request.ConferenceId, out var conferenceId);
 
             var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,
@@ -51,14 +50,7 @@ namespace Video.API.Controllers
                 command.ParticipantId = participantId;
             }
 
-            _logger.LogWarning($"EVENT: {request.EventType.ToString()} | " +
-                               $"Participant ID: {request.ParticipantId} | " +
-                               $"Reason: {request.Reason} | " +
-                               $"External Timestamp: {request.TimeStampUtc:yyyy-MM-dd HH:mm:ss.fffffff} | " +
-                               $"Timestamp: {(DateTime.Now):yyyy-MM-dd HH:mm:ss.fffffff} | " +
-                               $"TransferFrom: {request.TransferFrom} | " +
-                               $"TransferTo: {request.TransferTo} | " +
-                               $"Conference ID: {request.ConferenceId} ");
+            _logger.LogWarning("Handling {ConferenceEventRequest}", nameof(ConferenceEventRequest));
             
             await _commandHandler.Handle(command);
 
@@ -73,7 +65,6 @@ namespace Video.API.Controllers
                 TimeStampUtc = request.TimeStampUtc,
                 ParticipantId = participantId
             };
-
             await _eventHandlerFactory.Get(request.EventType).HandleAsync(callbackEvent);
             return NoContent();
         }

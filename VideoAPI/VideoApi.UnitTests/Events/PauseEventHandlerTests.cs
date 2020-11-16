@@ -9,15 +9,11 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.UnitTests.Events
 {
-    public class PauseEventHandlerTests : EventHandlerTestBase
+    public class PauseEventHandlerTests : EventHandlerTestBase<PauseEventHandler>
     {
-        private PauseEventHandler _eventHandler;
-
         [Test]
         public async Task Should_send_messages_to_participants_and_service_bus_on_pause()
         {
-            _eventHandler = new PauseEventHandler(QueryHandlerMock.Object, CommandHandlerMock.Object);
-
             var conference = TestConference;
             
             var callbackEvent = new CallbackEvent
@@ -28,7 +24,7 @@ namespace VideoApi.UnitTests.Events
                 TimeStampUtc = DateTime.UtcNow
             };
 
-            await _eventHandler.HandleAsync(callbackEvent);
+            await _sut.HandleAsync(callbackEvent);
 
             CommandHandlerMock.Verify(
                 x => x.Handle(It.Is<UpdateConferenceStatusCommand>(command =>

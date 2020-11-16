@@ -47,8 +47,7 @@ namespace VideoApi.Services
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
         {
-            _logger.LogInformation(
-                $"Booking a conference for {conferenceId} with callback {_servicesConfigOptions.CallbackUri} at {_servicesConfigOptions.KinlyApiUrl}");
+            _logger.LogInformation("Booking a conference for {conferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId, _servicesConfigOptions.CallbackUri, _servicesConfigOptions.KinlyApiUrl);
 
             try
             {
@@ -110,8 +109,7 @@ namespace VideoApi.Services
                 maxRetryAttempts,
                 _ => pauseBetweenFailures,
                 retryAttempt =>
-                    _logger.LogWarning(
-                        $"Failed to retrieve test score for participant {participantId} at {_servicesConfigOptions.KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}"),
+                    _logger.LogWarning("Failed to retrieve test score for participant {participantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}", participantId, _servicesConfigOptions.KinlySelfTestApiUrl, retryAttempt),
                 callResult => callResult == null,
                 () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
             );
@@ -119,11 +117,10 @@ namespace VideoApi.Services
             return result;
         }
 
-        public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,
+        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,
             RoomType toRoom)
         {
-            _logger.LogInformation(
-                $"Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}");
+            _logger.LogInformation("Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}", participantId, fromRoom, toRoom, conferenceId);
 
             var request = new TransferParticipantParams
             {
@@ -132,7 +129,7 @@ namespace VideoApi.Services
                 Part_id = participantId.ToString()
             };
 
-            await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
+            return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
         public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy,
@@ -141,7 +138,7 @@ namespace VideoApi.Services
             var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
 
             _logger.LogInformation(
-                $"Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}");
+                "Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}", conference.Id, requestedBy.Id, requestedFor.Id, targetRoom);
 
             await TransferParticipantAsync(conference.Id, requestedBy.Id,
                 requestedBy.GetCurrentRoom(), targetRoom);
@@ -155,7 +152,7 @@ namespace VideoApi.Services
         {
             var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
             _logger.LogInformation(
-                $"Conference: {conference.Id} - Attempting to transfer endpoint {endpoint.Id} and participant {defenceAdvocate.Id} into room {targetRoom}");
+                "Conference: {conference.Id} - Attempting to transfer endpoint {endpoint.Id} and participant {defenceAdvocate.Id} into room {targetRoom}", conference.Id, endpoint.Id, defenceAdvocate.Id, targetRoom);
             await TransferParticipantAsync(conference.Id, endpoint.Id,
                 endpoint.GetCurrentRoom(), targetRoom);
 
@@ -184,15 +181,15 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
+        public Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
         {
-            await _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString());
+            return _kinlyApiClient.DeleteHearingAsync(conferenceId.ToString());
         }
 
-        public async Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
+        public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
             IEnumerable<EndpointDto> endpoints)
         {
-            await _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(),
+            return _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(),
                 new UpdateHearingParams
                 {
                     Recording_enabled = audioRecordingRequired,
@@ -200,30 +197,30 @@ namespace VideoApi.Services
                 });
         }
 
-        public async Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
+        public Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
         {
-            await _kinlyApiClient.StartHearingAsync(conferenceId.ToString(),
-                new StartHearingParams {Hearing_layout = layout});
+            return _kinlyApiClient.StartHearingAsync(conferenceId.ToString(),
+                new StartHearingParams { Hearing_layout = layout });
         }
 
-        public async Task PauseHearingAsync(Guid conferenceId)
+        public Task PauseHearingAsync(Guid conferenceId)
         {
-            await _kinlyApiClient.PauseHearingAsync(conferenceId.ToString());
+            return _kinlyApiClient.PauseHearingAsync(conferenceId.ToString());
         }
 
-        public async Task EndHearingAsync(Guid conferenceId)
+        public Task EndHearingAsync(Guid conferenceId)
         {
-            await _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
+            return _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
         }
 
-        public async Task SuspendHearingAsync(Guid conferenceId)
+        public Task SuspendHearingAsync(Guid conferenceId)
         {
-            await _kinlyApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
+            return _kinlyApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
         }
 
-        public async Task<HealthCheckResponse> GetPlatformHealthAsync()
+        public Task<HealthCheckResponse> GetPlatformHealthAsync()
         {
-            return await _kinlyApiClient.HealthCheckAsync();
+            return _kinlyApiClient.HealthCheckAsync();
         }
     }
 }

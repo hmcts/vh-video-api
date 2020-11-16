@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ namespace Video.API.ValidationMiddleware
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            _logger.LogDebug($"Processing request {context.ActionDescriptor.DisplayName}");
+            _logger.LogDebug($"Processing request");
             foreach (var property in context.ActionDescriptor.Parameters)
             {
                 var valuePair = context.ActionArguments.SingleOrDefault(x => x.Key == property.Name);
