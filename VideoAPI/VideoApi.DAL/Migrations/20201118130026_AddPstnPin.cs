@@ -7,7 +7,7 @@ namespace VideoApi.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "MeetingRoom_PstnPin",
+                name: "PstnPin",
                 table: "Conference",
                 nullable: true);
         }
@@ -15,7 +15,7 @@ namespace VideoApi.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "MeetingRoom_PstnPin",
+                name: "PstnPin",
                 table: "Conference");
         }
     }

@@ -10,7 +10,7 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    [Migration("20201118110325_AddPstnPin")]
+    [Migration("20201118130026_AddPstnPin")]
     partial class AddPstnPin
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -432,6 +432,7 @@ namespace VideoApi.DAL.Migrations
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("PstnPin")
+                                .HasColumnName("PstnPin")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("ConferenceId");

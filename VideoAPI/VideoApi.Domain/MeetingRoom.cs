@@ -23,7 +23,7 @@ namespace VideoApi.Domain
 
         public bool IsSet()
         {
-            return AdminUri != null && JudgeUri != null && ParticipantUri != null && PexipNode != null;
+            return AdminUri != null && JudgeUri != null && ParticipantUri != null && PexipNode != null && PstnPin != null;
         }
     }
 }

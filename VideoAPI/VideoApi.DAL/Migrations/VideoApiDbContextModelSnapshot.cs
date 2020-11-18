@@ -430,6 +430,7 @@ namespace VideoApi.DAL.Migrations
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("PstnPin")
+                                .HasColumnName("PstnPin")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("ConferenceId");
