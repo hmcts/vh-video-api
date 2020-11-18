@@ -6,7 +6,7 @@ namespace VideoApi.Domain
         {
         }
         
-        public MeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode, string telephoneConferenceId)
+        public MeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode, int telephoneConferenceId)
         {
             AdminUri = adminUri;
             JudgeUri = judgeUri;
@@ -19,11 +19,11 @@ namespace VideoApi.Domain
         public string JudgeUri { get; set; }
         public string ParticipantUri { get; set; }
         public string PexipNode { get; set; }
-        public string TelephoneConferenceId { get; set; }
+        public int TelephoneConferenceId { get; set; }
 
         public bool IsSet()
         {
-            return AdminUri != null && JudgeUri != null && ParticipantUri != null && PexipNode != null && TelephoneConferenceId != null;
+            return AdminUri != null && JudgeUri != null && ParticipantUri != null && PexipNode != null && TelephoneConferenceId > int.MinValue;
         }
     }
 }

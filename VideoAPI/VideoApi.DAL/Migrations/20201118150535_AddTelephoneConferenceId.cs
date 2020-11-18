@@ -6,7 +6,7 @@ namespace VideoApi.DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
+            migrationBuilder.AddColumn<int>(
                 name: "TelephoneConferenceId",
                 table: "Conference",
                 nullable: true);

@@ -110,7 +110,7 @@ namespace VideoApi.Services
             var judgeUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
             var participantUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
             var pexipNode = "join.node.com";
-            var telephoneConferenceId = "12345678";
+            var telephoneConferenceId = 12345678;
             return new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
         }
     }

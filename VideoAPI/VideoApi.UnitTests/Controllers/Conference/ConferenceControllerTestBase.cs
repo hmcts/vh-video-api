@@ -82,7 +82,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             ServicesConfiguration.Setup(s => s.Value).Returns(new ServicesConfiguration());
 
-            MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode", "1234566");
+            MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode", 12345678);
 
             Controller = new ConferenceController(QueryHandlerMock.Object, CommandHandlerMock.Object,
                  VideoPlatformServiceMock.Object, ServicesConfiguration.Object, MockLogger.Object,

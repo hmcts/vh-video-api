@@ -33,6 +33,6 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// Public switched telephone network pin
         /// </summary>
-        public string TelephoneConferenceId { get; set; }
+        public int TelephoneConferenceId { get; set; }
     }
 }
