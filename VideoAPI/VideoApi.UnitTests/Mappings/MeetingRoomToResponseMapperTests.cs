@@ -15,8 +15,9 @@ namespace VideoApi.UnitTests.Mappings
             const string participantUri =
                 "https://participantstestpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string pexipNode = "testjoin.node.com";
+            const string pstnPin = "123445566";
 
-            var meetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
+            var meetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, pstnPin);
 
             var response = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(meetingRoom);
             response.Should().BeEquivalentTo(meetingRoom);

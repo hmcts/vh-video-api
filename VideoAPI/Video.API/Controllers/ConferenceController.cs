@@ -516,7 +516,7 @@ namespace Video.API.Controllers
             var command = new UpdateMeetingRoomCommand
             (
                 conferenceId, meetingRoom.AdminUri, meetingRoom.JudgeUri, meetingRoom.ParticipantUri,
-                meetingRoom.PexipNode
+                meetingRoom.PexipNode, meetingRoom.PstnPin
             );
 
             await _commandHandler.Handle(command);

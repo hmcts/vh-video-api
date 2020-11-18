@@ -47,7 +47,9 @@ namespace VideoApi.Services
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
         {
-            _logger.LogInformation("Booking a conference for {conferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId, _servicesConfigOptions.CallbackUri, _servicesConfigOptions.KinlyApiUrl);
+            _logger.LogInformation(
+                "Booking a conference for {conferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
+                _servicesConfigOptions.CallbackUri, _servicesConfigOptions.KinlyApiUrl);
 
             try
             {
@@ -63,9 +65,8 @@ namespace VideoApi.Services
                 });
 
                 return new MeetingRoom
-                (
-                    response.Uris.Admin, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node
-                );
+                (response.Uris.Admin, response.Uris.Participant, response.Uris.Participant,
+                    response.Uris.Pexip_node, response.PstnPin);
             }
             catch (KinlyApiException e)
             {
@@ -84,8 +85,7 @@ namespace VideoApi.Services
             {
                 var response = await _kinlyApiClient.GetHearingAsync(conferenceId.ToString());
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Participant,
-                    response.Uris.Participant,
-                    response.Uris.Pexip_node);
+                    response.Uris.Participant, response.Uris.Pexip_node, response.PstnPin);
                 return meetingRoom;
             }
             catch (KinlyApiException e)
@@ -109,7 +109,9 @@ namespace VideoApi.Services
                 maxRetryAttempts,
                 _ => pauseBetweenFailures,
                 retryAttempt =>
-                    _logger.LogWarning("Failed to retrieve test score for participant {participantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}", participantId, _servicesConfigOptions.KinlySelfTestApiUrl, retryAttempt),
+                    _logger.LogWarning(
+                        "Failed to retrieve test score for participant {participantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}",
+                        participantId, _servicesConfigOptions.KinlySelfTestApiUrl, retryAttempt),
                 callResult => callResult == null,
                 () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
             );
@@ -120,7 +122,9 @@ namespace VideoApi.Services
         public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,
             RoomType toRoom)
         {
-            _logger.LogInformation("Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}", participantId, fromRoom, toRoom, conferenceId);
+            _logger.LogInformation(
+                "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
+                participantId, fromRoom, toRoom, conferenceId);
 
             var request = new TransferParticipantParams
             {
@@ -138,7 +142,8 @@ namespace VideoApi.Services
             var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
 
             _logger.LogInformation(
-                "Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}", conference.Id, requestedBy.Id, requestedFor.Id, targetRoom);
+                "Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}",
+                conference.Id, requestedBy.Id, requestedFor.Id, targetRoom);
 
             await TransferParticipantAsync(conference.Id, requestedBy.Id,
                 requestedBy.GetCurrentRoom(), targetRoom);
@@ -152,7 +157,8 @@ namespace VideoApi.Services
         {
             var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
             _logger.LogInformation(
-                "Conference: {conference.Id} - Attempting to transfer endpoint {endpoint.Id} and participant {defenceAdvocate.Id} into room {targetRoom}", conference.Id, endpoint.Id, defenceAdvocate.Id, targetRoom);
+                "Conference: {conference.Id} - Attempting to transfer endpoint {endpoint.Id} and participant {defenceAdvocate.Id} into room {targetRoom}",
+                conference.Id, endpoint.Id, defenceAdvocate.Id, targetRoom);
             await TransferParticipantAsync(conference.Id, endpoint.Id,
                 endpoint.GetCurrentRoom(), targetRoom);
 
@@ -200,7 +206,7 @@ namespace VideoApi.Services
         public Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
         {
             return _kinlyApiClient.StartHearingAsync(conferenceId.ToString(),
-                new StartHearingParams { Hearing_layout = layout });
+                new StartHearingParams {Hearing_layout = layout});
         }
 
         public Task PauseHearingAsync(Guid conferenceId)
