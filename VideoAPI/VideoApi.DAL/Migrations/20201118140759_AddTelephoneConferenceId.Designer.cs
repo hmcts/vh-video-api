@@ -10,8 +10,8 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    [Migration("20201118130026_AddPstnPin")]
-    partial class AddPstnPin
+    [Migration("20201118140759_AddTelephoneConferenceId")]
+    partial class AddTelephoneConferenceId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -431,8 +431,8 @@ namespace VideoApi.DAL.Migrations
                                 .HasColumnName("PexipNode")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("PstnPin")
-                                .HasColumnName("PstnPin")
+                            b1.Property<string>("TelephoneConferenceId")
+                                .HasColumnName("TelephoneConferenceId")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("ConferenceId");

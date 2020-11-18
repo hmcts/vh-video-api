@@ -120,8 +120,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var judgeUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var participantUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var ticks = DateTime.UtcNow.Ticks.ToString();
-            var pstnpin = ticks.Substring(ticks.Length - 11);
-            _conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, pstnpin);
+            var telephoneConferenceId = ticks.Substring(ticks.Length - 8);
+            _conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
             return this;
         }
 

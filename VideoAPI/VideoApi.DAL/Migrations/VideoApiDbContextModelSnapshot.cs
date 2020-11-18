@@ -429,8 +429,8 @@ namespace VideoApi.DAL.Migrations
                                 .HasColumnName("PexipNode")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("PstnPin")
-                                .HasColumnName("PstnPin")
+                            b1.Property<string>("TelephoneConferenceId")
+                                .HasColumnName("TelephoneConferenceId")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("ConferenceId");

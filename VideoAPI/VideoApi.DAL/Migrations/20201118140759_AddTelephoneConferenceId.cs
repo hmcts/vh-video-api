@@ -2,12 +2,12 @@
 
 namespace VideoApi.DAL.Migrations
 {
-    public partial class AddPstnPin : Migration
+    public partial class AddTelephoneConferenceId : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "PstnPin",
+                name: "TelephoneConferenceId",
                 table: "Conference",
                 nullable: true);
         }
@@ -15,7 +15,7 @@ namespace VideoApi.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PstnPin",
+                name: "TelephoneConferenceId",
                 table: "Conference");
         }
     }

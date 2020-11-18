@@ -9,14 +9,14 @@ namespace VideoApi.DAL.Commands
     public class UpdateMeetingRoomCommand : ICommand
     {
         public UpdateMeetingRoomCommand(Guid conferenceId, string adminUri, string judgeUri, string participantUri,
-            string pexipNode, string pstnPin)
+            string pexipNode, string telephoneConferenceId)
         {
             ConferenceId = conferenceId;
             AdminUri = adminUri;
             JudgeUri = judgeUri;
             ParticipantUri = participantUri;
             PexipNode = pexipNode;
-            PstnPin = pstnPin;
+            TelephoneConferenceId = telephoneConferenceId;
         }
 
         public Guid ConferenceId { get; }
@@ -24,7 +24,7 @@ namespace VideoApi.DAL.Commands
         public string JudgeUri { get; }
         public string ParticipantUri { get; }
         public string PexipNode { get; }
-        public string PstnPin { get; }
+        public string TelephoneConferenceId { get; }
     }
 
     public class UpdateMeetingRoomHandler : ICommandHandler<UpdateMeetingRoomCommand>
@@ -46,7 +46,7 @@ namespace VideoApi.DAL.Commands
             }
 
             conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri, command.PexipNode,
-                command.PstnPin);
+                command.TelephoneConferenceId);
             
             await _context.SaveChangesAsync();
         }
