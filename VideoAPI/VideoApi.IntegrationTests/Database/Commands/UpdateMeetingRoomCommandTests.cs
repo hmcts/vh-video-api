@@ -80,7 +80,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string judgeUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string participantUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string pexipNode = "testpoc.node.com";
-            const int telephoneConferenceId = 12345678;
+            const string telephoneConferenceId = "12345678";
             return new UpdateMeetingRoomCommand(conferenceId, adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
         }
 

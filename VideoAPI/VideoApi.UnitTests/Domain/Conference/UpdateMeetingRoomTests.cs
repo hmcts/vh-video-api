@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             const string judgeUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string participantUri = "https://testpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string pexipNode = "testpoc.node.com";
-            const int telephoneConferenceId = 12345678;
+            const string telephoneConferenceId = "12345678";
             conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
 
             conference.GetMeetingRoom().Should().NotBeNull();
@@ -44,7 +44,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             const string judgeUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string participantUri = "https://poc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string pexipNode = "poc.node.com";
-            const int telephoneConferenceId = 12345678;
+            const string telephoneConferenceId = "12345678";
             conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
 
             conference.GetMeetingRoom().Should().NotBeNull();

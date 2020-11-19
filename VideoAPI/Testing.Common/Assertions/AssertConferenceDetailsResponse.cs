@@ -46,7 +46,7 @@ namespace Testing.Common.Assertions
             conference.MeetingRoom.JudgeUri.Should().NotBeNull();
             conference.MeetingRoom.ParticipantUri.Should().NotBeNull();
             conference.MeetingRoom.PexipNode.Should().NotBeNull();
-            conference.MeetingRoom.TelephoneConferenceId.Should().BeGreaterThan(int.MinValue);
+            conference.MeetingRoom.TelephoneConferenceId.Should().NotBeNull();
             conference.MeetingRoom.PexipSelfTestNode.Should().NotBeNullOrEmpty();
 
             if (conference.CurrentStatus > ConferenceState.NotStarted)

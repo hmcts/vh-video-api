@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Mappings
             const string participantUri =
                 "https://participantstestpoc.node.com/viju/#/?conference=user@email.com&output=embed";
             const string pexipNode = "testjoin.node.com";
-            const int telephoneConferenceId = 12345678;
+            const string telephoneConferenceId = "12345678";
 
             var meetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
 

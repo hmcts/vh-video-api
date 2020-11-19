@@ -50,7 +50,7 @@ namespace VideoApi.Domain
         public string IngestUrl { get; set; }
 
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode,
-            int telephoneConferenceId)
+            string telephoneConferenceId)
         {
             MeetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
         }

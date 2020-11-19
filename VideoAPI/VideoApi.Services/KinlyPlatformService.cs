@@ -66,7 +66,7 @@ namespace VideoApi.Services
 
                 return new MeetingRoom
                 (response.Uris.Admin, response.Uris.Participant, response.Uris.Participant,
-                    response.Uris.Pexip_node, int.Parse(response.Pstn_pin));
+                    response.Uris.Pexip_node, response.Telephone_conference_id);
             }
             catch (KinlyApiException e)
             {
@@ -85,7 +85,7 @@ namespace VideoApi.Services
             {
                 var response = await _kinlyApiClient.GetHearingAsync(conferenceId.ToString());
                 var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Participant,
-                    response.Uris.Participant, response.Uris.Pexip_node, int.Parse(response.Pstn_pin));
+                    response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id);
                 return meetingRoom;
             }
             catch (KinlyApiException e)

@@ -9,7 +9,7 @@ namespace VideoApi.DAL.Commands
     public class UpdateMeetingRoomCommand : ICommand
     {
         public UpdateMeetingRoomCommand(Guid conferenceId, string adminUri, string judgeUri, string participantUri,
-            string pexipNode, int telephoneConferenceId)
+            string pexipNode, string telephoneConferenceId)
         {
             ConferenceId = conferenceId;
             AdminUri = adminUri;
@@ -24,7 +24,7 @@ namespace VideoApi.DAL.Commands
         public string JudgeUri { get; }
         public string ParticipantUri { get; }
         public string PexipNode { get; }
-        public int TelephoneConferenceId { get; }
+        public string TelephoneConferenceId { get; }
     }
 
     public class UpdateMeetingRoomHandler : ICommandHandler<UpdateMeetingRoomCommand>
