@@ -49,9 +49,10 @@ namespace VideoApi.Domain
         public bool AudioRecordingRequired { get; set; }
         public string IngestUrl { get; set; }
 
-        public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode)
+        public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode,
+            string telephoneConferenceId)
         {
-            MeetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode);
+            MeetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
         }
 
         public MeetingRoom GetMeetingRoom()

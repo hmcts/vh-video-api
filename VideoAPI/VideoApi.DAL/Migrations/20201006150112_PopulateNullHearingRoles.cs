@@ -18,7 +18,7 @@ namespace VideoApi.DAL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            // Method intentionally left empty.
         }
     }
 }

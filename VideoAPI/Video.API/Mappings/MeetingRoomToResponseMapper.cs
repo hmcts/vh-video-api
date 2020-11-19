@@ -14,7 +14,8 @@ namespace Video.API.Mappings
                 AdminUri = meetingRoom.AdminUri,
                 JudgeUri = meetingRoom.JudgeUri,
                 ParticipantUri = meetingRoom.ParticipantUri,
-                PexipNode = meetingRoom.PexipNode
+                PexipNode = meetingRoom.PexipNode,
+                TelephoneConferenceId = meetingRoom.TelephoneConferenceId
             };
         }
     }

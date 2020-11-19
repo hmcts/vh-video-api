@@ -49,7 +49,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 new Endpoint("one", "44564", "1234", "Defence Sol"),
                 new Endpoint("two", "867744", "5678", "Defence Sol")
             };
-            
+
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom1)
@@ -61,20 +61,26 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x =>
+                    x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(It.IsAny<GetEndpointsForConferenceQuery>()))
+                .Setup(x =>
+                    x.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
+                        It.IsAny<GetEndpointsForConferenceQuery>()))
                 .ReturnsAsync(TestEndpoints);
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
+                .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                    It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(TestConference);
-            
+
             QueryHandlerMock
-              .Setup(x => x.Handle<GetExpiredAudiorecordingConferencesQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetExpiredAudiorecordingConferencesQuery>()))
-              .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
+                .Setup(x =>
+                    x.Handle<GetExpiredAudiorecordingConferencesQuery, List<VideoApi.Domain.Conference>>(
+                        It.IsAny<GetExpiredAudiorecordingConferencesQuery>()))
+                .ReturnsAsync(new List<VideoApi.Domain.Conference> {TestConference});
 
             CommandHandlerMock
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
@@ -82,11 +88,12 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             ServicesConfiguration.Setup(s => s.Value).Returns(new ServicesConfiguration());
 
-            MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode");
+            MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode",
+                "12345678");
 
             Controller = new ConferenceController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                 VideoPlatformServiceMock.Object, ServicesConfiguration.Object, MockLogger.Object,
-                 AudioPlatformServiceMock.Object, AzureStorageServiceFactoryMock.Object);
+                VideoPlatformServiceMock.Object, ServicesConfiguration.Object, MockLogger.Object,
+                AudioPlatformServiceMock.Object, AzureStorageServiceFactoryMock.Object);
         }
     }
 }

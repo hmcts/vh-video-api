@@ -212,7 +212,9 @@ namespace VideoApi.UnitTests.Services
                 )))
                 .ReturnsAsync(() => new Hearing
                 {
-                    Uris = uris
+                    Uris = uris,
+                    Telephone_conference_id = "12345678",
+                    Virtual_courtroom_id = Guid.NewGuid()
                 });
 
             var result = await _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
@@ -257,7 +259,9 @@ namespace VideoApi.UnitTests.Services
                 {
                     Admin = "https://Admin.com", Participant = "https://Participant.com",
                     Pexip_node = "https://Pexip_node.com"
-                }
+                },
+                Telephone_conference_id = "12345678",
+                Virtual_courtroom_id = Guid.NewGuid()
             };
 
             _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).ReturnsAsync(hearing);

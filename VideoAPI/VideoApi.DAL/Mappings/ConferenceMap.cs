@@ -32,6 +32,7 @@ namespace VideoApi.DAL.Mappings
             builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.JudgeUri).HasColumnName("JudgeUri");
             builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.ParticipantUri).HasColumnName("ParticipantUri");
             builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.PexipNode).HasColumnName("PexipNode");
+            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.TelephoneConferenceId).HasColumnName("TelephoneConferenceId");
         }
     }
 }

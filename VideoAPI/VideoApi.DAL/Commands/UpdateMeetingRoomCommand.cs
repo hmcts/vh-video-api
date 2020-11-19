@@ -9,20 +9,22 @@ namespace VideoApi.DAL.Commands
     public class UpdateMeetingRoomCommand : ICommand
     {
         public UpdateMeetingRoomCommand(Guid conferenceId, string adminUri, string judgeUri, string participantUri,
-            string pexipNode)
+            string pexipNode, string telephoneConferenceId)
         {
             ConferenceId = conferenceId;
             AdminUri = adminUri;
             JudgeUri = judgeUri;
             ParticipantUri = participantUri;
             PexipNode = pexipNode;
+            TelephoneConferenceId = telephoneConferenceId;
         }
 
-        public Guid ConferenceId { get; set; }
-        public string AdminUri { get; set; }
-        public string JudgeUri { get; set; }
-        public string ParticipantUri { get; set; }
-        public string PexipNode { get; set; }
+        public Guid ConferenceId { get; }
+        public string AdminUri { get; }
+        public string JudgeUri { get; }
+        public string ParticipantUri { get; }
+        public string PexipNode { get; }
+        public string TelephoneConferenceId { get; }
     }
 
     public class UpdateMeetingRoomHandler : ICommandHandler<UpdateMeetingRoomCommand>
@@ -43,7 +45,8 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri, command.PexipNode);
+            conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri, command.PexipNode,
+                command.TelephoneConferenceId);
             
             await _context.SaveChangesAsync();
         }

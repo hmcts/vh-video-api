@@ -29,5 +29,10 @@ namespace VideoApi.Contract.Responses
         /// The pexip node to connect to for self test
         /// </summary>
         public string PexipSelfTestNode { get; set; }
+
+        /// <summary>
+        /// Public switched telephone network pin
+        /// </summary>
+        public string TelephoneConferenceId { get; set; }
     }
 }

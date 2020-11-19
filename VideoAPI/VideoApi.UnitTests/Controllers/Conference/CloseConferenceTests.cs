@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         [Test]
         public async Task Should_close_conference_and_remove_court_room_for_given_valid_conference_id()
         {
-            var meetingRoom = new MeetingRoom("admin", "judge", "participant", "node");
+            var meetingRoom = new MeetingRoom("admin", "judge", "participant", "node", "12345678");
             VideoPlatformServiceMock.Setup(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>())).ReturnsAsync(meetingRoom);
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 

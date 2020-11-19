@@ -284,6 +284,12 @@ namespace VideoApi.Services.Kinly
                             return objectResponse_.Object;
                         }
                         else
+                        if (status_ == "400") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new KinlyApiException("Invalid format", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
                         if (status_ == "409") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -1335,6 +1341,10 @@ namespace VideoApi.Services.Kinly
         /// <summary>The conference's UUID</summary>
         [Newtonsoft.Json.JsonProperty("virtual_courtroom_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid? Virtual_courtroom_id { get; set; }
+    
+        /// <summary>The public switched telephone network pin</summary>
+        [Newtonsoft.Json.JsonProperty("telephone_conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_conference_id { get; set; }
     
         [Newtonsoft.Json.JsonProperty("uris", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Uris Uris { get; set; }

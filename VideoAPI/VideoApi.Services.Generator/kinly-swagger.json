@@ -42,6 +42,9 @@
               "$ref": "#/definitions/hearing"
             }
           },
+          "400": {
+            "description": "Invalid format"
+          },
           "409": {
             "description": "Meeting room already exists"
           }
@@ -417,6 +420,10 @@
           "type": "string",
           "description": "The conference's UUID",
           "format": "uuid"
+        },
+        "telephone_conference_id": {
+          "description": "The public switched telephone network pin",
+          "type": "string"
         },
         "uris": {
           "$ref": "#/definitions/uris"
