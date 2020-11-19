@@ -421,7 +421,7 @@
           "description": "The conference's UUID",
           "format": "uuid"
         },
-        "pstnPin": {
+        "pstn_pin": {
           "description": "The public switched telephone network pin",
           "type": "string"
         },

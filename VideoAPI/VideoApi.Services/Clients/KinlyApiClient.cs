@@ -1343,8 +1343,8 @@ namespace VideoApi.Services.Kinly
         public System.Guid? Virtual_courtroom_id { get; set; }
     
         /// <summary>The public switched telephone network pin</summary>
-        [Newtonsoft.Json.JsonProperty("pstnPin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string PstnPin { get; set; }
+        [Newtonsoft.Json.JsonProperty("pstn_pin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Pstn_pin { get; set; }
     
         [Newtonsoft.Json.JsonProperty("uris", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Uris Uris { get; set; }

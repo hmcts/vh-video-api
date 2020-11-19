@@ -213,7 +213,7 @@ namespace VideoApi.UnitTests.Services
                 .ReturnsAsync(() => new Hearing
                 {
                     Uris = uris,
-                    PstnPin = "12345678",
+                    Pstn_pin = "12345678",
                     Virtual_courtroom_id = Guid.NewGuid()
                 });
 
@@ -260,7 +260,7 @@ namespace VideoApi.UnitTests.Services
                     Admin = "https://Admin.com", Participant = "https://Participant.com",
                     Pexip_node = "https://Pexip_node.com"
                 },
-                PstnPin = "12345678",
+                Pstn_pin = "12345678",
                 Virtual_courtroom_id = Guid.NewGuid()
             };
 
