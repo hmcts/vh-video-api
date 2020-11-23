@@ -34,6 +34,16 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
+        [Given(@"I have a valid conference phone event request for event type (.*)")]
+        public void GivenIHaveAnConferencePhoneEventRequestForAnEventType(EventType eventType)
+        {
+            var request = BuildRequest(eventType, _context.Test.Conference, "0123456789");
+            _context.Uri = EventsEndpoints.Event;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
         [Given(@"I have a (.*) conference event request")]
         [Given(@"I have an (.*) conference event request")]
         public void GivenIHaveAnConferenceEventRequest(Scenario scenario)
@@ -63,7 +73,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
-        private ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null)
+        private ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null, string phone = null)
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = Guid.NewGuid().ToString())
@@ -73,6 +83,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
                 .With(x => x.Reason = "Automated")
+                .With(x => x.Phone = phone)
                 .Build();
 
             if (conference == null) return request;
@@ -93,6 +104,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.EventId = string.Empty)
                 .With(x => x.EventType = EventType.None)
                 .With(x => x.Reason = "Automated")
+                .With(x => x.Phone = null)
                 .Build();
             return request;
         }

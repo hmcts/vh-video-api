@@ -41,6 +41,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
                 .With(x => x.TransferTo = RoomType.WaitingRoom)
                 .With(x => x.Reason = "Automated")
+                .With(x => x.Phone = null)
                 .Build();
             _context.Request = _context.Post(Event, request);
             _context.Response = _context.Client().Execute(_context.Request);

@@ -57,3 +57,26 @@ Feature: Callbacks
       | EndpointDisconnected  | Disconnected    |
       | EndpointTransfer      | InConsultation  |
 
+   Scenario Outline: Should accept and process a phone event request
+    Given I have a conference
+    And I have a valid conference phone event request for event type <EventType>
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+  	Examples: 
+    | EventType              |
+    | Joined                 |
+    | Disconnected           |
+    | Transfer               |
+    | Start                  |
+    | CountdownFinished      |
+    | Pause                  |
+    | Close                  |
+    | Leave                  |
+    | MediaPermissionDenied  |
+    | ParticipantJoining     |
+    | Help                   |
+    | ParticipantNotSignedIn |
+    | ConnectingToEventHub   |
+    | SelectingMedia         |
+    | ConnectingToConference |
+

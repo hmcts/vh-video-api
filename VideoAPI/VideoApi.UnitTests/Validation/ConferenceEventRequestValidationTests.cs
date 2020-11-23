@@ -157,6 +157,7 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.EventType = EventType.Transfer)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom)
                 .With(x => x.TransferTo = RoomType.ConsultationRoom1)
+                .With(x => x.Phone = null)
                 .Build();
             return request;
         }
