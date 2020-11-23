@@ -17,12 +17,12 @@ namespace VideoApi.Events.Handlers
         }
 
         public override EventType EventType => EventType.EndpointDisconnected;
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             const EndpointState endpointState = EndpointState.Disconnected;
-            var command =
-                new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, null);
-            await CommandHandler.Handle(command);
+            var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, null);
+            return CommandHandler.Handle(command);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace VideoApi.DAL.Commands
     public class SaveEventCommand : ICommand
     {
         public SaveEventCommand(Guid conferenceId, string externalEventId, EventType eventType,
-            DateTime externalTimestamp, RoomType? transferredFrom, RoomType? transferredTo, string reason)
+            DateTime externalTimestamp, RoomType? transferredFrom, RoomType? transferredTo, string reason, string phone)
         {
             ConferenceId = conferenceId;
             ExternalEventId = externalEventId;
@@ -20,6 +20,7 @@ namespace VideoApi.DAL.Commands
             TransferredTo = transferredTo;
             Reason = reason;
             IsEndpoint = eventType.IsEndpointEvent();
+            Phone = phone;
         }
 
         public Guid ConferenceId { get; }
@@ -31,6 +32,7 @@ namespace VideoApi.DAL.Commands
         public RoomType? TransferredTo { get; }
         public string Reason { get; }
         public bool IsEndpoint { get; }
+        public string Phone { get; set; }
     }
 
     public class SaveEventCommandHandler : ICommandHandler<SaveEventCommand>
@@ -45,7 +47,7 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(SaveEventCommand command)
         {
             var @event = new Event(command.ConferenceId, command.ExternalEventId, command.EventType,
-                command.ExternalTimestamp, command.TransferredFrom, command.TransferredTo, command.Reason)
+                command.ExternalTimestamp, command.TransferredFrom, command.TransferredTo, command.Reason, command.Phone)
             {
                 ParticipantId = command.ParticipantId,
                 EndpointFlag = command.IsEndpoint

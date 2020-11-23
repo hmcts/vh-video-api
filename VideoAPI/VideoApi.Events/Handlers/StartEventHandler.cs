@@ -17,10 +17,11 @@ namespace VideoApi.Events.Handlers
         }
 
         public override EventType EventType => EventType.Start;
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
-            await CommandHandler.Handle(command);
+            return CommandHandler.Handle(command);
         }
     }
 }

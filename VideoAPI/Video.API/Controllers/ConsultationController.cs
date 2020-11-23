@@ -74,7 +74,7 @@ namespace Video.API.Controllers
             }
 
             var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
-                DateTime.UtcNow, null, null, $"Consultation with {requestedFor.DisplayName}")
+                DateTime.UtcNow, null, null, $"Consultation with {requestedFor.DisplayName}", null)
             {
                 ParticipantId = requestedBy.Id
             };

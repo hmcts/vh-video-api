@@ -18,15 +18,12 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Joined;
 
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantState =  ParticipantState.Available;
             var room = RoomType.WaitingRoom;
-
-            var command =
-                new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState,
-                    room);
-            await CommandHandler.Handle(command);
+            var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState, room);
+            return CommandHandler.Handle(command);
         }
 
        

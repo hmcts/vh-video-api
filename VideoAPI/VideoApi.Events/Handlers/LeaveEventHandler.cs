@@ -18,11 +18,10 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Leave;
 
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id,
-                ParticipantState.Disconnected);
-            await CommandHandler.Handle(command);
+            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, ParticipantState.Disconnected);
+            return CommandHandler.Handle(command);
         }
     }
 }
