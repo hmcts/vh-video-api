@@ -25,6 +25,7 @@ namespace Video.API.Mappings
                 Participants = participants,
                 HearingRefId = conference.HearingRefId,
                 HearingVenueName = conference.HearingVenueName,
+                TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId
             };
         }
     }
