@@ -40,12 +40,13 @@ namespace Video.API.Controllers
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
+        private readonly IPollyRetryService _pollyRetryService;
 
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
             ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
-            IAzureStorageServiceFactory azureStorageServiceFactory)
+            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -54,6 +55,7 @@ namespace Video.API.Controllers
             _logger = logger;
             _audioPlatformService = audioPlatformService;
             _azureStorageServiceFactory = azureStorageServiceFactory;
+            _pollyRetryService = pollyRetryService;
         }
 
         /// <summary>
@@ -78,14 +80,14 @@ namespace Video.API.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
-            var createAudioRecordingResponse = await _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId);
+            var createAudioRecordingResponse = await CreateAudioApplicationWithRetryAsync(request);
 
             if (!createAudioRecordingResponse.Success)
             {
-                _logger.LogWarning("Error creating audio recording");
+                return StatusCode((int) createAudioRecordingResponse.StatusCode, createAudioRecordingResponse.Message);
             }
 
-            var conferenceId = await CreateConferenceAsync(request, createAudioRecordingResponse.IngestUrl);
+            var conferenceId = await CreateConferenceWithRetiesAsync(request, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Conference Created");
 
             var conferenceEndpoints =
@@ -93,8 +95,16 @@ namespace Video.API.Controllers
                     new GetEndpointsForConferenceQuery(conferenceId));
             var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
-            await BookKinlyMeetingRoomAsync(conferenceId, request.AudioRecordingRequired,
+            var kinlyBookedSuccess = await BookKinlyMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,
                 createAudioRecordingResponse.IngestUrl, endpointDtos);
+            
+            if (!kinlyBookedSuccess)
+            {
+                var message = $"Could not book and find kinly meeting room for conferenceId: {conferenceId}";
+                _logger.LogError(message);
+                return StatusCode((int) HttpStatusCode.InternalServerError, message);
+            }
+            
             _logger.LogDebug("Kinly Room Booked");
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
@@ -490,8 +500,8 @@ namespace Video.API.Controllers
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
         }
-       
-        private async Task BookKinlyMeetingRoomAsync(Guid conferenceId,
+
+        public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
@@ -511,7 +521,7 @@ namespace Video.API.Controllers
                 meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             }
 
-            if (meetingRoom == null) return;
+            if (meetingRoom == null)  return false;
 
             var command = new UpdateMeetingRoomCommand
             (
@@ -520,6 +530,8 @@ namespace Video.API.Controllers
             );
 
             await _commandHandler.Handle(command);
+
+            return true;
         }
 
         private async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
@@ -550,6 +562,82 @@ namespace Video.API.Controllers
             await _commandHandler.Handle(createConferenceCommand);
 
             return createConferenceCommand.NewConferenceId;
+        }
+
+        private async Task<bool> BookKinlyMeetingRoomWithRetriesAsync(Guid conferenceId,
+            bool audioRecordingRequired,
+            string ingestUrl,
+            IEnumerable<EndpointDto> endpoints)
+        {
+            const int maxRetries = 3;
+            
+            try
+            {
+                var result = await _pollyRetryService.WaitAndRetryAsync<Exception, bool>
+                (
+                    maxRetries,
+                    _ => TimeSpan.FromSeconds(10),
+                    retryAttempt => _logger.LogWarning($"Failed to BookKinlyMeetingRoomAsync. Retrying attempt {retryAttempt}"),
+                    callResult => !callResult,
+                    () => BookKinlyMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints)
+                );
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to BookKinlyMeetingRoomAsync for conferenceId: {conferenceId}, with audioRecordingRequired: {audioRecordingRequired} after {maxRetries} retries");
+                throw;
+            }
+        }
+
+        private async Task<Guid> CreateConferenceWithRetiesAsync(BookNewConferenceRequest request, string ingestUrl)
+        {
+            const int maxRetries = 3;
+            
+            try
+            {
+                var result = await _pollyRetryService.WaitAndRetryAsync<Exception, Guid>
+                (
+                    maxRetries,
+                    _ => TimeSpan.FromSeconds(10),
+                    retryAttempt => _logger.LogWarning($"Failed to CreateConferenceAsync. Retrying attempt {retryAttempt}"),
+                    callResult => callResult != Guid.Empty,
+                    () => CreateConferenceAsync(request, ingestUrl)
+                );
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to CreateConferenceAsync for hearingRefId: {request.HearingRefId}, {request.CaseNumber}, {request.CaseName} after {maxRetries} retries");
+                throw;
+            }
+        }
+        
+
+        private async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithRetryAsync(BookNewConferenceRequest request)
+        {
+            const int maxRetries = 3;
+            
+            try
+            {
+                var result = await _pollyRetryService.WaitAndRetryAsync<Exception, AudioPlatformServiceResponse>
+                (
+                    maxRetries,
+                    _ => TimeSpan.FromSeconds(10),
+                    retryAttempt => _logger.LogWarning($"Failed to CreateAudioApplicationAsync. Retrying attempt {retryAttempt}"),
+                    callResult => callResult == null || !callResult.Success,
+                    () => _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId)
+                );
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to CreateAudioApplication for hearingRefId: {request.HearingRefId} after {maxRetries} retries");
+                return new AudioPlatformServiceResponse(false) { Message = $"Error after {maxRetries} retries: {ex.Message} - {ex.InnerException?.Message}", StatusCode = HttpStatusCode.InternalServerError };
+            }
         }
     }
 }
