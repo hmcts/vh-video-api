@@ -18,13 +18,12 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Close;
 
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var conferenceState = ConferenceState.Closed;
 
-            var command =
-                new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
-            await CommandHandler.Handle(command);
+            var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            return CommandHandler.Handle(command);
         }
     }
 }

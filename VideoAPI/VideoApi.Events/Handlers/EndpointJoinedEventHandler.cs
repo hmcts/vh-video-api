@@ -17,13 +17,13 @@ namespace VideoApi.Events.Handlers
         }
 
         public override EventType EventType => EventType.EndpointJoined;
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             const EndpointState endpointState = EndpointState.Connected;
             const RoomType room = RoomType.WaitingRoom;
-            var command =
-                new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, room);
-            await CommandHandler.Handle(command);
+            var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, room);
+            return CommandHandler.Handle(command);
         }
     }
 }

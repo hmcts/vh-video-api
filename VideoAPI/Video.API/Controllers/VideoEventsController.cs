@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using Video.API.Extensions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -44,7 +45,7 @@ namespace Video.API.Controllers
             Guid.TryParse(request.ConferenceId, out var conferenceId);
 
             var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,
-                request.TimeStampUtc, request.TransferFrom, request.TransferTo, request.Reason);
+                request.TimeStampUtc, request.TransferFrom, request.TransferTo, request.Reason, request.Phone);
             if (Guid.TryParse(request.ParticipantId, out var participantId))
             {
                 command.ParticipantId = participantId;
@@ -53,6 +54,12 @@ namespace Video.API.Controllers
             _logger.LogWarning("Handling {ConferenceEventRequest}", nameof(ConferenceEventRequest));
             
             await _commandHandler.Handle(command);
+
+            if (request.ShouldSkipEventHandler())
+            {
+                _logger.LogDebug("Handling CallbackEvent skipped due to result of ShouldHandleEvent.");
+                return NoContent();
+            }
 
             var callbackEvent = new CallbackEvent
             {
@@ -63,7 +70,8 @@ namespace Video.API.Controllers
                 TransferTo = request.TransferTo,
                 TransferFrom = request.TransferFrom,
                 TimeStampUtc = request.TimeStampUtc,
-                ParticipantId = participantId
+                ParticipantId = participantId,
+                Phone = request.Phone
             };
             await _eventHandlerFactory.Get(request.EventType).HandleAsync(callbackEvent);
             return NoContent();

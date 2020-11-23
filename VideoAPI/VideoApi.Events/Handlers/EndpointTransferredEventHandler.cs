@@ -14,6 +14,7 @@ namespace VideoApi.Events.Handlers
     public class EndpointTransferredEventHandler : EventHandlerBase<EndpointTransferredEventHandler>
     {
         private readonly IRoomReservationService _roomReservationService;
+
         public EndpointTransferredEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<EndpointTransferredEventHandler> logger, IRoomReservationService roomReservationService) : base(
             queryHandler, commandHandler, logger)
         {
@@ -21,6 +22,7 @@ namespace VideoApi.Events.Handlers
         }
 
         public override EventType EventType => EventType.EndpointTransfer;
+
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var endpointStatus = DeriveEndpointStatusForTransferEvent(callbackEvent);

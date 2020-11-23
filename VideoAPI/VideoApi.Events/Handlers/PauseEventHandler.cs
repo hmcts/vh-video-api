@@ -18,12 +18,11 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Pause;
 
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var conferenceState = ConferenceState.Paused;
-
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
-            await CommandHandler.Handle(command);
+            return CommandHandler.Handle(command);
         }
     }
 }

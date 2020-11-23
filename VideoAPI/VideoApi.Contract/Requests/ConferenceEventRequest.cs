@@ -48,5 +48,10 @@ namespace VideoApi.Contract.Requests
         /// Event reason
         /// </summary>
         public string Reason { get; set; }
+
+        /// <summary>
+        /// Can be either the phone number or "anonymous"
+        /// </summary>
+        public string Phone { get; set; }
     }
 }

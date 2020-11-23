@@ -18,13 +18,11 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.ParticipantNotSignedIn;
 
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantState = ParticipantState.NotSignedIn;
-
-            var command = new UpdateParticipantStatusCommand(SourceConference.Id,
-                SourceParticipant.Id, participantState);
-            await CommandHandler.Handle(command);
+            var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
+            return CommandHandler.Handle(command);
         }
     }
 }

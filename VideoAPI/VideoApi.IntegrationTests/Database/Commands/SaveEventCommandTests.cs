@@ -53,7 +53,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var eventType = EventType.Disconnected;
 
             var command = new SaveEventCommand(_newConferenceId, externalEventId, eventType, externalTimeStamp,
-                transferredFrom, transferredTo, reason) {ParticipantId = participantId};
+                transferredFrom, transferredTo, reason, null) {ParticipantId = participantId};
             await _handler.Handle(command);
 
             Event savedEvent;
@@ -71,6 +71,46 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedEvent.TransferredTo.Should().Be(transferredTo);
             savedEvent.Reason.Should().Be(reason);
             savedEvent.EndpointFlag.Should().BeFalse();
+            savedEvent.Phone.Should().BeNull();
+        }
+
+        [Test]
+        public async Task Should_save_event_with_phone()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+
+            var externalEventId = "AutomatedEventTestIdSuccessfulSave";
+            var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
+            var participantId = seededConference.GetParticipants().First().Id;
+            RoomType? transferredFrom = RoomType.WaitingRoom;
+            RoomType? transferredTo = RoomType.ConsultationRoom1;
+            var reason = "Automated";
+            var eventType = EventType.Disconnected;
+            var phone = "anonymous";
+
+            var command = new SaveEventCommand(_newConferenceId, externalEventId, eventType, externalTimeStamp,
+                transferredFrom, transferredTo, reason, phone)
+            { ParticipantId = participantId };
+            await _handler.Handle(command);
+
+            Event savedEvent;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                    x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
+            }
+
+            savedEvent.Should().NotBeNull();
+            savedEvent.ExternalEventId.Should().Be(externalEventId);
+            savedEvent.EventType.Should().Be(eventType);
+            savedEvent.ExternalTimestamp.Should().Be(externalTimeStamp);
+            savedEvent.TransferredFrom.Should().Be(transferredFrom);
+            savedEvent.TransferredTo.Should().Be(transferredTo);
+            savedEvent.Reason.Should().Be(reason);
+            savedEvent.EndpointFlag.Should().BeFalse();
+            savedEvent.Phone.Should().Be(command.Phone);
         }
 
         [Test]
@@ -91,7 +131,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var eventType = EventType.EndpointJoined;
             
             var command = new SaveEventCommand(_newConferenceId, externalEventId, eventType, externalTimeStamp,
-                null, null, reason) {ParticipantId = participantId};
+                null, null, reason, null) {ParticipantId = participantId};
             await _handler.Handle(command);
 
             Event savedEvent;
