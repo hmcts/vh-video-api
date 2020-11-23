@@ -18,5 +18,6 @@ namespace VideoApi.Contract.Responses
         public List<ParticipantSummaryResponse> Participants { get; set; }
         public Guid HearingRefId { get; set; }
         public string HearingVenueName { get; set; }
+        public string TelephoneConferenceId { get; set; }
     }
 }
