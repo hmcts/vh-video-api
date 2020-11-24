@@ -569,74 +569,44 @@ namespace Video.API.Controllers
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
         {
-            const int maxRetries = 3;
-            
-            try
-            {
-                var result = await _pollyRetryService.WaitAndRetryAsync<Exception, bool>
-                (
-                    maxRetries,
-                    _ => TimeSpan.FromSeconds(10),
-                    retryAttempt => _logger.LogWarning($"Failed to BookKinlyMeetingRoomAsync. Retrying attempt {retryAttempt}"),
-                    callResult => !callResult,
-                    () => BookKinlyMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints)
-                );
+            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, bool>
+            (
+                3,
+                _ => TimeSpan.FromSeconds(10),
+                retryAttempt => _logger.LogWarning($"Failed to BookKinlyMeetingRoomAsync. Retrying attempt {retryAttempt}"),
+                callResult => !callResult,
+                () => BookKinlyMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints)
+            );
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to BookKinlyMeetingRoomAsync for conferenceId: {conferenceId}, with audioRecordingRequired: {audioRecordingRequired} after {maxRetries} retries");
-                throw;
-            }
+            return result;
         }
 
         private async Task<Guid> CreateConferenceWithRetiesAsync(BookNewConferenceRequest request, string ingestUrl)
         {
-            const int maxRetries = 3;
-            
-            try
-            {
-                var result = await _pollyRetryService.WaitAndRetryAsync<Exception, Guid>
-                (
-                    maxRetries,
-                    _ => TimeSpan.FromSeconds(10),
-                    retryAttempt => _logger.LogWarning($"Failed to CreateConferenceAsync. Retrying attempt {retryAttempt}"),
-                    callResult => callResult == Guid.Empty,
-                    async () => await CreateConferenceAsync(request, ingestUrl));
+            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, Guid>
+            (
+                3,
+                _ => TimeSpan.FromSeconds(10),
+                retryAttempt => _logger.LogWarning($"Failed to CreateConferenceAsync. Retrying attempt {retryAttempt}"),
+                callResult => callResult == Guid.Empty,
+                async () => await CreateConferenceAsync(request, ingestUrl));
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to CreateConferenceAsync for hearingRefId: {request.HearingRefId}, {request.CaseNumber}, {request.CaseName} after {maxRetries} retries");
-                throw;
-            }
+            return result;
         }
         
 
         private async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithRetryAsync(BookNewConferenceRequest request)
         {
-            const int maxRetries = 3;
-            
-            try
-            {
-                var result = await _pollyRetryService.WaitAndRetryAsync<Exception, AudioPlatformServiceResponse>
-                (
-                    maxRetries,
-                    _ => TimeSpan.FromSeconds(10),
-                    retryAttempt => _logger.LogWarning($"Failed to CreateAudioApplicationAsync. Retrying attempt {retryAttempt}"),
-                    callResult => callResult == null || !callResult.Success,
-                    () => _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId)
-                );
+            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, AudioPlatformServiceResponse>
+            (
+                3,
+                _ => TimeSpan.FromSeconds(10),
+                retryAttempt => _logger.LogWarning($"Failed to CreateAudioApplicationAsync. Retrying attempt {retryAttempt}"),
+                callResult => callResult == null || !callResult.Success,
+                () => _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId)
+            );
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to CreateAudioApplication for hearingRefId: {request.HearingRefId} after {maxRetries} retries");
-                return new AudioPlatformServiceResponse(false) { Message = $"Error after {maxRetries} retries: {ex.Message} - {ex.InnerException?.Message}", StatusCode = HttpStatusCode.InternalServerError };
-            }
+            return result;
         }
     }
 }

@@ -219,7 +219,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
         
         [Test]
-        public async Task Should_return_save_all()
+        public async Task Should_save_all_successfully()
         {
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
             SetupCallToMockRetryService(Guid.NewGuid());
