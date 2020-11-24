@@ -602,9 +602,8 @@ namespace Video.API.Controllers
                     maxRetries,
                     _ => TimeSpan.FromSeconds(10),
                     retryAttempt => _logger.LogWarning($"Failed to CreateConferenceAsync. Retrying attempt {retryAttempt}"),
-                    callResult => callResult != Guid.Empty,
-                    () => CreateConferenceAsync(request, ingestUrl)
-                );
+                    callResult => callResult == Guid.Empty,
+                    async () => await CreateConferenceAsync(request, ingestUrl));
 
                 return result;
             }
