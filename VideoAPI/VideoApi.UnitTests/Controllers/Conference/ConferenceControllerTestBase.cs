@@ -1,8 +1,10 @@
+using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using Video.API.Factories;
@@ -31,6 +33,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
         protected Mock<IAzureStorageServiceFactory> AzureStorageServiceFactoryMock;
         protected Mock<IAzureStorageService> AzureStorageServiceMock;
+        protected Mock<IPollyRetryService> PollyRetryServiceMock;
         protected List<Endpoint> TestEndpoints;
 
         [SetUp]
@@ -44,6 +47,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock = new Mock<IAudioPlatformService>();
             AzureStorageServiceFactoryMock = new Mock<IAzureStorageServiceFactory>();
             AzureStorageServiceMock = new Mock<IAzureStorageService>();
+            PollyRetryServiceMock = new Mock<IPollyRetryService>();
             TestEndpoints = new List<Endpoint>
             {
                 new Endpoint("one", "44564", "1234", "Defence Sol"),
@@ -93,7 +97,23 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             Controller = new ConferenceController(QueryHandlerMock.Object, CommandHandlerMock.Object,
                 VideoPlatformServiceMock.Object, ServicesConfiguration.Object, MockLogger.Object,
-                AudioPlatformServiceMock.Object, AzureStorageServiceFactoryMock.Object);
+                AudioPlatformServiceMock.Object, AzureStorageServiceFactoryMock.Object, PollyRetryServiceMock.Object);
+        }
+        
+        protected void SetupCallToMockRetryService<T>(T expectedReturn)
+        {
+            PollyRetryServiceMock.Setup(x => x.WaitAndRetryAsync<Exception, T>
+                (
+                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(), It.IsAny<Func<T, bool>>(), It.IsAny<Func<Task<T>>>()
+                ))
+                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction, Func<T, bool> handleResultCondition, Func<Task<T>> executeFunction) =>
+                {
+                    sleepDuration(1);
+                    retryAction(1);
+                    handleResultCondition(expectedReturn);
+                    await executeFunction();
+                })
+                .ReturnsAsync(expectedReturn);
         }
     }
 }
