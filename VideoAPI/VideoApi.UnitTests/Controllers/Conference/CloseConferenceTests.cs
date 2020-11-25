@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Azure.Storage.Blobs;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Responses;
@@ -12,6 +14,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class CloseConferenceTests : ConferenceControllerTestBase
     {
+        private Mock<BlobClient> _blobClientMock;
+
         [Test]
         public async Task Should_close_conference_for_given_valid_conference_id()
         {
@@ -56,13 +60,22 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock.Setup(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>())).ReturnsAsync(response);
             AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
 
-            AzureStorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
+            _blobClientMock = new Mock<BlobClient>();
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
+            AzureStorageServiceMock.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
             AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Once);
+        }
+
+        private async IAsyncEnumerable<BlobClient> GetMockBlobClients()
+        {
+            yield return _blobClientMock.Object;
+
+            await Task.CompletedTask;
         }
 
         [Test]
@@ -75,16 +88,18 @@ namespace VideoApi.UnitTests.Controllers.Conference
                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                .ReturnsAsync(TestConference);
             AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
-
-            AzureStorageServiceMock.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
-
             AudioPlatformServiceMock.Reset();
             AzureStorageServiceMock.Reset();
+
+            _blobClientMock = new Mock<BlobClient>();
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
+            AzureStorageServiceMock.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
+
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            AzureStorageServiceMock.Verify(x => x.FileExistsAsync(It.IsAny<string>()), Times.Once);
+            AzureStorageServiceMock.Verify(x => x.GetAllBlobsAsync(It.IsAny<string>()), Times.Once);
 
             AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
         }
