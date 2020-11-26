@@ -50,17 +50,10 @@ namespace VideoApi.Services
 
         public async Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, string fileExtension = ".mp4")
         {
-            var blobFullNames = new List<string>();
             var allBlobsAsync = GetAllBlobsAsync(filePathPrefix);
-            await foreach (var blob in allBlobsAsync)
-            {
-                if (blob.Name.ToLower().EndsWith(fileExtension))
-                {
-                    blobFullNames.Add(blob.Name);
-                }
-            }
+            var result = await GetAllBlobNamesByFileExtension(allBlobsAsync);
 
-            return blobFullNames;
+            return result;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -57,6 +58,20 @@ namespace VideoApi.Services
                 : builder.ToSasQueryParameters(new StorageSharedKeyCredential(storageAccountName, storageAccountKey));
 
             return blobSasQueryParameters.ToString();
+        }
+
+        public async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
+        {
+            var blobFullNames = new List<string>();
+            await foreach (var blob in allBlobs)
+            {
+                if (blob.Name.ToLower().EndsWith(fileExtension))
+                {
+                    blobFullNames.Add(blob.Name);
+                }
+            }
+
+            return blobFullNames;
         }
     }
 }
