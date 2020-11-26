@@ -491,14 +491,29 @@ namespace Video.API.Controllers
 
         private async Task EnsureAudioFileExists(Conference conference)
         {
-            var filePath = $"{conference.HearingRefId}.mp4";
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+            var allBlobs = await GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString(), azureStorageService);
 
-            if (!await azureStorageService.FileExistsAsync(filePath) && conference.ActualStartTime.HasValue)
+            if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
             {
                 var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
+        }
+
+        private static async Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, IAzureStorageService azureStorageService, string fileExtension = ".mp4")
+        {
+            var blobFullNames = new List<string>();
+            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(filePathPrefix);
+            await foreach (var blob in allBlobsAsync)
+            {
+                if (blob.Name.ToLower().EndsWith(fileExtension))
+                {
+                    blobFullNames.Add(blob.Name);
+                }
+            }
+
+            return blobFullNames;
         }
 
         public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
