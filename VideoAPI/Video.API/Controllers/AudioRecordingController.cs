@@ -177,7 +177,7 @@ namespace Video.API.Controllers
             try
             {
                 var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-                var allBlobNames = await GetAllBlobNamesByFilePathPrefix(hearingId.ToString(), azureStorageService);
+                var allBlobNames = await azureStorageService.GetAllBlobNamesByFilePathPrefix(hearingId.ToString());
                 
                 return Ok(new AudioRecordingResponse
                 {
@@ -309,7 +309,7 @@ namespace Video.API.Controllers
 
             if (conference.AudioRecordingRequired)
             {
-                var allBlobs = await GetAllBlobNamesByFilePathPrefix(hearingId.ToString(), azureStorageService);
+                var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(hearingId.ToString());
 
                 if (conference.ActualStartTime.HasValue && !allBlobs.Any())
                 {
@@ -317,21 +317,6 @@ namespace Video.API.Controllers
                     throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
                 }
             }
-        }
-
-        private static async Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, IAzureStorageService azureStorageService, string fileExtension = ".mp4")
-        {
-            var blobFullNames = new List<string>();
-            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(filePathPrefix);
-            await foreach (var blob in allBlobsAsync)
-            {
-                if (blob.Name.ToLower().EndsWith(fileExtension))
-                {
-                    blobFullNames.Add(blob.Name);
-                }
-            }
-
-            return blobFullNames;
         }
     }
 }

@@ -157,9 +157,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         {
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             
-            _blobClientMock = new Mock<BlobClient>();
-            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
-            _storageService.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
+            var blobFiles = new List<string> { "SomeBlob.mp4" };
+            _storageService.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(blobFiles);
             _audioPlatformService
                 .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new AudioPlatformServiceResponse(false)
@@ -180,10 +179,9 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
             _storageService.Setup(x => x.FileExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
-            _blobClientMock = new Mock<BlobClient>();
-            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
-            _storageService.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
-            
+            var blobFiles = new List<string> { "SomeBlob.mp4" };
+            _storageService.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(blobFiles);
+
             _audioPlatformService
                 .Setup(x => x.DeleteAudioApplicationAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new AudioPlatformServiceResponse(true));
@@ -207,9 +205,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                 .ReturnsAsync(_testConference);
 
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
-            _blobClientMock = new Mock<BlobClient>();
-            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob");
-            _storageService.Setup(x => x.GetAllBlobsAsync(It.IsAny<string>())).Returns(GetMockBlobClients);
+            var blobFiles = new List<string>();
+            _storageService.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(blobFiles);
             _audioPlatformService.Reset();
             var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
             result.Should().NotBeNull();
@@ -333,9 +330,9 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var filePath = $"{hearingId}_2020-01-01.mp4";
             
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
-            _blobClientMock = new Mock<BlobClient>();
-            _blobClientMock.Setup(x => x.Name).Returns(filePath);
-            _storageService.Setup(x => x.GetAllBlobsAsync(hearingId.ToString())).Returns(GetMockBlobClients);
+           
+            var blobFileNames = new List<string> { filePath };
+            _storageService.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(),It.IsAny<string>())).ReturnsAsync(blobFileNames);
             _storageService
                 .Setup(x => x.CreateSharedAccessSignature(filePath, It.IsAny<TimeSpan>()))
                 .ReturnsAsync("fileLink");

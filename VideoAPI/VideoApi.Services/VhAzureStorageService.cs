@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
@@ -46,6 +46,12 @@ namespace VideoApi.Services
             {
                 yield return container.GetBlobClient(page.Name);
             }
+        }
+
+        public async Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, string fileExtension = ".mp4")
+        {
+            var allBlobsAsync = GetAllBlobsAsync(filePathPrefix);
+            return await GetAllBlobNamesByFileExtension(allBlobsAsync);
         }
     }
 }

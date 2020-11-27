@@ -491,16 +491,16 @@ namespace Video.API.Controllers
 
         private async Task EnsureAudioFileExists(Conference conference)
         {
-            var filePath = $"{conference.HearingRefId}.mp4";
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+            var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
 
-            if (!await azureStorageService.FileExistsAsync(filePath) && conference.ActualStartTime.HasValue)
+            if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
             {
                 var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
         }
-
+   
         public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,

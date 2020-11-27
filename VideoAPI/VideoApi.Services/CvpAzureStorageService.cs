@@ -47,5 +47,13 @@ namespace VideoApi.Services
                 yield return container.GetBlobClient(page.Name);
             }
         }
+
+        public async Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, string fileExtension = ".mp4")
+        {
+            var allBlobsAsync = GetAllBlobsAsync(filePathPrefix);
+            var result = await GetAllBlobNamesByFileExtension(allBlobsAsync);
+
+            return result;
+        }
     }
 }
