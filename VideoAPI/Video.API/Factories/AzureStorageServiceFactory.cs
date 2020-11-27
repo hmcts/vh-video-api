@@ -20,7 +20,7 @@ namespace Video.API.Factories
 
             if (azureStorageService == null)
             {
-                throw new Exception($"Can not find azureStorageService: {azureStorageServiceType}");
+                throw new NotImplementedException($"Can not find azureStorageService: {azureStorageServiceType}");
             }
 
             return azureStorageService;

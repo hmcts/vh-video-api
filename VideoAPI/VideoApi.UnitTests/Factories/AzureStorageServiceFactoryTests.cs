@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Factories
         [Test]
         public void Create_throws_exception_for_unknown_service_type()
         {
-            Assert.Throws<Exception>(() => _factory.Create((AzureStorageServiceType) 999999));
+            Assert.Throws<NotImplementedException>(() => _factory.Create((AzureStorageServiceType) 999999));
         }
     }
 }

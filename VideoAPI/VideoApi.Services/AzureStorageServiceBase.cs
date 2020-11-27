@@ -4,22 +4,68 @@ using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using VideoApi.Common.Configuration;
 
 namespace VideoApi.Services
 {
-    public class AzureStorageServiceBase
+    public abstract class AzureStorageServiceBase
     {
         private readonly BlobServiceClient _serviceClient;
 
-        protected AzureStorageServiceBase(BlobServiceClient serviceClient)
+        private readonly IBlobStorageConfiguration _blobStorageConfiguration;
+
+        private readonly bool _useUserDelegation;
+
+        protected AzureStorageServiceBase(BlobServiceClient serviceClient, IBlobStorageConfiguration blobStorageConfiguration, bool useUserDelegation)
         {
             _serviceClient = serviceClient;
+            _blobStorageConfiguration = blobStorageConfiguration;
+            _useUserDelegation = useUserDelegation;
         }
-        
-        protected async Task<string> GenerateSharedAccessSignature(string filePath, 
-            string storageContainerName, 
-            string storageEndpoint, 
-            string storageAccountName, 
+
+        public Task<bool> FileExistsAsync(string filePath) => ExistsAsync(filePath, _blobStorageConfiguration.StorageContainerName);
+
+        public Task<string> CreateSharedAccessSignature(string filePath, TimeSpan validUntil) => GenerateSharedAccessSignature(filePath,
+                _blobStorageConfiguration.StorageContainerName,
+                _blobStorageConfiguration.StorageEndpoint,
+                _blobStorageConfiguration.StorageAccountName,
+                _blobStorageConfiguration.StorageAccountKey,
+                validUntil,
+                _useUserDelegation);
+
+        public async IAsyncEnumerable<BlobClient> GetAllBlobsAsync(string filePathPrefix)
+        {
+            var container = _serviceClient.GetBlobContainerClient(_blobStorageConfiguration.StorageContainerName);
+            await foreach (var page in container.GetBlobsAsync(prefix: filePathPrefix))
+            {
+                yield return container.GetBlobClient(page.Name);
+            }
+        }
+
+        public Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix)
+        {
+            var allBlobsAsync = GetAllBlobsAsync(filePathPrefix);
+            return GetAllBlobNamesByFileExtension(allBlobsAsync);
+        }
+
+        private async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
+        {
+            var blobFullNames = new List<string>();
+            await foreach (var blob in allBlobs)
+            {
+                if (blob.Name.ToLower().EndsWith(fileExtension.ToLower()))
+                {
+                    blobFullNames.Add(blob.Name);
+                }
+            }
+
+            return blobFullNames;
+        }
+
+        private async Task<string> GenerateSharedAccessSignature(string filePath,
+            string storageContainerName,
+            string storageEndpoint,
+            string storageAccountName,
             string storageAccountKey,
             TimeSpan validUntil,
             bool useUserDelegation)
@@ -37,16 +83,17 @@ namespace VideoApi.Services
             };
 
             builder.SetPermissions(BlobSasPermissions.Read);
-
-            return $"{storageEndpoint}{storageContainerName}/{filePath}?{await GenerateSasToken(builder, useUserDelegation, storageAccountName, storageAccountKey)}";
+            var token = await GenerateSasToken(builder, useUserDelegation, storageAccountName, storageAccountKey);
+            return $"{storageEndpoint}{storageContainerName}/{filePath}?{token}";
         }
 
-        protected async Task<bool> ExistsAsync(string filePath, string storageContainerName)
+        private async Task<bool> ExistsAsync(string filePath, string storageContainerName)
         {
             var containerClient = _serviceClient.GetBlobContainerClient(storageContainerName);
             var blobClient = containerClient.GetBlobClient(filePath);
 
-            return await blobClient.ExistsAsync();
+            var response = await blobClient.ExistsAsync();
+            return response.Value;
         }
 
         private async Task<string> GenerateSasToken(BlobSasBuilder builder, bool useUserDelegation, string storageAccountName, string storageAccountKey)
@@ -58,20 +105,6 @@ namespace VideoApi.Services
                 : builder.ToSasQueryParameters(new StorageSharedKeyCredential(storageAccountName, storageAccountKey));
 
             return blobSasQueryParameters.ToString();
-        }
-
-        public async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
-        {
-            var blobFullNames = new List<string>();
-            await foreach (var blob in allBlobs)
-            {
-                if (blob.Name.ToLower().EndsWith(fileExtension))
-                {
-                    blobFullNames.Add(blob.Name);
-                }
-            }
-
-            return blobFullNames;
         }
     }
 }
