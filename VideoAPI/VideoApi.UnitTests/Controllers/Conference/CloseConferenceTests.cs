@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Azure.Storage.Blobs;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Responses;
@@ -60,7 +59,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
 
             var filesNames = new List<string> { "SomeBlob.mp4" };
-            AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(), It.IsAny<string>()))
+            AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>()))
                 .ReturnsAsync(filesNames);
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
@@ -81,7 +80,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
 
 
-            AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(), It.IsAny<string>()))
+            AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>()))
                 .ReturnsAsync(new List<string> { $"{TestConference.HearingRefId.ToString()}.mp4" });
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
@@ -103,13 +102,13 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock.Reset();
             AzureStorageServiceMock.Reset();
 
-            AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<string>());
+            AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(new List<string>());
 
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            AzureStorageServiceMock.Verify(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            AzureStorageServiceMock.Verify(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>()), Times.Once);
 
             AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
         }

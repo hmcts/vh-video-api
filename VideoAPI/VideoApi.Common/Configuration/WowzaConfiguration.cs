@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace VideoApi.Common.Configuration
 {
-    public class WowzaConfiguration
+    public class WowzaConfiguration : IBlobStorageConfiguration
     {
         public IEnumerable<string> RestApiEndpoints { get; set; }
         public string StreamingEndpoint { get; set; }

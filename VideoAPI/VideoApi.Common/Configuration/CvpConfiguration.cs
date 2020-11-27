@@ -1,6 +1,6 @@
 namespace VideoApi.Common.Configuration
 {
-    public class CvpConfiguration
+    public class CvpConfiguration : IBlobStorageConfiguration
     {
         public string StorageAccountName { get; set; }
         public string StorageAccountKey { get; set; }

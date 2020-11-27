@@ -8,11 +8,14 @@ namespace VideoApi.Services.Contracts
     public interface IAzureStorageService
     {
         AzureStorageServiceType AzureStorageServiceType { get; }
+
         Task<bool> FileExistsAsync(string filePath);
+
         Task<string> CreateSharedAccessSignature(string filePath, TimeSpan validUntil);
+
         IAsyncEnumerable<BlobClient> GetAllBlobsAsync(string filePathPrefix);
 
-        Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix, string fileExtension = ".mp4");
+        Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix);
 
     }
 }
