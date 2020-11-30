@@ -1,4 +1,5 @@
 using System.Linq;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 
@@ -6,11 +7,14 @@ namespace Video.API.Mappings
 {
     public static class ConferenceForAdminResponseMapper
     {
-        public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference)
+        public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference,
+            KinlyConfiguration configuration)
         {
-            var participants = conference.GetParticipants().Select(ParticipantToSummaryResponseMapper.MapParticipantToSummary)
+            var phoneNumber = configuration.ConferencePhoneNumber;
+            var participants = conference.GetParticipants()
+                .Select(ParticipantToSummaryResponseMapper.MapParticipantToSummary)
                 .ToList();
-            
+
             return new ConferenceForAdminResponse
             {
                 Id = conference.Id,
@@ -25,7 +29,8 @@ namespace Video.API.Mappings
                 Participants = participants,
                 HearingRefId = conference.HearingRefId,
                 HearingVenueName = conference.HearingVenueName,
-                TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId
+                TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
+                TelephoneConferenceNumber = phoneNumber
             };
         }
     }

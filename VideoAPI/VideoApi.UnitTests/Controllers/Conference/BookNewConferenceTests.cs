@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         {
             _request = new BookNewConferenceRequestBuilder("Video Api Unit Test Hearing")
                .WithJudge()
-               .WithRepresentative("Claimant").WithIndividual("Claimant")
+               .WithRepresentative().WithIndividual()
                .WithRepresentative("Defendant").WithIndividual("Defendant")
                .WithEndpoint("DisplayName1", "1234567890", "1234")
                .WithEndpoint("DisplayName2", "0987654321", "5678")
