@@ -326,6 +326,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
             foreach (var conference in conferences)
             {
+                AssertConferenceForAdminResponse.ForConference(conference);
                 conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);
             }
         }
