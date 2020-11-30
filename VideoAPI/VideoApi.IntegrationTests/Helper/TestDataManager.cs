@@ -36,6 +36,8 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
                 .WithAudioRecordingRequired(false)
                 .Build();
+            var conferenceType = typeof(Conference);
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(conference, conference.ScheduledDateTime.AddMinutes(1));
 
             foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))
             {

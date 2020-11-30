@@ -44,8 +44,8 @@ namespace Testing.Common.Helper
             private const string ApiRoot = "conferences";
             public static string BookNewConference => $"{ApiRoot}";
             public static string GetConferencesTodayForAdmin => $"{ApiRoot}/today/vho";
-            public static string GetConferencesTodayForJudge(string username) => $"{ApiRoot}/today/judge?username=${username}";
-            public static string GetConferencesTodayForIndividual(string username) => $"{ApiRoot}/today/individual?username=${username}";
+            public static string GetConferencesTodayForJudge(string username) => $"{ApiRoot}/today/judge?username={username}";
+            public static string GetConferencesTodayForIndividual(string username) => $"{ApiRoot}/today/individual?username={username}";
             public static string GetExpiredOpenConferences => $"{ApiRoot}/expired";
             public static string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
             public static string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
