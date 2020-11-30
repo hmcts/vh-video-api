@@ -2,6 +2,7 @@
 variables:
   - group: vh-wowza-dev
   - group: cvp-wowza-sbox
+  - group: KinlyConfiguration_Test
   - name: solutionType
     value : DotNetCore # angularDotNetCore, dotNetCore, angular
   - name: apiDirectory
@@ -45,7 +46,8 @@ variables:
       "CvpConfiguration/StorageAccountKey":"$(cvp_storageAccountKey)",
       "CvpConfiguration/StorageContainerName":"$(cvp_storageContainerName)",
       "CvpConfiguration/StorageEndpoint":"$(cvp_storageEndpoint)",
-      "CvpConfiguration/ManagedIdentityClientId":"$(wowza_managedIdentityClientId)"
+      "CvpConfiguration/ManagedIdentityClientId":"$(wowza_managedIdentityClientId)",
+      "KinlyConfiguration:ConferencePhoneNumber":"$(ConferencePhoneNumber)"
       '
   - name: dalWorkingDirectory
     value : 'VideoAPI/VideoApi.DAL'
