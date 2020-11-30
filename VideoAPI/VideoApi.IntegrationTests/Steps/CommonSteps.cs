@@ -50,6 +50,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have several conferences")]
         public async Task GivenIHaveManyConferences()
         {
+            var conferenceType = typeof(Conference);
             var today = DateTime.Today.ToUniversalTime().AddMinutes(1);
             var tomorrow = DateTime.Today.ToUniversalTime().AddDays(1).AddMinutes(1);
             var yesterday = DateTime.Today.ToUniversalTime().AddDays(-1).AddMinutes(1);
@@ -57,39 +58,55 @@ namespace VideoApi.IntegrationTests.Steps
             var venue1 = "Manchester";
             var venue2 = "Birmingham";
 
+            var pexipNode = "int-test.pexip.com";
+            var username = "confTodayIntTest";
+            
             var yesterdayClosedConference = new ConferenceBuilder(true, scheduledDateTime: yesterday, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
+                .WithMeetingRoom(pexipNode, username)
                 .Build();
-
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(yesterdayClosedConference, yesterday.AddMinutes(5));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(yesterdayClosedConference, yesterday.AddMinutes(35));
+            
             var todayConference1 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
+                .WithMeetingRoom(pexipNode, username)
                 .Build();
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(todayConference1, today.AddMinutes(5));
 
             var tomorrowConference1 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue1)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
+                .WithMeetingRoom(pexipNode, username)
                 .Build();
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(tomorrowConference1, tomorrow.AddMinutes(5));
+            conferenceType.GetProperty("ClosedDateTime")?.SetValue(tomorrowConference1, yesterday.AddMinutes(35));
 
             var todayConference2 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
+                .WithMeetingRoom(pexipNode, username)
                 .Build();
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(todayConference2, today.AddMinutes(5));
 
             var tomorrowConference2 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
+                .WithMeetingRoom(pexipNode, username)
                 .Build();
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(tomorrowConference2, tomorrow.AddMinutes(5));
 
             var yesterdayConference2 = new ConferenceBuilder(true, scheduledDateTime: yesterday, venueName: venue2)
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
+                .WithMeetingRoom(pexipNode, username)
                 .Build();
 
             _context.Test.ClosedConferences.Add(

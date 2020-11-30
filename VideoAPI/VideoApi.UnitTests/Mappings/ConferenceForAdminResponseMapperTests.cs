@@ -1,7 +1,9 @@
+using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Mappings;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Mappings
@@ -20,7 +22,11 @@ namespace VideoApi.UnitTests.Mappings
                 .WithParticipants(3)
                 .Build();
 
-            var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference);
+            const string conferencePhoneNumber = "+441234567890";
+            var configuration = Builder<KinlyConfiguration>.CreateNew()
+                .With(x => x.ConferencePhoneNumber = conferencePhoneNumber).Build();
+
+            var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, configuration);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
@@ -38,6 +44,8 @@ namespace VideoApi.UnitTests.Mappings
             response.StartedDateTime.Should().Be(conference.ActualStartTime);
             response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus());
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
+            response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
+            response.TelephoneConferenceNumber.Should().Be(conferencePhoneNumber);
         }
     }
 }

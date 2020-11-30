@@ -5,10 +5,13 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Autofac.Extras.Moq;
+using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
 using Video.API.Controllers;
 using Video.API.Factories;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
@@ -28,6 +31,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<ILogger<ConferenceController>> MockLogger;
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
         protected Mock<IOptions<ServicesConfiguration>> ServicesConfiguration;
+        protected Mock<IOptions<KinlyConfiguration>> KinlyConfiguration;
         protected MeetingRoom MeetingRoom;
         protected VideoApi.Domain.Conference TestConference;
         protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
@@ -35,19 +39,22 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IAzureStorageService> AzureStorageServiceMock;
         protected Mock<IPollyRetryService> PollyRetryServiceMock;
         protected List<Endpoint> TestEndpoints;
+        protected AutoMock Mocker;
 
         [SetUp]
         public void Setup()
         {
-            QueryHandlerMock = new Mock<IQueryHandler>();
-            CommandHandlerMock = new Mock<ICommandHandler>();
-            MockLogger = new Mock<ILogger<ConferenceController>>();
-            VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
-            ServicesConfiguration = new Mock<IOptions<ServicesConfiguration>>();
-            AudioPlatformServiceMock = new Mock<IAudioPlatformService>();
-            AzureStorageServiceFactoryMock = new Mock<IAzureStorageServiceFactory>();
-            AzureStorageServiceMock = new Mock<IAzureStorageService>();
-            PollyRetryServiceMock = new Mock<IPollyRetryService>();
+            Mocker = AutoMock.GetLoose();
+            QueryHandlerMock = Mocker.Mock<IQueryHandler>();
+            CommandHandlerMock = Mocker.Mock<ICommandHandler>();
+            MockLogger = Mocker.Mock<ILogger<ConferenceController>>();
+            VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
+            ServicesConfiguration = Mocker.Mock<IOptions<ServicesConfiguration>>();
+            KinlyConfiguration = Mocker.Mock<IOptions<KinlyConfiguration>>();
+            AudioPlatformServiceMock = Mocker.Mock<IAudioPlatformService>();
+            AzureStorageServiceFactoryMock = Mocker.Mock<IAzureStorageServiceFactory>();
+            AzureStorageServiceMock = Mocker.Mock<IAzureStorageService>();
+            PollyRetryServiceMock = Mocker.Mock<IPollyRetryService>();
             TestEndpoints = new List<Endpoint>
             {
                 new Endpoint("one", "44564", "1234", "Defence Sol"),
@@ -91,13 +98,12 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .Returns(Task.FromResult(default(object)));
 
             ServicesConfiguration.Setup(s => s.Value).Returns(new ServicesConfiguration());
+            KinlyConfiguration.Setup(options => options.Value).Returns(Builder<KinlyConfiguration>.CreateNew().Build());
 
             MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode",
                 "12345678");
-
-            Controller = new ConferenceController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                VideoPlatformServiceMock.Object, ServicesConfiguration.Object, MockLogger.Object,
-                AudioPlatformServiceMock.Object, AzureStorageServiceFactoryMock.Object, PollyRetryServiceMock.Object);
+            
+            Controller = Mocker.Create<ConferenceController>();
         }
         
         protected void SetupCallToMockRetryService<T>(T expectedReturn)

@@ -8,7 +8,7 @@ Feature: Conferences Today
     And I have a get conferences for a vho request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And only todays conferences should be retrieved
+    And only todays conferences should be retrieved for vho
 
   Scenario Outline: Get list of conferences for vho with username filter
     Given I have several conferences with users
@@ -29,7 +29,7 @@ Feature: Conferences Today
     And I have a get conferences for a judge by username request with a valid username
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And the summary of conference details should be retrieved
+    And the summary of conference details should be retrieved for judges
 
   Scenario: Get list of conferences for judge with an non-existent username
     Given I have several conferences
@@ -50,7 +50,7 @@ Feature: Conferences Today
     And I have a get conferences for an individual by username request with a valid username
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And the summary of conference details should be retrieved
+    And the summary of conference details should be retrieved for individuals
 
   Scenario: Get list of conferences for individual with an non-existent username
     Given I have several conferences

@@ -16,8 +16,10 @@ namespace Testing.Common.Assertions
             conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.Id.Should().NotBeEmpty();
+            conference.HearingRefId.Should().NotBeEmpty();
             conference.Status.Should().NotBeNull();
-            conference.TelephoneConferenceId.Should().NotBeNull();
+            conference.TelephoneConferenceId.Should().NotBeEmpty();
+            conference.TelephoneConferenceNumber.Should().NotBeEmpty();
             
             if (conference.Status > ConferenceState.NotStarted && conference.Status < ConferenceState.Closed)
             {

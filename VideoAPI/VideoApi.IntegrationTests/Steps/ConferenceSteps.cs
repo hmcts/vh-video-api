@@ -304,28 +304,43 @@ namespace VideoApi.IntegrationTests.Steps
             updatedParticipant.ContactTelephone.Should().NotBe(representative.ContactTelephone);
         }
 
-        [Then(@"the summary of conference details should be retrieved")]
+        [Then(@"the summary of conference details should be retrieved for judges")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNull();
+            var conferences = await Response.GetResponses<List<ConferenceForJudgeResponse>>(_context.Response.Content);
+            conferences.Should().NotBeNullOrEmpty();
             foreach (var conference in conferences)
             {
-                AssertConferenceForAdminResponse.ForConference(conference);
+                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
+                AssertConferenceForJudgeResponse.ForConference(conference);
                 conference.Participants.Should().NotBeNullOrEmpty();
                 foreach (var participant in conference.Participants)
                 {
-                    AssertParticipantSummaryResponse.ForParticipant(participant);
+                    AssertParticipantForJudgeResponse.ForParticipant(participant);
                 }
             }
         }
+        
+        [Then(@"the summary of conference details should be retrieved for individuals")]
+        public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrievedForIndividuals()
+        {
+            var conferences = await Response.GetResponses<List<ConferenceForIndividualResponse>>(_context.Response.Content);
+            conferences.Should().NotBeNullOrEmpty();
+            foreach (var conference in conferences)
+            {
+                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
+                AssertConferenceForIndividualResponse.ForConference(conference);
+            }
+        }
 
-        [Then(@"only todays conferences should be retrieved")]
+        [Then(@"only todays conferences should be retrieved for vho")]
         public async Task ThenOnlyTodaysConferencesShouldBeRetrieved()
         {
             var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
+            conferences.Should().NotBeNullOrEmpty();
             foreach (var conference in conferences)
             {
+                AssertConferenceForAdminResponse.ForConference(conference);
                 conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);
             }
         }
