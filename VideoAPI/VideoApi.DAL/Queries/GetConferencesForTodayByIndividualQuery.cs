@@ -35,7 +35,6 @@ namespace VideoApi.DAL.Queries
 
             return _context.Conferences
                 .AsNoTracking()
-                .Include(x=> x.Participants)
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
                 .Where(x => x.Participants.Any(p => p.Username == query.Username))
                 .Where(x => x.MeetingRoom != null && x.MeetingRoom.AdminUri != null && x.MeetingRoom.JudgeUri != null
