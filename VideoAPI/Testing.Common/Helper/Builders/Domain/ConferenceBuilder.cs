@@ -113,14 +113,14 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-        
-        public ConferenceBuilder WithMeetingRoom(string pexipNode, string conferenceUsername)
+
+        public ConferenceBuilder WithMeetingRoom(string pexipNode, string conferenceUsername, bool setTelephoneConferenceId = true)
         {
             var adminUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var judgeUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var participantUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var ticks = DateTime.UtcNow.Ticks.ToString();
-            var telephoneConferenceId = ticks.Substring(ticks.Length - 8);
+            var telephoneConferenceId = setTelephoneConferenceId ? ticks.Substring(ticks.Length - 8) : null;
             _conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
             return this;
         }

@@ -22,10 +22,6 @@ namespace VideoApi.Domain
         public string PexipNode { get; set; }
         public string TelephoneConferenceId { get; set; }
 
-        public bool IsSet()
-        {
-            return AdminUri != null && JudgeUri != null && ParticipantUri != null && PexipNode != null &&
-                   TelephoneConferenceId != null;
-        }
+        public bool IsSet() => AdminUri != null && JudgeUri != null && ParticipantUri != null && PexipNode != null;
     }
 }
