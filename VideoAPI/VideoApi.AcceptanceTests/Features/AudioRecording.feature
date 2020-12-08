@@ -52,7 +52,7 @@ Scenario: Get Audio Stream - Not Found
 
 @VIH-5868
 Scenario: Get Audio Stream Monitoring - Ok
-  Given I have a conference with audiorecording
+  Given I have a conference with an audio recording
 	And I have a valid get audio stream monitoring request
 	When I send the request to the endpoint
 	Then the response should have the status Ok and success status True
