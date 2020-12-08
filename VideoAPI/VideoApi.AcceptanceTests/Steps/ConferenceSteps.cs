@@ -75,8 +75,8 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2));
         }
 
-        [Given(@"I have a conference with audiorecording")]
-        public void GivenIHaveAConferenceWithAudiorecording()
+        [Given(@"I have a conference with an audio recording")]
+        public void GivenIHaveAConferenceWithAudioRecording()
         {
             CreateConference(DateTime.UtcNow.AddMinutes(2),null, true);
         }
@@ -96,8 +96,8 @@ namespace VideoApi.AcceptanceTests.Steps
         }
 
 
-        [Given(@"I have another conference with no audiorecording")]
-        public void GivenIHaveAnotherConferenceWithNoAudiorecording()
+        [Given(@"I have another conference without an audio recording")]
+        public void GivenIHaveAnotherConferenceWithNoAudioRecording()
         {
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
 
@@ -129,25 +129,24 @@ namespace VideoApi.AcceptanceTests.Steps
             GivenICloseAllConferences();
         }
 
-
         [Given(@"I have a conference for tomorrow")]
         public void GivenIHaveAConferenceForTomorrow()
         {
-            CreateConference(DateTime.Today.AddDays(1));
-            _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
+            CreateConference(DateTime.UtcNow.AddDays(1));
+            _context.Test.TomorrowsConference = _context.Test.ConferenceResponse.Id;
         }
 
-        [Given(@"I have a conference for tomorrow with audiorecording")]
-        public void GivenIHaveAConferenceForTomorrowWithAudiorecording()
+        [Given(@"I have a conference for tomorrow with an audio recording")]
+        public void GivenIHaveAConferenceForTomorrowWithAnAudioRecording()
         {
-            CreateConference(DateTime.Today.AddDays(1), null, true);
-            _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
+            CreateConference(DateTime.UtcNow.AddDays(1), null, true);
+            _context.Test.TomorrowsConference = _context.Test.ConferenceResponse.Id;
         }
 
         [Given(@"I have a conference for yesterday")]
         public void GivenIHaveAConferenceForYesterday()
         {
-            CreateConference(DateTime.Today.AddDays(-1));
+            CreateConference(DateTime.UtcNow.AddDays(-1));
             _context.Test.ConferenceIds.Add(_context.Test.ConferenceResponse.Id);
         }
 
@@ -163,20 +162,20 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Delete(RemoveConference(_context.Test.ConferenceResponse.Id));
         }
 
-        [Given(@"I have a get conferences today for a vho")]
+        [Given(@"I have a get conferences today for a vho request")]
         public void GivenIHaveAValidGetTodaysConferencesRequest()
         {
             _context.Request = _context.Get(GetConferencesTodayForAdmin);
         }
 
-        [Given(@"I have a get conferences today for a judge")]
+        [Given(@"I have a get conferences today for a judge request")]
         public void GivenIHaveAGetConferenceTodayForAJudge()
         {
             var judge = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
             _context.Request = _context.Get(GetConferencesTodayForJudge(judge.Username));
         }
         
-        [Given(@"I have a get conferences today for an individual")]
+        [Given(@"I have a get conferences today for an individual request")]
         public void GivenIHaveAGetConferenceTodayForAnIndividual()
         {
             var individual = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole != UserRole.Judge);
@@ -243,15 +242,20 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conferences = RequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
+            conferences.Any(x => x.CaseName.StartsWith(_context.Test.CaseName)).Should().BeTrue();
             foreach (var conference in conferences)
             {
-                AssertConferenceForAdminResponse.ForConference(conference);
-                foreach (var participant in conference.Participants)
-                    AssertParticipantSummaryResponse.ForParticipant(participant);
-                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
+                if (conference.CaseName.StartsWith(_context.Test.CaseName))
+                {
+                    AssertConferenceForAdminResponse.ForConference(conference);
+                    foreach (var participant in conference.Participants)
+                        AssertParticipantSummaryResponse.ForParticipant(participant);
+                    conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
+                }
             }
 
-            _context.Test.ConferenceResponses = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
+            _context.Test.ConferenceResponses = conferences.Where(x => x.CaseName.StartsWith(_context.Test.CaseName)).ToList();
+            conferences.Any(x => x.Id.Equals(_context.Test.TomorrowsConference)).Should().BeFalse();
         }
 
         [Then(@"a list containing only judge todays hearings conference details should be retrieved")]

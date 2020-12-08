@@ -31,6 +31,11 @@ namespace VideoApi.AcceptanceTests.Hooks
             {
                 RemoveConference(context, id);
             }
+
+            if (context.Test.TomorrowsConference != Guid.Empty)
+            {
+                RemoveConference(context, context.Test.TomorrowsConference);
+            }
         }
 
         [AfterScenario(Order = (int)HooksSequence.RemoveAllTodaysConferences)]

@@ -40,7 +40,7 @@ Feature: Conference
 	  Given I have a conference
 	  And I have another conference
 	  And I have a conference for tomorrow
-	  And I have a get conferences today for a vho
+	  And I have a get conferences today for a vho request
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
 	  And a list containing only todays hearings conference details should be retrieved
@@ -49,7 +49,7 @@ Feature: Conference
 	  Given I have a conference
 	  And I have another conference
 	  And I have a conference for tomorrow
-	  And I have a get conferences today for a judge
+	  And I have a get conferences today for a judge request
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
 	  And a list containing only judge todays hearings conference details should be retrieved
@@ -58,7 +58,7 @@ Feature: Conference
 	  Given I have a conference
 	  And I have another conference
 	  And I have a conference for tomorrow
-	  And I have a get conferences today for an individual
+	  And I have a get conferences today for an individual request
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
 	  And a list containing only individual todays hearings conference details should be retrieved
@@ -89,10 +89,10 @@ Feature: Conference
 	  Then the response should have the status OK and success status True
 	  And a list not containing the closed hearings should be retrieved
 
-  Scenario: Get audiorecording expired closed conferences
-	  Given I have a conference with audiorecording
-	  And I have another conference with no audiorecording
-	  And I have a conference for tomorrow with audiorecording
+  Scenario: Get audio recording expired closed conferences
+	  Given I have a conference with an audio recording
+	  And I have another conference without an audio recording
+	  And I have a conference for tomorrow with an audio recording
 	  And All conferences have started
 	  And I have a get expired audiorecording conferences request
 	  When I send the request to the endpoint
