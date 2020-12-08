@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
@@ -28,13 +29,22 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [Test]
         public async Task Should_get_conference_details_by_hearing_ref_id()
         {
-            var seededConference = await TestDataManager.SeedConference();
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            var knownHearingRefId = Guid.NewGuid();
+            var seededConference = new ConferenceBuilder(true, knownHearingRefId)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithEndpoints(new List<Endpoint>
+                    {
+                        new Endpoint("one", "44564", "1234", "Defence Sol"),
+                        new Endpoint("two", "867744", "5678", "Defence Sol")
+                    })
+                .Build();
             _newConferenceId1 = seededConference.Id;
+            await TestDataManager.SeedConference(seededConference);
+            var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(knownHearingRefId));
 
-            var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(seededConference.HearingRefId));
-
-            AssertConference(conference, seededConference);
+            AssertConference(conference, conference);
         }
 
         [Test]
@@ -85,6 +95,16 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.ParticipantRefId.Should().NotBeEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
                 participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
+            }
+
+            var endpoints = actual.GetEndpoints();
+            endpoints.Should().NotBeNullOrEmpty();
+            foreach (var endpoint in endpoints)
+            {
+                endpoint.DisplayName.Should().NotBeNullOrEmpty();
+                endpoint.Pin.Should().NotBeNullOrEmpty();
+                endpoint.SipAddress.Should().NotBeNullOrEmpty();
+                endpoint.DefenceAdvocate.Should().NotBeEmpty();
             }
         }
 
