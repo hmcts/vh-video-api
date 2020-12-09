@@ -12,7 +12,8 @@ namespace VideoApi.DAL.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // Method intentionally left empty
+            migrationBuilder.Sql(@"UPDATE Participant SET UserRole = 5 
+                WHERE HearingRole = 'Winger' OR HearingRole = 'Panel Member'");
         }
     }
 }
