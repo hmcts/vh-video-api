@@ -321,6 +321,39 @@
         }
       }
     },
+    "/hearing/{virtual_courtroom_id}/consultation-room":  {
+      "post": {
+        "operationId": "createConsultationRoom",
+        "description": "Create consultation room",
+        "tags": [
+          "hearing"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "virtual_courtroom_id",
+            "type": "string",
+            "required": true,
+            "description": "Hearing ID"
+          },
+          {
+            "name": "CreateConsultationRoomParams",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/createConsultationRoomParams"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Participant transferred"
+          },
+          "400": {
+            "description": "Data is malformed"
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "operationId": "healthCheck",
@@ -493,6 +526,18 @@
         "from": {
           "type": "string",
           "description": "Room label transfering participant to"
+        }
+      }
+    },
+    "createConsultationRoomParams":  {
+      "type": "object",
+      "required": [
+        "room_label_prefix"
+      ],
+      "properties": {
+        "room_label_prefix": {
+          "type": "string",
+          "description": "Room label prefix"
         }
       }
     },
