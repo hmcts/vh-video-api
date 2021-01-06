@@ -51,6 +51,30 @@ namespace Testing.Common.Helper.Builders.Api
 
             return this;
         }
+        
+        public BookNewConferenceRequestBuilder WithJoh(string firstName = null)
+        {
+            var participant = Builder<ParticipantRequest>.CreateNew()
+                .With(x => x.Name = $"Automation_{Name.First()}{RandomNumber.Next()}")
+                .With(x => x.FirstName = $"Automation_{Name.First()}")
+                .With(x => x.LastName = $"Automation_{Name.Last()}")
+                .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
+                .With(x => x.UserRole = UserRole.JudicialOfficeHolder)
+                .With(x => x.HearingRole = "Judicial Office Holder")
+                .With(x => x.ParticipantRefId = Guid.NewGuid())
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
+                .Build();
+
+            if (!string.IsNullOrWhiteSpace(firstName))
+            {
+                participant.FirstName = firstName;
+            }
+
+            _bookNewConferenceRequest.Participants.Add(participant);
+
+            return this;
+        }
 
         public BookNewConferenceRequestBuilder WithRepresentative(string caseTypeGroup = "Claimant")
         {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -13,7 +14,10 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Kinly;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -239,6 +243,71 @@ namespace Video.API.Controllers
             await _videoPlatformService.StartEndpointPrivateConsultationAsync(conference, endpoint, defenceAdvocate);
 
             return Accepted();
+        }
+
+        [HttpPost("/consultations/start/{roomType}")]
+        [SwaggerOperation(OperationId = "StartPrivateConsultationWithEndpoint")]
+        [ProducesResponseType((int) HttpStatusCode.Accepted)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request, RoomType roomType)
+        {
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            _logger.LogTrace($"Conference details for {request.ConferenceId} successfully retrieved.");
+            
+            var availableRoomsType = conference.GetAvailableConsultationRoom();
+            if (availableRoomsType != roomType)
+            {
+                try
+                {
+                    //TODO: Set RoomStatus to failed
+                    
+                    _logger.LogTrace($"Room {roomType} does not exist, calling Kinly to create a room now..");
+                    //TODO: Create new room using Kinly, /virtual-court/api/v1/hearing/{hearingId}/consultation-room NOT FOUND
+                    var kinlyApiClient = IKinlyApiClient
+                    kinlyApiClient.
+                    
+                    var command = new CreateRoomCommand(request.ConferenceId, request.RequestedBy, roomType);
+                    await _commandHandler.Handle(command);
+                    _logger.LogTrace($"Room created in database with Id: {command.RoomId}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Failed to create a new consultation room: {ex}");
+                    return BadRequest(ex.Message);
+                }
+            }
+
+            try
+            {
+                _logger.LogTrace($"Room {roomType} found, transferring in now..");
+                //TODO: Add params to KinlyApiClient
+                var kinlyApiClient = new KinlyApiClient();
+                var transferParameters = new TransferParticipantParams
+                {
+                    From = "",
+                    To = "",
+                    Part_id = ""
+                };
+                await kinlyApiClient.TransferParticipantAsync("Idk what the virtualCourtRoomId is", transferParameters);
+                _logger.LogTrace($"Participant successfully transferred in consultation room: {roomType}");
+
+                //TODO: Add participant with Id and time using command AddRoomParticipantCommand
+            
+                //TODO: Set room status to 'Live' using UpdateRoomStatusCommand
+            
+                //TODO: Update Participant>CurrentRoom value to the roomId in response
+            
+                return Accepted();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to create a new consultation room: {ex}");
+                return BadRequest(ex.Message);
+            }
         }
         
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,

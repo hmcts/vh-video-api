@@ -226,6 +226,7 @@ namespace VideoApi.Services
 
         public Task<HealthCheckResponse> GetPlatformHealthAsync()
         {
+            _kinlyApiClient.Crea
             return _kinlyApiClient.HealthCheckAsync();
         }
     }
