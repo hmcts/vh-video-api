@@ -150,5 +150,30 @@ namespace VideoApi.IntegrationTests.Helper
             db.Tasks.RemoveRange(toDelete);
             await db.SaveChangesAsync();
         }
+
+        public async Task RemoveRooms(Guid conferenceId)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var roomsToDelete = db.Rooms.Where(x => x.ConferenceId == conferenceId);
+            db.Rooms.RemoveRange(roomsToDelete);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task<Room> SeedRoom(Room room)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            await db.Rooms.AddAsync(room);
+            await db.SaveChangesAsync();
+
+            return room;
+        }
+
+        public async Task SeedRoomParticipant(long roomId, RoomParticipant roomParticipant)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var room = db.Rooms.Where(x => x.Id == roomId).FirstOrDefault();
+            room.AddParticipant(roomParticipant);
+            await db.SaveChangesAsync();
+        }
     }
 }
