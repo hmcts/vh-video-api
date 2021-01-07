@@ -30,8 +30,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task Should_add_participant_to_room()
         {
-            var enterTime = DateTime.UtcNow;
-
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
@@ -54,7 +52,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedRoomParticipant.Should().NotBeNull();
             savedRoomParticipant.RoomId.Should().Be(_newRoomId);
             savedRoomParticipant.ParticipantId.Should().Be(judge.Id);
-            savedRoomParticipant.EnterTime.Ticks.Should().BeGreaterOrEqualTo(enterTime.Ticks);
 
         }
 

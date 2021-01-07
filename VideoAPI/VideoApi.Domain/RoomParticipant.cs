@@ -9,11 +9,9 @@ namespace VideoApi.Domain
         {
             RoomId = roomId;
             ParticipantId = participantId;
-            EnterTime = DateTime.UtcNow;
         }
 
         public long RoomId { get; set; }
         public Guid ParticipantId { get; set; }
-        public DateTime EnterTime { get; private set; }
     }
 }

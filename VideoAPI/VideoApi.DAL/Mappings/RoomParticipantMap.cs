@@ -13,7 +13,6 @@ namespace VideoApi.DAL.Mappings
             builder.HasKey(x => x.Id);
             builder.Property(x => x.RoomId);
             builder.Property(x => x.ParticipantId);
-            builder.Property(x => x.EnterTime);
         }
     }
 }

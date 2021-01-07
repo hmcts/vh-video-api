@@ -12,12 +12,9 @@ namespace VideoApi.UnitTests.Domain
         {
             var participantId = Guid.NewGuid();
             var roomId = 1;
-            var date = DateTime.UtcNow;
             var roomParticipant = new RoomParticipant(roomId, participantId);
             roomParticipant.RoomId.Should().Be(roomId);
             roomParticipant.ParticipantId.Should().Be(participantId);
-            roomParticipant.EnterTime.Ticks.Should().BeGreaterOrEqualTo(date.Ticks);
         }
-    
     }
 }
