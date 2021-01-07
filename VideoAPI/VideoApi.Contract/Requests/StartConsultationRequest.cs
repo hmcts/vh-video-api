@@ -1,4 +1,5 @@
 using System;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.Contract.Requests
 {
@@ -21,14 +22,5 @@ namespace VideoApi.Contract.Requests
         /// Requester's UUID
         /// </summary>
         public Guid RequestedBy { get; set; }
-    }
-
-    public enum RoomType
-    {
-        WaitingRoom,
-        HearingRoom,
-        ConsultationRoom1,
-        ConsultationRoom2,
-        AdminRoom
     }
 }

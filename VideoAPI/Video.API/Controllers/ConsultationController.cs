@@ -32,10 +32,11 @@ namespace Video.API.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<ConsultationController> _logger;
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly IConsultationService _consultationService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             ILogger<ConsultationController> logger,
-            IVideoPlatformService videoPlatformService)
+            IVideoPlatformService videoPlatformService, IConsultationService _consultationService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -253,48 +254,28 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request, RoomType roomType)
         {
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-            _logger.LogTrace($"Conference details for {request.ConferenceId} successfully retrieved.");
+            var availableRoom = 1; //TODO: GetAvailableRoomByRoomType query to check if the type is live or created
             
-            var availableRoomsType = conference.GetAvailableConsultationRoom();
-            if (availableRoomsType != roomType)
-            {
-                try
-                {
-                    //TODO: Set RoomStatus to failed
-                    
-                    _logger.LogTrace($"Room {roomType} does not exist, calling Kinly to create a room now..");
-                    //TODO: Create new room using Kinly, /virtual-court/api/v1/hearing/{hearingId}/consultation-room NOT FOUND
-                    var kinlyApiClient = IKinlyApiClient
-                    kinlyApiClient.
-                    
-                    var command = new CreateRoomCommand(request.ConferenceId, request.RequestedBy, roomType);
-                    await _commandHandler.Handle(command);
-                    _logger.LogTrace($"Room created in database with Id: {command.RoomId}");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Failed to create a new consultation room: {ex}");
-                    return BadRequest(ex.Message);
-                }
-            }
-
             try
             {
-                _logger.LogTrace($"Room {roomType} found, transferring in now..");
-                //TODO: Add params to KinlyApiClient
-                var kinlyApiClient = new KinlyApiClient();
-                var transferParameters = new TransferParticipantParams
+                if (availableRoom != null /*Created*/ || availableRoom != 1 /*Live*/)
                 {
-                    From = "",
-                    To = "",
-                    Part_id = ""
-                };
-                await kinlyApiClient.TransferParticipantAsync("Idk what the virtualCourtRoomId is", transferParameters);
-                _logger.LogTrace($"Participant successfully transferred in consultation room: {roomType}");
-
+                    await _consultationService.StartConsultationAsync(request.ConferenceId, request.RequestedBy, roomType);
+                    //TODO: CreateRoomCommand using RoomType + RoomLabel and update RoomStatus to Created
+                }
+                else
+                {
+                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, request.RoomType, roomType);
+                    _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, roomType);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to create a new consultation room: {ex.Message}");
+                //TODO: Update RoomStatus to Failed
+                return BadRequest(ex.Message);
+            }
+            
                 //TODO: Add participant with Id and time using command AddRoomParticipantCommand
             
                 //TODO: Set room status to 'Live' using UpdateRoomStatusCommand
@@ -302,12 +283,6 @@ namespace Video.API.Controllers
                 //TODO: Update Participant>CurrentRoom value to the roomId in response
             
                 return Accepted();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to create a new consultation room: {ex}");
-                return BadRequest(ex.Message);
-            }
         }
         
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
