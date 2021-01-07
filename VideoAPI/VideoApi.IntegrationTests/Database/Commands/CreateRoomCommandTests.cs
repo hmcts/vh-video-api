@@ -38,7 +38,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
             command.ConferenceId.Should().Be(_newConferenceId);
             command.Type.Should().Be(VirtualCourtRoomType.JudgeJOH);
             command.Status.Should().Be(RoomStatus.Created);
-      
         }
 
 
@@ -59,6 +58,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
                 TestContext.WriteLine($"Removing test conference {_newConferenceId}");
                 await TestDataManager.RemoveConference(_newConferenceId);
+                _newConferenceId = Guid.Empty;
             }
             
         }

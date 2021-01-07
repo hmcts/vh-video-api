@@ -15,7 +15,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class RemoveRoomParticipantCommandTests : DatabaseTestsBase
     {
-        private AddRoomParticipantCommandHandler _handler;
+        private RemoveRoomParticipantCommandHandler _handler;
         private Guid _newConferenceId;
         private long _newRoomId;
 
@@ -23,38 +23,77 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new AddRoomParticipantCommandHandler(context);
+            _handler = new RemoveRoomParticipantCommandHandler(context);
         }
 
         [Test]
         public async Task Should_remove_participant_from_room()
         {
-            //var seededConference = await TestDataManager.SeedConference();
-            //TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            //_newConferenceId = seededConference.Id;
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
 
-            //var judge = seededConference.Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge);
-            //var room = await TestDataManager.SeedRoom(new Room(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH));
-            //_newRoomId = room.Id;
+            var participant = seededConference.Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge);
+            var room = await TestDataManager.SeedRoom(new Room(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH));
+            _newRoomId = room.Id;
 
-            //var enterTime = DateTime.UtcNow;
-            //var command = new AddRoomParticipantCommand(_newRoomId, new RoomParticipant(_newRoomId, judge.Id, enterTime));
+            var roomWithParticipant = await TestDataManager.SeedRoomWithRoomParticipant(_newRoomId, new RoomParticipant(_newRoomId, participant.Id, DateTime.UtcNow));
 
-            //await _handler.Handle(command);
-            //Room roomSaved;
-            //await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
-            //{
-            //    roomSaved = await db.Rooms.Include("RoomParticipants")
-            //        .SingleOrDefaultAsync(x => x.Id == _newRoomId);
-            //}
+            var currentCount = roomWithParticipant.RoomParticipants.Count;
+            currentCount.Should().BeGreaterThan(0);
 
-            //var savedRoomParticipant = roomSaved.RoomParticipants.First();
+            var command = new RemoveRoomParticipantCommand(participant.Id, _newRoomId);
+            await _handler.Handle(command);
+
+            Room roomSaved;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                roomSaved = await db.Rooms.Include("RoomParticipants")
+                    .SingleOrDefaultAsync(x => x.Id == _newRoomId);
+            }
+
+            var savedRoomParticipantCount = roomSaved.RoomParticipants.Count;
 
 
-            //savedRoomParticipant.Should().NotBeNull();
-            //savedRoomParticipant.RoomId.Should().Be(_newRoomId);
-            //savedRoomParticipant.ParticipantId.Should().Be(judge.Id);
-            //savedRoomParticipant.EnterTime.Should().Be(enterTime);
+            savedRoomParticipantCount.Should().BeLessThan(currentCount);
+        }
+
+        [Test]
+        public void Should_throw_exception_if_no_room_found()
+        {
+            var command = new RemoveRoomParticipantCommand(Guid.NewGuid(), _newRoomId);
+            Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
+        }
+
+        [Test]
+        public async Task Should_throw_exception_if_no_room_participant_found()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+
+            var room = await TestDataManager.SeedRoom(new Room(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH));
+
+            _newRoomId = room.Id;
+            var command = new RemoveRoomParticipantCommand(Guid.NewGuid(), _newRoomId);
+            Assert.ThrowsAsync<RoomParticipantNotFoundException>(() => _handler.Handle(command));
+        }
+
+        [TearDown]
+        public async Task TearDown()
+        {
+            if (_newRoomId > 0)
+            {
+                TestContext.WriteLine($"Removing test room {_newRoomId} for conference {_newConferenceId}");
+                await TestDataManager.RemoveRooms(_newConferenceId);
+                _newRoomId = 0;
+            }
+            if (_newConferenceId != Guid.Empty)
+            {
+                TestContext.WriteLine($"Removing test conference {_newConferenceId}");
+                await TestDataManager.RemoveConference(_newConferenceId);
+                _newConferenceId = Guid.Empty;
+            }
 
         }
     }

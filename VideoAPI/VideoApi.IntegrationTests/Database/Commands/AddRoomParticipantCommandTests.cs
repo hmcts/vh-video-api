@@ -61,22 +61,25 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_exception_if_no_room_found()
         {
             var enterTime = DateTime.UtcNow;
-            var command = new AddRoomParticipantCommand(_newRoomId, new RoomParticipant(_newRoomId, Guid.NewGuid(), enterTime));
+            var command = new AddRoomParticipantCommand(0, new RoomParticipant(0, Guid.NewGuid(), enterTime));
             Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
 
         [TearDown]
         public async Task TearDown()
         {
+            if(_newRoomId > 0)
+            {
+                TestContext.WriteLine($"Removing test room {_newRoomId} for conference {_newConferenceId}");
+                await TestDataManager.RemoveRooms(_newConferenceId);
+                _newRoomId = 0;
+            }
             if (_newConferenceId != Guid.Empty)
             {
-                TestContext.WriteLine($"Removing test room for conference {_newConferenceId}");
-                await TestDataManager.RemoveRooms(_newConferenceId);
-
                 TestContext.WriteLine($"Removing test conference {_newConferenceId}");
                 await TestDataManager.RemoveConference(_newConferenceId);
+                _newConferenceId = Guid.Empty;
             }
-
         }
     }
 }

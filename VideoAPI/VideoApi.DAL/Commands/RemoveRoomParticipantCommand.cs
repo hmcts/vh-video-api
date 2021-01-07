@@ -19,11 +19,11 @@ namespace VideoApi.DAL.Commands
         }
     }
 
-    public class RemoveRoomParticipantCommandHandle : ICommandHandler<RemoveRoomParticipantCommand>
+    public class RemoveRoomParticipantCommandHandler : ICommandHandler<RemoveRoomParticipantCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public RemoveRoomParticipantCommandHandle(VideoApiDbContext context)
+        public RemoveRoomParticipantCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }

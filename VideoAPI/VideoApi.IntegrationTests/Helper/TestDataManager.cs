@@ -168,12 +168,13 @@ namespace VideoApi.IntegrationTests.Helper
             return room;
         }
 
-        public async Task SeedRoomParticipant(long roomId, RoomParticipant roomParticipant)
+        public async Task<Room> SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var room = db.Rooms.Where(x => x.Id == roomId).FirstOrDefault();
             room.AddParticipant(roomParticipant);
             await db.SaveChangesAsync();
+            return room;
         }
     }
 }
