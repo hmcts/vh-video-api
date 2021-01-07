@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             command.NewRoomId.Should().BeGreaterThan(0);
             command.ConferenceId.Should().Be(_newConferenceId);
             command.Type.Should().Be(VirtualCourtRoomType.JudgeJOH);
-            command.Status.Should().Be(RoomStatus.Created);
+            command.Status.Should().Be(RoomStatus.Live);
         }
 
 

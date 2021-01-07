@@ -33,7 +33,7 @@ namespace VideoApi.DAL.Queries
                 .Include(x => x.RoomParticipants)
                 .AsNoTracking()
                 .Where(x => x.Type == query.CourtRoomType)
-                .Where(x => x.Status == RoomStatus.Live || x.Status == RoomStatus.Created)
+                .Where(x => x.Status == RoomStatus.Live)
                 .ToListAsync();
         }
       

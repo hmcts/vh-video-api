@@ -16,7 +16,7 @@ namespace VideoApi.UnitTests.Domain
             var label = "Room1";
 
             var room = new Room(conferenceId, label, VirtualCourtRoomType.JudgeJOH);
-            room.Status.Should().Be(RoomStatus.Created);
+            room.Status.Should().Be(RoomStatus.Live);
             room.ConferenceId.Should().Be(conferenceId);
             room.Label.Should().Be(label);
             room.Type.Should().Be(VirtualCourtRoomType.JudgeJOH);
@@ -79,26 +79,22 @@ namespace VideoApi.UnitTests.Domain
         }
 
         [Test]
-        public void Should_update_room_status()
+        public void Should_update_room_status_to_Live_on_init()
         {
             var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
-
-            room.UpdateStatus(RoomStatus.Live);
-
             room.Status.Should().Be(RoomStatus.Live);
         }
 
         [Test]
-        public void Should_not_update_room_status_if_room_closed()
+        public void Should_update_room_status_to_closed_on_last_participant_remove()
         {
             var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var roomParticipant = new RoomParticipant(1, Guid.NewGuid());
+            room.RoomParticipants.Add(roomParticipant);
+            room.Status.Should().Be(RoomStatus.Live);
 
-            room.UpdateStatus(RoomStatus.Closed);
-            room.Status.Should().Be(RoomStatus.Closed);
+            room.RemoveParticipant(roomParticipant);
 
-            Action action = () => room.UpdateStatus(RoomStatus.Live);
-
-            action.Should().Throw<DomainRuleException>();
             room.Status.Should().Be(RoomStatus.Closed);
         }
     }
