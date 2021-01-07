@@ -168,6 +168,16 @@ namespace VideoApi.IntegrationTests.Helper
             return room;
         }
 
+        public async Task<List<Room>> SeedRooms(IEnumerable<Room> rooms)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var seedRooms = rooms.ToList();
+            await db.Rooms.AddRangeAsync(seedRooms);
+            await db.SaveChangesAsync();
+
+            return seedRooms;
+        }
+
         public async Task<Room> SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
