@@ -32,5 +32,20 @@ namespace VideoApi.AcceptanceTests.Steps
             };
             _context.Request = _context.Post(HandleConsultationRequest, request);
         }
+        
+        [Given(@"I have a valid consultation request as a Judge")]
+        public void GivenIHaveAValidConsultationRequestAsAJudge()
+        {
+            var judge = _context.Test.ConferenceResponse.Participants
+                .Find(x => x.UserRole.Equals(UserRole.Individual)).Id;
+            
+            var request = new StartConsultationRequest()
+            {
+                ConferenceId = _context.Test.ConferenceResponse.Id,
+                RequestedBy = judge,
+                RoomType = RoomType.ConsultationRoom1
+            };
+            _context.Request = _context.Post(HandleConsultationRequest, request);
+        }
     }
 }

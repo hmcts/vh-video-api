@@ -252,7 +252,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request, RoomType roomType)
+        public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
             var availableRoom = 1; //TODO: GetAvailableRoomByRoomType query to check if the type is live or created
             
@@ -260,13 +260,13 @@ namespace Video.API.Controllers
             {
                 if (availableRoom != null /*Created*/ || availableRoom != 1 /*Live*/)
                 {
-                    await _consultationService.StartConsultationAsync(request.ConferenceId, request.RequestedBy, roomType);
+                    await _consultationService.StartConsultationAsync(request.ConferenceId, request.RequestedBy, request.RoomType);
                     //TODO: CreateRoomCommand using RoomType + RoomLabel and update RoomStatus to Created
                 }
                 else
                 {
-                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, request.RoomType, roomType);
-                    _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, roomType);
+                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, RoomType.WaitingRoom, request.RoomType);
+                    _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, request.RoomType);
                 }
             }
             catch (Exception ex)
