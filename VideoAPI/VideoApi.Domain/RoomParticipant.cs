@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using VideoApi.Domain.Ddd;
 
 namespace VideoApi.Domain

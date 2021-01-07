@@ -176,5 +176,13 @@ namespace VideoApi.IntegrationTests.Helper
             await db.SaveChangesAsync();
             return room;
         }
+
+        public async Task<Room> GetRoomById(long roomId)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var room = db.Rooms.Include("RoomParticipants").Where(x => x.Id == roomId).FirstOrDefault();
+
+            return room;
+        }
     }
 }
