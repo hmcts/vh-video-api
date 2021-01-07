@@ -15,7 +15,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
     public class GetAvailableRoomByRoomTypeQueryTests : DatabaseTestsBase
     {
         private GetAvailableRoomByRoomTypeQueryHandler _handler;
-        private UpdateRoomStatusCommandHandler _handlerUpdate;
+        private RemoveRoomParticipantCommandHandler _handlerUpdate;
         private Guid _newConferenceId;
         private List<long> _expectedIds;
         private List<long> _notExpectedIds;
@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new GetAvailableRoomByRoomTypeQueryHandler(context);
-            _handlerUpdate = new UpdateRoomStatusCommandHandler(context);
+            _handlerUpdate = new RemoveRoomParticipantCommandHandler(context);
 
         }
 
@@ -35,12 +35,17 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
+            var participant = seededConference.Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge);
+
             var listRooms = GetListRoom(_newConferenceId);
             var roomSaved = await TestDataManager.SeedRooms(listRooms);
+            await TestDataManager.SeedRoomWithRoomParticipant(roomSaved[0].Id, new RoomParticipant(roomSaved[0].Id, participant.Id));
+           
+
             _expectedIds = new List<long> { roomSaved[1].Id, roomSaved[2].Id, roomSaved[3].Id };
             _notExpectedIds = new List<long> { roomSaved[0].Id, roomSaved[4].Id };
 
-            var command = new UpdateRoomStatusCommand(roomSaved[0].Id, RoomStatus.Closed);
+            var command = new RemoveRoomParticipantCommand(participant.Id, roomSaved[0].Id);
             await _handlerUpdate.Handle(command);
 
             var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH);

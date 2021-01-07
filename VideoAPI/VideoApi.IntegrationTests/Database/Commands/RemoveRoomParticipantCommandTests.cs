@@ -27,7 +27,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task Should_remove_participant_from_room()
+        public async Task Should_remove_the_last_participant_from_room_and_set_status_closed()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -53,9 +53,42 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
 
             var savedRoomParticipantCount = roomSaved.RoomParticipants.Count;
-
-
             savedRoomParticipantCount.Should().BeLessThan(currentCount);
+            roomSaved.Status.Should().Be(RoomStatus.Closed);
+        }
+
+        [Test]
+        public async Task Should_remove_the_participant_from_room_and_status_of_room_should_be_live()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+
+            var participant1Id = seededConference.Participants[0].Id;
+            var participant2Id = seededConference.Participants[1].Id;
+
+            var room = await TestDataManager.SeedRoom(new Room(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH));
+            _newRoomId = room.Id;
+
+            await TestDataManager.SeedRoomWithRoomParticipant(_newRoomId, new RoomParticipant(_newRoomId, participant1Id));
+            room = await TestDataManager.SeedRoomWithRoomParticipant(_newRoomId, new RoomParticipant(_newRoomId, participant2Id));
+
+            var currentCount = room.RoomParticipants.Count;
+            currentCount.Should().BeGreaterThan(0);
+
+            var command = new RemoveRoomParticipantCommand(participant1Id, _newRoomId);
+            await _handler.Handle(command);
+
+            Room roomSaved;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                roomSaved = await db.Rooms.Include("RoomParticipants")
+                    .SingleOrDefaultAsync(x => x.Id == _newRoomId);
+            }
+
+            var savedRoomParticipantCount = roomSaved.RoomParticipants.Count;
+            savedRoomParticipantCount.Should().BeLessThan(currentCount);
+            roomSaved.Status.Should().Be(RoomStatus.Live);
         }
 
         [Test]

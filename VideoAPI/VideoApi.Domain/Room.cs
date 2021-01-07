@@ -14,7 +14,7 @@ namespace VideoApi.Domain
             ConferenceId = conferenceId;
             Label = label;
             Type = type;
-            Status = RoomStatus.Created;
+            Status = RoomStatus.Live;
             RoomParticipants = new List<RoomParticipant>();
         }
 
@@ -45,16 +45,15 @@ namespace VideoApi.Domain
             var existingParticipant = RoomParticipants.Single(x => x.ParticipantId == participant.ParticipantId);
 
             RoomParticipants.Remove(existingParticipant);
+            UpdateStatus();
         }
 
-        public void UpdateStatus(RoomStatus status)
+        private void UpdateStatus()
         {
-            if (Status == RoomStatus.Closed)
+           if (Status != RoomStatus.Closed && !RoomParticipants.Any())
             {
-                throw new DomainRuleException("Status", "Could not change status for a closed room");
+                Status = RoomStatus.Closed;
             }
-
-            Status = status;
         }
 
         public bool DoesParticipantExist(RoomParticipant participant)
