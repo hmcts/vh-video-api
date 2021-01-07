@@ -8,8 +8,8 @@ namespace VideoApi.DAL.Commands
 {
     public class UpdateRoomStatusCommand : ICommand
     {
-        public long RoomId { get; set; }
-        public RoomStatus Status { get; set; }
+        public long RoomId { get; }
+        public RoomStatus Status { get; }
 
         public UpdateRoomStatusCommand(long roomId, RoomStatus status)
         {

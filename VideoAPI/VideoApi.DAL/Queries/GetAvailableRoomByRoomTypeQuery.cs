@@ -10,7 +10,7 @@ namespace VideoApi.DAL.Queries
 {
     public class GetAvailableRoomByRoomTypeQuery : IQuery
     {
-        public VirtualCourtRoomType CourtRoomType { get; set; }
+        public VirtualCourtRoomType CourtRoomType { get; }
 
         public GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType courtRoomType)
         {

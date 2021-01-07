@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var room = await TestDataManager.SeedRoom(new Room(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH));
             _newRoomId = room.Id;
 
-            var roomWithParticipant = await TestDataManager.SeedRoomWithRoomParticipant(_newRoomId, new RoomParticipant(_newRoomId, participant.Id, DateTime.UtcNow));
+            var roomWithParticipant = await TestDataManager.SeedRoomWithRoomParticipant(_newRoomId, new RoomParticipant(_newRoomId, participant.Id));
 
             var currentCount = roomWithParticipant.RoomParticipants.Count;
             currentCount.Should().BeGreaterThan(0);

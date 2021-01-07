@@ -14,8 +14,6 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.RoomId);
             builder.Property(x => x.ParticipantId);
             builder.Property(x => x.EnterTime);
-            builder.Property(x => x.LeaveTime);
-
         }
     }
 }

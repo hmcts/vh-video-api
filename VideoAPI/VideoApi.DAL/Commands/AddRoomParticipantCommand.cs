@@ -8,8 +8,8 @@ namespace VideoApi.DAL.Commands
 {
     public class AddRoomParticipantCommand : ICommand
     {
-        public long RoomId { get; set; }
-        public RoomParticipant RoomParticipant { get; set; }
+        public long RoomId { get; }
+        public RoomParticipant RoomParticipant { get; }
 
         public AddRoomParticipantCommand(long roomId, RoomParticipant participant)
         {

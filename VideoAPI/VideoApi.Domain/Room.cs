@@ -18,12 +18,12 @@ namespace VideoApi.Domain
             RoomParticipants = new List<RoomParticipant>();
         }
 
-        public Guid ConferenceId { get; set; }
-        public string Label { get; set; }
+        public Guid ConferenceId { get; private set; }
+        public string Label { get; private set; }
         public VirtualCourtRoomType Type { get; private set; }
-        public RoomStatus Status { get; private set; } 
+        public RoomStatus Status { get; private set; }
 
-       public virtual List<RoomParticipant> RoomParticipants { get; }
+        public virtual List<RoomParticipant> RoomParticipants { get; }
 
         public void AddParticipant(RoomParticipant participant)
         {
@@ -49,6 +49,11 @@ namespace VideoApi.Domain
 
         public void UpdateStatus(RoomStatus status)
         {
+            if (Status == RoomStatus.Closed)
+            {
+                throw new DomainRuleException("Status", "Could not change status for a closed room");
+            }
+
             Status = status;
         }
 

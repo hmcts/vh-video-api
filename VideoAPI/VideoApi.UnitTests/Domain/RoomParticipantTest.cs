@@ -13,19 +13,11 @@ namespace VideoApi.UnitTests.Domain
             var participantId = Guid.NewGuid();
             var roomId = 1;
             var date = DateTime.UtcNow;
-            var roomParticipant = new RoomParticipant(roomId, participantId, date);
+            var roomParticipant = new RoomParticipant(roomId, participantId);
             roomParticipant.RoomId.Should().Be(roomId);
             roomParticipant.ParticipantId.Should().Be(participantId);
-            roomParticipant.EnterTime.Should().Be(date);
+            roomParticipant.EnterTime.Ticks.Should().BeGreaterOrEqualTo(date.Ticks);
         }
-
-        [Test]
-        public void Should_assign_leaved_time()
-        {
-            var leaveTime = DateTime.UtcNow;
-            var roomParticipant = new RoomParticipant(1, Guid.NewGuid(), DateTime.UtcNow);
-            roomParticipant.AssignLeaveTime(leaveTime);
-            roomParticipant.LeaveTime.Should().Be(leaveTime);
-        }
+    
     }
 }
