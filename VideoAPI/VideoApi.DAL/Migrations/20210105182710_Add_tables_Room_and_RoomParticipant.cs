@@ -42,8 +42,6 @@ namespace VideoApi.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoomId = table.Column<long>(nullable: false),
                     ParticipantId = table.Column<Guid>(nullable: false),
-                    EnterTime = table.Column<DateTime>(nullable: false),
-                    LeaveTime = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
