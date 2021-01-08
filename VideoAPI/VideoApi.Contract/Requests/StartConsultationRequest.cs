@@ -16,7 +16,7 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// The room type number
         /// </summary>
-        public RoomType RoomType { get; set; }
+        public VirtualCourtRoomType RoomType { get; set; }
         
         /// <summary>
         /// Requester's UUID

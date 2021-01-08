@@ -6,8 +6,8 @@ namespace VideoApi.Services.Contracts
 {
     public interface IConsultationService
     {
-        Task StartConsultationAsync(Guid conferenceId, Guid requestedBy, RoomType roomType);
+        Task StartConsultationAsync(Guid conferenceId, Guid requestedBy, VirtualCourtRoomType roomType);
 
-        Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);
+        Task TransferParticipantAsync(Guid conferenceId, Guid participantId, VirtualCourtRoomType fromRoom, VirtualCourtRoomType toRoom);
     }
 }

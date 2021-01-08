@@ -43,7 +43,7 @@ namespace VideoApi.AcceptanceTests.Steps
             {
                 ConferenceId = _context.Test.ConferenceResponse.Id,
                 RequestedBy = judge,
-                RoomType = RoomType.ConsultationRoom1
+                RoomType = VirtualCourtRoomType.JudgeJOH
             };
             _context.Request = _context.Post(HandleConsultationRequest, request);
         }

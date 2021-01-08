@@ -1,11 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -14,10 +14,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
-using VideoApi.Services;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Kinly;
-using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -36,12 +33,13 @@ namespace Video.API.Controllers
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             ILogger<ConsultationController> logger,
-            IVideoPlatformService videoPlatformService, IConsultationService _consultationService)
+            IVideoPlatformService videoPlatformService, IConsultationService consultationService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _logger = logger;
             _videoPlatformService = videoPlatformService;
+            _consultationService = consultationService;
         }
 
         /// <summary>
@@ -254,35 +252,49 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
-            var availableRoom = 1; //TODO: GetAvailableRoomByRoomType query to check if the type is live or created
-            
+            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH);
+            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
+            var room = listOfRooms.First(x => x.Type.Equals(request.RoomType));
+            var createRoomCommand = new CreateRoomCommand(request.ConferenceId, room.Label, room.Type);
+
             try
             {
-                if (availableRoom != null /*Created*/ || availableRoom != 1 /*Live*/)
+                if (room.Status != RoomStatus.Live)
                 {
                     await _consultationService.StartConsultationAsync(request.ConferenceId, request.RequestedBy, request.RoomType);
-                    //TODO: CreateRoomCommand using RoomType + RoomLabel and update RoomStatus to Created
+                    await _commandHandler.Handle(createRoomCommand);
+                    
+                    _logger.LogTrace("Room successfully created for Conference {conferenceId} with RoomId: {roomId}", 
+                        createRoomCommand.ConferenceId, createRoomCommand.NewRoomId);
                 }
                 else
                 {
-                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, RoomType.WaitingRoom, request.RoomType);
+                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, request.RoomType, room.Type);
                     _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, request.RoomType);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Failed to create a new consultation room: {ex.Message}");
-                //TODO: Update RoomStatus to Failed
+                return BadRequest(ex.Message);
+            }
+
+            var roomId = createRoomCommand.NewRoomId;
+            var roomParticipant = new RoomParticipant(roomId, request.RequestedBy);
+            var command = new AddRoomParticipantCommand(roomId, roomParticipant);
+            
+            try
+            {
+                await _commandHandler.Handle(command);
+                _logger.LogTrace("Room participant {roomParticipant} successfully added to RoomId: {roomId}", roomParticipant, roomId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to add participant to ro: {ex.Message}");
                 return BadRequest(ex.Message);
             }
             
-                //TODO: Add participant with Id and time using command AddRoomParticipantCommand
-            
-                //TODO: Set room status to 'Live' using UpdateRoomStatusCommand
-            
-                //TODO: Update Participant>CurrentRoom value to the roomId in response
-            
-                return Accepted();
+            return Accepted();
         }
         
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,

@@ -24,22 +24,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
         
         [Test]
-        public async Task Should_Return_BadRequest_When_RoomType_Is_Invalid()
+        public async Task Should_Return_BadRequest_When_VirtualCourtRoomType_Is_Invalid()
         {
             var request = RequestBuilder();
-            request.RoomType = (RoomType)50;
-
-            var result = await Controller.StartConsultationRequestAsync(request);
-            
-            var actionResult = result.As<BadRequestResult>();
-            actionResult.Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task Should_Return_BadRequest_When_Judge_Is_Being_Transferred_To_An_Admin_Room()
-        {
-            var request = RequestBuilder();
-            request.RoomType = RoomType.AdminRoom;
+            request.RoomType = (VirtualCourtRoomType)50;
 
             var result = await Controller.StartConsultationRequestAsync(request);
             
@@ -85,7 +73,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ConferenceId = TestConference.Id,
                 RequestedBy = TestConference.GetParticipants().First(x =>
                     x.UserRole.Equals(UserRole.Judge)).Id,
-                RoomType = RoomType.ConsultationRoom1
+                RoomType = VirtualCourtRoomType.JudgeJOH
             };
         }
     }

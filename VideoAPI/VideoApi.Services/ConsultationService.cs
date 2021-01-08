@@ -18,7 +18,7 @@ namespace VideoApi.Services
             _logger = logger;
         }
         
-        public async Task StartConsultationAsync(Guid conferenceId, Guid requestedBy, RoomType roomType)
+        public async Task StartConsultationAsync(Guid conferenceId, Guid requestedBy, VirtualCourtRoomType roomType)
         {
             _logger.LogTrace("Starting a consultation for ConferenceId: {conferenceId} requested by {requestedBy} with {roomType}",
                 conferenceId, requestedBy, roomType);
@@ -26,8 +26,6 @@ namespace VideoApi.Services
             try
             {
                 await _kinlyApiClient.CreateConsultationRoomAsync(roomType.ToString(), new CreateConsultationRoomParams {Room_label_prefix = "Enter prefix here"});
-                
-                //TODO: Change RoomStatus to "Created"
             }
             catch (Exception e)
             {
@@ -36,9 +34,9 @@ namespace VideoApi.Services
             }
         }
 
-        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom)
+        public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, VirtualCourtRoomType fromRoom, VirtualCourtRoomType toRoom)
         {
-            _logger.LogInformation(
+            _logger.LogTrace(
                 "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
                 participantId, fromRoom, toRoom, conferenceId);
 
@@ -48,8 +46,15 @@ namespace VideoApi.Services
                 To = toRoom.ToString(),
                 Part_id = participantId.ToString()
             };
-
-            return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
+            try
+            {
+                await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Unable to start a transfer participant: {participantId} for ConferenceId: {{conferenceId}}, with exception message: {{e}}", 
+                    participantId, conferenceId, e);
+            }
         }
     }
 }
