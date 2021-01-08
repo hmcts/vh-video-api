@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideoApi.DAL;
 
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    partial class VideoApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210105182710_Add_tables_Room_and_RoomParticipant")]
+    partial class Add_tables_Room_and_RoomParticipant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -385,6 +387,12 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("EnterTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LeaveTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("ParticipantId")
                         .HasColumnType("uniqueidentifier");
