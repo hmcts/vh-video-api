@@ -1,17 +1,24 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
+using VideoApi.DAL.Exceptions;
+using VideoApi.DAL.Queries;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
     public class StartConsultationRequestTests : ConsultationControllerTestBase
     {
 
+        private List<Room> _testRooms;
+        
         [Test]
         public async Task Should_Return_Accepted()
         {
@@ -36,28 +43,19 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
         
         [Test]
-        public async Task Should_Return_BadRequest_When_Conference_Does_Not_Exist()
+        public async Task Should_Return_NotFound_When_Conference_Does_Not_Exist()
         {
             var request = RequestBuilder();
             request.ConferenceId = Guid.NewGuid();
 
-            var result = await Controller.StartConsultationRequestAsync(request);
-            
-            var actionResult = result.As<BadRequestResult>();
-            actionResult.Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task Should_Return_Unauthorized_When_Requesting_Participant_Is_Not_A_Judge()
-        {
-            var request = RequestBuilder();
-            var representative = TestConference.GetParticipants().First(x =>
-                x.UserRole.Equals(UserRole.Representative));
-            request.RequestedBy = representative.Id;
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
+                    It.Is<GetAvailableRoomByRoomTypeQuery>(q => q.ConferenceId == request.ConferenceId)))
+                .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
             
             var result = await Controller.StartConsultationRequestAsync(request);
             
-            var actionResult = result.As<UnauthorizedResult>();
+            var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
         }
         
@@ -67,6 +65,16 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 Assert.Fail("No participants found in conference");
             }
+            
+            _testRooms = new List<Room>
+            {
+                new Room(TestConference.Id, "JohRoom1", VirtualCourtRoomType.JudgeJOH)
+            };
+            
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
+                    It.Is<GetAvailableRoomByRoomTypeQuery>(q => q.ConferenceId == TestConference.Id)))
+                .ReturnsAsync(_testRooms);
             
             return new StartConsultationRequest
             {

@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -244,7 +245,7 @@ namespace Video.API.Controllers
             return Accepted();
         }
 
-        [HttpPost("/consultations/start/{roomType}")]
+        [HttpPost("/consultations/start")]
         [SwaggerOperation(OperationId = "StartPrivateConsultationWithEndpoint")]
         [ProducesResponseType((int) HttpStatusCode.Accepted)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -252,25 +253,41 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
-            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH);
-            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
-            var room = listOfRooms.First(x => x.Type.Equals(request.RoomType));
-            var createRoomCommand = new CreateRoomCommand(request.ConferenceId, room.Label, room.Type);
+            Room room;
+            
+            try
+            {
+                var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, request.ConferenceId);
+                var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
+                room = listOfRooms.FirstOrDefault(x => x.Type.Equals(request.RoomType));
+                if (room == null)
+                {
+                    _logger.LogError("Room type does not exist");
+                    return BadRequest();
+                }
+            }
+            catch (ConferenceNotFoundException e)
+            {
+                _logger.LogError("Cannot start consultation for conference: {conferenceId} as it does not exist",
+                    request.ConferenceId);
+                return NotFound(e.Message);
+            }
 
             try
             {
-                if (room.Status != RoomStatus.Live)
+                if (room.Status == RoomStatus.Live)
+                {
+                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, request.RoomType, room.Type);
+                    _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, request.RoomType);
+                }
+                else
                 {
                     await _consultationService.StartConsultationAsync(request.ConferenceId, request.RequestedBy, request.RoomType);
+                    var createRoomCommand = new CreateRoomCommand(request.ConferenceId, room.Label, room.Type);
                     await _commandHandler.Handle(createRoomCommand);
                     
                     _logger.LogTrace("Room successfully created for Conference {conferenceId} with RoomId: {roomId}", 
                         createRoomCommand.ConferenceId, createRoomCommand.NewRoomId);
-                }
-                else
-                {
-                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, request.RoomType, room.Type);
-                    _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, request.RoomType);
                 }
             }
             catch (Exception ex)
@@ -279,7 +296,7 @@ namespace Video.API.Controllers
                 return BadRequest(ex.Message);
             }
 
-            var roomId = createRoomCommand.NewRoomId;
+            var roomId = room.Id;
             var roomParticipant = new RoomParticipant(roomId, request.RequestedBy);
             var command = new AddRoomParticipantCommand(roomId, roomParticipant);
             
@@ -290,7 +307,8 @@ namespace Video.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to add participant to ro: {ex.Message}");
+                _logger.LogError("Failed to add participant {roomParticipant} to room {roomId} with message: {ex.Message}", 
+                    roomParticipant, roomId, ex);
                 return BadRequest(ex.Message);
             }
             

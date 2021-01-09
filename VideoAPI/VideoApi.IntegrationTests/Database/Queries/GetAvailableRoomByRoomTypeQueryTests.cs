@@ -48,7 +48,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var command = new RemoveRoomParticipantCommand(participant.Id, roomSaved[0].Id);
             await _handlerUpdate.Handle(command);
 
-            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH);
+            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, seededConference.Id);
             var result = await _handler.Handle(query);
 
             result.Should().NotBeEmpty();
