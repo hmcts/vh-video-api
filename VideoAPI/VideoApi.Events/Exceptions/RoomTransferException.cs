@@ -7,12 +7,12 @@ namespace VideoApi.Events.Exceptions
     public class RoomTransferException : Exception
     {
         public RoomTransferException(RoomType roomFrom, RoomType roomTo) : base(
-            $"Unable to process TransferEvent from: {roomFrom}, to: {roomTo} to participant a status")
+            $"Unable to determine participant status from transferEvent - from: {roomFrom}, to: {roomTo}")
         {
         }
         
         public RoomTransferException(string roomFrom, string roomTo) : base(
-            $"Unable to process TransferEvent from: {roomFrom}, to: {roomTo} to participant a status")
+            $"Unable to determine participant status from transferEvent - from: {roomFrom}, to: {roomTo}")
         {
         }
     }

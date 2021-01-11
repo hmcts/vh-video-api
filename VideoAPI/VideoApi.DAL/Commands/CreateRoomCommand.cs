@@ -44,7 +44,7 @@ namespace VideoApi.DAL.Commands
 
             var room = new Room(command.ConferenceId, command.Label, command.Type);
 
-            await _context.Rooms.AddAsync(room);
+            _context.Rooms.Add(room);
 
             await _context.SaveChangesAsync();
 

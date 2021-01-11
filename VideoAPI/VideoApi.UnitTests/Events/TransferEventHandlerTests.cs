@@ -51,7 +51,7 @@ namespace VideoApi.UnitTests.Events
         }
 
         [Test]
-        public async Task Should_map_to_to_in_consultation_status_when_transfer_to_label_contains_consultation()
+        public async Task Should_map_to_in_consultation_status_when_transfer_to_label_contains_consultation()
         {
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
@@ -80,7 +80,7 @@ namespace VideoApi.UnitTests.Events
         }
         
         [Test]
-        public async Task Should_map_to_to_available_status_when_transfer_to_waiting_room_from_judge_consultation_room()
+        public async Task Should_map_to_available_status_when_transfer_to_waiting_room_from_judge_consultation_room()
         {
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);

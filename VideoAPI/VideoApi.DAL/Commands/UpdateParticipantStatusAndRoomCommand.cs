@@ -68,12 +68,12 @@ namespace VideoApi.DAL.Commands
             await _context.SaveChangesAsync();
         }
 
-        private void UpdateRoom(ParticipantState status, Room vRoom, Participant participant)
+        private void UpdateRoom(ParticipantState status, Room virtualRoom, Participant participant)
         {
-            var isDynamicConsultationRoom = vRoom != null;
+            var isDynamicConsultationRoom = virtualRoom != null;
             if (status == ParticipantState.InConsultation && isDynamicConsultationRoom)
             {
-                vRoom.AddParticipant(new RoomParticipant(participant.Id));
+                virtualRoom.AddParticipant(new RoomParticipant(participant.Id));
             }
 
             if (status != ParticipantState.InConsultation && participant.CurrentVirtualRoom != null)
