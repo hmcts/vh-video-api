@@ -32,7 +32,7 @@ namespace VideoApi.Services
             {
                 _logger.LogError("Unable to create a consultation room for VirtualCourtRoomId: {virtualCourtRoomId}, with exception message: {e}", 
                     virtualCourtRoomId, e);
-                return null;
+                return Task.FromResult<CreateConsultationRoomResponse>(null);
             }
         }
 

@@ -47,7 +47,21 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
         }
+        
+        [Test]
+        public void Should_Return_BadRequest_When_TransferParticipant_Fails()
+        {
+            var request = RequestBuilder();
+            request.RequestedBy = Guid.NewGuid();
 
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
+                    It.Is<GetAvailableRoomByRoomTypeQuery>(q => q.ConferenceId == request.ConferenceId)))
+                .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
+
+            Controller.Invoking(controller => controller.StartConsultationRequestAsync(request)).Equals(new BadRequestResult()).Should().BeTrue();
+        }
+        
         private StartConsultationRequest RequestBuilder()
         {
             if (TestConference.Participants == null)
