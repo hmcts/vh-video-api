@@ -36,5 +36,6 @@ namespace Testing.Common.Configuration
         public Conference YesterdayClosedConference { get; set; }
         public List<JudgeInHearingResponse> JudgeInHearings { get; set; }
         public List<string> CvpFileNamesOnStorage { get; set; }
+        public Room Room { get; set; }
     }
 }

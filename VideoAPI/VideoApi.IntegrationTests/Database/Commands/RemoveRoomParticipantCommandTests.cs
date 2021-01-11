@@ -8,7 +8,6 @@ using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
@@ -33,7 +32,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var participant = seededConference.Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge);
+            var participant = seededConference.Participants.First(x => x.UserRole == UserRole.Judge);
             var room = await TestDataManager.SeedRoom(new Room(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH));
             _newRoomId = room.Id;
 

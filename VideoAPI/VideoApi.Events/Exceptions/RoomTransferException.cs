@@ -10,5 +10,10 @@ namespace VideoApi.Events.Exceptions
             $"Unable to process TransferEvent from: {roomFrom}, to: {roomTo} to participant a status")
         {
         }
+        
+        public RoomTransferException(string roomFrom, string roomTo) : base(
+            $"Unable to process TransferEvent from: {roomFrom}, to: {roomTo} to participant a status")
+        {
+        }
     }
 }

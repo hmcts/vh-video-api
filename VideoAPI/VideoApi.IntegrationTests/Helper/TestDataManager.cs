@@ -181,7 +181,7 @@ namespace VideoApi.IntegrationTests.Helper
         public async Task<Room> SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
-            var room = db.Rooms.Include("RoomParticipants").Where(x => x.Id == roomId).FirstOrDefault();
+            var room = db.Rooms.Include(x => x.RoomParticipants).First(x => x.Id == roomId);
             room.AddParticipant(roomParticipant);
             await db.SaveChangesAsync();
             return room;

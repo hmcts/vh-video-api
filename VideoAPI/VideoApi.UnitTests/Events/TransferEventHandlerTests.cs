@@ -35,6 +35,9 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = participantForEvent.Id,
                 TransferFrom = from,
                 TransferTo = to,
+                TransferredFromRoomLabel = from.ToString(),
+                TransferredToRoomLabel = to.ToString(),
+                
                 TimeStampUtc = DateTime.UtcNow
             };
             await _sut.HandleAsync(callbackEvent);
@@ -47,6 +50,64 @@ namespace VideoApi.UnitTests.Events
                     command.Room == to)), Times.Once);
         }
 
+        [Test]
+        public async Task Should_map_to_to_in_consultation_status_when_transfer_to_label_contains_consultation()
+        {
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
+            
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Transfer,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
+                TransferFrom = RoomType.WaitingRoom,
+                TransferTo = null,
+                TransferredFromRoomLabel = RoomType.WaitingRoom.ToString(),
+                TransferredToRoomLabel = "JudgeConsultationRoom3",
+                TimeStampUtc = DateTime.UtcNow
+            };
+            await _sut.HandleAsync(callbackEvent);
+
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.InConsultation && 
+                    command.Room == null && 
+                    command.RoomLabel == callbackEvent.TransferredToRoomLabel)), Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_map_to_to_available_status_when_transfer_to_waiting_room_from_judge_consultation_room()
+        {
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
+
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Transfer,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
+                TransferFrom = null,
+                TransferTo = RoomType.WaitingRoom,
+                TransferredFromRoomLabel = "JudgeConsultationRoom3",
+                TransferredToRoomLabel = RoomType.WaitingRoom.ToString(),
+                TimeStampUtc = DateTime.UtcNow
+            };
+            await _sut.HandleAsync(callbackEvent);
+
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.Available && 
+                    command.Room == RoomType.WaitingRoom && 
+                    command.RoomLabel == RoomType.WaitingRoom.ToString())), Times.Once);
+        }
+        
         [Test]
         public void Should_throw_exception_when_transfer_cannot_be_mapped_to_participant_status()
         {
@@ -61,6 +122,8 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = participantForEvent.Id,
                 TransferFrom = RoomType.WaitingRoom,
                 TransferTo = RoomType.WaitingRoom,
+                TransferredFromRoomLabel = RoomType.WaitingRoom.ToString(),
+                TransferredToRoomLabel = RoomType.WaitingRoom.ToString(),
                 TimeStampUtc = DateTime.UtcNow
             };
 

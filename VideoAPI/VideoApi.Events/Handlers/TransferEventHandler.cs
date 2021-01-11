@@ -29,10 +29,10 @@ namespace VideoApi.Events.Handlers
 
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
-                    callbackEvent.TransferTo);
+                    callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
             await CommandHandler.Handle(command);
 
-            if (participantStatus == ParticipantState.InConsultation)
+            if (participantStatus == ParticipantState.InConsultation && callbackEvent.TransferTo.HasValue)
             {
                 _roomReservationService.RemoveRoomReservation(SourceConference.Id, (RoomType)callbackEvent.TransferTo);
             }
@@ -40,13 +40,20 @@ namespace VideoApi.Events.Handlers
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
+            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
+            {
+                return ParticipantState.InConsultation;
+            }
+            
+            
             if (callbackEvent.TransferFrom == RoomType.WaitingRoom &&
                 (callbackEvent.TransferTo == RoomType.ConsultationRoom1 ||
                  callbackEvent.TransferTo == RoomType.ConsultationRoom2))
                 return ParticipantState.InConsultation;
 
             if ((callbackEvent.TransferFrom == RoomType.ConsultationRoom1 ||
-                 callbackEvent.TransferFrom == RoomType.ConsultationRoom2) &&
+                 callbackEvent.TransferFrom == RoomType.ConsultationRoom2 || 
+                 callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation")) &&
                 callbackEvent.TransferTo == RoomType.WaitingRoom)
                 return ParticipantState.Available;
 
@@ -62,8 +69,8 @@ namespace VideoApi.Events.Handlers
                 case RoomType.HearingRoom when callbackEvent.TransferTo == RoomType.WaitingRoom:
                     return ParticipantState.Available;
                 default:
-                    throw new RoomTransferException(callbackEvent.TransferFrom.GetValueOrDefault(),
-                        callbackEvent.TransferTo.GetValueOrDefault());
+                    throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel,
+                        callbackEvent.TransferredToRoomLabel);
             }
         }
     }
