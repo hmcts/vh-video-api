@@ -266,14 +266,7 @@ namespace Video.API.Controllers
                 room = listOfRooms.FirstOrDefault(x => x.Type.Equals(request.RoomType));
                 if (room == null)
                 {
-                    var consultationRoomParams = new CreateConsultationRoomParams
-                    {
-                        Room_label_prefix = "Judge"
-                    };
-                    var createConsultationRoomResponse = await _consultationService.CreateConsultationRoomAsync(request.ConferenceId.ToString(), consultationRoomParams);
-                    var createRoomCommand = new CreateRoomCommand(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
-                    await _commandHandler.Handle(createRoomCommand);
-                    
+                    var createConsultationRoomResponse = await CreateNewConsultationRoom(request);
                     room = new Room(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
                 }
             }
@@ -309,6 +302,19 @@ namespace Video.API.Controllers
                     "Conference: {conferenceId} - Attempting to start private consultation between {requestedById} and {requestedForId}", conference.Id, requestedBy.Id, requestedFor.Id);
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
+        }
+
+        private async Task<CreateConsultationRoomResponse> CreateNewConsultationRoom(StartConsultationRequest request)
+        {
+            var consultationRoomParams = new CreateConsultationRoomParams
+            {
+                Room_label_prefix = "Judge"
+            };
+            var createConsultationRoomResponse = await _consultationService.CreateConsultationRoomAsync(request.ConferenceId.ToString(), consultationRoomParams);
+            var createRoomCommand = new CreateRoomCommand(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
+            await _commandHandler.Handle(createRoomCommand);
+
+            return createConsultationRoomResponse;
         }
     }
 }
