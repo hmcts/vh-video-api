@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services
 {
@@ -18,23 +19,24 @@ namespace VideoApi.Services
             _logger = logger;
         }
         
-        public async Task StartConsultationAsync(Guid conferenceId, Guid requestedBy, VirtualCourtRoomType roomType)
+        public Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId, CreateConsultationRoomParams createConsultationRoomParams)
         {
-            _logger.LogTrace("Starting a consultation for ConferenceId: {conferenceId} requested by {requestedBy} with {roomType}",
-                conferenceId, requestedBy, roomType);
+            _logger.LogTrace("Creating a consultation for VirtualCourtRoomId: {virtualCourtRoomId} with prefix {createConsultationRoomParamsPrefix}",
+                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix);
 
             try
             {
-                await _kinlyApiClient.CreateConsultationRoomAsync(roomType.ToString(), new CreateConsultationRoomParams {Room_label_prefix = "Enter prefix here"});
+                return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             }
-            catch (Exception e)
+            catch (KinlyApiException e)
             {
-                _logger.LogError("Unable to start a consultation for ConferenceId: {conferenceId}, with exception message: {e}", 
-                    conferenceId, e);
+                _logger.LogError("Unable to create a consultation room for VirtualCourtRoomId: {virtualCourtRoomId}, with exception message: {e}", 
+                    virtualCourtRoomId, e);
+                return null;
             }
         }
 
-        public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, VirtualCourtRoomType fromRoom, VirtualCourtRoomType toRoom)
+        public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
         {
             _logger.LogTrace(
                 "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
@@ -42,8 +44,8 @@ namespace VideoApi.Services
 
             var request = new TransferParticipantParams
             {
-                From = fromRoom.ToString(),
-                To = toRoom.ToString(),
+                From = fromRoom,
+                To = toRoom,
                 Part_id = participantId.ToString()
             };
             try

@@ -1,0 +1,36 @@
+using System;
+using System.Threading.Tasks;
+using FluentAssertions;
+using NUnit.Framework;
+using Video.API.Validations;
+using VideoApi.Contract.Requests;
+using VideoApi.Domain.Enums;
+
+namespace VideoApi.UnitTests.Validation
+{
+    public class StartConsultationRequestValidationTests
+    {
+        private StartConsultationRequestValidation _validator;
+        
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _validator = new StartConsultationRequestValidation();
+        }
+
+        [Test]
+        public async Task should_pass_validation()
+        {
+            var request = new StartConsultationRequest
+            {
+                ConferenceId = Guid.NewGuid(),
+                RequestedBy = Guid.NewGuid(),
+                RoomType = VirtualCourtRoomType.JudgeJOH
+            };
+            
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeTrue();
+        }
+    }
+}

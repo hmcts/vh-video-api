@@ -16,7 +16,10 @@ namespace Video.API.Swagger
                 .Any(filter => filter is IAllowAnonymousFilter);
             
             if (!isAuthorized || allowAnonymous) return;
-            operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
+            if (!operation.Responses.ContainsKey("401"))
+            {
+                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });   
+            }
         }
     }
 }

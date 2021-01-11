@@ -31,18 +31,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
         
         [Test]
-        public async Task Should_Return_BadRequest_When_VirtualCourtRoomType_Is_Invalid()
-        {
-            var request = RequestBuilder();
-            request.RoomType = (VirtualCourtRoomType)50;
-
-            var result = await Controller.StartConsultationRequestAsync(request);
-            
-            var actionResult = result.As<BadRequestResult>();
-            actionResult.Should().NotBeNull();
-        }
-        
-        [Test]
         public async Task Should_Return_NotFound_When_Conference_Does_Not_Exist()
         {
             var request = RequestBuilder();

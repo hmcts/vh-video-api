@@ -359,7 +359,7 @@ namespace VideoApi.IntegrationTests.Steps
         
         private void SerialiseStartConsultationRequest(StartConsultationRequest request)
         {
-            _context.Uri = ConsultationEndpoints.EndpointConsultationRequest;
+            _context.Uri = ConsultationEndpoints.StartPrivateConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");

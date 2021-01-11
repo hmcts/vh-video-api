@@ -130,13 +130,13 @@ namespace VideoApi.Services.Kinly
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams);
+        System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams, System.Threading.CancellationToken cancellationToken);
     
         /// <returns>Health Check</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
@@ -965,7 +965,7 @@ namespace VideoApi.Services.Kinly
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams)
+        public System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams)
         {
             return CreateConsultationRoomAsync(virtual_courtroom_id, createConsultationRoomParams, System.Threading.CancellationToken.None);
         }
@@ -974,7 +974,7 @@ namespace VideoApi.Services.Kinly
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
                 throw new System.ArgumentNullException("virtual_courtroom_id");
@@ -992,6 +992,7 @@ namespace VideoApi.Services.Kinly
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -1011,9 +1012,10 @@ namespace VideoApi.Services.Kinly
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "202") 
+                        if (status_ == "200") 
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<CreateConsultationRoomResponse>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
                         }
                         else
                         if (status_ == "400") 
@@ -1027,6 +1029,8 @@ namespace VideoApi.Services.Kinly
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
                             throw new KinlyApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
+            
+                        return default(CreateConsultationRoomResponse);
                     }
                     finally
                     {
@@ -1484,6 +1488,24 @@ namespace VideoApi.Services.Kinly
     
         [System.Runtime.Serialization.EnumMember(Value = @"UNHEALTHY")]
         UNHEALTHY = 1,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class CreateConsultationRoomResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("room_label", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Room_label { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static CreateConsultationRoomResponse FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<CreateConsultationRoomResponse>(data);
+        }
     
     }
     

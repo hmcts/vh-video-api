@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,6 +17,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -246,24 +248,33 @@ namespace Video.API.Controllers
         }
 
         [HttpPost("/consultations/start")]
-        [SwaggerOperation(OperationId = "StartPrivateConsultationWithEndpoint")]
+        [SwaggerOperation(OperationId = "StartPrivateConsultation")]
         [ProducesResponseType((int) HttpStatusCode.Accepted)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
+            _logger.LogDebug("StartJudgeJohConsultationRequest");
             Room room;
             
             try
             {
-                var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, request.ConferenceId);
+                var query = new GetAvailableRoomByRoomTypeQuery(request.RoomType, request.ConferenceId);
                 var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
                 room = listOfRooms.FirstOrDefault(x => x.Type.Equals(request.RoomType));
                 if (room == null)
                 {
-                    _logger.LogError("Room type does not exist");
-                    return BadRequest();
+                    var consultationRoomParams = new CreateConsultationRoomParams
+                    {
+                        Room_label_prefix = "Judge"
+                    };
+                    var createConsultationRoomResponse = await _consultationService.CreateConsultationRoomAsync(request.ConferenceId.ToString(), consultationRoomParams);
+                    var createRoomCommand = new CreateRoomCommand(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
+                    await _commandHandler.Handle(createRoomCommand);
+                    
+                    room = new Room(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
                 }
             }
             catch (ConferenceNotFoundException e)
@@ -275,43 +286,17 @@ namespace Video.API.Controllers
 
             try
             {
-                if (room.Status == RoomStatus.Live)
-                {
-                    await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, request.RoomType, room.Type);
-                    _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, request.RoomType);
-                }
-                else
-                {
-                    await _consultationService.StartConsultationAsync(request.ConferenceId, request.RequestedBy, request.RoomType);
-                    var createRoomCommand = new CreateRoomCommand(request.ConferenceId, room.Label, room.Type);
-                    await _commandHandler.Handle(createRoomCommand);
-                    
-                    _logger.LogTrace("Room successfully created for Conference {conferenceId} with RoomId: {roomId}", 
-                        createRoomCommand.ConferenceId, createRoomCommand.NewRoomId);
-                }
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(request.ConferenceId));
+                var participant = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
+                await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, participant.CurrentRoom.ToString(), room.Label);
+                _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, request.RoomType);
             }
-            catch (Exception ex)
+            catch (KinlyApiException ex)
             {
-                _logger.LogError($"Failed to create a new consultation room: {ex.Message}");
+                _logger.LogError("Failed to transfer participant {ParticipantId} to room label {roomLabel} with {ex.Message}", request.RequestedBy, room.Label, ex);
                 return BadRequest(ex.Message);
             }
 
-            var roomId = room.Id;
-            var roomParticipant = new RoomParticipant(roomId, request.RequestedBy);
-            var command = new AddRoomParticipantCommand(roomId, roomParticipant);
-            
-            try
-            {
-                await _commandHandler.Handle(command);
-                _logger.LogTrace("Room participant {roomParticipant} successfully added to RoomId: {roomId}", roomParticipant, roomId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Failed to add participant {roomParticipant} to room {roomId} with message: {ex.Message}", 
-                    roomParticipant, roomId, ex);
-                return BadRequest(ex.Message);
-            }
-            
             return Accepted();
         }
         
