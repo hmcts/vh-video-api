@@ -1,10 +1,11 @@
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -26,7 +27,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new GetAvailableRoomByRoomTypeQueryHandler(context);
             _handlerUpdate = new RemoveRoomParticipantCommandHandler(context);
-
         }
 
         [Test]
@@ -40,7 +40,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var listRooms = GetListRoom(_newConferenceId);
             var roomSaved = await TestDataManager.SeedRooms(listRooms);
             await TestDataManager.SeedRoomWithRoomParticipant(roomSaved[0].Id, new RoomParticipant(roomSaved[0].Id, participant.Id));
-           
 
             _expectedIds = new List<long> { roomSaved[1].Id, roomSaved[2].Id, roomSaved[3].Id };
             _notExpectedIds = new List<long> { roomSaved[0].Id, roomSaved[4].Id };
@@ -58,6 +57,15 @@ namespace VideoApi.IntegrationTests.Database.Queries
             result.Any(x => x.Id == _notExpectedIds[0]).Should().Be(false);
             result.Any(x => x.Id == _notExpectedIds[1]).Should().Be(false);
 
+            await TearDown();
+        }
+
+        [Test]
+        public void Should_Throw_Conference_Not_Found_Exception_If_Conference_Does_Not_Exist()
+        {
+            var fakeConferenceId = Guid.NewGuid();
+            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, fakeConferenceId);
+            _handler.Invoking(x => x.Handle(query)).Should().ThrowAsync<ConferenceNotFoundException>();
         }
 
         private List<Room> GetListRoom(Guid conferenceId)
@@ -71,9 +79,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 new Room(conferenceId, "RoomTest", VirtualCourtRoomType.Participant),
             };
         }
-
-        [TearDown]
-        public async Task TearDown()
+        
+        private async Task TearDown()
         {
             TestContext.WriteLine("Cleaning rooms for GetAvailableRoomByRoomTypeQuery");
             await TestDataManager.RemoveRooms(_newConferenceId);

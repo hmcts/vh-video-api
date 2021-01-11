@@ -10,6 +10,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -46,7 +47,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
         }
-        
+
         private StartConsultationRequest RequestBuilder()
         {
             if (TestConference.Participants == null)
