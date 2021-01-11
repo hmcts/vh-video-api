@@ -45,5 +45,11 @@
   </ItemGroup>
     <ItemGroup>
         <Content Include="Features\*.feature" />
+        <Content Include="Features\Consultations\StartConsultation.feature" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Features\Consultations\StartConsultation.feature.cs">
+        <DependentUpon>StartConsultation.feature</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

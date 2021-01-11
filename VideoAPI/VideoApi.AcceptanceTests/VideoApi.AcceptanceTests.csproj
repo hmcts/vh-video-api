@@ -71,10 +71,4 @@
         <TargetPath>appsettings.test2.json</TargetPath>
     </ContentWithTargetPath>
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Features\Consultation.feature.cs">
-      <DependentUpon>Consultation.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
 </Project>

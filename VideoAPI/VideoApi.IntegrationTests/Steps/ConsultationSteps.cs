@@ -308,6 +308,23 @@ namespace VideoApi.IntegrationTests.Steps
             SerialiseEndpointConsultationRequest(request);
         }
         
+        [Given(@"I have a valid start consultation request")]
+        public void GivenIHaveAValidStartConsultationRequest()
+        {
+            var conference = _context.Test.Conference;
+            var judge =
+                _context.Test.Conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+
+            var request = new StartConsultationRequest()
+            {
+                ConferenceId = conference.Id,
+                RequestedBy = judge.Id,
+                RoomType = VirtualCourtRoomType.JudgeJOH
+            };
+
+            SerialiseStartConsultationRequest(request);
+        }
+        
         private void SerialiseConsultationRequest(ConsultationRequest request)
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
@@ -333,6 +350,14 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         private void SerialiseEndpointConsultationRequest(EndpointConsultationRequest request)
+        {
+            _context.Uri = ConsultationEndpoints.EndpointConsultationRequest;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        private void SerialiseStartConsultationRequest(StartConsultationRequest request)
         {
             _context.Uri = ConsultationEndpoints.EndpointConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
