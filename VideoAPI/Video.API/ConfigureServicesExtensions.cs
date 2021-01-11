@@ -108,6 +108,7 @@ namespace Video.API
             services.AddTransient<KinlyApiTokenDelegatingHandler>();
             services.AddTransient<KinlySelfTestApiDelegatingHandler>();
             services.AddSingleton<IPollyRetryService, PollyRetryService>();
+
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);
@@ -116,6 +117,7 @@ namespace Video.API
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
+                services.AddScoped<IConsultationService, ConsultationServiceStub>();
             }
             else
             {
@@ -150,6 +152,7 @@ namespace Video.API
 
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
+                services.AddScoped<IConsultationService, ConsultationService>();
             }
 
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();

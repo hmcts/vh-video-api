@@ -21,8 +21,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         protected Mock<IQueryHandler> QueryHandlerMock;
         protected Mock<ILogger<ConsultationController>> MockLogger;
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
+        protected Mock<IConsultationService> ConsultationServiceMock;
 
         protected VideoApi.Domain.Conference TestConference;
+        protected VideoApi.Domain.Room TestRoom;
 
         [SetUp]
         public void Setup()
@@ -31,6 +33,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             CommandHandlerMock = new Mock<ICommandHandler>();
             MockLogger = new Mock<ILogger<ConsultationController>>();
             VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
+            ConsultationServiceMock = new Mock<IConsultationService>();
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -42,17 +45,26 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@test.hearings.com")
                 .Build();
 
+            TestRoom = new RoomBuilder(TestConference.Id)
+                .WithParticipants(2).Build();
+
+
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
                 .ReturnsAsync(TestConference);
+
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetRoomByIdQuery, VideoApi.Domain.Room>(
+                    It.Is<GetRoomByIdQuery>(r => r.RoomId == TestRoom.Id)))
+                .ReturnsAsync(TestRoom);
 
             CommandHandlerMock
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
                 .Returns(Task.FromResult(default(object)));
 
             Controller = new ConsultationController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                MockLogger.Object, VideoPlatformServiceMock.Object);
+                MockLogger.Object, VideoPlatformServiceMock.Object, ConsultationServiceMock.Object);
         }
     }
 }
