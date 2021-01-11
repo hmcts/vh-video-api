@@ -49,17 +49,20 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
         
         [Test]
-        public void Should_Return_BadRequest_When_TransferParticipant_Fails()
+        public async Task Should_Return_BadRequest_When_Participant_Cannot_Be_Found()
         {
             var request = RequestBuilder();
             request.RequestedBy = Guid.NewGuid();
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
-                    It.Is<GetAvailableRoomByRoomTypeQuery>(q => q.ConferenceId == request.ConferenceId)))
-                .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
+                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == request.ConferenceId)))
+                .ThrowsAsync(new ParticipantNotFoundException(request.RequestedBy));
 
-            Controller.Invoking(controller => controller.StartConsultationRequestAsync(request)).Equals(new BadRequestResult()).Should().BeTrue();
+            var result = await Controller.StartConsultationRequestAsync(request);
+            
+            var actionResult = result.As<NotFoundObjectResult>();
+            actionResult.Should().NotBeNull();
         }
         
         private StartConsultationRequest RequestBuilder()

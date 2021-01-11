@@ -258,6 +258,7 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug("StartJudgeJohConsultationRequest");
             Room room;
+            Participant participant;
             
             try
             {
@@ -272,7 +273,7 @@ namespace Video.API.Controllers
             }
             catch (ConferenceNotFoundException e)
             {
-                _logger.LogError("Cannot start consultation for conference: {conferenceId} as it does not exist",
+                _logger.LogError("Cannot create consultation for conference: {conferenceId} as the conference does not exist",
                     request.ConferenceId);
                 return NotFound(e.Message);
             }
@@ -280,15 +281,17 @@ namespace Video.API.Controllers
             try
             {
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(request.ConferenceId));
-                var participant = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
-                await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, participant.CurrentRoom.ToString(), room.Label);
-                _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomType}", request.RequestedBy, request.RoomType);
+                participant = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
             }
-            catch (KinlyApiException ex)
+            catch (ParticipantNotFoundException e)
             {
-                _logger.LogError("Failed to transfer participant {ParticipantId} to room label {roomLabel} with {ex.Message}", request.RequestedBy, room.Label, ex);
-                return BadRequest(ex.Message);
+                _logger.LogError("Cannot create consultation with participant: {participantId} as the conference does not exist",
+                    request.RequestedBy);
+                return NotFound(e.Message);
             }
+
+            await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, participant.CurrentRoom.ToString(), room.Label);
+            _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomLabel}", request.RequestedBy, room.Label);
 
             return Accepted();
         }
