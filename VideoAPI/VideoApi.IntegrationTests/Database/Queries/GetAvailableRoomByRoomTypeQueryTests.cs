@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
@@ -15,7 +16,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
     public class GetAvailableRoomByRoomTypeQueryTests : DatabaseTestsBase
     {
         private GetAvailableRoomByRoomTypeQueryHandler _handler;
-        private RemoveRoomParticipantCommandHandler _handlerUpdate;
         private Guid _newConferenceId;
         private List<long> _expectedIds;
         private List<long> _notExpectedIds;
@@ -25,7 +25,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new GetAvailableRoomByRoomTypeQueryHandler(context);
-            _handlerUpdate = new RemoveRoomParticipantCommandHandler(context);
 
         }
 
@@ -35,18 +34,21 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var participant = seededConference.Participants.FirstOrDefault(x => x.UserRole == UserRole.Judge);
+            var participant = seededConference.Participants.First(x => x.UserRole == UserRole.Judge);
 
             var listRooms = GetListRoom(_newConferenceId);
             var roomSaved = await TestDataManager.SeedRooms(listRooms);
-            await TestDataManager.SeedRoomWithRoomParticipant(roomSaved[0].Id, new RoomParticipant(roomSaved[0].Id, participant.Id));
+            await TestDataManager.SeedRoomWithRoomParticipant(roomSaved[0].Id, new RoomParticipant(participant.Id));
            
 
             _expectedIds = new List<long> { roomSaved[1].Id, roomSaved[2].Id, roomSaved[3].Id };
             _notExpectedIds = new List<long> { roomSaved[0].Id, roomSaved[4].Id };
 
-            var command = new RemoveRoomParticipantCommand(participant.Id, roomSaved[0].Id);
-            await _handlerUpdate.Handle(command);
+            await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
+            
+            var roomToUpdate = await db.Rooms.Include(x=> x.RoomParticipants).SingleAsync(x => x.Id == roomSaved[0].Id);
+            roomToUpdate.RemoveParticipant(new RoomParticipant(participant.Id));
+            await db.SaveChangesAsync();
 
             var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH);
             var result = await _handler.Handle(query);

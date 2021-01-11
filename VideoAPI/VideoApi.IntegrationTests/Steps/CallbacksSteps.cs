@@ -63,7 +63,7 @@ namespace VideoApi.IntegrationTests.Steps
             var judge = conference.Participants.Single(x => x.IsJudge());
 
             var dbRoom = await db.Rooms.Include(x => x.RoomParticipants).SingleAsync(x=> x.Label == room.Label);
-            dbRoom.AddParticipant(new RoomParticipant(dbRoom.Id, judge.Id));
+            dbRoom.AddParticipant(new RoomParticipant(judge.Id));
             var record = await db.SaveChangesAsync();
             record.Should().BePositive();
         }

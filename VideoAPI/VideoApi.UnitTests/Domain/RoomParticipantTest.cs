@@ -11,9 +11,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_create_roomParticipant()
         {
             var participantId = Guid.NewGuid();
-            var roomId = 1;
-            var roomParticipant = new RoomParticipant(roomId, participantId);
-            roomParticipant.RoomId.Should().Be(roomId);
+            var roomParticipant = new RoomParticipant(participantId);
             roomParticipant.ParticipantId.Should().Be(participantId);
         }
     }

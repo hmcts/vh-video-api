@@ -73,12 +73,12 @@ namespace VideoApi.DAL.Commands
             var isDynamicConsultationRoom = vRoom != null;
             if (status == ParticipantState.InConsultation && isDynamicConsultationRoom)
             {
-                vRoom.AddParticipant(new RoomParticipant(vRoom.Id, participant.Id));
+                vRoom.AddParticipant(new RoomParticipant(participant.Id));
             }
 
             if (status != ParticipantState.InConsultation && participant.CurrentVirtualRoom != null)
             {
-                participant.CurrentVirtualRoom.RemoveParticipant(new RoomParticipant(vRoom.Id, participant.Id));
+                participant.CurrentVirtualRoom.RemoveParticipant(new RoomParticipant(participant.Id));
             }
         }
     }
