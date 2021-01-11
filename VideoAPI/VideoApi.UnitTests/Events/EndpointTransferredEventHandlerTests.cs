@@ -34,6 +34,8 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = endpointForEvent.Id,
                 TransferFrom = from,
                 TransferTo = to,
+                TransferredFromRoomLabel = from.ToString(),
+                TransferredToRoomLabel = to.ToString(),
                 TimeStampUtc = DateTime.UtcNow
             };
             await _sut.HandleAsync(callbackEvent);
@@ -60,6 +62,8 @@ namespace VideoApi.UnitTests.Events
                 ParticipantId = endpointForEvent.Id,
                 TransferFrom = RoomType.WaitingRoom,
                 TransferTo = RoomType.WaitingRoom,
+                TransferredFromRoomLabel = RoomType.WaitingRoom.ToString(),
+                TransferredToRoomLabel = RoomType.WaitingRoom.ToString(),
                 TimeStampUtc = DateTime.UtcNow
             };
 

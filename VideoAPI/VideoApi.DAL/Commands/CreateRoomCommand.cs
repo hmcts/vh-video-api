@@ -14,7 +14,6 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; }
         public string Label { get; }
         public VirtualCourtRoomType Type { get; }
-        public RoomStatus Status { get; }
         public long NewRoomId { get; set; }
 
         public CreateRoomCommand(Guid conferenceId, string label, VirtualCourtRoomType type)
@@ -45,7 +44,7 @@ namespace VideoApi.DAL.Commands
 
             var room = new Room(command.ConferenceId, command.Label, command.Type);
 
-            _context.Rooms.Add(room);
+            await _context.Rooms.AddAsync(room);
 
             await _context.SaveChangesAsync();
 

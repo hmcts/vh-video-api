@@ -28,7 +28,7 @@ namespace VideoApi.Events.Handlers
             var participantState = ParticipantState.Disconnected;
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantState,
-                    null);
+                    null, null);
             await CommandHandler.Handle(command);
             if (SourceConference.State != ConferenceState.Closed)
             {

@@ -29,7 +29,7 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AddRoomParticipantCommand command)
         {
-            var room = await _context.Rooms.Include("RoomParticipants")
+            var room = await _context.Rooms.Include(x=> x.RoomParticipants)
                 .SingleOrDefaultAsync(x => x.Id == command.RoomId);
 
             if (room == null)
