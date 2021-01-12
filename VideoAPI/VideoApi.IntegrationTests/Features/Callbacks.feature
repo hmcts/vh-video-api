@@ -22,6 +22,23 @@ Feature: Callbacks
     And the error response message should also contain 'EventId is required'
     And the error response message should also contain 'EventType is required'
 
+  Scenario: Transfer event for judge into consultation room
+    Given I have a conference
+    And I have a judge consultation room
+    And I have a transfer judge into consultation room event
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the judge should be in the consultation room
+
+  Scenario: Transfer event for judge out of consultation room
+    Given I have a conference
+    And I have a judge consultation room
+    And the judge is in the consultation room
+    And I have a transfer judge out of a consultation room event
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the judge should be in the waiting room
+    
   Scenario Outline: Should accept and process a conference event request
     Given I have a conference
     And I have a valid conference event request for event type <EventType>

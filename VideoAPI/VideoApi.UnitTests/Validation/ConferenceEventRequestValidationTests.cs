@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Validation
         {
             var request = BuildRequest();
             request.TransferFrom = null;
-            request.TransferTo = RoomType.WaitingRoom;
+            request.TransferTo = RoomType.WaitingRoom.ToString();
 
             var result = await _validator.ValidateAsync(request);
 
@@ -155,8 +155,8 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.ParticipantId = Guid.NewGuid().ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = EventType.Transfer)
-                .With(x => x.TransferFrom = RoomType.WaitingRoom)
-                .With(x => x.TransferTo = RoomType.ConsultationRoom1)
+                .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
+                .With(x => x.TransferTo = RoomType.ConsultationRoom1.ToString())
                 .With(x => x.Phone = null)
                 .Build();
             return request;

@@ -5,11 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Extensions;
+using Video.API.Mappings;
 using VideoApi.Contract.Requests;
-using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Events.Handlers.Core;
-using VideoApi.Events.Models;
 
 namespace Video.API.Controllers
 {
@@ -43,13 +42,9 @@ namespace Video.API.Controllers
         public async Task<IActionResult> PostEventAsync(ConferenceEventRequest request)
         {
             Guid.TryParse(request.ConferenceId, out var conferenceId);
+            Guid.TryParse(request.ParticipantId, out var participantId);
 
-            var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,
-                request.TimeStampUtc, request.TransferFrom, request.TransferTo, request.Reason, request.Phone);
-            if (Guid.TryParse(request.ParticipantId, out var participantId))
-            {
-                command.ParticipantId = participantId;
-            }
+            var command = EventRequestMapper.MapEventRequestToEventCommand(conferenceId, request);
 
             _logger.LogWarning("Handling {ConferenceEventRequest}", nameof(ConferenceEventRequest));
             
@@ -61,18 +56,7 @@ namespace Video.API.Controllers
                 return NoContent();
             }
 
-            var callbackEvent = new CallbackEvent
-            {
-                EventId = request.EventId,
-                EventType = request.EventType,
-                ConferenceId = conferenceId,
-                Reason = request.Reason,
-                TransferTo = request.TransferTo,
-                TransferFrom = request.TransferFrom,
-                TimeStampUtc = request.TimeStampUtc,
-                ParticipantId = participantId,
-                Phone = request.Phone
-            };
+            var callbackEvent = EventRequestMapper.MapEventRequestToEventHandlerDto(conferenceId, participantId, request);
             await _eventHandlerFactory.Get(request.EventType).HandleAsync(callbackEvent);
             return NoContent();
         }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideoApi.DAL;
 
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    partial class VideoApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210108162946_AddTansferRoomLabelToEvent")]
+    partial class AddTansferRoomLabelToEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -400,7 +402,7 @@ namespace VideoApi.DAL.Migrations
                     b.Property<Guid>("ParticipantId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("RoomId")
+                    b.Property<long>("RoomId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -554,7 +556,8 @@ namespace VideoApi.DAL.Migrations
                     b.HasOne("VideoApi.Domain.Room", null)
                         .WithMany("RoomParticipants")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

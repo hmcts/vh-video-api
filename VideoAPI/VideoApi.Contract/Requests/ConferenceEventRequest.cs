@@ -35,14 +35,12 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Room from where the participant is transferred from.
         /// </summary>
-        [EnumDataType(typeof(RoomType))]
-        public RoomType? TransferFrom { get; set; }
+        public string TransferFrom { get; set; }
 
         /// <summary>
         /// Room to where the participant is transferred to.
         /// </summary>
-        [EnumDataType(typeof(RoomType))]
-        public RoomType? TransferTo { get; set; }
+        public string TransferTo { get; set; }
 
         /// <summary>
         /// Event reason

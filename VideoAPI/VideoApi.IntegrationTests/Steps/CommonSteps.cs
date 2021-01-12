@@ -522,6 +522,15 @@ namespace VideoApi.IntegrationTests.Steps
             }
         }
 
+        [Given(@"I have a judge consultation room")]
+        public async Task GivenIHaveADynamicConsultationRoom()
+        {
+            var conference = _context.Test.Conference;
+            var vRoom = new Room(conference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+                VirtualCourtRoomType.JudgeJOH);
+            _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+        }
+        
         [When(@"I send the request to the endpoint")]
         [When(@"I send the same request twice")]
         public async Task WhenISendTheRequestToTheEndpoint()

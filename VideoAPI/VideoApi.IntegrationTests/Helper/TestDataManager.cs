@@ -154,7 +154,8 @@ namespace VideoApi.IntegrationTests.Helper
         public async Task RemoveRooms(Guid conferenceId)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
-            var roomsToDelete = db.Rooms.Where(x => x.ConferenceId == conferenceId);
+            var roomsToDelete = db.Rooms.Include(x=> x.RoomParticipants).Where(x => x.ConferenceId == conferenceId);
+            
             db.Rooms.RemoveRange(roomsToDelete);
             await db.SaveChangesAsync();
         }
@@ -181,17 +182,13 @@ namespace VideoApi.IntegrationTests.Helper
         public async Task<Room> SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
-            var room = db.Rooms.Include("RoomParticipants").Where(x => x.Id == roomId).FirstOrDefault();
+            var room = db.Rooms.Include(x => x.RoomParticipants).First(x => x.Id == roomId);
             room.AddParticipant(roomParticipant);
+
+            var participant = await db.Participants.FindAsync(roomParticipant.ParticipantId);
+            participant.CurrentVirtualRoomId = roomId;
+            
             await db.SaveChangesAsync();
-            return room;
-        }
-
-        public async Task<Room> GetRoomById(long roomId)
-        {
-            await using var db = new VideoApiDbContext(_dbContextOptions);
-            var room = db.Rooms.Include("RoomParticipants").Where(x => x.Id == roomId).FirstOrDefault();
-
             return room;
         }
     }

@@ -11,7 +11,6 @@ namespace VideoApi.DAL.Mappings
             builder.ToTable(nameof(RoomParticipant));
 
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.RoomId);
             builder.Property(x => x.ParticipantId);
         }
     }

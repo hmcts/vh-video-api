@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_add_participant_to_room()
         {
             var participantId = Guid.NewGuid();
-            var roomParticipant = new RoomParticipant(1, participantId);
+            var roomParticipant = new RoomParticipant(participantId);
             var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
             room.AddParticipant(roomParticipant);
 
@@ -38,7 +38,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_not_add_existing_participant_to_room_and_throw_exception()
         {
             var participantId = Guid.NewGuid();
-            var roomParticipant = new RoomParticipant(1, participantId);
+            var roomParticipant = new RoomParticipant(participantId);
             var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
             room.AddParticipant(roomParticipant);
             var beforeCount = room.RoomParticipants.Count;
@@ -53,7 +53,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_remove_participant_from_room()
         {
             var participantId = Guid.NewGuid();
-            var roomParticipant = new RoomParticipant(1, participantId);
+            var roomParticipant = new RoomParticipant(participantId);
             var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
             room.AddParticipant(roomParticipant);
             var beforeCount = room.RoomParticipants.Count;
@@ -67,12 +67,12 @@ namespace VideoApi.UnitTests.Domain
         public void Should_throw_exception_for_remove_non_existing_participant_from_room()
         {
             var participantId = Guid.NewGuid();
-            var roomParticipant = new RoomParticipant(1, participantId);
+            var roomParticipant = new RoomParticipant(participantId);
             var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
             room.AddParticipant(roomParticipant);
             var beforeCount = room.RoomParticipants.Count;
 
-           Action action = () => room.RemoveParticipant(new RoomParticipant(1, Guid.NewGuid()));
+           Action action = () => room.RemoveParticipant(new RoomParticipant(Guid.NewGuid()));
 
             action.Should().Throw<DomainRuleException>();
             room.RoomParticipants.Count.Should().Be(beforeCount);
@@ -89,7 +89,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_update_room_status_to_closed_on_last_participant_remove()
         {
             var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
-            var roomParticipant = new RoomParticipant(1, Guid.NewGuid());
+            var roomParticipant = new RoomParticipant(Guid.NewGuid());
             room.RoomParticipants.Add(roomParticipant);
             room.Status.Should().Be(RoomStatus.Live);
 
