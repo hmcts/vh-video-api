@@ -17,7 +17,6 @@ namespace VideoApi.UnitTests.Services
         private Mock<IKinlyApiClient> _kinlyApiClientMock;
         private Mock<ILogger<ConsultationService>> _loggerMock;
         private Conference _testConference;
-        private Room _testRoom;
 
         [SetUp]
         public void Setup()
@@ -36,13 +35,12 @@ namespace VideoApi.UnitTests.Services
                 .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@test.hearings.com", "rep1@dA.com")
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@test.hearings.com")
                 .Build();
-            _testRoom = new RoomBuilder(_testConference.Id).WithParticipants(3).Build();
         }
 
         [Test]
         public async Task should_remove_all_participants_in_room()
         {
-            var participantId = _testRoom.RoomParticipants[0].ParticipantId;
+            var participantId = _testConference.Participants[0].Id;
             var _consultationRoom = VirtualCourtRoomType.JudgeJOH;
             await _consultationService.LeaveConsultationAsync(_testConference.Id, participantId, _consultationRoom);
 

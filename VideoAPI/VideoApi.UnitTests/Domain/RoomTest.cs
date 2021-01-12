@@ -97,20 +97,5 @@ namespace VideoApi.UnitTests.Domain
 
             room.Status.Should().Be(RoomStatus.Closed);
         }
-
-        [Test]
-        public void Should_return_list_of_participant_in_a_room()
-        {
-            var participantId = Guid.NewGuid();
-            var roomParticipant = new RoomParticipant(1, participantId);
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
-            room.AddParticipant(roomParticipant);
-
-            room.RoomParticipants.Count.Should().Be(1);
-            room.RoomParticipants[0].ParticipantId.Should().Be(participantId);
-
-            var participantsList = room.GetRoomParticipants();
-            participantsList.Count.Should().Be(1);
-        }
     }
 }

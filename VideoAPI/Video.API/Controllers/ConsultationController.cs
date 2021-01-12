@@ -269,7 +269,7 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var currentRoom = VirtualCourtRoomType.JudgeJOH; // :: TODO :: Get from participant.
+            var currentRoom = participant.CurrentVirtualRoom.Type;
             await _consultationService.TransferParticipantAsync(request.ConferenceId, request.ParticipantId,
                 currentRoom, VirtualCourtRoomType.WaitingRoom);
             return Ok();

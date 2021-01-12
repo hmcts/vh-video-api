@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
@@ -36,6 +37,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
+            var vRoom = new Room(TestConference.Id, "room2", VirtualCourtRoomType.JudgeJOH);
+            TestConference.Participants[0].CurrentVirtualRoom = vRoom;
             var fromRoom = VirtualCourtRoomType.JudgeJOH;
             var toRoom = VirtualCourtRoomType.WaitingRoom;
             var leaveConsultationRequest = new LeaveConsultationRequest
