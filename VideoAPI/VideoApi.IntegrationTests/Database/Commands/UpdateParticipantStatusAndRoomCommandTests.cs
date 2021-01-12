@@ -133,9 +133,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var newRoomId = room.Id;
 
             var pat1 = seededConference.Participants[0].Id;
-            var pat2 = seededConference.Participants[1].Id;
             await TestDataManager.SeedRoomWithRoomParticipant(newRoomId, new RoomParticipant(pat1));
-            await TestDataManager.SeedRoomWithRoomParticipant(newRoomId, new RoomParticipant(pat2));
 
             // Act
             var command =

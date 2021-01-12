@@ -183,6 +183,10 @@ namespace VideoApi.IntegrationTests.Helper
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var room = db.Rooms.Include(x => x.RoomParticipants).First(x => x.Id == roomId);
             room.AddParticipant(roomParticipant);
+
+            var participant = await db.Participants.FindAsync(roomParticipant.ParticipantId);
+            participant.CurrentVirtualRoomId = roomId;
+            
             await db.SaveChangesAsync();
             return room;
         }

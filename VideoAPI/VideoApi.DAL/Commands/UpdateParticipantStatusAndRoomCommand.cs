@@ -76,9 +76,9 @@ namespace VideoApi.DAL.Commands
                 virtualRoom.AddParticipant(new RoomParticipant(participant.Id));
             }
 
-            if (status != ParticipantState.InConsultation && participant.CurrentVirtualRoom != null)
+            if (status != ParticipantState.InConsultation)
             {
-                participant.CurrentVirtualRoom.RemoveParticipant(new RoomParticipant(participant.Id));
+                participant.CurrentVirtualRoom?.RemoveParticipant(new RoomParticipant(participant.Id));
             }
         }
     }
