@@ -5,13 +5,10 @@ namespace VideoApi.Domain
 {
     public class RoomParticipant : Entity<long>
     {
-        public RoomParticipant(long roomId, Guid participantId)
+        public RoomParticipant(Guid participantId)
         {
-            RoomId = roomId;
             ParticipantId = participantId;
         }
-
-        public long RoomId { get; set; }
-        public Guid ParticipantId { get; set; }
+        public Guid ParticipantId { get; private set; }
     }
 }

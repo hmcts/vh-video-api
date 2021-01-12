@@ -15,6 +15,8 @@ namespace VideoApi.Events.Models
         [EnumDataType(typeof(RoomType))] public RoomType? TransferFrom { get; set; }
 
         [EnumDataType(typeof(RoomType))] public RoomType? TransferTo { get; set; }
+        public string TransferredFromRoomLabel { get; set; }
+        public string TransferredToRoomLabel { get; set; }
 
         public string Reason { get; set; }
         public string Phone { get; set; }

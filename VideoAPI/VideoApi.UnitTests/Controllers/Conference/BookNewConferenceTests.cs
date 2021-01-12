@@ -193,7 +193,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         {
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
             SetupCallToMockRetryService(Guid.Empty);
-            // SetupCallToMockRetryService(true);
 
             var response = await Controller.BookNewConferenceAsync(_request) as ActionResult;
 

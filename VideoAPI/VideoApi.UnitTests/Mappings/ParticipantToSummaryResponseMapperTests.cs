@@ -20,7 +20,7 @@ namespace VideoApi.UnitTests.Mappings
             }
         }
 
-        [TestCaseSource("ParticipantTestCases")]
+        [TestCaseSource(nameof(ParticipantTestCases))]
         public void Should_map_all_properties(Participant participant)
         {
             participant.UpdateParticipantStatus(ParticipantState.Available);
@@ -36,6 +36,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.TestCallResultId)
                 .Excluding(x => x.TestCallResult)
                 .Excluding(x => x.CurrentRoom)
+                .Excluding(x => x.CurrentVirtualRoomId)
+                .Excluding(x => x.CurrentVirtualRoom)
                 .Excluding(x => x.State)
             );
             response.Status.Should().BeEquivalentTo(participant.State);

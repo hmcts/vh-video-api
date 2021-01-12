@@ -48,8 +48,8 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.ParticipantId = participantId.ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = eventType)
-                .With(x => x.TransferFrom = RoomType.WaitingRoom)
-                .With(x => x.TransferTo = RoomType.HearingRoom)
+                .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
+                .With(x => x.TransferTo = RoomType.HearingRoom.ToString())
                 .With(x => x.Reason = "Automated")
                 .With(x => x.Phone = null)
                 .Build();
