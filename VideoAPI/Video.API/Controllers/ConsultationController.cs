@@ -303,7 +303,7 @@ namespace Video.API.Controllers
             {
                 var consultationRoomParams = new CreateConsultationRoomParams
                 {
-                    Room_label_prefix = "Judge"
+                    Room_label_prefix = request.RoomType.ToString()
                 };
                 var createConsultationRoomResponse =
                     await _consultationService.CreateConsultationRoomAsync(request.ConferenceId.ToString(),
