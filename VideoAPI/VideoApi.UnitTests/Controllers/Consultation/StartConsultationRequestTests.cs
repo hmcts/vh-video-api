@@ -23,8 +23,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var request = RequestBuilder();
             ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request)).ReturnsAsync(_testRoom);
-            ConsultationService.Setup(x => x.TransferParticipantToConsultationRoomAsync(request, _testRoom))
-                .ReturnsAsync(new AcceptedResult());
+            ConsultationService.Setup(x => x.TransferParticipantToConsultationRoomAsync(request, _testRoom));
             
             var result = await Controller.StartConsultationRequestAsync(request);
             
@@ -40,8 +39,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request))
                 .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
 
-            await Controller.Invoking(x => x.StartConsultationRequestAsync(request)).Should()
-                .ThrowAsync<ConferenceNotFoundException>();
+            var result = await Controller.StartConsultationRequestAsync(request);
+            
+            var actionResult = result.As<NotFoundObjectResult>();
+            actionResult.Should().NotBeNull();
         }
         
         [Test]
@@ -53,8 +54,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             ConsultationService.Setup(x => x.TransferParticipantToConsultationRoomAsync(request, _testRoom))
                 .ThrowsAsync(new ParticipantNotFoundException(request.RequestedBy));
 
-            await Controller.Invoking(x => x.StartConsultationRequestAsync(request)).Should()
-                .ThrowAsync<ParticipantNotFoundException>();
+            var result = await Controller.StartConsultationRequestAsync(request);
+            
+            var actionResult = result.As<NotFoundObjectResult>();
+            actionResult.Should().NotBeNull();
         }
         
         private StartConsultationRequest RequestBuilder()

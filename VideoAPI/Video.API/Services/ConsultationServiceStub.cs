@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -19,9 +18,9 @@ namespace Video.API.Services
             return Task.FromResult(room);
         }
         
-        public Task<IActionResult> TransferParticipantToConsultationRoomAsync(StartConsultationRequest request, Room room)
+        public Task TransferParticipantToConsultationRoomAsync(StartConsultationRequest request, Room room)
         {
-            return Task.FromResult((IActionResult)new AcceptedResult());
+            return Task.CompletedTask;
         }
     }
 }
