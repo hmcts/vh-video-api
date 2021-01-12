@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -289,7 +288,7 @@ namespace Video.API.Controllers
             }
 
             await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy,
-                participant.CurrentRoom.ToString(), room.Label);
+                participant.GetCurrentRoom().ToString(), room.Label);
 
             return Accepted();
         }

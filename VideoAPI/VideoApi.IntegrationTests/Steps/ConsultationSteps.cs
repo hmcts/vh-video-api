@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using AcceptanceTests.Common.Api.Helpers;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
@@ -19,12 +21,25 @@ namespace VideoApi.IntegrationTests.Steps
     public class ConsultationSteps : BaseSteps
     {
         private readonly TestContext _context;
+        private readonly ConferenceBaseSteps _conferenceSteps;
+        private readonly CommonSteps _commonSteps;
 
-        public ConsultationSteps(TestContext context)
+        public ConsultationSteps(TestContext context, ConferenceBaseSteps conferenceSteps, CommonSteps commonSteps)
         {
             _context = context;
+            _conferenceSteps = conferenceSteps;
+            _commonSteps = commonSteps;
         }
 
+        [Given(@"I have a booked conference")]
+        public async Task GivenIHaveABookedConference()
+        {
+            _conferenceSteps.GivenIHaveABookANewConferenceRequest(Scenario.Valid);
+            await _commonSteps.WhenISendTheRequestToTheEndpoint();
+            _commonSteps.ThenTheResponseShouldHaveStatus(HttpStatusCode.Created, true);
+            await _conferenceSteps.ThenAConferenceDetailsShouldBeRetrieved();
+        }
+        
         [Given(@"I have a (.*) raise consultation request")]
         [Given(@"I have an (.*) raise consultation request")]
         public void GivenIHaveARaiseConsultationRequest(Scenario scenario)
@@ -309,11 +324,11 @@ namespace VideoApi.IntegrationTests.Steps
         }
         
         [Given(@"I have a valid start consultation request")]
-        public void GivenIHaveAValidStartConsultationRequest()
+        public async Task GivenIHaveAValidStartConsultationRequest()
         {
-            var conference = _context.Test.Conference;
+            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judge =
-                _context.Test.Conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+                conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
 
             var request = new StartConsultationRequest()
             {
@@ -323,6 +338,24 @@ namespace VideoApi.IntegrationTests.Steps
             };
 
             SerialiseStartConsultationRequest(request);
+        }
+        
+        [Given(@"the judge is in the waiting room")]
+        public async Task GivenTheJudgeIsInTheWaitingRoom()
+        {
+            var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var judgeResponse =
+                conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var conference = await db.Conferences
+                .Include(x=> x.Participants)
+                .SingleAsync(x => x.Id == conferenceResponse.Id);
+
+            var judge = conference.Participants.First(x => x.Id == judgeResponse.Id);
+            judge.UpdateCurrentRoom(RoomType.WaitingRoom);
+
+            await db.SaveChangesAsync();
         }
         
         private void SerialiseConsultationRequest(ConsultationRequest request)
