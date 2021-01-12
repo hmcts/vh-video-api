@@ -18,6 +18,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Video.API.Factories;
+using Video.API.Services;
 using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;

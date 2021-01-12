@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,14 +8,12 @@ using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -254,66 +251,8 @@ namespace Video.API.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
-            Room room;
-            try
-            {
-                room = await GetAvailableConsultationRoom(request);
-            }
-            catch (ConferenceNotFoundException e)
-            {
-                _logger.LogError("Cannot create consultation for conference: {conferenceId} as the conference does not exist",
-                    request.ConferenceId);
-                return NotFound(e.Message);
-            }
-
-            return await TransferParticipantToConsultationRoom(request, room);
-        }
-
-        private async Task<IActionResult> TransferParticipantToConsultationRoom(StartConsultationRequest request, Room room)
-        {
-            Participant participant;
-            try
-            {
-                var conference =
-                    await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
-                        new GetConferenceByIdQuery(request.ConferenceId));
-                participant = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
-            }
-            catch (ParticipantNotFoundException e)
-            {
-                _logger.LogError(
-                    "Cannot create consultation with participant: {participantId} as the participant does not exist",
-                    request.RequestedBy);
-                return NotFound(e.Message);
-            }
-
-            await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy,
-                participant.GetCurrentRoom().ToString(), room.Label);
-
-            return Accepted();
-        }
-
-        private async Task<Room> GetAvailableConsultationRoom(StartConsultationRequest request)
-        {
-            var query = new GetAvailableRoomByRoomTypeQuery(request.RoomType, request.ConferenceId);
-            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
-            var room = listOfRooms.FirstOrDefault(x => x.Type.Equals(request.RoomType));
-            if (room == null)
-            {
-                var consultationRoomParams = new CreateConsultationRoomParams
-                {
-                    Room_label_prefix = request.RoomType.ToString()
-                };
-                var createConsultationRoomResponse =
-                    await _consultationService.CreateConsultationRoomAsync(request.ConferenceId.ToString(),
-                        consultationRoomParams);
-                var createRoomCommand = new CreateRoomCommand(request.ConferenceId, createConsultationRoomResponse.Room_label,
-                    request.RoomType);
-                await _commandHandler.Handle(createRoomCommand);
-                room = new Room(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
-            }
-
-            return room;
+            var room = await _consultationService.GetAvailableConsultationRoomAsync(request);
+            return await _consultationService.TransferParticipantToConsultationRoomAsync(request, room);
         }
 
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,

@@ -10,20 +10,21 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
     public class StartConsultationRequestTests : ConsultationControllerTestBase
     {
-
-        private List<Room> _testRooms;
+        private Room _testRoom;
         
         [Test]
         public async Task Should_Return_Accepted()
         {
             var request = RequestBuilder();
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request)).ReturnsAsync(_testRoom);
+            ConsultationService.Setup(x => x.TransferParticipantToConsultationRoomAsync(request, _testRoom))
+                .ReturnsAsync(new AcceptedResult());
             
             var result = await Controller.StartConsultationRequestAsync(request);
             
@@ -32,37 +33,28 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
         
         [Test]
-        public async Task Should_Return_NotFound_When_Conference_Does_Not_Exist()
+        public async Task Should_Throw_NotFoundException_When_Conference_Does_Not_Exist()
         {
             var request = RequestBuilder();
             request.ConferenceId = Guid.NewGuid();
-
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
-                    It.Is<GetAvailableRoomByRoomTypeQuery>(q => q.ConferenceId == request.ConferenceId)))
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request))
                 .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
-            
-            var result = await Controller.StartConsultationRequestAsync(request);
-            
-            var actionResult = result.As<NotFoundObjectResult>();
-            actionResult.Should().NotBeNull();
+
+            await Controller.Invoking(x => x.StartConsultationRequestAsync(request)).Should()
+                .ThrowAsync<ConferenceNotFoundException>();
         }
         
         [Test]
-        public async Task Should_Return_BadRequest_When_Participant_Cannot_Be_Found()
+        public async Task Should_Return_NotFound_When_Participant_Cannot_Be_Found()
         {
             var request = RequestBuilder();
             request.RequestedBy = Guid.NewGuid();
-
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
-                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == request.ConferenceId)))
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request)).ReturnsAsync(_testRoom);
+            ConsultationService.Setup(x => x.TransferParticipantToConsultationRoomAsync(request, _testRoom))
                 .ThrowsAsync(new ParticipantNotFoundException(request.RequestedBy));
 
-            var result = await Controller.StartConsultationRequestAsync(request);
-            
-            var actionResult = result.As<NotFoundObjectResult>();
-            actionResult.Should().NotBeNull();
+            await Controller.Invoking(x => x.StartConsultationRequestAsync(request)).Should()
+                .ThrowAsync<ParticipantNotFoundException>();
         }
         
         private StartConsultationRequest RequestBuilder()
@@ -71,17 +63,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 Assert.Fail("No participants found in conference");
             }
-            
-            _testRooms = new List<Room>
-            {
-                new Room(TestConference.Id, "JohRoom1", VirtualCourtRoomType.JudgeJOH)
-            };
-            
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
-                    It.Is<GetAvailableRoomByRoomTypeQuery>(q => q.ConferenceId == TestConference.Id)))
-                .ReturnsAsync(_testRooms);
-            
+
+            _testRoom = new Room(TestConference.Id, "JohRoom1", VirtualCourtRoomType.JudgeJOH);
+
             return new StartConsultationRequest
             {
                 ConferenceId = TestConference.Id,
