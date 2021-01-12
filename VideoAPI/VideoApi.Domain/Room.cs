@@ -50,7 +50,7 @@ namespace VideoApi.Domain
 
         private void UpdateStatus()
         {
-           if (Status != RoomStatus.Closed && !RoomParticipants.Any())
+            if (Status != RoomStatus.Closed && !RoomParticipants.Any())
             {
                 Status = RoomStatus.Closed;
             }

@@ -14,7 +14,6 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; }
         public string Label { get; }
         public VirtualCourtRoomType Type { get; }
-        public RoomStatus Status { get; }
         public long NewRoomId { get; set; }
 
         public CreateRoomCommand(Guid conferenceId, string label, VirtualCourtRoomType type)

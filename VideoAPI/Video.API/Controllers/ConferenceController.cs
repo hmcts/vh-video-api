@@ -121,7 +121,7 @@ namespace Video.API.Controllers
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
-            return CreatedAtAction(nameof(GetConferenceDetailsByIdAsync), new {conferenceId = response.Id}, response);
+            return CreatedAtAction("GetConferenceDetailsById", new {conferenceId = response.Id}, response);
         }
 
         /// <summary>

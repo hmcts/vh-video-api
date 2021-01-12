@@ -33,6 +33,8 @@ namespace VideoApi.DAL.Commands
         public string Reason { get; }
         public bool IsEndpoint { get; }
         public string Phone { get; set; }
+        public string TransferredFromRoomLabel { get; set; }
+        public string TransferredToRoomLabel { get; set; }
     }
 
     public class SaveEventCommandHandler : ICommandHandler<SaveEventCommand>
@@ -46,16 +48,21 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(SaveEventCommand command)
         {
-            var @event = new Event(command.ConferenceId, command.ExternalEventId, command.EventType,
+            var @event = MapCommandToEvent(command);
+            await _context.Events.AddAsync(@event);
+            await _context.SaveChangesAsync();
+        }
+
+        private Event MapCommandToEvent(SaveEventCommand command)
+        {
+            return new Event(command.ConferenceId, command.ExternalEventId, command.EventType,
                 command.ExternalTimestamp, command.TransferredFrom, command.TransferredTo, command.Reason, command.Phone)
             {
                 ParticipantId = command.ParticipantId,
-                EndpointFlag = command.IsEndpoint
+                EndpointFlag = command.IsEndpoint,
+                TransferredFromRoomLabel = command.TransferredFromRoomLabel,
+                TransferredToRoomLabel = command.TransferredToRoomLabel
             };
-
-            await _context.Events.AddAsync(@event);
-
-            await _context.SaveChangesAsync();
         }
     }
 }

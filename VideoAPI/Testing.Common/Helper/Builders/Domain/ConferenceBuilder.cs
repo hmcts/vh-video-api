@@ -20,6 +20,7 @@ namespace Testing.Common.Helper.Builders.Domain
             if (ignoreId)
             {
                 _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.TestCallResultId);
+                _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.CurrentVirtualRoomId);
                 _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<Task, long>(x => x.Id);
@@ -79,7 +80,10 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
-                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Internet.Email()}", Phone.Number())).Build();
+                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Internet.Email()}", Phone.Number()))
+                .And(x=> x.TestCallResultId = null)
+                .And(x=> x.CurrentVirtualRoomId = null)
+                .Build();
 
             if (userRole == UserRole.Representative)
             {

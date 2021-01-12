@@ -28,6 +28,9 @@ namespace VideoApi.Domain
         public Guid ParticipantId { get; set; }
         public RoomType? TransferredFrom { get; set; }
         public RoomType? TransferredTo { get; set; }
+        
+        public string TransferredFromRoomLabel { get; set; }
+        public string TransferredToRoomLabel { get; set; }
         public string Reason { get; set; }
         public DateTime Timestamp { get; set; }
         public bool EndpointFlag { get; set; }

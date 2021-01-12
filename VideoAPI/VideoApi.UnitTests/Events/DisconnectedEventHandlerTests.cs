@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Events
                 TimeStampUtc = DateTime.UtcNow
             };
             var updateStatusCommand = new UpdateParticipantStatusAndRoomCommand(conference.Id, participantForEvent.Id,
-                ParticipantState.Disconnected, null);
+                ParticipantState.Disconnected, null, null);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
             var addParticipantDisconnectedTask =

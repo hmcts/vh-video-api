@@ -28,6 +28,7 @@ namespace VideoApi.IntegrationTests.Hooks
             {
                 await context.TestDataManager.RemoveConference(conference.Id);
                 await context.TestDataManager.RemoveHeartbeats(conference.Id);
+                await context.TestDataManager.RemoveRooms(conference.Id);
             }
 
             await context.TestDataManager.RemoveEvents();

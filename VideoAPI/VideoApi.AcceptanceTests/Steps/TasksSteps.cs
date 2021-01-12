@@ -38,8 +38,8 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.ParticipantId = _context.Test.ConferenceResponse.Participants.First().Id.ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = EventType.MediaPermissionDenied)
-                .With(x => x.TransferFrom = RoomType.WaitingRoom)
-                .With(x => x.TransferTo = RoomType.WaitingRoom)
+                .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
+                .With(x => x.TransferTo = RoomType.WaitingRoom.ToString())
                 .With(x => x.Reason = "Automated")
                 .With(x => x.Phone = null)
                 .Build();
