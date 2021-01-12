@@ -7,6 +7,7 @@ using AcceptanceTests.Common.Api.Helpers;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
@@ -307,7 +308,44 @@ namespace VideoApi.IntegrationTests.Steps
 
             SerialiseEndpointConsultationRequest(request);
         }
-        
+
+        //[Given(@"the judge is in the consultation room")]
+        //public async Task GivenTheJudgeIsInTheConsultationRoom()
+        //{
+        //    var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+        //    var judgeResponse =
+        //        conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+
+        //    await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+        //    var conference = await db.Conferences
+        //        .Include(x => x.Participants)
+        //        .SingleAsync(x => x.Id == conferenceResponse.Id);
+
+        //    var judge = conference.Participants.First(x => x.Id == judgeResponse.Id);
+        //    judge.UpdateCurrentVirtualRoom(VirtualCourtRoomType.JudgeJOH);
+
+        //    await db.SaveChangesAsync();
+        //}
+
+        [Given(@"I have a valid leave consultation request")]
+        public async Task GivenIHaveAValidLeaveConsultationRequest()
+        {
+            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var judge =
+                conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+
+            var request = new LeaveConsultationRequest()
+            {
+                ConferenceId = conference.Id,
+                ParticipantId = judge.Id,
+            };
+            _context.Uri = ConsultationEndpoints.EndpointConsultationRequest;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
+
         private void SerialiseConsultationRequest(ConsultationRequest request)
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;

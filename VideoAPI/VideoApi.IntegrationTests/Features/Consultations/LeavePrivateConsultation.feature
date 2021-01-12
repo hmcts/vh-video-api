@@ -35,3 +35,9 @@ Feature: Leave Private Consultations
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
     
+  #Scenario: Leave consultation for a Judge/Joh
+  #  Given I have a conference
+  #  ## And the judge is in the consultation room
+  #  And I have a valid leave consultation request
+  #  When I send the request to the endpoint
+  #  Then the response should have the status Accepted and success status True

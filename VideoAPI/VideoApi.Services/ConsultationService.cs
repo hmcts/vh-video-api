@@ -1,7 +1,5 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using VideoApi.Domain;
+using System;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
@@ -12,9 +10,9 @@ namespace VideoApi.Services
     public class ConsultationService : IConsultationService
     {
         private readonly IKinlyApiClient _kinlyApiClient;
-        private readonly ILogger<KinlyPlatformService> _logger;
+        private readonly ILogger<ConsultationService> _logger;
 
-        public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<KinlyPlatformService> logger)
+        public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
@@ -38,14 +36,9 @@ namespace VideoApi.Services
             return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
-        public async Task EndJudgeJohConsultationAsync(Guid conferenceId, Room room)
+        public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, VirtualCourtRoomType consultation)
         {
-            var participants = room.GetRoomParticipants();
-            foreach (var participant in participants)
-            {
-                await TransferParticipantAsync(conferenceId, participant.ParticipantId,
-                    VirtualCourtRoomType.JudgeJOH, VirtualCourtRoomType.WaitingRoom);
-            }
+            await TransferParticipantAsync(conferenceId, participantId, consultation, VirtualCourtRoomType.WaitingRoom);
         }
     }
 }

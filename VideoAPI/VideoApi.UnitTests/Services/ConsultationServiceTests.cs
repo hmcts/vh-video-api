@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Services
     {
         private ConsultationService _consultationService;
         private Mock<IKinlyApiClient> _kinlyApiClientMock;
-        private Mock<ILogger<KinlyPlatformService>> _loggerMock;
+        private Mock<ILogger<ConsultationService>> _loggerMock;
         private Conference _testConference;
         private Room _testRoom;
 
@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Services
         public void Setup()
         {
             _kinlyApiClientMock = new Mock<IKinlyApiClient>();
-            _loggerMock = new Mock<ILogger<KinlyPlatformService>>();
+            _loggerMock = new Mock<ILogger<ConsultationService>>();
 
             _consultationService = new ConsultationService(_kinlyApiClientMock.Object, _loggerMock.Object);
 
@@ -42,7 +42,9 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task should_remove_all_participants_in_room()
         {
-            await _consultationService.EndJudgeJohConsultationAsync(_testConference.Id, _testRoom);
+            var participantId = _testRoom.RoomParticipants[0].ParticipantId;
+            var _consultationRoom = VirtualCourtRoomType.JudgeJOH;
+            await _consultationService.LeaveConsultationAsync(_testConference.Id, participantId, _consultationRoom);
 
             _kinlyApiClientMock.Verify(x =>
                     x.TransferParticipantAsync(_testConference.Id.ToString(),
@@ -51,7 +53,7 @@ namespace VideoApi.UnitTests.Services
                             r.To == VirtualCourtRoomType.WaitingRoom.ToString()
                         )
                     )
-                , Times.Exactly(3));
+                , Times.Exactly(1));
         }
     }
 }

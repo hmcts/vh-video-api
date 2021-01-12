@@ -244,18 +244,17 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// End Judge/JoH consultation
+        /// Leave a consultation.
         /// </summary>
-        /// <param name="request">EndConsultationRequest</param>
-        /// <returns>Ok</returns>
-        [HttpPost("end/{roomid}")]
-        [SwaggerOperation(OperationId = "EndJudgeJohConsultationRequest")]
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("end")]
+        [SwaggerOperation(OperationId = "LeaveConsultationAsync")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EndJudgeJohConsultationRequestAsync(EndConsultationRequest request)
+        public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
         {
-            _logger.LogDebug("EndJudgeJohConsultationRequest");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             if (conference == null)
@@ -263,15 +262,16 @@ namespace Video.API.Controllers
                 _logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
-
-            var getRoomByIdQuery = new GetRoomByIdQuery(request.RoomId);
-            var room = await _queryHandler.Handle<GetRoomByIdQuery, Room>(getRoomByIdQuery);
-            if (room == null)
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
+            if (participant == null)
             {
-                _logger.LogWarning("Unable to find consultation room!");
+                _logger.LogWarning("Unable to find participant request by id");
                 return NotFound();
             }
-            await _consultationService.EndJudgeJohConsultationAsync(request.ConferenceId, room);
+
+            var currentRoom = VirtualCourtRoomType.JudgeJOH; // :: TODO :: Get from participant.
+            await _consultationService.TransferParticipantAsync(request.ConferenceId, request.ParticipantId,
+                currentRoom, VirtualCourtRoomType.WaitingRoom);
             return Ok();
         }
 

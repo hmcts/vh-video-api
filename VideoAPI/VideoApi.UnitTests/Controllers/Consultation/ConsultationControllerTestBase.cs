@@ -24,7 +24,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         protected Mock<IConsultationService> ConsultationServiceMock;
 
         protected VideoApi.Domain.Conference TestConference;
-        protected VideoApi.Domain.Room TestRoom;
 
         [SetUp]
         public void Setup()
@@ -45,19 +44,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@test.hearings.com")
                 .Build();
 
-            TestRoom = new RoomBuilder(TestConference.Id)
-                .WithParticipants(2).Build();
-
-
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
                 .ReturnsAsync(TestConference);
-
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetRoomByIdQuery, VideoApi.Domain.Room>(
-                    It.Is<GetRoomByIdQuery>(r => r.RoomId == TestRoom.Id)))
-                .ReturnsAsync(TestRoom);
 
             CommandHandlerMock
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
