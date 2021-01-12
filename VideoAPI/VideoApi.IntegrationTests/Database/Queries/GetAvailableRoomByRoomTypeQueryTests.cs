@@ -76,11 +76,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [TearDown]
         public async Task TearDown()
         {
-            TestContext.WriteLine("Cleaning rooms for GetAvailableRoomByRoomTypeQuery");
-            await TestDataManager.RemoveRooms(_newConferenceId);
-
             TestContext.WriteLine("Cleaning conferences for GetAvailableRoomByRoomTypeQuery");
             await TestDataManager.RemoveConference(_newConferenceId);
+            
+            TestContext.WriteLine("Cleaning rooms for GetAvailableRoomByRoomTypeQuery");
+            await TestDataManager.RemoveRooms(_newConferenceId);
         }
     }
 }
