@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -16,9 +17,11 @@ namespace Video.API.Swagger
                 .Any(filter => filter is IAllowAnonymousFilter);
             
             if (!isAuthorized || allowAnonymous) return;
-            if (!operation.Responses.ContainsKey("401"))
+            var unauthorisedStatus = ((int)HttpStatusCode.Unauthorized).ToString();
+
+            if (!operation.Responses.ContainsKey(unauthorisedStatus))
             {
-                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });   
+                operation.Responses.Add(unauthorisedStatus, new OpenApiResponse { Description = HttpStatusCode.Unauthorized.ToString() });   
             }
         }
     }

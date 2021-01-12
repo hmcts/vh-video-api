@@ -27,10 +27,25 @@ namespace VideoApi.UnitTests.Validation
                 RequestedBy = Guid.NewGuid(),
                 RoomType = VirtualCourtRoomType.JudgeJOH
             };
-            
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task should_fail_validation_when_values_are_invalid()
+        {
+            var request = new StartConsultationRequest
+            {
+                ConferenceId = Guid.Empty,
+                RequestedBy = Guid.Empty,
+                RoomType = (VirtualCourtRoomType)20
+            };
+            
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
         }
     }
 }

@@ -247,29 +247,18 @@ namespace Video.API.Controllers
             return Accepted();
         }
 
-        [HttpPost("/consultations/start")]
+        [HttpPost("start")]
         [SwaggerOperation(OperationId = "StartPrivateConsultation")]
         [ProducesResponseType((int) HttpStatusCode.Accepted)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [AllowAnonymous]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
-            _logger.LogDebug("StartJudgeJohConsultationRequest");
             Room room;
-            Participant participant;
-            
             try
             {
-                var query = new GetAvailableRoomByRoomTypeQuery(request.RoomType, request.ConferenceId);
-                var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
-                room = listOfRooms.FirstOrDefault(x => x.Type.Equals(request.RoomType));
-                if (room == null)
-                {
-                    var createConsultationRoomResponse = await CreateNewConsultationRoom(request);
-                    room = new Room(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
-                }
+                room = await GetAvailableConsultationRoom(request);
             }
             catch (ConferenceNotFoundException e)
             {
@@ -278,24 +267,56 @@ namespace Video.API.Controllers
                 return NotFound(e.Message);
             }
 
+            return await TransferParticipantToConsultationRoom(request, room);
+        }
+
+        private async Task<IActionResult> TransferParticipantToConsultationRoom(StartConsultationRequest request, Room room)
+        {
+            Participant participant;
             try
             {
-                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(request.ConferenceId));
+                var conference =
+                    await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                        new GetConferenceByIdQuery(request.ConferenceId));
                 participant = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
             }
             catch (ParticipantNotFoundException e)
             {
-                _logger.LogError("Cannot create consultation with participant: {participantId} as the conference does not exist",
+                _logger.LogError(
+                    "Cannot create consultation with participant: {participantId} as the participant does not exist",
                     request.RequestedBy);
                 return NotFound(e.Message);
             }
 
-            await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy, participant.CurrentRoom.ToString(), room.Label);
-            _logger.LogTrace("{ParticipantId} successfully transferred in consultation room: {roomLabel}", request.RequestedBy, room.Label);
+            await _consultationService.TransferParticipantAsync(request.ConferenceId, request.RequestedBy,
+                participant.CurrentRoom.ToString(), room.Label);
 
             return Accepted();
         }
-        
+
+        private async Task<Room> GetAvailableConsultationRoom(StartConsultationRequest request)
+        {
+            var query = new GetAvailableRoomByRoomTypeQuery(request.RoomType, request.ConferenceId);
+            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
+            var room = listOfRooms.FirstOrDefault(x => x.Type.Equals(request.RoomType));
+            if (room == null)
+            {
+                var consultationRoomParams = new CreateConsultationRoomParams
+                {
+                    Room_label_prefix = "Judge"
+                };
+                var createConsultationRoomResponse =
+                    await _consultationService.CreateConsultationRoomAsync(request.ConferenceId.ToString(),
+                        consultationRoomParams);
+                var createRoomCommand = new CreateRoomCommand(request.ConferenceId, createConsultationRoomResponse.Room_label,
+                    request.RoomType);
+                await _commandHandler.Handle(createRoomCommand);
+                room = new Room(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
+            }
+
+            return room;
+        }
+
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
@@ -305,19 +326,6 @@ namespace Video.API.Controllers
                     "Conference: {conferenceId} - Attempting to start private consultation between {requestedById} and {requestedForId}", conference.Id, requestedBy.Id, requestedFor.Id);
                 await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
-        }
-
-        private async Task<CreateConsultationRoomResponse> CreateNewConsultationRoom(StartConsultationRequest request)
-        {
-            var consultationRoomParams = new CreateConsultationRoomParams
-            {
-                Room_label_prefix = "Judge"
-            };
-            var createConsultationRoomResponse = await _consultationService.CreateConsultationRoomAsync(request.ConferenceId.ToString(), consultationRoomParams);
-            var createRoomCommand = new CreateRoomCommand(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
-            await _commandHandler.Handle(createRoomCommand);
-
-            return createConsultationRoomResponse;
         }
     }
 }

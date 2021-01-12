@@ -2,8 +2,7 @@ namespace VideoApi.Domain.Enums
 {
     public enum VirtualCourtRoomType
     {
-        JudgeJOH,
-        Participant,
-        WaitingRoom
+        JudgeJOH = 0,
+        Participant = 1
     }
 }

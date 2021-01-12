@@ -11,29 +11,32 @@ namespace VideoApi.Services
     public class ConsultationService : IConsultationService
     {
         private readonly IKinlyApiClient _kinlyApiClient;
-        private readonly ILogger<KinlyPlatformService> _logger;
+        private readonly ILogger<ConsultationService> _logger;
 
-        public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<KinlyPlatformService> logger)
+        public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
         }
         
-        public Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId, CreateConsultationRoomParams createConsultationRoomParams)
+        public async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId, CreateConsultationRoomParams createConsultationRoomParams)
         {
             _logger.LogTrace("Creating a consultation for VirtualCourtRoomId: {virtualCourtRoomId} with prefix {createConsultationRoomParamsPrefix}",
                 virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix);
 
+            CreateConsultationRoomResponse consultationRoomResponse;
             try
             {
-                return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
+                consultationRoomResponse = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             }
             catch (KinlyApiException e)
             {
                 _logger.LogError("Unable to create a consultation room for VirtualCourtRoomId: {virtualCourtRoomId}, with exception message: {e}", 
                     virtualCourtRoomId, e);
-                return Task.FromResult<CreateConsultationRoomResponse>(null);
+                throw;
             }
+
+            return consultationRoomResponse;
         }
 
         public async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
@@ -52,10 +55,11 @@ namespace VideoApi.Services
             {
                 await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
             }
-            catch (Exception e)
+            catch (KinlyApiException e)
             {
                 _logger.LogError("Unable to start a transfer participant: {participantId} for ConferenceId: {{conferenceId}}, with exception message: {{e}}", 
                     participantId, conferenceId, e);
+                throw;
             }
         }
     }
