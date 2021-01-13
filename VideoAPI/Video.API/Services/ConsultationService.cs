@@ -56,7 +56,6 @@ namespace Video.API.Services
 
         public async Task TransferParticipantToConsultationRoomAsync(StartConsultationRequest request, Room room)
         {
-
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(request.ConferenceId));

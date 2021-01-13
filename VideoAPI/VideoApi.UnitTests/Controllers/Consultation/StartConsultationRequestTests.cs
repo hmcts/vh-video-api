@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -8,6 +10,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -55,6 +58,24 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var result = await Controller.StartConsultationRequestAsync(request);
             
             var actionResult = result.As<NotFoundObjectResult>();
+            actionResult.Should().NotBeNull();
+        }
+        
+        [Test]
+        public async Task Should_Return_BadRequest_When_Participant_Cannot_Be_Found()
+        {
+            var request = RequestBuilder();
+
+            var kinlyApiException = new KinlyApiException("", (int) HttpStatusCode.BadRequest, "payload",
+                new Dictionary<string, IEnumerable<string>>(), new Exception());
+            
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request)).ReturnsAsync(_testRoom);
+            ConsultationService.Setup(x => x.TransferParticipantToConsultationRoomAsync(request, _testRoom))
+                .ThrowsAsync(kinlyApiException);
+
+            var result = await Controller.StartConsultationRequestAsync(request);
+            
+            var actionResult = result.As<BadRequestObjectResult>();
             actionResult.Should().NotBeNull();
         }
         
