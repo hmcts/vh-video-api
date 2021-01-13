@@ -41,7 +41,7 @@ namespace VideoApi.IntegrationTests.Steps
             _commonSteps.ThenTheResponseShouldHaveStatus(HttpStatusCode.Created, true);
             await _conferenceSteps.ThenAConferenceDetailsShouldBeRetrieved();
         }
-
+        
         [Given(@"I have a (.*) raise consultation request")]
         [Given(@"I have an (.*) raise consultation request")]
         public void GivenIHaveARaiseConsultationRequest(Scenario scenario)
@@ -325,10 +325,43 @@ namespace VideoApi.IntegrationTests.Steps
             SerialiseEndpointConsultationRequest(request);
         }
 
+[Given(@"I have a valid start consultation request")]
+        public async Task GivenIHaveAValidStartConsultationRequest()
+        {
+            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var judge =
+                conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
 
+            var request = new StartConsultationRequest()
+            {
+                ConferenceId = conference.Id,
+                RequestedBy = judge.Id,
+                RoomType = VirtualCourtRoomType.JudgeJOH
+            };
+
+            SerialiseStartConsultationRequest(request);
+        }
+        
+        [Given(@"the judge is in the waiting room")]
+        public async Task GivenTheJudgeIsInTheWaitingRoom()
+        {
+            var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var judgeResponse =
+                conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var conference = await db.Conferences
+                .Include(x=> x.Participants)
+                .SingleAsync(x => x.Id == conferenceResponse.Id);
+
+            var judge = conference.Participants.First(x => x.Id == judgeResponse.Id);
+            judge.UpdateCurrentRoom(RoomType.WaitingRoom);
+
+            await db.SaveChangesAsync();
+        }
 
         [Given(@"I have a valid leave consultation request")]
-        public async Task GivenIHaveAValidStartConsultationRequest()
+        public async Task GivenIHaveAValidLeaveConsultationRequest()
         {
             var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judge =
@@ -397,6 +430,14 @@ namespace VideoApi.IntegrationTests.Steps
         private void SerialiseEndpointConsultationRequest(EndpointConsultationRequest request)
         {
             _context.Uri = ConsultationEndpoints.EndpointConsultationRequest;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        private void SerialiseStartConsultationRequest(StartConsultationRequest request)
+        {
+            _context.Uri = ConsultationEndpoints.StartPrivateConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");

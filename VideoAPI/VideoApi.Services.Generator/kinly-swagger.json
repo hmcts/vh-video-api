@@ -345,8 +345,11 @@
           }
         ],
         "responses": {
-          "202": {
-            "description": "Participant transferred"
+          "200": {
+            "description": "Participant transferred",
+            "schema": {
+              "$ref": "#/definitions/createConsultationRoomResponse"
+            }
           },
           "400": {
             "description": "Data is malformed"
@@ -592,6 +595,14 @@
         "UNHEALTHY"
       ],
       "type": "string"
+    },
+    "createConsultationRoomResponse": {
+      "type": "object",
+      "properties": {
+        "room_label": {
+          "type": "string"
+        }
+      }
     }
   }
 }

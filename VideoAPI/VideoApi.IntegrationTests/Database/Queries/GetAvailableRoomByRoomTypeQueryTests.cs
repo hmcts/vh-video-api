@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -49,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             roomToUpdate.RemoveParticipant(new RoomParticipant(participant.Id));
             await db.SaveChangesAsync();
 
-            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH);
+            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, _newConferenceId);
             var result = await _handler.Handle(query);
 
             result.Should().NotBeEmpty();
@@ -59,8 +60,17 @@ namespace VideoApi.IntegrationTests.Database.Queries
             result.Any(x => x.Id == _notExpectedIds[0]).Should().Be(false);
             result.Any(x => x.Id == _notExpectedIds[1]).Should().Be(false);
 
+            await TearDown();
         }
 
+        [Test]
+        public void Should_Throw_Conference_Not_Found_Exception_If_Conference_Does_Not_Exist()
+        {
+            var fakeConferenceId = Guid.NewGuid();
+            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, fakeConferenceId);
+            _handler.Invoking(x => x.Handle(query)).Should().ThrowAsync<ConferenceNotFoundException>();
+        }
+        
         private List<Room> GetListRoom(Guid conferenceId)
         {
             return new List<Room>
@@ -72,8 +82,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 new Room(conferenceId, "RoomTest", VirtualCourtRoomType.Participant),
             };
         }
-
-        [TearDown]
+        
         public async Task TearDown()
         {
             TestContext.WriteLine("Cleaning conferences for GetAvailableRoomByRoomTypeQuery");
