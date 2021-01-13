@@ -34,7 +34,7 @@ namespace Video.API.Services
         {
             var query = new GetAvailableRoomByRoomTypeQuery(request.RoomType, request.ConferenceId);
             var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
-            var room = listOfRooms.FirstOrDefault(x => x.Type.Equals(request.RoomType));
+            var room = listOfRooms?.FirstOrDefault(x => x.Type.Equals(request.RoomType));
             if (room == null)
             {
                 var consultationRoomParams = new CreateConsultationRoomParams
@@ -75,7 +75,8 @@ namespace Video.API.Services
             return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
         }
 
-        private async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
+        private async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom,
+            string toRoom)
         {
             _logger.LogTrace(
                 "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
@@ -87,16 +88,8 @@ namespace Video.API.Services
                 To = toRoom,
                 Part_id = participantId.ToString()
             };
-            try
-            {
-                await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
-            }
-            catch (KinlyApiException e)
-            {
-                _logger.LogError("Unable to start a transfer participant: {participantId} for ConferenceId: {{conferenceId}}, with exception message: {{e}}", 
-                    participantId, conferenceId, e);
-                throw;
-            }
+
+            await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
     }
 }

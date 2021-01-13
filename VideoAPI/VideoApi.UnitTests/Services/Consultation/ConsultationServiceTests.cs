@@ -58,6 +58,29 @@ namespace VideoApi.UnitTests.Services.Consultation
             returnedRoom.Should().BeOfType<Room>();
             returnedRoom.Should().NotBeNull();
         }
+        
+        [Test]
+        public async Task Should_Create_ConsultationRoom_If_None_Are_Available()
+        {
+            _queryHandler.Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(It.IsAny<GetAvailableRoomByRoomTypeQuery>())).ReturnsAsync(new List<Room>());
+
+            var consultationRoomParams = new CreateConsultationRoomParams
+            {
+                Room_label_prefix = _request.RoomType.ToString()
+            };
+
+            _kinlyApiClient
+                .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
+                .ReturnsAsync(new CreateConsultationRoomResponse(){ Room_label = "Label"});
+            
+            var returnedRoom = await _consultationService.GetAvailableConsultationRoomAsync(_request);
+            
+            _kinlyApiClient.Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
+                y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
+                y => y.Room_label_prefix.Equals(consultationRoomParams.Room_label_prefix))), Times.Once);
+            returnedRoom.Should().BeOfType<Room>();
+            returnedRoom.Should().NotBeNull();
+        }
 
         [Test]
         public async Task Should_Successfully_Transfer_Participant_To_ConsultationRoom()
