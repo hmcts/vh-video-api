@@ -1,8 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -36,10 +34,6 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
                 .ReturnsAsync(TestConference);
-
-            CommandHandlerMock
-                .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
-                .Returns(Task.FromResult(default(object)));
         }
     }
 }
