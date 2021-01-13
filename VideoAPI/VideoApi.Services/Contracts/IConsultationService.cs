@@ -11,8 +11,8 @@ namespace VideoApi.Services.Contracts
         /// </summary>
         /// <param name="conferenceId">The conference UUID</param>
         /// <param name="participantId">The participant UUID</param>
-        /// <param name="fromRoom">consultation room</param>
-        /// <param name="toRoom">consultation room</param>
+        /// <param name="fromRoom">virtual court room</param>
+        /// <param name="toRoom">virtual court room</param>
         /// <returns></returns>
         Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom,
             string toRoom);
