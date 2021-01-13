@@ -37,10 +37,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
-            var vRoom = new Room(TestConference.Id, "room2", VirtualCourtRoomType.JudgeJOH);
+            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH);
             TestConference.Participants[0].CurrentVirtualRoom = vRoom;
-            var fromRoom = VirtualCourtRoomType.JudgeJOH;
-            var toRoom = VirtualCourtRoomType.WaitingRoom;
+            var fromRoom = "ConsultationRoom";
+            var toRoom = "WaitingRoom";
             var leaveConsultationRequest = new LeaveConsultationRequest
             { ConferenceId = conferenceId, ParticipantId = participantId };
             await Controller.LeaveConsultationAsync(leaveConsultationRequest);

@@ -38,17 +38,18 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task should_remove_all_participants_in_room()
+        public async Task should_remove_a_participant_in_room()
         {
             var participantId = _testConference.Participants[0].Id;
-            var _consultationRoom = VirtualCourtRoomType.JudgeJOH;
-            await _consultationService.LeaveConsultationAsync(_testConference.Id, participantId, _consultationRoom);
+            var _fromRoom = "ConsultationRoom";
+            var _toRoom = "WaitingRoom";
+            await _consultationService.TransferParticipantAsync(_testConference.Id, participantId, _fromRoom, _toRoom);
 
             _kinlyApiClientMock.Verify(x =>
                     x.TransferParticipantAsync(_testConference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
-                            r.From == VirtualCourtRoomType.JudgeJOH.ToString() &&
-                            r.To == VirtualCourtRoomType.WaitingRoom.ToString()
+                            r.From == "ConsultationRoom" &&
+                            r.To == "WaitingRoom"
                         )
                     )
                 , Times.Exactly(1));

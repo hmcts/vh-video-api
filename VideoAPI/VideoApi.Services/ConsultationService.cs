@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using System;
-using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
@@ -19,8 +18,8 @@ namespace VideoApi.Services
         }
 
 
-        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, VirtualCourtRoomType fromRoom,
-            VirtualCourtRoomType toRoom)
+        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom,
+            string toRoom)
         {
             _logger.LogInformation(
                 "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
@@ -28,17 +27,12 @@ namespace VideoApi.Services
 
             var request = new TransferParticipantParams
             {
-                From = fromRoom.ToString(),
-                To = toRoom.ToString(),
+                From = fromRoom,
+                To = toRoom,
                 Part_id = participantId.ToString()
             };
 
             return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
-        }
-
-        public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, VirtualCourtRoomType consultation)
-        {
-            await TransferParticipantAsync(conferenceId, participantId, consultation, VirtualCourtRoomType.WaitingRoom);
         }
     }
 }

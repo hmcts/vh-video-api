@@ -255,6 +255,7 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
         {
+            const string toRoom = "WaitingRoom";
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             if (conference == null)
@@ -269,9 +270,9 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var currentRoom = participant.CurrentVirtualRoom.Type;
+            var currentRoom = participant.CurrentVirtualRoom.Label;
             await _consultationService.TransferParticipantAsync(request.ConferenceId, request.ParticipantId,
-                currentRoom, VirtualCourtRoomType.WaitingRoom);
+                currentRoom, toRoom);
             return Ok();
         }
 
