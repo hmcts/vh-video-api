@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services;
@@ -41,9 +42,11 @@ namespace VideoApi.UnitTests.Services
         public async Task should_remove_a_participant_in_room()
         {
             var participantId = _testConference.Participants[0].Id;
+            var leaveRequest = new LeaveConsultationRequest
+            { ConferenceId = _testConference.Id, ParticipantId = participantId };
             var _fromRoom = "ConsultationRoom";
             var _toRoom = "WaitingRoom";
-            await _consultationService.TransferParticipantAsync(_testConference.Id, participantId, _fromRoom, _toRoom);
+            await _consultationService.LeaveConsultationAsync(leaveRequest, _fromRoom, _toRoom);
 
             _kinlyApiClientMock.Verify(x =>
                     x.TransferParticipantAsync(_testConference.Id.ToString(),

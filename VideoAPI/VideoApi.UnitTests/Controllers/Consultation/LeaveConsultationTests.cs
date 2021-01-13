@@ -47,8 +47,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
                 (It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-            ConsultationServiceMock.Verify(v => v.TransferParticipantAsync
-                (conferenceId, participantId, fromRoom, toRoom), Times.Once);
+            ConsultationServiceMock.Verify(v => v.LeaveConsultationAsync
+                (leaveConsultationRequest, fromRoom, toRoom), Times.Once);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
     }

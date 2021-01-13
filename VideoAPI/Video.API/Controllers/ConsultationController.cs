@@ -270,8 +270,8 @@ namespace Video.API.Controllers
             }
 
             var currentRoom = participant.CurrentVirtualRoom.Label;
-            await _consultationService.TransferParticipantAsync(request.ConferenceId, request.ParticipantId,
-                currentRoom, VirtualCourtRoomType.WaitingRoom.ToString());
+            await _consultationService.LeaveConsultationAsync(request, currentRoom,
+                VirtualCourtRoomType.WaitingRoom.ToString());
             return Ok();
         }
 
