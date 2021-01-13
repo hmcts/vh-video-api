@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +10,12 @@ using TechTalk.SpecFlow;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -20,10 +23,23 @@ namespace VideoApi.IntegrationTests.Steps
     public class ConsultationSteps : BaseSteps
     {
         private readonly TestContext _context;
+        private readonly ConferenceBaseSteps _conferenceSteps;
+        private readonly CommonSteps _commonSteps;
 
-        public ConsultationSteps(TestContext context)
+        public ConsultationSteps(TestContext context, ConferenceBaseSteps conferenceSteps, CommonSteps commonSteps)
         {
             _context = context;
+            _conferenceSteps = conferenceSteps;
+            _commonSteps = commonSteps;
+        }
+
+        [Given(@"I have a booked conference")]
+        public async Task GivenIHaveABookedConference()
+        {
+            _conferenceSteps.GivenIHaveABookANewConferenceRequest(Scenario.Valid);
+            await _commonSteps.WhenISendTheRequestToTheEndpoint();
+            _commonSteps.ThenTheResponseShouldHaveStatus(HttpStatusCode.Created, true);
+            await _conferenceSteps.ThenAConferenceDetailsShouldBeRetrieved();
         }
 
         [Given(@"I have a (.*) raise consultation request")]
@@ -309,6 +325,43 @@ namespace VideoApi.IntegrationTests.Steps
             SerialiseEndpointConsultationRequest(request);
         }
 
+
+
+        [Given(@"I have a valid leave consultation request")]
+        public async Task GivenIHaveAValidStartConsultationRequest()
+        {
+            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var judge =
+                conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+
+            var request = new LeaveConsultationRequest()
+            {
+                ConferenceId = conference.Id,
+                ParticipantId = judge.Id
+            };
+
+            SerialiseLeavePrivateConsultationRequest(request);
+        }
+
+        [Given(@"the judge joh is in the consultation room")]
+        public async Task GivenTheJudgeJohIsInTheConsultationRoom()
+        {
+            var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var judgeResponse =
+                conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+            var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH);
+
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var conference = await db.Conferences
+                .Include(x => x.Participants)
+                .SingleAsync(x => x.Id == conferenceResponse.Id);
+
+            var judge = conference.Participants.First(x => x.Id == judgeResponse.Id);
+            judge.UpdateCurrentVirtualRoom(vRoom);
+
+            await db.SaveChangesAsync();
+        }
+
         private void SerialiseConsultationRequest(ConsultationRequest request)
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
@@ -328,6 +381,14 @@ namespace VideoApi.IntegrationTests.Steps
         private void SerialiseLeaveConsultationRequest(LeaveConsultationRequest request)
         {
             _context.Uri = ConsultationEndpoints.LeaveConsultationRequest;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
+        private void SerialiseLeavePrivateConsultationRequest(LeaveConsultationRequest request)
+        {
+            _context.Uri = ConsultationEndpoints.LeavePrivateConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
