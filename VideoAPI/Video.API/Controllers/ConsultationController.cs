@@ -8,12 +8,14 @@ using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
@@ -28,15 +30,17 @@ namespace Video.API.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<ConsultationController> _logger;
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly IConsultationService _consultationService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             ILogger<ConsultationController> logger,
-            IVideoPlatformService videoPlatformService)
+            IVideoPlatformService videoPlatformService, IConsultationService consultationService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _logger = logger;
             _videoPlatformService = videoPlatformService;
+            _consultationService = consultationService;
         }
 
         /// <summary>
@@ -240,7 +244,45 @@ namespace Video.API.Controllers
 
             return Accepted();
         }
-        
+
+        [HttpPost("start")]
+        [SwaggerOperation(OperationId = "StartPrivateConsultation")]
+        [ProducesResponseType((int) HttpStatusCode.Accepted)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
+        {
+            try
+            {
+                var room = await _consultationService.GetAvailableConsultationRoomAsync(request);
+                await _consultationService.TransferParticipantToConsultationRoomAsync(request, room);
+
+                return Accepted();
+            }
+            catch (ConferenceNotFoundException ex)
+            {
+                _logger.LogError(ex, 
+                    "Cannot create consultation for conference: {conferenceId} as the conference does not exist",
+                    request.ConferenceId);
+                return NotFound("Conference does not exist");
+            }
+            catch (ParticipantNotFoundException ex)
+            {
+                _logger.LogError(ex, 
+                    "Cannot create consultation with participant: {participantId} as the participant does not exist",
+                    request.RequestedBy);
+                return NotFound("Participant doesn't exist");
+            }
+            catch (KinlyApiException ex)
+            {
+                _logger.LogError(ex,
+                    "Unable to create a consultation room for ConferenceId: {conferenceId}", 
+                    request.ConferenceId);
+                return BadRequest("Consultation room creation failed");
+            }
+        }
+
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {

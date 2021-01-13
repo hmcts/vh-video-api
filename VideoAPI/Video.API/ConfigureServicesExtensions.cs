@@ -18,6 +18,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Video.API.Factories;
+using Video.API.Services;
 using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
@@ -116,6 +117,7 @@ namespace Video.API
             {
                 services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
+                services.AddScoped<IConsultationService, ConsultationServiceStub>();
             }
             else
             {
@@ -150,6 +152,7 @@ namespace Video.API
 
                 services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
+                services.AddScoped<IConsultationService, ConsultationService>();
             }
 
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
