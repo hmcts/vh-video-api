@@ -109,6 +109,7 @@ namespace Video.API
             services.AddTransient<KinlyApiTokenDelegatingHandler>();
             services.AddTransient<KinlySelfTestApiDelegatingHandler>();
             services.AddSingleton<IPollyRetryService, PollyRetryService>();
+
             RegisterCommandHandlers(services);
             RegisterQueryHandlers(services);
             RegisterEventHandlers(services);

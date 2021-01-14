@@ -34,4 +34,3 @@ Feature: Leave Private Consultations
     And I have a leave consultation request for a participant not in a consultation
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
-    

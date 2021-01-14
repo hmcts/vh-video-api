@@ -56,6 +56,11 @@ namespace VideoApi.Domain
             }
         }
 
+        public List<RoomParticipant> GetRoomParticipants()
+        {
+            return RoomParticipants;
+        }
+
         public bool DoesParticipantExist(RoomParticipant participant)
         {
             return RoomParticipants.Any(x => x.ParticipantId == participant.ParticipantId);

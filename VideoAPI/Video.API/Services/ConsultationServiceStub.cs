@@ -17,8 +17,13 @@ namespace Video.API.Services
             var room = new Room(Guid.NewGuid(), "Judge", VirtualCourtRoomType.JudgeJOH);
             return Task.FromResult(room);
         }
-        
+
         public Task TransferParticipantToConsultationRoomAsync(StartConsultationRequest request, Room room)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task LeaveConsultationAsync(LeaveConsultationRequest request, string fromRoom, string toRoom)
         {
             return Task.CompletedTask;
         }

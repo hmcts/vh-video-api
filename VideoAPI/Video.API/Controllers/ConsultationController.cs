@@ -33,8 +33,8 @@ namespace Video.API.Controllers
         private readonly IConsultationService _consultationService;
 
         public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            ILogger<ConsultationController> logger,
-            IVideoPlatformService videoPlatformService, IConsultationService consultationService)
+            ILogger<ConsultationController> logger, IVideoPlatformService videoPlatformService,
+            IConsultationService consultationService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -50,8 +50,8 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "HandleConsultationRequest")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> HandleConsultationRequestAsync(ConsultationRequest request)
         {
             _logger.LogDebug("HandleConsultationRequest");
@@ -105,9 +105,9 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPost("leave")]
         [SwaggerOperation(OperationId = "LeavePrivateConsultation")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeavePrivateConsultationAsync(LeaveConsultationRequest request)
         {
             _logger.LogDebug("LeavePrivateConsultation");
@@ -128,7 +128,7 @@ namespace Video.API.Controllers
             }
 
             var currentRoom = participant.CurrentRoom;
-            if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 && 
+            if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 &&
                                           currentRoom != RoomType.ConsultationRoom2))
             {
                 // This could only happen when both the participants press 'Close' button at the same time to end the call
@@ -148,9 +148,9 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPost("vhofficer/respond")]
         [SwaggerOperation(OperationId = "RespondToAdminConsultationRequest")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RespondToAdminConsultationRequestAsync(AdminConsultationRequest request)
         {
             _logger.LogDebug("RespondToAdminConsultationRequest");
@@ -165,7 +165,7 @@ namespace Video.API.Controllers
                 ModelState.AddModelError(nameof(request.Answer), modelErrorMessage);
                 return BadRequest(ModelState);
             }
-            
+
             if (conference == null)
             {
                 _logger.LogWarning("Unable to find conference");
@@ -187,7 +187,7 @@ namespace Video.API.Controllers
 
             return NoContent();
         }
-        
+
         /// <summary>
         /// Start a private consultation with a video endpoint
         /// </summary>
@@ -195,9 +195,9 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPost("endpoint")]
         [SwaggerOperation(OperationId = "StartPrivateConsultationWithEndpoint")]
-        [ProducesResponseType((int) HttpStatusCode.Accepted)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
             _logger.LogDebug("StartPrivateConsultationWithEndpoint");
@@ -218,7 +218,7 @@ namespace Video.API.Controllers
                 _logger.LogWarning("Unable to find endpoint");
                 return NotFound($"Unable to find endpoint {request.EndpointId}");
             }
-            
+
             var defenceAdvocate = conference.GetParticipants().SingleOrDefault(x => x.Id == request.DefenceAdvocateId);
             if (defenceAdvocate == null)
             {
@@ -232,14 +232,14 @@ namespace Video.API.Controllers
                 _logger.LogWarning(message);
                 return Unauthorized(message);
             }
-            
+
             if (!endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 var message = "Defence advocate is not allowed to speak to requested endpoint";
                 _logger.LogWarning(message);
                 return Unauthorized(message);
             }
-            
+
             await _videoPlatformService.StartEndpointPrivateConsultationAsync(conference, endpoint, defenceAdvocate);
 
             return Accepted();
@@ -247,10 +247,10 @@ namespace Video.API.Controllers
 
         [HttpPost("start")]
         [SwaggerOperation(OperationId = "StartPrivateConsultation")]
-        [ProducesResponseType((int) HttpStatusCode.Accepted)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
             try
@@ -262,14 +262,14 @@ namespace Video.API.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, 
+                _logger.LogError(ex,
                     "Cannot create consultation for conference: {conferenceId} as the conference does not exist",
                     request.ConferenceId);
                 return NotFound("Conference does not exist");
             }
             catch (ParticipantNotFoundException ex)
             {
-                _logger.LogError(ex, 
+                _logger.LogError(ex,
                     "Cannot create consultation with participant: {participantId} as the participant does not exist",
                     request.RequestedBy);
                 return NotFound("Participant doesn't exist");
@@ -277,9 +277,51 @@ namespace Video.API.Controllers
             catch (KinlyApiException ex)
             {
                 _logger.LogError(ex,
-                    "Unable to create a consultation room for ConferenceId: {conferenceId}", 
+                    "Unable to create a consultation room for ConferenceId: {conferenceId}",
                     request.ConferenceId);
                 return BadRequest("Consultation room creation failed");
+            }
+        }
+
+        /// <summary>
+        /// Leave a consultation.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("end")]
+        [SwaggerOperation(OperationId = "LeaveConsultationAsync")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
+        {
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            if (conference == null)
+            {
+                _logger.LogWarning("Unable to find conference");
+                return NotFound();
+            }
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
+            if (participant == null)
+            {
+                _logger.LogWarning("Unable to find participant request by id");
+                return NotFound();
+            }
+
+            try
+            {
+                var currentRoom = participant.CurrentVirtualRoom.Label;
+                await _consultationService.LeaveConsultationAsync(request, currentRoom,
+                    VirtualCourtRoomType.WaitingRoom.ToString());
+                return Ok();
+            }
+            catch (KinlyApiException ex)
+            {
+                _logger.LogError(ex,
+                    "Unable to leave a consultation room for ConferenceId: {conferenceId}",
+                    request.ConferenceId);
+                return BadRequest("Error on Leave Consultation room");
             }
         }
 

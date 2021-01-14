@@ -91,5 +91,10 @@ namespace Video.API.Services
 
             await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
+
+        public async Task LeaveConsultationAsync(LeaveConsultationRequest request, string fromRoom, string toRoom)
+        {
+            await TransferParticipantAsync(request.ConferenceId, request.ParticipantId, fromRoom, toRoom);
+        }
     }
 }
