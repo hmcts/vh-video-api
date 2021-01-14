@@ -1,12 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System;
 using VideoApi.Contract.Requests;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -50,6 +55,30 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             ConsultationService.Verify(v => v.LeaveConsultationAsync
                 (leaveConsultationRequest, fromRoom, toRoom), Times.Once);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task Should_Return_BadRequest_When_Participant_Cannot_Be_Found()
+        {
+            var conferenceId = TestConference.Id;
+            var participantId = TestConference.Participants[0].Id;
+            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH);
+            TestConference.Participants[0].CurrentVirtualRoom = vRoom;
+            var fromRoom = "ConsultationRoom";
+            var toRoom = "WaitingRoom";
+            var leaveConsultationRequest = new LeaveConsultationRequest
+                { ConferenceId = conferenceId, ParticipantId = participantId };
+
+            var kinlyApiException = new KinlyApiException("", (int)HttpStatusCode.BadRequest, "payload",
+                new Dictionary<string, IEnumerable<string>>(), new Exception());
+
+            ConsultationService.Setup(x => x.LeaveConsultationAsync(leaveConsultationRequest, fromRoom, toRoom))
+                .ThrowsAsync(kinlyApiException);
+
+            var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
+
+            var actionResult = result.As<BadRequestObjectResult>();
+            actionResult.Should().NotBeNull();
         }
     }
 }

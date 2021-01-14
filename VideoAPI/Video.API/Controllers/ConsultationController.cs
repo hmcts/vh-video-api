@@ -247,10 +247,10 @@ namespace Video.API.Controllers
 
         [HttpPost("start")]
         [SwaggerOperation(OperationId = "StartPrivateConsultation")]
-        [ProducesResponseType((int) HttpStatusCode.Accepted)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
             try
@@ -262,14 +262,14 @@ namespace Video.API.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, 
+                _logger.LogError(ex,
                     "Cannot create consultation for conference: {conferenceId} as the conference does not exist",
                     request.ConferenceId);
                 return NotFound("Conference does not exist");
             }
             catch (ParticipantNotFoundException ex)
             {
-                _logger.LogError(ex, 
+                _logger.LogError(ex,
                     "Cannot create consultation with participant: {participantId} as the participant does not exist",
                     request.RequestedBy);
                 return NotFound("Participant doesn't exist");
@@ -277,7 +277,7 @@ namespace Video.API.Controllers
             catch (KinlyApiException ex)
             {
                 _logger.LogError(ex,
-                    "Unable to create a consultation room for ConferenceId: {conferenceId}", 
+                    "Unable to create a consultation room for ConferenceId: {conferenceId}",
                     request.ConferenceId);
                 return BadRequest("Consultation room creation failed");
             }
@@ -309,12 +309,22 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
-            var currentRoom = participant.CurrentVirtualRoom.Label;
-            await _consultationService.LeaveConsultationAsync(request, currentRoom,
-                VirtualCourtRoomType.WaitingRoom.ToString());
-            return Ok();
+            try
+            {
+                var currentRoom = participant.CurrentVirtualRoom.Label;
+                await _consultationService.LeaveConsultationAsync(request, currentRoom,
+                    VirtualCourtRoomType.WaitingRoom.ToString());
+                return Ok();
+            }
+            catch (KinlyApiException ex)
+            {
+                _logger.LogError(ex,
+                    "Unable to leave a consultation room for ConferenceId: {conferenceId}",
+                    request.ConferenceId);
+                return BadRequest("Error on Leave Consultation room");
+            }
         }
-        
+
         private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
             Participant requestedFor, ConsultationAnswer answer)
         {
