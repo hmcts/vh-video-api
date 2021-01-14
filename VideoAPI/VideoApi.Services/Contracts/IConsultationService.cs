@@ -1,16 +1,17 @@
+using System;
 using System.Threading.Tasks;
-using VideoApi.Contract.Requests;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services.Contracts
 {
     public interface IConsultationService
     {
-        Task<Room> GetAvailableConsultationRoomAsync(StartConsultationRequest request);
+        Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType);
 
-        Task TransferParticipantToConsultationRoomAsync(StartConsultationRequest request, Room room);
+        Task JoinConsultationRoomAsync(Guid conferenceId, Guid participantId, string room);
 
-        Task LeaveConsultationAsync(LeaveConsultationRequest request, string fromRoom, string toRoom);
+        Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom);
     }
 }

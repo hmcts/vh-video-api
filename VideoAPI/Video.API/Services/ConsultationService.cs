@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
@@ -22,7 +22,8 @@ namespace Video.API.Services
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
 
-        public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger, ICommandHandler commandHandler, IQueryHandler queryHandler)
+        public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger,
+            ICommandHandler commandHandler, IQueryHandler queryHandler)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
@@ -30,41 +31,30 @@ namespace Video.API.Services
             _queryHandler = queryHandler;
         }
 
-        public async Task<Room> GetAvailableConsultationRoomAsync(StartConsultationRequest request)
+        public async Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
-            var query = new GetAvailableRoomByRoomTypeQuery(request.RoomType, request.ConferenceId);
+            var query = new GetAvailableRoomByRoomTypeQuery(roomType, conferenceId);
             var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
-            var room = listOfRooms?.FirstOrDefault(x => x.Type.Equals(request.RoomType));
+            var room = listOfRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
             if (room == null)
             {
                 var consultationRoomParams = new CreateConsultationRoomParams
                 {
-                    Room_label_prefix = request.RoomType.ToString()
+                    Room_label_prefix = roomType.ToString()
                 };
                 var createConsultationRoomResponse =
-                    await CreateConsultationRoomAsync(request.ConferenceId.ToString(),
+                    await CreateConsultationRoomAsync(conferenceId.ToString(),
                         consultationRoomParams);
-                var createRoomCommand = new CreateRoomCommand(request.ConferenceId,
+                var createRoomCommand = new CreateRoomCommand(conferenceId,
                     createConsultationRoomResponse.Room_label,
-                    request.RoomType);
+                    roomType);
                 await _commandHandler.Handle(createRoomCommand);
-                room = new Room(request.ConferenceId, createConsultationRoomResponse.Room_label, request.RoomType);
+                room = new Room(conferenceId, createConsultationRoomResponse.Room_label, roomType);
             }
 
             return room;
         }
-
-        public async Task TransferParticipantToConsultationRoomAsync(StartConsultationRequest request, Room room)
-        {
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
-                    new GetConferenceByIdQuery(request.ConferenceId));
-            var participant = conference.GetParticipants().Single(x => x.Id == request.RequestedBy);
-
-            await TransferParticipantAsync(request.ConferenceId, request.RequestedBy,
-                participant.GetCurrentRoom().ToString(), room.Label);
-        }
-
+        
         private Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
             CreateConsultationRoomParams createConsultationRoomParams)
         {
@@ -74,7 +64,23 @@ namespace Video.API.Services
 
             return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
         }
+        
+        public async Task JoinConsultationRoomAsync(Guid conferenceId, Guid participantId, string room)
+        {
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
+            var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
+            await TransferParticipantAsync(conferenceId, participantId, participant.GetCurrentRoom().ToString(),
+                room);
+        }
+        
+        public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
+        {
+            await TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom);
+        }
+        
         private async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom,
             string toRoom)
         {
@@ -92,9 +98,5 @@ namespace Video.API.Services
             await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
-        public async Task LeaveConsultationAsync(LeaveConsultationRequest request, string fromRoom, string toRoom)
-        {
-            await TransferParticipantAsync(request.ConferenceId, request.ParticipantId, fromRoom, toRoom);
-        }
     }
 }

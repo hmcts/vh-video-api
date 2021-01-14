@@ -255,8 +255,9 @@ namespace Video.API.Controllers
         {
             try
             {
-                var room = await _consultationService.GetAvailableConsultationRoomAsync(request);
-                await _consultationService.TransferParticipantToConsultationRoomAsync(request, room);
+                var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
+                    request.RoomType);
+                await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
                 return Accepted();
             }
@@ -312,7 +313,7 @@ namespace Video.API.Controllers
             try
             {
                 var currentRoom = participant.CurrentVirtualRoom.Label;
-                await _consultationService.LeaveConsultationAsync(request, currentRoom,
+                await _consultationService.LeaveConsultationAsync(request.ConferenceId, request.ParticipantId, currentRoom,
                     VirtualCourtRoomType.WaitingRoom.ToString());
                 return Ok();
             }
