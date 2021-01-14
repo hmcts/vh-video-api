@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
@@ -12,18 +11,18 @@ namespace Video.API.Services
     [ExcludeFromCodeCoverage]
     public class ConsultationServiceStub : IConsultationService
     {
-        public Task<Room> GetAvailableConsultationRoomAsync(StartConsultationRequest request)
+        public Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
             var room = new Room(Guid.NewGuid(), "Judge", VirtualCourtRoomType.JudgeJOH);
             return Task.FromResult(room);
         }
 
-        public Task TransferParticipantToConsultationRoomAsync(StartConsultationRequest request, Room room)
+        public Task JoinConsultationRoomAsync(Guid conferenceId, Guid participantId, string room)
         {
             return Task.CompletedTask;
         }
 
-        public Task LeaveConsultationAsync(LeaveConsultationRequest request, string fromRoom, string toRoom)
+        public Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
         {
             return Task.CompletedTask;
         }

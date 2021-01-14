@@ -47,13 +47,16 @@ namespace VideoApi.UnitTests.Services.Consultation
         [Test]
         public async Task Should_Return_A_Valid_ConsultationRoom_With_A_Valid_Request()
         {
-            _queryHandler.Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(It.Is<GetAvailableRoomByRoomTypeQuery>(
-                x => x.ConferenceId.Equals(_request.ConferenceId) && x.CourtRoomType.Equals(_request.RoomType)))).ReturnsAsync(_rooms);
+            _queryHandler.Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
+                It.Is<GetAvailableRoomByRoomTypeQuery>(
+                    query => query.ConferenceId.Equals(_request.ConferenceId) &&
+                             query.CourtRoomType.Equals(_request.RoomType)))).ReturnsAsync(_rooms);
 
             var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType);
             _commandHandler.Setup(x => x.Handle(mockCommand));
 
-            var returnedRoom = await _consultationService.GetAvailableConsultationRoomAsync(_request);
+            var returnedRoom =
+                await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType);
 
             returnedRoom.Should().BeOfType<Room>();
             returnedRoom.Should().NotBeNull();
@@ -62,7 +65,10 @@ namespace VideoApi.UnitTests.Services.Consultation
         [Test]
         public async Task Should_Create_ConsultationRoom_If_None_Are_Available()
         {
-            _queryHandler.Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(It.IsAny<GetAvailableRoomByRoomTypeQuery>())).ReturnsAsync(new List<Room>());
+            _queryHandler
+                .Setup(x =>
+                    x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(It.IsAny<GetAvailableRoomByRoomTypeQuery>()))
+                .ReturnsAsync(new List<Room>());
 
             var consultationRoomParams = new CreateConsultationRoomParams
             {
@@ -71,9 +77,10 @@ namespace VideoApi.UnitTests.Services.Consultation
 
             _kinlyApiClient
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
-                .ReturnsAsync(new CreateConsultationRoomResponse() { Room_label = "Label" });
+                .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
 
-            var returnedRoom = await _consultationService.GetAvailableConsultationRoomAsync(_request);
+            var returnedRoom =
+                await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType);
 
             _kinlyApiClient.Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
                 y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
@@ -91,7 +98,8 @@ namespace VideoApi.UnitTests.Services.Consultation
             var room = _rooms.First(x => x.ConferenceId.Equals(_request.ConferenceId));
             var participant =
                 TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
-            await _consultationService.TransferParticipantToConsultationRoomAsync(_request, room);
+            await _consultationService.JoinConsultationRoomAsync(_request.ConferenceId, _request.RequestedBy,
+                room.Label);
 
             var request = new TransferParticipantParams
             {
@@ -101,8 +109,9 @@ namespace VideoApi.UnitTests.Services.Consultation
             };
 
             _kinlyApiClient.Verify(x => x.TransferParticipantAsync(It.Is<string>(
-                y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
-                y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))), Times.Once);
+                    y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
+                    y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
+                Times.Once);
         }
 
         private StartConsultationRequest RequestBuilder()
@@ -137,11 +146,9 @@ namespace VideoApi.UnitTests.Services.Consultation
         public async Task should_remove_a_participant_in_room()
         {
             var participantId = TestConference.Participants[0].Id;
-            var leaveRequest = new LeaveConsultationRequest
-            { ConferenceId = TestConference.Id, ParticipantId = participantId };
             var _fromRoom = "ConsultationRoom";
             var _toRoom = "WaitingRoom";
-            await _consultationService.LeaveConsultationAsync(leaveRequest, _fromRoom, _toRoom);
+            await _consultationService.LeaveConsultationAsync(TestConference.Id, participantId, _fromRoom, _toRoom);
 
             _kinlyApiClient.Verify(x =>
                     x.TransferParticipantAsync(TestConference.Id.ToString(),
