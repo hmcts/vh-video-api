@@ -66,7 +66,21 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, null, "TestRoomNotExist");
             Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
-        
+
+
+        [Test]
+        public async Task should_not_throw_room_not_found_exception_when_room_label_if_not_InConsultation()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            var participant = seededConference.GetParticipants().First();
+            const ParticipantState state = ParticipantState.Disconnected;
+
+            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, null, null);
+            await _handler.Handle(command);
+        }
+
         [Test]
         public async Task Should_update_participant_status_to_in_consultation_in_consultation_room_1()
         {
@@ -118,6 +132,25 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterState.ParticipantState.Should().Be(state);
             updatedParticipant.CurrentRoom.Should().BeNull();
             updatedParticipant.CurrentVirtualRoom.Label.Should().Be(seededRoom.Label);
+        }
+
+        [Test]
+        public async Task should_throw_room_not_found_exception_when_room_label_is_provided_but_returns_null_conferenceId_check()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            var seededConference2 = await TestDataManager.SeedConference();
+            _newConferenceId = seededConference.Id;
+            var vRoom = new Room(seededConference2.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+                VirtualCourtRoomType.JudgeJOH);
+            var seededRoom = await TestDataManager.SeedRoom(vRoom);
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
+            _newConferenceId = seededConference.Id;
+            var participant = seededConference.GetParticipants().First(p => p.IsJudge());
+            const ParticipantState state = ParticipantState.InConsultation;
+
+            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, null, seededRoom.Label);
+            Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
 
         [Test]
