@@ -52,7 +52,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                     query => query.ConferenceId.Equals(_request.ConferenceId) &&
                              query.CourtRoomType.Equals(_request.RoomType)))).ReturnsAsync(_rooms);
 
-            var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType);
+            var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType, false);
             _commandHandler.Setup(x => x.Handle(mockCommand));
 
             var returnedRoom =
@@ -133,8 +133,8 @@ namespace VideoApi.UnitTests.Services.Consultation
         private List<Room> CreateTestRooms(StartConsultationRequest request)
         {
             var rooms = new List<Room>();
-            var room1 = new Room(request.ConferenceId, "Judge", request.RoomType);
-            var room2 = new Room(Guid.NewGuid(), "Waiting", VirtualCourtRoomType.JudgeJOH);
+            var room1 = new Room(request.ConferenceId, "Judge", request.RoomType, false);
+            var room2 = new Room(Guid.NewGuid(), "Waiting", VirtualCourtRoomType.WaitingRoom, false);
 
             rooms.Add(room1);
             rooms.Add(room2);

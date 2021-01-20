@@ -173,20 +173,6 @@ namespace VideoApi.IntegrationTests.Steps
 
             SerialiseConsultationRequest(request);
         }
-
-        [Given("no consultation rooms are available")]
-        public async Task GivenNoConsultationRoomsAreAvailable()
-        {
-            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
-            var conference = await db.Conferences
-                .Include("Participants")
-                .SingleAsync(x => x.Id == _context.Test.Conference.Id);
-
-            conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
-            conference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom2);
-
-            await db.SaveChangesAsync();
-        }
         
         [Given(@"I have a (.*) respond to admin consultation request")]
         [Given(@"I have an (.*) respond to admin consultation request")]
@@ -382,7 +368,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
                 conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
-            var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH);
+            var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
 
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var conference = await db.Conferences
@@ -481,7 +467,7 @@ namespace VideoApi.IntegrationTests.Steps
                     .SingleAsync(x => x.Id == _context.Test.Conference.Id);
 
                 conference.Participants.Single(x => x.Id == participantId)
-                    .UpdateCurrentRoom(RoomType.ConsultationRoom1);
+                    .UpdateCurrentRoom(RoomType.ConsultationRoom);
 
                 await db.SaveChangesAsync();
 
@@ -501,7 +487,7 @@ namespace VideoApi.IntegrationTests.Steps
             request.ConferenceId = _context.Test.Conference.Id;
             request.ParticipantId = participants[0].Id;
             request.Answer = ConsultationAnswer.Accepted;
-            request.ConsultationRoom = RoomType.ConsultationRoom1;
+            request.ConsultationRoom = RoomType.ConsultationRoom;
 
             return request;
         }

@@ -90,7 +90,7 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.ConferenceId = Guid.NewGuid())
                 .With(x => x.ParticipantId = Guid.NewGuid())
                 .With(x => x.Answer = ConsultationAnswer.Accepted)
-                .With(x => x.ConsultationRoom = RoomType.ConsultationRoom1)
+                .With(x => x.ConsultationRoom = RoomType.ConsultationRoom)
                 .Build();
             return request;
         }

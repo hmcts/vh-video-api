@@ -156,7 +156,7 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = EventType.Transfer)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
-                .With(x => x.TransferTo = RoomType.ConsultationRoom1.ToString())
+                .With(x => x.TransferTo = RoomType.ConsultationRoom.ToString())
                 .With(x => x.Phone = null)
                 .Build();
             return request;

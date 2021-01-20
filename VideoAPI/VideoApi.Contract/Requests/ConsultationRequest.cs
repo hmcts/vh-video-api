@@ -22,6 +22,8 @@ namespace VideoApi.Contract.Requests
         /// Requestee's UUID
         /// </summary>
         public Guid RequestedFor { get; set; }
+
+        public string RoomName { get; set; }
         
         /// <summary>
         /// Response to a consultation request (i.e. 'Accepted or Rejected')

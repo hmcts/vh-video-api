@@ -31,6 +31,19 @@ namespace Video.API.Services
             _queryHandler = queryHandler;
         }
 
+        public async Task<Room> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false)
+        {
+            var consultationRoomParams = new CreateConsultationRoomParams
+            {
+                Room_label_prefix = roomType.ToString()
+            };
+            var createConsultationRoomResponse = await CreateConsultationRoomAsync(conferenceId.ToString(), consultationRoomParams);
+            var createRoomCommand = new CreateRoomCommand(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
+            await _commandHandler.Handle(createRoomCommand);
+            var room = new Room(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
+            return room;
+        }
+
         public async Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
             var query = new GetAvailableRoomByRoomTypeQuery(roomType, conferenceId);
@@ -47,9 +60,10 @@ namespace Video.API.Services
                         consultationRoomParams);
                 var createRoomCommand = new CreateRoomCommand(conferenceId,
                     createConsultationRoomResponse.Room_label,
-                    roomType);
+                    roomType,
+                    false);
                 await _commandHandler.Handle(createRoomCommand);
-                room = new Room(conferenceId, createConsultationRoomResponse.Room_label, roomType);
+                room = new Room(conferenceId, createConsultationRoomResponse.Room_label, roomType, false);
             }
 
             return room;

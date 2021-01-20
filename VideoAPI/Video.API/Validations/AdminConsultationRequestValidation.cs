@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FluentValidation;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
@@ -19,8 +18,7 @@ namespace Video.API.Validations
             RuleFor(x => x.Answer).NotEqual(ConsultationAnswer.None).WithMessage(NoAnswerErrorMessage);
             RuleFor(x => x.ConsultationRoom).Custom((type, context) =>
             {
-                var validRooms = new List<RoomType> {RoomType.ConsultationRoom1, RoomType.ConsultationRoom2};
-                if (!validRooms.Contains(type))
+                if (type != RoomType.ConsultationRoom)
                 {
                     context.AddFailure("ConsultationRoom", NotValidConsultationRoomMessage);
                 }

@@ -23,20 +23,18 @@ namespace VideoApi.Services
         private readonly IKinlyApiClient _kinlyApiClient;
         private readonly ILogger<KinlyPlatformService> _logger;
         private readonly ServicesConfiguration _servicesConfigOptions;
-        private readonly IRoomReservationService _roomReservationService;
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
             IOptions<ServicesConfiguration> servicesConfigOptions,
-            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService,
+            ILogger<KinlyPlatformService> logger,
             IKinlySelfTestHttpClient kinlySelfTestHttpClient,
             IPollyRetryService pollyRetryService)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
             _servicesConfigOptions = servicesConfigOptions.Value;
-            _roomReservationService = roomReservationService;
             _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
         }
@@ -134,36 +132,6 @@ namespace VideoApi.Services
             };
 
             return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
-        }
-
-        public async Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy,
-            Participant requestedFor)
-        {
-            var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
-
-            _logger.LogInformation(
-                "Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}",
-                conference.Id, requestedBy.Id, requestedFor.Id, targetRoom);
-
-            await TransferParticipantAsync(conference.Id, requestedBy.Id,
-                requestedBy.GetCurrentRoom(), targetRoom);
-
-            await TransferParticipantAsync(conference.Id, requestedFor.Id,
-                requestedFor.GetCurrentRoom(), targetRoom);
-        }
-
-        public async Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint,
-            Participant defenceAdvocate)
-        {
-            var targetRoom = _roomReservationService.GetNextAvailableConsultationRoom(conference);
-            _logger.LogInformation(
-                "Conference: {conference.Id} - Attempting to transfer endpoint {endpoint.Id} and participant {defenceAdvocate.Id} into room {targetRoom}",
-                conference.Id, endpoint.Id, defenceAdvocate.Id, targetRoom);
-            await TransferParticipantAsync(conference.Id, endpoint.Id,
-                endpoint.GetCurrentRoom(), targetRoom);
-
-            await TransferParticipantAsync(conference.Id, defenceAdvocate.Id,
-                defenceAdvocate.GetCurrentRoom(), targetRoom);
         }
 
         public async Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)

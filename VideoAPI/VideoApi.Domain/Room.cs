@@ -9,21 +9,27 @@ namespace VideoApi.Domain
 {
     public class Room : Entity<long>
     {
-        public Room(Guid conferenceId, string label, VirtualCourtRoomType type)
+        public Room(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
         {
             ConferenceId = conferenceId;
             Label = label;
             Type = type;
             Status = RoomStatus.Live;
             RoomParticipants = new List<RoomParticipant>();
+            Locked = locked;
         }
 
         public Guid ConferenceId { get; private set; }
         public string Label { get; private set; }
         public VirtualCourtRoomType Type { get; private set; }
         public RoomStatus Status { get; private set; }
-
         public virtual List<RoomParticipant> RoomParticipants { get; }
+        public bool Locked { get; private set; }
+
+        public void UpdateRoomLock(bool locked)
+        {
+            Locked = locked;
+        }
 
         public void AddParticipant(RoomParticipant participant)
         {

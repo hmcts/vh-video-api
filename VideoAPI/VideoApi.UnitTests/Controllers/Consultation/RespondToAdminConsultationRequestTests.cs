@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 ParticipantId = participant.Id,
-                ConsultationRoom = RoomType.ConsultationRoom1,
+                ConsultationRoom = RoomType.ConsultationRoom,
                 Answer = ConsultationAnswer.Accepted
             };
 
@@ -46,7 +46,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 ParticipantId = participant.Id,
-                ConsultationRoom = RoomType.ConsultationRoom1,
+                ConsultationRoom = RoomType.ConsultationRoom,
                 Answer = ConsultationAnswer.Rejected
             };
 
@@ -67,7 +67,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 ParticipantId = Guid.NewGuid(),
-                ConsultationRoom = RoomType.ConsultationRoom1,
+                ConsultationRoom = RoomType.ConsultationRoom,
                 Answer = ConsultationAnswer.Rejected
             };
 
@@ -84,7 +84,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 ParticipantId = Guid.NewGuid(),
-                ConsultationRoom = RoomType.ConsultationRoom1
+                ConsultationRoom = RoomType.ConsultationRoom
             };
             
             var result = await Controller.RespondToAdminConsultationRequestAsync(request);

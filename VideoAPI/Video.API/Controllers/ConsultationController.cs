@@ -13,10 +13,8 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
-using Task = System.Threading.Tasks.Task;
 
 namespace Video.API.Controllers
 {
@@ -32,15 +30,15 @@ namespace Video.API.Controllers
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly IConsultationService _consultationService;
 
-        public ConsultationController(IQueryHandler queryHandler, ICommandHandler commandHandler,
+        public ConsultationController(IQueryHandler queryHandler,
             ILogger<ConsultationController> logger, IVideoPlatformService videoPlatformService,
-            IConsultationService consultationService)
+            IConsultationService consultationService, ICommandHandler commandHandler)
         {
             _queryHandler = queryHandler;
-            _commandHandler = commandHandler;
             _logger = logger;
             _videoPlatformService = videoPlatformService;
             _consultationService = consultationService;
+            _commandHandler = commandHandler;
         }
 
         /// <summary>
@@ -54,7 +52,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> HandleConsultationRequestAsync(ConsultationRequest request)
         {
-            _logger.LogDebug("HandleConsultationRequest");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             if (conference == null)
@@ -77,23 +74,21 @@ namespace Video.API.Controllers
                 return NotFound();
             }
 
+            if (string.IsNullOrEmpty(request.RoomName))
+            {
+                _logger.LogWarning("Please provide a room name");
+                return NotFound();
+            }
+
             var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
-                DateTime.UtcNow, null, null, $"Consultation with {requestedFor.DisplayName}", null)
+                DateTime.UtcNow, null, null, $"Adding {requestedFor.DisplayName} to {request.RoomName}", null)
             {
                 ParticipantId = requestedBy.Id
             };
+
             await _commandHandler.Handle(command);
 
-            try
-            {
-                await InitiateStartConsultationAsync(conference, requestedBy, requestedFor, request.Answer.GetValueOrDefault());
-            }
-            catch (DomainRuleException ex)
-            {
-                _logger.LogError(ex, "No consultation room available for conference");
-                ModelState.AddModelError("ConsultationRoom", "No consultation room available");
-                return BadRequest(ModelState);
-            }
+            await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, requestedFor.Id, request.RoomName);
 
             return NoContent();
         }
@@ -110,7 +105,6 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeavePrivateConsultationAsync(LeaveConsultationRequest request)
         {
-            _logger.LogDebug("LeavePrivateConsultation");
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
@@ -128,15 +122,14 @@ namespace Video.API.Controllers
             }
 
             var currentRoom = participant.CurrentRoom;
-            if (!currentRoom.HasValue || (currentRoom != RoomType.ConsultationRoom1 &&
-                                          currentRoom != RoomType.ConsultationRoom2))
+            if (!currentRoom.HasValue || currentRoom != RoomType.ConsultationRoom)
             {
                 // This could only happen when both the participants press 'Close' button at the same time to end the call
                 _logger.LogWarning("Participant is not in a consultation to leave from");
                 return NoContent();
             }
 
-            await _videoPlatformService.StopPrivateConsultationAsync(conference, currentRoom.Value);
+            await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom);
             return NoContent();
 
         }
@@ -153,12 +146,9 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RespondToAdminConsultationRequestAsync(AdminConsultationRequest request)
         {
-            _logger.LogDebug("RespondToAdminConsultationRequest");
-
             const string modelErrorMessage = "Response to consultation is missing";
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (!request.Answer.HasValue)
             {
@@ -200,11 +190,8 @@ namespace Video.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
-            _logger.LogDebug("StartPrivateConsultationWithEndpoint");
-
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (conference == null)
             {
@@ -240,7 +227,9 @@ namespace Video.API.Controllers
                 return Unauthorized(message);
             }
 
-            await _videoPlatformService.StartEndpointPrivateConsultationAsync(conference, endpoint, defenceAdvocate);
+            var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId, locked: true);
+            await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, defenceAdvocate.Id, room.Label);
+            await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, endpoint.Id, room.Label);
 
             return Accepted();
         }
@@ -255,8 +244,9 @@ namespace Video.API.Controllers
         {
             try
             {
-                var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
-                    request.RoomType);
+                var room = request.RoomType == VirtualCourtRoomType.Participant
+                    ? await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId)
+                    : await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType);
                 await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
                 return Accepted();
@@ -323,17 +313,6 @@ namespace Video.API.Controllers
                     "Unable to leave a consultation room for ConferenceId: {conferenceId}",
                     request.ConferenceId);
                 return BadRequest("Error on Leave Consultation room");
-            }
-        }
-
-        private async Task InitiateStartConsultationAsync(Conference conference, Participant requestedBy,
-            Participant requestedFor, ConsultationAnswer answer)
-        {
-            if (answer == ConsultationAnswer.Accepted)
-            {
-                _logger.LogInformation(
-                    "Conference: {conferenceId} - Attempting to start private consultation between {requestedById} and {requestedForId}", conference.Id, requestedBy.Id, requestedFor.Id);
-                await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
             }
         }
     }

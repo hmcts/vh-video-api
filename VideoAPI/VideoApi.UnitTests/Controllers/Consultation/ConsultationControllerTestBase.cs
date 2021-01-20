@@ -36,7 +36,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom1)
+                .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Claimant", "rep1@dA.com")
                 .WithParticipant(UserRole.Individual, "Defendant")
                 .WithParticipant(UserRole.Representative, "Defendant")
@@ -53,8 +53,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
                 .Returns(Task.FromResult(default(object)));
 
-            Controller = new ConsultationController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                MockLogger.Object, VideoPlatformServiceMock.Object, ConsultationService.Object);
+            Controller = new ConsultationController(QueryHandlerMock.Object,
+                MockLogger.Object, VideoPlatformServiceMock.Object, ConsultationService.Object, CommandHandlerMock.Object);
         }
     }
 }

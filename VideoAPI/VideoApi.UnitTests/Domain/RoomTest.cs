@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Domain
             var conferenceId = Guid.NewGuid();
             var label = "Room1";
 
-            var room = new Room(conferenceId, label, VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(conferenceId, label, VirtualCourtRoomType.JudgeJOH, false);
             room.Status.Should().Be(RoomStatus.Live);
             room.ConferenceId.Should().Be(conferenceId);
             room.Label.Should().Be(label);
@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Domain
         {
             var participantId = Guid.NewGuid();
             var roomParticipant = new RoomParticipant(participantId);
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             room.AddParticipant(roomParticipant);
 
             room.RoomParticipants.Count.Should().Be(1);
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Domain
         {
             var participantId = Guid.NewGuid();
             var roomParticipant = new RoomParticipant(participantId);
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             room.AddParticipant(roomParticipant);
             var beforeCount = room.RoomParticipants.Count;
 
@@ -54,7 +54,7 @@ namespace VideoApi.UnitTests.Domain
         {
             var participantId = Guid.NewGuid();
             var roomParticipant = new RoomParticipant(participantId);
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             room.AddParticipant(roomParticipant);
             var beforeCount = room.RoomParticipants.Count;
 
@@ -68,7 +68,7 @@ namespace VideoApi.UnitTests.Domain
         {
             var participantId = Guid.NewGuid();
             var roomParticipant = new RoomParticipant(participantId);
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             room.AddParticipant(roomParticipant);
             var beforeCount = room.RoomParticipants.Count;
 
@@ -81,14 +81,14 @@ namespace VideoApi.UnitTests.Domain
         [Test]
         public void Should_update_room_status_to_Live_on_init()
         {
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             room.Status.Should().Be(RoomStatus.Live);
         }
 
         [Test]
         public void Should_update_room_status_to_closed_on_last_participant_remove()
         {
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             var roomParticipant = new RoomParticipant(Guid.NewGuid());
             room.RoomParticipants.Add(roomParticipant);
             room.Status.Should().Be(RoomStatus.Live);
@@ -103,7 +103,7 @@ namespace VideoApi.UnitTests.Domain
         {
             var participantId = Guid.NewGuid();
             var roomParticipant = new RoomParticipant(participantId);
-            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             room.AddParticipant(roomParticipant);
 
             room.RoomParticipants.Count.Should().Be(1);

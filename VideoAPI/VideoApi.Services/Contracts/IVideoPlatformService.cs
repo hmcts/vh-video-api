@@ -18,18 +18,6 @@ namespace VideoApi.Services.Contracts
         Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);
         
         /// <summary>
-        /// Move two participants into a single consultation room
-        /// </summary>
-        /// <param name="conference">Conference</param>
-        /// <param name="requestedBy">First participant</param>
-        /// <param name="requestedFor">Second participant</param>
-        /// <returns></returns>
-        Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor);
-
-        Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint,
-            Participant defenceAdvocate);
-        
-        /// <summary>
         /// Returns participants in a given room to waiting room
         /// </summary>
         /// <param name="conference"></param>

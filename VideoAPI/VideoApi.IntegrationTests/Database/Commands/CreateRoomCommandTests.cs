@@ -30,7 +30,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
 
 
-            var command = new CreateRoomCommand(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH);
+            var command = new CreateRoomCommand(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH, false);
 
             await _handler.Handle(command);
 
@@ -43,7 +43,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public void Should_throw_exception_if_no_conference_found()
         {
-            var command = new CreateRoomCommand(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH);
+            var command = new CreateRoomCommand(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 

@@ -11,9 +11,15 @@ namespace Video.API.Services
     [ExcludeFromCodeCoverage]
     public class ConsultationServiceStub : IConsultationService
     {
+        public Task<Room> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false)
+        {
+            var room = new Room(Guid.NewGuid(), "Label", roomType, locked);
+            return Task.FromResult(room);
+        }
+
         public Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
-            var room = new Room(Guid.NewGuid(), "Judge", VirtualCourtRoomType.JudgeJOH);
+            var room = new Room(Guid.NewGuid(), "Judge", VirtualCourtRoomType.JudgeJOH, false);
             return Task.FromResult(room);
         }
 
