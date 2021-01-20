@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -16,7 +17,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
     {
         private UpdateParticipantStatusAndRoomCommandHandler _handler;
         private GetConferenceByIdQueryHandler _conferenceByIdHandler;
-        private Guid _newConferenceId;
+        private List<Guid> _newConferenceIds;
 
         [SetUp]
         public void Setup()
@@ -24,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new UpdateParticipantStatusAndRoomCommandHandler(context);
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
-            _newConferenceId = Guid.Empty;
+            _newConferenceIds = new List<Guid>();
         }
 
         [Test]
@@ -45,12 +46,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            _newConferenceId = seededConference.Id;
+            _newConferenceIds.Add(seededConference.Id);
             var participantId = Guid.NewGuid();
             var state = ParticipantState.InConsultation;
             var room = RoomType.ConsultationRoom1;
 
-            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participantId, state, room, null);
+            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participantId, state, room, null);
 
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
@@ -59,11 +60,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            _newConferenceId = seededConference.Id;
+            _newConferenceIds.Add(seededConference.Id);
             var participant = seededConference.GetParticipants().First();
             const ParticipantState state = ParticipantState.InConsultation;
 
-            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, null, "TestRoomNotExist");
+            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, "TestRoomNotExist");
             Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -73,11 +74,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            _newConferenceId = seededConference.Id;
+            _newConferenceIds.Add(seededConference.Id);
             var participant = seededConference.GetParticipants().First();
             const ParticipantState state = ParticipantState.Disconnected;
 
-            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, null, null);
+            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, null);
             await _handler.Handle(command);
         }
 
@@ -86,17 +87,17 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            _newConferenceId = seededConference.Id;
+            _newConferenceIds.Add(seededConference.Id);
             var participant = seededConference.GetParticipants().First();
             const ParticipantState state = ParticipantState.InConsultation;
             const RoomType room = RoomType.ConsultationRoom1;
 
             var beforeState = participant.GetCurrentStatus();
 
-            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, room, null);
+            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, room, null);
             await _handler.Handle(command);
 
-            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id));
             var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
             var afterState = updatedParticipant.GetCurrentStatus();
 
@@ -109,22 +110,21 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_update_participant_status_and_virtual_room()
         {
             var seededConference = await TestDataManager.SeedConference();
-            _newConferenceId = seededConference.Id;
+            _newConferenceIds.Add(seededConference.Id);
             var vRoom = new Room(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH);
             var seededRoom = await TestDataManager.SeedRoom(vRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
-            _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants().First(p => p.IsJudge());
             const ParticipantState state = ParticipantState.InConsultation;
 
             var beforeState = participant.GetCurrentStatus();
 
-            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, null, seededRoom.Label);
+            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, seededRoom.Label);
             await _handler.Handle(command);
 
-            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id));
             var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
             var afterState = updatedParticipant.GetCurrentStatus();
 
@@ -139,17 +139,17 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var seededConference = await TestDataManager.SeedConference();
             var seededConference2 = await TestDataManager.SeedConference();
-            _newConferenceId = seededConference.Id;
+            _newConferenceIds.Add(seededConference.Id);
+            _newConferenceIds.Add(seededConference2.Id);
             var vRoom = new Room(seededConference2.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH);
             var seededRoom = await TestDataManager.SeedRoom(vRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
-            _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants().First(p => p.IsJudge());
             const ParticipantState state = ParticipantState.InConsultation;
 
-            var command = new UpdateParticipantStatusAndRoomCommand(_newConferenceId, participant.Id, state, null, seededRoom.Label);
+            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, seededRoom.Label);
             Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -158,7 +158,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             // Arrange conference with participant in consultation room
             var seededConference = await TestDataManager.SeedConference();
-            _newConferenceId = seededConference.Id;
+            _newConferenceIds.Add(seededConference.Id);
             var vRoom = new Room(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH);
             
@@ -175,7 +175,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             await _handler.Handle(command);
 
             // Assert
-            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id));
             var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Id == pat1);
             updatedParticipant.State.Should().Be(ParticipantState.Disconnected);
             updatedParticipant.CurrentRoom.Should().BeNull();
@@ -185,14 +185,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [TearDown]
         public async Task TearDownAsync()
         {
-            if (_newConferenceId != Guid.Empty)
+            foreach (var conferenceId in _newConferenceIds)
             {
-                TestContext.WriteLine($"Removing test conference {_newConferenceId}");
-                await TestDataManager.RemoveConference(_newConferenceId);
+                TestContext.WriteLine($"Removing test conference {conferenceId}");
+                await TestDataManager.RemoveConference(conferenceId);
+
+                TestContext.WriteLine("Cleaning rooms for GetAvailableRoomByRoomTypeQuery");
+                await TestDataManager.RemoveRooms(conferenceId);
             }
-            
-            TestContext.WriteLine("Cleaning rooms for GetAvailableRoomByRoomTypeQuery");
-            await TestDataManager.RemoveRooms(_newConferenceId);
         }
     }
 }
