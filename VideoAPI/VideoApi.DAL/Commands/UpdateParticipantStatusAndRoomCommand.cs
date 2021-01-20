@@ -47,14 +47,17 @@ namespace VideoApi.DAL.Commands
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
-            
-            var virtualRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId);
 
-            if (!command.Room.HasValue && virtualRoom == null && command.ParticipantState != ParticipantState.Disconnected)
+            Room virtualRoom = null;
+            if (command.ParticipantState == ParticipantState.InConsultation)
             {
-                throw new RoomNotFoundException(command.RoomLabel);
+                virtualRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId);
+                if (!command.Room.HasValue && virtualRoom == null && command.ParticipantState != ParticipantState.Disconnected)
+                {
+                    throw new RoomNotFoundException(command.RoomLabel);
+                }
             }
-            
+
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == command.ParticipantId);
             if (participant == null)
             {
