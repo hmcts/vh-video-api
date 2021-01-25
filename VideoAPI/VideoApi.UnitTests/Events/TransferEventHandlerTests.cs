@@ -80,6 +80,35 @@ namespace VideoApi.UnitTests.Events
         }
         
         [Test]
+        public async Task Should_map_to_in_hearing_status_when_transfer_from_new_consultation_room_to_hearing_room()
+        {
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
+            
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Transfer,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
+                TransferFrom = null,
+                TransferredFromRoomLabel = "JudgeConsultationRoom3",
+                TransferTo = RoomType.HearingRoom,
+                TransferredToRoomLabel = RoomType.HearingRoom.ToString(),
+                TimeStampUtc = DateTime.UtcNow
+            };
+            await _sut.HandleAsync(callbackEvent);
+
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.InHearing && 
+                    command.Room == RoomType.HearingRoom &&
+                    command.RoomLabel == RoomType.HearingRoom.ToString())), Times.Once);
+        }
+        
+        [Test]
         public async Task Should_map_to_available_status_when_transfer_to_waiting_room_from_judge_consultation_room()
         {
             var conference = TestConference;
