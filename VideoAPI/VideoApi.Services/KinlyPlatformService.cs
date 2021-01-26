@@ -170,6 +170,7 @@ namespace VideoApi.Services
         {
             var participants = conference.GetParticipants()
                 .Where(x => x.GetCurrentStatus().ParticipantState == ParticipantState.InConsultation &&
+                            x.CurrentVirtualRoom == null &&
                             x.GetCurrentRoom() == consultationRoom);
 
             foreach (var participant in participants)
