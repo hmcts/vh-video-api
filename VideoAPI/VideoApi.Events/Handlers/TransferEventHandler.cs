@@ -58,7 +58,8 @@ namespace VideoApi.Events.Handlers
                 return ParticipantState.Available;
 
             if ((callbackEvent.TransferFrom == RoomType.ConsultationRoom1 ||
-                 callbackEvent.TransferFrom == RoomType.ConsultationRoom2) &&
+                 callbackEvent.TransferFrom == RoomType.ConsultationRoom2 || 
+                 callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation")) &&
                 callbackEvent.TransferTo == RoomType.HearingRoom)
                 return ParticipantState.InHearing;
 
