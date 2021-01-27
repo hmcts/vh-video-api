@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task Should_update_conference_status()
+        public async Task Should_update_participant_details()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -70,6 +70,33 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.LastName.Should().Be("lastName");
             updatedParticipant.ContactEmail.Should().Be("new@test.com");
             updatedParticipant.ContactTelephone.Should().Be("0123456789");
+        }
+        
+        [Test]
+        public async Task Should_update_participant_username_when_provided()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            var participant = seededConference.GetParticipants().First();
+
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
+                "lastName", "displayname", String.Empty, "new@test.com", "0123456789")
+            {
+                Username = "newUser@updated.com"
+            };
+            await _handler.Handle(command);
+
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var updatedParticipant =
+                updatedConference.GetParticipants().Single(x => x.Id == participant.Id);
+            updatedParticipant.DisplayName.Should().Be("displayname");
+            updatedParticipant.Name.Should().Be("fullname");
+            updatedParticipant.FirstName.Should().Be("firstName");
+            updatedParticipant.LastName.Should().Be("lastName");
+            updatedParticipant.ContactEmail.Should().Be("new@test.com");
+            updatedParticipant.ContactTelephone.Should().Be("0123456789");
+            updatedParticipant.Username.Should().Be(command.Username);
         }
 
 

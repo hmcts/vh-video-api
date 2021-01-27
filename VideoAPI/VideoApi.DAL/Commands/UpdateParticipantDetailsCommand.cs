@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
@@ -18,6 +19,7 @@ namespace VideoApi.DAL.Commands
         public string LastName { get; }
         public string ContactEmail { get; }
         public string ContactTelephone { get; }
+        public string Username { get; set; }
 
         public UpdateParticipantDetailsCommand(Guid conferenceId, Guid participantId, string fullname, string firstname,
             string lastname, string displayName, string representee, string contactEmail, string contactTelephone)
@@ -65,6 +67,11 @@ namespace VideoApi.DAL.Commands
             
             participant.ContactEmail = command.ContactEmail;
             participant.ContactTelephone = command.ContactTelephone;
+
+            if (!command.Username.IsNullOrEmpty())
+            {
+                participant.Username = command.Username;
+            }
             
             await _context.SaveChangesAsync();
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -97,6 +98,10 @@ namespace Video.API.Controllers
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
                     request.Fullname, request.FirstName, request.LastName, request.DisplayName, request.Representee,
                     request.ContactEmail, request.ContactTelephone);
+                if (!request.Username.IsNullOrEmpty())
+                {
+                    updateParticipantDetailsCommand.Username = request.Username;
+                }
                 await _commandHandler.Handle(updateParticipantDetailsCommand);
 
                 return NoContent();
