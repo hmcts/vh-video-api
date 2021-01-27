@@ -10,7 +10,7 @@ using VideoApi.Domain.Enums;
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
     [TestFixture]
-    public class RespondToAdminConsultationRequestTests : ConsultationControllerTestBase
+    public class RespondToConsultationRequestResponseTests : ConsultationControllerTestBase
     {
         [Test]
         public async Task Should_transfer_participant_when_consultation_is_accepted()
@@ -18,19 +18,19 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[3];
 
-            var roomFrom = participant.CurrentRoom.Value;
-            var request = new AdminConsultationRequest
+            var roomFrom = participant.GetCurrentRoom();
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
-                ParticipantId = participant.Id,
-                ConsultationRoom = RoomType.ConsultationRoom,
+                RequestedFor = participant.Id,
+                RoomLabel = RoomType.ConsultationRoom.ToString(),
                 Answer = ConsultationAnswer.Accepted
             };
 
-            await Controller.RespondToAdminConsultationRequestAsync(request);
+            await Controller.RespondToConsultationRequestAsync(request);
 
             VideoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom),
+                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.RoomLabel),
                 Times.Once);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
@@ -41,19 +41,19 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[3];
 
-            var roomFrom = participant.CurrentRoom.Value;
-            var request = new AdminConsultationRequest
+            var roomFrom = participant.GetCurrentRoom();
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
-                ParticipantId = participant.Id,
-                ConsultationRoom = RoomType.ConsultationRoom,
+                RequestedFor = participant.Id,
+                RoomLabel = RoomType.ConsultationRoom.ToString(),
                 Answer = ConsultationAnswer.Rejected
             };
 
-            await Controller.RespondToAdminConsultationRequestAsync(request);
+            await Controller.RespondToConsultationRequestAsync(request);
 
             VideoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom),
+                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.RoomLabel),
                 Times.Never);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
@@ -63,15 +63,15 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
              
-            var request = new AdminConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
-                ParticipantId = Guid.NewGuid(),
-                ConsultationRoom = RoomType.ConsultationRoom,
+                RequestedFor = Guid.NewGuid(),
+                RoomLabel = RoomType.ConsultationRoom.ToString(),
                 Answer = ConsultationAnswer.Rejected
             };
 
-            var result = await Controller.RespondToAdminConsultationRequestAsync(request);
+            var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -80,14 +80,14 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task should_return_bad_request_when_answer_is_not_provided()
         {
             var conferenceId = TestConference.Id;
-            var request = new AdminConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
-                ParticipantId = Guid.NewGuid(),
-                ConsultationRoom = RoomType.ConsultationRoom
+                RequestedFor = Guid.NewGuid(),
+                RoomLabel = RoomType.ConsultationRoom.ToString()
             };
             
-            var result = await Controller.RespondToAdminConsultationRequestAsync(request);
+            var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (BadRequestObjectResult)result;
             typedResult.Should().NotBeNull();
         }

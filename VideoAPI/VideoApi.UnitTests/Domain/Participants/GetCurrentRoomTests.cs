@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Domain.Participants
                 .WithCaseTypeGroup("Claimant")
                 .Build();
             participant.UpdateCurrentRoom(newRoom);
-            participant.GetCurrentRoom().Should().Be(newRoom);
+            participant.GetCurrentRoom().Should().Be(newRoom.ToString());
         }
 
         [Test]

@@ -24,7 +24,8 @@ namespace Video.API.Mappings
                 Representee = participant.Representee,
                 CurrentStatus = participant.State,
                 ContactEmail = participant.ContactEmail,
-                ContactTelephone = participant.ContactTelephone
+                ContactTelephone = participant.ContactTelephone,
+                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentVirtualRoom)
             })
             .ToList();
         }

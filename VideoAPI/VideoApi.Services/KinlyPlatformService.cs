@@ -14,7 +14,6 @@ using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Mappers;
-using Endpoint = VideoApi.Domain.Endpoint;
 
 namespace VideoApi.Services
 {
@@ -117,8 +116,8 @@ namespace VideoApi.Services
             return result;
         }
 
-        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom,
-            RoomType toRoom)
+        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom,
+            string toRoom)
         {
             _logger.LogInformation(
                 "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
@@ -126,15 +125,15 @@ namespace VideoApi.Services
 
             var request = new TransferParticipantParams
             {
-                From = fromRoom.ToString(),
-                To = toRoom.ToString(),
+                From = fromRoom,
+                To = toRoom,
                 Part_id = participantId.ToString()
             };
 
             return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
-        public async Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
+        public async Task StopPrivateConsultationAsync(Conference conference, string consultationRoom)
         {
             var participants = conference.GetParticipants()
                 .Where(x => x.GetCurrentStatus().ParticipantState == ParticipantState.InConsultation &&
@@ -143,15 +142,14 @@ namespace VideoApi.Services
             foreach (var participant in participants)
             {
                 await TransferParticipantAsync(conference.Id, participant.Id, consultationRoom,
-                    RoomType.WaitingRoom);
+                    RoomType.WaitingRoom.ToString());
             }
 
             var endpoints = conference.GetEndpoints()
                 .Where(x => x.State == EndpointState.InConsultation && x.GetCurrentRoom() == consultationRoom);
             foreach (var endpoint in endpoints)
             {
-                await TransferParticipantAsync(conference.Id, endpoint.Id, consultationRoom,
-                    RoomType.WaitingRoom);
+                await TransferParticipantAsync(conference.Id, endpoint.Id, consultationRoom, RoomType.WaitingRoom.ToString());
             }
         }
 

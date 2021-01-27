@@ -86,8 +86,7 @@ namespace Video.API.Services
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
-            await TransferParticipantAsync(conferenceId, participantId, participant.GetCurrentRoom().ToString(),
-                room);
+            await TransferParticipantAsync(conferenceId, participantId, participant.GetCurrentRoom(), room);
         }
         
         public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)

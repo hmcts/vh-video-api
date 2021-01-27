@@ -43,9 +43,9 @@ namespace VideoApi.Domain
             DefenceAdvocate = username;
         }
 
-        public RoomType GetCurrentRoom()
+        public string GetCurrentRoom()
         {
-            return CurrentRoom ?? throw new DomainRuleException(nameof(CurrentRoom), "Endpoint is not in a room");
+            return CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Endpoint is not in a room");
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)

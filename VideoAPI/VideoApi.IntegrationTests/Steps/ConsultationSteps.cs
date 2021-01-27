@@ -176,9 +176,9 @@ namespace VideoApi.IntegrationTests.Steps
         
         [Given(@"I have a (.*) respond to admin consultation request")]
         [Given(@"I have an (.*) respond to admin consultation request")]
-        public void GivenIHaveARespondToAdminConsultationRequest(Scenario scenario)
+        public void GivenIHaveARespondToConsultationRequestResponse(Scenario scenario)
         {
-            var request = SetupRespondToAdminConsultationRequest();
+            var request = SetupRespondToConsultationRequestResponse();
             switch (scenario)
             {
                 case Scenario.Valid: break;
@@ -186,8 +186,8 @@ namespace VideoApi.IntegrationTests.Steps
                 {
                     request.ConferenceId = Guid.Empty;
                     request.Answer = ConsultationAnswer.None;
-                    request.ParticipantId = Guid.Empty;
-                    request.ConsultationRoom = RoomType.HearingRoom;
+                    request.RequestedFor = Guid.Empty;
+                    request.RoomLabel = RoomType.HearingRoom.ToString();
                     break;
                 }
 
@@ -199,16 +199,16 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            SerialiseRespondToAdminConsultationRequest(request);
+            SerialiseRespondToConsultationRequestResponse(request);
         }
 
         [Given(@"I have a respond to admin consultation request with a non-existent participant")]
-        public void GivenIHaveARespondToAdminConsultationRequestWithNonExistentParticipant()
+        public void GivenIHaveARespondToConsultationRequestResponseWithNonExistentParticipant()
         {
-            var request = SetupRespondToAdminConsultationRequest();
-            request.ParticipantId = Guid.NewGuid();
+            var request = SetupRespondToConsultationRequestResponse();
+            request.RequestedFor = Guid.NewGuid();
 
-            SerialiseRespondToAdminConsultationRequest(request);
+            SerialiseRespondToConsultationRequestResponse(request);
         }
 
         [Given(@"I have a start endpoint consultation with a linked defence advocate")]
@@ -381,7 +381,7 @@ namespace VideoApi.IntegrationTests.Steps
             await db.SaveChangesAsync();
         }
 
-        private void SerialiseConsultationRequest(ConsultationRequest request)
+        private void SerialiseConsultationRequest(ConsultationRequestResponse request)
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
@@ -389,9 +389,9 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
-        private void SerialiseRespondToAdminConsultationRequest(AdminConsultationRequest request)
+        private void SerialiseRespondToConsultationRequestResponse(ConsultationRequestResponse request)
         {
-            _context.Uri = ConsultationEndpoints.RespondToAdminConsultationRequest;
+            _context.Uri = ConsultationEndpoints.RespondToConsultationRequestResponse;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -429,9 +429,9 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
-        private ConsultationRequest SetupConsultationRequest(bool withAnswer)
+        private ConsultationRequestResponse SetupConsultationRequest(bool withAnswer)
         {
-            var request = new ConsultationRequest();
+            var request = new ConsultationRequestResponse();
 
             var participants = _context.Test.Conference.GetParticipants().Where(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
@@ -477,17 +477,17 @@ namespace VideoApi.IntegrationTests.Steps
             return request;
         }
 
-        private AdminConsultationRequest SetupRespondToAdminConsultationRequest()
+        private ConsultationRequestResponse SetupRespondToConsultationRequestResponse()
         {
-            var request = new AdminConsultationRequest();
+            var request = new ConsultationRequestResponse();
 
             var participants = _context.Test.Conference.GetParticipants().Where(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
 
             request.ConferenceId = _context.Test.Conference.Id;
-            request.ParticipantId = participants[0].Id;
+            request.RequestedFor = participants[0].Id;
             request.Answer = ConsultationAnswer.Accepted;
-            request.ConsultationRoom = RoomType.ConsultationRoom;
+            request.RoomLabel = RoomType.ConsultationRoom.ToString();
 
             return request;
         }

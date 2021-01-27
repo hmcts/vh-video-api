@@ -145,14 +145,14 @@ namespace Video.API.Controllers
                             participantId, conferenceId);
                         await _videoPlatformService.TransferParticipantAsync(conferenceId,
                             transferRequest.ParticipantId,
-                            RoomType.WaitingRoom, RoomType.HearingRoom);
+                            RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
                             participantId, conferenceId);
                         await _videoPlatformService.TransferParticipantAsync(conferenceId,
                             transferRequest.ParticipantId,
-                            RoomType.HearingRoom, RoomType.WaitingRoom);
+                            RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
                         break;
                     default:
                         _logger.LogWarning("Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",

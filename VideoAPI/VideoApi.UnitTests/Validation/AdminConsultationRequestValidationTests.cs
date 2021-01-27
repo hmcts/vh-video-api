@@ -10,14 +10,14 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Validation
 {
-    public class AdminConsultationRequestValidationTests
+    public class ConsultationRequestResponseValidationTests
     {
-        private AdminConsultationRequestValidation _validator;
+        private ConsultationRequestResponseValidation _validator;
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _validator = new AdminConsultationRequestValidation();
+            _validator = new ConsultationRequestResponseValidation();
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == AdminConsultationRequestValidation.NoConferenceIdErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NoConferenceIdErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -47,12 +47,12 @@ namespace VideoApi.UnitTests.Validation
         public async Task Should_fail_validation_when_participant_id_is_empty()
         {
             var request = BuildRequest();
-            request.ParticipantId = Guid.Empty;
+            request.RequestedFor = Guid.Empty;
 
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == AdminConsultationRequestValidation.NoParticipantIdErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NoParticipantIdErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -65,7 +65,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == AdminConsultationRequestValidation.NoAnswerErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NoAnswerErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -73,24 +73,24 @@ namespace VideoApi.UnitTests.Validation
         public async Task Should_fail_validation_when_room_is_not_consultation()
         {
             var request = BuildRequest();
-            request.ConsultationRoom = RoomType.AdminRoom;
+            request.RoomLabel = RoomType.AdminRoom.ToString();
 
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
             result.Errors.Any(x => x.PropertyName == "ConsultationRoom")
                 .Should().BeTrue();
-            result.Errors.Any(x => x.ErrorMessage == AdminConsultationRequestValidation.NotValidConsultationRoomMessage)
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NotValidConsultationRoomMessage)
                 .Should().BeTrue();
         }
         
-        private AdminConsultationRequest BuildRequest()
+        private ConsultationRequestResponse BuildRequest()
         {
-            var request = Builder<AdminConsultationRequest>.CreateNew()
+            var request = Builder<ConsultationRequestResponse>.CreateNew()
                 .With(x => x.ConferenceId = Guid.NewGuid())
-                .With(x => x.ParticipantId = Guid.NewGuid())
+                .With(x => x.RequestedFor = Guid.NewGuid())
                 .With(x => x.Answer = ConsultationAnswer.Accepted)
-                .With(x => x.ConsultationRoom = RoomType.ConsultationRoom)
+                .With(x => x.RoomLabel = RoomType.ConsultationRoom.ToString())
                 .Build();
             return request;
         }

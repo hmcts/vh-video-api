@@ -15,7 +15,7 @@ namespace VideoApi.Services.Contracts
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl, IEnumerable<EndpointDto> endpoints);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
-        Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);
+        Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom);
         
         /// <summary>
         /// Returns participants in a given room to waiting room
@@ -23,7 +23,7 @@ namespace VideoApi.Services.Contracts
         /// <param name="conference"></param>
         /// <param name="consultationRoom"></param>
         /// <returns></returns>
-        Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom);
+        Task StopPrivateConsultationAsync(Conference conference, string consultationRoom);
 
         /// <summary>
         /// Delete virtual court room

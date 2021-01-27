@@ -72,9 +72,9 @@ namespace VideoApi.Domain
             TestCallResult = new TestCallResult(passed, score);
         }
 
-        public RoomType GetCurrentRoom()
+        public string GetCurrentRoom()
         {
-            return CurrentRoom ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
+            return CurrentVirtualRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)

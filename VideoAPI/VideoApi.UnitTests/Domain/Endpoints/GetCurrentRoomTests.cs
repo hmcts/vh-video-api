@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
         {
             var endpoint = new Endpoint("old name", "123@sip.com", "1234", "defence@sol.com");
             endpoint.UpdateCurrentRoom(newRoom);
-            endpoint.GetCurrentRoom().Should().Be(newRoom);
+            endpoint.GetCurrentRoom().Should().Be(newRoom.ToString());
         }
 
         [Test]

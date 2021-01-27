@@ -74,5 +74,10 @@ namespace VideoApi.Contract.Responses
         /// The current participant status
         /// </summary>
         public ParticipantState CurrentStatus { get; set; }
+
+        /// <summary>
+        /// Current consultation room details
+        /// </summary>
+        public RoomResponse CurrentRoom { get; set; }
     }
 }

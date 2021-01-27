@@ -46,12 +46,7 @@ namespace VideoApi.Services
             return Task.FromResult<TestCallResult>(null);
         }
 
-        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
+        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
         {
             return Task.CompletedTask;
         }
@@ -61,7 +56,7 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
-        public Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
+        public Task StopPrivateConsultationAsync(Conference conference, string consultationRoom)
         {
             return Task.CompletedTask;
         }

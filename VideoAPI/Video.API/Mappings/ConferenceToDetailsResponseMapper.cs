@@ -21,8 +21,7 @@ namespace Video.API.Mappings
                 ClosedDateTime = conference.ClosedDateTime,
                 ScheduledDuration = conference.ScheduledDuration,
                 CurrentStatus = conference.GetCurrentStatus(),
-                Participants =
-                    ParticipantToDetailsResponseMapper.MapParticipantsToResponse(conference.GetParticipants()),
+                Participants = ParticipantToDetailsResponseMapper.MapParticipantsToResponse(conference.GetParticipants()),
                 MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom()),
                 Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
                 HearingVenueName = conference.HearingVenueName,

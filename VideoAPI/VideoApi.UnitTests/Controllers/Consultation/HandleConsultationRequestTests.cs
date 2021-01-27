@@ -1,14 +1,10 @@
 using System;
-using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
-using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
-using Testing.Common.Assertions;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -24,16 +20,16 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             
             var answer = ConsultationAnswer.Accepted;
 
-            var request = new ConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
                 RequestedBy = requestedBy.Id,
                 RequestedFor = requestedFor.Id,
                 Answer = answer,
-                RoomName = "Room1"
+                RoomLabel = "Room1"
             };
 
-            await Controller.HandleConsultationRequestAsync(request);
+            await Controller.RespondToConsultationRequestAsync(request);
 
             CommandHandlerMock.Verify(x => x.Handle(It.Is<SaveEventCommand>(s => s.Reason == $"Consultation with {requestedFor.DisplayName}")), Times.Once);
             ConsultationService.Verify(x =>
@@ -49,7 +45,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var answer = ConsultationAnswer.Accepted;
 
-            var request = new ConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
                 RequestedBy = requestedBy.Id,
@@ -57,7 +53,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequestAsync(request);
+            var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -70,7 +66,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var answer = ConsultationAnswer.Accepted;
 
-            var request = new ConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
                 RequestedBy = Guid.NewGuid(),
@@ -78,7 +74,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequestAsync(request);
+            var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
