@@ -105,11 +105,11 @@ namespace Video.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("endpoint")]
-        [SwaggerOperation(OperationId = "StartPrivateConsultationWithEndpoint")]
+        [SwaggerOperation(OperationId = "StartConsultationWithEndpoint")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest request)
+        public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
@@ -155,7 +155,28 @@ namespace Video.API.Controllers
             return Accepted();
         }
 
-        [HttpPost("createprivateconsultation")]
+        [HttpPost("lockroom")]
+        [SwaggerOperation(OperationId = "LockRoom")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> LockRoomRequestAsync(LockRoomRequest request)
+        {
+            try
+            {
+                var lockRoomCommand = new LockRoomCommand(request.ConferenceId, request.RoomLabel, request.Lock);
+                await _commandHandler.Handle(lockRoomCommand);
+                return Ok();
+            }
+            catch (RoomNotFoundException ex)
+            {
+                _logger.LogError(ex, "Room doest not exist in conference {conferenceId} with label {label}", request.ConferenceId, request.RoomLabel);
+                return NotFound("Room does not exist");
+            }
+        }
+
+        [HttpPost("createconsultation")]
         [SwaggerOperation(OperationId = "CreatePrivateConsultation")]
         [ProducesResponseType(typeof(RoomResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -233,16 +254,16 @@ namespace Video.API.Controllers
         }
 
         /// <summary>
-        /// Leave a private consultation
+        /// Leave a consultation
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("leave")]
-        [SwaggerOperation(OperationId = "LeavePrivateConsultation")]
+        [SwaggerOperation(OperationId = "LeaveConsultation")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> LeavePrivateConsultationAsync(LeaveConsultationRequest request)
+        public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);

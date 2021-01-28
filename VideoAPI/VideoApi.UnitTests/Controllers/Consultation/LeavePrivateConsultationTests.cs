@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var leaveConsultationRequest = new LeaveConsultationRequest { ConferenceId = conferenceId, 
                 ParticipantId = request.Id  };
 
-            await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
+            await Controller.LeaveConsultationAsync(leaveConsultationRequest);
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.StopPrivateConsultationAsync(TestConference, RoomType.ConsultationRoom.ToString()), Times.Once);
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = Guid.NewGuid()
             };
 
-            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
+            var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -53,7 +53,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = Guid.NewGuid()
             };
 
-            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
+            var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -70,7 +70,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = request.Id
             };
 
-            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
+            var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
             var typedResult = (NoContentResult)result;
             typedResult.Should().NotBeNull();
         }

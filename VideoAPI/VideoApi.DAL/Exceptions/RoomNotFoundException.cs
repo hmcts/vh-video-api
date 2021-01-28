@@ -15,6 +15,10 @@ namespace VideoApi.DAL.Exceptions
             $"Room '{roomLabel}' not found ")
         {
         }
+        public RoomNotFoundException(Guid conferenceId, string roomLabel) : base(
+            $"Room '{roomLabel}' not found in conference {conferenceId}")
+        {
+        }
 
         protected RoomNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info,context)

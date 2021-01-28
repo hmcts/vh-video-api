@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ConferenceId = conferenceId,
                 EndpointId = endpointId
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ConferenceId = conferenceId,
                 EndpointId = endpointId
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
@@ -59,7 +59,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 EndpointId = endpointId,
                 DefenceAdvocateId = defenceAdvocateId
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
@@ -81,7 +81,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 EndpointId = endpointWithoutDefenceAdvocate.Id,
                 DefenceAdvocateId = defenceAdvocate.Id
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<UnauthorizedObjectResult>();
             actionResult.Should().NotBeNull();
@@ -102,7 +102,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 EndpointId = endpointWithDefenceAdvocate.Id,
                 DefenceAdvocateId = defenceAdvocate.Id
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<UnauthorizedObjectResult>();
             actionResult.Should().NotBeNull();
@@ -123,7 +123,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 EndpointId = endpointWithDefenceAdvocate.Id,
                 DefenceAdvocateId = defenceAdvocate.Id
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<AcceptedResult>();
             actionResult.Should().NotBeNull();
