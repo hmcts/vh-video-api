@@ -36,5 +36,10 @@ namespace VideoApi.Contract.Requests
         /// The participant contact telephone
         /// </summary>
         public string ContactTelephone { get; set; }
+        
+        /// <summary>
+        /// The participant username
+        /// </summary>
+        public string Username { get; set; }
     }
 }

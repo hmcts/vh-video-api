@@ -52,7 +52,10 @@ namespace VideoApi.UnitTests.Validation
                 DisplayName = "displayname", 
                 Fullname = "Fullname", 
                 FirstName = "FirstName", 
-                LastName = "LastName" 
+                LastName = "LastName",
+                ContactEmail = "prson@me.com",
+                ContactTelephone = "098765432",
+                Username = "username@test.com"
             };
         }
     }
