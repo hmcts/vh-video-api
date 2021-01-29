@@ -77,5 +77,22 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var typedResult = (NotFoundResult) result;
             typedResult.Should().NotBeNull();
         }
+        
+        
+
+        [Test]
+        public async Task should_add_username_to_command_when_provided()
+        {
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.GetParticipants()[1];
+            _updateParticipantRequest.Username = "new.me@username.net;";
+
+
+            var result = await Controller.UpdateParticipantDetailsAsync(conferenceId, participant.Id, _updateParticipantRequest);
+            MockCommandHandler.Verify(c => c.Handle(It.Is<UpdateParticipantDetailsCommand>(c => c.Username == _updateParticipantRequest.Username)), Times.Once);
+            
+            var typedResult = (NoContentResult)result;
+            typedResult.Should().NotBeNull();
+        }
     }
 }
