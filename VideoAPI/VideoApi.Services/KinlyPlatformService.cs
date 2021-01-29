@@ -133,7 +133,7 @@ namespace VideoApi.Services
             return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
-        public async Task StopPrivateConsultationAsync(Conference conference, string consultationRoom)
+        public async Task StopConsultationAsync(Conference conference, string consultationRoom)
         {
             var participants = conference.GetParticipants()
                 .Where(x => x.GetCurrentStatus().ParticipantState == ParticipantState.InConsultation &&

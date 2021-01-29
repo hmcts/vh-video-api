@@ -20,7 +20,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         private Room _testRoom;
 
         [Test]
-        public async Task Should_Return_Accepted()
+        public async Task Should_Return_Ok()
         {
             var request = RequestBuilder();
             ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType))
@@ -30,8 +30,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var result = await Controller.StartConsultationRequestAsync(request);
 
-            var actionResult = result.As<AcceptedResult>();
-            actionResult.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
         }
 
         [Test]

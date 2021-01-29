@@ -69,21 +69,6 @@ namespace VideoApi.UnitTests.Validation
                 .Should().BeTrue();
         }
         
-        [Test]
-        public async Task Should_fail_validation_when_room_is_not_consultation()
-        {
-            var request = BuildRequest();
-            request.RoomLabel = RoomType.AdminRoom.ToString();
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.PropertyName == "ConsultationRoom")
-                .Should().BeTrue();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NotValidConsultationRoomMessage)
-                .Should().BeTrue();
-        }
-        
         private ConsultationRequestResponse BuildRequest()
         {
             var request = Builder<ConsultationRequestResponse>.CreateNew()

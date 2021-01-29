@@ -93,6 +93,11 @@ namespace Testing.Common.Helper.Builders.Domain
             if (roomType.HasValue)
             {
                 participant.UpdateCurrentRoom(roomType);
+                if (roomType == RoomType.ConsultationRoom)
+                {
+                    participant.CurrentVirtualRoomId = 1;
+                    participant.UpdateCurrentVirtualRoom(new Room(Guid.Empty, "Room1", VirtualCourtRoomType.Participant, false));
+                }
             }
 
             participant.UpdateParticipantStatus(participantState == ParticipantState.None

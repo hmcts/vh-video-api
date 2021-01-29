@@ -106,7 +106,7 @@ namespace Video.API.Controllers
         /// <returns></returns>
         [HttpPost("endpoint")]
         [SwaggerOperation(OperationId = "StartConsultationWithEndpoint")]
-        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
@@ -148,11 +148,11 @@ namespace Video.API.Controllers
                 return Unauthorized(message);
             }
 
-            var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId, locked: true);
+            var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
             await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, defenceAdvocate.Id, room.Label);
             await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, endpoint.Id, room.Label);
 
-            return Accepted();
+            return Ok();
         }
 
         [HttpPost("lockroom")]
@@ -217,7 +217,7 @@ namespace Video.API.Controllers
 
         [HttpPost("start")]
         [SwaggerOperation(OperationId = "StartPrivateConsultation")]
-        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

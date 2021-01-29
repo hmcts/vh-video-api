@@ -17,11 +17,12 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[3];
+            var requestedBy = TestConference.GetParticipants()[1];
 
-            var roomFrom = participant.GetCurrentRoom();
             var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
+                RequestedBy = requestedBy.Id,
                 RequestedFor = participant.Id,
                 RoomLabel = RoomType.ConsultationRoom.ToString(),
                 Answer = ConsultationAnswer.Accepted
@@ -29,10 +30,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             await Controller.RespondToConsultationRequestAsync(request);
 
-            VideoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.RoomLabel),
+            ConsultationService.Verify(x => x.JoinConsultationRoomAsync(conferenceId, participant.Id, request.RoomLabel),
                 Times.Once);
-            VideoPlatformServiceMock.VerifyNoOtherCalls();
+            ConsultationService.VerifyNoOtherCalls();
         }
         
         [Test]
@@ -73,22 +73,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
-            typedResult.Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task should_return_bad_request_when_answer_is_not_provided()
-        {
-            var conferenceId = TestConference.Id;
-            var request = new ConsultationRequestResponse
-            {
-                ConferenceId = conferenceId,
-                RequestedFor = Guid.NewGuid(),
-                RoomLabel = RoomType.ConsultationRoom.ToString()
-            };
-            
-            var result = await Controller.RespondToConsultationRequestAsync(request);
-            var typedResult = (BadRequestObjectResult)result;
             typedResult.Should().NotBeNull();
         }
     }

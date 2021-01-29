@@ -74,7 +74,7 @@ namespace VideoApi.UnitTests.Services
             _testConference.Participants[1].UpdateCurrentRoom(room);
             _testConference.Participants[4].UpdateCurrentRoom(room);
             
-            await _kinlyPlatformService.StopPrivateConsultationAsync(_testConference, room.ToString());
+            await _kinlyPlatformService.StopConsultationAsync(_testConference, room.ToString());
             
             _kinlyApiClientMock.Verify(x =>
                     x.TransferParticipantAsync(_testConference.Id.ToString(), 
@@ -95,7 +95,7 @@ namespace VideoApi.UnitTests.Services
             _testConference.Endpoints[0].UpdateStatus(EndpointState.InConsultation);
             _testConference.Endpoints[0].UpdateCurrentRoom(room);
 
-            await _kinlyPlatformService.StopPrivateConsultationAsync(_testConference, room.ToString());
+            await _kinlyPlatformService.StopConsultationAsync(_testConference, room.ToString());
             
             _kinlyApiClientMock.Verify(x =>
                     x.TransferParticipantAsync(_testConference.Id.ToString(), 

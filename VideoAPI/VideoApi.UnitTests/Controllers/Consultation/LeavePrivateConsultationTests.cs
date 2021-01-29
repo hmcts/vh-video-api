@@ -16,15 +16,15 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_leave_private_consultation_with_valid_conference_and_room_type()
         {
             var conferenceId = TestConference.Id;
-            var request = TestConference.GetParticipants()[1];
+            var participant = TestConference.GetParticipants()[1];
 
             var leaveConsultationRequest = new LeaveConsultationRequest { ConferenceId = conferenceId, 
-                ParticipantId = request.Id  };
+                ParticipantId = participant.Id  };
 
             await Controller.LeaveConsultationAsync(leaveConsultationRequest);
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-            VideoPlatformServiceMock.Verify(v => v.StopPrivateConsultationAsync(TestConference, RoomType.ConsultationRoom.ToString()), Times.Once);
+            VideoPlatformServiceMock.Verify(v => v.TransferParticipantAsync(TestConference.Id, leaveConsultationRequest.ParticipantId, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString()), Times.Once);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
 

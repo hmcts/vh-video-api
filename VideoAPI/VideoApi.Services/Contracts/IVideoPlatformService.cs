@@ -18,12 +18,12 @@ namespace VideoApi.Services.Contracts
         Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom);
         
         /// <summary>
-        /// Returns participants in a given room to waiting room
+        /// Transfers all participants and endpoints to the waiting room (triggering kinly to close the room)
         /// </summary>
         /// <param name="conference"></param>
         /// <param name="consultationRoom"></param>
         /// <returns></returns>
-        Task StopPrivateConsultationAsync(Conference conference, string consultationRoom);
+        Task StopConsultationAsync(Conference conference, string consultationRoom);
 
         /// <summary>
         /// Delete virtual court room

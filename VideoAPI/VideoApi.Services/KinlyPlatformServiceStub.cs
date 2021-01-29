@@ -56,7 +56,7 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
-        public Task StopPrivateConsultationAsync(Conference conference, string consultationRoom)
+        public Task StopConsultationAsync(Conference conference, string consultationRoom)
         {
             return Task.CompletedTask;
         }
