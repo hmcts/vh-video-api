@@ -6,7 +6,7 @@ using Moq;
 using NUnit.Framework;
 using System.Net;
 using Video.API.Controllers;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Responses;
 
 namespace VideoApi.UnitTests.Controllers.SelfTest
@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
     {
         private SelfTestController _controller;
         private Mock<ILogger<SelfTestController>> _mockLogger;
-        private ServicesConfiguration _servicesConfiguration;
+        private KinlyConfiguration _kinlyConfiguration;
 
 
         [SetUp]
@@ -27,21 +27,21 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
         [Test]
         public void Should_return_okay_with_response()
         {
-            _servicesConfiguration = new ServicesConfiguration();
-            _controller = new SelfTestController(Options.Create(_servicesConfiguration), _mockLogger.Object);
-            _servicesConfiguration.PexipSelfTestNode = "test.self-test.node";
+            _kinlyConfiguration = new KinlyConfiguration();
+            _controller = new SelfTestController(Options.Create(_kinlyConfiguration), _mockLogger.Object);
+            _kinlyConfiguration.PexipSelfTestNode = "test.self-test.node";
 
             var response = (OkObjectResult)_controller.GetPexipServicesConfiguration();
             response.Should().NotBeNull();
             var pexipConfig = (PexipConfigResponse)response.Value;
-            pexipConfig.PexipSelfTestNode.Should().Be(_servicesConfiguration.PexipSelfTestNode);
+            pexipConfig.PexipSelfTestNode.Should().Be(_kinlyConfiguration.PexipSelfTestNode);
         }
 
         [Test]
         public void Should_return_not_found()
         {
-            _servicesConfiguration = null;
-            _controller = new SelfTestController(Options.Create(_servicesConfiguration), _mockLogger.Object);
+            _kinlyConfiguration = null;
+            _controller = new SelfTestController(Options.Create(_kinlyConfiguration), _mockLogger.Object);
 
             var response = (NotFoundResult)_controller.GetPexipServicesConfiguration();
             response.StatusCode.Should().Be((int)HttpStatusCode.NotFound);

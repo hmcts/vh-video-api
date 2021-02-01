@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using Video.API.Mappings;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 
 namespace VideoApi.UnitTests.Mappings
 {
@@ -10,7 +10,7 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void Should_map_all_properties()
         {
-            var pexipConfig = new ServicesConfiguration();
+            var pexipConfig = new KinlyConfiguration();
             pexipConfig.PexipSelfTestNode = "self-test.node";
 
             var response = PexipConfigurationMapper.MapPexipConfigToResponse(pexipConfig);

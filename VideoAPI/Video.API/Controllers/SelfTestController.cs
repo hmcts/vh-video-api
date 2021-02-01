@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Mappings;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Responses;
 
 namespace Video.API.Controllers
@@ -15,13 +15,13 @@ namespace Video.API.Controllers
     public class SelfTestController : Controller
     {
         private readonly ILogger<SelfTestController> _logger;
-        private readonly ServicesConfiguration _servicesConfiguration;
+        private readonly KinlyConfiguration _kinlyConfiguration;
 
-        public SelfTestController(IOptions<ServicesConfiguration> servicesConfiguration,
+        public SelfTestController(IOptions<KinlyConfiguration> kinlyConfiguration,
             ILogger<SelfTestController> logger)
         {
             _logger = logger;
-            _servicesConfiguration = servicesConfiguration.Value;
+            _kinlyConfiguration = kinlyConfiguration.Value;
         }
 
         /// <summary>
@@ -36,13 +36,13 @@ namespace Video.API.Controllers
         {
             _logger.LogDebug($"GetPexipServicesConfiguration");
 
-            if (_servicesConfiguration == null)
+            if (_kinlyConfiguration == null)
             {
                 _logger.LogWarning($"Unable to retrieve the pexip configuration!");
                 
                 return NotFound();
             }
-            var response = PexipConfigurationMapper.MapPexipConfigToResponse(_servicesConfiguration);
+            var response = PexipConfigurationMapper.MapPexipConfigToResponse(_kinlyConfiguration);
             return Ok(response);
         }
     }

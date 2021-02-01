@@ -87,7 +87,7 @@ namespace Video.API
         public static IServiceCollection AddCustomTypes(this IServiceCollection services, IWebHostEnvironment environment, bool useStub)
         {
             var container = services.BuildServiceProvider();
-            var servicesConfiguration = container.GetService<IOptions<ServicesConfiguration>>().Value;
+            var kinlyConfiguration = container.GetService<IOptions<KinlyConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
             var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
 
@@ -96,7 +96,6 @@ namespace Video.API
             services.AddScoped<IRoomReservationService, RoomReservationService>();
 
             services.AddScoped<ITokenProvider, AzureTokenProvider>();
-            services.AddTransient<UserApiTokenHandler>();
             services.AddSingleton<ITelemetryInitializer, BadRequestTelemetry>();
 
             services.AddScoped<IQueryHandlerFactory, QueryHandlerFactory>();
@@ -124,7 +123,7 @@ namespace Video.API
             {
                 services
                     .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
-                    .AddTypedClient(httpClient => BuildKinlyClient(servicesConfiguration.KinlyApiUrl, httpClient))
+                    .AddTypedClient(httpClient => BuildKinlyClient(kinlyConfiguration.KinlyApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
 
                 foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)

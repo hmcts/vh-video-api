@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.IntegrationTests.Helper;
 
 namespace VideoApi.IntegrationTests.Database
@@ -12,7 +12,7 @@ namespace VideoApi.IntegrationTests.Database
     public abstract class DatabaseTestsBase
     {
         private string _databaseConnectionString;
-        private ServicesConfiguration _services;
+        private KinlyConfiguration _services;
         protected DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions;
         protected TestDataManager TestDataManager;
 
@@ -26,7 +26,7 @@ namespace VideoApi.IntegrationTests.Database
 
             var configRoot = configRootBuilder.Build();
             _databaseConnectionString = configRoot.GetConnectionString("VhVideoApi");
-            _services = Options.Create(configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
+            _services = Options.Create(configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
 
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();

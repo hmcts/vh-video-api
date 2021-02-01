@@ -88,7 +88,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var tasks = RequestHelper.Deserialise<List<TaskResponse>>(_context.Response.Content);
             tasks.Should().NotBeNull();
             tasks.First().Id.Should().BeGreaterThan(-1);
-            tasks.First().Created.Should().BeBefore(DateTime.Now);
+            tasks.First().Created.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
             tasks.First().Type.Should().Be(TaskType.Participant);
             tasks.First().Body.Should().Contain("Media blocked");
             _context.Test.TaskId = tasks.First().Id;

@@ -10,7 +10,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using Video.API.Factories;
 using Video.API.Mappings;
 using Video.API.Validations;
-using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -38,7 +37,6 @@ namespace Video.API.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly KinlyConfiguration _kinlyConfiguration;
-        private readonly ServicesConfiguration _servicesConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
@@ -46,16 +44,14 @@ namespace Video.API.Controllers
 
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IVideoPlatformService videoPlatformService, IOptions<ServicesConfiguration> servicesConfiguration,
-            IOptions<KinlyConfiguration> kinlyConfiguration, ILogger<ConferenceController> logger,
-            IAudioPlatformService audioPlatformService, IAzureStorageServiceFactory azureStorageServiceFactory,
-            IPollyRetryService pollyRetryService)
+            IVideoPlatformService videoPlatformService, IOptions<KinlyConfiguration> kinlyConfiguration, 
+            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService, 
+            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _videoPlatformService = videoPlatformService;
             _kinlyConfiguration = kinlyConfiguration.Value;
-            _servicesConfiguration = servicesConfiguration.Value;
             _logger = logger;
             _audioPlatformService = audioPlatformService;
             _azureStorageServiceFactory = azureStorageServiceFactory;
@@ -117,7 +113,7 @@ namespace Video.API.Controllers
 
             var response =
                 ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference,
-                    _servicesConfiguration.PexipSelfTestNode);
+                    _kinlyConfiguration.PexipSelfTestNode);
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
@@ -194,7 +190,7 @@ namespace Video.API.Controllers
 
             var response =
                 ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference,
-                    _servicesConfiguration.PexipSelfTestNode);
+                    _kinlyConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
 
@@ -337,7 +333,7 @@ namespace Video.API.Controllers
 
             var response =
                 ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference,
-                    _servicesConfiguration.PexipSelfTestNode);
+                    _kinlyConfiguration.PexipSelfTestNode);
 
             return Ok(response);
         }

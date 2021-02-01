@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -28,8 +28,7 @@ namespace VideoApi.UnitTests.Services
     {
         private Mock<IKinlyApiClient> _kinlyApiClientMock;
         private Mock<ILogger<KinlyPlatformService>> _loggerMock;
-        private IOptions<ServicesConfiguration> _servicesConfigOptions;
-
+        private IOptions<KinlyConfiguration> _kinlyConfigOptions;
         private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
         private IRoomReservationService _roomReservationService;
         private Mock<IKinlySelfTestHttpClient> _kinlySelfTestHttpClient;
@@ -50,14 +49,14 @@ namespace VideoApi.UnitTests.Services
             _kinlySelfTestHttpClient = new Mock<IKinlySelfTestHttpClient>();
             _pollyRetryService = new Mock<IPollyRetryService>();
             
-            _servicesConfigOptions = Options.Create(new ServicesConfiguration
+            _kinlyConfigOptions = Options.Create(new KinlyConfiguration()
             {
                 CallbackUri = "CallbackUri", KinlyApiUrl = "KinlyApiUrl"
             });
 
             _kinlyPlatformService = new KinlyPlatformService(
                 _kinlyApiClientMock.Object,
-                _servicesConfigOptions,
+                _kinlyConfigOptions,
                 _loggerMock.Object,
                 _roomReservationService,
                 _kinlySelfTestHttpClient.Object,
@@ -188,7 +187,7 @@ namespace VideoApi.UnitTests.Services
             var hearingParams = new CreateHearingParams
             {
                 Virtual_courtroom_id = _testConference.Id.ToString(),
-                Callback_uri = _servicesConfigOptions.Value.CallbackUri,
+                Callback_uri = _kinlyConfigOptions.Value.CallbackUri,
                 Recording_enabled = audioRecordingRequired,
                 Recording_url = ingestUrl,
                 Streaming_enabled = false,

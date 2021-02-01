@@ -1,4 +1,5 @@
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 
 
 namespace Testing.Common.Configuration
@@ -10,6 +11,7 @@ namespace Testing.Common.Configuration
         public ServicesConfiguration VhServices { get; set; }
         public WowzaConfiguration Wowza { get; set; }
         public CvpConfiguration Cvp { get; set; }
+        public KinlyConfiguration Kinly { get; set; }
         public AudioRecordingTestIdConfiguration AudioRecordingTestIds { get; set; }
     }
 }

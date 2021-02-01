@@ -14,6 +14,7 @@ using Testing.Common.Configuration;
 using Video.API;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
@@ -41,6 +42,7 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterHearingServices(context);
             RegisterWowzaSettings(context);
             RegisterCvpSettings(context);
+            RegisterKinlySettings(context);
             RegisterDatabaseSettings(context);
             RegisterServer(context);
             RegisterApiSettings(context);
@@ -90,6 +92,14 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Cvp.StorageContainerName.Should().NotBeNullOrEmpty();
         }
 
+        private void RegisterKinlySettings(TestContext context)
+        {
+            context.Config.Kinly = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
+            context.Config.Kinly.CallbackUri = context.Config.VhServices.CallbackUri;
+            context.Config.Kinly.KinlyApiUrl.Should().NotBeEmpty();
+            context.Config.Kinly.PexipNode.Should().NotBeEmpty();
+        }
+        
         private void RegisterDatabaseSettings(TestContext context)
         {
             context.Config.DbConnection = Options.Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
@@ -98,7 +108,7 @@ namespace VideoApi.IntegrationTests.Hooks
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VhVideoApi);
             context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            context.TestDataManager = new TestDataManager(context.Config.VhServices, context.VideoBookingsDbContextOptions);
+            context.TestDataManager = new TestDataManager(context.Config.Kinly, context.VideoBookingsDbContextOptions);
         }
 
         private static void RegisterServer(TestContext context)

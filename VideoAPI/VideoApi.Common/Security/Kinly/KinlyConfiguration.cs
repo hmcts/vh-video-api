@@ -2,6 +2,12 @@
 {
     public class KinlyConfiguration
     {
+        public string KinlyApiUrl { get; set; }
+        public string KinlySelfTestApiUrl { get; set; }
+        public string CallbackUri { get; set; }
+        public string PexipNode { get; set; }
+        public string PexipSelfTestNode { get; set; }
+        public string ConferenceUsername { get; set; }
         public string ApiSecret { get; set; }
         public string SelfTestApiSecret { get; set; }
         public string Audience { get; set; }

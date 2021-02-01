@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-      <IsPackable>false</IsPackable>
+    <IsPackable>false</IsPackable>
+    <UserSecretsId>6b1d4c67-28f8-4104-8424-9379113b6631</UserSecretsId>  
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,11 +14,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
-    <PackageReference Include="RestSharp" Version="106.11.4" />
-    <PackageReference Include="SpecFlow" Version="3.4.8" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.4.8" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.4.8" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.273" />
+    <PackageReference Include="RestSharp" Version="106.11.7" />
+    <PackageReference Include="SpecFlow" Version="3.6.23" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.6.23" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.6.23" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.10" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,41 +35,5 @@
     <None Update="TestAudioFiles\TestAudioFile.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <ContentWithTargetPath Include="Environments\appsettings.aat.json" Condition="Exists('Environments\appsettings.aat.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.aat.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.demo.json" Condition="Exists('Environments\appsettings.demo.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.demo.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.dev.json" Condition="Exists('Environments\appsettings.dev.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.dev.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.local.json" Condition="Exists('Environments\appsettings.local.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.local.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.preprod.json" Condition="Exists('Environments\appsettings.preprod.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.preprod.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.preview.json" Condition="Exists('Environments\appsettings.preview.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.preview.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.sandbox.json" Condition="Exists('Environments\appsettings.sandbox.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.sandbox.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.test1.json" Condition="Exists('Environments\appsettings.test1.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.test1.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Environments\appsettings.test2.json" Condition="Exists('Environments\appsettings.test2.json')">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <TargetPath>appsettings.test2.json</TargetPath>
-    </ContentWithTargetPath>
   </ItemGroup>
 </Project>
