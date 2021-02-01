@@ -20,14 +20,7 @@ variables:
       "AzureAd/ClientId":"$(vh-video-api-appid)",
       "AzureAd/ClientSecret":"$(vh-video-api-key)",
       "ServiceBusQueue/ConnectionString":"$(AzureServiceBusConnectionStringSend)",
-      "Services/KinlyApiUrl":"$(KinlyApiUrl)",
-      "Services/KinlySelfTestApiUrl":"$(KinlySelfTestApiUrl)",
       "Services/CallbackUri":"$(CallbackUri)",
-      "Services/PexipNode":"$(PexipNode)",
-      "Services/ConferenceUsername":"$(ConferenceUsername)",
-      "Services/PexipSelfTestNode":"$(PexipSelfTestNode)",
-      "Services/UserApiUrl":"$(UserApiUrl)",
-      "Services/UserApiResourceId":"$(vh-user-api-identifieruris)",
       "Services/VhVideoApiResourceId":"$(vh-video-api-identifieruris)",
       "Services/VhVideoWebClientId":"$(vh-video-web-appid)",
       "WowzaConfiguration/RestApiEndpoints":"$(wowza_restApiEndpoints)",
@@ -47,7 +40,12 @@ variables:
       "CvpConfiguration/StorageContainerName":"$(cvp_storageContainerName)",
       "CvpConfiguration/StorageEndpoint":"$(cvp_storageEndpoint)",
       "CvpConfiguration/ManagedIdentityClientId":"$(wowza_managedIdentityClientId)",
-      "KinlyConfiguration:ConferencePhoneNumber":"$(ConferencePhoneNumber)"
+      "KinlyConfiguration/ConferencePhoneNumber":"$(ConferencePhoneNumber)",
+      "KinlyConfiguration/ConferenceUsername":"$(ConferenceUsername)",
+      "KinlyConfiguration/KinlyApiUrl":"$(KinlyApiUrl)",
+      "KinlyConfiguration/KinlySelfTestApiUrl":"$(KinlySelfTestApiUrl)",
+      "KinlyConfiguration/PexipNode":"$(PexipNode)",
+      "KinlyConfiguration/PexipSelfTestNode":"$(PexipSelfTestNode)"
       '
   - name: dalWorkingDirectory
     value : 'VideoAPI/VideoApi.DAL'
