@@ -64,7 +64,7 @@ parameters:
     - name: Services:ConferenceUsername
       value: $(ConferenceUsername)
     - name: Services:VhVideoApiResourceId
-      value: vh-notification-api-identifieruris
+      value: vh-video-api-identifieruris
       secret: true
 
     # Wowza Configuration
@@ -159,7 +159,7 @@ parameters:
     - name: WowzaConfiguration:StorageContainerName
       value: $(wowza_storageContainerName)
     - name: WowzaConfiguration:StorageEndpoint
-      value: vh-notification-api-identifieruris
+      value: $(wowza_storageEndpoint)
     - name: WowzaConfiguration:ManagedIdentityClientId
       value: $(wowza_managedIdentityClientId)
 
@@ -239,8 +239,8 @@ extends:
       baseAgent: windows-latest
       coreProjectPath: VideoApi/VideoApi
       nugetConfigPath: VideoApi
-      unitTestProjectPath: NotificationApi/NotificationApi.UnitTests
-      integTestProjectPath: NotificationApi/NotificationApi.IntegrationTests
+      unitTestProjectPath: VideoApi/VideoApi.UnitTests
+      integTestProjectPath: VideoApi/VideoApi.IntegrationTests
       secrets_KeyVault: $(pr_Secret_KeyVault)
       secrets_Subscription: $(pr_Secret_Subscription)
       RunUnitTests: ${{ parameters.RunUnitTests }}
