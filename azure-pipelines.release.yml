@@ -1,0 +1,229 @@
+parameters:
+- name: deploymentBranch
+  displayName: Branch to Deploy
+  type: string
+  default: refs/heads/master
+
+- name: environment
+  displayName: Environment
+  type: string
+  default: Sandbox
+  values:
+  - Preview
+  - Dev
+  - AAT
+  - Sandbox
+  - Test1
+  - Demo
+  - Preprod
+  - Prod
+
+- name: RunZap
+  displayName: Execute ZAP Tests
+  type: boolean
+  default: false
+
+- name: prodEnvs
+  displayName: Environments Using Prod Subscription
+  type: object
+  default:
+    - Prod
+    - Preprod
+
+# Set variables once
+variables:
+  - group: vh-domains-and-urls
+  - group: vh-apps-settings-generic
+  - group: vh-video-api
+  - ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
+    - ${{ if containsValue(parameters.prodEnvs, parameters.environment) }}:
+      - group: vh-prod
+    - ${{ if not(containsValue(parameters.prodEnvs, parameters.environment)) }}:
+      - group: vh-preview
+  - ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
+    - ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+      - group: vh-prod
+    - ${{ if not(or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))) }}:
+      - group: vh-preview
+
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: refs/heads/master
+      endpoint: hmcts_shaed
+  pipelines:
+  - pipeline: CI
+    source: hmcts.vh-video-api
+    trigger:
+      enabled: true
+      branches:
+      - master
+      - hotfix/*
+      - release/*
+
+extends:
+    template: templates/vh-release.yml@templates
+    parameters:
+      ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
+        environments:
+          - ${{ parameters.environment }}
+        deploymentBranch: ${{ parameters.deploymentBranch }}
+      ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
+        deploymentBranch: resources.pipeline.CI.sourceBranch
+      releaseParameters:
+        runACTests: false
+        runZapTests: ${{ parameters.RunZap }}
+        subscription: $(env_Subscription)
+        secrets_KeyVault: $(env_Secret_KeyVault)
+        secrets_Subscription: $(env_Secret_Subscription)
+        devOpsResource: vh_video_api
+        appName: vh-video-api-$(environment)
+        resourceGroup: vh-video-api-$(environment)
+        variables:
+          - group: KinlyConfiguration_Dev
+            env:
+              - Sandbox
+          - group: KinlyConfiguration_Test
+            env:
+             - Preview
+             - Dev
+             - AAT
+             - Test1
+             - Test2
+          - group: KinlyConfiguration_Test2
+            env:
+             - Demo
+          - group: KinlyConfiguration_Preprod
+            env:
+             - Preprod
+          - group: KinlyConfiguration_Prod
+            env:
+             - Prod
+          - group: vh-wowza-dev
+            env:
+             - Preview
+             - Dev
+             - AAT
+             - Test1
+          - group: vh-wowza-demo
+            env:
+             - Demo
+          - group: vh-wowza-preprod
+            env:
+             - Preprod
+          - group: vh-wowza-prod
+            env:
+             - Prod
+          - group: cvp-wowza-sbox
+            env:
+             - Preview
+             - Dev
+             - AAT
+             - Test1
+             - Demo
+             - Preprod
+          - group: cvp-wowza-prod
+            env:
+             - Prod
+        appSettings:
+          - name: ApplicationInsights:InstrumentationKey
+            value: vh-core-infra-AppInsightsKey
+            secret: true
+          - name: AzureAd:ClientId
+            value: vh-video-api-appid
+            secret: true
+          - name: AzureAd:ClientSecret
+            value: vh-video-api-key
+            secret: true
+          - name: AzureAd:TenantId
+            value: tenantid
+            secret: true
+          - name: UseStub
+            value: "false"
+
+          # Services Configuration
+          - name: Services:KinlyApiUrl
+            value: $(KinlyApiUrl)
+          - name: Services:KinlySelfTestApiUrl
+            value: $(KinlySelfTestApiUrl)
+          - name: Services:CallbackUri
+            value: $(CallbackUri)
+          - name: Services:ConferenceUsername
+            value: $(ConferenceUsername)
+          
+          # Wowza Configuration
+          - name: WowzaConfiguration:RestApiEndpoints
+            value: $(wowza_restApiEndpoints)
+          - name: WowzaConfiguration:StreamingEndpoint
+            value: $(wowza_streamingEndpoint)
+          - name: WowzaConfiguration:ServerName
+            value: $(wowza_serverName)
+          - name: WowzaConfiguration:HostName
+            value: $(wowza_hostName)
+          - name: WowzaConfiguration:Username
+            value: $(wowza_userName)
+          - name: WowzaConfiguration:Password
+            value: $(wowza_password)
+          - name: WowzaConfiguration:StorageDirectory
+            value: $(wowza_storageDirectory)
+          - name: WowzaConfiguration:StorageAccountName
+            value: $(wowza_storageAccountName)
+          - name: WowzaConfiguration:StorageAccountKey
+            value: $(wowza_storageAccountKey)
+          - name: WowzaConfiguration:StorageContainerName
+            value: $(wowza_storageContainerName)
+          - name: WowzaConfiguration:StorageEndpoint
+            value: $(wowza_storageEndpoint)
+          - name: WowzaConfiguration:ManagedIdentityClientId
+            value: $(wowza_managedIdentityClientId)
+
+          # CVP Configuration
+          - name: CvpConfiguration:StorageAccountName
+            value: $(cvp_storageAccountName)
+          - name: CvpConfiguration:StorageAccountKey
+            value: $(cvp_storageAccountKey)
+          - name: CvpConfiguration:StorageContainerName
+            value: $(cvp_storageContainerName)
+          - name: CvpConfiguration:StorageEndpoint
+            value: $(cvp_storageEndpoint)
+          - name: CvpConfiguration:ManagedIdentityClientId
+            value: $(wowza_managedIdentityClientId)
+
+          # Kinly Configuration
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
+          - name: KinlyConfiguration:ApiSecret
+            value: $(KinlyApiKey)
+          - name: KinlyConfiguration:CallbackSecret
+            value: $(CallbackKey)
+          - name: KinlyConfiguration:SelfTestApiSecret
+            value: $(SelfTestApiKey)
+            
+          # Connection strings
+          - name: ConnectionStrings:VhvideosApi
+            value: vhvideoDatabaseConnectionString
+            secret: true
+            
+        acceptanceTestSettings:
+          # AzureAd
+          - name: AzureAd:TenantId
+            value: tenantid
+            secret: true
+          - name: AzureAd:ClientId
+            value: vh-video-api-appid
+            secret: true
+          - name: AzureAd:ClientSecret
+            value: vh-video-api-key
+            secret: true
+          
+          # Services          
+          - name: Services:VhvideoApiResourceId
+            value: vh-video-api-identifieruris
+            secret: true
+          - name: Services:videoApiUrl
+            value: $(video_api_url_staging)
