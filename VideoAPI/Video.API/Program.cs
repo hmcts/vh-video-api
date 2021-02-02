@@ -1,6 +1,7 @@
-﻿using System.IO;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using VH.Core.Configuration;
 
 namespace Video.API
 {
@@ -18,6 +19,7 @@ namespace Video.API
         private static IHostBuilder CreateWebHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
+                .AddAksKeyVaultSecretProvider()
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseIISIntegration();
