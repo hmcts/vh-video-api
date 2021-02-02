@@ -154,9 +154,6 @@ extends:
             value: $(CallbackUri)
           - name: Services:ConferenceUsername
             value: $(ConferenceUsername)
-          - name: Services:VhVideoApiResourceId
-            value: vh-notification-api-identifieruris
-            secret: true
           
           # Wowza Configuration
           - name: WowzaConfiguration:RestApiEndpoints
