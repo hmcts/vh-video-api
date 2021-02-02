@@ -191,6 +191,8 @@ parameters:
       secret: true
 
 variables:
+  - group: vh-domains-and-urls
+  - group: vh-apps-settings-generic
   - group: vh-wowza-dev
   - group: cvp-wowza-sbox
   - group: vh-preview
