@@ -158,8 +158,6 @@ extends:
           - name: Services:VhVideoApiResourceId
             value: vh-notification-api-identifieruris
             secret: true
-          - name: Services:ConferenceUsername
-            value: $(ConferenceUsername)
           
           # Wowza Configuration
           - name: WowzaConfiguration:RestApiEndpoints
@@ -179,13 +177,13 @@ extends:
           - name: WowzaConfiguration:StorageAccountName
             value: $(wowza_storageAccountName)
           - name: WowzaConfiguration:StorageAccountKey
-            value: $(ConferenceUsername)
+            value: $(wowza_storageAccountKey)
           - name: WowzaConfiguration:StorageContainerName
-            value: $(ConferenceUsername)
+            value: $(wowza_storageContainerName)
           - name: WowzaConfiguration:StorageEndpoint
-            value: vh-notification-api-identifieruris
+            value: $(wowza_storageEndpoint)
           - name: WowzaConfiguration:ManagedIdentityClientId
-            value: $(ConferenceUsername)
+            value: $(wowza_managedIdentityClientId)
 
           # CVP Configuration
           - name: CvpConfiguration:StorageAccountName
