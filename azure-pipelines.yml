@@ -135,7 +135,6 @@ parameters:
       value: $(CallbackUri)
     - name: Services:ConferenceUsername
       value: $(ConferenceUsername)
-      secret: true
 
     # Wowza Configuration
     - name: WowzaConfiguration:RestApiEndpoints
