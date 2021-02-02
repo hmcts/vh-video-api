@@ -391,7 +391,7 @@ namespace VideoApi.IntegrationTests.Steps
         
         private void SerialiseRespondToConsultationRequestResponse(ConsultationRequestResponse request)
         {
-            _context.Uri = ConsultationEndpoints.RespondToConsultationRequestResponse;
+            _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -407,7 +407,7 @@ namespace VideoApi.IntegrationTests.Steps
 
         private void SerialiseLeavePrivateConsultationRequest(LeaveConsultationRequest request)
         {
-            _context.Uri = ConsultationEndpoints.LeavePrivateConsultationRequest;
+            _context.Uri = ConsultationEndpoints.LeaveConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -442,7 +442,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             if (withAnswer)
                 request.Answer = ConsultationAnswer.Accepted;
-
+            request.RoomLabel = RoomType.ConsultationRoom.ToString();
             return request;
         }
 
@@ -486,6 +486,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             request.ConferenceId = _context.Test.Conference.Id;
             request.RequestedFor = participants[0].Id;
+            request.RequestedBy = participants[0].Id;
             request.Answer = ConsultationAnswer.Accepted;
             request.RoomLabel = RoomType.ConsultationRoom.ToString();
 
