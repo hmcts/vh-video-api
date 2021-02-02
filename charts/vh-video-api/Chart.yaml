@@ -5,4 +5,4 @@ home: https://github.com/hmcts/vh-video-api
 version: 0.0.1
 description: Helm Chart for Video Hearing video-api
 maintainers:
-  - name: VH Devops
+  - name: VH Devops 
