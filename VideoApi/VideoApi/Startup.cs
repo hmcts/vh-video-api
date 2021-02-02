@@ -115,7 +115,7 @@ namespace Video.API
             app.UseOpenApi();
             app.UseSwaggerUi3(c =>
             {
-                c.DocumentTitle = "Notifications API V1";
+                c.DocumentTitle = "Video API V1";
             });
 
             if (env.IsDevelopment())

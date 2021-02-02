@@ -12,10 +12,11 @@ namespace Video.API
 
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        private static IHostBuilder CreateWebHostBuilder(string[] args)
+        // ReSharper disable once MemberCanBePrivate.Global Needed for client generation on build with nswag
+        public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => {
