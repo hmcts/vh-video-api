@@ -9,4 +9,4 @@ Feature: Start Consultation
     And the judge is in the waiting room
     And I have a valid start consultation request
     When I send the request to the endpoint
-    Then the response should have the status Accepted and success status True
+    Then the response should have the status Ok and success status True

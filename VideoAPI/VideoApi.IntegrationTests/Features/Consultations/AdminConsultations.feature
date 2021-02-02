@@ -11,7 +11,6 @@ Feature: Respond to Admin Consultations
     And the error response message should also contain 'ConferenceId is required'
     And the error response message should also contain 'RequestedBy is required'
     And the error response message should also contain 'RequestedFor is required'
-    And the error response message should also contain 'Answer to request is required'
     
   Scenario: Respond to a VH Officer Consultation for a non-existent conference
     Given I have a conference

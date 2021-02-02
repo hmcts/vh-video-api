@@ -187,6 +187,7 @@ namespace VideoApi.IntegrationTests.Steps
                     request.ConferenceId = Guid.Empty;
                     request.Answer = ConsultationAnswer.None;
                     request.RequestedFor = Guid.Empty;
+                    request.RequestedBy = Guid.Empty;
                     request.RoomLabel = RoomType.HearingRoom.ToString();
                     break;
                 }

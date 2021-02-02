@@ -23,7 +23,6 @@ Feature: Respond To Consultations
     And the error response message should also contain 'RequestedBy is required'
     And the error response message should also contain 'RequestedFor is required'
     And the error response message should also contain 'ConferenceId is required'
-    And the error response message should also contain 'Answer to request is required'
 
   Scenario: Respond to private consultation request when user requested by does not exist
     Given I have a conference
