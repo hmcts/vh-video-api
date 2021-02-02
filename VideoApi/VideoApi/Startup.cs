@@ -72,7 +72,6 @@ namespace VideoApi
         private void RegisterSettings(IServiceCollection services)
         {
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
-            services.Configure<ServiceBusSettings>(options => Configuration.Bind("ServiceBusQueue", options));
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
             services.Configure<WowzaConfiguration>(options => Configuration.Bind("WowzaConfiguration", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
