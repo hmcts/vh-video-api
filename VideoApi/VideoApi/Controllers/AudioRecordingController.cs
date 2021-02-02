@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Factories;
 using Video.API.Mappings;
 using VideoApi.Contract.Responses;
@@ -48,7 +48,7 @@ namespace Video.API.Controllers
         /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <returns></returns>
         [HttpGet("audioapplications/{hearingId}")]
-        [SwaggerOperation(OperationId = "GetAudioApplication")]
+        [OpenApiOperation("GetAudioApplication")]
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
@@ -68,7 +68,7 @@ namespace Video.API.Controllers
         /// <param name="hearingId">The HearingRefId of the conference to create the audio application info</param>
         /// <returns></returns>
         [HttpPost("audioapplications/{hearingId}")]
-        [SwaggerOperation(OperationId = "CreateAudioApplication")]
+        [OpenApiOperation("CreateAudioApplication")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
@@ -94,7 +94,7 @@ namespace Video.API.Controllers
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
         /// <returns></returns>
         [HttpDelete("audioapplications/{hearingId}")]
-        [SwaggerOperation(OperationId = "DeleteAudioApplication")]
+        [OpenApiOperation("DeleteAudioApplication")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAudioApplicationAsync(Guid hearingId)
@@ -128,7 +128,7 @@ namespace Video.API.Controllers
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         [HttpGet("audiostreams/{hearingId}")]
-        [SwaggerOperation(OperationId = "GetAudioStreamInfo")]
+        [OpenApiOperation("GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId)
@@ -148,7 +148,7 @@ namespace Video.API.Controllers
         /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         [HttpGet("audiostreams/{hearingId}/monitoring")]
-        [SwaggerOperation(OperationId = "GetAudioStreamMonitoringInfo")]
+        [OpenApiOperation("GetAudioStreamMonitoringInfo")]
         [ProducesResponseType(typeof(AudioStreamMonitoringInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
@@ -168,7 +168,7 @@ namespace Video.API.Controllers
         /// <param name="hearingId">The hearing id.</param>
         /// <returns> AudioRecordingResponse with the link - AudioFileLink</returns>
         [HttpGet("audio/{hearingId}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLink")]
+        [OpenApiOperation("GetAudioRecordingLink")]
         [ProducesResponseType(typeof(AudioRecordingResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
@@ -203,7 +203,7 @@ namespace Video.API.Controllers
         /// <param name="date"></param>
         /// <param name="caseReference"></param>
         [HttpGet("audio/cvp/all/{cloudRoom}/{date}/{caseReference}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLinkAllCvp")]
+        [OpenApiOperation("GetAudioRecordingLinkAllCvp")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpAllAsync(string cloudRoom, string date, string caseReference)
@@ -229,7 +229,7 @@ namespace Video.API.Controllers
         /// <param name="cloudRoom"></param>
         /// <param name="date"></param>
         [HttpGet("audio/cvp/cloudroom/{cloudRoom}/{date}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpByCloudRoom")]
+        [OpenApiOperation("GetAudioRecordingLinkCvpByCloudRoom")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date)
@@ -255,7 +255,7 @@ namespace Video.API.Controllers
         /// <param name="date"></param>
         /// <param name="caseReference"></param>
         [HttpGet("audio/cvp/date/{date}/{caseReference}")]
-        [SwaggerOperation(OperationId = "GetAudioRecordingLinkCvpByDate")]
+        [OpenApiOperation("GetAudioRecordingLinkCvpByDate")]
         [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference)

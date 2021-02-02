@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -48,7 +48,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>List of endpoints</returns>
         [HttpGet("{conferenceId}/endpoints")]
-        [SwaggerOperation(OperationId = "GetEndpointsForConference")]
+        [OpenApiOperation("GetEndpointsForConference")]
         [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetEndpointsForConference(Guid conferenceId)
         {
@@ -65,7 +65,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         [HttpPost("{conferenceId}/endpoints")]
-        [SwaggerOperation(OperationId = "AddEndpointToConference")]
+        [OpenApiOperation("AddEndpointToConference")]
         [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId,
             [FromBody] AddEndpointRequest request)
@@ -90,7 +90,7 @@ namespace Video.API.Controllers
         /// <param name="sipAddress"></param>
         /// <returns></returns>
         [HttpDelete("{conferenceId}/endpoints/{sipAddress}")]
-        [SwaggerOperation(OperationId = "RemoveEndpointFromConference")]
+        [OpenApiOperation("RemoveEndpointFromConference")]
         [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, string sipAddress)
         {
@@ -115,7 +115,7 @@ namespace Video.API.Controllers
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         [HttpPatch("{conferenceId}/endpoints/{sipAddress}")]
-        [SwaggerOperation(OperationId = "UpdateDisplayNameForEndpoint")]
+        [OpenApiOperation("UpdateDisplayNameForEndpoint")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateDisplayNameForEndpointAsync(Guid conferenceId, string sipAddress,
             [FromBody] UpdateEndpointRequest request)

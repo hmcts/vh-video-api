@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Mappings;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
@@ -29,7 +29,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns>Returns the pexip node</returns>
         [HttpGet]
-        [SwaggerOperation(OperationId = "GetPexipServicesConfiguration")]
+        [OpenApiOperation("GetPexipServicesConfiguration")]
         [ProducesResponseType(typeof(PexipConfigResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public IActionResult GetPexipServicesConfiguration()

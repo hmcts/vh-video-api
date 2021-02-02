@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Castle.Core.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -47,7 +47,7 @@ namespace Video.API.Controllers
         /// <param name="request">Details of the participant</param>
         /// <returns></returns>
         [HttpPut("{conferenceId}/participants")]
-        [SwaggerOperation(OperationId = "AddParticipantsToConference")]
+        [OpenApiOperation("AddParticipantsToConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
@@ -86,7 +86,7 @@ namespace Video.API.Controllers
         /// <param name="request">The participant information to update</param>
         /// <returns></returns>
         [HttpPatch("{conferenceId}/participants/{participantId}", Name = "UpdateParticipantDetails")]
-        [SwaggerOperation(OperationId = "UpdateParticipantDetails")]
+        [OpenApiOperation("UpdateParticipantDetails")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -125,7 +125,7 @@ namespace Video.API.Controllers
         /// <param name="participantId">The id of the participant to remove</param>
         /// <returns></returns>
         [HttpDelete("{conferenceId}/participants/{participantId}")]
-        [SwaggerOperation(OperationId = "RemoveParticipantFromConference")]
+        [OpenApiOperation("RemoveParticipantFromConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
@@ -162,7 +162,7 @@ namespace Video.API.Controllers
         /// <param name="participantId">The id of the participant</param>
         /// <returns></returns>
         [HttpGet("{conferenceId}/participants/{participantId}/selftestresult")]
-        [SwaggerOperation(OperationId = "GetTestCallResultForParticipant")]
+        [OpenApiOperation("GetTestCallResultForParticipant")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetTestCallResultForParticipantAsync(Guid conferenceId, Guid participantId)
@@ -194,7 +194,7 @@ namespace Video.API.Controllers
         /// <param name="participantId">The id of the participant</param>
         /// <returns></returns>
         [HttpGet("independentselftestresult")]
-        [SwaggerOperation(OperationId = "GetIndependentTestCallResult")]
+        [OpenApiOperation("GetIndependentTestCallResult")]
         [ProducesResponseType(typeof(TestCallScoreResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetIndependentTestCallResultAsync(Guid participantId)
@@ -217,7 +217,7 @@ namespace Video.API.Controllers
         /// <param name="participantId">The id of the participant</param>
         /// <returns></returns>
         [HttpGet("{conferenceId}/participant/{participantId}/heartbeatrecent")]
-        [SwaggerOperation(OperationId = "GetHeartbeatDataForParticipant")]
+        [OpenApiOperation("GetHeartbeatDataForParticipant")]
         [ProducesResponseType(typeof(IEnumerable<ParticipantHeartbeatResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId)
@@ -241,7 +241,7 @@ namespace Video.API.Controllers
         /// <param name="request">The AddHeartbeatRequest</param>
         /// <returns></returns>
         [HttpPost("{conferenceId}/participant/{participantId}/heartbeat")]
-        [SwaggerOperation(OperationId = "SaveHeartbeatDataForParticipant")]
+        [OpenApiOperation("SaveHeartbeatDataForParticipant")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
@@ -275,7 +275,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("participants/Judge/firstname")]
-        [SwaggerOperation(OperationId = "GetDistinctJudgeNames")]
+        [OpenApiOperation("GetDistinctJudgeNames")]
         [ProducesResponseType(typeof(JudgeNameListResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDistinctJudgeNamesAsync()
         {
@@ -291,7 +291,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">The conference Id</param>
         /// <returns>The list of participants</returns>
         [HttpGet("{conferenceId}/participants")]
-        [SwaggerOperation(OperationId = "GetParticipantsByConferenceId")]
+        [OpenApiOperation("GetParticipantsByConferenceId")]
         [ProducesResponseType(typeof(List<ParticipantSummaryResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetParticipantsByConferenceId(Guid conferenceId)

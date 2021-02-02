@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Factories;
 using Video.API.Mappings;
 using Video.API.Validations;
@@ -68,7 +68,7 @@ namespace Video.API.Controllers
         /// <param name="request">Details of a conference</param>
         /// <returns>Details of the new conference</returns>
         [HttpPost]
-        [SwaggerOperation(OperationId = "BookNewConference")]
+        [OpenApiOperation("BookNewConference")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.Created)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
@@ -130,7 +130,7 @@ namespace Video.API.Controllers
         /// <param name="request">Details of a conference</param>
         /// <returns>Ok status</returns>
         [HttpPut]
-        [SwaggerOperation(OperationId = "UpdateConference")]
+        [OpenApiOperation("UpdateConference")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateConferenceAsync(UpdateConferenceRequest request)
@@ -173,7 +173,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpGet("{conferenceId}")]
-        [SwaggerOperation(OperationId = "GetConferenceDetailsById")]
+        [OpenApiOperation("GetConferenceDetailsById")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
@@ -204,7 +204,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">The conference id</param>
         /// <returns></returns>
         [HttpDelete("{conferenceId}")]
-        [SwaggerOperation(OperationId = "RemoveConference")]
+        [OpenApiOperation("RemoveConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -234,7 +234,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns>Conference details</returns>
         [HttpGet("today/vho")]
-        [SwaggerOperation(OperationId = "GetConferencesTodayForAdmin")]
+        [OpenApiOperation("GetConferencesTodayForAdmin")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetConferencesTodayForAdminByUsernameAsync(
             [FromQuery] ConferenceForAdminRequest request)
@@ -259,7 +259,7 @@ namespace Video.API.Controllers
         /// <param name="username">judge username</param>
         /// <returns>List of conferences for judge</returns>
         [HttpGet("today/judge")]
-        [SwaggerOperation(OperationId = "GetConferencesTodayForJudgeByUsername")]
+        [OpenApiOperation("GetConferencesTodayForJudgeByUsername")]
         [ProducesResponseType(typeof(List<ConferenceForJudgeResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
@@ -288,7 +288,7 @@ namespace Video.API.Controllers
         /// <param name="username">person username</param>
         /// <returns>List of non-closed conferences for judge</returns>
         [HttpGet("today/individual")]
-        [SwaggerOperation(OperationId = "GetConferencesTodayForIndividualByUsername")]
+        [OpenApiOperation("GetConferencesTodayForIndividualByUsername")]
         [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
@@ -318,7 +318,7 @@ namespace Video.API.Controllers
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpGet("hearings/{hearingRefId}")]
-        [SwaggerOperation(OperationId = "GetConferenceByHearingRefId")]
+        [OpenApiOperation("GetConferenceByHearingRefId")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId)
@@ -348,7 +348,7 @@ namespace Video.API.Controllers
         /// <returns>Conference summary details</returns>
 
         [HttpGet("expired")]
-        [SwaggerOperation(OperationId = "GetExpiredOpenConferences")]
+        [OpenApiOperation("GetExpiredOpenConferences")]
         [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetExpiredOpenConferencesAsync()
         {
@@ -366,7 +366,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns>List of expired conferences</returns>
         [HttpGet("audiorecording/expired")]
-        [SwaggerOperation(OperationId = "GetExpiredAudiorecordingConferences")]
+        [OpenApiOperation("GetExpiredAudiorecordingConferences")]
         [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
 
         public async Task<IActionResult> GetExpiredAudiorecordingConferencesAsync()
@@ -387,7 +387,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">conference id</param>
         /// <returns>No Content status</returns>
         [HttpPut("{conferenceId}/close")]
-        [SwaggerOperation(OperationId = "CloseConference")]
+        [OpenApiOperation("CloseConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloseConferenceAsync(Guid conferenceId)
@@ -415,7 +415,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns>Conference details</returns>
         [HttpGet("today/judgesinhearings")]
-        [SwaggerOperation(OperationId = "GetJudgesInHearingsToday")]
+        [OpenApiOperation("GetJudgesInHearingsToday")]
         [ProducesResponseType(typeof(List<JudgeInHearingResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
         {
@@ -436,7 +436,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPatch("anonymiseconferences")]
-        [SwaggerOperation(OperationId = "AnonymiseConferences")]
+        [OpenApiOperation("AnonymiseConferences")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> AnonymiseConferencesAsync()
         {
@@ -450,7 +450,7 @@ namespace Video.API.Controllers
         }
 
         [HttpDelete("expiredHearbeats")]
-        [SwaggerOperation(OperationId = "RemoveHeartbeatsForConferences")]
+        [OpenApiOperation("RemoveHeartbeatsForConferences")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
         {

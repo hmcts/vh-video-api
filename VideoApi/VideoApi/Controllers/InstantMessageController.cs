@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using NSwag.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -41,7 +41,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Chat messages</returns>
         [HttpGet("{conferenceId}/instantmessages")]
-        [SwaggerOperation(OperationId = "GetInstantMessageHistory")]
+        [OpenApiOperation("GetInstantMessageHistory")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
@@ -59,7 +59,7 @@ namespace Video.API.Controllers
         /// <param name="participantUsername">instant messages for the participant user name</param>
         /// <returns>Chat messages</returns>
         [HttpGet("{conferenceId}/instantMessages/{participantUsername}")]
-        [SwaggerOperation(OperationId = "GetInstantMessageHistoryForParticipant")]
+        [OpenApiOperation("GetInstantMessageHistoryForParticipant")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInstantMessageHistoryForParticipantAsync(Guid conferenceId, string participantUsername)
@@ -77,7 +77,7 @@ namespace Video.API.Controllers
         /// <param name="request">Details of the chat message</param>
         /// <returns>OK if the message is saved successfully</returns>
         [HttpPost("{conferenceId}/instantmessages")]
-        [SwaggerOperation(OperationId = "AddInstantMessageToConference")]
+        [OpenApiOperation("AddInstantMessageToConference")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddInstantMessageToConferenceAsync(Guid conferenceId, AddInstantMessageRequest request)
@@ -99,7 +99,7 @@ namespace Video.API.Controllers
         }
 
         [HttpDelete("{conferenceId}/instantmessages")]
-        [SwaggerOperation(OperationId = "RemoveInstantMessages")]
+        [OpenApiOperation("RemoveInstantMessages")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -125,7 +125,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns>List of Conference Ids</returns>
         [HttpGet("expiredIM")]
-        [SwaggerOperation(OperationId = "GetClosedConferencesWithInstantMessages")]
+        [OpenApiOperation("GetClosedConferencesWithInstantMessages")]
         [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetClosedConferencesWithInstantMessagesAsync()
         {

@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -40,7 +40,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns></returns>
         [HttpGet("{conferenceId}/tasks")]
-        [SwaggerOperation(OperationId = "GetTasksForConference")]
+        [OpenApiOperation("GetTasksForConference")]
         [ProducesResponseType(typeof(List<TaskResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTasksForConferenceAsync(Guid conferenceId)
         {
@@ -67,7 +67,7 @@ namespace Video.API.Controllers
         /// <param name="updateTaskRequest">username of who completed the task</param>
         /// <returns></returns>
         [HttpPatch("{conferenceId}/tasks/{taskId}")]
-        [SwaggerOperation(OperationId = "UpdateTaskStatus")]
+        [OpenApiOperation("UpdateTaskStatus")]
         [ProducesResponseType(typeof(TaskResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -105,7 +105,7 @@ namespace Video.API.Controllers
         /// <param name="addTaskRequest">The task request containing the task type and the alert (task name)</param>
         /// <returns></returns>
         [HttpPost("{conferenceId}/task")]
-        [SwaggerOperation(OperationId = "AddTask")]
+        [OpenApiOperation("AddTask")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddTaskAsync(Guid conferenceId, [FromBody] AddTaskRequest addTaskRequest)

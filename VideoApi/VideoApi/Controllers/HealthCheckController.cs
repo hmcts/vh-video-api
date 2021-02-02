@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using NSwag.Annotations;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -39,7 +39,7 @@ namespace Video.API.Controllers
         /// </summary>
         /// <returns>Error if fails, otherwise OK status</returns>
         [HttpGet("health")]
-        [SwaggerOperation(OperationId = "CheckServiceHealth")]
+        [OpenApiOperation("CheckServiceHealth")]
         [ProducesResponseType(typeof(HealthCheckResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(HealthCheckResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> HealthAsync()

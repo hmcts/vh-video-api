@@ -22,7 +22,8 @@ namespace Video.API.ValidationMiddleware
                 var failure = new ValidationFailure(modelValue.GetType().ToString(), "Validator not found for request");
                 return new List<ValidationFailure>{failure};
             }
-            var result = validator.Validate(modelValue);
+            var context = new ValidationContext<object>(modelValue);
+            var result = validator.Validate(context);
             return result.Errors;
         }
     }

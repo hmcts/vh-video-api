@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Extensions;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
@@ -36,7 +36,7 @@ namespace Video.API.Controllers
         /// <param name="request">Details of the event</param>
         /// <returns>NoContent if event is handled as expected</returns>
         [HttpPost]
-        [SwaggerOperation(OperationId = "RaiseVideoEvent")]
+        [OpenApiOperation("RaiseVideoEvent")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostEventAsync(ConferenceEventRequest request)

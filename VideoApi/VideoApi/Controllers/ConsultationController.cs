@@ -4,7 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -49,7 +49,7 @@ namespace Video.API.Controllers
         /// <param name="request">Private consultation request with or without an answer</param>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerOperation(OperationId = "HandleConsultationRequest")]
+        [OpenApiOperation("HandleConsultationRequest")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> HandleConsultationRequestAsync(ConsultationRequest request)
@@ -104,7 +104,7 @@ namespace Video.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("leave")]
-        [SwaggerOperation(OperationId = "LeavePrivateConsultation")]
+        [OpenApiOperation("LeavePrivateConsultation")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -147,7 +147,7 @@ namespace Video.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("vhofficer/respond")]
-        [SwaggerOperation(OperationId = "RespondToAdminConsultationRequest")]
+        [OpenApiOperation("RespondToAdminConsultationRequest")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -194,7 +194,7 @@ namespace Video.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("endpoint")]
-        [SwaggerOperation(OperationId = "StartPrivateConsultationWithEndpoint")]
+        [OpenApiOperation("StartPrivateConsultationWithEndpoint")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -246,7 +246,7 @@ namespace Video.API.Controllers
         }
 
         [HttpPost("start")]
-        [SwaggerOperation(OperationId = "StartPrivateConsultation")]
+        [OpenApiOperation("StartPrivateConsultation")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -290,7 +290,7 @@ namespace Video.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("end")]
-        [SwaggerOperation(OperationId = "LeaveConsultationAsync")]
+        [OpenApiOperation("LeaveConsultationAsync")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

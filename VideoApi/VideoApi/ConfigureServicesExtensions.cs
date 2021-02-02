@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -12,20 +9,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
+using NSwag;
+using NSwag.Generation.Processors.Security;
 using Video.API.Factories;
 using Video.API.Services;
-using Video.API.Swagger;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
 using VideoApi.Common.Security.Kinly;
-using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
@@ -34,6 +29,8 @@ using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Handlers;
 using VideoApi.Services.Kinly;
+using VideoApi.Swagger;
+using ZymLabs.NSwag.FluentValidation;
 
 namespace Video.API
 {
@@ -41,46 +38,27 @@ namespace Video.API
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
-            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-            var contractsXmlFile = $"{typeof(BookNewConferenceRequest).Assembly.GetName().Name}.xml";
-            var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, contractsXmlFile);
-
-
-            services.AddSwaggerGen(c =>
+            services.AddSingleton<FluentValidationSchemaProcessor>();
+            services.AddOpenApiDocument((document, serviceProvider) =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Video API", Version = "v1"});
-                c.AddFluentValidationRules();
-                c.IncludeXmlComments(xmlPath);
-                c.IncludeXmlComments(contractsXmlPath);
-                c.EnableAnnotations();
-
-                c.AddSecurityDefinition("Bearer", //Name the security scheme
-                    new OpenApiSecurityScheme
-                    {
-                        Description = "JWT Authorization header using the Bearer scheme.",
-                        Type = SecuritySchemeType.Http, //We set the scheme type to http since we're using bearer authentication
-                        Scheme = "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
-                    });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
+                document.Title = "Video API";
+                document.DocumentProcessors.Add(
+                    new SecurityDefinitionAppender("JWT",
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference
-                            {
-                                Id = "Bearer", //The name of the previously defined security scheme.
-                                Type = ReferenceType.SecurityScheme
-                            }
-                        },
-                        new List<string>()
-                    }
-                });
-                c.OperationFilter<AuthResponsesOperationFilter>();
+                            Type = OpenApiSecuritySchemeType.ApiKey,
+                            Name = "Authorization",
+                            In = OpenApiSecurityApiKeyLocation.Header,
+                            Description = "Type into the textbox: Bearer {your JWT token}.",
+                            Scheme = "bearer"
+                        }));
+                document.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
+                document.OperationProcessors.Add(new AuthResponseOperationProcessor());
+                var fluentValidationSchemaProcessor = serviceProvider.GetService<FluentValidationSchemaProcessor>();
+
+                // Add the fluent validations schema processor
+                document.SchemaProcessors.Add(fluentValidationSchemaProcessor);
             });
-            services.AddSwaggerGenNewtonsoftSupport();
             return services;
         }
 

@@ -112,11 +112,10 @@ namespace Video.API
         {
             app.RunLatestMigrations();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            app.UseOpenApi();
+            app.UseSwaggerUi3(c =>
             {
-                const string url = "/swagger/v1/swagger.json";
-                c.SwaggerEndpoint(url, "Video API V1");
+                c.DocumentTitle = "Notifications API V1";
             });
 
             if (env.IsDevelopment())

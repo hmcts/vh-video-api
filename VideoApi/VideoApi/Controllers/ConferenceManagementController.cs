@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
@@ -14,7 +14,7 @@ namespace Video.API.Controllers
 {
     [Consumes("application/json")]
     [Produces("application/json")]
-    [SwaggerTag("Conference Management")]
+    [OpenApiTag("Conference Management")]
     [Route("conferences")]
     [ApiController]
     public class ConferenceManagementController : ControllerBase
@@ -36,7 +36,7 @@ namespace Video.API.Controllers
         /// <param name="request"></param>
         /// <returns>No Content status</returns>
         [HttpPost("{conferenceId}/start")]
-        [SwaggerOperation(OperationId = "StartOrResumeVideoHearing")]
+        [OpenApiOperation("StartOrResumeVideoHearing")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> StartVideoHearingAsync(Guid conferenceId, StartHearingRequest request)
         {
@@ -62,7 +62,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">conference id</param>
         /// <returns>No Content status</returns>
         [HttpPost("{conferenceId}/pause")]
-        [SwaggerOperation(OperationId = "PauseVideoHearing")]
+        [OpenApiOperation("PauseVideoHearing")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> PauseVideoHearingAsync(Guid conferenceId)
         {
@@ -85,7 +85,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">conference id</param>
         /// <returns>No Content status</returns>
         [HttpPost("{conferenceId}/end")]
-        [SwaggerOperation(OperationId = "EndVideoHearing")]
+        [OpenApiOperation("EndVideoHearing")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> EndVideoHearingAsync(Guid conferenceId)
         {
@@ -107,7 +107,7 @@ namespace Video.API.Controllers
         /// <param name="conferenceId">conference id</param>	
         /// <returns>No Content status</returns>	
         [HttpPost("{conferenceId}/suspend")]	
-        [SwaggerOperation(OperationId = "SuspendHearing")]	
+        [OpenApiOperation("SuspendHearing")]	
         [ProducesResponseType((int)HttpStatusCode.Accepted)]	
         public async Task<IActionResult> SuspendHearingAsync(Guid conferenceId)	
         {	
@@ -130,7 +130,7 @@ namespace Video.API.Controllers
         /// <param name="transferRequest">Participant and direction of transfer</param>
         /// <returns></returns>
         [HttpPost("{conferenceId}/transfer")]
-        [SwaggerOperation(OperationId = "TransferParticipant")]
+        [OpenApiOperation("TransferParticipant")]
         [ProducesResponseType((int) HttpStatusCode.Accepted)]
         public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId, TransferParticipantRequest transferRequest)
         {
