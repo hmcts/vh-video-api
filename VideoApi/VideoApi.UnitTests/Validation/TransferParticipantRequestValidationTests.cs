@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
-using Video.API.Validations;
 using VideoApi.Contract.Requests;
+using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
 {

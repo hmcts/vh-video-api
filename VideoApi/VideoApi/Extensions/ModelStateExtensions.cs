@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Video.API.Extensions
+namespace VideoApi.Extensions
 {
     public static class ModelStateExtensions
     {

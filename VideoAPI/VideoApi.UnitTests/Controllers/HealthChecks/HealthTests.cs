@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Net;
 using Testing.Common.Helper.Builders.Domain;
-using Video.API.Controllers;
+using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;

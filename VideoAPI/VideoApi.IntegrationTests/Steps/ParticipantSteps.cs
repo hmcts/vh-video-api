@@ -17,6 +17,7 @@ using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;
 using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;
 using Testing.Common.Assertions;
+using Testing.Common.Helper;
 
 namespace VideoApi.IntegrationTests.Steps
 {

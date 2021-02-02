@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
-using Video.API.Extensions;
+using VideoApi.Extensions;
 
-namespace Video.API.ValidationMiddleware
+namespace VideoApi.ValidationMiddleware
 {
     public class RequestModelValidatorFilter : IAsyncActionFilter
     {

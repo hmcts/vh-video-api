@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using Video.API.Mappings;
 using VideoApi.Common.Configuration;
+using VideoApi.Mappings;
 
 namespace VideoApi.UnitTests.Mappings
 {

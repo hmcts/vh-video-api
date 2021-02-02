@@ -13,7 +13,7 @@ using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
-namespace Video.API.Services
+namespace VideoApi.Services
 {
     public class ConsultationService : IConsultationService
     {

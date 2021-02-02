@@ -2,7 +2,7 @@ using System;
 using FluentValidation;
 using VideoApi.Contract.Requests;
 
-namespace Video.API.Validations
+namespace VideoApi.Validations
 {
     public class UpdateConferenceRequestValidation : AbstractValidator<UpdateConferenceRequest>
     {

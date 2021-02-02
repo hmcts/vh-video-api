@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
-using Video.API.Extensions;
 using VideoApi.Common;
+using VideoApi.Extensions;
 
 namespace VideoApi.UnitTests.Middleware
 {

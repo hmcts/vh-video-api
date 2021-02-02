@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using AcceptanceTests.Common.Api.Helpers;
 using TechTalk.SpecFlow;
+using Testing.Common.Helper;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;

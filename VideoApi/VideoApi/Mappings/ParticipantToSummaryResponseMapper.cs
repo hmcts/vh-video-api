@@ -2,7 +2,7 @@ using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
-namespace Video.API.Mappings
+namespace VideoApi.Mappings
 {
     public static class ParticipantToSummaryResponseMapper
     {

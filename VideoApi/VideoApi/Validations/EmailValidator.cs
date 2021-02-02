@@ -1,7 +1,7 @@
 using System;
 using System.Net.Mail;
 
-namespace Video.API.Validations
+namespace VideoApi.Validations
 {
     /// <summary>Simple validator to check email formats</summary>
     public static class EmailValidator

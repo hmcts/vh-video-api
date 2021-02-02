@@ -1,9 +1,9 @@
+using System;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
-using System;
 
-namespace Video.API.Telemetry
+namespace VideoApi.Telemetry
 {
     public class SuccessfulDependencyProcessor : ITelemetryProcessor
     {

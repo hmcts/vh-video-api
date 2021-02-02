@@ -5,9 +5,9 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using System.Net;
-using Video.API.Controllers;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
+using VideoApi.Controllers;
 
 namespace VideoApi.UnitTests.Controllers.SelfTest
 {

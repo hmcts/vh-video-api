@@ -1,8 +1,8 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
-using Video.API.Mappings;
 using VideoApi.Domain.Enums;
+using VideoApi.Mappings;
 
 namespace VideoApi.UnitTests.Mappings
 {

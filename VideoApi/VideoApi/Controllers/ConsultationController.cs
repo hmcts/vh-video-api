@@ -18,7 +18,7 @@ using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
-namespace Video.API.Controllers
+namespace VideoApi.Controllers
 {
     [Consumes("application/json")]
     [Produces("application/json")]

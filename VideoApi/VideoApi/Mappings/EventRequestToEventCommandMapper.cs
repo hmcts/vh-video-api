@@ -4,7 +4,7 @@ using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Models;
 
-namespace Video.API.Mappings
+namespace VideoApi.Mappings
 {
     public static class EventRequestMapper
     {

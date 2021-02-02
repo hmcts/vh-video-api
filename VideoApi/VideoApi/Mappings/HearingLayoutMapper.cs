@@ -1,7 +1,7 @@
 using VideoApi.Contract.Requests;
 using VideoApi.Services.Kinly;
 
-namespace Video.API.Mappings
+namespace VideoApi.Mappings
 {
     public static class HearingLayoutMapper
     {

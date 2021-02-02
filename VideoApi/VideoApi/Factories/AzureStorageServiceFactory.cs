@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Services.Contracts;
 
-namespace Video.API.Factories
+namespace VideoApi.Factories
 {
     public class AzureStorageServiceFactory : IAzureStorageServiceFactory
     {

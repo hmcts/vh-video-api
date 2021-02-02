@@ -1,6 +1,6 @@
 using VideoApi.Services.Contracts;
 
-namespace Video.API.Factories
+namespace VideoApi.Factories
 {
     public interface IAzureStorageServiceFactory
     {

@@ -7,6 +7,7 @@ using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
+using Testing.Common.Helper;
 using VideoApi.Common;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL;

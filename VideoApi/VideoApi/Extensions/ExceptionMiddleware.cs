@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Threading.Tasks;
 using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using VideoApi.Common;
 using VideoApi.Common.Helpers;
 
-namespace Video.API.Extensions
+namespace VideoApi.Extensions
 {
     public class ExceptionMiddleware
     {

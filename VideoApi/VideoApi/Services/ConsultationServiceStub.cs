@@ -6,7 +6,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
 
-namespace Video.API.Services
+namespace VideoApi.Services
 {
     [ExcludeFromCodeCoverage]
     public class ConsultationServiceStub : IConsultationService

@@ -1,7 +1,7 @@
 ﻿using VideoApi.Contract.Responses;
 using VideoApi.Services.Responses;
 
-namespace Video.API.Mappings
+namespace VideoApi.Mappings
 {
     public static class AudioRecordingMapper
     {

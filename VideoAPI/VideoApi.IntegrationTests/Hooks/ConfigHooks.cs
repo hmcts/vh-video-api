@@ -11,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
-using Video.API;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
 using VideoApi.DAL;

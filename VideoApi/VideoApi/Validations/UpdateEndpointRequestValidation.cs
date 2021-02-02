@@ -1,6 +1,7 @@
 using FluentValidation;
 using VideoApi.Contract.Requests;
-namespace Video.API.Validations
+
+namespace VideoApi.Validations
 {
     public class UpdateEndpointRequestValidation : AbstractValidator<UpdateEndpointRequest>
     {

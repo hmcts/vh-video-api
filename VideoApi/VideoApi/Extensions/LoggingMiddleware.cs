@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 using VideoApi.Common.Helpers;
 
-namespace Video.API.Extensions
+namespace VideoApi.Extensions
 {
     public class LoggingMiddleware : IAsyncActionFilter
     {

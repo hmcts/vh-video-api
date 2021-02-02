@@ -3,7 +3,7 @@ using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 
-namespace Video.API.Mappings
+namespace VideoApi.Mappings
 {
     public static class ConferenceForAdminResponseMapper
     {

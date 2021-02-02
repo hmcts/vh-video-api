@@ -1,5 +1,4 @@
-﻿using Video.API;
-using VideoApi.DAL;
+﻿using VideoApi.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;

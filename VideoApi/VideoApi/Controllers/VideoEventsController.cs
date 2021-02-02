@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
-using Video.API.Extensions;
-using Video.API.Mappings;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Events.Handlers.Core;
+using VideoApi.Extensions;
+using VideoApi.Mappings;
 
-namespace Video.API.Controllers
+namespace VideoApi.Controllers
 {
     [Consumes("application/json")]
     [Produces("application/json")]

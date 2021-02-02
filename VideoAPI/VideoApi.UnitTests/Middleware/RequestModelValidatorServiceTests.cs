@@ -3,8 +3,8 @@ using FluentAssertions;
 using FluentValidation;
 using Moq;
 using NUnit.Framework;
-using Video.API.ValidationMiddleware;
 using VideoApi.Contract.Requests;
+using VideoApi.ValidationMiddleware;
 
 namespace VideoApi.UnitTests.Middleware
 {

@@ -1,7 +1,7 @@
 ﻿using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
 
-namespace Video.API.Mappings
+namespace VideoApi.Mappings
 {
     public static class PexipConfigurationMapper
     {

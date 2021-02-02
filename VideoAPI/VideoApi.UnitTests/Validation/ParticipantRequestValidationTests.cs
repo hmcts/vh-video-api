@@ -5,9 +5,9 @@ using Faker;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
-using Video.API.Validations;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
+using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
 {

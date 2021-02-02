@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSwag.Annotations;
-using Video.API.Mappings;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
+using VideoApi.Mappings;
 
-namespace Video.API.Controllers
+namespace VideoApi.Controllers
 {
     [Produces("application/json")]
     [Route("selftest")]

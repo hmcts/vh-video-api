@@ -11,12 +11,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
-using Video.API.Controllers;
-using Video.API.Factories;
 using VideoApi.Contract.Responses;
+using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
+using VideoApi.Factories;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Responses;
 

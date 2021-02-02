@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace Video.API.Extensions
+namespace VideoApi.Extensions
 {
     public static class EnumExtensions
     {

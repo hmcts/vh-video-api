@@ -7,9 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSwag.Annotations;
-using Video.API.Factories;
-using Video.API.Mappings;
-using Video.API.Validations;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Requests;
@@ -20,13 +17,16 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Factories;
+using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Mappers;
+using VideoApi.Validations;
 using Task = System.Threading.Tasks.Task;
 
-namespace Video.API.Controllers
+namespace VideoApi.Controllers
 {
     [Consumes("application/json")]
     [Produces("application/json")]

@@ -1,7 +1,7 @@
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
 
-namespace Video.API.Extensions
+namespace VideoApi.Extensions
 {
     public static class ConferenceEventRequestExtensions
     {

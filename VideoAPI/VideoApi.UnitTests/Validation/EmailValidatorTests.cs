@@ -1,7 +1,7 @@
 using Faker;
 using FluentAssertions;
 using NUnit.Framework;
-using Video.API.Validations;
+using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
 {

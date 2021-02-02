@@ -12,15 +12,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Video.API.Extensions;
-using Video.API.Telemetry;
-using Video.API.ValidationMiddleware;
-using Video.API.Validations;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
+using VideoApi.Extensions;
+using VideoApi.Telemetry;
+using VideoApi.ValidationMiddleware;
+using VideoApi.Validations;
 
-namespace Video.API
+namespace VideoApi
 {
     public class Startup
     {

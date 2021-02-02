@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 using Autofac.Extras.Moq;
 using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
-using Video.API.Controllers;
-using Video.API.Factories;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Kinly;
+using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Factories;
 using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
 

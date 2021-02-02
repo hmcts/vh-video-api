@@ -3,7 +3,7 @@ using FluentValidation;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain.Enums;
 
-namespace Video.API.Validations
+namespace VideoApi.Validations
 {
     public class ConferenceEventRequestValidation : AbstractValidator<ConferenceEventRequest>
     {

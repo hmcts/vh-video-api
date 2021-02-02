@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Video.API.Mappings;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Mappings;
 
 namespace VideoApi.UnitTests.Mappings
 {

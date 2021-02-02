@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
@@ -14,7 +14,7 @@ using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 using HealthCheckResponse = VideoApi.Contract.Responses.HealthCheckResponse;
 
-namespace Video.API.Controllers
+namespace VideoApi.Controllers
 {
     [Produces("application/json")]
     [Route("HealthCheck")]

@@ -2,7 +2,7 @@ using System;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Video.API.Factories;
+using VideoApi.Factories;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.UnitTests.Factories

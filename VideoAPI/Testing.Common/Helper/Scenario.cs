@@ -1,4 +1,4 @@
-﻿namespace VideoApi.IntegrationTests.Helper
+﻿namespace Testing.Common.Helper
 {
     public enum Scenario
     {

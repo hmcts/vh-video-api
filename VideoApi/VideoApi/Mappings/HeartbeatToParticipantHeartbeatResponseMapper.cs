@@ -3,7 +3,7 @@ using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 
-namespace Video.API.Mappings
+namespace VideoApi.Mappings
 {
     public static class HeartbeatToParticipantHeartbeatResponseMapper
     {

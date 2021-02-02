@@ -1,9 +1,9 @@
-﻿using VideoApi.DAL;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using VideoApi.DAL;
 
-namespace Video.API.Extensions
+namespace VideoApi.Extensions
 {
     public static class DatabaseMigration
     {

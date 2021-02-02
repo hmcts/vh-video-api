@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace Video.API.ValidationMiddleware
+namespace VideoApi.ValidationMiddleware
 {
     public class RequestModelValidatorService : IRequestModelValidatorService
     {

@@ -14,8 +14,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NSwag;
 using NSwag.Generation.Processors.Security;
-using Video.API.Factories;
-using Video.API.Services;
 using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
@@ -24,6 +22,7 @@ using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
+using VideoApi.Factories;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
@@ -32,7 +31,7 @@ using VideoApi.Services.Kinly;
 using VideoApi.Swagger;
 using ZymLabs.NSwag.FluentValidation;
 
-namespace Video.API
+namespace VideoApi
 {
     public static class ConfigureServicesExtensions
     {

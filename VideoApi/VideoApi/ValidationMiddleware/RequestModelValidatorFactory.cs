@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace Video.API.ValidationMiddleware
+namespace VideoApi.ValidationMiddleware
 {
     public class RequestModelValidatorFactory : ValidatorFactoryBase
     {
