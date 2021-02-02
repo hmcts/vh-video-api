@@ -57,60 +57,60 @@ parameters:
       
     # Services Configuration
     - name: Services:KinlyApiUrl
-      - value: $(KinlyApiUrl)
+      value: $(KinlyApiUrl)
     - name: Services:KinlySelfTestApiUrl
-      - value: $(KinlySelfTestApiUrl)
+      value: $(KinlySelfTestApiUrl)
     - name: Services:CallbackUri
-      - value: $(CallbackUri)
+      value: $(CallbackUri)
     - name: Services:ConferenceUsername
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
     - name: Services:VhVideoApiResourceId
       value: vh-notification-api-identifieruris
       secret: true
     - name: Services:ConferenceUsername
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
 
     # Wowza Configuration
     - name: WowzaConfiguration:RestApiEndpoints
-      - value: $(wowza_restApiEndpoints)
+      value: $(wowza_restApiEndpoints)
     - name: WowzaConfiguration:StreamingEndpoint
-      - value: $(wowza_streamingEndpoint)
+      value: $(wowza_streamingEndpoint)
     - name: WowzaConfiguration:ServerName
-      - value: $(wowza_serverName)
+      value: $(wowza_serverName)
     - name: WowzaConfiguration:HostName
-      - value: $(wowza_hostName)
+      value: $(wowza_hostName)
     - name: WowzaConfiguration:Username
       value: $(wowza_userName)
     - name: WowzaConfiguration:Password
-      - value: $(wowza_password)
+      value: $(wowza_password)
     - name: WowzaConfiguration:StorageDirectory
-      - value: $(wowza_storageDirectory)
+      value: $(wowza_storageDirectory)
     - name: WowzaConfiguration:StorageAccountName
       value: $(wowza_storageAccountName)
     - name: WowzaConfiguration:StorageAccountKey
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
     - name: WowzaConfiguration:StorageContainerName
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
     - name: WowzaConfiguration:StorageEndpoint
       value: vh-notification-api-identifieruris
     - name: WowzaConfiguration:ManagedIdentityClientId
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
 
     # CVP Configuration
     - name: CvpConfiguration:StorageAccountName
-      - value: $(cvp_storageAccountName)
+      value: $(cvp_storageAccountName)
     - name: CvpConfiguration:StorageAccountKey
-      - value: $(cvp_storageAccountKey)
+      value: $(cvp_storageAccountKey)
     - name: CvpConfiguration:StorageContainerName
       value: $(cvp_storageContainerName)
     - name: CvpConfiguration:StorageEndpoint
-      - value: $(cvp_storageEndpoint)
+      value: $(cvp_storageEndpoint)
     - name: CvpConfiguration:ManagedIdentityClientId
-      - value: $(wowza_managedIdentityClientId)
+      value: $(wowza_managedIdentityClientId)
 
     # Kinly Configuration
     - name: KinlyConfiguration:ConferencePhoneNumber
-      - value: $(ConferencePhoneNumber)
+      value: $(ConferencePhoneNumber)
 
 - name: appSettings
   type: object
@@ -127,69 +127,71 @@ parameters:
       value: tenantid
       secret: true
     - name: Services:VhVideoApiResourceId
+    - name: UseStub
+      value: "false"
       
     # Services Configuration
     - name: Services:KinlyApiUrl
-      - value: $(KinlyApiUrl)
+      value: $(KinlyApiUrl)
     - name: Services:KinlySelfTestApiUrl
-      - value: $(KinlySelfTestApiUrl)
+      value: $(KinlySelfTestApiUrl)
     - name: Services:CallbackUri
-      - value: $(CallbackUri)
+      value: $(CallbackUri)
     - name: Services:ConferenceUsername
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
     - name: Services:VhVideoApiResourceId
       value: vh-notification-api-identifieruris
       secret: true
     - name: Services:ConferenceUsername
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
 
     # Wowza Configuration
     - name: WowzaConfiguration:RestApiEndpoints
-      - value: $(wowza_restApiEndpoints)
+      value: $(wowza_restApiEndpoints)
     - name: WowzaConfiguration:StreamingEndpoint
-      - value: $(wowza_streamingEndpoint)
+      value: $(wowza_streamingEndpoint)
     - name: WowzaConfiguration:ServerName
-      - value: $(wowza_serverName)
+      value: $(wowza_serverName)
     - name: WowzaConfiguration:HostName
-      - value: $(wowza_hostName)
+      value: $(wowza_hostName)
     - name: WowzaConfiguration:Username
       value: $(wowza_userName)
     - name: WowzaConfiguration:Password
-      - value: $(wowza_password)
+      value: $(wowza_password)
     - name: WowzaConfiguration:StorageDirectory
-      - value: $(wowza_storageDirectory)
+      value: $(wowza_storageDirectory)
     - name: WowzaConfiguration:StorageAccountName
       value: $(wowza_storageAccountName)
     - name: WowzaConfiguration:StorageAccountKey
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
     - name: WowzaConfiguration:StorageContainerName
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
     - name: WowzaConfiguration:StorageEndpoint
       value: vh-notification-api-identifieruris
     - name: WowzaConfiguration:ManagedIdentityClientId
-      - value: $(ConferenceUsername)
+      value: $(ConferenceUsername)
 
     # CVP Configuration
     - name: CvpConfiguration:StorageAccountName
-      - value: $(cvp_storageAccountName)
+      value: $(cvp_storageAccountName)
     - name: CvpConfiguration:StorageAccountKey
-      - value: $(cvp_storageAccountKey)
+      value: $(cvp_storageAccountKey)
     - name: CvpConfiguration:StorageContainerName
       value: $(cvp_storageContainerName)
     - name: CvpConfiguration:StorageEndpoint
-      - value: $(cvp_storageEndpoint)
+      value: $(cvp_storageEndpoint)
     - name: CvpConfiguration:ManagedIdentityClientId
-      - value: $(wowza_managedIdentityClientId)
+      value: $(wowza_managedIdentityClientId)
 
     # Kinly Configuration
     - name: KinlyConfiguration:ConferencePhoneNumber
-      - value: $(ConferencePhoneNumber)
+      value: $(ConferencePhoneNumber)
     - name: KinlyConfiguration:ApiSecret
-      - value: $(KinlyApiKey)
+      value: $(KinlyApiKey)
     - name: KinlyConfiguration:CallbackSecret
-      - value: $(CallbackKey)
+      value: $(CallbackKey)
     - name: KinlyConfiguration:SelfTestApiSecret
-      - value: $(SelfTestApiKey)
+      value: $(SelfTestApiKey)
 
     # Connection strings
     - name: ConnectionStrings:VhVideoApi
