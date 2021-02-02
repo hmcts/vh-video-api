@@ -1,0 +1,40 @@
+{
+  "stryker-config": {
+    "reporters": [
+      "Html",
+      "Progress",
+      "ClearText"
+    ],
+    "log-level": "info",
+    "timeout-ms": 10000,
+    "log-file": true,
+    "project-file": "Video.API.csproj",
+    "max-concurrent-test-runners": 4,
+    "threshold-high": 95,
+    "threshold-low": 90,
+    "threshold-break": 85,
+    "files-to-exclude": [
+    ],
+    "excluded-mutations": [
+    ],
+    "ignore-methods": [
+      "*LogDebug",
+      "*LogTrace",
+      "*LogError",
+      "*LogInformation",
+      "*LogWarning",
+      "*TraceException"
+    ],
+    "mutate": [
+      "!Startup.cs",
+      "!Program.cs",
+      "!ConfigureServicesExtensions.cs",
+      "!KinlyApiTokenDelegatingHandler.cs",
+      "!Swagger/AuthResponsesOperationFilter.cs",
+      "!ValidationMiddleware/RequestModelValidatorFilter.cs",
+      "!Extensions/EnumExtensions.cs",
+      "!Telemetry/SuccessfulDependencyProcessor.cs",
+      "!**/AssemblyInfo.cs"
+    ]
+  }
+}
