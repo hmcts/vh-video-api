@@ -206,7 +206,7 @@ extends:
             
           # Connection strings
           - name: ConnectionStrings:VhvideosApi
-            value: vhvideoDatabaseConnectionString
+            value: VhVideoDatabaseConnectionString
             secret: true
             
         acceptanceTestSettings:
