@@ -43,6 +43,9 @@ namespace VideoApi.DAL.Migrations
                     b.Property<DateTime?>("ClosedDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("HearingRefId")
                         .HasColumnType("uniqueidentifier");
 
