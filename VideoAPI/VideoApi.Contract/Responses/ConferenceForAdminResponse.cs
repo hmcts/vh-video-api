@@ -20,5 +20,7 @@ namespace VideoApi.Contract.Responses
         public string HearingVenueName { get; set; }
         public string TelephoneConferenceId { get; set; }
         public string TelephoneConferenceNumber { get; set; }
+        public DateTime? CreatedDateTime { get; set; }
+
     }
 }
