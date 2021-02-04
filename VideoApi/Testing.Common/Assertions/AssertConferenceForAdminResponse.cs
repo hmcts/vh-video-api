@@ -18,7 +18,6 @@ namespace Testing.Common.Assertions
             conference.Id.Should().NotBeEmpty();
             conference.HearingRefId.Should().NotBeEmpty();
             conference.Status.Should().NotBeNull();
-            conference.TelephoneConferenceNumber.Should().NotBeEmpty();
             
             if (conference.Status > ConferenceState.NotStarted && conference.Status < ConferenceState.Closed)
             {
