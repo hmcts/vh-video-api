@@ -44,6 +44,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="VH.Core.Configuration" Version="0.1.12" />
     <PackageReference Include="ZymLabs.NSwag.FluentValidation" Version="0.4.0" />
   </ItemGroup>
   
