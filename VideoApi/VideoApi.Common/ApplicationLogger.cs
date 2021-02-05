@@ -75,7 +75,7 @@ namespace VideoApi.Common
             TraceWithObject(traceCategory, eventTitle, user, null);
         }
 
-        public static void TraceException(string traceCategory, string eventTitle, Exception exception, IPrincipal user, IDictionary<string, string> properties)
+        public static void TraceException(string traceCategory, string eventTitle, Exception exception, string user, IDictionary<string, string> properties)
         {
             if (exception == null)
             {
@@ -86,9 +86,9 @@ namespace VideoApi.Common
 
             telematryException.Properties.Add("Event", traceCategory + " " + eventTitle);
 
-            if (user != null && user.Identity != null)
+            if (!string.IsNullOrEmpty(user))
             {
-                telematryException.Properties.Add("User", user.Identity.Name);
+                telematryException.Properties.Add("User", user);
             }
 
             if (properties != null)
@@ -102,7 +102,7 @@ namespace VideoApi.Common
             TelemetryClient.TrackException(telematryException);
         }
 
-        public static void TraceException(string traceCategory, string eventTitle, Exception exception, IPrincipal user)
+        public static void TraceException(string traceCategory, string eventTitle, Exception exception, string user)
         {
             TraceException(traceCategory, eventTitle, exception, user, null);
         }
