@@ -336,7 +336,7 @@ ASALocalRun/
 *.feature.cs
 
 # Local environment settings files
-/VideoAPI/VideoApi.AcceptanceTests/Environments/
+/VideoApi/VideoApi.AcceptanceTests/Environments/
 
 # azds
 values.dev.yaml
