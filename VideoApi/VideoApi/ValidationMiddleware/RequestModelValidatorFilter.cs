@@ -23,7 +23,7 @@ namespace VideoApi.ValidationMiddleware
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            _logger.LogDebug($"Processing request");
+            _logger.LogDebug("Processing request");
             foreach (var property in context.ActionDescriptor.Parameters)
             {
                 var valuePair = context.ActionArguments.SingleOrDefault(x => x.Key == property.Name);
@@ -33,17 +33,17 @@ namespace VideoApi.ValidationMiddleware
                     context.ModelState.AddFluentValidationErrors(validationFailures);
                 }
                 
-                if (valuePair.Value.Equals(GetDefaultValue(property.ParameterType)))
+                if (valuePair.Value != null && valuePair.Value.Equals(GetDefaultValue(property.ParameterType)))
                 {
                     context.ModelState.AddModelError(valuePair.Key, $"Please provide a valid {valuePair.Key}");
-
                 }
             }
 
             if (!context.ModelState.IsValid)
             {
                 var errors = context.ModelState.Values.SelectMany(v => v.Errors.Select(b => b.ErrorMessage)).ToList();
-                _logger.LogWarning($"Request Validation Failed: {string.Join("; ", errors)}");
+                var errorsString = string.Join("; ", errors);
+                _logger.LogWarning("Request Validation Failed: {Errors}", errorsString);
                 context.Result = new BadRequestObjectResult(context.ModelState);
             }
             else

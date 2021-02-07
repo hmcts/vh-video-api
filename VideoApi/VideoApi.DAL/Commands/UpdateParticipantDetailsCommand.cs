@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
@@ -65,13 +64,9 @@ namespace VideoApi.DAL.Commands
             participant.DisplayName = command.DisplayName;
             participant.Representee = command.Representee;
             
-            participant.ContactEmail = command.ContactEmail;
-            participant.ContactTelephone = command.ContactTelephone;
-
-            if (!command.Username.IsNullOrEmpty())
-            {
-                participant.Username = command.Username;
-            }
+            participant.ContactEmail = command.ContactEmail ?? participant.ContactEmail;
+            participant.ContactTelephone = command.ContactTelephone ?? participant.ContactTelephone;
+            participant.Username = command.Username ?? participant.Username;
             
             await _context.SaveChangesAsync();
         }

@@ -6,17 +6,22 @@ namespace VideoApi.Common.Helpers
 {
     public interface ILoggingDataExtractor
     {
-        Dictionary<string, object> ConvertToDictionary(object input, string path = null, int debth = 0);
+        Dictionary<string, object> ConvertToDictionary(object input, string path = null, int depth = 0);
     }
 
     public class LoggingDataExtractor : ILoggingDataExtractor
     {
-        public Dictionary<string, object> ConvertToDictionary(object input, string path = null, int debth = 0)
+        public Dictionary<string, object> ConvertToDictionary(object input, string path = null, int depth = 0)
         {
             var result = new Dictionary<string, object>();
-            if (debth > 3)
+            if (depth > 3)
             {
-                // Protection from recusrive properties
+                // Protection from recursive properties
+                return result;
+            }
+
+            if (input == null)
+            {
                 return result;
             }
 
@@ -32,7 +37,7 @@ namespace VideoApi.Common.Helpers
                 var value = property.GetValue(input);
                 if (IsCustomType(property.PropertyType))
                 {
-                    var propertyValues = ConvertToDictionary(value, GetPath(path, property.Name), debth++);
+                    var propertyValues = ConvertToDictionary(value, GetPath(path, property.Name), depth++);
                     foreach (var kvp in propertyValues)
                     {
                         result.Add(kvp.Key, kvp.Value);
