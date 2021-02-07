@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -316,16 +317,17 @@ namespace VideoApi.Controllers
         /// Get conferences by hearing ref id
         /// </summary>
         /// <param name="hearingRefId">Hearing ID</param>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpGet("hearings/{hearingRefId}")]
         [OpenApiOperation("GetConferenceByHearingRefId")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId)
+        public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId, [FromQuery]bool? includeClosed = false)
         {
             _logger.LogDebug("GetConferenceByHearingRefId {hearingRefId}", hearingRefId);
 
-            var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId);
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId, includeClosed.GetValueOrDefault());
             var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
 
             if (conference == null)

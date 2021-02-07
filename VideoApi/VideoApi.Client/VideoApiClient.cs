@@ -210,16 +210,18 @@ namespace VideoApi.Client
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get list of expired conferences</summary>
         /// <returns>Conference summary details</returns>
@@ -2179,26 +2181,33 @@ namespace VideoApi.Client
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId)
+        public System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed)
         {
-            return GetConferenceByHearingRefIdAsync(hearingRefId, System.Threading.CancellationToken.None);
+            return GetConferenceByHearingRefIdAsync(hearingRefId, includeClosed, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingRefId == null)
                 throw new System.ArgumentNullException("hearingRefId");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearings/{hearingRefId}");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearings/{hearingRefId}?");
             urlBuilder_.Replace("{hearingRefId}", System.Uri.EscapeDataString(ConvertToString(hearingRefId, System.Globalization.CultureInfo.InvariantCulture)));
+            if (includeClosed != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("includeClosed") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeClosed, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
     
             var client_ = _httpClient;
             var disposeClient_ = false;
