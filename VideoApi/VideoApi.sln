@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
+
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi", "VideoApi\VideoApi.csproj", "{2131B290-9EA1-4523-BBC2-52E889B2C4E9}"
