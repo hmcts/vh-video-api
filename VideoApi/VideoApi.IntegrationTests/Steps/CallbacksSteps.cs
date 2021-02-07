@@ -13,7 +13,6 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory;
 using Task = System.Threading.Tasks.Task;
 using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;

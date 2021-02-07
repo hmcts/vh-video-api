@@ -11,10 +11,12 @@ namespace VideoApi.DAL.Queries
     public class GetNonClosedConferenceByHearingRefIdQuery : IQuery
     {
         public Guid HearingRefId { get; }
+        public bool IncludeClosedConferences { get; }
 
-        public GetNonClosedConferenceByHearingRefIdQuery(Guid hearingRefId)
+        public GetNonClosedConferenceByHearingRefIdQuery(Guid hearingRefId, bool includeClosedConferences = false)
         {
             HearingRefId = hearingRefId;
+            IncludeClosedConferences = includeClosedConferences;
         }
     }
 
@@ -30,12 +32,17 @@ namespace VideoApi.DAL.Queries
 
         public async Task<Conference> Handle(GetNonClosedConferenceByHearingRefIdQuery query)
         {
-            return await _context.Conferences
+            var efQuery = _context.Conferences
                 .Include(x => x.Participants)
                 .Include(x => x.Endpoints)
-                .Where(x => x.State != ConferenceState.Closed)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.HearingRefId == query.HearingRefId);
+                .AsNoTracking();
+            
+            if (!query.IncludeClosedConferences)
+            {
+                efQuery = efQuery.Where(x => x.State != ConferenceState.Closed);
+            }
+
+            return await efQuery.SingleOrDefaultAsync(x => x.HearingRefId == query.HearingRefId);
         }
     }
 }

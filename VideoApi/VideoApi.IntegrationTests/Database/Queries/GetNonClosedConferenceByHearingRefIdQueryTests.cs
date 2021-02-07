@@ -72,6 +72,24 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             AssertConference(conference, conference2, true);
         }
+        
+        [Test]
+        public async Task Should_get_closed_conference_when_toggle_set_to_true()
+        {
+            var knownHearingRefId = Guid.NewGuid();
+            var conference1 = new ConferenceBuilder(true, knownHearingRefId)
+                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.Closed)
+                .Build();
+            _newConferenceId1 = conference1.Id;
+
+            await TestDataManager.SeedConference(conference1);
+
+            var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(knownHearingRefId,true));
+
+            AssertConference(conference, conference1, true);
+        }
 
         private void AssertConference(Conference actual, Conference expected, bool ignoreParticipants = false)
         {
