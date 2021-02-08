@@ -11,7 +11,7 @@ using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;

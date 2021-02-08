@@ -4,9 +4,10 @@ using Autofac;
 using Autofac.Extras.Moq;
 using FluentAssertions;
 using NUnit.Framework;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Handlers.Core;
+using VideoApi.Extensions;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -53,14 +54,14 @@ namespace VideoApi.UnitTests.Events
         public void Should_return_instance_of_event_handler_when_factory_get_is_called_with_valid_request(
             EventType eventType, Type typeOfEventHandler)
         {
-            var eventHandler = _sut.Get(eventType);
+            var eventHandler = _sut.Get(eventType.MapToDomainEnum());
             eventHandler.Should().BeOfType(typeOfEventHandler);
         }
 
         [Test]
         public void Should_throw_exception_when_event_type_is_not_supported()
         {
-            Action action = () => _sut.Get(EventType.None);
+            Action action = () => _sut.Get(EventType.None.MapToDomainEnum());
             action.Should().Throw<ArgumentOutOfRangeException>();
         }
     }

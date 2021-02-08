@@ -1,7 +1,7 @@
 using Faker;
 using FizzWare.NBuilder;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
 
 namespace Testing.Common.Helper.Builders.Api
 {

@@ -22,10 +22,6 @@
             <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
             <IncludeAssets>VideoApi.Contract.dll</IncludeAssets>
         </ProjectReference>
-        <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj">
-            <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-            <IncludeAssets>VideoApi.Domain.dll</IncludeAssets>
-        </ProjectReference>
     </ItemGroup>
 
     <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">

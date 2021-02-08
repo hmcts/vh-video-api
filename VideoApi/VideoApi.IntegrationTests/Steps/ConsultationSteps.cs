@@ -202,7 +202,7 @@ namespace VideoApi.IntegrationTests.Steps
                     request.ConferenceId = Guid.Empty;
                     request.Answer = ConsultationAnswer.None;
                     request.ParticipantId = Guid.Empty;
-                    request.ConsultationRoom = RoomType.HearingRoom;
+                    request.ConsultationRoom = Contract.Enums.RoomType.HearingRoom;
                     break;
                 }
 
@@ -331,13 +331,13 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judge =
-                conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+                conference.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
 
             var request = new StartConsultationRequest()
             {
                 ConferenceId = conference.Id,
                 RequestedBy = judge.Id,
-                RoomType = VirtualCourtRoomType.JudgeJOH
+                RoomType =  Contract.Enums.VirtualCourtRoomType.JudgeJOH
             };
 
             SerialiseStartConsultationRequest(request);
@@ -348,7 +348,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
-                conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+                conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
 
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var conference = await db.Conferences
@@ -366,7 +366,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judge =
-                conference.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+                conference.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
 
             var request = new LeaveConsultationRequest()
             {
@@ -382,7 +382,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
-                conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+                conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
             var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH);
 
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
@@ -502,7 +502,7 @@ namespace VideoApi.IntegrationTests.Steps
             request.ConferenceId = _context.Test.Conference.Id;
             request.ParticipantId = participants[0].Id;
             request.Answer = ConsultationAnswer.Accepted;
-            request.ConsultationRoom = RoomType.ConsultationRoom1;
+            request.ConsultationRoom = Contract.Enums.RoomType.ConsultationRoom1;
 
             return request;
         }

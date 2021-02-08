@@ -13,6 +13,7 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Extensions;
 using VideoApi.Mappings;
 using Task = VideoApi.Domain.Task;
 
@@ -110,16 +111,17 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddTaskAsync(Guid conferenceId, [FromBody] AddTaskRequest addTaskRequest)
         {
-            _logger.LogDebug($"Adding a task {addTaskRequest.Body} for participant {addTaskRequest.ParticipantId} in conference {conferenceId}");
+            _logger.LogDebug("Adding a task {Body} for participant {Participant} in conference {Conference}",
+                addTaskRequest.Body, addTaskRequest.ParticipantId, conferenceId);
             try
             {
-                var command = new AddTaskCommand(conferenceId, addTaskRequest.ParticipantId, addTaskRequest.Body, addTaskRequest.TaskType);
+                var command = new AddTaskCommand(conferenceId, addTaskRequest.ParticipantId, addTaskRequest.Body, addTaskRequest.TaskType.MapToDomainEnum());
                 await _commandHandler.Handle(command);
                 return NoContent();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Unable to add a task {taskBody} for participant {participant} in conference {conference}", 
+                _logger.LogError(e, "Unable to add a task {Body} for participant {Participant} in conference {Conference}", 
                     addTaskRequest.Body, addTaskRequest.ParticipantId, conferenceId);
                 return BadRequest();
             }

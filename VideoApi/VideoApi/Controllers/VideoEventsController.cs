@@ -52,12 +52,12 @@ namespace VideoApi.Controllers
 
             if (request.ShouldSkipEventHandler())
             {
-                _logger.LogDebug("Handling CallbackEvent skipped due to result of ShouldHandleEvent.");
+                _logger.LogDebug("Handling CallbackEvent skipped due to result of ShouldHandleEvent");
                 return NoContent();
             }
 
             var callbackEvent = EventRequestMapper.MapEventRequestToEventHandlerDto(conferenceId, participantId, request);
-            await _eventHandlerFactory.Get(request.EventType).HandleAsync(callbackEvent);
+            await _eventHandlerFactory.Get(callbackEvent.EventType).HandleAsync(callbackEvent);
             return NoContent();
         }
     }

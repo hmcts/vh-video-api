@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +17,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 using VideoApi.Factories;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
@@ -180,7 +180,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsByIdAsync(Guid conferenceId)
         {
-            _logger.LogDebug("GetConferenceDetailsById {conferenceId}", conferenceId);
+            _logger.LogDebug("GetConferenceDetailsById {ConferenceId}", conferenceId);
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
@@ -188,7 +188,7 @@ namespace VideoApi.Controllers
 
             if (queriedConference == null)
             {
-                _logger.LogWarning("Unable to find conference {conferenceId}", conferenceId);
+                _logger.LogWarning("Unable to find conference {ConferenceId}", conferenceId);
 
                 return NotFound();
             }
@@ -211,20 +211,20 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveConferenceAsync(Guid conferenceId)
         {
-            _logger.LogDebug("RemoveConference {conferenceId}", conferenceId);
+            _logger.LogDebug("RemoveConference {ConferenceId}", conferenceId);
             var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
             try
             {
                 await _commandHandler.Handle(removeConferenceCommand);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
 
-                _logger.LogInformation("Successfully removed conference {conferenceId}", conferenceId);
+                _logger.LogInformation("Successfully removed conference {ConferenceId}", conferenceId);
 
                 return NoContent();
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference {conferenceId}", conferenceId);
+                _logger.LogError(ex, "Unable to find conference {ConferenceId}", conferenceId);
 
                 return NotFound();
             }
@@ -265,13 +265,13 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
-            _logger.LogDebug("GetConferencesTodayForJudgeByUsername {username}", username);
+            _logger.LogDebug("GetConferencesTodayForJudgeByUsername {Username}", username);
 
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
 
-                _logger.LogWarning("Invalid username {username}", username);
+                _logger.LogWarning("Invalid username {Username}", username);
 
                 return BadRequest(ModelState);
             }
@@ -294,13 +294,13 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
-            _logger.LogDebug("GetConferencesTodayForIndividualByUsername {username}", username);
+            _logger.LogDebug("GetConferencesTodayForIndividualByUsername {Username}", username);
 
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
 
-                _logger.LogWarning("Invalid username {username}", username);
+                _logger.LogWarning("Invalid username {Username}", username);
 
                 return BadRequest(ModelState);
             }
@@ -325,14 +325,14 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId, [FromQuery]bool? includeClosed = false)
         {
-            _logger.LogDebug("GetConferenceByHearingRefId {hearingRefId}", hearingRefId);
+            _logger.LogDebug("GetConferenceByHearingRefId {HearingRefId}", hearingRefId);
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId, includeClosed.GetValueOrDefault());
             var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
 
             if (conference == null)
             {
-                _logger.LogWarning("Unable to find conference with hearing id {hearingRefId}", hearingRefId);
+                _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", hearingRefId);
 
                 return NotFound();
             }
@@ -549,7 +549,7 @@ namespace VideoApi.Controllers
 
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name, x.FirstName, x.LastName, x.DisplayName, x.Username,
-                        x.UserRole, x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
+                        x.UserRole.MapToDomainEnum(), x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
                     {
                         Representee = x.Representee
                     })
@@ -593,7 +593,7 @@ namespace VideoApi.Controllers
             (
                 3,
                 _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning($"Failed to CreateConferenceAsync. Retrying attempt {retryAttempt}"),
+                retryAttempt => _logger.LogWarning("Failed to CreateConferenceAsync. Retrying attempt {RetryAttempt}", retryAttempt),
                 callResult => callResult == Guid.Empty,
                 async () => await CreateConferenceAsync(request, ingestUrl));
 
@@ -607,7 +607,7 @@ namespace VideoApi.Controllers
             (
                 3,
                 _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning($"Failed to CreateAudioApplicationAsync. Retrying attempt {retryAttempt}"),
+                retryAttempt => _logger.LogWarning("Failed to CreateAudioApplicationAsync. Retrying attempt {RetryAttempt}", retryAttempt),
                 callResult => callResult == null || !callResult.Success,
                 () => _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId)
             );
