@@ -1,5 +1,6 @@
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -11,8 +12,8 @@ namespace VideoApi.Mappings
             {
                 Id = task.Id,
                 Body = task.Body,
-                Type = task.Type,
-                Status = task.Status,
+                Type = task.Type.MapToContractEnum(),
+                Status = task.Status.MapToContractEnum(),
                 OriginId = task.OriginId,
                 Created = task.Created,
                 Updated = task.Updated,

@@ -7,7 +7,7 @@ using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using static Testing.Common.Helper.ApiUriFactory.InstantMessageEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
@@ -24,7 +24,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public InstantMessagesSteps(TestContext injectedContext)
         {
             _context = injectedContext;
-            _fromUsername = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge)).DisplayName;
+            _fromUsername = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
         }
 
         [Given(@"the conference has existing messages")]

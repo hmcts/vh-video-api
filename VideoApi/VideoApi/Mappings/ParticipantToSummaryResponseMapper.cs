@@ -1,6 +1,7 @@
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -23,8 +24,8 @@ namespace VideoApi.Mappings
                 Id = participant.Id,
                 Username = participant.Username,
                 DisplayName = participant.DisplayName,
-                Status = participantStatus,
-                UserRole = participant.UserRole,
+                Status = participantStatus.MapToContractEnum(),
+                UserRole = participant.UserRole.MapToContractEnum(),
                 HearingRole = participant.HearingRole,
                 Representee = participant.Representee,
                 CaseGroup = caseGroup,

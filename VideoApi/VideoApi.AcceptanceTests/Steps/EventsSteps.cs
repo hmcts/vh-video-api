@@ -7,7 +7,7 @@ using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using static Testing.Common.Helper.ApiUriFactory;
 
 namespace VideoApi.AcceptanceTests.Steps

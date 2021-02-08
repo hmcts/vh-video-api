@@ -4,8 +4,9 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
@@ -30,7 +31,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             await Controller.RespondToAdminConsultationRequestAsync(request);
 
             VideoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom),
+                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom.MapToDomainEnum()),
                 Times.Once);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
@@ -53,7 +54,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             await Controller.RespondToAdminConsultationRequestAsync(request);
 
             VideoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom),
+                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.ConsultationRoom.MapToDomainEnum()),
                 Times.Never);
             VideoPlatformServiceMock.VerifyNoOtherCalls();
         }

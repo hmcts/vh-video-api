@@ -1,7 +1,8 @@
+using System.Linq;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using static Testing.Common.Helper.ApiUriFactory.ConsultationEndpoints;
 
 namespace VideoApi.AcceptanceTests.Steps
@@ -19,9 +20,9 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid request private consultation request")]
         public void GivenIHaveAValidRequestPrivateConsultationRequest()
         {
-            var individual = _context.Test.ConferenceResponse.Participants.Find(x => x.UserRole.Equals(UserRole.Individual)).Id;
+            var individual = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual).Id;
             var representative = _context.Test.ConferenceResponse.Participants
-                .Find(x => x.UserRole.Equals(UserRole.Representative)).Id;
+                .First(x => x.UserRole == UserRole.Representative).Id;
 
             var request = new ConsultationRequest()
             {

@@ -10,7 +10,7 @@ using Testing.Common.Helper.Builders.Api;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;
 

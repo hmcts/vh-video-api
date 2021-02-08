@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -18,11 +19,11 @@ namespace VideoApi.Mappings
                 LastName = participant.LastName,
                 Username = participant.Username,
                 DisplayName = participant.DisplayName,
-                UserRole = participant.UserRole,
+                UserRole = participant.UserRole.MapToContractEnum(),
                 HearingRole = participant.HearingRole,
                 CaseTypeGroup = participant.CaseTypeGroup,
                 Representee = participant.Representee,
-                CurrentStatus = participant.State,
+                CurrentStatus = participant.State.MapToContractEnum(),
                 ContactEmail = participant.ContactEmail,
                 ContactTelephone = participant.ContactTelephone
             })

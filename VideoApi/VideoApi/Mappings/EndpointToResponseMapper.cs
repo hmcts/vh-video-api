@@ -1,5 +1,6 @@
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -11,7 +12,7 @@ namespace VideoApi.Mappings
             {
                 Id = endpoint.Id,
                 Pin = endpoint.Pin,
-                Status = endpoint.State,
+                Status = endpoint.State.MapToContractEnum(),
                 DisplayName = endpoint.DisplayName,
                 SipAddress = endpoint.SipAddress,
                 DefenceAdvocate = endpoint.DefenceAdvocate
