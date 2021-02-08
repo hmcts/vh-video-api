@@ -80,7 +80,6 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.KinlyConfiguration.KinlyApiUrl.Should().NotBeEmpty();
-            context.Config.KinlyConfiguration.PexipNode.Should().NotBeEmpty();
         }
 
         private void RegisterWowzaSettings(TestContext context)
