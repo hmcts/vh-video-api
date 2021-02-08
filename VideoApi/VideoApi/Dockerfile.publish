@@ -6,4 +6,4 @@ EXPOSE 443
 FROM base AS final
 WORKDIR /app
 COPY . .
-ENTRYPOINT ["dotnet", "Video.API.dll"]
+ENTRYPOINT ["dotnet", "VideoApi.dll"]

@@ -8,7 +8,7 @@
     "log-level": "info",
     "timeout-ms": 10000,
     "log-file": true,
-    "project-file": "Video.API.csproj",
+    "project-file": "VideoApi.csproj",
     "max-concurrent-test-runners": 4,
     "threshold-high": 95,
     "threshold-low": 90,

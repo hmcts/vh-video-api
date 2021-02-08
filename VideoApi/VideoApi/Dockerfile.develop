@@ -14,11 +14,11 @@ EXPOSE 443
 WORKDIR /src
 RUN echo "<?xml version='1.0' encoding='utf-8'?><configuration><packageSources><add key='vh-packages' value='$ARTIFACTS_ENDPOINT' /></packageSources><packageSourceCredentials><ByThey><add key='Username' value='$USER' /><add key='ClearTextPassword' value='$ACCESS_TOKEN' /></ByThey></packageSourceCredentials></configuration>" > NuGet.Config
 COPY . .
-COPY Video.API/appsettings.json .
-COPY Video.API/appsettings.Development.json .
-RUN dotnet restore Video.API -nowarn:msb3202,nu1503
-RUN dotnet build Video.API --no-restore -c $BUILD_CONFIGURATION
+COPY VideoApi/appsettings.json .
+COPY VideoApi/appsettings.Development.json .
+RUN dotnet restore VideoApi -nowarn:msb3202,nu1503
+RUN dotnet build VideoApi --no-restore -c $BUILD_CONFIGURATION
 
-RUN echo "exec dotnet run --project Video.API --no-build --no-launch-profile -c $BUILD_CONFIGURATION -- \"\$@\"" > /entrypoint.sh
+RUN echo "exec dotnet run --project VideoApi --no-build --no-launch-profile -c $BUILD_CONFIGURATION -- \"\$@\"" > /entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
