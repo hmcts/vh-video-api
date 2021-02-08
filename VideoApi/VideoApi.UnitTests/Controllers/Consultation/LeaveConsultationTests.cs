@@ -41,7 +41,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
-            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH);
+            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH, false);
             TestConference.Participants[0].CurrentVirtualRoom = vRoom;
             var fromRoom = "ConsultationRoom";
             var toRoom = "WaitingRoom";
@@ -62,7 +62,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
-            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH);
+            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH, false);
             TestConference.Participants[0].CurrentVirtualRoom = vRoom;
             var fromRoom = "ConsultationRoom";
             var toRoom = "WaitingRoom";

@@ -142,7 +142,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceIds.Add(seededConference.Id);
             _newConferenceIds.Add(seededConference2.Id);
             var vRoom = new Room(seededConference2.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.JudgeJOH);
+                VirtualCourtRoomType.JudgeJOH, false);
             var seededRoom = await TestDataManager.SeedRoom(vRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");

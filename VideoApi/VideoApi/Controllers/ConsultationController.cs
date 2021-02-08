@@ -14,6 +14,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 
@@ -48,7 +49,7 @@ namespace VideoApi.Controllers
         /// <param name="request">Private consultation request with or without an answer</param>
         /// <returns></returns>
         [HttpPost]
-        [OpenApiOperation(OperationId = "RespondToConsultationRequestAsync")]
+        [OpenApiOperation("RespondToConsultationRequestAsync")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RespondToConsultationRequestAsync(ConsultationRequestResponse request)
@@ -104,7 +105,7 @@ namespace VideoApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("endpoint")]
-        [OpenApiOperation(OperationId = "StartConsultationWithEndpoint")]
+        [OpenApiOperation("StartConsultationWithEndpoint")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -155,7 +156,7 @@ namespace VideoApi.Controllers
         }
 
         [HttpPost("lockroom")]
-        [SwaggerOperation(OperationId = "LockRoom")]
+        [OpenApiOperation("LockRoom")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -176,7 +177,7 @@ namespace VideoApi.Controllers
         }
 
         [HttpPost("createconsultation")]
-        [SwaggerOperation(OperationId = "CreatePrivateConsultation")]
+        [OpenApiOperation("CreatePrivateConsultation")]
         [ProducesResponseType(typeof(RoomResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -215,7 +216,7 @@ namespace VideoApi.Controllers
         }
 
         [HttpPost("start")]
-        [OpenApiOperation(OperationId = "StartPrivateConsultation")]
+        [OpenApiOperation("StartPrivateConsultation")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -258,7 +259,7 @@ namespace VideoApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("leave")]
-        [OpenApiOperation(OperationId = "LeaveConsultation")]
+        [OpenApiOperation("LeaveConsultation")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
