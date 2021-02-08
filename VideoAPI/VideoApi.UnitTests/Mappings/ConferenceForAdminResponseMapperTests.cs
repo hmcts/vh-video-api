@@ -46,6 +46,7 @@ namespace VideoApi.UnitTests.Mappings
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
             response.TelephoneConferenceNumber.Should().Be(conferencePhoneNumber);
+            response.CreatedDateTime.Should().Be(conference.CreatedDateTime);
         }
     }
 }

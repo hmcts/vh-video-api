@@ -29,6 +29,7 @@ namespace VideoApi.Domain
             HearingVenueName = hearingVenueName;
             AudioRecordingRequired = audioRecordingRequired;
             IngestUrl = ingestUrl;
+            CreatedDateTime = DateTime.UtcNow;
         }
 
         public Guid HearingRefId { get; private set; }
@@ -48,7 +49,7 @@ namespace VideoApi.Domain
         public string HearingVenueName { get; private set; }
         public bool AudioRecordingRequired { get; set; }
         public string IngestUrl { get; set; }
-
+        public DateTime? CreatedDateTime { get; private set; }
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode,
             string telephoneConferenceId)
         {
