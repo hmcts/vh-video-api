@@ -30,7 +30,8 @@ namespace VideoApi.Mappings
                 HearingRefId = conference.HearingRefId,
                 HearingVenueName = conference.HearingVenueName,
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
-                TelephoneConferenceNumber = phoneNumber
+                TelephoneConferenceNumber = phoneNumber,
+                CreatedDateTime = conference.CreatedDateTime
             };
         }
     }
