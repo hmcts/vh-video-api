@@ -147,14 +147,8 @@ extends:
             value: "false"
 
           # Services Configuration
-          - name: Services:KinlyApiUrl
-            value: $(KinlyApiUrl)
-          - name: Services:KinlySelfTestApiUrl
-            value: $(KinlySelfTestApiUrl)
           - name: Services:CallbackUri
             value: $(CallbackUri)
-          - name: Services:ConferenceUsername
-            value: $(ConferenceUsername)
           
           # Wowza Configuration
           - name: WowzaConfiguration:RestApiEndpoints
@@ -203,10 +197,16 @@ extends:
             value: $(CallbackKey)
           - name: KinlyConfiguration:SelfTestApiSecret
             value: $(SelfTestApiKey)
+          - name: KinlyConfiguration:KinlyApiUrl
+            value: $(KinlyApiUrl)
+          - name: KinlyConfiguration:KinlySelfTestApiUrl
+            value: $(KinlySelfTestApiUrl)
+          - name: KinlyConfiguration:ConferenceUsername
+            value: $(ConferenceUsername)
             
           # Connection strings
-          - name: ConnectionStrings:VhvideosApi
-            value: VhVideoDatabaseConnectionString
+          - name: ConnectionStrings:VideosApi
+            value: VideoDatabaseConnectionString
             secret: true
             
         acceptanceTestSettings:
@@ -222,8 +222,8 @@ extends:
             secret: true
           
           # Services          
-          - name: Services:VhvideoApiResourceId
+          - name: Services:VideoApiResourceId
             value: vh-video-api-identifieruris
             secret: true
-          - name: Services:videoApiUrl
+          - name: Services:VideoApiUrl
             value: $(video_api_url_staging)
