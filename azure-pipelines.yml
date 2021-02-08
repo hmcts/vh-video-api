@@ -188,7 +188,7 @@ parameters:
 
     # Connection strings
     - name: ConnectionStrings:VideoApi
-      value: VideoDatabaseConnectionString
+      value: VhVideoDatabaseConnectionString
       secret: true
 
 variables:
