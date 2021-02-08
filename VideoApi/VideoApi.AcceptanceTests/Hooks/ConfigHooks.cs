@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.Configuration;
+using AcceptanceTests.Common.Exceptions;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -10,6 +11,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Responses;
 
 namespace VideoApi.AcceptanceTests.Hooks
@@ -21,14 +23,9 @@ namespace VideoApi.AcceptanceTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = ConfigurationManager.BuildConfig("9AECE566-336D-4D16-88FA-7A76C27321CD", GetTargetEnvironment());
+            _configRoot = ConfigurationManager.BuildConfig("9AECE566-336D-4D16-88FA-7A76C27321CD", "6b1d4c67-28f8-4104-8424-9379113b6631");
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
-        }
-
-        private static string GetTargetEnvironment()
-        {
-            return NUnit.Framework.TestContext.Parameters["TargetEnvironment"] ?? "";
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
@@ -37,6 +34,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             RegisterAzureSecrets(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
+            RegisterKinlySettings(context);
             RegisterWowzaSettings(context);
             RegisterAudioRecordingTestIdConfiguration(context);
             await GenerateBearerTokens(context);
@@ -65,8 +63,18 @@ namespace VideoApi.AcceptanceTests.Hooks
 
         private void RegisterHearingServices(TestContext context)
         {
-            context.Config.VhServices = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.VhServices);
+            context.Config.Services = GetTargetTestEnvironment() == string.Empty ? Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value
+                : Options.Create(_configRoot.GetSection($"Testing.{GetTargetTestEnvironment()}.Services").Get<ServicesConfiguration>()).Value;
+            if (context.Config.Services == null && GetTargetTestEnvironment() != string.Empty) throw new TestSecretsFileMissingException(GetTargetTestEnvironment());
+            ConfigurationManager.VerifyConfigValuesSet(context.Config.Services);
+        }
+        
+        private void RegisterKinlySettings(TestContext context)
+        {
+            context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
+            context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
+            context.Config.KinlyConfiguration.KinlyApiUrl.Should().NotBeEmpty();
+            context.Config.KinlyConfiguration.PexipNode.Should().NotBeEmpty();
         }
 
         private void RegisterWowzaSettings(TestContext context)
@@ -84,6 +92,11 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Config.AudioRecordingTestIds.Existing.Should().NotBeEmpty();
         }
 
+        private static string GetTargetTestEnvironment()
+        {
+            return NUnit.Framework.TestContext.Parameters["TargetTestEnvironment"] ?? String.Empty;
+        }
+
         private static async Task GenerateBearerTokens(TestContext context)
         {
             var azureConfig = new AzureAdConfig()
@@ -95,7 +108,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             };
 
             context.Tokens.VideoApiBearerToken = await ConfigurationManager.GetBearerToken(
-                azureConfig, context.Config.VhServices.VhVideoApiResourceId);
+                azureConfig, context.Config.Services.VideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
             
             Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);

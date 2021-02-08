@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
@@ -22,20 +22,20 @@ namespace VideoApi.Services
     {
         private readonly IKinlyApiClient _kinlyApiClient;
         private readonly ILogger<KinlyPlatformService> _logger;
-        private readonly ServicesConfiguration _servicesConfigOptions;
+        private readonly KinlyConfiguration _servicesConfigOptions;
         private readonly IRoomReservationService _roomReservationService;
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
-            IOptions<ServicesConfiguration> servicesConfigOptions,
+            IOptions<KinlyConfiguration> kinlyConfigOptions,
             ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService,
             IKinlySelfTestHttpClient kinlySelfTestHttpClient,
             IPollyRetryService pollyRetryService)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
-            _servicesConfigOptions = servicesConfigOptions.Value;
+            _servicesConfigOptions = kinlyConfigOptions.Value;
             _roomReservationService = roomReservationService;
             _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
