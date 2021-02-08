@@ -3030,8 +3030,7 @@
       "videoapi.contract": {
         "type": "Project",
         "dependencies": {
-          "System.ComponentModel.Annotations": "4.7.0",
-          "VideoApi.Domain": "1.0.0"
+          "System.ComponentModel.Annotations": "4.7.0"
         }
       },
       "videoapi.dal": {

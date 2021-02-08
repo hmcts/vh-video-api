@@ -15,6 +15,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 
@@ -57,8 +58,8 @@ namespace VideoApi.Controllers
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
-                        x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole, x.HearingRole,
-                        x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
+                        x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole.MapToDomainEnum(),
+                        x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
                     {
                         Representee = x.Representee
                     })
@@ -251,7 +252,7 @@ namespace VideoApi.Controllers
 
             if (request == null)
             {
-                _logger.LogWarning($"AddHeartbeatRequest is null");
+                _logger.LogWarning("AddHeartbeatRequest is null");
                 return BadRequest();
             }
 

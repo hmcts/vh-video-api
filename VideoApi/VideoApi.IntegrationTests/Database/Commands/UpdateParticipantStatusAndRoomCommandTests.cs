@@ -70,7 +70,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
 
         [Test]
-        public async Task should_not_throw_room_not_found_exception_when_room_label_if_not_InConsultation()
+        public async Task should_not_throw_room_not_found_exception_when_updating_participant_to_InConsultation()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -80,6 +80,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, null);
             await _handler.Handle(command);
+            
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id));
+            var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
+            var afterState = updatedParticipant.GetCurrentStatus();
+            afterState.ParticipantState.Should().Be(state);
         }
 
         [Test]

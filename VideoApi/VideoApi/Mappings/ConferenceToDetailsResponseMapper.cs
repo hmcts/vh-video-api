@@ -1,6 +1,7 @@
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -20,7 +21,7 @@ namespace VideoApi.Mappings
                 StartedDateTime = conference.ActualStartTime,
                 ClosedDateTime = conference.ClosedDateTime,
                 ScheduledDuration = conference.ScheduledDuration,
-                CurrentStatus = conference.GetCurrentStatus(),
+                CurrentStatus = conference.GetCurrentStatus().MapToContractEnum(),
                 Participants =
                     ParticipantToDetailsResponseMapper.MapParticipantsToResponse(conference.GetParticipants()),
                 MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom()),

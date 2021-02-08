@@ -1,5 +1,6 @@
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -10,7 +11,7 @@ namespace VideoApi.Mappings
             return new ExpiredConferencesResponse
             {
                 Id = conference.Id,
-                CurrentStatus = conference.State,
+                CurrentStatus = conference.State.MapToContractEnum(),
                 HearingId = conference.HearingRefId
             };
         }

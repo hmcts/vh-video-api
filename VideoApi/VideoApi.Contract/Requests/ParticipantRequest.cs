@@ -1,5 +1,5 @@
 using System;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
 {
