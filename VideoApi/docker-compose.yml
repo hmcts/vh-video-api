@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  videoapi:
+    image: ${DOCKER_REGISTRY-}videoapi:latest
+    build:
+      context: .
+      dockerfile: VideoApi/Dockerfile
+      
