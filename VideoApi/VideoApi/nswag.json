@@ -91,7 +91,8 @@
       "additionalNamespaceUsages": [
         "Microsoft.AspNetCore.Mvc",
         "VideoApi.Contract.Requests",
-        "VideoApi.Contract.Responses"
+        "VideoApi.Contract.Responses",
+        "VideoApi.Domain.Enums"
       ],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,
