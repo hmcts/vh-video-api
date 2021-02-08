@@ -6,7 +6,7 @@
     <ProjectGuid>1aa310c5-d155-44e7-a18d-4d2564868de0</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/{Scheme}://{ServiceHost}:{ServicePort}/swagger/</DockerServiceUrl>
-    <DockerServiceName>video.api</DockerServiceName>
+    <DockerServiceName>VideoApi</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.yml" />
