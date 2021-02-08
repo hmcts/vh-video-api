@@ -1,4 +1,4 @@
-$HEADER$namespace $NAMESPACE$
+public enum LinkedParticipantType
 {
-  public enum $ENUM$ {$END$}
+    Interpreter = 1
 }
