@@ -205,7 +205,7 @@ extends:
             value: $(ConferenceUsername)
             
           # Connection strings
-          - name: ConnectionStrings:VideosApi
+          - name: ConnectionStrings:VideoApi
             value: VhVideoDatabaseConnectionString
             secret: true
             
