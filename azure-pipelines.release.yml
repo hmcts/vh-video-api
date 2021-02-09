@@ -151,6 +151,9 @@ extends:
           # Services Configuration
           - name: Services:CallbackUri
             value: $(CallbackUri)
+          - name: Services:VideoApiResourceId
+            value: vh-video-api-identifieruris
+            secret: true
           
           # Wowza Configuration
           - name: WowzaConfiguration:RestApiEndpoints
