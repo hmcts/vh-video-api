@@ -71,7 +71,6 @@ java:
     VideoAppUrl: https://vh-video-web.{{ .Values.global.environment }}.hearings.reform.hmcts.net
     WOWZACONFIGURATION__AZURESTORAGEDIRECTORY: /wowzadata/azurecopy
     WOWZACONFIGURATION__HOSTNAME: _defaultVHost_
-    WOWZACONFIGURATION__MANAGEDIDENTITYCLIENTID: 27431cb9-d1fb-4c04-8f9d-68ae6c6de53d
     WOWZACONFIGURATION__RESTAPIENDPOINT: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
     WOWZACONFIGURATION__RESTAPIENDPOINT__0: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
     WOWZACONFIGURATION__RESTAPIENDPOINT__1: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
