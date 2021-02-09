@@ -224,7 +224,7 @@ extends:
             secret: true
           
           # Services          
-          - name: Services:VideoApiResourceId
+          - name: Services:VhVideoApiResourceId
             value: vh-video-api-identifieruris
             secret: true
           - name: Services:VideoApiUrl
