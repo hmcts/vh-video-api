@@ -107,7 +107,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             };
 
             context.Tokens.VideoApiBearerToken = await ConfigurationManager.GetBearerToken(
-                azureConfig, context.Config.Services.VideoApiResourceId);
+                azureConfig, context.Config.Services.VhVideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
             
             Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);

@@ -127,7 +127,7 @@ namespace VideoApi.IntegrationTests.Hooks
         {
             context.Tokens.VideoApiBearerToken = new AzureTokenProvider(azureOptions).GetClientAccessToken(
                 azureOptions.Value.ClientId, azureOptions.Value.ClientSecret,
-                context.Config.Services.VideoApiResourceId);
+                context.Config.Services.VhVideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
 
             Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
