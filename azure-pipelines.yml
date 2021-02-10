@@ -192,6 +192,10 @@ parameters:
       value: $(ConferenceUsername)
     - name: KinlyConfiguration:CallbackUri
       value: $(CallbackUri)
+    - name: KinlyConfiguration:PexipNode
+      value: $(PexipNode)
+    - name: KinlyConfiguration:PexipSelfTestNode
+      value: $(PexipSelfTestNode)
 
     # Connection strings
     - name: ConnectionStrings:VideoApi
