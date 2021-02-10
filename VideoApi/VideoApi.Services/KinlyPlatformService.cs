@@ -22,7 +22,7 @@ namespace VideoApi.Services
     {
         private readonly IKinlyApiClient _kinlyApiClient;
         private readonly ILogger<KinlyPlatformService> _logger;
-        private readonly KinlyConfiguration _servicesConfigOptions;
+        private readonly KinlyConfiguration _kinlyConfigOptions;
         private readonly IRoomReservationService _roomReservationService;
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
@@ -35,7 +35,7 @@ namespace VideoApi.Services
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
-            _servicesConfigOptions = kinlyConfigOptions.Value;
+            _kinlyConfigOptions = kinlyConfigOptions.Value;
             _roomReservationService = roomReservationService;
             _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
@@ -49,14 +49,14 @@ namespace VideoApi.Services
         {
             _logger.LogInformation(
                 "Booking a conference for {conferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
-                _servicesConfigOptions.CallbackUri, _servicesConfigOptions.KinlyApiUrl);
+                _kinlyConfigOptions.CallbackUri, _kinlyConfigOptions.KinlyApiUrl);
 
             try
             {
                 var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
-                    Callback_uri = _servicesConfigOptions.CallbackUri,
+                    Callback_uri = _kinlyConfigOptions.CallbackUri,
                     Recording_enabled = audioRecordingRequired,
                     Recording_url = ingestUrl,
                     Streaming_enabled = false,
@@ -111,7 +111,7 @@ namespace VideoApi.Services
                 retryAttempt =>
                     _logger.LogWarning(
                         "Failed to retrieve test score for participant {participantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}",
-                        participantId, _servicesConfigOptions.KinlySelfTestApiUrl, retryAttempt),
+                        participantId, _kinlyConfigOptions.KinlySelfTestApiUrl, retryAttempt),
                 callResult => callResult == null,
                 () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
             );
