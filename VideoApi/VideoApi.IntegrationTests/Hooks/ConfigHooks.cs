@@ -13,6 +13,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
@@ -38,6 +39,7 @@ namespace VideoApi.IntegrationTests.Hooks
             var azureOptions = RegisterAzureSecrets(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
+            RegisterKinlySettings(context);
             RegisterWowzaSettings(context);
             RegisterCvpSettings(context);
             RegisterDatabaseSettings(context);
@@ -69,8 +71,16 @@ namespace VideoApi.IntegrationTests.Hooks
 
         private void RegisterHearingServices(TestContext context)
         {
-            context.Config.VhServices = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.VhServices);
+            context.Config.Services = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.Config.Services);
+        }
+        
+        private void RegisterKinlySettings(TestContext context)
+        {
+            context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
+            context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
+            context.Config.KinlyConfiguration.CallbackUri.Should().NotBeEmpty();
+            context.Config.KinlyConfiguration.KinlyApiUrl.Should().NotBeEmpty();
         }
 
         private void RegisterWowzaSettings(TestContext context)
@@ -95,9 +105,9 @@ namespace VideoApi.IntegrationTests.Hooks
             ConfigurationManager.VerifyConfigValuesSet(context.Config.DbConnection);
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.EnableSensitiveDataLogging();
-            dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VhVideoApi);
+            dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VideoApi);
             context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            context.TestDataManager = new TestDataManager(context.Config.VhServices, context.VideoBookingsDbContextOptions);
+            context.TestDataManager = new TestDataManager(context.Config.KinlyConfiguration, context.VideoBookingsDbContextOptions);
         }
 
         private static void RegisterServer(TestContext context)
@@ -118,7 +128,7 @@ namespace VideoApi.IntegrationTests.Hooks
         {
             context.Tokens.VideoApiBearerToken = new AzureTokenProvider(azureOptions).GetClientAccessToken(
                 azureOptions.Value.ClientId, azureOptions.Value.ClientSecret,
-                context.Config.VhServices.VhVideoApiResourceId);
+                context.Config.Services.VideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
 
             Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
