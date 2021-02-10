@@ -109,6 +109,8 @@ parameters:
       value: $(KinlySelfTestApiUrl)
     - name: KinlyConfiguration:ConferenceUsername
       value: $(ConferenceUsername)
+    - name: KinlyConfiguration:CallbackUri
+      value: $(CallbackUri)
 
 - name: appSettings
   type: object
@@ -188,6 +190,8 @@ parameters:
       value: $(KinlySelfTestApiUrl)
     - name: KinlyConfiguration:ConferenceUsername
       value: $(ConferenceUsername)
+    - name: KinlyConfiguration:CallbackUri
+      value: $(CallbackUri)
 
     # Connection strings
     - name: ConnectionStrings:VideoApi
