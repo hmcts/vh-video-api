@@ -38,13 +38,6 @@ java:
         - azuread--clientid
         - applicationinsights-instrumentationkey
         - applicationinsights-connection-string
-  secrets:
-  AZUREAD__CLIENTSECRET:
-    secretRef: /mnt/secret/vh-core-infra
-    key: vh-video-api-key
-  AZUREAD__CLIENTID:
-    secretRef: /mnt/secret/vh-core-infra
-    key: vh-video-api-appid
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
