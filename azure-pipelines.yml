@@ -10,6 +10,7 @@ variables:
   - name: sonarCloudExtraProperties
     value : |
       sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
+      sonar.scanner.force-deprecated-java-version-grace-period=true
       sonar.coverage.exclusions=**/Program.cs, **/Startup.cs, **/Video.API/Extensions/**, **/Video.API/Swagger/**, **/Video.API/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Testing.Common/Helper/, **/Testing.Common/Helper/Builders/Api, **/Testing.Common/Helper/Builders/Domain, **/VideoApi.Common/**, **/VideoApi.DAL/Mappings/**, **/VideoApi.DAL/SeedData/**, **/VideoApi.DAL/VideoApiDbContext.cs, **/VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs, **/VideoApi.DAL/Migrations/**, **/VideoApi.Domain/Ddd/**, **/VideoApi.Domain/Validations/**, **/VideoApi.Services/**, **/VideoApi.Events/Hub/EventHubClient.cs, **/Video.API/KinlyApiTokenDelegatingHandler.cs
       sonar.cpd.exclusions="**/VideoApi.DAL/Migrations/**"
   - name: coverletCoverageExclusions
