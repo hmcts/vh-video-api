@@ -121,15 +121,7 @@ namespace VideoApi.Services
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId)
         {
-            if (hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))
-            {
-                return await Task.FromResult(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.NotFound
-                });
-            }
-
-            return await Task.FromResult(new AudioPlatformServiceResponse(true));
+            return await DeleteAudioApplicationAsync(hearingId);
         }
 
         public async Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync()
