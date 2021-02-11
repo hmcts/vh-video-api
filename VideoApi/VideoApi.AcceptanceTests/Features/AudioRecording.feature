@@ -18,7 +18,7 @@ Scenario: Get Audio Application - Not Found
 	Then the response should have the status NotFound and success status False
 
 @VIH-5868
-Scenario: Create Audio Application - Conflict
+Scenario: Create Audio Application - Handle Conflict
   Given I have a conference
   And I have a valid create audio application request
 	When I send the request to the endpoint
