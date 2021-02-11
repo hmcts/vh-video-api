@@ -191,7 +191,7 @@ namespace VideoApi.Services
             }
         }
 
-        private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
+        public string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
 
         private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
         {

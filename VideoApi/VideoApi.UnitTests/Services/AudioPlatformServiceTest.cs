@@ -413,5 +413,16 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
             result.Should().HaveCount(2);
         }
+
+        [Test]
+        public void should_return_injest_url_for_hearing_id()
+        {
+            var hearingId = Guid.NewGuid();
+            
+            var result =_audioPlatformService.GetAudioIngestUrl(hearingId.ToString());
+
+            result.Should().Contain(hearingId.ToString());
+            result.Should().Contain(_wowzaConfiguration.StreamingEndpoint);
+        }
     }
 }

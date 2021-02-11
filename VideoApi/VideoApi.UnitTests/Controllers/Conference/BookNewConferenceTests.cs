@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -81,6 +82,19 @@ namespace VideoApi.UnitTests.Controllers.Conference
             await Controller.BookNewConferenceAsync(_request);
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+        }
+
+        [Test]
+        public async Task should_handle_existing_audio_application_for_hearing_id()
+        {
+            var hearingRefId = Guid.NewGuid();
+            var exception = new AudioPlatformException("Audio Application already exists", HttpStatusCode.Conflict);
+            AudioPlatformServiceMock.Setup(x => x.CreateAudioApplicationAsync(hearingRefId)).ThrowsAsync(exception);
+
+            await Controller.CreateAudioApplicationAsync(hearingRefId);
+
+            AudioPlatformServiceMock.Verify(v => v.CreateAudioApplicationAsync(hearingRefId), Times.Once);
+            AudioPlatformServiceMock.Verify(v => v.GetAudioIngestUrl(hearingRefId.ToString()), Times.Once);
         }
 
         [Test]
