@@ -17,7 +17,7 @@ namespace VideoApi.AcceptanceTests.Contexts
 
         public RestClient Client()
         {
-            var client = new RestClient(Config.VhServices.VideoApiUrl) {Proxy = Zap.WebProxy};
+            var client = new RestClient(Config.Services.VideoApiUrl) {Proxy = Zap.WebProxy};
             client.AddDefaultHeader("Accept", "application/json");
             client.AddDefaultHeader("Authorization", $"Bearer {Tokens.VideoApiBearerToken}");
             return client;

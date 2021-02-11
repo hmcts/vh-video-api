@@ -64,9 +64,8 @@ namespace VideoApi
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
 
-
             services.AddDbContextPool<VideoApiDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("VhVideoApi")));
+                options.UseSqlServer(Configuration.GetConnectionString("VideoApi")));
         }
 
         private void RegisterSettings(IServiceCollection services)
@@ -97,7 +96,7 @@ namespace VideoApi
                     {
                         ClockSkew = TimeSpan.Zero,
                         ValidateLifetime = true,
-                        ValidAudience = serviceSettings.VhVideoApiResourceId
+                        ValidAudience = serviceSettings.VideoApiResourceId
                     };
                 });
 

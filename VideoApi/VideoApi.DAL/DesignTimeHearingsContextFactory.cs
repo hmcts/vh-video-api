@@ -13,7 +13,7 @@ namespace VideoApi.DAL
                 .AddUserSecrets("9AECE566-336D-4D16-88FA-7A76C27321CD")
                 .Build();
             var builder = new DbContextOptionsBuilder<VideoApiDbContext>();
-            builder.UseSqlServer(config.GetConnectionString("VhVideoApi"));
+            builder.UseSqlServer(config.GetConnectionString("VideoApi"));
             var context = new VideoApiDbContext(builder.Options);
             return context;
         }
