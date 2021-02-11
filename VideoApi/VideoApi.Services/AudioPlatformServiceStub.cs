@@ -138,10 +138,5 @@ namespace VideoApi.Services
                 }
             });
         }
-
-        public string GetAudioIngestUrl(string applicationName)
-        {
-            return applicationName;
-        }
     }
 }

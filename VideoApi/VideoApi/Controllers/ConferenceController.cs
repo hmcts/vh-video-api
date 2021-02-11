@@ -535,23 +535,6 @@ namespace VideoApi.Controllers
 
             return true;
         }
-
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingRefId)
-        {
-            try
-            {
-                return await _audioPlatformService.CreateAudioApplicationAsync(hearingRefId);
-            }
-            catch (AudioPlatformException ex)
-            {
-                if (ex.StatusCode != HttpStatusCode.Conflict) throw;
-                _logger.LogError(ex, "Audio application already creating for hearing {HearingRefId}", hearingRefId);
-                return new AudioPlatformServiceResponse(true)
-                {
-                    IngestUrl = _audioPlatformService.GetAudioIngestUrl(hearingRefId.ToString())
-                };
-            }
-        }
         
         private async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
         {
@@ -622,7 +605,7 @@ namespace VideoApi.Controllers
                 _ => TimeSpan.FromSeconds(10),
                 retryAttempt => _logger.LogWarning("Failed to CreateAudioApplicationAsync. Retrying attempt {RetryAttempt}", retryAttempt),
                 callResult => callResult == null || !callResult.Success,
-                () => CreateAudioApplicationAsync(request.HearingRefId)
+                () => _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId)
             );
 
             return result;

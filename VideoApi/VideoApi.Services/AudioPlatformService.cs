@@ -59,6 +59,10 @@ namespace VideoApi.Services
             }
             catch (AudioPlatformException ex)
             {
+                if (ex.StatusCode == HttpStatusCode.Conflict)
+                {
+                    return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(hearingId.ToString())};
+                }
                 var errorMessageTemplate = "Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 var errorMessage = $"Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
@@ -191,7 +195,7 @@ namespace VideoApi.Services
             }
         }
 
-        public string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
+        private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
 
         private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
         {

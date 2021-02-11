@@ -85,19 +85,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        public async Task should_handle_existing_audio_application_for_hearing_id()
-        {
-            var hearingRefId = Guid.NewGuid();
-            var exception = new AudioPlatformException("Audio Application already exists", HttpStatusCode.Conflict);
-            AudioPlatformServiceMock.Setup(x => x.CreateAudioApplicationAsync(hearingRefId)).ThrowsAsync(exception);
-
-            await Controller.CreateAudioApplicationAsync(hearingRefId);
-
-            AudioPlatformServiceMock.Verify(v => v.CreateAudioApplicationAsync(hearingRefId), Times.Once);
-            AudioPlatformServiceMock.Verify(v => v.GetAudioIngestUrl(hearingRefId.ToString()), Times.Once);
-        }
-
-        [Test]
         public async Task Should_book_kinly_conference_and_update_meeting_room_for_given_conference_id()
         {
             var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};

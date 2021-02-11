@@ -15,6 +15,5 @@ namespace VideoApi.Services.Contracts
         Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId);
         Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync();
-        string GetAudioIngestUrl(string applicationName);
     }
 }
