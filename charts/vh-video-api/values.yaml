@@ -20,9 +20,7 @@ java:
         - customtoken--thirdpartysecret
         - cvpconfiguration--managedidentityclientid
         - azuread--vhvideowebclientid
-        - kinlyconfiguration--apisecret
-        - kinlyconfiguration--callbacksecret
-        - kinlyconfiguration--selftestapisecret
+
         - servicebusqueue--connectionstring
         - services--vhvideowebclientid
         - wowzaconfiguration--password
@@ -38,6 +36,9 @@ java:
         - azuread--clientid
         - applicationinsights-instrumentationkey
         - applicationinsights-connection-string
+        - kinlyconfiguration--apisecret
+        - kinlyconfiguration--callbacksecret
+        - kinlyconfiguration--selftestapisecret
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
