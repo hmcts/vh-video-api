@@ -170,6 +170,24 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
             result.Success.Should().BeTrue();
         }
+
+        [Test]
+        public async Task CreateAudioApplicationAsync_Returns_True_When_Conflict()
+        {
+            _wowzaClient1.Setup(x =>
+                    x.CreateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>()))
+                .ThrowsAsync(new AudioPlatformException("Already exists", HttpStatusCode.Conflict));
+            
+            _wowzaClient2.Setup(x =>
+                    x.CreateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>()))
+                .ThrowsAsync(new AudioPlatformException("Already exists", HttpStatusCode.Conflict));
+            
+            var result = await _audioPlatformService.CreateAudioApplicationAsync(It.IsAny<Guid>());
+            result.Should().NotBeNull();
+            result.Success.Should().BeTrue();
+        }
         
         [Test]
         public async Task DeleteAudioApplicationAsync_Returns_False_AudioPlatformServiceResponse_When_AudioPlatformException_Thrown()
