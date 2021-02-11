@@ -62,12 +62,6 @@ namespace Testing.Common.Helper.Builders.Domain
             _testCallResult = new TestCallResult(passed, score);
             return this;
         }
-        
-        public ParticipantBuilder WithLinkedParticipant(Guid participantId, Guid linkedParticipantId, LinkedParticipantType type)
-        {
-            _linkedParticipant = new LinkedParticipant(participantId, linkedParticipantId, type);
-            return this;
-        }
 
         public Participant Build()
         {
