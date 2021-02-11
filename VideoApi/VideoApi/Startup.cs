@@ -71,8 +71,7 @@ namespace VideoApi
 
         private void RegisterSettings(IServiceCollection services)
         {
-            SettingsConfiguration = Configuration.GetSection("Settings").Get<SettingsConfiguration>();
-
+            SettingsConfiguration = Configuration.Get<SettingsConfiguration>();
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
             services.Configure<WowzaConfiguration>(options => Configuration.Bind("WowzaConfiguration", options));
@@ -80,7 +79,6 @@ namespace VideoApi
             services.Configure<CvpConfiguration>(options => Configuration.Bind("CvpConfiguration", options));
             services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
             services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
-            services.AddSingleton(SettingsConfiguration);
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)
