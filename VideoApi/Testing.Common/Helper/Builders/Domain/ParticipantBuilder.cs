@@ -14,7 +14,6 @@ namespace Testing.Common.Helper.Builders.Domain
         private string _caseTypeGroup;
         private string _hearingRole;
         private TestCallResult _testCallResult;
-        private LinkedParticipant _linkedParticipant;
 
         public ParticipantBuilder(bool ignoreId = false)
         {
