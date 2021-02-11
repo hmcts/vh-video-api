@@ -20,7 +20,6 @@ java:
         - customtoken--thirdpartysecret
         - cvpconfiguration--managedidentityclientid
         - azuread--vhvideowebclientid
-
         - servicebusqueue--connectionstring
         - services--vhvideowebclientid
         - wowzaconfiguration--password
