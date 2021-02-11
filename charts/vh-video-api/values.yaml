@@ -38,7 +38,7 @@ java:
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
-        - ConnectionStrings--DefaultConnection
+        - ConnectionStrings--VhVideoApi
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
