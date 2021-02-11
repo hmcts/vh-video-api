@@ -64,5 +64,15 @@ namespace VideoApi.Extensions
         {
             return Enum.Parse<Domain.Enums.TaskType>(taskType.ToString());
         }
+        
+        public static Domain.Enums.LinkedParticipantType MapToDomainEnum(this Contract.Enums.LinkedParticipantType taskType)
+        {
+            return Enum.Parse<Domain.Enums.LinkedParticipantType>(taskType.ToString());
+        }
+        
+        public static Contract.Enums.LinkedParticipantType MapToContractEnum(this Domain.Enums.LinkedParticipantType taskType)
+        {
+            return Enum.Parse<Contract.Enums.LinkedParticipantType>(taskType.ToString());
+        }
     }
 }

@@ -10,8 +10,8 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    [Migration("20210208104528_AddInterpreterSupport")]
-    partial class AddInterpreterSupport
+    [Migration("20210210122958_AddLinkedParticipant")]
+    partial class AddLinkedParticipant
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,9 @@ namespace VideoApi.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ClosedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("HearingRefId")
@@ -398,14 +401,8 @@ namespace VideoApi.DAL.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AudioStreamUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("JoinUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Label")
                         .HasColumnType("nvarchar(max)");
@@ -565,7 +562,7 @@ namespace VideoApi.DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("VideoApi.Domain.Participant", "Participant")
-                        .WithMany()
+                        .WithMany("LinkedParticipants")
                         .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();

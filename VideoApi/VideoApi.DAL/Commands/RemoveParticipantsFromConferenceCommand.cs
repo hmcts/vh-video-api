@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
@@ -41,6 +42,11 @@ namespace VideoApi.DAL.Commands
 
             foreach (var participant in command.Participants)
             {
+                // find linked participants using participan
+                // participant.LinkedParticipants.Any()
+                    
+                // remove l.p.
+                // remove particpant
                 conference.RemoveParticipant(participant);
             }
             await _context.SaveChangesAsync();

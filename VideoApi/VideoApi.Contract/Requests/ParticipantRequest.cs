@@ -1,10 +1,16 @@
 using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
 {
     public class ParticipantRequest
     {
+        public ParticipantRequest()
+        {
+            LinkedParticipants = new List<LinkedParticipantRequest>();
+        }
+        
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
@@ -17,5 +23,6 @@ namespace VideoApi.Contract.Requests
         public string HearingRole { get; set; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
+        public IList<LinkedParticipantRequest> LinkedParticipants { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -558,11 +559,20 @@ namespace VideoApi.Controllers
             var endpoints = request.Endpoints
                 .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate)).ToList();
 
+            var linkedParticipants = request.Participants
+                .SelectMany(x => x.LinkedParticipants)
+                .Select(x => new LinkedParticipantDto()
+                {
+                    ParticipantRefId = x.ParticipantRefId, 
+                    LinkedRefId = x.LinkedRefId, 
+                    Type = x.Type.MapToDomainEnum()
+                }).ToList();
+            
             var createConferenceCommand = new CreateConferenceCommand
             (
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
                 request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
-                request.AudioRecordingRequired, ingestUrl, endpoints
+                request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants
             );
 
             await _commandHandler.Handle(createConferenceCommand);

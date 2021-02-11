@@ -24,6 +24,14 @@ Feature: Participants
     Then the response should have the status NoContent and success status True
     And the participant is updated
 
+  Scenario: Add linked participants
+    Given I have a conference
+    And I have a request to add two linked participants
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the participant is added
+    And the linked participants are added
+    
   @VIH-5598
   Scenario: Get the heartbeat data for a participant
     Given I have a conference

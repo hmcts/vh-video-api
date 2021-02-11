@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 
@@ -32,7 +34,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = Guid.NewGuid();
 
             var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@test.com", "1234");
+                "lastName", "displayname", String.Empty, "failed@test.com", "1234", new List<LinkedParticipantDto>());
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -45,7 +47,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = Guid.NewGuid();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@test.com", "1234");
+                "lastName", "displayname", String.Empty, "failed@test.com", "1234", new List<LinkedParticipantDto>());
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -58,7 +60,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@test.com", "0123456789");
+                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", new List<LinkedParticipantDto>());
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
@@ -81,7 +83,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@test.com", "0123456789")
+                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", new List<LinkedParticipantDto>())
             {
                 Username = "newUser@updated.com"
             };

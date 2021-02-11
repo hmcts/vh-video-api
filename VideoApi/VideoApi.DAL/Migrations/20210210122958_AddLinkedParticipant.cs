@@ -3,20 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VideoApi.DAL.Migrations
 {
-    public partial class AddInterpreterSupport : Migration
+    public partial class AddLinkedParticipant : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "AudioStreamUrl",
-                table: "Room",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "JoinUrl",
-                table: "Room",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "LinkedParticipant",
                 columns: table => new
@@ -58,14 +48,6 @@ namespace VideoApi.DAL.Migrations
         {
             migrationBuilder.DropTable(
                 name: "LinkedParticipant");
-
-            migrationBuilder.DropColumn(
-                name: "AudioStreamUrl",
-                table: "Room");
-
-            migrationBuilder.DropColumn(
-                name: "JoinUrl",
-                table: "Room");
         }
     }
 }

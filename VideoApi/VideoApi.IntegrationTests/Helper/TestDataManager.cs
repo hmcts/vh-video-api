@@ -70,9 +70,10 @@ namespace VideoApi.IntegrationTests.Helper
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var conference = await db.Conferences
-                .Include("Endpoints")
+                .Include(x => x.Endpoints)
+                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses")
+                .Include(x => x.ConferenceStatuses)
                 .SingleAsync(x => x.Id == conferenceId);
 
             db.Remove(conference);
@@ -86,9 +87,10 @@ namespace VideoApi.IntegrationTests.Helper
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var conferenceIds = conferences.Select(conference => conference.Id).ToList();
             var allConferences = await db.Conferences
-                .Include("Endpoints")
+                .Include(x => x.Endpoints)
+                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses")
+                .Include(x => x.ConferenceStatuses)
                 .Where(x => conferenceIds.Contains(x.Id)).ToListAsync();
 
             db.RemoveRange(allConferences);

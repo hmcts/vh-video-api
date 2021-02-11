@@ -1,7 +1,14 @@
+using System.Collections.Generic;
+
 namespace VideoApi.Contract.Requests
 {
     public class UpdateParticipantRequest
     {
+        public UpdateParticipantRequest()
+        {
+            LinkedParticipants = new List<LinkedParticipantRequest>();
+        }
+        
         /// <summary>
         ///     Participant Fullname
         /// </summary>
@@ -41,5 +48,10 @@ namespace VideoApi.Contract.Requests
         /// The participant username
         /// </summary>
         public string Username { get; set; }
+        
+        /// <summary>
+        /// Linked participants
+        /// </summary>
+        public IList<LinkedParticipantRequest> LinkedParticipants { get; set; }
     }
 }

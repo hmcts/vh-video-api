@@ -23,6 +23,7 @@ namespace VideoApi.AcceptanceTests.Steps
         private readonly ScenarioContext _scenarioContext;
         private readonly CommonSteps _commonSteps;
         private const string ParticipantUsernameKey = "ParticipantUsername";
+        private const string RequestBodyKey = "RequestBodyKey";
         private const decimal LossPercentage = 0.25m;
 
         public ParticipantsSteps(TestContext injectedContext, ScenarioContext scenarioContext, CommonSteps commonSteps)
@@ -41,6 +42,63 @@ namespace VideoApi.AcceptanceTests.Steps
             };
             _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
             _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
+        }
+        
+        [Given(@"I have a request to add two linked participants")]
+        public void GivenIHaveARequestToAddTwoLinkedParticipants()
+        {
+            var participantA = new ParticipantRequestBuilder(UserRole.Individual).Build();
+            var participantB = new ParticipantRequestBuilder(UserRole.Individual).Build();
+            
+            participantA.LinkedParticipants.Add(new LinkedParticipantRequest()
+            {
+                Type = LinkedParticipantType.Interpreter,
+                LinkedRefId = participantB.ParticipantRefId,
+                ParticipantRefId = participantA.ParticipantRefId
+            });
+            
+            participantB.LinkedParticipants.Add(new LinkedParticipantRequest()
+            {
+                Type = LinkedParticipantType.Interpreter,
+                LinkedRefId = participantA.ParticipantRefId,
+                ParticipantRefId = participantB.ParticipantRefId
+            });
+            
+            var request = new AddParticipantsToConferenceRequest
+            {
+                Participants = new List<ParticipantRequest>
+                {
+                    participantA,
+                    participantB
+                },
+            };
+            _scenarioContext.Add(RequestBodyKey, request);
+            _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
+        }
+        
+        [Then(@"the linked participants are added")]
+        public void ThenTheLinkedParticipantsAreAdded()
+        {
+            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.IsSuccessful.Should().BeTrue();
+
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
+            
+            var confParticipants = conference.Participants;
+            var linkCount = confParticipants.Sum(x => x.LinkedParticipants.Count);
+            linkCount.Should().Be(2);
+            
+            var request = _scenarioContext.Get<AddParticipantsToConferenceRequest>(RequestBodyKey);
+            var participantA = request.Participants[0];
+            var participantB = request.Participants[1];
+            
+            // verify correct links have been added
+            var participantAFromContext = confParticipants.Single(x => x.RefId == participantA.ParticipantRefId);
+            var participantBFromContext = confParticipants.Single(x => x.RefId == participantB.ParticipantRefId);
+            
+            participantAFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantBFromContext.Id);
+            participantBFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantAFromContext.Id);
         }
 
         [Given(@"I have an remove participant from a valid conference request")]

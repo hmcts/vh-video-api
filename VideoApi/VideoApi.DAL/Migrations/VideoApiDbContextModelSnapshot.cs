@@ -276,6 +276,29 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("InstantMessage");
                 });
 
+            modelBuilder.Entity("VideoApi.Domain.LinkedParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LinkedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ParticipantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LinkedId");
+
+                    b.HasIndex("ParticipantId");
+
+                    b.ToTable("LinkedParticipant");
+                });
+
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -525,6 +548,21 @@ namespace VideoApi.DAL.Migrations
                         .WithMany("InstantMessageHistory")
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.LinkedParticipant", b =>
+                {
+                    b.HasOne("VideoApi.Domain.Participant", "Linked")
+                        .WithMany()
+                        .HasForeignKey("LinkedId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("VideoApi.Domain.Participant", "Participant")
+                        .WithMany("LinkedParticipants")
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 

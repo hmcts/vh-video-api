@@ -9,4 +9,16 @@ namespace VideoApi.DAL.Exceptions
         {
         }
     }
+    
+    public class ParticipantLinkException : Exception
+    {
+        public ParticipantLinkException(Guid participantRefId, Guid linkRefId) : base($"Cannot link participants because one or both cannot be found")
+        {
+            ParticipantRefId = participantRefId;
+            LinkRefId = linkRefId;
+        }
+
+        public Guid ParticipantRefId { get; }
+        public Guid LinkRefId { get; }
+    }
 }
