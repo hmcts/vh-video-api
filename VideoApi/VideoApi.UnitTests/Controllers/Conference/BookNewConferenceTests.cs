@@ -111,18 +111,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
         
         [Test]
-        public async Task Should_book_kinly_conference_and_update_meeting_room_for_given_conference_id_retries()
-        {
-            SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
-            SetupCallToMockRetryService(Guid.NewGuid());
-            SetupCallToMockRetryService(true);
-            
-            await Controller.BookNewConferenceAsync(_request);
-
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-        }
-        
-        [Test]
         public async Task Should_book_kinly_conference_with_ingesturl_when_audio_recording_not_required()
         {
             var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
