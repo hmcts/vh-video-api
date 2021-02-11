@@ -263,6 +263,7 @@ extends:
         - "[VideoApi.Common]*"
       sonarCloud_ExtraProperties: |
         sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
+        sonar.scanner.force-deprecated-java-version-grace-period=true 
         sonar.coverage.exclusions=**/Program.cs,**/Startup.cs,**/VideoApi/Extensions/**,**/VideoApiI/Swagger/**,**/VideoApi/ConfigureServicesExtensions.cs,**/Testing.Common/**/*,**/VideoApi.Common/**,**/VideoApi.DAL/Mappings/**,**/VideoApi.DAL/SeedData/**,**/VideoApi.DAL/VideoApiDbContext.cs,**/VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,**/VideoApi.DAL/Migrations/*,**/VideoApi.Domain/Ddd/*,**/VideoApi.Domain/Validations/*
         sonar.cpd.exclusions=**/VideoApi.DAL/Migrations/**
       StrykerBreak: 75
