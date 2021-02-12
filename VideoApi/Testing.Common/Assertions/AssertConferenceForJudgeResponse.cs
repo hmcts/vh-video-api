@@ -1,5 +1,6 @@
 using FluentAssertions;
 using System;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
 
 namespace Testing.Common.Assertions
@@ -18,6 +19,11 @@ namespace Testing.Common.Assertions
             conference.Status.Should().NotBeNull();
             conference.NumberOfEndpoints.Should().BeGreaterThan(-1);
             conference.Participants.Should().NotBeNullOrEmpty();
+
+            if (conference.Status == ConferenceState.Closed)
+            {
+                conference.ClosedDateTime.Should().HaveValue().And.NotBe(DateTime.MinValue);
+            }
         }
     }
 }
