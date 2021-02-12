@@ -24,6 +24,7 @@ namespace VideoApi.UnitTests.Mappings
             
             response.Id.Should().Be(conference.Id);
             response.ScheduledDateTime.Should().Be(conference.ScheduledDateTime);
+            response.ClosedDateTime.Should().Be(conference.ClosedDateTime);
             response.ScheduledDuration.Should().Be(conference.ScheduledDuration);
             response.CaseType.Should().Be(conference.CaseType);
             response.CaseName.Should().Be(conference.CaseName);

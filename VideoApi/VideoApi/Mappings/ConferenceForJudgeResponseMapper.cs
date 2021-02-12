@@ -19,6 +19,7 @@ namespace VideoApi.Mappings
                 CaseType = conference.CaseType,
                 ScheduledDuration = conference.ScheduledDuration,
                 ScheduledDateTime = conference.ScheduledDateTime,
+                ClosedDateTime = conference.ClosedDateTime,
                 Participants = conference.Participants
                     .Select(ParticipantForJudgeResponseMapper.MapParticipantSummaryToModel).ToList(),
                 NumberOfEndpoints = conference.Endpoints.Count
