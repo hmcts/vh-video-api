@@ -67,7 +67,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_add_interpreter_linked_participants()
         {
             var seededConference = await TestDataManager.SeedConference();
-            var conferenceId = seededConference.Id;
+            _newConferenceId = seededConference.Id;
             
             var participantA = new ParticipantBuilder(true).Build();
             var participantB = new ParticipantBuilder(true).Build();
@@ -80,11 +80,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var participants = new List<Participant>() {participantA, participantB};
 
-            var command = new AddParticipantsToConferenceCommand(conferenceId, participants, linkedParticipants);
+            var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants, linkedParticipants);
             
             await _handler.Handle(command);
             
-            var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(conferenceId));
+            var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var confParticipants = conference.GetParticipants();
             var linkCount = confParticipants.Sum(x => x.LinkedParticipants.Count);
             linkCount.Should().Be(2);
@@ -100,7 +100,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_throw_participant_link_exception_when_id_doesnt_match()
         {
             var seededConference = await TestDataManager.SeedConference();
-            var conferenceId = seededConference.Id;
+            _newConferenceId = seededConference.Id;
             
             var participantA = new ParticipantBuilder(true).Build();
             var participantB = new ParticipantBuilder(true).Build();
@@ -113,7 +113,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var participants = new List<Participant>() {participantA, participantB};
 
-            var command = new AddParticipantsToConferenceCommand(conferenceId, participants, linkedParticipants);
+            var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants, linkedParticipants);
             
             Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
         }
