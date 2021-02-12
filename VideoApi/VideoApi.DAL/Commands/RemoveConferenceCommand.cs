@@ -31,6 +31,7 @@ namespace VideoApi.DAL.Commands
             var conference = await _context.Conferences
                 .Include("Endpoints")
                 .Include("Participants.ParticipantStatuses")
+                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .Include("ConferenceStatuses")
                 .Include(x => x.Participants).ThenInclude(x => x.TestCallResult)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);

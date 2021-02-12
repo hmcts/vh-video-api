@@ -72,6 +72,8 @@ namespace VideoApi.AcceptanceTests.Steps
                     participantB
                 },
             };
+            
+            _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
             _scenarioContext.Add(RequestBodyKey, request);
             _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
         }
