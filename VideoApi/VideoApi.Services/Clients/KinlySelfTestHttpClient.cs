@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
@@ -16,21 +16,21 @@ namespace VideoApi.Services.Clients
     public class KinlySelfTestHttpClient : IKinlySelfTestHttpClient
     {
         private readonly HttpClient _httpClient;
-        private readonly ServicesConfiguration _servicesConfigOptions;
+        private readonly KinlyConfiguration _kinlyConfigOptions;
         private readonly ILogger<KinlySelfTestHttpClient> _logger;
 
-        public KinlySelfTestHttpClient(HttpClient httpClient, IOptions<ServicesConfiguration> servicesConfigOptions, ILogger<KinlySelfTestHttpClient> logger)
+        public KinlySelfTestHttpClient(HttpClient httpClient, IOptions<KinlyConfiguration> kinlyConfigOptions, ILogger<KinlySelfTestHttpClient> logger)
         {
             _httpClient = httpClient;
-            _servicesConfigOptions = servicesConfigOptions.Value;
+            _kinlyConfigOptions = kinlyConfigOptions.Value;
             _logger = logger;
         }
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            _logger.LogInformation("Retrieving test call score for participant {participantId} at {KinlySelfTestApiUrl}", participantId, _servicesConfigOptions.KinlySelfTestApiUrl);
+            _logger.LogInformation("Retrieving test call score for participant {participantId} at {KinlySelfTestApiUrl}", participantId, _kinlyConfigOptions.KinlySelfTestApiUrl);
             
-            var requestUri = $"{_servicesConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
+            var requestUri = $"{_kinlyConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
             var request = new HttpRequestMessage
             {
                 RequestUri = new Uri(requestUri),

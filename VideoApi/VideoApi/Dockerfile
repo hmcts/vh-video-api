@@ -15,7 +15,8 @@ COPY ["VideoApi.Services/VideoApi.Services.csproj", "VideoApi.Services/"]
 COPY ["VideoApi.Services.Generator/VideoApi.Services.Generator.csproj", "VideoApi.Services.Generator/"]
 COPY ["VideoApi.DAL/VideoApi.DAL.csproj", "VideoApi.DAL/"]
 COPY ["VideoApi.Events/VideoApi.Events.csproj", "VideoApi.Events/"]
-RUN dotnet restore "VideoApi/VideoApi.csproj"
+COPY ["nuget.config", "nuget.config"]
+RUN dotnet restore --configfile nuget.config "VideoApi/VideoApi.csproj"
 COPY . .
 WORKDIR "/src/VideoApi"
 RUN dotnet build "VideoApi.csproj" -c Release -o /app/build
