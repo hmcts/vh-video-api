@@ -46,8 +46,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", "0987654321", "1234", "Defence Sol"),
-                new Endpoint("name2", "1234567890", "5678", "Defence Old")
+                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
+                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
             };
 
             var command =
@@ -98,8 +98,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", "0987654321", "1234", "Defence Sol"),
-                new Endpoint("name2", "1234567890", "5678", "Defence Old")
+                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
+                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
             };
             
             
@@ -135,6 +135,18 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 TestContext.WriteLine($"Removing test conference {_newConferenceId}");
                 await TestDataManager.RemoveConference(_newConferenceId);
             }
+        }
+        
+        private string GetSipAddress()
+        {
+            var random = new Random();
+            var address = "";
+            int i;
+            for (i = 1; i < 11; i++)
+            {
+                address += random.Next(0, 9).ToString();
+            }
+            return address;
         }
     }
 }
