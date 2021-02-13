@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -12,14 +13,12 @@ namespace VideoApi.UnitTests.Domain.Participants
     {
         private Participant _participantA;
         private Participant _participantB;
-        private Participant _participantC;
 
         [SetUp]
         public void SetUp()
         {
             _participantA = new ParticipantBuilder().Build();
             _participantB = new ParticipantBuilder().Build();
-            _participantC = new ParticipantBuilder().Build();
         }
         
         [Test]
@@ -27,7 +26,6 @@ namespace VideoApi.UnitTests.Domain.Participants
         {
             _participantA.AddLink(_participantB.Id, LinkedParticipantType.Interpreter);
             var linkedId = _participantA.LinkedParticipants.Select(x => x.LinkedId);
-
             linkedId.Should().BeEquivalentTo(_participantB.Id);
         }
         
@@ -48,6 +46,19 @@ namespace VideoApi.UnitTests.Domain.Participants
             
             _participantA.RemoveLink(_participantA.LinkedParticipants.First());
             _participantA.LinkedParticipants.Any().Should().BeFalse();
+        }
+        
+        [Test]
+        public void Should_throw_exception_when_link_to_remove_doesnt_exist()
+        {
+            _participantA.Invoking(
+                x => x.RemoveLink(
+                    new LinkedParticipant(
+                        Guid.NewGuid(), 
+                        Guid.NewGuid(), 
+                        LinkedParticipantType.Interpreter)
+                )
+            ).Should().Throw<DomainRuleException>();
         }
     }
 }
