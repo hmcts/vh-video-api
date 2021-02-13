@@ -11,6 +11,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -64,10 +65,19 @@ namespace VideoApi.Controllers
                         Representee = x.Representee
                     })
                 .ToList();
+            
+            var linkedParticipants = request.Participants
+                .SelectMany(x => x.LinkedParticipants)
+                .Select(x => new LinkedParticipantDto()
+                {
+                    ParticipantRefId = x.ParticipantRefId, 
+                    LinkedRefId = x.LinkedRefId, 
+                    Type = x.Type.MapToDomainEnum()
+                }).ToList();
 
             try
             {
-                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants);
+                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants, linkedParticipants);
                 await _commandHandler.Handle(addParticipantCommand);
 
                 return NoContent();
@@ -96,9 +106,16 @@ namespace VideoApi.Controllers
             _logger.LogDebug("UpdateParticipantDetails");
             try
             {
+                var linkedParticipants = request.LinkedParticipants.Select(x => new LinkedParticipantDto()
+                    {
+                        ParticipantRefId = x.ParticipantRefId, 
+                        LinkedRefId = x.LinkedRefId, 
+                        Type = x.Type.MapToDomainEnum()
+                    }).ToList();
+                
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
                     request.Fullname, request.FirstName, request.LastName, request.DisplayName, request.Representee,
-                    request.ContactEmail, request.ContactTelephone);
+                    request.ContactEmail, request.ContactTelephone, linkedParticipants);
                 if (!request.Username.IsNullOrEmpty())
                 {
                     updateParticipantDetailsCommand.Username = request.Username;

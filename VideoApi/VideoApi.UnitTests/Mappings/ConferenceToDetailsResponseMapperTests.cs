@@ -50,6 +50,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CurrentVirtualRoom)
                 .Excluding(x => x.CurrentRoom)
                 .Excluding(x => x.State)
+                .Excluding(x => x.LinkedParticipants)
             );
         }
 

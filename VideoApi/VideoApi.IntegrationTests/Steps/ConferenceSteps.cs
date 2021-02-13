@@ -204,6 +204,21 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
+        [Given(@"I have a valid book a new conference request with linked participants")]
+        public void GivenIHaveABookANewConferenceRequestWithLinkedParticipants()
+        {
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
+                .WithJudge()
+                .WithRepresentative("Claimant").WithIndividualAndInterpreter("Claimant")
+                .WithRepresentative("Defendant").WithIndividual("Defendant")
+                .Build();
+
+            _context.Uri = BookNewConference;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
         [Given(@"I have a valid book a new conference request with jvs endpoints")]
         public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpoints()
         {

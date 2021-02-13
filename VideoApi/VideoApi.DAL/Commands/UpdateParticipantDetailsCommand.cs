@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
+using VideoApi.Domain;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
@@ -19,9 +22,11 @@ namespace VideoApi.DAL.Commands
         public string ContactEmail { get; }
         public string ContactTelephone { get; }
         public string Username { get; set; }
+        public IList<LinkedParticipantDto> LinkedParticipants { get; set; }
 
         public UpdateParticipantDetailsCommand(Guid conferenceId, Guid participantId, string fullname, string firstname,
-            string lastname, string displayName, string representee, string contactEmail, string contactTelephone)
+            string lastname, string displayName, string representee, string contactEmail, string contactTelephone, 
+            IList<LinkedParticipantDto> linkedParticipants)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -32,6 +37,7 @@ namespace VideoApi.DAL.Commands
             LastName = lastname;
             ContactEmail = contactEmail;
             ContactTelephone = contactTelephone;
+            LinkedParticipants = linkedParticipants;
         }
     }
 
@@ -67,7 +73,7 @@ namespace VideoApi.DAL.Commands
             participant.ContactEmail = command.ContactEmail ?? participant.ContactEmail;
             participant.ContactTelephone = command.ContactTelephone ?? participant.ContactTelephone;
             participant.Username = command.Username ?? participant.Username;
-            
+
             await _context.SaveChangesAsync();
         }
     }

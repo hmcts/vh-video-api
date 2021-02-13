@@ -25,7 +25,10 @@ namespace VideoApi.Mappings
                 Representee = participant.Representee,
                 CurrentStatus = participant.State.MapToContractEnum(),
                 ContactEmail = participant.ContactEmail,
-                ContactTelephone = participant.ContactTelephone
+                ContactTelephone = participant.ContactTelephone,
+                LinkedParticipants = 
+                    participant.LinkedParticipants
+                        .Select(LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse).ToList(),
             })
             .ToList();
         }

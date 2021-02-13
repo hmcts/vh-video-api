@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -12,6 +13,7 @@ namespace VideoApi.Domain
         {
             Id = Guid.NewGuid();
             ParticipantStatuses = new List<ParticipantStatus>();
+            LinkedParticipants = new List<LinkedParticipant>();
         }
 
         public Participant(Guid participantRefId, string name, string firstName, string lastName, string displayName,
@@ -50,7 +52,8 @@ namespace VideoApi.Domain
         public virtual TestCallResult TestCallResult { get; private set; }
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
         public ParticipantState State { get; set; }
-        
+        public virtual IList<LinkedParticipant> LinkedParticipants { get; set; }
+
         public IList<ParticipantStatus> GetParticipantStatuses()
         {
             return ParticipantStatuses;
@@ -94,6 +97,28 @@ namespace VideoApi.Domain
         public bool IsVideoHearingOfficer()
         {
             return UserRole == UserRole.VideoHearingsOfficer;
+        }
+        
+        public void AddLink(Guid linkedId, LinkedParticipantType linkType)
+        {
+            var existingLink = LinkedParticipants.SingleOrDefault(x => x.LinkedId == linkedId && x.Type == linkType);
+            if (existingLink != null)
+            {
+                throw new DomainRuleException("LinkedParticipant", "Participant is already linked with the same link type");
+            }
+            LinkedParticipants.Add(new LinkedParticipant(Id, linkedId, linkType));
+        }
+
+        public void RemoveLink(LinkedParticipant linkedParticipant)
+        {
+            var link = LinkedParticipants.SingleOrDefault(
+                x => x.LinkedId == linkedParticipant.LinkedId && x.Type == linkedParticipant.Type);
+            if (link == null)
+            {
+                throw new DomainRuleException("LinkedParticipant", "Link does not exist");
+            }
+
+            LinkedParticipants.Remove(linkedParticipant);
         }
     }
 }

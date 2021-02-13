@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
@@ -74,5 +75,7 @@ namespace VideoApi.Contract.Responses
         /// The current participant status
         /// </summary>
         public ParticipantState CurrentStatus { get; set; }
+
+        public IList<LinkedParticipantResponse> LinkedParticipants { get; set; }
     }
 }
