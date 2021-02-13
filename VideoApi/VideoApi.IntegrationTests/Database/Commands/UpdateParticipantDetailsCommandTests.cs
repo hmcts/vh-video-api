@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
+using VideoApi.Domain;
+using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
@@ -72,6 +75,60 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.LastName.Should().Be("lastName");
             updatedParticipant.ContactEmail.Should().Be("new@test.com");
             updatedParticipant.ContactTelephone.Should().Be("0123456789");
+        }
+        
+        [Test]
+        public async Task Should_update_participant_details_and_linked_participants()
+        {
+            var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
+                .WithConferenceStatus(ConferenceState.InSession)
+                .Build();
+            
+            var participantA = new ParticipantBuilder(true).Build();
+            var participantB = new ParticipantBuilder(true).Build();
+            var participantC = new ParticipantBuilder(true).Build();
+            
+            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id, LinkedParticipantType.Interpreter));
+            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id, LinkedParticipantType.Interpreter));
+
+            conference.AddParticipant(participantA);
+            conference.AddParticipant(participantB);
+            conference.Participants.Add(participantC);
+            
+            var seededConference = await TestDataManager.SeedConference(conference);
+            
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            
+            var participant = seededConference.GetParticipants().First();
+
+            var newLinkedParticipants = new List<LinkedParticipantDto>()
+            {
+                new LinkedParticipantDto()
+                {
+                    ParticipantRefId = participantC.ParticipantRefId,
+                    LinkedRefId = participantA.ParticipantRefId,
+                    Type = LinkedParticipantType.Interpreter
+                },
+                new LinkedParticipantDto()
+                {
+                    ParticipantRefId = participantA.ParticipantRefId,
+                    LinkedRefId = participantC.ParticipantRefId,
+                    Type = LinkedParticipantType.Interpreter
+                }
+            };
+            
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
+                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", newLinkedParticipants);
+            
+            await _handler.Handle(command);
+
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var updatedParticipant =
+                updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
+
+            updatedParticipant.LinkedParticipants.Should().NotContain(x => x.LinkedId == participantB.Id);
+            updatedParticipant.LinkedParticipants.Should().Contain(x => x.LinkedId == participantC.Id);
         }
         
         [Test]

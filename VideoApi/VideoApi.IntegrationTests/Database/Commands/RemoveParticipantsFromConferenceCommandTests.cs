@@ -7,8 +7,11 @@ using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using System.Collections.Generic;
 using System.Linq;
+using Namotion.Reflection;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
+using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
@@ -55,6 +58,41 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var confParticipants = conference.GetParticipants();
             confParticipants.Any(x => x.Username == participantToRemove.Username).Should().BeFalse();
             var afterCount = conference.GetParticipants().Count;
+            afterCount.Should().BeLessThan(beforeCount);
+        }
+        
+        [Test]
+        public async Task Should_remove_participant_from_conference_and_remove_links_to_other_participants()
+        {
+            var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
+                .WithConferenceStatus(ConferenceState.InSession)
+                .Build();
+            
+            var participantA = new ParticipantBuilder(true).Build();
+            var participantB = new ParticipantBuilder(true).Build();
+
+            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id, LinkedParticipantType.Interpreter));
+            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id, LinkedParticipantType.Interpreter));
+
+            conference.AddParticipant(participantA);
+            conference.AddParticipant(participantB);
+
+            var seededConference = await TestDataManager.SeedConference(conference);
+            
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            var beforeCount = seededConference.GetParticipants().Count;
+
+            var participantToRemove = seededConference.GetParticipants().First();
+            var participants = new List<Participant> {participantToRemove};
+            var command = new RemoveParticipantsFromConferenceCommand(_newConferenceId, participants);
+            await _handler.Handle(command);
+
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var confParticipants = updatedConference.GetParticipants();
+            confParticipants.Any(x => x.Username == participantToRemove.Username).Should().BeFalse();
+            confParticipants.Any(x => x.LinkedParticipants.Any()).Should().BeFalse();
+            var afterCount = updatedConference.GetParticipants().Count;
             afterCount.Should().BeLessThan(beforeCount);
         }
 
