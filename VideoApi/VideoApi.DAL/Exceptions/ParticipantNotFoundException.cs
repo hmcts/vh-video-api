@@ -1,21 +1,33 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace VideoApi.DAL.Exceptions
 {
-#pragma warning disable S3925 // "ISerializable" should be implemented correctly
+    [Serializable]
     public class ParticipantNotFoundException : Exception
     {
         public ParticipantNotFoundException(Guid participantId) : base($"Participant {participantId} does not exist")
         {
         }
+        
+        protected ParticipantNotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info,context)
+        {
+        }
     }
     
+    [Serializable]
     public class ParticipantLinkException : Exception
     {
         public ParticipantLinkException(Guid participantRefId, Guid linkRefId) : base($"Cannot link participants because one or both cannot be found")
         {
             ParticipantRefId = participantRefId;
             LinkRefId = linkRefId;
+        }
+        
+        protected ParticipantLinkException(SerializationInfo info, StreamingContext context)
+            : base(info,context)
+        {
         }
 
         public Guid ParticipantRefId { get; }

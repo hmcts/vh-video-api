@@ -95,7 +95,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             participantAFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantBFromContext.Id);
             participantBFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantAFromContext.Id);
         }
-        
+
         [Test]
         public async Task Should_throw_participant_link_exception_when_id_doesnt_match()
         {
@@ -105,17 +105,22 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantA = new ParticipantBuilder(true).Build();
             var participantB = new ParticipantBuilder(true).Build();
 
+            var fakeIdA = Guid.NewGuid();
+            var fakeIdB = Guid.NewGuid();
+            
             var linkedParticipants = new List<LinkedParticipantDto>()
             {
-                new LinkedParticipantDto() { ParticipantRefId = Guid.NewGuid(), LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
-                new LinkedParticipantDto() { ParticipantRefId = Guid.NewGuid(), LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
+                new LinkedParticipantDto() { ParticipantRefId = fakeIdA, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
+                new LinkedParticipantDto() { ParticipantRefId = fakeIdB, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
             };
 
             var participants = new List<Participant>() {participantA, participantB};
 
             var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants, linkedParticipants);
-            
-            Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
+
+            var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
+            exception.LinkRefId.Should().Be(participantB.ParticipantRefId);
+            exception.ParticipantRefId.Should().Be(fakeIdA);
         }
 
 
