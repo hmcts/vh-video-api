@@ -15,6 +15,11 @@ namespace VideoApi.Contract.Responses
         /// Scheduled date time as UTC
         /// </summary>
         public DateTime ScheduledDateTime { get; set; }
+        
+        /// <summary>
+        /// The time a conference was closed
+        /// </summary>
+        public DateTime? ClosedDateTime { get; set; }
 
         /// <summary>
         /// The scheduled duration in minutes
