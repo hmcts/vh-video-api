@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
@@ -75,8 +74,6 @@ namespace VideoApi.DAL.Commands
             participant.ContactTelephone = command.ContactTelephone ?? participant.ContactTelephone;
             participant.Username = command.Username ?? participant.Username;
 
-            // participant.LinkedParticipants = command.LinkedParticipants;
-            
             await _context.SaveChangesAsync();
         }
     }
