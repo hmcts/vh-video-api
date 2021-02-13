@@ -1,6 +1,6 @@
 ---
 java:
-  image: 'sdshmctspublic.azurecr.io/vh/video-api:20210211.3'
+  image: 'sdshmctspublic.azurecr.io/vh/video-api:20210213.1'
   applicationPort: 8080
   replicas: 2
   ingressHost: vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
@@ -38,8 +38,8 @@ java:
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
-        - ConnectionStrings--VhVideoApi
-        - sqlazureconnstr--VhVideoApi
+        - connectionstrings--vhvideoapi
+        - sqlazureconnstr--vhvideoapi
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
