@@ -132,6 +132,58 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
         
         [Test]
+        public async Task Should_throw_participant_link_exception_when_id_doesnt_match()
+        {
+            var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
+                .WithConferenceStatus(ConferenceState.InSession)
+                .Build();
+            
+            var participantA = new ParticipantBuilder(true).Build();
+            var participantB = new ParticipantBuilder(true).Build();
+            var participantC = new ParticipantBuilder(true).Build();
+            
+            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id, LinkedParticipantType.Interpreter));
+            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id, LinkedParticipantType.Interpreter));
+
+            conference.AddParticipant(participantA);
+            conference.AddParticipant(participantB);
+            conference.Participants.Add(participantC);
+            
+            var seededConference = await TestDataManager.SeedConference(conference);
+            
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+            
+            var participant = seededConference.GetParticipants().First();
+
+            var fakeIdA = Guid.NewGuid();
+            var fakeIdC = Guid.NewGuid();
+            
+            var newLinkedParticipants = new List<LinkedParticipantDto>()
+            {
+                new LinkedParticipantDto()
+                {
+                    ParticipantRefId = fakeIdC,
+                    LinkedRefId = participantA.ParticipantRefId,
+                    Type = LinkedParticipantType.Interpreter
+                },
+                new LinkedParticipantDto()
+                {
+                    ParticipantRefId = fakeIdA,
+                    LinkedRefId = participantC.ParticipantRefId,
+                    Type = LinkedParticipantType.Interpreter
+                }
+            };
+            
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
+                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", newLinkedParticipants);
+            
+            var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
+            exception.LinkRefId.Should().Be(participantA.ParticipantRefId);
+            exception.ParticipantRefId.Should().Be(fakeIdC);
+        }
+        
+        [Test]
         public async Task Should_update_participant_username_when_provided()
         {
             var seededConference = await TestDataManager.SeedConference();
