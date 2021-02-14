@@ -10,14 +10,14 @@ using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
 {
-    public class ConsultationRequestResponseValidationTests
+    public class ConsultationRequestValidationTests
     {
-        private ConsultationRequestResponseValidation _validator;
+        private ConsultationRequestValidation _validator;
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _validator = new ConsultationRequestResponseValidation();
+            _validator = new ConsultationRequestValidation();
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NoConferenceIdErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoConferenceIdErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -52,7 +52,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NoParticipantIdErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoParticipantIdErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -65,7 +65,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestResponseValidation.NoAnswerErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoAnswerErrorMessage)
                 .Should().BeTrue();
         }
         

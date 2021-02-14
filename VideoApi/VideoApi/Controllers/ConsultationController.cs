@@ -66,7 +66,7 @@ namespace VideoApi.Controllers
             if (requestedBy == null)
             {
                 _logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
-                return NotFound();
+                //return NotFound();
             }
 
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
@@ -88,12 +88,12 @@ namespace VideoApi.Controllers
                 return NoContent();
             }
 
-            var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
-                DateTime.UtcNow, null, null, $"Adding {requestedFor.DisplayName} to {request.RoomLabel}", null)
-            {
-                ParticipantId = requestedBy.Id
-            };
-            await _commandHandler.Handle(command);
+            //var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
+            //    DateTime.UtcNow, null, null, $"Adding {requestedFor.DisplayName} to {request.RoomLabel}", null)
+            //{
+            //    //ParticipantId = requestedBy.Id
+            //};
+            //await _commandHandler.Handle(command);
             await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, requestedFor.Id, request.RoomLabel);
 
             return NoContent();
