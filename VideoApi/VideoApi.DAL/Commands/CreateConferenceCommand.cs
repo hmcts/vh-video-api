@@ -77,7 +77,7 @@ namespace VideoApi.DAL.Commands
                     
                     primaryParticipant.AddLink(secondaryParticipant.Id, linkedParticipant.Type);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new ParticipantLinkException(linkedParticipant.ParticipantRefId, linkedParticipant.LinkedRefId);
                 }

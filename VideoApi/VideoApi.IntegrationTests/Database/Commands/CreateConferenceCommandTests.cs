@@ -8,6 +8,7 @@ using VideoApi.Contract.Enums;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.DTOs;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Extensions;
@@ -127,6 +128,48 @@ namespace VideoApi.IntegrationTests.Database.Commands
             participantBFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantAFromContext.Id);
         }
                 
+        [Test]
+        public void Should_throw_participant_link_exception_when_id_doesnt_match()
+        {
+            var hearingRefId = Guid.NewGuid();
+            const string caseType = "Civil Money Claims";
+            var scheduledDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
+            const string caseNumber = "AutoTest Create Command 1234";
+            const string caseName = "AutoTest vs Manual Test";
+            const int scheduledDuration = 120;
+            
+            var participantA = new ParticipantBuilder(true).Build();
+            var participantB = new ParticipantBuilder(true).Build();
+
+            var fakeIdA = Guid.NewGuid();
+            var fakeIdB = Guid.NewGuid();
+            
+            var linkedParticipants = new List<LinkedParticipantDto>()
+            {
+                new LinkedParticipantDto() { ParticipantRefId = fakeIdA, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
+                new LinkedParticipantDto() { ParticipantRefId = fakeIdB, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
+            };
+
+            var participants = new List<Participant>() {participantA, participantB};
+            
+            const string hearingVenueName = "MyVenue";
+            const string ingestUrl = "https://localhost/ingesturl";
+            const bool audioRecordingRequired = true;
+            var endpoints = new List<Endpoint>
+            {
+                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
+                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+            };
+
+            var command =
+                new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
+                    scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl, endpoints, linkedParticipants);
+            
+            var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
+            exception.LinkRefId.Should().Be(participantB.ParticipantRefId);
+            exception.ParticipantRefId.Should().Be(fakeIdA);
+        }
+        
         [TearDown]
         public async Task TearDown()
         {
