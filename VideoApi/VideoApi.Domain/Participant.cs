@@ -120,5 +120,10 @@ namespace VideoApi.Domain
 
             LinkedParticipants.Remove(linkedParticipant);
         }
+        
+        public void RemoveAllLinks()
+        {
+            LinkedParticipants.Clear();
+        }
     }
 }
