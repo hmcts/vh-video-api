@@ -68,9 +68,11 @@
     </Content>
   </ItemGroup>
 
+    <!--
   <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' AND '$(Configuration)'=='Debug'">
     <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
     <Exec Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:ProjectPath=&quot;$(MSBuildProjectFullPath)&quot;" />
     <RemoveDir Directories="$(OutDir)References" />
   </Target>
+    -->
 </Project>

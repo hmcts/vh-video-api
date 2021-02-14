@@ -13,7 +13,7 @@ namespace VideoApi.Validations
         public ConsultationRequestValidation()
         {
             RuleFor(x => x.ConferenceId).NotEmpty().WithMessage(NoConferenceIdErrorMessage);
-            RuleFor(x => x.RequestedBy).NotEmpty().WithMessage(NoRequestedByIdErrorMessage);
+            //RuleFor(x => x.RequestedBy).NotEmpty().WithMessage(NoRequestedByIdErrorMessage);
             RuleFor(x => x.RequestedFor).NotEmpty().WithMessage(NoRequestedForIdErrorMessage);
             RuleFor(x => x.Answer).NotEqual(ConsultationAnswer.None).WithMessage(NoAnswerErrorMessage)
                 .When(x => x.Answer.HasValue);

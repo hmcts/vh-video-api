@@ -145,8 +145,13 @@ namespace VideoApi.Services
                 "Conference: {conference.Id} - Attempting to transfer participants {requestedBy.Id} {requestedFor.Id} into room {targetRoom}",
                 conference.Id, requestedBy.Id, requestedFor.Id, targetRoom);
 
-            await TransferParticipantAsync(conference.Id, requestedBy.Id,
+            if(requestedBy == null)
+            {
+                // Assume to be VHO
+                await TransferParticipantAsync(conference.Id, requestedBy.Id,
                 requestedBy.GetCurrentRoom(), targetRoom);
+            }
+            
 
             await TransferParticipantAsync(conference.Id, requestedFor.Id,
                 requestedFor.GetCurrentRoom(), targetRoom);

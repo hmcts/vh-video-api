@@ -68,7 +68,7 @@ namespace VideoApi.Controllers
             if (requestedBy == null)
             {
                 _logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
-                return NotFound();
+                //return NotFound();
             }
 
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
@@ -78,12 +78,14 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
+            /*
             var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
                 DateTime.UtcNow, null, null, $"Consultation with {requestedFor.DisplayName}", null)
             {
                 ParticipantId = requestedBy.Id
             };
             await _commandHandler.Handle(command);
+            */
 
             try
             {
@@ -332,10 +334,22 @@ namespace VideoApi.Controllers
         {
             if (answer == ConsultationAnswer.Accepted)
             {
-                _logger.LogInformation(
-                    "Conference: {ConferenceId} - Attempting to start private consultation between {RequestedById} and {RequestedForId}",
-                    conference.Id, requestedBy.Id, requestedFor.Id);
-                await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
+                if (requestedBy == null)
+                {
+                    _logger.LogInformation(
+                   "Conference: {ConferenceId} - Attempting to start private consultation between VHO and {RequestedForId}",
+                   conference.Id, requestedFor.Id);
+                    await _videoPlatformService.TransferParticipantAsync(conference.Id, requestedFor.Id, RoomType.HearingRoom, RoomType.ConsultationRoom2);
+                }
+                else
+                {
+                    _logger.LogInformation(
+                      "Conference: {ConferenceId} - Attempting to start private consultation between {RequestedById} and {RequestedForId}",
+                      conference.Id, requestedBy.Id, requestedFor.Id);
+                    await _videoPlatformService.StartPrivateConsultationAsync(conference, requestedBy, requestedFor);
+
+                }
+                   
             }
         }
     }
