@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
+using System.Linq;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 

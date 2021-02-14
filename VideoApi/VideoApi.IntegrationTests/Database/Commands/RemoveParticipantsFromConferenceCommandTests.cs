@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.DAL;
@@ -7,7 +6,6 @@ using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using System.Collections.Generic;
 using System.Linq;
-using Namotion.Reflection;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;

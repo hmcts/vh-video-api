@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
-using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
@@ -109,7 +108,7 @@ namespace VideoApi.DAL.Commands
                     
                     primaryParticipant.AddLink(secondaryParticipant.Id, linkedParticipant.Type);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new ParticipantLinkException(linkedParticipant.ParticipantRefId, linkedParticipant.LinkedRefId);
                 }
