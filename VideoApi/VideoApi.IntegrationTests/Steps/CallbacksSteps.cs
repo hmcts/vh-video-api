@@ -158,7 +158,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
-                .With(x => x.TransferTo = RoomType.ConsultationRoom.ToString())
+                .With(x => x.TransferTo = "ConsultationRoom")
                 .With(x => x.Reason = "Automated")
                 .With(x => x.Phone = phone)
                 .Build();

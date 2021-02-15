@@ -28,8 +28,6 @@ namespace VideoApi.UnitTests.Services
         private Mock<ILogger<KinlyPlatformService>> _loggerMock;
         private IOptions<KinlyConfiguration> _kinlyConfigOptions;
 
-        private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
-        private IRoomReservationService _roomReservationService;
         private Mock<IKinlySelfTestHttpClient> _kinlySelfTestHttpClient;
         private Mock<IPollyRetryService> _pollyRetryService;
         private KinlyPlatformService _kinlyPlatformService;

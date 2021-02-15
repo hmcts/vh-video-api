@@ -93,7 +93,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Assert.Fail("No participants found in conference");
             }
 
-            _testRoom = new Room(TestConference.Id, "JohRoom1", VirtualCourtRoomType.JudgeJOH, false);
+            _testRoom = new Room(TestConference.Id, "JohRoom1", VirtualCourtRoomType.JudgeJOH.MapToDomainEnum(), false);
 
             return new StartConsultationRequest
             {

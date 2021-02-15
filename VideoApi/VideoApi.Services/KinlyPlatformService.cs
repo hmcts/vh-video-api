@@ -22,20 +22,18 @@ namespace VideoApi.Services
         private readonly IKinlyApiClient _kinlyApiClient;
         private readonly ILogger<KinlyPlatformService> _logger;
         private readonly KinlyConfiguration _kinlyConfigOptions;
-        private readonly IRoomReservationService _roomReservationService;
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
             IOptions<KinlyConfiguration> kinlyConfigOptions,
-            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService,
+            ILogger<KinlyPlatformService> logger,
             IKinlySelfTestHttpClient kinlySelfTestHttpClient,
             IPollyRetryService pollyRetryService)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
             _kinlyConfigOptions = kinlyConfigOptions.Value;
-            _roomReservationService = roomReservationService;
             _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
         }

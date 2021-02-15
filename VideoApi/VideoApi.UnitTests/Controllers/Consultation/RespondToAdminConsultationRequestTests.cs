@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ConferenceId = conferenceId,
                 RequestedBy = requestedBy.Id,
                 RequestedFor = participant.Id,
-                RoomLabel = RoomType.ConsultationRoom.ToString(),
+                RoomLabel = "ConsultationRoom",
                 Answer = ConsultationAnswer.Accepted
             };
 
@@ -47,7 +47,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 RequestedFor = participant.Id,
-                RoomLabel = RoomType.ConsultationRoom.ToString(),
+                RoomLabel = "ConsultationRoom",
                 Answer = ConsultationAnswer.Rejected
             };
 
@@ -68,7 +68,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 RequestedFor = Guid.NewGuid(),
-                RoomLabel = RoomType.ConsultationRoom.ToString(),
+                RoomLabel = "ConsultationRoom",
                 Answer = ConsultationAnswer.Rejected
             };
 
