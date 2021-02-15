@@ -22,11 +22,10 @@ java:
         - cvpconfiguration--storageaccountKey
         - azuread--vhvideowebclientid
         - servicebusqueue--connectionstring
-        - services--vhvideowebclientid
+        - services--videowebclientid
         - wowzaconfiguration--password
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
-        - vhvideoapi
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -39,8 +38,7 @@ java:
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
-        - connectionstrings--vhvideoapi
-        - sqlazureconnstr--vhvideoapi
+        - connectionstrings--videoapi
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
