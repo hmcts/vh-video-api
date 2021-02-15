@@ -11,7 +11,7 @@ using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;
@@ -109,6 +109,42 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateParticipantFromConference(conferenceId, participantId);
             _context.HttpMethod = HttpMethod.Patch;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        [Given(@"I have a request to add two linked participants")]
+        public void GivenIHaveARequestToAddTwoLinkedParticipants()
+        {
+            var conferenceId = _context.Test.Conference.Id; 
+            var participantA = new ParticipantRequestBuilder(UserRole.Individual).Build();
+            var participantB = new ParticipantRequestBuilder(UserRole.Individual).Build();
+            
+            participantA.LinkedParticipants.Add(new LinkedParticipantRequest()
+            {
+                Type = LinkedParticipantType.Interpreter,
+                LinkedRefId = participantB.ParticipantRefId,
+                ParticipantRefId = participantA.ParticipantRefId
+            });
+            
+            participantB.LinkedParticipants.Add(new LinkedParticipantRequest()
+            {
+                Type = LinkedParticipantType.Interpreter,
+                LinkedRefId = participantA.ParticipantRefId,
+                ParticipantRefId = participantB.ParticipantRefId
+            });
+            
+            var request = new AddParticipantsToConferenceRequest
+            {
+                Participants = new List<ParticipantRequest>
+                {
+                    participantA,
+                    participantB
+                },
+            };
+
+            _context.Uri = AddParticipantsToConference(conferenceId);
+            _context.HttpMethod = HttpMethod.Put;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
@@ -275,10 +311,10 @@ namespace VideoApi.IntegrationTests.Steps
             switch (scenario)
             {
                 case Scenario.Valid:
-                    {
-                        conferenceId = _context.Test.Conference.Id;
-                        break;
-                    }
+                {
+                    conferenceId = _context.Test.Conference.Id;
+                    break;
+                }
 
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();

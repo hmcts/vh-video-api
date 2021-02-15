@@ -1,7 +1,7 @@
 using System;
 using FluentAssertions;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 
 namespace Testing.Common.Assertions
 {

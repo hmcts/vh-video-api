@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Faker;
 using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
 
 namespace Testing.Common.Helper.Builders.Api
 {
@@ -61,7 +62,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.CaseTypeGroup = caseTypeGroup)
-                .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
+                .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(VideoApi.Domain.Enums.UserRole.Representative, caseTypeGroup))
                 .With(x => x.Representee = "Person")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
@@ -81,13 +82,43 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
                 .With(x => x.UserRole = UserRole.Individual)
                 .With(x => x.CaseTypeGroup = caseTypeGroup)
-                .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(UserRole.Representative, caseTypeGroup))
+                .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(VideoApi.Domain.Enums.UserRole.Representative, caseTypeGroup))
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
                 .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
                 .Build();
 
             _bookNewConferenceRequest.Participants.Add(participant);
+            return this;
+        }
+        
+        public BookNewConferenceRequestBuilder WithIndividualAndInterpreter(string caseTypeGroup = "Claimant")
+        {
+            var participant = Builder<ParticipantRequest>.CreateNew()
+                .With(x => x.Name = $"Automation_{Name.FullName()}")
+                .With(x => x.FirstName = $"Automation_{Name.First()}")
+                .With(x => x.LastName = $"Automation_{Name.Last()}")
+                .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
+                .With(x => x.UserRole = UserRole.Individual)
+                .With(x => x.CaseTypeGroup = caseTypeGroup)
+                .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(VideoApi.Domain.Enums.UserRole.Representative, caseTypeGroup))
+                .With(x => x.ParticipantRefId = Guid.NewGuid())
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
+                .Build();
+
+            var interpreter =
+                _bookNewConferenceRequest.Participants.First(x => x.ParticipantRefId != participant.ParticipantRefId);
+            
+            participant.LinkedParticipants.Add(new LinkedParticipantRequest()
+            {
+                ParticipantRefId = participant.ParticipantRefId,
+                LinkedRefId = interpreter.ParticipantRefId,
+                Type = LinkedParticipantType.Interpreter
+            });
+            
+            _bookNewConferenceRequest.Participants.Add(participant);
+            
             return this;
         }
 

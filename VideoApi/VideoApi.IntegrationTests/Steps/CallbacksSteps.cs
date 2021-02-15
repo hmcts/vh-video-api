@@ -9,10 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.Common;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 using static Testing.Common.Helper.ApiUriFactory;
 using Task = System.Threading.Tasks.Task;
 using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;
@@ -165,7 +166,7 @@ namespace VideoApi.IntegrationTests.Steps
             if (conference == null) return request;
 
             request.ConferenceId = conference.Id.ToString();
-            var isEndpointEvent = eventType.IsEndpointEvent();
+            var isEndpointEvent = eventType.MapToDomainEnum().IsEndpointEvent();
             var participantId = isEndpointEvent ? conference.GetEndpoints().First().Id: conference.GetParticipants().First().Id;
             request.ParticipantId = participantId.ToString();
             _context.Test.ParticipantId = participantId;

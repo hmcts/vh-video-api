@@ -6,12 +6,14 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
+using VhRoom = VideoApi.Domain.Enums.RoomType;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
@@ -23,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_Return_Ok()
         {
             var request = RequestBuilder();
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType))
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
             ConsultationService.Setup(x =>
                 x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
@@ -38,7 +40,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var request = RequestBuilder();
             request.ConferenceId = Guid.NewGuid();
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType))
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
 
             var result = await Controller.StartConsultationRequestAsync(request);
@@ -52,7 +54,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var request = RequestBuilder();
             request.RequestedBy = Guid.NewGuid();
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType))
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
             ConsultationService.Setup(x =>
                     x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
@@ -72,7 +74,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var kinlyApiException = new KinlyApiException("", (int) HttpStatusCode.BadRequest, "payload",
                 new Dictionary<string, IEnumerable<string>>(), new Exception());
 
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType))
+            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
             ConsultationService
                 .Setup(x => x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
@@ -97,7 +99,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = TestConference.Id,
                 RequestedBy = TestConference.GetParticipants().First(x =>
-                    x.UserRole.Equals(UserRole.Judge)).Id,
+                    x.UserRole.MapToContractEnum().Equals(UserRole.Judge)).Id,
                 RoomType = VirtualCourtRoomType.JudgeJOH
             };
         }

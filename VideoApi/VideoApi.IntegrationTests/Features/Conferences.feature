@@ -9,6 +9,12 @@ Feature: Conferences
     Then the response should have the status Created and success status True
     And the conference details should be retrieved
 
+  Scenario: Create a new conference with linked participants
+    Given I have a valid book a new conference request with linked participants
+    When I send the request to the endpoint
+    Then the response should have the status Created and success status True
+    And the conference details should be retrieved
+
   Scenario: Create a new conference with jvs endpoints
     Given I have a valid book a new conference request with jvs endpoints
     When I send the request to the endpoint

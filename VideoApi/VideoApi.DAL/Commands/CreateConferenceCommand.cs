@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.DTOs;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -21,10 +24,12 @@ namespace VideoApi.DAL.Commands
         public bool AudioRecordingRequired { get; set; }
         public string IngestUrl { get; set; }
         public List<Endpoint> Endpoints { get; set; }
+        public List<LinkedParticipantDto> LinkedParticipants { get; set; }
 
         public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
             string caseNumber, string caseName, int scheduledDuration, List<Participant> participants,
-            string hearingVenueName, bool audioRecordingRequired, string ingestUrl, List<Endpoint> endpoints)
+            string hearingVenueName, bool audioRecordingRequired, string ingestUrl, List<Endpoint> endpoints,
+            List<LinkedParticipantDto> linkedParticipants)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
@@ -37,6 +42,7 @@ namespace VideoApi.DAL.Commands
             AudioRecordingRequired = audioRecordingRequired;
             IngestUrl = ingestUrl;
             Endpoints = endpoints;
+            LinkedParticipants = linkedParticipants;
         }
     }
 
@@ -57,6 +63,24 @@ namespace VideoApi.DAL.Commands
             foreach (var participant in command.Participants)
             {
                 conference.AddParticipant(participant);
+            }
+            
+            foreach (var linkedParticipant in command.LinkedParticipants)
+            {
+                try
+                {
+                    var primaryParticipant =
+                        conference.Participants.Single(x => x.ParticipantRefId == linkedParticipant.ParticipantRefId);
+                
+                    var secondaryParticipant =
+                        conference.Participants.Single(x => x.ParticipantRefId == linkedParticipant.LinkedRefId);
+                    
+                    primaryParticipant.AddLink(secondaryParticipant.Id, linkedParticipant.Type);
+                }
+                catch (Exception)
+                {
+                    throw new ParticipantLinkException(linkedParticipant.ParticipantRefId, linkedParticipant.LinkedRefId);
+                }
             }
 
             foreach (var endpoint in command.Endpoints)

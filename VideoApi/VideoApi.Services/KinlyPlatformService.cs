@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
@@ -21,19 +21,21 @@ namespace VideoApi.Services
     {
         private readonly IKinlyApiClient _kinlyApiClient;
         private readonly ILogger<KinlyPlatformService> _logger;
-        private readonly ServicesConfiguration _servicesConfigOptions;
+        private readonly KinlyConfiguration _kinlyConfigOptions;
+        private readonly IRoomReservationService _roomReservationService;
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
 
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
-            IOptions<ServicesConfiguration> servicesConfigOptions,
-            ILogger<KinlyPlatformService> logger,
+            IOptions<KinlyConfiguration> kinlyConfigOptions,
+            ILogger<KinlyPlatformService> logger, IRoomReservationService roomReservationService,
             IKinlySelfTestHttpClient kinlySelfTestHttpClient,
             IPollyRetryService pollyRetryService)
         {
             _kinlyApiClient = kinlyApiClient;
             _logger = logger;
-            _servicesConfigOptions = servicesConfigOptions.Value;
+            _kinlyConfigOptions = kinlyConfigOptions.Value;
+            _roomReservationService = roomReservationService;
             _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
         }
@@ -46,14 +48,14 @@ namespace VideoApi.Services
         {
             _logger.LogInformation(
                 "Booking a conference for {conferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
-                _servicesConfigOptions.CallbackUri, _servicesConfigOptions.KinlyApiUrl);
+                _kinlyConfigOptions.CallbackUri, _kinlyConfigOptions.KinlyApiUrl);
 
             try
             {
                 var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
-                    Callback_uri = _servicesConfigOptions.CallbackUri,
+                    Callback_uri = _kinlyConfigOptions.CallbackUri,
                     Recording_enabled = audioRecordingRequired,
                     Recording_url = ingestUrl,
                     Streaming_enabled = false,
@@ -108,7 +110,7 @@ namespace VideoApi.Services
                 retryAttempt =>
                     _logger.LogWarning(
                         "Failed to retrieve test score for participant {participantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}",
-                        participantId, _servicesConfigOptions.KinlySelfTestApiUrl, retryAttempt),
+                        participantId, _kinlyConfigOptions.KinlySelfTestApiUrl, retryAttempt),
                 callResult => callResult == null,
                 () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
             );

@@ -4,8 +4,9 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {

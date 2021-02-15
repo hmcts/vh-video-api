@@ -1,5 +1,6 @@
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -10,7 +11,7 @@ namespace VideoApi.Mappings
             return new TestCallScoreResponse
             {
                 Passed = testCallScore.Passed,
-                Score = testCallScore.Score
+                Score = testCallScore.Score.MapToContractEnum()
             };
         }
     }

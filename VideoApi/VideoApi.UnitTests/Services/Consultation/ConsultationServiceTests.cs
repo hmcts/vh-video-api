@@ -12,6 +12,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 using VideoApi.Services;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
@@ -50,13 +51,13 @@ namespace VideoApi.UnitTests.Services.Consultation
             _queryHandler.Setup(x => x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(
                 It.Is<GetAvailableRoomByRoomTypeQuery>(
                     query => query.ConferenceId.Equals(_request.ConferenceId) &&
-                             query.CourtRoomType.Equals(_request.RoomType)))).ReturnsAsync(_rooms);
+                             query.CourtRoomType.Equals(_request.RoomType.MapToDomainEnum())))).ReturnsAsync(_rooms);
 
-            var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType, false);
+            var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType.MapToDomainEnum(), false);
             _commandHandler.Setup(x => x.Handle(mockCommand));
 
             var returnedRoom =
-                await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType);
+                await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
 
             returnedRoom.Should().BeOfType<Room>();
             returnedRoom.Should().NotBeNull();
@@ -80,7 +81,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
 
             var returnedRoom =
-                await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType);
+                await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
 
             _kinlyApiClient.Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
                 y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
@@ -126,15 +127,15 @@ namespace VideoApi.UnitTests.Services.Consultation
                 ConferenceId = TestConference.Id,
                 RequestedBy = TestConference.GetParticipants().First(x =>
                     x.UserRole.Equals(UserRole.Judge)).Id,
-                RoomType = VirtualCourtRoomType.JudgeJOH
+                RoomType = Contract.Enums.VirtualCourtRoomType.JudgeJOH
             };
         }
 
         private List<Room> CreateTestRooms(StartConsultationRequest request)
         {
             var rooms = new List<Room>();
-            var room1 = new Room(request.ConferenceId, "Judge", request.RoomType, false);
-            var room2 = new Room(Guid.NewGuid(), "Waiting", VirtualCourtRoomType.WaitingRoom, false);
+            var room1 = new Room(request.ConferenceId, "Judge", request.RoomType.MapToDomainEnum(), false);
+            var room2 = new Room(Guid.NewGuid(), "Waiting", VirtualCourtRoomType.JudgeJOH, false);
 
             rooms.Add(room1);
             rooms.Add(room2);

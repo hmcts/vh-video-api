@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
 {

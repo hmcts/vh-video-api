@@ -1,5 +1,6 @@
 using System;
-using VideoApi.Domain.Enums;
+using System.Collections.Generic;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
 {
@@ -79,5 +80,10 @@ namespace VideoApi.Contract.Responses
         /// Current consultation room details
         /// </summary>
         public RoomResponse CurrentRoom { get; set; }
+
+        /// <summary>
+        /// Linked Participants - example interperter and "interpretee"
+        /// </summary>
+        public IList<LinkedParticipantResponse> LinkedParticipants { get; set; }
     }
 }

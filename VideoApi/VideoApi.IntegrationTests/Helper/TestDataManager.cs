@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -15,12 +15,12 @@ namespace VideoApi.IntegrationTests.Helper
 {
     public class TestDataManager
     {
-        private readonly ServicesConfiguration _services;
+        private readonly KinlyConfiguration _kinlyConfiguration;
         private readonly DbContextOptions<VideoApiDbContext> _dbContextOptions;
 
-        public TestDataManager(ServicesConfiguration services, DbContextOptions<VideoApiDbContext> dbContextOptions)
+        public TestDataManager(KinlyConfiguration kinlyConfiguration, DbContextOptions<VideoApiDbContext> dbContextOptions)
         {
-            _services = services;
+            _kinlyConfiguration = kinlyConfiguration;
             _dbContextOptions = dbContextOptions;
         }
 
@@ -33,7 +33,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Representative, "Defendant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom(_services.PexipNode, _services.ConferenceUsername)
+                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername)
                 .WithAudioRecordingRequired(false)
                 .Build();
             var conferenceType = typeof(Conference);
@@ -70,9 +70,10 @@ namespace VideoApi.IntegrationTests.Helper
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var conference = await db.Conferences
-                .Include("Endpoints")
+                .Include(x => x.Endpoints)
+                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses")
+                .Include(x => x.ConferenceStatuses)
                 .SingleAsync(x => x.Id == conferenceId);
 
             db.Remove(conference);
@@ -86,9 +87,10 @@ namespace VideoApi.IntegrationTests.Helper
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var conferenceIds = conferences.Select(conference => conference.Id).ToList();
             var allConferences = await db.Conferences
-                .Include("Endpoints")
+                .Include(x => x.Endpoints)
+                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .Include("Participants.ParticipantStatuses")
-                .Include("ConferenceStatuses")
+                .Include(x => x.ConferenceStatuses)
                 .Where(x => conferenceIds.Contains(x.Id)).ToListAsync();
 
             db.RemoveRange(allConferences);

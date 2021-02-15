@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -25,12 +27,13 @@ namespace VideoApi.Mappings
                 StartedDateTime = conference.ActualStartTime,
                 ClosedDateTime = conference.ClosedDateTime,
                 ScheduledDuration = conference.ScheduledDuration,
-                Status = conference.GetCurrentStatus(),
+                Status = conference.GetCurrentStatus().MapToContractEnum(),
                 Participants = participants,
                 HearingRefId = conference.HearingRefId,
                 HearingVenueName = conference.HearingVenueName,
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
-                TelephoneConferenceNumber = phoneNumber
+                TelephoneConferenceNumber = phoneNumber,
+                CreatedDateTime = conference.CreatedDateTime
             };
         }
     }

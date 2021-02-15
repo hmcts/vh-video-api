@@ -36,7 +36,7 @@ namespace VideoApi.IntegrationTests.Contexts
 
                 client = new HttpClient(handler)
                 {
-                    BaseAddress = new System.Uri(Config.VhServices.VideoApiUrl)
+                    BaseAddress = new System.Uri(Config.Services.VideoApiUrl)
                 };
             }
             else
