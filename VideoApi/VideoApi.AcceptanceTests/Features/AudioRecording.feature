@@ -18,11 +18,11 @@ Scenario: Get Audio Application - Not Found
 	Then the response should have the status NotFound and success status False
 
 @VIH-5868
-Scenario: Create Audio Application - Conflict
+Scenario: Create Audio Application - Handle Conflict
   Given I have a conference
   And I have a valid create audio application request
 	When I send the request to the endpoint
-	Then the response should have the status Conflict and success status False
+	Then the response should have the status OK and success status true
 
 @VIH-5868
 Scenario: Delete Audio Application with audio recording file - No Content

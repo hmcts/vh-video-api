@@ -112,6 +112,42 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
+        
+        [Given(@"I have a request to add two linked participants")]
+        public void GivenIHaveARequestToAddTwoLinkedParticipants()
+        {
+            var conferenceId = _context.Test.Conference.Id; 
+            var participantA = new ParticipantRequestBuilder(UserRole.Individual).Build();
+            var participantB = new ParticipantRequestBuilder(UserRole.Individual).Build();
+            
+            participantA.LinkedParticipants.Add(new LinkedParticipantRequest()
+            {
+                Type = LinkedParticipantType.Interpreter,
+                LinkedRefId = participantB.ParticipantRefId,
+                ParticipantRefId = participantA.ParticipantRefId
+            });
+            
+            participantB.LinkedParticipants.Add(new LinkedParticipantRequest()
+            {
+                Type = LinkedParticipantType.Interpreter,
+                LinkedRefId = participantA.ParticipantRefId,
+                ParticipantRefId = participantB.ParticipantRefId
+            });
+            
+            var request = new AddParticipantsToConferenceRequest
+            {
+                Participants = new List<ParticipantRequest>
+                {
+                    participantA,
+                    participantB
+                },
+            };
+
+            _context.Uri = AddParticipantsToConference(conferenceId);
+            _context.HttpMethod = HttpMethod.Put;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
 
         [Given(@"I have an add participant to a conference request with a (.*) body")]
         [Given(@"I have an add participant to a conference request with an invalid body")]
@@ -275,10 +311,10 @@ namespace VideoApi.IntegrationTests.Steps
             switch (scenario)
             {
                 case Scenario.Valid:
-                    {
-                        conferenceId = _context.Test.Conference.Id;
-                        break;
-                    }
+                {
+                    conferenceId = _context.Test.Conference.Id;
+                    break;
+                }
 
                 case Scenario.Nonexistent:
                     conferenceId = Guid.NewGuid();
