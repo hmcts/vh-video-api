@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
 {
@@ -20,5 +20,6 @@ namespace VideoApi.Contract.Responses
         public string HearingVenueName { get; set; }
         public string TelephoneConferenceId { get; set; }
         public string TelephoneConferenceNumber { get; set; }
+        public DateTime? CreatedDateTime { get; set; }
     }
 }

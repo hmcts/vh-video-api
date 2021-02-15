@@ -12,7 +12,6 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
-using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory.TaskEndpoints;
 using Alert = VideoApi.Domain.Task;
 
@@ -76,7 +75,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 task.Id.Should().BeGreaterThan(0);
                 task.Body.Should().NotBeNullOrWhiteSpace();
-                task.Type.Should().BeOfType<TaskType>();
+                task.Type.Should().BeOfType<Contract.Enums.TaskType>();
             }
         }
 
@@ -128,7 +127,11 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferenceId = _context.Test.Conference.Id;
             var participantId = _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Individual).Id;
-            var addTaskRequest = new AddTaskRequest { ParticipantId = participantId, Body = "Witness dismissed", TaskType = TaskType.Participant };
+            var addTaskRequest = new AddTaskRequest
+            {
+                ParticipantId = participantId, Body = "Witness dismissed",
+                TaskType = Contract.Enums.TaskType.Participant
+            };
             switch (scenario)
             {
                 case Scenario.Valid:

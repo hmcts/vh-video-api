@@ -7,8 +7,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using VideoApi.Common.Configuration;
-using VideoApi.Domain;
+using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Kinly;
@@ -18,20 +17,20 @@ namespace VideoApi.UnitTests.Clients
 {
     public class KinlySelfTestHttpClientTest
     {
-        private readonly IOptions<ServicesConfiguration> _servicesConfigOptions;
+        private readonly IOptions<KinlyConfiguration> _kinlyConfigOptions;
         private readonly Mock<ILogger<KinlySelfTestHttpClient>> _loggerMock;
 
         public KinlySelfTestHttpClientTest()
         {
-            _servicesConfigOptions = Options.Create(new ServicesConfiguration());
+            _kinlyConfigOptions = Options.Create(new KinlyConfiguration());
             _loggerMock = new Mock<ILogger<KinlySelfTestHttpClient>>();
         }
         
         [Test]
         public async Task GetTestCallScoreAsync_returns_null_on_not_found()
         {
-            _servicesConfigOptions.Value.KinlySelfTestApiUrl = $"http://{HttpStatusCode.NotFound}.com/";
-            var client = new KinlySelfTestHttpClient(new HttpClient(new FakeHttpMessageHandler()), _servicesConfigOptions, _loggerMock.Object);
+            _kinlyConfigOptions.Value.KinlySelfTestApiUrl = $"http://{HttpStatusCode.NotFound}.com/";
+            var client = new KinlySelfTestHttpClient(new HttpClient(new FakeHttpMessageHandler()), _kinlyConfigOptions, _loggerMock.Object);
 
             var result = await client.GetTestCallScoreAsync(It.IsAny<Guid>());
 
@@ -41,11 +40,11 @@ namespace VideoApi.UnitTests.Clients
         [Test]
         public async Task GetTestCallScoreAsync_test_call_result_object_passed_good()
         {
-            _servicesConfigOptions.Value.KinlySelfTestApiUrl = $"http://{HttpStatusCode.OK}.com/";
+            _kinlyConfigOptions.Value.KinlySelfTestApiUrl = $"http://{HttpStatusCode.OK}.com/";
             var client = new KinlySelfTestHttpClient(new HttpClient(new FakeHttpMessageHandler
             {
                 ReturnContent = JsonConvert.SerializeObject(new Testcall{ Passed = true, Score = (int)TestScore.Good, User_id = Guid.NewGuid().ToString() })
-            }), _servicesConfigOptions, _loggerMock.Object);
+            }), _kinlyConfigOptions, _loggerMock.Object);
 
             var result = await client.GetTestCallScoreAsync(It.IsAny<Guid>());
 

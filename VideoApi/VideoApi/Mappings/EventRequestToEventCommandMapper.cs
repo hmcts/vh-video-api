@@ -3,6 +3,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Models;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -11,8 +12,7 @@ namespace VideoApi.Mappings
         public static SaveEventCommand MapEventRequestToEventCommand(Guid conferenceId, ConferenceEventRequest request)
         {
             GetRoomTypeEnums(request, out var transferTo, out var transferFrom);
-
-            var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType,
+            var command = new SaveEventCommand(conferenceId, request.EventId, request.EventType.MapToDomainEnum(),
                 request.TimeStampUtc, transferFrom, transferTo, request.Reason, request.Phone);
             if (Guid.TryParse(request.ParticipantId, out var participantId))
             {
@@ -33,7 +33,7 @@ namespace VideoApi.Mappings
             return new CallbackEvent
             {
                 EventId = request.EventId,
-                EventType = request.EventType,
+                EventType = request.EventType.MapToDomainEnum(),
                 ConferenceId = conferenceId,
                 Reason = request.Reason,
                 TransferTo = transferTo,

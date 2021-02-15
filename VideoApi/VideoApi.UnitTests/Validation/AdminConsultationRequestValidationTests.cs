@@ -5,7 +5,7 @@ using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
@@ -75,7 +75,7 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.ConferenceId = Guid.NewGuid())
                 .With(x => x.RequestedFor = Guid.NewGuid())
                 .With(x => x.Answer = ConsultationAnswer.Accepted)
-                .With(x => x.RoomLabel = RoomType.ConsultationRoom.ToString())
+                .With(x => x.RoomLabel = "ConsultationRoom")
                 .Build();
             return request;
         }

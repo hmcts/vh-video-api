@@ -15,6 +15,8 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
+using VideoApi.Domain.Validations;
+using VideoApi.Extensions;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
 
@@ -136,14 +138,14 @@ namespace VideoApi.Controllers
 
             if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
             {
-                var message = "Endpoint does not have a defence advocate linked";
+                const string message = "Endpoint does not have a defence advocate linked";
                 _logger.LogWarning(message);
                 return Unauthorized(message);
             }
 
             if (!endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
-                var message = "Defence advocate is not allowed to speak to requested endpoint";
+                const string message = "Defence advocate is not allowed to speak to requested endpoint";
                 _logger.LogWarning(message);
                 return Unauthorized(message);
             }
@@ -225,7 +227,8 @@ namespace VideoApi.Controllers
         {
             try
             {
-                var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType);
+                var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
+                    request.RoomType.MapToDomainEnum());
                 await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
                 return Ok(room);
@@ -233,21 +236,21 @@ namespace VideoApi.Controllers
             catch (ConferenceNotFoundException ex)
             {
                 _logger.LogError(ex,
-                    "Cannot create consultation for conference: {conferenceId} as the conference does not exist",
+                    "Cannot create consultation for conference: {ConferenceId} as the conference does not exist",
                     request.ConferenceId);
                 return NotFound("Conference does not exist");
             }
             catch (ParticipantNotFoundException ex)
             {
                 _logger.LogError(ex,
-                    "Cannot create consultation with participant: {participantId} as the participant does not exist",
+                    "Cannot create consultation with participant: {ParticipantId} as the participant does not exist",
                     request.RequestedBy);
                 return NotFound("Participant doesn't exist");
             }
             catch (KinlyApiException ex)
             {
                 _logger.LogError(ex,
-                    "Unable to create a consultation room for ConferenceId: {conferenceId}",
+                    "Unable to create a consultation room for ConferenceId: {ConferenceId}",
                     request.ConferenceId);
                 return BadRequest("Consultation room creation failed");
             }

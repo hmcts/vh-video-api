@@ -31,6 +31,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.State).HasDefaultValue(ParticipantState.NotSignedIn);
 
             builder.HasMany<ParticipantStatus>("ParticipantStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.LinkedParticipants).WithOne(x => x.Participant).HasForeignKey(x => x.ParticipantId);
         }
     }
 }

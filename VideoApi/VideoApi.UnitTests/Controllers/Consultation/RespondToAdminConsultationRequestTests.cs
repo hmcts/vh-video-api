@@ -4,8 +4,9 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
@@ -24,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ConferenceId = conferenceId,
                 RequestedBy = requestedBy.Id,
                 RequestedFor = participant.Id,
-                RoomLabel = RoomType.ConsultationRoom.ToString(),
+                RoomLabel = "ConsultationRoom",
                 Answer = ConsultationAnswer.Accepted
             };
 
@@ -46,7 +47,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 RequestedFor = participant.Id,
-                RoomLabel = RoomType.ConsultationRoom.ToString(),
+                RoomLabel = "ConsultationRoom",
                 Answer = ConsultationAnswer.Rejected
             };
 
@@ -67,7 +68,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 RequestedFor = Guid.NewGuid(),
-                RoomLabel = RoomType.ConsultationRoom.ToString(),
+                RoomLabel = "ConsultationRoom",
                 Answer = ConsultationAnswer.Rejected
             };
 

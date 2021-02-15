@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
-using VideoApi.Domain.Enums;
+using VideoApi.Contract.Enums;
 using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation

@@ -103,7 +103,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conferences.Should().BeEmpty();
         }
         
-                [Test]
+        [Test]
         public async Task Should_return_conferences_with_judges_in_hearing_or_available()
         {
             var today = DateTime.Today.AddHours(10);

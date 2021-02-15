@@ -11,10 +11,12 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 
@@ -57,16 +59,25 @@ namespace VideoApi.Controllers
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
-                        x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole, x.HearingRole,
-                        x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
+                        x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole.MapToDomainEnum(),
+                        x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
                     {
                         Representee = x.Representee
                     })
                 .ToList();
+            
+            var linkedParticipants = request.Participants
+                .SelectMany(x => x.LinkedParticipants)
+                .Select(x => new LinkedParticipantDto()
+                {
+                    ParticipantRefId = x.ParticipantRefId, 
+                    LinkedRefId = x.LinkedRefId, 
+                    Type = x.Type.MapToDomainEnum()
+                }).ToList();
 
             try
             {
-                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants);
+                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants, linkedParticipants);
                 await _commandHandler.Handle(addParticipantCommand);
 
                 return NoContent();
@@ -95,9 +106,16 @@ namespace VideoApi.Controllers
             _logger.LogDebug("UpdateParticipantDetails");
             try
             {
+                var linkedParticipants = request.LinkedParticipants.Select(x => new LinkedParticipantDto()
+                    {
+                        ParticipantRefId = x.ParticipantRefId, 
+                        LinkedRefId = x.LinkedRefId, 
+                        Type = x.Type.MapToDomainEnum()
+                    }).ToList();
+                
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
                     request.Fullname, request.FirstName, request.LastName, request.DisplayName, request.Representee,
-                    request.ContactEmail, request.ContactTelephone);
+                    request.ContactEmail, request.ContactTelephone, linkedParticipants);
                 if (!request.Username.IsNullOrEmpty())
                 {
                     updateParticipantDetailsCommand.Username = request.Username;
@@ -251,7 +269,7 @@ namespace VideoApi.Controllers
 
             if (request == null)
             {
-                _logger.LogWarning($"AddHeartbeatRequest is null");
+                _logger.LogWarning("AddHeartbeatRequest is null");
                 return BadRequest();
             }
 

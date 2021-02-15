@@ -2,6 +2,6 @@ namespace Testing.Common.Configuration
 {
     public class ConnectionStringsConfig
     {
-        public string VhVideoApi { get; set; }
+        public string VideoApi { get; set; }
     }
 }

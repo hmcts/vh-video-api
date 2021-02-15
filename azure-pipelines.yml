@@ -56,15 +56,9 @@ parameters:
       secret: true
       
     # Services Configuration
-    - name: Services:KinlyApiUrl
-      value: $(KinlyApiUrl)
-    - name: Services:KinlySelfTestApiUrl
-      value: $(KinlySelfTestApiUrl)
     - name: Services:CallbackUri
       value: $(CallbackUri)
-    - name: Services:ConferenceUsername
-      value: $(ConferenceUsername)
-    - name: Services:VhVideoApiResourceId
+    - name: Services:VideoApiResourceId
       value: vh-video-api-identifieruris
       secret: true
 
@@ -109,6 +103,14 @@ parameters:
     # Kinly Configuration
     - name: KinlyConfiguration:ConferencePhoneNumber
       value: $(ConferencePhoneNumber)
+    - name: KinlyConfiguration:KinlyApiUrl
+      value: $(KinlyApiUrl)
+    - name: KinlyConfiguration:KinlySelfTestApiUrl
+      value: $(KinlySelfTestApiUrl)
+    - name: KinlyConfiguration:ConferenceUsername
+      value: $(ConferenceUsername)
+    - name: KinlyConfiguration:CallbackUri
+      value: $(CallbackUri)
 
 - name: appSettings
   type: object
@@ -129,14 +131,11 @@ parameters:
       value: "false"
       
     # Services Configuration
-    - name: Services:KinlyApiUrl
-      value: $(KinlyApiUrl)
-    - name: Services:KinlySelfTestApiUrl
-      value: $(KinlySelfTestApiUrl)
     - name: Services:CallbackUri
       value: $(CallbackUri)
-    - name: Services:ConferenceUsername
-      value: $(ConferenceUsername)
+    - name: Services:VideoApiResourceId
+      value: vh-video-api-identifieruris
+      secret: true
 
     # Wowza Configuration
     - name: WowzaConfiguration:RestApiEndpoints
@@ -185,9 +184,21 @@ parameters:
       value: $(CallbackKey)
     - name: KinlyConfiguration:SelfTestApiSecret
       value: $(SelfTestApiKey)
+    - name: KinlyConfiguration:KinlyApiUrl
+      value: $(KinlyApiUrl)
+    - name: KinlyConfiguration:KinlySelfTestApiUrl
+      value: $(KinlySelfTestApiUrl)
+    - name: KinlyConfiguration:ConferenceUsername
+      value: $(ConferenceUsername)
+    - name: KinlyConfiguration:CallbackUri
+      value: $(CallbackUri)
+    - name: KinlyConfiguration:PexipNode
+      value: $(PexipNode)
+    - name: KinlyConfiguration:PexipSelfTestNode
+      value: $(PexipSelfTestNode)
 
     # Connection strings
-    - name: ConnectionStrings:VhVideoApi
+    - name: ConnectionStrings:VideoApi
       value: VhVideoDatabaseConnectionString
       secret: true
 
