@@ -32,6 +32,7 @@ namespace VideoApi
 
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment Environment { get; }
+        public SettingsConfiguration SettingsConfiguration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -70,6 +71,7 @@ namespace VideoApi
 
         private void RegisterSettings(IServiceCollection services)
         {
+            SettingsConfiguration = Configuration.Get<SettingsConfiguration>();
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
             services.Configure<WowzaConfiguration>(options => Configuration.Bind("WowzaConfiguration", options));
@@ -120,7 +122,7 @@ namespace VideoApi
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
+            else if(!SettingsConfiguration.DisableHttpsRedirection)
             {
                 app.UseHsts();
                 app.UseHttpsRedirection();
