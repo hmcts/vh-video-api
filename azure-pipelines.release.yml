@@ -97,6 +97,7 @@ extends:
              - AAT
              - Test1
              - Test2
+             - Test3
           - group: KinlyConfiguration_Test2
             env:
              - Demo
@@ -111,7 +112,10 @@ extends:
              - Preview
              - Dev
              - AAT
+             - Sandbox
              - Test1
+             - Test2
+             - Test3
           - group: vh-wowza-demo
             env:
              - Demo
@@ -126,7 +130,10 @@ extends:
              - Preview
              - Dev
              - AAT
+             - Sandbox
              - Test1
+             - Test2            
+             - Test3
              - Demo
              - Preprod
           - group: cvp-wowza-prod
