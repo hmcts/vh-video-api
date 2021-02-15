@@ -219,7 +219,7 @@ namespace VideoApi.Controllers
 
         [HttpPost("start")]
         [OpenApiOperation("StartPrivateConsultation")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -231,7 +231,7 @@ namespace VideoApi.Controllers
                     request.RoomType.MapToDomainEnum());
                 await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
-                return Ok(room);
+                return Accepted();
             }
             catch (ConferenceNotFoundException ex)
             {
