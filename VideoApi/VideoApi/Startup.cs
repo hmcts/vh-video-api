@@ -122,7 +122,7 @@ namespace VideoApi
             {
                 app.UseDeveloperExceptionPage();
             }
-            else if(SettingsConfiguration.DisableHttpsRedirection)
+            else if(!SettingsConfiguration.DisableHttpsRedirection)
             {
                 app.UseHsts();
                 app.UseHttpsRedirection();
