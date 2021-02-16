@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Domain;
@@ -30,7 +31,11 @@ namespace Testing.Common.Helper.Builders.Domain
 
             var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
             const string caseType = "Civil Money Claims";
-            var caseNumber = $"{GenerateRandom.CaseNumber(new Random())}";
+            var randomGenerator = RandomNumberGenerator.Create(); // Compliant for security-sensitive use cases
+            var data = new byte[2];
+            randomGenerator.GetBytes(data);
+
+            var caseNumber = $"{BitConverter.ToString(data)}";
             const string caseName = CaseName;
             const int scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
