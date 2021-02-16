@@ -76,5 +76,24 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
+
+        [Test]
+        public async Task Should_return_notfound_when_no_room_label_provided()
+        {
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.GetParticipants()[3];
+
+            var request = new ConsultationRequestResponse
+            {
+                ConferenceId = conferenceId,
+                RequestedFor = participant.Id,
+                RoomLabel = "",
+                Answer = ConsultationAnswer.Rejected
+            };
+
+            var result = await Controller.RespondToConsultationRequestAsync(request);
+            var typedResult = (NotFoundResult)result;
+            typedResult.Should().NotBeNull();
+        }
     }
 }

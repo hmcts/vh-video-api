@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -76,6 +77,42 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
+            typedResult.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task Should_return_ok_for_lock_room_request()
+        {
+            var conferenceId = TestConference.Id;
+
+            var request = new LockRoomRequest
+            {
+                ConferenceId = conferenceId,
+                RoomLabel = "ConsultationRoom",
+                Lock = true
+            };
+
+            var result = await Controller.LockRoomRequestAsync(request);
+            var typedResult = (OkResult)result;
+            typedResult.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task Should_return_notfound_for_lock_room_request()
+        {
+            var conferenceId = TestConference.Id;
+
+            var request = new LockRoomRequest
+            {
+                ConferenceId = conferenceId,
+                RoomLabel = "ConsultationRoom",
+                Lock = true
+            };
+            CommandHandlerMock
+               .Setup(x => x.Handle(It.IsAny<LockRoomCommand>())).Throws(new RoomNotFoundException(12345));
+
+            var result = await Controller.LockRoomRequestAsync(request);
+            var typedResult = (NotFoundObjectResult)result;
             typedResult.Should().NotBeNull();
         }
     }
