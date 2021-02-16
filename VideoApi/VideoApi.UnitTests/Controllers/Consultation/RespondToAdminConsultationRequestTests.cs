@@ -1,12 +1,10 @@
-using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using VideoApi.Contract.Enums;
+using System;
+using System.Threading.Tasks;
 using VideoApi.Contract.Requests;
-using VideoApi.Extensions;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
@@ -82,11 +80,12 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[3];
-
+            var requestedBy = TestConference.GetParticipants()[2].Id;
             var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
                 RequestedFor = participant.Id,
+                RequestedBy = requestedBy,
                 RoomLabel = "",
                 Answer = ConsultationAnswer.Rejected
             };
