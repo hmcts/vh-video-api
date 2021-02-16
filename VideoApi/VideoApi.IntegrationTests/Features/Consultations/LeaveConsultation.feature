@@ -8,4 +8,4 @@ Scenario: Leave Consultation for a Judge Joh
 	And the judge joh is in the consultation room
 	And I have a valid leave consultation request
 	When I send the request to the endpoint
-	Then the response should have the status Ok and success status True
+	Then the response should have the status NoContent and success status True

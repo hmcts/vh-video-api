@@ -369,7 +369,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
-                conferenceResponse.Participants.First(x => x.UserRole.Equals(UserRole.Judge));
+                conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
             var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
 
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
