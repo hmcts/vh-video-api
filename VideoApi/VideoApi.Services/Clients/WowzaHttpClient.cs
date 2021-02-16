@@ -30,7 +30,7 @@ namespace VideoApi.Services.Clients
                 StreamConfig = new StreamConfigurationConfig
                 {
                     CreateStorageDir = true,
-                    StreamType = "live-record",
+                    StreamType = "live",
                     StorageDir = $"{storageDirectory}{applicationName}",
                     StorageDirExists = false
                 },
