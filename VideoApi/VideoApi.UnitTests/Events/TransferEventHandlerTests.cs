@@ -88,7 +88,7 @@ namespace VideoApi.UnitTests.Events
                 EventId = Guid.NewGuid().ToString(),
                 ConferenceId = conference.Id,
                 ParticipantId = participantForEvent.Id,
-                TransferFrom = null,
+                TransferFrom = RoomType.ConsultationRoom,
                 TransferredFromRoomLabel = "JudgeConsultationRoom3",
                 TransferTo = RoomType.HearingRoom,
                 TransferredToRoomLabel = RoomType.HearingRoom.ToString(),

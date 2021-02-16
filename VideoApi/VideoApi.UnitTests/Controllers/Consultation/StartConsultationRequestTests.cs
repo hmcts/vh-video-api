@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var result = await Controller.StartConsultationRequestAsync(request);
 
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<AcceptedResult>();
         }
 
         [Test]

@@ -43,6 +43,12 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var participantId = TestConference.Participants[0].Id;
             var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH, false);
             TestConference.Participants[0].CurrentVirtualRoom = vRoom;
+            TestConference.Participants[0].CurrentVirtualRoomId = 1;
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
+                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
+                .ReturnsAsync(TestConference);
+
             var fromRoom = "ConsultationRoom";
             var toRoom = "WaitingRoom";
             var leaveConsultationRequest = new LeaveConsultationRequest
@@ -53,12 +59,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 (It.IsAny<GetConferenceByIdQuery>()), Times.Once);
             ConsultationService.Verify(v => v.LeaveConsultationAsync
                     (leaveConsultationRequest.ConferenceId, leaveConsultationRequest.ParticipantId, fromRoom, toRoom),
+                Times.Never);
+            VideoPlatformServiceMock.Verify(v => v.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom),
                 Times.Once);
-            VideoPlatformServiceMock.VerifyNoOtherCalls();
         }
 
         [Test]
-        public async Task Should_Return_BadRequest_When_Participant_Cannot_Be_Found()
+        public async Task Should_Return_NoContent_When_Participant_Cannot_Be_Found_In_Consultation_Room()
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
@@ -77,7 +84,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
 
-            var actionResult = result.As<BadRequestObjectResult>();
+            var actionResult = result.As<NoContentResult>();
             actionResult.Should().NotBeNull();
         }
     }
