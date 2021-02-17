@@ -22,7 +22,7 @@ namespace VideoApi.UnitTests.Validation
         {
             var request = new UpdateTaskRequest
             {
-                UpdatedBy = "foo@foo.com"
+                UpdatedBy = "foo@hmcts.net"
             };
 
             var result = await _validator.ValidateAsync(request);

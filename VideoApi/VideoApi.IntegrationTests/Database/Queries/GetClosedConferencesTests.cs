@@ -59,7 +59,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             // conference in session.
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: currentHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
@@ -68,7 +68,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             // closed conferences with no messages.
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -77,7 +77,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -87,7 +87,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             // closed conferences with messages.
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithMessages(10)
                 .WithConferenceStatus(ConferenceState.Closed)
@@ -97,7 +97,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conferenceList.Add(conference4);
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithMessages(10)
                 .WithConferenceStatus(ConferenceState.Closed)
@@ -107,7 +107,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conferenceList.Add(conference5);
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithMessages(10)
                 .WithConferenceStatus(ConferenceState.Closed)
@@ -117,7 +117,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             conferenceList.Add(conference6);
 
             var conference7 = new ConferenceBuilder(true, scheduledDateTime: veryOldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithMessages(10)
                 .WithConferenceStatus(ConferenceState.Closed)

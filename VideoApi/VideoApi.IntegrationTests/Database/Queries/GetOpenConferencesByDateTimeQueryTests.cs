@@ -49,28 +49,28 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var beyondTimeLimit = utcDate.AddHours(10);
             
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: expired)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             _conference1Id = conference1.Id;
             
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: withinTimeLimit)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             _conference2Id = conference2.Id;
             
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: beyondTimeLimit)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .Build();
             _conference3Id = conference3.Id;
             
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: expired)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();

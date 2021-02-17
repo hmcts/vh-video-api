@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void Should_add_participant_status()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Claimant")
+                .WithCaseTypeGroup("Applicant")
                 .Build();
             
             var beforeCount = participant.GetParticipantStatuses().Count;

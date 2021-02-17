@@ -35,7 +35,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_save_new_conference()
         {
             var hearingRefId = Guid.NewGuid();
-            const string caseType = "Civil Money Claims";
+            const string caseType = "Generic";
             var scheduledDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             const string caseNumber = "AutoTest Create Command 1234";
             const string caseName = "AutoTest vs Manual Test";
@@ -77,7 +77,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_save_new_conference_with_linked_participants()
         {
             var hearingRefId = Guid.NewGuid();
-            const string caseType = "Civil Money Claims";
+            const string caseType = "Generic";
             var scheduledDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             const string caseNumber = "AutoTest Create Command 1234";
             const string caseName = "AutoTest vs Manual Test";
@@ -132,7 +132,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_participant_link_exception_when_id_doesnt_match()
         {
             var hearingRefId = Guid.NewGuid();
-            const string caseType = "Civil Money Claims";
+            const string caseType = "Generic";
             var scheduledDateTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
             const string caseNumber = "AutoTest Create Command 1234";
             const string caseName = "AutoTest vs Manual Test";

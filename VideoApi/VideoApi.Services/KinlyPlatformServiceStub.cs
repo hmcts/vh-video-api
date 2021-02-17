@@ -106,9 +106,9 @@ namespace VideoApi.Services
 
         private static MeetingRoom Create()
         {
-            var adminUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
-            var judgeUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
-            var participantUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
+            var adminUri = "https://ext-node02.com/webapp/#/?conference=user@hmcts.net";
+            var judgeUri = "https://ext-node02.com/webapp/#/?conference=user@hmcts.net";
+            var participantUri = "https://ext-node02.com/webapp/#/?conference=user@hmcts.net";
             var pexipNode = "join.node.com";
             var telephoneConferenceId = "12345678";
             return new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);

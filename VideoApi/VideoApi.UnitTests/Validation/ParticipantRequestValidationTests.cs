@@ -174,11 +174,11 @@ namespace VideoApi.UnitTests.Validation
         private ParticipantRequest BuildRequest()
         {
             return Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.CaseTypeGroup = "Claimant")
+                .With(x => x.CaseTypeGroup = "Applicant")
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.HearingRole = "Litigant in person")
                 .With(x => x.Name = Name.FullName())
-                .With(x => x.Username = Internet.Email())
+                .With(x => x.Username = $"{RandomNumber.Next()}@hmcts.com")
                 .Build();
         }
     }

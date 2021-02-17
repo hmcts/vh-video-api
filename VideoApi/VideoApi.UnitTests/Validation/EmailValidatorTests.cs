@@ -10,7 +10,7 @@ namespace VideoApi.UnitTests.Validation
         [Test]
         public void Should_pass_validation_with_good_email()
         {
-            var email = Internet.Email();
+            var email = $"{RandomNumber.Next()}@hmcts.net";
             email.IsValidEmail().Should().BeTrue();
         }
 

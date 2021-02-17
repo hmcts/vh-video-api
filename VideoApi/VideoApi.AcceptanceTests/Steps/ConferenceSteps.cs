@@ -62,8 +62,8 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var endpoints = new List<AddEndpointRequest>
             {
-                new AddEndpointRequest {DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@test.com", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                new AddEndpointRequest {DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@test.com", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                new AddEndpointRequest {DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
+                new AddEndpointRequest {DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
             };
             
             CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), endpoints: endpoints);
@@ -401,8 +401,8 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge(judgeFirstName)
-                .WithRepresentative("Claimant").WithIndividual("Claimant")
-                .WithRepresentative("Defendant").WithIndividual("Defendant")
+                .WithRepresentative("Applicant").WithIndividual("Applicant")
+                .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .WithHearingRefId(Guid.NewGuid())
                 .WithDate(date)
                 .WithAudiorecordingRequired(audioRequired)

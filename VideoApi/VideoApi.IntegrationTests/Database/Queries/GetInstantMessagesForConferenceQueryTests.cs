@@ -27,7 +27,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async Task Should_retrieve_all_messages()
         {
             var conference = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
                 .WithParticipant(UserRole.Judge, "Judge")
                 .Build();
 
@@ -52,7 +52,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async Task Should_retrieve_all_messages_for_the_participant()
         {
             var conference = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
                 .WithParticipant(UserRole.Judge, "Judge")
                 .Build();
 

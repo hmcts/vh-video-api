@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.MeetingRoom
         {
             // Arrange
             var conference = new ConferenceBuilder()
-                .WithMeetingRoom("https://poc.node.com", "user@email.com", true)
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net", true)
                 .Build();
 
             // Act/Assert
@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Domain.MeetingRoom
         {
             // Arrange
             var conference = new ConferenceBuilder()
-                .WithMeetingRoom("https://poc.node.com", "user@email.com", false)
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net", false)
                 .Build();
 
             // Act/Assert
@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Domain.MeetingRoom
         {
             // Arrange
             var conference = new ConferenceBuilder()
-                .WithMeetingRoom(null, "user@email.com", true)
+                .WithMeetingRoom(null, "user@hmcts.net", true)
                 .Build();
 
             // Act/Assert

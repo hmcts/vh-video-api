@@ -31,7 +31,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var knownHearingRefId = Guid.NewGuid();
             var seededConference = new ConferenceBuilder(true, knownHearingRefId)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithEndpoints(new List<Endpoint>
@@ -52,14 +52,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var knownHearingRefId = Guid.NewGuid();
             var conference1 = new ConferenceBuilder(true, knownHearingRefId)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             _newConferenceId1 = conference1.Id;
 
             var conference2 = new ConferenceBuilder(true, knownHearingRefId)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
@@ -78,7 +78,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var knownHearingRefId = Guid.NewGuid();
             var conference1 = new ConferenceBuilder(true, knownHearingRefId)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();

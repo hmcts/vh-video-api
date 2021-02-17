@@ -31,10 +31,10 @@ namespace VideoApi.UnitTests.Services
             _roomReservationService = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .Build();
         }
 

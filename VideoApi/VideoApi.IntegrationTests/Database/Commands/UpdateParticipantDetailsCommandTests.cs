@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = Guid.NewGuid();
 
             var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@test.com", "1234", new List<LinkedParticipantDto>());
+                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>());
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = Guid.NewGuid();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@test.com", "1234", new List<LinkedParticipantDto>());
+                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>());
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -63,7 +63,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", new List<LinkedParticipantDto>());
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>());
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
@@ -73,7 +73,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.Name.Should().Be("fullname");
             updatedParticipant.FirstName.Should().Be("firstName");
             updatedParticipant.LastName.Should().Be("lastName");
-            updatedParticipant.ContactEmail.Should().Be("new@test.com");
+            updatedParticipant.ContactEmail.Should().Be("new@hmcts.net");
             updatedParticipant.ContactTelephone.Should().Be("0123456789");
         }
         
@@ -119,7 +119,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             };
             
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", newLinkedParticipants);
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants);
             
             await _handler.Handle(command);
 
@@ -176,7 +176,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             };
             
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", newLinkedParticipants);
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants);
             
             var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
             exception.LinkRefId.Should().Be(participantA.ParticipantRefId);
@@ -192,9 +192,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@test.com", "0123456789", new List<LinkedParticipantDto>())
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>())
             {
-                Username = "newUser@updated.com"
+                Username = "newUser@hmcts.net"
             };
             await _handler.Handle(command);
 
@@ -205,7 +205,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.Name.Should().Be("fullname");
             updatedParticipant.FirstName.Should().Be("firstName");
             updatedParticipant.LastName.Should().Be("lastName");
-            updatedParticipant.ContactEmail.Should().Be("new@test.com");
+            updatedParticipant.ContactEmail.Should().Be("new@hmcts.net");
             updatedParticipant.ContactTelephone.Should().Be("0123456789");
             updatedParticipant.Username.Should().Be(command.Username);
         }

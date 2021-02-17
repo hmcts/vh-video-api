@@ -51,42 +51,42 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
             var yesterday = DateTime.Today.AddDays(-1).AddHours(10);
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             _newConferenceId1 = conference1.Id;
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.InConsultation)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             _newConferenceId2 = conference2.Id;
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.NotSignedIn)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .Build();
             _newConferenceId3 = conference3.Id;
 
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
             _newConferenceId4 = conference4.Id;
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
             _newConferenceId5 = conference5.Id;
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Disconnected)
                 .Build();
             _newConferenceId6 = conference6.Id;
@@ -110,42 +110,42 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
             var yesterday = DateTime.Today.AddDays(-1).AddHours(10);
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             _newConferenceId1 = conference1.Id;
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.InHearing)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
             _newConferenceId2 = conference2.Id;
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .Build();
             _newConferenceId3 = conference3.Id;
 
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
             _newConferenceId4 = conference4.Id;
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
             _newConferenceId5 = conference5.Id;
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null, participantState: ParticipantState.Available)
                 .Build();
             _newConferenceId6 = conference6.Id;

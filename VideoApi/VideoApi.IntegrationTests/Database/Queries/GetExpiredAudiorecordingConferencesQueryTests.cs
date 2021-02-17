@@ -87,7 +87,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private Domain.Conference GetTestDataConference(DateTime startTime, bool audioRecording, ConferenceState conferenceStatus)
         {
             var conference = new ConferenceBuilder(true, scheduledDateTime: startTime)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(conferenceStatus)
                 .WithAudioRecordingRequired(audioRecording)

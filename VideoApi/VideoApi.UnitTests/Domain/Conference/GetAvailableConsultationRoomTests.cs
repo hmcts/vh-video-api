@@ -14,8 +14,8 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_return_first_consultation_room_when_no_rooms_occupied()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
                 .Build();
 
             var availableRoom = conference.GetAvailableConsultationRoom();
@@ -26,8 +26,8 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_return_second_consultation_room_when_first_is_occupied()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
                 .Build();
             
             conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
@@ -40,9 +40,9 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_return_second_consultation_room_when_first_is_occupied_by_endpoint()
         {
             var conference = new ConferenceBuilder()
-                .WithEndpoint("First EP", "ep12345@test.hearings.reform.hmcts.net")
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithEndpoint("First EP", "ep12345@hmcts.net")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
                 .Build();
             
             conference.Endpoints[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
@@ -55,8 +55,8 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_return_first_consultation_room_when_second_is_occupied()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
                 .Build();
             
             conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom2);
@@ -70,9 +70,9 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_return_first_consultation_room_when_second_is_occupied_by_endpoint()
         {
             var conference = new ConferenceBuilder()
-                .WithEndpoint("First EP", "ep12345@test.hearings.reform.hmcts.net")
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithEndpoint("First EP", "ep12345@hmcts.net")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
                 .Build();
             
             conference.Endpoints[0].UpdateCurrentRoom(RoomType.ConsultationRoom2);
@@ -96,9 +96,9 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_throw_exception_when_no_room_is_available()
         {
             var conference = new ConferenceBuilder()
-                .WithEndpoint("First EP", "ep12345@test.hearings.reform.hmcts.net")
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
+                .WithEndpoint("First EP", "ep12345@hmcts.net")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
                 .Build();
             
             conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);

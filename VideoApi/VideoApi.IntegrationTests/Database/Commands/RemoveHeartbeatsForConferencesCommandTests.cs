@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var hearingOlderThan14Days = utcDate.AddDays(-14);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingOlderThan14Days)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -78,7 +78,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var hearingWithin14Days = utcDate.AddDays(-13);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingWithin14Days)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();

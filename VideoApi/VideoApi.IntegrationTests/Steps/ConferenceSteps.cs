@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Steps
                 }
 
                 case Scenario.Nonexistent:
-                    username = Internet.Email();
+                    username = $"{RandomNumber.Next()}@hmcts.com";
                     break;
                 case Scenario.Invalid:
                     username = "invalidemail";
@@ -76,7 +76,7 @@ namespace VideoApi.IntegrationTests.Steps
                 }
 
                 case Scenario.Nonexistent:
-                    username = Internet.Email();
+                    username = $"{RandomNumber.Next()}@hmcts.com";
                     break;
                 case Scenario.Invalid:
                     username = "invalidemail";
@@ -185,8 +185,8 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge()
-                .WithRepresentative("Claimant").WithIndividual("Claimant")
-                .WithRepresentative("Defendant").WithIndividual("Defendant")
+                .WithRepresentative("Applicant").WithIndividual("Applicant")
+                .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .Build();
             if (scenario == Scenario.Invalid)
             {
@@ -209,8 +209,8 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge()
-                .WithRepresentative("Claimant").WithIndividualAndInterpreter("Claimant")
-                .WithRepresentative("Defendant").WithIndividual("Defendant")
+                .WithRepresentative("Applicant").WithIndividualAndInterpreter("Applicant")
+                .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .Build();
 
             _context.Uri = BookNewConference;
@@ -224,12 +224,12 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge()
-                .WithRepresentative("Claimant").WithIndividual("Claimant")
-                .WithRepresentative("Defendant").WithIndividual("Defendant")
+                .WithRepresentative("Applicant").WithIndividual("Applicant")
+                .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .WithEndpoints(new List<AddEndpointRequest>
                 {
-                    new AddEndpointRequest{DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@test.com", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                    new AddEndpointRequest{DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@test.com", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                    new AddEndpointRequest{DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
+                    new AddEndpointRequest{DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
                 })
                 .Build();
 

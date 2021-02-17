@@ -41,7 +41,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingClosed3Months)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -82,7 +82,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var hearingclosed1Month = utcDate.AddMonths(-1).AddMinutes(-50);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: hearingclosed1Month)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -116,7 +116,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var futureHearing = utcDate.AddMonths(1);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: futureHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
@@ -150,7 +150,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingClosed3Months)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();

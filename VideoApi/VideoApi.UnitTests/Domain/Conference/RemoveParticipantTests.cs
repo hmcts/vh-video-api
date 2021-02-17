@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_remove_participant_from_hearing()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
                 .Build();
 
             var beforeCount = conference.GetParticipants().Count;
@@ -34,16 +34,16 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_not_fail_when_removing_non_existent_participant()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
                 .Build();
 
             var beforeCount = conference.GetParticipants().Count;
             var userRole = UserRole.Representative;
-            var caseGroup = "Claimant";
+            var caseGroup = "Applicant";
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseGroup);
             var participant = Builder<Participant>.CreateNew().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                    Internet.Email(), userRole, hearingRole,caseGroup, Internet.Email(), Phone.Number())).Build();
+                    $"{RandomNumber.Next()}@hmcts.net", userRole, hearingRole,caseGroup, $"{RandomNumber.Next()}@hmcts.net", Phone.Number())).Build();
 
             Action action = () => conference.RemoveParticipant(participant);
 

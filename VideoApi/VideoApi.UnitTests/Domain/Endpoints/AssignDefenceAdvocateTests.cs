@@ -12,7 +12,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
             var defenceAdvocate = "Defence Sol";
             var endpoint = new Endpoint("old name", "123@sip.com", "1234", defenceAdvocate);
 
-            var newDefenceAdvocate = "a@test.com";
+            var newDefenceAdvocate = "a@hmcts.net";
             endpoint.AssignDefenceAdvocate(newDefenceAdvocate);
 
             endpoint.DefenceAdvocate.Should().Be(newDefenceAdvocate);
