@@ -25,9 +25,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_Return_Ok()
         {
             var request = RequestBuilder();
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
+            ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
-            ConsultationService.Setup(x =>
+            ConsultationServiceMock.Setup(x =>
                 x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartConsultationRequestAsync(request);
@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var request = RequestBuilder();
             request.ConferenceId = Guid.NewGuid();
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
+            ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
 
             var result = await Controller.StartConsultationRequestAsync(request);
@@ -54,9 +54,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var request = RequestBuilder();
             request.RequestedBy = Guid.NewGuid();
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
+            ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
-            ConsultationService.Setup(x =>
+            ConsultationServiceMock.Setup(x =>
                     x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
                 .ThrowsAsync(new ParticipantNotFoundException(request.RequestedBy));
 
@@ -74,9 +74,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var kinlyApiException = new KinlyApiException("", (int) HttpStatusCode.BadRequest, "payload",
                 new Dictionary<string, IEnumerable<string>>(), new Exception());
 
-            ConsultationService.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
+            ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
-            ConsultationService
+            ConsultationServiceMock
                 .Setup(x => x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
                 .ThrowsAsync(kinlyApiException);
 
@@ -108,10 +108,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_Start_New_Consultation_Returns_Ok()
         {
             var request = RequestBuilder();
-            ConsultationService.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
+            ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
                 It.IsAny<VideoApi.Domain.Enums.VirtualCourtRoomType>(), It.IsAny<bool>())).ReturnsAsync(_testRoom);
 
-            ConsultationService.Setup(x =>
+            ConsultationServiceMock.Setup(x =>
                 x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);
@@ -123,11 +123,11 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_Start_New_Consultation_Returns_Notfound_conference()
         {
             var request = RequestBuilder();
-            ConsultationService.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
+            ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
                 It.IsAny<VideoApi.Domain.Enums.VirtualCourtRoomType>(), It.IsAny<bool>()))
                 .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
 
-            ConsultationService.Setup(x =>
+            ConsultationServiceMock.Setup(x =>
                 x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);
@@ -139,11 +139,11 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_Start_New_Consultation_Returns_Notfound_participant()
         {
             var request = RequestBuilder();
-            ConsultationService.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
+            ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
                 It.IsAny<VideoApi.Domain.Enums.VirtualCourtRoomType>(), It.IsAny<bool>()))
                 .ThrowsAsync(new ParticipantNotFoundException(Guid.NewGuid()));
 
-            ConsultationService.Setup(x =>
+            ConsultationServiceMock.Setup(x =>
                 x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);
@@ -155,11 +155,11 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_Start_New_Consultation_Returns_BadRequest_for_kinly_exeption()
         {
             var request = RequestBuilder();
-            ConsultationService.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
+            ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
                 It.IsAny<VideoApi.Domain.Enums.VirtualCourtRoomType>(), It.IsAny<bool>()))
                 .ThrowsAsync(new KinlyApiException("Error", 400, "Response", null, null));
 
-            ConsultationService.Setup(x =>
+            ConsultationServiceMock.Setup(x =>
                 x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);

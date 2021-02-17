@@ -18,6 +18,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.State).IsRequired();
             builder.Property(x => x.DefenceAdvocate).HasMaxLength(450);
             builder.Property(x => x.CurrentRoom);
+            builder.Property(x => x.CurrentVirtualRoomId).IsRequired(false);
         }
     }
 }

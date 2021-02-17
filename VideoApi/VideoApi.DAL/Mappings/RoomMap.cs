@@ -13,6 +13,7 @@ namespace VideoApi.DAL.Mappings
             builder.HasKey(x => x.Id);
 
             builder.HasMany(x => x.RoomParticipants).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.RoomEndpoints).WithOne().OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(x => x.ConferenceId);
             builder.Property(x => x.Label);

@@ -121,7 +121,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                     StringComparison.CurrentCultureIgnoreCase));
 
             var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
-            ConsultationService.Setup(x => x.CreateNewConsultationRoomAsync(TestConference.Id, VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false)).ReturnsAsync(room);
+            ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(TestConference.Id, VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false)).ReturnsAsync(room);
 
 
             var request = new EndpointConsultationRequest()

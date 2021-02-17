@@ -17,8 +17,12 @@ namespace VideoApi.DAL.Commands
         public RoomType? Room { get; }
         public string RoomLabel { get; }
 
-        public UpdateParticipantStatusAndRoomCommand(Guid conferenceId, Guid participantId,
-            ParticipantState participantState, RoomType? room, string roomLabel)
+        public UpdateParticipantStatusAndRoomCommand(
+            Guid conferenceId,
+            Guid participantId,
+            ParticipantState participantState,
+            RoomType? room,
+            string roomLabel)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;

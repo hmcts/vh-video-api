@@ -35,6 +35,18 @@ namespace VideoApi.UnitTests.Domain
         }
 
         [Test]
+        public void Should_add_endpoint_to_room()
+        {
+            var endpointId = Guid.NewGuid();
+            var roomEndpoint = new RoomEndpoint(endpointId);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+            room.AddEndpoint(roomEndpoint);
+
+            room.RoomEndpoints.Count.Should().Be(1);
+            room.RoomEndpoints[0].EndpointId.Should().Be(endpointId);
+        }
+
+        [Test]
         public void Should_not_add_existing_participant_to_room_and_throw_exception()
         {
             var participantId = Guid.NewGuid();
@@ -50,6 +62,21 @@ namespace VideoApi.UnitTests.Domain
         }
 
         [Test]
+        public void Should_not_add_existing_endpoint_to_room_and_throw_exception()
+        {
+            var endpointId = Guid.NewGuid();
+            var roomEndpoint = new RoomEndpoint(endpointId);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+            room.AddEndpoint(roomEndpoint);
+            var beforeCount = room.RoomEndpoints.Count;
+
+            Action action = () => room.AddEndpoint(roomEndpoint);
+
+            action.Should().Throw<DomainRuleException>();
+            room.RoomEndpoints.Count.Should().Be(beforeCount);
+        }
+
+        [Test]
         public void Should_remove_participant_from_room()
         {
             var participantId = Guid.NewGuid();
@@ -60,7 +87,21 @@ namespace VideoApi.UnitTests.Domain
 
             room.RemoveParticipant(roomParticipant);
 
-            room.RoomParticipants.Count.Should().BeLessThan(beforeCount);
+            room.RoomParticipants.Count.Should().Be(beforeCount - 1);
+        }
+
+        [Test]
+        public void Should_remove_endpoint_from_room()
+        {
+            var endpointId = Guid.NewGuid();
+            var roomEndpoint = new RoomEndpoint(endpointId);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+            room.AddEndpoint(roomEndpoint);
+            var beforeCount = room.RoomEndpoints.Count;
+
+            room.RemoveEndpoint(roomEndpoint);
+
+            room.RoomEndpoints.Count.Should().Be(beforeCount - 1);
         }
 
         [Test]
@@ -76,6 +117,22 @@ namespace VideoApi.UnitTests.Domain
 
             action.Should().Throw<DomainRuleException>();
             room.RoomParticipants.Count.Should().Be(beforeCount);
+        }
+
+
+        [Test]
+        public void Should_throw_exception_for_remove_non_existing_endpoint_from_room()
+        {
+            var endpointId = Guid.NewGuid();
+            var roomEndpoint = new RoomEndpoint(endpointId);
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+            room.AddEndpoint(roomEndpoint);
+            var beforeCount = room.RoomEndpoints.Count;
+
+            Action action = () => room.RemoveEndpoint(new RoomEndpoint(Guid.NewGuid()));
+
+            action.Should().Throw<DomainRuleException>();
+            room.RoomEndpoints.Count.Should().Be(beforeCount);
         }
 
         [Test]
@@ -96,6 +153,50 @@ namespace VideoApi.UnitTests.Domain
             room.RemoveParticipant(roomParticipant);
 
             room.Status.Should().Be(RoomStatus.Closed);
+        }
+
+        [Test]
+        public void Should_update_room_status_to_closed_on_last_endpoint_remove()
+        {
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+            var roomEndpoint = new RoomEndpoint(Guid.NewGuid());
+            room.RoomEndpoints.Add(roomEndpoint);
+            room.Status.Should().Be(RoomStatus.Live);
+
+            room.RemoveEndpoint(roomEndpoint);
+
+            room.Status.Should().Be(RoomStatus.Closed);
+        }
+
+        [Test]
+        public void Should_not_update_room_status_to_closed_on_last_endpoint_remove_if_has_participant()
+        {
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+            var roomParticipant = new RoomParticipant(Guid.NewGuid());
+            room.RoomParticipants.Add(roomParticipant);
+            var roomEndpoint = new RoomEndpoint(Guid.NewGuid());
+            room.RoomEndpoints.Add(roomEndpoint);
+            room.Status.Should().Be(RoomStatus.Live);
+
+            room.RemoveEndpoint(roomEndpoint);
+
+            room.Status.Should().Be(RoomStatus.Live);
+        }
+
+
+        [Test]
+        public void Should_not_update_room_status_to_closed_on_last_participant_remove_if_has_endpoint()
+        {
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+            var roomParticipant = new RoomParticipant(Guid.NewGuid());
+            room.RoomParticipants.Add(roomParticipant);
+            var roomEndpoint = new RoomEndpoint(Guid.NewGuid());
+            room.RoomEndpoints.Add(roomEndpoint);
+            room.Status.Should().Be(RoomStatus.Live);
+
+            room.RemoveParticipant(roomParticipant);
+
+            room.Status.Should().Be(RoomStatus.Live);
         }
 
         [Test]

@@ -57,15 +57,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
                 (It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-            ConsultationService.Verify(v => v.LeaveConsultationAsync
+            ConsultationServiceMock.Verify(v => v.LeaveConsultationAsync
                     (leaveConsultationRequest.ConferenceId, leaveConsultationRequest.ParticipantId, fromRoom, toRoom),
-                Times.Never);
-            VideoPlatformServiceMock.Verify(v => v.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom),
                 Times.Once);
         }
 
         [Test]
-        public async Task Should_Return_NoContent_When_Participant_Cannot_Be_Found_In_Consultation_Room()
+        public async Task Should_Return_BadRequest_When_Participant_Cannot_Be_Found_In_Consultation_Room()
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
@@ -79,13 +77,17 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var kinlyApiException = new KinlyApiException("", (int) HttpStatusCode.BadRequest, "payload",
                 new Dictionary<string, IEnumerable<string>>(), new Exception());
 
-            ConsultationService.Setup(x => x.LeaveConsultationAsync(leaveConsultationRequest.ConferenceId,
+            ConsultationServiceMock.Setup(x => x.LeaveConsultationAsync(leaveConsultationRequest.ConferenceId,
                 leaveConsultationRequest.ParticipantId, fromRoom, toRoom)).ThrowsAsync(kinlyApiException);
 
             var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
 
-            var actionResult = result.As<NoContentResult>();
-            actionResult.Should().NotBeNull();
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
+                (It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+            ConsultationServiceMock.Verify(v => v.LeaveConsultationAsync
+                    (leaveConsultationRequest.ConferenceId, leaveConsultationRequest.ParticipantId, fromRoom, toRoom),
+                Times.Never);
+            result.Should().BeOfType<BadRequestObjectResult>();
         }
     }
 }

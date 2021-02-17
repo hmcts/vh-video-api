@@ -29,9 +29,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             await Controller.RespondToConsultationRequestAsync(request);
 
-            ConsultationService.Verify(x => x.JoinConsultationRoomAsync(conferenceId, participant.Id, request.RoomLabel),
+            ConsultationServiceMock.Verify(x => x.JoinConsultationRoomAsync(conferenceId, participant.Id, request.RoomLabel),
                 Times.Once);
-            ConsultationService.VerifyNoOtherCalls();
+            ConsultationServiceMock.VerifyNoOtherCalls();
         }
         
         [Test]
@@ -51,10 +51,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             await Controller.RespondToConsultationRequestAsync(request);
 
-            VideoPlatformServiceMock.Verify(x =>
-                    x.TransferParticipantAsync(conferenceId, participant.Id, roomFrom, request.RoomLabel),
+            ConsultationServiceMock.Verify(x =>
+                    x.LeaveConsultationAsync(conferenceId, participant.Id, roomFrom, request.RoomLabel),
                 Times.Never);
-            VideoPlatformServiceMock.VerifyNoOtherCalls();
+            ConsultationServiceMock.VerifyNoOtherCalls();
         }
 
         [Test]

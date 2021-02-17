@@ -24,7 +24,7 @@ namespace VideoApi.Events.Handlers
             var endpointStatus = DeriveEndpointStatusForTransferEvent(callbackEvent);
 
             var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointStatus,
-                callbackEvent.TransferTo);
+                callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
             await CommandHandler.Handle(command);
         }
         

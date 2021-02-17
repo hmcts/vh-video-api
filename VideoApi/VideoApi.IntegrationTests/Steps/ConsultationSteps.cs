@@ -468,8 +468,10 @@ namespace VideoApi.IntegrationTests.Steps
                     .Include("Participants")
                     .SingleAsync(x => x.Id == _context.Test.Conference.Id);
 
-                conference.Participants.Single(x => x.Id == participantId)
-                    .UpdateCurrentRoom(RoomType.ConsultationRoom);
+                var room = new Room(_context.Test.Conference.Id, "TestRoom", VirtualCourtRoomType.Participant, false);
+                var participant = conference.Participants.Single(x => x.Id == participantId);
+                participant.UpdateCurrentRoom(RoomType.ConsultationRoom);
+                participant.UpdateCurrentVirtualRoom(room);
 
                 await db.SaveChangesAsync();
 

@@ -15,7 +15,6 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
-using VideoApi.Domain.Validations;
 using VideoApi.Extensions;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
@@ -31,16 +30,16 @@ namespace VideoApi.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<ConsultationController> _logger;
-        private readonly IVideoPlatformService _videoPlatformService;
         private readonly IConsultationService _consultationService;
 
-        public ConsultationController(IQueryHandler queryHandler,
-            ILogger<ConsultationController> logger, IVideoPlatformService videoPlatformService,
-            IConsultationService consultationService, ICommandHandler commandHandler)
+        public ConsultationController(
+            IQueryHandler queryHandler,
+            ILogger<ConsultationController> logger,
+            IConsultationService consultationService,
+            ICommandHandler commandHandler)
         {
             _queryHandler = queryHandler;
             _logger = logger;
-            _videoPlatformService = videoPlatformService;
             _consultationService = consultationService;
             _commandHandler = commandHandler;
         }
@@ -263,7 +262,7 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPost("leave")]
         [OpenApiOperation("LeaveConsultation")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
@@ -286,13 +285,11 @@ namespace VideoApi.Controllers
 
             if (!participant.CurrentVirtualRoomId.HasValue)
             {
-                // This could only happen when both the participants press 'Close' button at the same time to end the call
-                _logger.LogWarning("Participant is not in a consultation to leave from");
-                return NoContent();
+                return BadRequest("Participant is not in a consultation");
             }
 
-            await _videoPlatformService.TransferParticipantAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());
-            return NoContent();
+            await _consultationService.LeaveConsultationAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());
+            return Ok();
         }
     }
 }
