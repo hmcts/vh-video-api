@@ -27,8 +27,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             result.Should().BeOfType<AcceptedResult>();
             
             VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.WaitingRoom,
-                    RoomType.HearingRoom), Times.Once);
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.WaitingRoom.ToString(),
+                    RoomType.HearingRoom.ToString()), Times.Once);
         }
         
         [Test]
@@ -45,8 +45,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             result.Should().BeOfType<AcceptedResult>();
 
             VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.HearingRoom,
-                    RoomType.WaitingRoom), Times.Once);
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.HearingRoom.ToString(),
+                    RoomType.WaitingRoom.ToString()), Times.Once);
         }
         
         [Test]
@@ -63,8 +63,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 Controller.TransferParticipantAsync(conferenceId, request));
             
             VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, It.IsAny<RoomType>(),
-                    It.IsAny<RoomType>()), Times.Never);
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, It.IsAny<string>(),
+                    It.IsAny<string>()), Times.Never);
         }
 
         [Test]
@@ -82,8 +82,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var exception =
                 new KinlyApiException(message, statusCode, response, null, null);
             VideoPlatformServiceMock
-                .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<RoomType>(),
-                    It.IsAny<RoomType>())).ThrowsAsync(exception);
+                .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(),
+                    It.IsAny<string>())).ThrowsAsync(exception);
 
             var result = await Controller.TransferParticipantAsync(conferenceId, request);
             result.Should().BeOfType<ObjectResult>();

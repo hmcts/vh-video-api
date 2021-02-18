@@ -15,27 +15,15 @@ namespace VideoApi.Services.Contracts
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl, IEnumerable<EndpointDto> endpoints);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
-        Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom);
+        Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom);
         
         /// <summary>
-        /// Move two participants into a single consultation room
-        /// </summary>
-        /// <param name="conference">Conference</param>
-        /// <param name="requestedBy">First participant</param>
-        /// <param name="requestedFor">Second participant</param>
-        /// <returns></returns>
-        Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor);
-
-        Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint,
-            Participant defenceAdvocate);
-        
-        /// <summary>
-        /// Returns participants in a given room to waiting room
+        /// Transfers all participants and endpoints to the waiting room (triggering kinly to close the room)
         /// </summary>
         /// <param name="conference"></param>
         /// <param name="consultationRoom"></param>
         /// <returns></returns>
-        Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom);
+        Task StopConsultationAsync(Conference conference, string consultationRoom);
 
         /// <summary>
         /// Delete virtual court room

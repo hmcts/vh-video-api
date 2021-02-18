@@ -70,7 +70,6 @@ namespace VideoApi
 
             services.AddMemoryCache();
             services.AddScoped<ILoggingDataExtractor, LoggingDataExtractor>();
-            services.AddScoped<IRoomReservationService, RoomReservationService>();
 
             services.AddScoped<ITokenProvider, AzureTokenProvider>();
             services.AddSingleton<ITelemetryInitializer, BadRequestTelemetry>();

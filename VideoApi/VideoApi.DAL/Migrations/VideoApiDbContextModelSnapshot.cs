@@ -104,6 +104,9 @@ namespace VideoApi.DAL.Migrations
                     b.Property<int?>("CurrentRoom")
                         .HasColumnType("int");
 
+                    b.Property<long?>("CurrentVirtualRoomId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("DefenceAdvocate")
                         .HasColumnType("nvarchar(450)")
                         .HasMaxLength(450);
@@ -126,6 +129,8 @@ namespace VideoApi.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ConferenceId");
+
+                    b.HasIndex("CurrentVirtualRoomId");
 
                     b.HasIndex("SipAddress")
                         .IsUnique();
@@ -405,6 +410,9 @@ namespace VideoApi.DAL.Migrations
                     b.Property<string>("Label")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("Locked")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -414,6 +422,26 @@ namespace VideoApi.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Room");
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.RoomEndpoint", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<Guid>("EndpointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long?>("RoomId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("RoomEndpoint");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.RoomParticipant", b =>
@@ -540,6 +568,10 @@ namespace VideoApi.DAL.Migrations
                         .WithMany("Endpoints")
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("VideoApi.Domain.Room", "CurrentVirtualRoom")
+                        .WithMany()
+                        .HasForeignKey("CurrentVirtualRoomId");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
@@ -587,6 +619,14 @@ namespace VideoApi.DAL.Migrations
                     b.HasOne("VideoApi.Domain.Participant", null)
                         .WithMany("ParticipantStatuses")
                         .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.RoomEndpoint", b =>
+                {
+                    b.HasOne("VideoApi.Domain.Room", null)
+                        .WithMany("RoomEndpoints")
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

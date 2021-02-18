@@ -48,7 +48,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
             var participantId = seededConference.GetParticipants().First().Id;
             RoomType? transferredFrom = RoomType.WaitingRoom;
-            RoomType? transferredTo = RoomType.ConsultationRoom1;
+            RoomType? transferredTo = RoomType.ConsultationRoom;
             var reason = "Automated";
             var eventType = EventType.Disconnected;
 
@@ -85,7 +85,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
             var participantId = seededConference.GetParticipants().First().Id;
             RoomType? transferredFrom = RoomType.WaitingRoom;
-            RoomType? transferredTo = RoomType.ConsultationRoom1;
+            RoomType? transferredTo = RoomType.ConsultationRoom;
             var reason = "Automated";
             var eventType = EventType.Disconnected;
             var phone = "anonymous";

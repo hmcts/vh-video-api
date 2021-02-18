@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Events
                 TimeStampUtc = DateTime.UtcNow
             };
             var updateStatusCommand = new UpdateEndpointStatusAndRoomCommand(conference.Id, participantForEvent.Id,
-                EndpointState.Connected, RoomType.WaitingRoom);
+                EndpointState.Connected, RoomType.WaitingRoom, null);
             CommandHandlerMock.Setup(x => x.Handle(updateStatusCommand));
 
             await _sut.HandleAsync(callbackEvent);

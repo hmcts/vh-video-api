@@ -3,8 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
+using VideoApi.Domain;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
 {
@@ -21,7 +24,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ConferenceId = conferenceId,
                 EndpointId = endpointId
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
@@ -39,7 +42,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ConferenceId = conferenceId,
                 EndpointId = endpointId
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
@@ -59,7 +62,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 EndpointId = endpointId,
                 DefenceAdvocateId = defenceAdvocateId
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
@@ -81,7 +84,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 EndpointId = endpointWithoutDefenceAdvocate.Id,
                 DefenceAdvocateId = defenceAdvocate.Id
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<UnauthorizedObjectResult>();
             actionResult.Should().NotBeNull();
@@ -102,7 +105,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 EndpointId = endpointWithDefenceAdvocate.Id,
                 DefenceAdvocateId = defenceAdvocate.Id
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<UnauthorizedObjectResult>();
             actionResult.Should().NotBeNull();
@@ -110,23 +113,26 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         }
         
         [Test]
-        public async Task should_return_accepted_when_endpoint_is_linked_with_defence_advocate()
+        public async Task should_return_ok_when_endpoint_is_linked_with_defence_advocate()
         {
             var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
             var defenceAdvocate = TestConference.GetParticipants().First(x =>
                 x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
                     StringComparison.CurrentCultureIgnoreCase));
-            
+
+            var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
+            ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(TestConference.Id, VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false)).ReturnsAsync(room);
+
+
             var request = new EndpointConsultationRequest()
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithDefenceAdvocate.Id,
                 DefenceAdvocateId = defenceAdvocate.Id
             };
-            var result = await Controller.StartPrivateConsultationWithEndpointAsync(request);
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
 
-            var actionResult = result.As<AcceptedResult>();
-            actionResult.Should().NotBeNull();
+            result.Should().BeOfType<OkResult>();
         }
     }
 }

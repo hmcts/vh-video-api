@@ -34,7 +34,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conferenceId = Guid.NewGuid();
             var participantId = Guid.NewGuid();
             var state = ParticipantState.InConsultation;
-            var room = RoomType.ConsultationRoom1;
+            var room = RoomType.ConsultationRoom;
 
             var command = new UpdateParticipantStatusAndRoomCommand(conferenceId, participantId, state, room, null);
 
@@ -49,7 +49,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceIds.Add(seededConference.Id);
             var participantId = Guid.NewGuid();
             var state = ParticipantState.InConsultation;
-            var room = RoomType.ConsultationRoom1;
+            var room = RoomType.ConsultationRoom;
 
             var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participantId, state, room, null);
 
@@ -95,7 +95,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceIds.Add(seededConference.Id);
             var participant = seededConference.GetParticipants().First();
             const ParticipantState state = ParticipantState.InConsultation;
-            const RoomType room = RoomType.ConsultationRoom1;
+            const RoomType room = RoomType.ConsultationRoom;
 
             var beforeState = participant.GetCurrentStatus();
 
@@ -117,7 +117,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceIds.Add(seededConference.Id);
             var vRoom = new Room(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.JudgeJOH);
+                VirtualCourtRoomType.JudgeJOH, false);
             var seededRoom = await TestDataManager.SeedRoom(vRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
@@ -147,7 +147,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceIds.Add(seededConference.Id);
             _newConferenceIds.Add(seededConference2.Id);
             var vRoom = new Room(seededConference2.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.JudgeJOH);
+                VirtualCourtRoomType.JudgeJOH, false);
             var seededRoom = await TestDataManager.SeedRoom(vRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
@@ -165,7 +165,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceIds.Add(seededConference.Id);
             var vRoom = new Room(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.JudgeJOH);
+                VirtualCourtRoomType.JudgeJOH, false);
             
             var room = await TestDataManager.SeedRoom(vRoom);
             var newRoomId = room.Id;

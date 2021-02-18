@@ -1,14 +1,11 @@
 using System;
-using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
-using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
-using Testing.Common.Assertions;
+using VideoApi.DAL.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -24,20 +21,21 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             
             var answer = ConsultationAnswer.Accepted;
 
-            var request = new ConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
                 RequestedBy = requestedBy.Id,
                 RequestedFor = requestedFor.Id,
-                Answer = answer
+                Answer = answer,
+                RoomLabel = "Room1"
             };
 
-            await Controller.HandleConsultationRequestAsync(request);
+            await Controller.RespondToConsultationRequestAsync(request);
 
-            CommandHandlerMock.Verify(x => x.Handle(It.Is<SaveEventCommand>(s => s.Reason == $"Consultation with {requestedFor.DisplayName}")), Times.Once);
-            VideoPlatformServiceMock.Verify(x =>
-                x.StartPrivateConsultationAsync(TestConference, requestedBy, requestedFor), Times.Once);
-            VideoPlatformServiceMock.VerifyNoOtherCalls();
+            CommandHandlerMock.Verify(x => x.Handle(It.Is<SaveEventCommand>(s => s.Reason == $"Adding {requestedFor.DisplayName} to {request.RoomLabel}")), Times.Once);
+            ConsultationServiceMock.Verify(x =>
+                x.JoinConsultationRoomAsync(TestConference.Id, requestedFor.Id, "Room1"), Times.Once);
+            ConsultationServiceMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -48,7 +46,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var answer = ConsultationAnswer.Accepted;
 
-            var request = new ConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
                 RequestedBy = requestedBy.Id,
@@ -56,7 +54,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequestAsync(request);
+            var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -69,7 +67,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var answer = ConsultationAnswer.Accepted;
 
-            var request = new ConsultationRequest
+            var request = new ConsultationRequestResponse
             {
                 ConferenceId = conferenceId,
                 RequestedBy = Guid.NewGuid(),
@@ -77,45 +75,45 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 Answer = answer
             };
 
-            var result = await Controller.HandleConsultationRequestAsync(request);
+            var result = await Controller.RespondToConsultationRequestAsync(request);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
 
-
         [Test]
-        public async Task Should_return_error_when_consultation_accepted_but_no_room_is_available()
+        public async Task Should_return_ok_for_lock_room_request()
         {
             var conferenceId = TestConference.Id;
-            var requestedBy = TestConference.GetParticipants()[2];
-            var requestedFor = TestConference.GetParticipants()[3];
 
-            VideoPlatformServiceMock
-                .Setup(x => x.StartPrivateConsultationAsync(TestConference, requestedBy, requestedFor))
-                .ThrowsAsync(new DomainRuleException("Unavailable room", "No consultation rooms available"));
-            
-            // make sure no rooms are available
-            TestConference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom1);
-            TestConference.Participants[4].UpdateCurrentRoom(RoomType.ConsultationRoom2);
-
-            var answer = ConsultationAnswer.Accepted;
-
-            var request = new ConsultationRequest
+            var request = new LockRoomRequest
             {
                 ConferenceId = conferenceId,
-                RequestedBy = requestedBy.Id,
-                RequestedFor = requestedFor.Id,
-                Answer = answer
+                RoomLabel = "ConsultationRoom",
+                Lock = true
             };
 
-            var result = await Controller.HandleConsultationRequestAsync(request);
+            var result = await Controller.LockRoomRequestAsync(request);
+            var typedResult = (OkResult)result;
+            typedResult.Should().NotBeNull();
+        }
 
-            var typedResult = (ObjectResult) result;
-            typedResult.StatusCode.Should().Be((int) HttpStatusCode.BadRequest);
-            ((SerializableError)typedResult.Value).ContainsKeyAndErrorMessage("ConsultationRoom", "No consultation room available");            
-            VideoPlatformServiceMock.Verify(x =>
-                x.StartPrivateConsultationAsync(TestConference, requestedBy, requestedFor), Times.Once);
-            VideoPlatformServiceMock.VerifyNoOtherCalls();
+        [Test]
+        public async Task Should_return_notfound_for_lock_room_request()
+        {
+            var conferenceId = TestConference.Id;
+
+            var request = new LockRoomRequest
+            {
+                ConferenceId = conferenceId,
+                RoomLabel = "ConsultationRoom",
+                Lock = true
+            };
+            CommandHandlerMock
+               .Setup(x => x.Handle(It.IsAny<LockRoomCommand>())).Throws(new RoomNotFoundException(12345));
+
+            var result = await Controller.LockRoomRequestAsync(request);
+            var typedResult = (NotFoundObjectResult)result;
+            typedResult.Should().NotBeNull();
         }
     }
 }

@@ -64,5 +64,10 @@ namespace VideoApi.Contract.Responses
         /// The group a participant belongs to
         /// </summary>
         public string CaseGroup { get; set; }
+
+        /// <summary>
+        /// Current consultation room details
+        /// </summary>
+        public RoomResponse CurrentRoom { get; set; }
     }
 }

@@ -26,7 +26,7 @@
     <PackageReference Include="SpecFlow" Version="3.6.23" />
     <PackageReference Include="SpecFlow.NUnit" Version="3.6.23" />
     <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.6.23" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.15" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.16" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />

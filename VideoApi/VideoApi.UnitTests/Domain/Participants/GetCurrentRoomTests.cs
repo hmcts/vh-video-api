@@ -11,8 +11,7 @@ namespace VideoApi.UnitTests.Domain.Participants
     {
         [TestCase(RoomType.WaitingRoom)]
         [TestCase(RoomType.HearingRoom)]
-        [TestCase(RoomType.ConsultationRoom1)]
-        [TestCase(RoomType.ConsultationRoom2)]
+        [TestCase(RoomType.ConsultationRoom)]
         [TestCase(RoomType.AdminRoom)]
         public void should_get_current_room(RoomType newRoom)
         {
@@ -20,7 +19,7 @@ namespace VideoApi.UnitTests.Domain.Participants
                 .WithCaseTypeGroup("Claimant")
                 .Build();
             participant.UpdateCurrentRoom(newRoom);
-            participant.GetCurrentRoom().Should().Be(newRoom);
+            participant.GetCurrentRoom().Should().Be(newRoom.ToString());
         }
 
         [Test]

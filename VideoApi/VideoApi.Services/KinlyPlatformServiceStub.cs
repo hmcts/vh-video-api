@@ -46,12 +46,7 @@ namespace VideoApi.Services
             return Task.FromResult<TestCallResult>(null);
         }
 
-        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, RoomType fromRoom, RoomType toRoom)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task StartPrivateConsultationAsync(Conference conference, Participant requestedBy, Participant requestedFor)
+        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
         {
             return Task.CompletedTask;
         }
@@ -61,7 +56,7 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
-        public Task StopPrivateConsultationAsync(Conference conference, RoomType consultationRoom)
+        public Task StopConsultationAsync(Conference conference, string consultationRoom)
         {
             return Task.CompletedTask;
         }
@@ -106,9 +101,10 @@ namespace VideoApi.Services
 
         private static MeetingRoom Create()
         {
-            var adminUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
-            var judgeUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
-            var participantUri = "https://ext-node02.com/webapp/#/?conference=user@email.com";
+            const string URL_CONFERENCE = "https://ext-node02.com/webapp/#/?conference=user@email.com";
+            var adminUri = URL_CONFERENCE;
+            var judgeUri = URL_CONFERENCE;
+            var participantUri = URL_CONFERENCE;
             var pexipNode = "join.node.com";
             var telephoneConferenceId = "12345678";
             return new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);

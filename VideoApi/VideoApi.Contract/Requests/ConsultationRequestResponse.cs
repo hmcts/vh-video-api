@@ -6,7 +6,7 @@ namespace VideoApi.Contract.Requests
     /// <summary>
     /// Request a private consultation with another participant
     /// </summary>
-    public class ConsultationRequest
+    public class ConsultationRequestResponse
     {
         /// <summary>
         /// The conference UUID
@@ -22,12 +22,17 @@ namespace VideoApi.Contract.Requests
         /// Requestee's UUID
         /// </summary>
         public Guid RequestedFor { get; set; }
+
+        /// <summary>
+        /// The room to have a private consultation in
+        /// </summary>
+        public string RoomLabel { get; set; }
         
         /// <summary>
         /// Response to a consultation request (i.e. 'Accepted or Rejected')
         /// </summary>
         [EnumDataType(typeof(ConsultationAnswer))]
-        public ConsultationAnswer? Answer { get; set; }
+        public ConsultationAnswer Answer { get; set; }
     }
 
     public enum ConsultationAnswer
@@ -43,10 +48,6 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Reject a consultation request
         /// </summary>
-        Rejected,
-        /// <summary>
-        /// Cancel a consultation request
-        /// </summary>
-        Cancelled
+        Rejected
     }
 }

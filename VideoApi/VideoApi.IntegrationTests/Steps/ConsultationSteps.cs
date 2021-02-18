@@ -174,26 +174,12 @@ namespace VideoApi.IntegrationTests.Steps
 
             SerialiseConsultationRequest(request);
         }
-
-        [Given("no consultation rooms are available")]
-        public async Task GivenNoConsultationRoomsAreAvailable()
-        {
-            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
-            var conference = await db.Conferences
-                .Include("Participants")
-                .SingleAsync(x => x.Id == _context.Test.Conference.Id);
-
-            conference.Participants[0].UpdateCurrentRoom(RoomType.ConsultationRoom1);
-            conference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom2);
-
-            await db.SaveChangesAsync();
-        }
         
         [Given(@"I have a (.*) respond to admin consultation request")]
         [Given(@"I have an (.*) respond to admin consultation request")]
-        public void GivenIHaveARespondToAdminConsultationRequest(Scenario scenario)
+        public void GivenIHaveARespondToConsultationRequestResponse(Scenario scenario)
         {
-            var request = SetupRespondToAdminConsultationRequest();
+            var request = SetupRespondToConsultationRequestResponse();
             switch (scenario)
             {
                 case Scenario.Valid: break;
@@ -201,8 +187,9 @@ namespace VideoApi.IntegrationTests.Steps
                 {
                     request.ConferenceId = Guid.Empty;
                     request.Answer = ConsultationAnswer.None;
-                    request.ParticipantId = Guid.Empty;
-                    request.ConsultationRoom = Contract.Enums.RoomType.HearingRoom;
+                    request.RequestedFor = Guid.Empty;
+                    request.RequestedBy = Guid.Empty;
+                    request.RoomLabel = RoomType.HearingRoom.ToString();
                     break;
                 }
 
@@ -214,16 +201,16 @@ namespace VideoApi.IntegrationTests.Steps
                 default: throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null);
             }
 
-            SerialiseRespondToAdminConsultationRequest(request);
+            SerialiseRespondToConsultationRequestResponse(request);
         }
 
         [Given(@"I have a respond to admin consultation request with a non-existent participant")]
-        public void GivenIHaveARespondToAdminConsultationRequestWithNonExistentParticipant()
+        public void GivenIHaveARespondToConsultationRequestResponseWithNonExistentParticipant()
         {
-            var request = SetupRespondToAdminConsultationRequest();
-            request.ParticipantId = Guid.NewGuid();
+            var request = SetupRespondToConsultationRequestResponse();
+            request.RequestedFor = Guid.NewGuid();
 
-            SerialiseRespondToAdminConsultationRequest(request);
+            SerialiseRespondToConsultationRequestResponse(request);
         }
 
         [Given(@"I have a start endpoint consultation with a linked defence advocate")]
@@ -383,7 +370,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
                 conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
-            var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH);
+            var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
 
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var conference = await db.Conferences
@@ -396,7 +383,7 @@ namespace VideoApi.IntegrationTests.Steps
             await db.SaveChangesAsync();
         }
 
-        private void SerialiseConsultationRequest(ConsultationRequest request)
+        private void SerialiseConsultationRequest(ConsultationRequestResponse request)
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
@@ -404,9 +391,9 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
-        private void SerialiseRespondToAdminConsultationRequest(AdminConsultationRequest request)
+        private void SerialiseRespondToConsultationRequestResponse(ConsultationRequestResponse request)
         {
-            _context.Uri = ConsultationEndpoints.RespondToAdminConsultationRequest;
+            _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -422,7 +409,7 @@ namespace VideoApi.IntegrationTests.Steps
 
         private void SerialiseLeavePrivateConsultationRequest(LeaveConsultationRequest request)
         {
-            _context.Uri = ConsultationEndpoints.LeavePrivateConsultationRequest;
+            _context.Uri = ConsultationEndpoints.LeaveConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
@@ -444,9 +431,9 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
-        private ConsultationRequest SetupConsultationRequest(bool withAnswer)
+        private ConsultationRequestResponse SetupConsultationRequest(bool withAnswer)
         {
-            var request = new ConsultationRequest();
+            var request = new ConsultationRequestResponse();
 
             var participants = _context.Test.Conference.GetParticipants().Where(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
@@ -457,7 +444,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             if (withAnswer)
                 request.Answer = ConsultationAnswer.Accepted;
-
+            request.RoomLabel = RoomType.ConsultationRoom.ToString();
             return request;
         }
 
@@ -481,8 +468,10 @@ namespace VideoApi.IntegrationTests.Steps
                     .Include("Participants")
                     .SingleAsync(x => x.Id == _context.Test.Conference.Id);
 
-                conference.Participants.Single(x => x.Id == participantId)
-                    .UpdateCurrentRoom(RoomType.ConsultationRoom1);
+                var room = new Room(_context.Test.Conference.Id, "TestRoom", VirtualCourtRoomType.Participant, false);
+                var participant = conference.Participants.Single(x => x.Id == participantId);
+                participant.UpdateCurrentRoom(RoomType.ConsultationRoom);
+                participant.UpdateCurrentVirtualRoom(room);
 
                 await db.SaveChangesAsync();
 
@@ -492,17 +481,18 @@ namespace VideoApi.IntegrationTests.Steps
             return request;
         }
 
-        private AdminConsultationRequest SetupRespondToAdminConsultationRequest()
+        private ConsultationRequestResponse SetupRespondToConsultationRequestResponse()
         {
-            var request = new AdminConsultationRequest();
+            var request = new ConsultationRequestResponse();
 
             var participants = _context.Test.Conference.GetParticipants().Where(x =>
                 x.UserRole == UserRole.Individual || x.UserRole == UserRole.Representative).ToList();
 
             request.ConferenceId = _context.Test.Conference.Id;
-            request.ParticipantId = participants[0].Id;
+            request.RequestedFor = participants[0].Id;
+            request.RequestedBy = participants[0].Id;
             request.Answer = ConsultationAnswer.Accepted;
-            request.ConsultationRoom = Contract.Enums.RoomType.ConsultationRoom1;
+            request.RoomLabel = RoomType.ConsultationRoom.ToString();
 
             return request;
         }

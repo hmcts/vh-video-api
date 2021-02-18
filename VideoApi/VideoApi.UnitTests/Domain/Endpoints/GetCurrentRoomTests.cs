@@ -11,14 +11,13 @@ namespace VideoApi.UnitTests.Domain.Endpoints
     {
         [TestCase(RoomType.WaitingRoom)]
         [TestCase(RoomType.HearingRoom)]
-        [TestCase(RoomType.ConsultationRoom1)]
-        [TestCase(RoomType.ConsultationRoom2)]
+        [TestCase(RoomType.ConsultationRoom)]
         [TestCase(RoomType.AdminRoom)]
         public void should_get_current_room(RoomType newRoom)
         {
             var endpoint = new Endpoint("old name", "123@sip.com", "1234", "defence@sol.com");
             endpoint.UpdateCurrentRoom(newRoom);
-            endpoint.GetCurrentRoom().Should().Be(newRoom);
+            endpoint.GetCurrentRoom().Should().Be(newRoom.ToString());
         }
 
         [Test]

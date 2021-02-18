@@ -24,7 +24,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var representative = _context.Test.ConferenceResponse.Participants
                 .First(x => x.UserRole == UserRole.Representative).Id;
 
-            var request = new ConsultationRequest()
+            var request = new ConsultationRequestResponse()
             {
                 ConferenceId = _context.Test.ConferenceResponse.Id,
                 RequestedBy = individual,

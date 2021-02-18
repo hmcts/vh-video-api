@@ -10,17 +10,23 @@ namespace VideoApi.DAL.Commands
 {
     public class CreateRoomCommand : ICommand
     {
-
         public Guid ConferenceId { get; }
         public string Label { get; }
         public VirtualCourtRoomType Type { get; }
-        public long NewRoomId { get; set; }
+        public long NewRoomId { get; private set; }
+        public bool Locked { get; private set; }
 
-        public CreateRoomCommand(Guid conferenceId, string label, VirtualCourtRoomType type)
+        public CreateRoomCommand(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
         {
             ConferenceId = conferenceId;
             Label = label;
             Type = type;
+            Locked = locked;
+        }
+
+        public void UpdateNewRoomId(long newRoomId)
+        {
+            NewRoomId = newRoomId;
         }
     }
 
@@ -42,13 +48,13 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var room = new Room(command.ConferenceId, command.Label, command.Type);
+            var room = new Room(command.ConferenceId, command.Label, command.Type, command.Locked);
 
             _context.Rooms.Add(room);
 
             await _context.SaveChangesAsync();
 
-            command.NewRoomId = room.Id;
+            command.UpdateNewRoomId(room.Id);
         }
     }
 }
