@@ -4,8 +4,7 @@ namespace VideoApi.Contract.Enums
     {
         WaitingRoom,
         HearingRoom,
-        ConsultationRoom1,
-        ConsultationRoom2,
+        ConsultationRoom,
         AdminRoom
     }
 }

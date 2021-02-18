@@ -69,7 +69,6 @@ namespace Testing.Common.Helper
             private const string ApiRoot = "consultations";
             public static string HandleConsultationRequest => $"{ApiRoot}";
             public static string LeaveConsultationRequest => $"{ApiRoot}/leave";
-            public static string RespondToAdminConsultationRequest => $"{ApiRoot}/vhofficer/respond";
             public static string EndpointConsultationRequest => $"{ApiRoot}/endpoint";
             public static string StartPrivateConsultationRequest => $"{ApiRoot}/start";
             public static string LeavePrivateConsultationRequest => $"{ApiRoot}/end";

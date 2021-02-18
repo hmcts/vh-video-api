@@ -76,6 +76,14 @@ namespace VideoApi.Contract.Responses
         /// </summary>
         public ParticipantState CurrentStatus { get; set; }
 
+        /// <summary>
+        /// Current consultation room details
+        /// </summary>
+        public RoomResponse CurrentRoom { get; set; }
+
+        /// <summary>
+        /// Linked Participants - example interperter and "interpretee"
+        /// </summary>
         public IList<LinkedParticipantResponse> LinkedParticipants { get; set; }
     }
 }

@@ -75,11 +75,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             return new List<Room>
             {
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.Participant),
+                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.Participant, false),
             };
         }
         

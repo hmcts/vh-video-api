@@ -53,7 +53,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                     query => query.ConferenceId.Equals(_request.ConferenceId) &&
                              query.CourtRoomType.Equals(_request.RoomType.MapToDomainEnum())))).ReturnsAsync(_rooms);
 
-            var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType.MapToDomainEnum());
+            var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType.MapToDomainEnum(), false);
             _commandHandler.Setup(x => x.Handle(mockCommand));
 
             var returnedRoom =
@@ -134,8 +134,8 @@ namespace VideoApi.UnitTests.Services.Consultation
         private List<Room> CreateTestRooms(StartConsultationRequest request)
         {
             var rooms = new List<Room>();
-            var room1 = new Room(request.ConferenceId, "Judge", request.RoomType.MapToDomainEnum());
-            var room2 = new Room(Guid.NewGuid(), "Waiting", VirtualCourtRoomType.JudgeJOH);
+            var room1 = new Room(request.ConferenceId, "Judge", request.RoomType.MapToDomainEnum(), false);
+            var room2 = new Room(Guid.NewGuid(), "Waiting", VirtualCourtRoomType.JudgeJOH, false);
 
             rooms.Add(room1);
             rooms.Add(room2);
@@ -159,6 +159,30 @@ namespace VideoApi.UnitTests.Services.Consultation
                         )
                     )
                 , Times.Exactly(1));
+        }
+
+        [Test]
+        public async Task Should_Create_New_ConsultationRoom()
+        {
+            var mockCommand = new CreateRoomCommand(_request.ConferenceId, "Judge", _request.RoomType.MapToDomainEnum(), false);
+            _commandHandler.Setup(x => x.Handle(mockCommand));
+            var consultationRoomParams = new CreateConsultationRoomParams
+            {
+                Room_label_prefix = _request.RoomType.ToString()
+            };
+
+            _kinlyApiClient
+                .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
+                .ReturnsAsync(new CreateConsultationRoomResponse() { Room_label = "Label" });
+
+            var returnedRoom =
+                await _consultationService.CreateNewConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
+
+            _kinlyApiClient.Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
+                y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
+                y => y.Room_label_prefix.Equals(consultationRoomParams.Room_label_prefix))), Times.Once);
+            returnedRoom.Should().BeOfType<Room>();
+            returnedRoom.Should().NotBeNull();
         }
     }
 }

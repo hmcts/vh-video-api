@@ -7,7 +7,7 @@ Feature: Start Private Endpoint Consultation
     Given I have a conference with endpoints
     And I have a start endpoint consultation with a linked defence advocate
     When I send the request to the endpoint
-    Then the response should have the status Accepted and success status True
+    Then the response should have the status OK and success status True
 
   Scenario: Fail to start a private consultation for non-existent conference
     Given I have a conference with endpoints

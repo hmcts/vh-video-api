@@ -18,12 +18,13 @@ namespace VideoApi.UnitTests.Domain.Participants
 
             participant.CurrentVirtualRoom.Should().BeNull();
 
-            var newRoom = new Room(Guid.NewGuid(), "TestRoom1", VirtualCourtRoomType.JudgeJOH);
+            var newRoom = new Room(Guid.NewGuid(), "TestRoom1", VirtualCourtRoomType.JudgeJOH, false);
             participant.UpdateCurrentVirtualRoom(newRoom);
 
             participant.CurrentVirtualRoom.Should().Be(newRoom);
         }
     }
+
     public class UpdateCurrentRoomTests
     {
         [Test]
@@ -35,7 +36,7 @@ namespace VideoApi.UnitTests.Domain.Participants
 
             participant.CurrentRoom.Should().BeNull();
 
-            var newRoom = RoomType.ConsultationRoom1;
+            var newRoom = RoomType.ConsultationRoom;
             participant.UpdateCurrentRoom(newRoom);
 
             participant.CurrentRoom.Should().Be(newRoom);

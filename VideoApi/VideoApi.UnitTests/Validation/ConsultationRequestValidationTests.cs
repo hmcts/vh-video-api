@@ -67,27 +67,14 @@ namespace VideoApi.UnitTests.Validation
                 .Should().BeTrue();
         }
 
-        [Test]
-        public async Task Should_fail_validation_when_answer_is_invalid()
+        private ConsultationRequestResponse BuildRequest()
         {
-            var request = BuildRequest();
-            request.Answer = ConsultationAnswer.None;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoAnswerErrorMessage)
-                .Should().BeTrue();
-        }
-
-        private ConsultationRequest BuildRequest()
-        {
-            return new ConsultationRequest
+            return new ConsultationRequestResponse
             {
                 ConferenceId = Guid.NewGuid(),
                 RequestedBy = Guid.NewGuid(),
                 RequestedFor = Guid.NewGuid(),
-                Answer = null
+                Answer = ConsultationAnswer.None
             };
         }
     }

@@ -179,32 +179,6 @@ namespace VideoApi.Domain
             AudioRecordingRequired = audioRecordingRequired;
         }
 
-        public RoomType GetAvailableConsultationRoom()
-        {
-            if (!Participants.Any())
-            {
-                throw new DomainRuleException("No Participants", "This conference has no participants");
-            }
-
-            var endpointRooms = GetEndpoints().Select(x => x.CurrentRoom);
-            var participantRooms = GetParticipants().Select(x => x.CurrentRoom);
-            var allRooms = new List<RoomType?>(endpointRooms).Concat(participantRooms).ToList();
-            
-            var consultationRoomOneOccupied = allRooms.Any(x => x == RoomType.ConsultationRoom1);
-            if (!consultationRoomOneOccupied)
-            {
-                return RoomType.ConsultationRoom1;
-            }
-
-            var consultationRoomTwoOccupied = allRooms.Any(x => x == RoomType.ConsultationRoom2);
-            if (!consultationRoomTwoOccupied)
-            {
-                return RoomType.ConsultationRoom2;
-            }
-
-            throw new DomainRuleException("Unavailable room", "No consultation rooms available");
-        }
-
         public Participant GetJudge()
         {
             return Participants.SingleOrDefault(x => x.IsJudge());

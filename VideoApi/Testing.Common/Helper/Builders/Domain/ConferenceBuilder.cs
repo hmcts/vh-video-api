@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Domain;
@@ -30,7 +31,11 @@ namespace Testing.Common.Helper.Builders.Domain
 
             var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
             const string caseType = "Generic";
-            var caseNumber = $"{GenerateRandom.CaseNumber(new Random())}";
+            var randomGenerator = RandomNumberGenerator.Create(); // Compliant for security-sensitive use cases
+            var data = new byte[2];
+            randomGenerator.GetBytes(data);
+
+            var caseNumber = $"{BitConverter.ToString(data)}";
             const string caseName = CaseName;
             const int scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
@@ -42,7 +47,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
                 .WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                        $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts",
+                        $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net",
                         Phone.Number())).Build();
 
             foreach (var participant in participants)
@@ -93,6 +98,11 @@ namespace Testing.Common.Helper.Builders.Domain
             if (roomType.HasValue)
             {
                 participant.UpdateCurrentRoom(roomType);
+                if (roomType == RoomType.ConsultationRoom)
+                {
+                    participant.CurrentVirtualRoomId = 1;
+                    participant.UpdateCurrentVirtualRoom(new Room(Guid.Empty, "Room1", VirtualCourtRoomType.Participant, false));
+                }
             }
 
             participant.UpdateParticipantStatus(participantState == ParticipantState.None

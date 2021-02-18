@@ -20,8 +20,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         protected ConsultationController Controller;
         protected Mock<IQueryHandler> QueryHandlerMock;
         protected Mock<ILogger<ConsultationController>> MockLogger;
-        protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
-        protected Mock<IConsultationService> ConsultationService;
+        protected Mock<IConsultationService> ConsultationServiceMock;
 
         protected VideoApi.Domain.Conference TestConference;
 
@@ -31,12 +30,11 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             QueryHandlerMock = new Mock<IQueryHandler>();
             CommandHandlerMock = new Mock<ICommandHandler>();
             MockLogger = new Mock<ILogger<ConsultationController>>();
-            VideoPlatformServiceMock = new Mock<IVideoPlatformService>();
-            ConsultationService = new Mock<IConsultationService>();
+            ConsultationServiceMock = new Mock<IConsultationService>();
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom1)
+                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant", "rep1@hmcts.net")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
@@ -53,8 +51,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
                 .Returns(Task.FromResult(default(object)));
 
-            Controller = new ConsultationController(QueryHandlerMock.Object, CommandHandlerMock.Object,
-                MockLogger.Object, VideoPlatformServiceMock.Object, ConsultationService.Object);
+            Controller = new ConsultationController(QueryHandlerMock.Object,
+                MockLogger.Object, ConsultationServiceMock.Object, CommandHandlerMock.Object);
         }
     }
 }

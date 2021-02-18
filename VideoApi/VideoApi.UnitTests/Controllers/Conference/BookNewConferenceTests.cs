@@ -70,14 +70,14 @@ namespace VideoApi.UnitTests.Controllers.Conference
             VideoPlatformServiceMock.Verify(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
         }
-        
+
         [Test]
         public async Task Should_verify_double_booking_for_given_conference_id_retries()
         {
-            SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
+            SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) { IngestUrl = "http://myIngestUrl.com" });
             SetupCallToMockRetryService(Guid.NewGuid());
             SetupCallToMockRetryService(true);
-            
+
             await Controller.BookNewConferenceAsync(_request);
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);

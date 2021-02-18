@@ -9,8 +9,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
     {
         [TestCase(RoomType.WaitingRoom)]
         [TestCase(RoomType.HearingRoom)]
-        [TestCase(RoomType.ConsultationRoom1)]
-        [TestCase(RoomType.ConsultationRoom2)]
+        [TestCase(RoomType.ConsultationRoom)]
         [TestCase(RoomType.AdminRoom)]
         [TestCase(null)]
         public void should_update_room(RoomType? newRoom)

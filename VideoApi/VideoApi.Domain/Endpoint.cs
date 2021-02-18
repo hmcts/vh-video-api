@@ -5,7 +5,7 @@ using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
-    public sealed class Endpoint : Entity<Guid>
+    public class Endpoint : Entity<Guid>
     {
         public string DisplayName { get; private set; }
         public string SipAddress { get; }
@@ -13,6 +13,8 @@ namespace VideoApi.Domain
         public EndpointState State { get; private set; }
         public string DefenceAdvocate { get; private set; }
         public RoomType? CurrentRoom { get; private set; }
+        public long? CurrentVirtualRoomId { get; set; }
+        public virtual Room CurrentVirtualRoom { get; set; }
 
         private Endpoint()
         {
@@ -43,14 +45,19 @@ namespace VideoApi.Domain
             DefenceAdvocate = username;
         }
 
-        public RoomType GetCurrentRoom()
+        public string GetCurrentRoom()
         {
-            return CurrentRoom ?? throw new DomainRuleException(nameof(CurrentRoom), "Endpoint is not in a room");
+            return CurrentVirtualRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Endpoint is not in a room");
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)
         {
             CurrentRoom = currentRoom;
+        }
+
+        public void UpdateCurrentVirtualRoom(Room room)
+        {
+            CurrentVirtualRoom = room;
         }
     }
 }

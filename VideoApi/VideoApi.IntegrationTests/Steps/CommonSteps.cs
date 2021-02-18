@@ -527,7 +527,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = _context.Test.Conference;
             var vRoom = new Room(conference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.JudgeJOH);
+                VirtualCourtRoomType.JudgeJOH, false);
             _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
         }
         

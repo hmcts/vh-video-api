@@ -42,7 +42,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conferenceId = Guid.NewGuid();
             var endpointId = Guid.NewGuid();
             const EndpointState status = EndpointState.Connected;
-            var command = new UpdateEndpointStatusAndRoomCommand(conferenceId, endpointId, status, null);
+            var command = new UpdateEndpointStatusAndRoomCommand(conferenceId, endpointId, status, null, null);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -54,7 +54,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const EndpointState status = EndpointState.Connected;
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var command = new UpdateEndpointStatusAndRoomCommand(_newConferenceId, endpointId, status, null);
+            var command = new UpdateEndpointStatusAndRoomCommand(_newConferenceId, endpointId, status, null, null);
 
             Assert.ThrowsAsync<EndpointNotFoundException>(async () => await _handler.Handle(command));
         }
@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointStatusAndRoomCommand(_newConferenceId, endpointId, status, room);
+            var command = new UpdateEndpointStatusAndRoomCommand(_newConferenceId, endpointId, status, room, null);
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -82,7 +82,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.Id == endpointId);
             updatedEndpoint.State.Should().Be(status);
-            updatedEndpoint.GetCurrentRoom().Should().Be(room);
+            updatedEndpoint.GetCurrentRoom().Should().Be(room.ToString());
         }
     } 
     public class UpdateEndpointStatusCommandTests : DatabaseTestsBase

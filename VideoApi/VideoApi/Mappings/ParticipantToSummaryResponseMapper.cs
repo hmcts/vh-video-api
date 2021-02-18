@@ -17,8 +17,8 @@ namespace VideoApi.Mappings
                 participant.UserRole == UserRole.Individual || participant.UserRole == UserRole.Representative
                     ? participant.CaseTypeGroup
                     : string.Empty;
-            
-            
+
+
             return new ParticipantSummaryResponse
             {
                 Id = participant.Id,
@@ -32,7 +32,8 @@ namespace VideoApi.Mappings
                 FirstName = participant.FirstName,
                 LastName = participant.LastName,
                 ContactEmail = participant.ContactEmail,
-                ContactTelephone = participant.ContactTelephone
+                ContactTelephone = participant.ContactTelephone,
+                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentVirtualRoom)
             };
         }
     }

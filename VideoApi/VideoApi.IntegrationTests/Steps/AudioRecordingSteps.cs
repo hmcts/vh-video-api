@@ -222,7 +222,8 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheCountAudioRecordingFromCvpAreRetrieved(int count)
         {
             var audioRecordings = await Response.GetResponses<List<CvpAudioFileResponse>>(_context.Response.Content);
-            audioRecordings.Should().HaveCount(count);
+            var countAudioRecords = audioRecordings.Count;
+            countAudioRecords.Should().BeGreaterOrEqualTo(count);
         }
     }
 }

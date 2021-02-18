@@ -22,7 +22,7 @@ namespace VideoApi.Events.Handlers
         {
             const EndpointState endpointState = EndpointState.Connected;
             const RoomType room = RoomType.WaitingRoom;
-            var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, room);
+            var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, room, null);
             return CommandHandler.Handle(command);
         }
     }

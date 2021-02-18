@@ -16,16 +16,16 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task Should_leave_private_consultation_with_valid_conference_and_room_type()
         {
             var conferenceId = TestConference.Id;
-            var request = TestConference.GetParticipants()[1];
+            var participant = TestConference.GetParticipants()[1];
 
             var leaveConsultationRequest = new LeaveConsultationRequest { ConferenceId = conferenceId, 
-                ParticipantId = request.Id  };
+                ParticipantId = participant.Id  };
 
-            await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
+            await Controller.LeaveConsultationAsync(leaveConsultationRequest);
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-            VideoPlatformServiceMock.Verify(v => v.StopPrivateConsultationAsync(TestConference, RoomType.ConsultationRoom1), Times.Once);
-            VideoPlatformServiceMock.VerifyNoOtherCalls();
+            ConsultationServiceMock.Verify(v => v.LeaveConsultationAsync(TestConference.Id, leaveConsultationRequest.ParticipantId, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString()), Times.Once);
+            ConsultationServiceMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = Guid.NewGuid()
             };
 
-            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
+            var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -53,13 +53,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = Guid.NewGuid()
             };
 
-            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
+            var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
 
         [Test]
-        public async Task Should_return_nocontent_when_participant_current_room_is_not_consultation_room_type()
+        public async Task Should_return_badrequest_when_participant_current_room_is_not_consultation_room_type()
         {
             var conferenceId = TestConference.Id;
             var request = TestConference.GetParticipants()[2];
@@ -70,9 +70,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 ParticipantId = request.Id
             };
 
-            var result = await Controller.LeavePrivateConsultationAsync(leaveConsultationRequest);
-            var typedResult = (NoContentResult)result;
-            typedResult.Should().NotBeNull();
+            var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
+            result.Should().BeOfType<BadRequestObjectResult>();
         }
     }
 }

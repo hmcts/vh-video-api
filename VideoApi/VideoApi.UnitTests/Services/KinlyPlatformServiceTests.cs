@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -13,7 +12,6 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -30,11 +28,8 @@ namespace VideoApi.UnitTests.Services
         private Mock<ILogger<KinlyPlatformService>> _loggerMock;
         private IOptions<KinlyConfiguration> _kinlyConfigOptions;
 
-        private Mock<ILogger<IRoomReservationService>> _loggerRoomReservationMock;
-        private IRoomReservationService _roomReservationService;
         private Mock<IKinlySelfTestHttpClient> _kinlySelfTestHttpClient;
         private Mock<IPollyRetryService> _pollyRetryService;
-        private IMemoryCache _memoryCache;
         private KinlyPlatformService _kinlyPlatformService;
         private Conference _testConference;
 
@@ -43,10 +38,7 @@ namespace VideoApi.UnitTests.Services
         {
             _kinlyApiClientMock = new Mock<IKinlyApiClient>();
             _loggerMock = new Mock<ILogger<KinlyPlatformService>>();
-            
-            _loggerRoomReservationMock = new Mock<ILogger<IRoomReservationService>>();
-            _memoryCache = new MemoryCache(new MemoryCacheOptions());
-            _roomReservationService = new RoomReservationService(_memoryCache, _loggerRoomReservationMock.Object);
+
             _kinlySelfTestHttpClient = new Mock<IKinlySelfTestHttpClient>();
             _pollyRetryService = new Mock<IPollyRetryService>();
             
@@ -59,7 +51,6 @@ namespace VideoApi.UnitTests.Services
                 _kinlyApiClientMock.Object,
                 _kinlyConfigOptions,
                 _loggerMock.Object,
-                _roomReservationService,
                 _kinlySelfTestHttpClient.Object,
                 _pollyRetryService.Object
             );
@@ -76,48 +67,15 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public void Should_throw_exception_when_no_hearing_room_available()
-        {
-            var requestedBy = _testConference.GetParticipants()[2];
-            var requestedFor = _testConference.GetParticipants()[3];
-            
-            // make sure no rooms are available
-            _testConference.Participants[1].UpdateCurrentRoom(RoomType.ConsultationRoom1);
-            _testConference.Participants[4].UpdateCurrentRoom(RoomType.ConsultationRoom2);
-
-            Func<Task> sutMethod = async () =>
-            {
-                await _kinlyPlatformService.StartPrivateConsultationAsync(_testConference, requestedBy,
-                    requestedFor);
-            };
-            sutMethod.Should().Throw<DomainRuleException>().And.ValidationFailures.Any(x => x.Name == "Unavailable room")
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public async Task Should_transfer_participants_when_pc_started()
-        {
-            var requestedBy = _testConference.GetParticipants()[2];
-            var requestedFor = _testConference.GetParticipants()[3];
-
-            await _kinlyPlatformService.StartPrivateConsultationAsync(_testConference, requestedBy,
-                requestedFor);
-
-            _kinlyApiClientMock.Verify(x =>
-                    x.TransferParticipantAsync(_testConference.Id.ToString(), It.IsAny<TransferParticipantParams>())
-                , Times.Exactly(2));
-        }
-
-        [Test]
         public async Task Should_remove_all_participants_in_room()
         {
-            var room = RoomType.ConsultationRoom1;
+            var room = RoomType.ConsultationRoom;
             _testConference.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
             _testConference.Participants[4].UpdateParticipantStatus(ParticipantState.InConsultation);
             _testConference.Participants[1].UpdateCurrentRoom(room);
             _testConference.Participants[4].UpdateCurrentRoom(room);
             
-            await _kinlyPlatformService.StopPrivateConsultationAsync(_testConference, room);
+            await _kinlyPlatformService.StopConsultationAsync(_testConference, room.ToString());
             
             _kinlyApiClientMock.Verify(x =>
                     x.TransferParticipantAsync(_testConference.Id.ToString(), 
@@ -132,13 +90,13 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task Should_remove_all_participants_and_endpoints_in_room()
         {
-            var room = RoomType.ConsultationRoom1;
+            var room = RoomType.ConsultationRoom;
             _testConference.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
             _testConference.Participants[1].UpdateCurrentRoom(room);
             _testConference.Endpoints[0].UpdateStatus(EndpointState.InConsultation);
             _testConference.Endpoints[0].UpdateCurrentRoom(room);
 
-            await _kinlyPlatformService.StopPrivateConsultationAsync(_testConference, room);
+            await _kinlyPlatformService.StopConsultationAsync(_testConference, room.ToString());
             
             _kinlyApiClientMock.Verify(x =>
                     x.TransferParticipantAsync(_testConference.Id.ToString(), 
@@ -373,41 +331,6 @@ namespace VideoApi.UnitTests.Services
             var conferenceId = Guid.NewGuid();	
             await _kinlyPlatformService.SuspendHearingAsync(conferenceId);	
             _kinlyApiClientMock.Verify(x => x.TechnicalAssistanceAsync(conferenceId.ToString()), Times.Once);	
-        }
-
-        [Test]
-        public async Task should_start_private_consultation_with_endpoint()
-        {
-            var room = RoomType.ConsultationRoom1;
-            var endpointWithDefenceAdvocate = _testConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
-            var defenceAdvocate = _testConference.GetParticipants().First(x =>
-                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
-                    StringComparison.CurrentCultureIgnoreCase));
-
-            endpointWithDefenceAdvocate.UpdateCurrentRoom(RoomType.WaitingRoom);
-            defenceAdvocate.UpdateCurrentRoom(RoomType.WaitingRoom);
-
-            
-            await _kinlyPlatformService.StartEndpointPrivateConsultationAsync(_testConference, endpointWithDefenceAdvocate,
-                defenceAdvocate);
-
-            _kinlyApiClientMock.Verify(x =>
-                    x.TransferParticipantAsync(_testConference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.Part_id == endpointWithDefenceAdvocate.Id.ToString() &&
-                            r.From == endpointWithDefenceAdvocate.GetCurrentRoom().ToString() &&
-                            r.To == room.ToString())
-                    )
-                , Times.Once);
-
-            _kinlyApiClientMock.Verify(x =>
-                    x.TransferParticipantAsync(_testConference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.Part_id == defenceAdvocate.Id.ToString() &&
-                            r.From == endpointWithDefenceAdvocate.GetCurrentRoom().ToString() &&
-                            r.To == room.ToString())
-                    )
-                , Times.Once);
         }
     }
 }

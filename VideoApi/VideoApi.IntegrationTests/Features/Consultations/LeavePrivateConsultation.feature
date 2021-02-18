@@ -15,7 +15,7 @@ Feature: Leave Private Consultations
     Given I have a conference
     And I have an valid leave consultation request
     When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
+    Then the response should have the status Ok and success status True
 
   Scenario: Leaving a consultation for a non-existent conference returns not found
     Given I have a conference
@@ -29,8 +29,8 @@ Feature: Leave Private Consultations
     When I send the request to the endpoint
     Then the response should have the status NotFound and success status False
 
-  Scenario: Leaving a consultation for a participant not in a consultation returns no content
+  Scenario: Leaving a consultation for a participant not in a consultation returns bad request
     Given I have a conference
     And I have a leave consultation request for a participant not in a consultation
     When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
+    Then the response should have the status BadRequest and success status False
