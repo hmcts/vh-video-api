@@ -34,10 +34,10 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveAConferenceToday()
         {
             var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
@@ -62,7 +62,7 @@ namespace VideoApi.IntegrationTests.Steps
             var username = "confTodayIntTest";
             
             var yesterdayClosedConference = new ConferenceBuilder(true, scheduledDateTime: yesterday, venueName: venue1)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithMeetingRoom(pexipNode, username)
@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceType.GetProperty("ClosedDateTime")?.SetValue(yesterdayClosedConference, yesterday.AddMinutes(35));
             
             var todayConference1 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue1)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(pexipNode, username)
@@ -79,7 +79,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceType.GetProperty("ActualStartTime")?.SetValue(todayConference1, today.AddMinutes(5));
 
             var tomorrowConference1 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue1)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithMeetingRoom(pexipNode, username)
@@ -88,7 +88,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceType.GetProperty("ClosedDateTime")?.SetValue(tomorrowConference1, yesterday.AddMinutes(35));
 
             var todayConference2 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: venue2)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .WithMeetingRoom(pexipNode, username)
@@ -96,7 +96,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceType.GetProperty("ActualStartTime")?.SetValue(todayConference2, today.AddMinutes(5));
 
             var tomorrowConference2 = new ConferenceBuilder(true, scheduledDateTime: tomorrow, venueName: venue2)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .WithMeetingRoom(pexipNode, username)
@@ -104,7 +104,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceType.GetProperty("ActualStartTime")?.SetValue(tomorrowConference2, tomorrow.AddMinutes(5));
 
             var yesterdayConference2 = new ConferenceBuilder(true, scheduledDateTime: yesterday, venueName: venue2)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithMeetingRoom(pexipNode, username)
                 .Build();
@@ -150,89 +150,89 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@email.com", UserRole.Judge,
+                        "JudgeOne.Smith@hmcts.net", UserRole.Judge,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge1@test.com", "01234"),
+                        "judge1@hmcts.net", "01234"),
                     new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
-                        "IndividualOne.Smith@email.com", UserRole.Individual,
+                        "IndividualOne.Smith@hmcts.net", UserRole.Individual,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual1@test.com", "01234")
+                        "individual1@hmcts.net", "01234")
                 })
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(20);
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@email.com", UserRole.Judge,
+                        "JudgeOne.Smith@hmcts.net", UserRole.Judge,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge1@test.com", "01234"),
+                        "judge1@hmcts.net", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
-                        "RepresentativeOne.Green@email.com", UserRole.Individual,
+                        "RepresentativeOne.Green@hmcts.net", UserRole.Individual,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual2@test.com", "01234")
+                        "individual2@hmcts.net", "01234")
                 })
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(30);
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@email.com", UserRole.Judge,
+                        "JudgeOne.Smith@hmcts.net", UserRole.Judge,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge1@test.com", "01234"),
+                        "judge1@hmcts.net", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Brown", "RepresentativeTwo Brown",
-                        "RepresentativeTwo.Brown@email.com", UserRole.Individual,
+                        "RepresentativeTwo.Brown@hmcts.net", UserRole.Individual,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual3@test.com", "01234")
+                        "individual3@hmcts.net", "01234")
                 })
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(35);
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
-                    new Participant(Guid.NewGuid(), "", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@email.com",
+                    new Participant(Guid.NewGuid(), "", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@hmcts.net",
                         UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge2@test.com", "01234"),
+                        "judge2@hmcts.net", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
-                        "RepresentativeOne.Green@email.com", UserRole.Individual,
+                        "RepresentativeOne.Green@hmcts.net", UserRole.Individual,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual2@test.com", "01234")
+                        "individual2@hmcts.net", "01234")
                 })
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(40);
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
-                        "JudgeFour.Matt@email.com", UserRole.Judge,
+                        "JudgeFour.Matt@hmcts.net", UserRole.Judge,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge4@test.com", "01234"),
+                        "judge4@hmcts.net", "01234"),
                     new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Dredd", "RepresentativeTwo Dredd",
-                        "RepresentativeTwo.Dredd@email.com", UserRole.Individual,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup, "rep2@test.com",
+                        "RepresentativeTwo.Dredd@hmcts.net", UserRole.Individual,
+                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup, "rep2@hmcts.net",
                         "01234")
                 })
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(45);
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
                 .WithParticipants(new List<Participant>
                 {
                     new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
-                        "JudgeFour.Matt@email.com", UserRole.Judge,
+                        "JudgeFour.Matt@hmcts.net", UserRole.Judge,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge4@test.com", "01234"),
+                        "judge4@hmcts.net", "01234"),
                     new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
-                        "IndividualOne.Smith@email.com", UserRole.Individual,
+                        "IndividualOne.Smith@hmcts.net", UserRole.Individual,
                         ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual1@test.com", "01234")
+                        "individual1@hmcts.net", "01234")
                 })
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             await _context.TestDataManager.SeedConference(conference1);
             await _context.TestDataManager.SeedConference(conference2);
@@ -252,7 +252,7 @@ namespace VideoApi.IntegrationTests.Steps
             var oldHearing = utcDate.AddMinutes(-180);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: currentHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithMessages(3)
@@ -261,7 +261,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference1);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -269,7 +269,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithMessages(3)
@@ -277,7 +277,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference3);
 
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithMessages(3)
@@ -286,7 +286,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference4);
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMessages(3)
@@ -294,7 +294,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference5);
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .Build();
             conferenceList.Add(conference6);
@@ -333,7 +333,7 @@ namespace VideoApi.IntegrationTests.Steps
             var oldHearing = utcDate.AddMonths(-4);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithMessages(3)
@@ -342,7 +342,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference1);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -350,7 +350,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .WithMessages(3)
@@ -383,7 +383,7 @@ namespace VideoApi.IntegrationTests.Steps
             var oldHearing = utcDate.AddMinutes(-180);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: currentHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -391,7 +391,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference1);
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -399,7 +399,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -430,7 +430,7 @@ namespace VideoApi.IntegrationTests.Steps
             var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingClosed3Months)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
@@ -454,7 +454,7 @@ namespace VideoApi.IntegrationTests.Steps
             var oldHearing = utcDate.AddMinutes(-180);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .WithMessages(3)
@@ -462,7 +462,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference3);
 
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMessages(3)
@@ -471,7 +471,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference4);
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMessages(3)
@@ -479,7 +479,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferenceList.Add(conference5);
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
                 .Build();
@@ -509,7 +509,7 @@ namespace VideoApi.IntegrationTests.Steps
             var hearingClosed3Months = utcDate.AddDays(days);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingClosed3Months)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
                 .Build();

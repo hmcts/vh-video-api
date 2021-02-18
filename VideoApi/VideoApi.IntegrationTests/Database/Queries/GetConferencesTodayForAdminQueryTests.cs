@@ -47,63 +47,63 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var tomorrow = DateTime.Today.AddDays(1).AddHours(10);
             var yesterday = DateTime.Today.AddDays(-1).AddHours(10);
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId1 = conference1.Id;
 
             var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId2 = conference2.Id;
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId3 = conference3.Id;
 
             var conference4 = new ConferenceBuilder(true, scheduledDateTime: yesterday)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId4 = conference4.Id;
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: tomorrow)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId5 = conference5.Id;
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId6 = conference6.Id;
 
             var conference7 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId7 = conference7.Id;
 
 
             var conference8 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
@@ -148,100 +148,100 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var participants1 = new List<Participant>
             {
-                new Participant(Guid.NewGuid(), "", "firstJudge", "James", "Judge James", "judge.james@email.com",
+                new Participant(Guid.NewGuid(), "", "firstJudge", "James", "Judge James", "judge.james@hmcts.net",
                     UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"),
-                    "Children Act", Internet.Email(), Phone.Number()),
+                    "Children Act", $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "firstname", "lastname", "firstname lastname",
-                    "firstname.lastname@email.com", UserRole.Individual,
+                    "firstname.lastname@hmcts.net", UserRole.Individual,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"), "Children Act",
-                    Internet.Email(), Phone.Number())
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number())
             };
             var participants2 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
-                    "secondJudge.james@email.com", UserRole.Judge,
+                    "secondJudge.james@hmcts.net", UserRole.Judge,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
-                    Internet.Email(), Phone.Number()),
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "individualFirst", "lastname", "individualFirst lastname",
-                    "individualFirst.lastname@email.com", UserRole.Individual,
+                    "individualFirst.lastname@hmcts.net", UserRole.Individual,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"), "Children Act",
-                    Internet.Email(),
+                    $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
             var participants3 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "firstJudge", "James", "firstJudge James",
-                    "firstJudge.james@email.com", UserRole.Judge,
+                    "firstJudge.james@hmcts.net", UserRole.Judge,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
-                    Internet.Email(), Phone.Number()),
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
-                    "representativeFirst.lastname@email.com", UserRole.Representative,
+                    "representativeFirst.lastname@hmcts.net", UserRole.Representative,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
-                    Internet.Email(),
+                    $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
             var participants4 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@email.com", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", Internet.Email(), Phone.Number()),
+                    "thirdJudge.james@hmcts.net", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
-                    "representativeFirst.lastname@email.com", UserRole.Representative, ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"),"Children Act", Internet.Email(),
+                    "representativeFirst.lastname@hmcts.net", UserRole.Representative, ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
             var participants5 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@email.com", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", Internet.Email(), Phone.Number()),
+                    "thirdJudge.james@hmcts.net", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeSecond", "lastname", "representativeSecond lastname",
-                    "representativeSecond.lastname@email.com", UserRole.Representative,ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
-                    Internet.Email(), Phone.Number()),
+                    "representativeSecond.lastname@hmcts.net", UserRole.Representative,ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
             };
             var participants6 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
-                    "secondJudge.james@email.com", UserRole.Judge,
+                    "secondJudge.james@hmcts.net", UserRole.Judge,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
-                    Internet.Email(), Phone.Number()),
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeThird", "lastname", "representativeThird lastname",
-                    "representativeThird.lastname@email.com", UserRole.Representative,
+                    "representativeThird.lastname@hmcts.net", UserRole.Representative,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
-                    Internet.Email(),
+                    $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
 
             var conference1 = new ConferenceBuilder(true, venueName: venue1)
                 .WithParticipants(participants1)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId1 = conference1.Id;
 
             var conference2 = new ConferenceBuilder(true, venueName: venue1)
                 .WithParticipants(participants2)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId2 = conference2.Id;
 
             var conference3 = new ConferenceBuilder(true, venueName: venue2)
                 .WithParticipants(participants3)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId3 = conference3.Id;
 
             var conference4 = new ConferenceBuilder(true, venueName: venue2)
                 .WithParticipants(participants4)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId4 = conference4.Id;
 
             var conference5 = new ConferenceBuilder(true, venueName: venue3)
                 .WithParticipants(participants5)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId5 = conference5.Id;
 
             var conference6 = new ConferenceBuilder(true, venueName: venue3)
                 .WithParticipants(participants6)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId6 = conference6.Id;
 

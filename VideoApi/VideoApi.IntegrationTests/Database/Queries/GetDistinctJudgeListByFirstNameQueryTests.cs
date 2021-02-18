@@ -31,7 +31,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             for (int i = 0; i < 3; i++)
             {
                 var newConference = new ConferenceBuilder(true)
-               .WithParticipant(UserRole.Representative, "Defendant")
+               .WithParticipant(UserRole.Representative, "Respondent")
                .WithParticipant(UserRole.Judge, null)
                .Build();
                 _conferenceIds.Add(newConference.Id);
@@ -71,18 +71,18 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async Task Should_get_list_of_judges_excluding_anonymised_and_automation_test_users()
         {
             var newConference = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Judge, "Judge", "Judge.James@email.com", "JudgeManchester", null, ParticipantState.None)
-                .WithParticipant(UserRole.Representative, "Claimant", "Claimaint.Smith@email.com", "Claimaint", null, ParticipantState.None)
-                .WithParticipant(UserRole.Individual, "Claimant", "ClaimaintLIP.Green@email.com", "Claimaint", null, ParticipantState.None)
+                .WithParticipant(UserRole.Judge, "Judge", "Judge.James@hmcts.net", "JudgeManchester", null, ParticipantState.None)
+                .WithParticipant(UserRole.Representative, "Applicant", "Applicant.Smith@hmcts.net", "Applicant", null, ParticipantState.None)
+                .WithParticipant(UserRole.Individual, "Applicant", "ApplicantLIP.Green@hmcts.net", "Applicant", null, ParticipantState.None)
                 .Build();
             _conferenceIds.Add(newConference.Id);
             await TestDataManager.SeedConference(newConference);
 
             // anonymised data
             newConference = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Judge, "Judge", "Judge.James1@email.net", "JudgeLondon", null, ParticipantState.None)
-                .WithParticipant(UserRole.Representative, "Claimant", "Claimaint.Smith1@email.com", "Claimaint", null, ParticipantState.None)
-                .WithParticipant(UserRole.Individual, "Claimant", "ClaimaintLIP.Green1@email.com", "Claimaint", null, ParticipantState.None)
+                .WithParticipant(UserRole.Judge, "Judge", "Judge.James1@hmcts.net1", "JudgeLondon", null, ParticipantState.None)
+                .WithParticipant(UserRole.Representative, "Applicant", "Applicant.Smith1@hmcts.net", "Applicant", null, ParticipantState.None)
+                .WithParticipant(UserRole.Individual, "Applicant", "ApplicantLIP.Green1@hmcts.net", "Applicant", null, ParticipantState.None)
                 .Build();
             _conferenceIds.Add(newConference.Id);
             await TestDataManager.SeedConference(newConference);
@@ -94,7 +94,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private async Task CreateConference(string judge)
         {
             var newConference = new ConferenceBuilder(true)
-              .WithParticipant(UserRole.Representative, "Defendant")
+              .WithParticipant(UserRole.Representative, "Respondent")
               .WithParticipant(UserRole.Judge, null, firstName: judge)
               .Build();
             _conferenceIds.Add(newConference.Id);

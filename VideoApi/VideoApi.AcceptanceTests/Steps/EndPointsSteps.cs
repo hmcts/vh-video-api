@@ -202,7 +202,7 @@ namespace VideoApi.AcceptanceTests.Steps
             return new AddEndpointRequest
             {
                 DisplayName = $"DisplayName{Guid.NewGuid()}",
-                SipAddress = $"{Guid.NewGuid()}@videohearings.net",
+                SipAddress = $"{Guid.NewGuid()}@hmcts.net",
                 Pin = "1234", 
                 DefenceAdvocate = "Defence Sol"
             };

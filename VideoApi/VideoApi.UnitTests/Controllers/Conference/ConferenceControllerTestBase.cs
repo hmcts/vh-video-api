@@ -63,10 +63,10 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant", null, null, RoomType.ConsultationRoom)
-                .WithParticipant(UserRole.Representative, "Claimant")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithEndpoints(TestEndpoints)
                 .Build();
 

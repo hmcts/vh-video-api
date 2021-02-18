@@ -10,7 +10,7 @@ namespace VideoApi.UnitTests.Services.Mappers
         [Test]
         public void should_map_to_kinly_endpoint_dto()
         {
-            var ep = new Endpoint("Displayname", "sip", "pin", "defence_advocate@test.com");
+            var ep = new Endpoint("Displayname", "sip", "pin", "defence_advocate@hmcts.net");
             var dto = EndpointMapper.MapToEndpoint(ep);
 
             dto.Id.Should().Be(ep.Id);

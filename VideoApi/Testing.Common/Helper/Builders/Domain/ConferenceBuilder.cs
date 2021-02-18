@@ -30,7 +30,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
 
             var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
-            const string caseType = "Civil Money Claims";
+            const string caseType = "Generic";
             var randomGenerator = RandomNumberGenerator.Create(); // Compliant for security-sensitive use cases
             var data = new byte[2];
             randomGenerator.GetBytes(data);
@@ -47,7 +47,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
                 .WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                        $"Video_Api_Integration_Test_{Internet.Email()}", UserRole.Individual, "Litigant in person", "Claimant", $"Video_Api_Integration_Test_{Internet.Email()}",
+                        $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net",
                         Phone.Number())).Build();
 
             foreach (var participant in participants)
@@ -74,7 +74,7 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                username = $"Video_Api_Integration_Test_{Internet.Email()}";
+                username = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
             }
 
             if (string.IsNullOrWhiteSpace(firstName))
@@ -85,7 +85,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
-                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Internet.Email()}", Phone.Number()))
+                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
                 .And(x=> x.TestCallResultId = null)
                 .And(x=> x.CurrentVirtualRoomId = null)
                 .Build();

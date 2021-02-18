@@ -42,64 +42,64 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [Test]
         public async Task Should_get_conference_with_meeting_room_for_username()
         {
-            const string username = "Automation_knownuser@email.com";
+            const string username = "Automation_knownuser@hmcts.net";
             var conference1 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId1 = conference1.Id;
 
             var conference2 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId2 = conference2.Id;
 
             var conference3 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId3 = conference3.Id;
 
             var conference4 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId4 = conference4.Id;
 
             var conference5 = new ConferenceBuilder(true, null, DateTime.UtcNow.AddDays(-1))
-                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId5 = conference5.Id;
 
             var conference6 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId6 = conference6.Id;
 
             var conference7 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId7 = conference7.Id;
 
             var conference8 = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Representative, "Defendant", username)
+                .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();

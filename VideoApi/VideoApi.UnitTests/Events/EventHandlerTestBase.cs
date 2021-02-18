@@ -33,10 +33,10 @@ namespace VideoApi.UnitTests.Events
                 .WithEndpoint("Endpoint1", "Endpoint1234@sip.com")
                 .WithEndpoint("Endpoint2", "Endpoint2345@sip.com")
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .Build();
 
             QueryHandlerMock

@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         {
             var beforeActionTime = DateTime.UtcNow;
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
                 .Build();
             
             conference.GetCurrentStatus().Should().Be(ConferenceState.NotStarted);
@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_add_conference_status()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
                 .Build();
 
             conference.GetCurrentStatus().Should().Be(ConferenceState.NotStarted);

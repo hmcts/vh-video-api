@@ -57,12 +57,12 @@ namespace VideoApi.UnitTests.Services
             
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant", "rep1@dA.com")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@test.hearings.com", "rep1@dA.com")
-                .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@test.hearings.com")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant", "rep1@hmcts.net")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
+                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net", "rep1@hmcts.net")
+                .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .Build();
         }
 

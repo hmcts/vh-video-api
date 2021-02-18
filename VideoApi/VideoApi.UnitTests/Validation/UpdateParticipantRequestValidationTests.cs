@@ -53,9 +53,9 @@ namespace VideoApi.UnitTests.Validation
                 Fullname = "Fullname", 
                 FirstName = "FirstName", 
                 LastName = "LastName",
-                ContactEmail = "prson@me.com",
+                ContactEmail = "prson@hmcts.net",
                 ContactTelephone = "098765432",
-                Username = "username@test.com"
+                Username = "username@hmcts.net"
             };
         }
     }

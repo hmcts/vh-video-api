@@ -48,14 +48,14 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveAConferenceWithEndpoints()
         {
             var conference1 = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant", "rep@hearings.reform.hmcts.net")
-                .WithParticipant(UserRole.Individual, "Defendant")
-                .WithParticipant(UserRole.Representative, "Defendant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant", "rep@hmcts.net")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hearings.reform.hmcts.net")
+                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hmcts.net")
                 .WithEndpoint("Display2", Internet.FreeEmail())
-                .WithMeetingRoom("https://poc.node.com", "user@email.com")
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
             _context.Test.Conferences.Add(_context.Test.Conference);

@@ -29,7 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async System.Threading.Tasks.Task Should_retrieve_all_alerts()
         {
             var conference = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Individual, "Claimant")
+                .WithParticipant(UserRole.Individual, "Applicant")
                 .WithParticipant(UserRole.Judge, "Judge")
                 .Build();
 
@@ -48,7 +48,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private static List<Task> InitTasks(Conference conference)
         {
             const string body = "Automated Test Complete Task";
-            const string updatedBy = "test@automated.com";
+            const string updatedBy = "test@hmcts.net";
 
             var judge = conference.GetParticipants().First(x => x.UserRole == UserRole.Judge);
             var individual = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);

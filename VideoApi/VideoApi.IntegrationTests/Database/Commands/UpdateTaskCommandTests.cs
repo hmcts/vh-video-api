@@ -33,7 +33,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_update_status_to_done(TaskType taskType)
         {
             const string body = "Automated Test Complete Task";
-            const string updatedBy = "test@automated.com";
+            const string updatedBy = "test@hmcts.net";
             _newConferenceId = Guid.NewGuid();
             var task = new Alert(_newConferenceId, _newConferenceId, body, taskType);
             await TestDataManager.SeedAlerts(new List<Alert>{task});
@@ -57,7 +57,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public void Should_throw_task_not_found_exception()
         {
-            const string updatedBy = "test@automated.com";
+            const string updatedBy = "test@hmcts.net";
             _newConferenceId = Guid.NewGuid();
             
             var command = new UpdateTaskCommand(_newConferenceId, 9999, updatedBy);

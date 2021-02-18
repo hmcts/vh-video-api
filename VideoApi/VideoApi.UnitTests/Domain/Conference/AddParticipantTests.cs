@@ -27,10 +27,10 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void Should_not_add_existing_participant_to_hearing()
         {
             var conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Claimant")
-                .WithParticipant(UserRole.Representative, "Claimant")
-                .WithParticipant(UserRole.Representative, "Defendant")
-                .WithParticipant(UserRole.Individual, "Defendant")
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithParticipant(UserRole.Representative, "Respondent")
+                .WithParticipant(UserRole.Individual, "Respondent")
                 .Build();
 
             var beforeCount = conference.GetParticipants().Count;

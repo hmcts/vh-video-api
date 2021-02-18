@@ -85,7 +85,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.GetParticipants()[1];
-            _updateParticipantRequest.Username = "new.me@username.net;";
+            _updateParticipantRequest.Username = "new.me@hmcts.net;";
 
 
             var result = await Controller.UpdateParticipantDetailsAsync(conferenceId, participant.Id, _updateParticipantRequest);

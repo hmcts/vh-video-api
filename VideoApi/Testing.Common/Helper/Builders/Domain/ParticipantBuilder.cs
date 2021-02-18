@@ -18,7 +18,7 @@ namespace Testing.Common.Helper.Builders.Domain
         public ParticipantBuilder(bool ignoreId = false)
         {
             _userRole = UserRole.Individual;
-            _caseTypeGroup = "Claimant";
+            _caseTypeGroup = "Applicant";
             _builderSettings = new BuilderSettings();
             if (!ignoreId) return;
 
@@ -68,8 +68,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var name = Name.FullName();
 
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                    new Participant(Guid.NewGuid(), name, Name.First(), Name.Last(), name, Internet.Email(), _userRole,
-                        _hearingRole, _caseTypeGroup, Internet.Email(), Phone.Number()))
+                    new Participant(Guid.NewGuid(), name, Name.First(), Name.Last(), name, $"{RandomNumber.Next()}@hmcts.net", _userRole,
+                        _hearingRole, _caseTypeGroup, $"{RandomNumber.Next()}@hmcts.net", Phone.Number()))
                 .With(x => x.CurrentRoom = null)
                 .Build();
 

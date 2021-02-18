@@ -18,7 +18,7 @@ namespace Testing.Common.Helper.Builders.Api
             var fromRandomNumber = new Random();
             _bookNewConferenceRequest = Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.HearingRefId = Guid.NewGuid())
-                .With(x => x.CaseType = "Civil Money Claims")
+                .With(x => x.CaseType = "Generic")
                 .With(x => x.ScheduledDateTime = DateTime.Now.ToLocalTime().AddMinutes(2))
                 .With(x => x.CaseNumber = $"{GenerateRandom.CaseNumber(fromRandomNumber)}")
                 .With(x => x.CaseName = $"{caseName} {GenerateRandom.Letters(fromRandomNumber)}")
@@ -39,8 +39,8 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.UserRole = UserRole.Judge)
                 .With(x => x.HearingRole = "Judge")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
-                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
-                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
                 .Build();
 
             if (!string.IsNullOrWhiteSpace(firstName))
@@ -53,7 +53,7 @@ namespace Testing.Common.Helper.Builders.Api
             return this;
         }
 
-        public BookNewConferenceRequestBuilder WithRepresentative(string caseTypeGroup = "Claimant")
+        public BookNewConferenceRequestBuilder WithRepresentative(string caseTypeGroup = "Applicant")
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
@@ -65,15 +65,15 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(VideoApi.Domain.Enums.UserRole.Representative, caseTypeGroup))
                 .With(x => x.Representee = "Person")
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
-                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
-                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
 
                 .Build();
             _bookNewConferenceRequest.Participants.Add(participant);
             return this;
         }
 
-        public BookNewConferenceRequestBuilder WithIndividual(string caseTypeGroup = "Claimant")
+        public BookNewConferenceRequestBuilder WithIndividual(string caseTypeGroup = "Applicant")
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
@@ -84,15 +84,15 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.CaseTypeGroup = caseTypeGroup)
                 .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(VideoApi.Domain.Enums.UserRole.Representative, caseTypeGroup))
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
-                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
-                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
                 .Build();
 
             _bookNewConferenceRequest.Participants.Add(participant);
             return this;
         }
         
-        public BookNewConferenceRequestBuilder WithIndividualAndInterpreter(string caseTypeGroup = "Claimant")
+        public BookNewConferenceRequestBuilder WithIndividualAndInterpreter(string caseTypeGroup = "Applicant")
         {
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.FullName()}")
@@ -103,8 +103,8 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.CaseTypeGroup = caseTypeGroup)
                 .With(x => x.HearingRole = ParticipantBuilder.DetermineHearingRole(VideoApi.Domain.Enums.UserRole.Representative, caseTypeGroup))
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
-                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@email.com")
-                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@username.com")
+                .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
+                .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
                 .Build();
 
             var interpreter =
