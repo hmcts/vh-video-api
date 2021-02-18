@@ -150,22 +150,22 @@ namespace VideoApi.IntegrationTests.Database.Queries
             {
                 new Participant(Guid.NewGuid(), "", "firstJudge", "James", "Judge James", "judge.james@hmcts.net",
                     UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"),
-                    "Children Act", $"{RandomNumber.Next()}@hmcts.com", Phone.Number()),
+                    "Children Act", $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "firstname", "lastname", "firstname lastname",
                     "firstname.lastname@hmcts.net", UserRole.Individual,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com", Phone.Number())
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number())
             };
             var participants2 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
                     "secondJudge.james@hmcts.net", UserRole.Judge,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com", Phone.Number()),
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "individualFirst", "lastname", "individualFirst lastname",
                     "individualFirst.lastname@hmcts.net", UserRole.Individual,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Individual, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com",
+                    $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
             var participants3 = new List<Participant>
@@ -173,39 +173,39 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 new Participant(Guid.NewGuid(), "", "firstJudge", "James", "firstJudge James",
                     "firstJudge.james@hmcts.net", UserRole.Judge,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com", Phone.Number()),
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
                     "representativeFirst.lastname@hmcts.net", UserRole.Representative,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com",
+                    $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
             var participants4 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@hmcts.net", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.com", Phone.Number()),
+                    "thirdJudge.james@hmcts.net", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeFirst", "lastname", "representativeFirst lastname",
-                    "representativeFirst.lastname@hmcts.net", UserRole.Representative, ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.com",
+                    "representativeFirst.lastname@hmcts.net", UserRole.Representative, ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
             var participants5 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "thirdJudge", "James", "thirdJudge James",
-                    "thirdJudge.james@hmcts.net", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.com", Phone.Number()),
+                    "thirdJudge.james@hmcts.net", UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"),"Children Act", $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeSecond", "lastname", "representativeSecond lastname",
                     "representativeSecond.lastname@hmcts.net", UserRole.Representative,ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com", Phone.Number()),
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
             };
             var participants6 = new List<Participant>
             {
                 new Participant(Guid.NewGuid(), "", "secondJudge", "James II", "SecondJudge James II",
                     "secondJudge.james@hmcts.net", UserRole.Judge,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Judge, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com", Phone.Number()),
+                    $"{RandomNumber.Next()}@hmcts.net", Phone.Number()),
                 new Participant(Guid.NewGuid(), "", "representativeThird", "lastname", "representativeThird lastname",
                     "representativeThird.lastname@hmcts.net", UserRole.Representative,
                     ParticipantBuilder.DetermineHearingRole(UserRole.Representative, "Children Act"), "Children Act",
-                    $"{RandomNumber.Next()}@hmcts.com",
+                    $"{RandomNumber.Next()}@hmcts.net",
                     Phone.Number()),
             };
 

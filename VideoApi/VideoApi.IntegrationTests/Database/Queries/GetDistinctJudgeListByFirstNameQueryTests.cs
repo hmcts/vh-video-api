@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async Task Should_get_list_of_judges_excluding_anonymised_and_automation_test_users()
         {
             var newConference = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Judge, "Judge", "Judge.James@email.net", "JudgeManchester", null, ParticipantState.None)
+                .WithParticipant(UserRole.Judge, "Judge", "Judge.James@hmcts.net", "JudgeManchester", null, ParticipantState.None)
                 .WithParticipant(UserRole.Representative, "Applicant", "Applicant.Smith@hmcts.net", "Applicant", null, ParticipantState.None)
                 .WithParticipant(UserRole.Individual, "Applicant", "ApplicantLIP.Green@hmcts.net", "Applicant", null, ParticipantState.None)
                 .Build();
@@ -80,7 +80,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             // anonymised data
             newConference = new ConferenceBuilder(true)
-                .WithParticipant(UserRole.Judge, "Judge", "Judge.James1@hmcts.net", "JudgeLondon", null, ParticipantState.None)
+                .WithParticipant(UserRole.Judge, "Judge", "Judge.James1@hmcts.net1", "JudgeLondon", null, ParticipantState.None)
                 .WithParticipant(UserRole.Representative, "Applicant", "Applicant.Smith1@hmcts.net", "Applicant", null, ParticipantState.None)
                 .WithParticipant(UserRole.Individual, "Applicant", "ApplicantLIP.Green1@hmcts.net", "Applicant", null, ParticipantState.None)
                 .Build();

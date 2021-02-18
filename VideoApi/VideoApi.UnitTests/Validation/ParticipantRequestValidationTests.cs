@@ -178,7 +178,7 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.HearingRole = "Litigant in person")
                 .With(x => x.Name = Name.FullName())
-                .With(x => x.Username = $"{RandomNumber.Next()}@hmcts.com")
+                .With(x => x.Username = $"{RandomNumber.Next()}@hmcts.net")
                 .Build();
         }
     }

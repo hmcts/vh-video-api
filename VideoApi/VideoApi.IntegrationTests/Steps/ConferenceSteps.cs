@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Steps
                 }
 
                 case Scenario.Nonexistent:
-                    username = $"{RandomNumber.Next()}@hmcts.com";
+                    username = $"{RandomNumber.Next()}@hmcts.net";
                     break;
                 case Scenario.Invalid:
                     username = "invalidemail";
@@ -76,7 +76,7 @@ namespace VideoApi.IntegrationTests.Steps
                 }
 
                 case Scenario.Nonexistent:
-                    username = $"{RandomNumber.Next()}@hmcts.com";
+                    username = $"{RandomNumber.Next()}@hmcts.net";
                     break;
                 case Scenario.Invalid:
                     username = "invalidemail";

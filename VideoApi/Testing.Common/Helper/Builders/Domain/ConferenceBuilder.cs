@@ -74,7 +74,7 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                username = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.com";
+                username = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
             }
 
             if (string.IsNullOrWhiteSpace(firstName))
@@ -85,7 +85,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
-                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.com", Phone.Number()))
+                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
                 .And(x=> x.TestCallResultId = null)
                 .And(x=> x.CurrentVirtualRoomId = null)
                 .Build();
