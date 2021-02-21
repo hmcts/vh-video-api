@@ -41,18 +41,6 @@ namespace VideoApi.UnitTests.Validation
                 .Should().BeTrue();
         }
 
-        [Test]
-        public async Task Should_fail_validation_when_requested_by_is_empty()
-        {
-            var request = BuildRequest();
-            request.RequestedBy = Guid.Empty;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoRequestedByIdErrorMessage)
-                .Should().BeTrue();
-        }
 
         [Test]
         public async Task Should_fail_validation_when_requested_for_is_empty()

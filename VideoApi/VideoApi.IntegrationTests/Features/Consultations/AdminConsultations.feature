@@ -9,7 +9,6 @@ Feature: Respond to Admin Consultations
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
     And the error response message should also contain 'ConferenceId is required'
-    And the error response message should also contain 'RequestedBy is required'
     And the error response message should also contain 'RequestedFor is required'
     
   Scenario: Respond to a VH Officer Consultation for a non-existent conference

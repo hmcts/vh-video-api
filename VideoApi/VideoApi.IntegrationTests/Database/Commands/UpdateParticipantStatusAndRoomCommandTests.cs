@@ -56,16 +56,25 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
-        [Test] public async Task should_throw_room_not_found_exception_when_room_label_is_provided_but_returns_null()
+        [Test] public async Task should_add_participant_into_a_room_when_static_room_label__provided_but_returns_null()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceIds.Add(seededConference.Id);
             var participant = seededConference.GetParticipants().First();
             const ParticipantState state = ParticipantState.InConsultation;
+            const string staticRoomlabel = "ConsultationRoom1";
 
-            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, "TestRoomNotExist");
-            Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
+            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, staticRoomlabel);
+            await _handler.Handle(command);
+
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id));
+            var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
+            var afterState = updatedParticipant.GetCurrentStatus();
+
+            afterState.ParticipantState.Should().Be(state);
+            updatedParticipant.CurrentRoom.Should().BeNull();
+            updatedParticipant.CurrentVirtualRoom.Label.Should().Be(staticRoomlabel);
         }
 
 
@@ -139,24 +148,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.CurrentVirtualRoom.Label.Should().Be(seededRoom.Label);
         }
 
-        [Test]
-        public async Task should_throw_room_not_found_exception_when_room_label_is_provided_but_returns_null_conferenceId_check()
-        {
-            var seededConference = await TestDataManager.SeedConference();
-            var seededConference2 = await TestDataManager.SeedConference();
-            _newConferenceIds.Add(seededConference.Id);
-            _newConferenceIds.Add(seededConference2.Id);
-            var vRoom = new Room(seededConference2.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.JudgeJOH, false);
-            var seededRoom = await TestDataManager.SeedRoom(vRoom);
-            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
-            TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
-            var participant = seededConference.GetParticipants().First(p => p.IsJudge());
-            const ParticipantState state = ParticipantState.InConsultation;
-
-            var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, seededRoom.Label);
-            Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
-        }
 
         [Test]
         public async Task should_update_participant_to_disconnected_from_virtual_room()
