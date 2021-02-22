@@ -20,7 +20,6 @@ Feature: Respond To Consultations
     And I have an invalid respond consultation request
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
-    And the error response message should also contain 'RequestedBy is required'
     And the error response message should also contain 'RequestedFor is required'
     And the error response message should also contain 'ConferenceId is required'
 

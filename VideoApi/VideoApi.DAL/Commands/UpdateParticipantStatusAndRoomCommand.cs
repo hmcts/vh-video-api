@@ -60,7 +60,9 @@ namespace VideoApi.DAL.Commands
                 virtualRoom = virtualRooms.LastOrDefault();
                 if (!command.Room.HasValue && virtualRoom == null && command.ParticipantState != ParticipantState.Disconnected)
                 {
-                    throw new RoomNotFoundException(command.RoomLabel);
+                    var vhoConsultation = new Room(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
+                    _context.Rooms.Add(vhoConsultation);
+                    virtualRoom = vhoConsultation;
                 }
             }
 
