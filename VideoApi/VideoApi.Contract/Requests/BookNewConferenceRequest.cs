@@ -10,7 +10,15 @@ namespace VideoApi.Contract.Requests
             Endpoints = new List<AddEndpointRequest>();   
         }
         
+        /// <summary>
+        /// The booking reference ID
+        /// </summary>
         public Guid HearingRefId { get; set; }
+        
+        /// <summary>
+        /// The ID of the group of hearings
+        /// </summary>
+        public Guid? GroupId { get; set; }
         public string CaseType { get; set; }
         public DateTime ScheduledDateTime { get; set; }
         public string CaseNumber { get; set; }

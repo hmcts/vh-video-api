@@ -18,6 +18,7 @@ namespace Testing.Common.Helper.Builders.Api
             var fromRandomNumber = new Random();
             _bookNewConferenceRequest = Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.HearingRefId = Guid.NewGuid())
+                .With(x => x.GroupId = Guid.NewGuid())
                 .With(x => x.CaseType = "Generic")
                 .With(x => x.ScheduledDateTime = DateTime.Now.ToLocalTime().AddMinutes(2))
                 .With(x => x.CaseNumber = $"{GenerateRandom.CaseNumber(fromRandomNumber)}")
@@ -125,6 +126,7 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithHearingRefId(Guid hearingRefId)
         {
             _bookNewConferenceRequest.HearingRefId = hearingRefId;
+            _bookNewConferenceRequest.GroupId = hearingRefId;
             return this;
         }
 

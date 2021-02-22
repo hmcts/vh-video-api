@@ -569,7 +569,10 @@ namespace VideoApi.Controllers
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
                 request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
                 request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants
-            );
+            )
+            {
+                GroupId = request.GroupId
+            };
 
             await _commandHandler.Handle(createConferenceCommand);
 

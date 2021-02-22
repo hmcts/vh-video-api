@@ -13,6 +13,7 @@ namespace VideoApi.DAL.Mappings
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.HearingRefId);
+            builder.Property(x => x.GroupId);
             builder.Property(x => x.CaseType);
             builder.Property(x => x.ScheduledDateTime);
             builder.Property(x => x.CaseNumber);

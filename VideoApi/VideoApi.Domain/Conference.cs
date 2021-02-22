@@ -33,6 +33,7 @@ namespace VideoApi.Domain
         }
 
         public Guid HearingRefId { get; private set; }
+        public Guid? GroupId { get; set; }
         public string CaseType { get; private set; }
         public DateTime ScheduledDateTime { get; private set; }
         public DateTime? ActualStartTime { get; private set; }

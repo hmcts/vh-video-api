@@ -26,6 +26,7 @@ namespace VideoApi.UnitTests.Mappings
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, pexipSelfTestNode);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
+                .Excluding(x => x.GroupId)
                 .Excluding(x => x.Participants)
                 .Excluding(x => x.ConferenceStatuses)
                 .Excluding(x => x.State)

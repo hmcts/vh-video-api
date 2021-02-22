@@ -29,6 +29,7 @@ namespace VideoApi.UnitTests.Mappings
             var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, configuration);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
+                .Excluding(x => x.GroupId)
                 .Excluding(x => x.Participants)
                 .Excluding(x => x.ConferenceStatuses)
                 .Excluding(x => x.State)
