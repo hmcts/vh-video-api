@@ -30,29 +30,12 @@ namespace VideoApi.Events.Handlers
         
         private static EndpointState DeriveEndpointStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            var toConsultationRoom = callbackEvent.TransferTo == RoomType.ConsultationRoom;
-            
-            if (callbackEvent.TransferFrom == RoomType.WaitingRoom && toConsultationRoom)
-                return EndpointState.InConsultation;
-
-            var fromConsultationRoom = callbackEvent.TransferFrom == RoomType.ConsultationRoom;
-            if (fromConsultationRoom && callbackEvent.TransferTo == RoomType.WaitingRoom)
-                return EndpointState.Connected;
-
-            if (callbackEvent.TransferFrom == RoomType.ConsultationRoom &&
-                callbackEvent.TransferTo == RoomType.HearingRoom)
-                return EndpointState.Connected;
-
-            switch (callbackEvent.TransferFrom)
+            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
             {
-                case RoomType.WaitingRoom when callbackEvent.TransferTo == RoomType.HearingRoom:
-                    return EndpointState.Connected;
-                case RoomType.HearingRoom when callbackEvent.TransferTo == RoomType.WaitingRoom:
-                    return EndpointState.Connected;
-                default:
-                    throw new RoomTransferException(callbackEvent.TransferFrom.GetValueOrDefault(),
-                        callbackEvent.TransferTo.GetValueOrDefault());
+                return EndpointState.InConsultation;
             }
+
+            return EndpointState.Connected;
         }
     }
 }

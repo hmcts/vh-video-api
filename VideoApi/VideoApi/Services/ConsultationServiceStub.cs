@@ -23,7 +23,12 @@ namespace VideoApi.Services
             return Task.FromResult(room);
         }
 
-        public Task JoinConsultationRoomAsync(Guid conferenceId, Guid participantId, string room)
+        public Task EndpointTransferToRoomAsync(Guid conferenceId, Guid endpointId, string room)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task ParticipantTransferToRoomAsync(Guid conferenceId, Guid participantId, string room)
         {
             return Task.CompletedTask;
         }

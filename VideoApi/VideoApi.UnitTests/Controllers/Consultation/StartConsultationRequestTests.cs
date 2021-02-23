@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
             ConsultationServiceMock.Setup(x =>
-                x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
+                x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartConsultationRequestAsync(request);
 
@@ -57,7 +57,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
             ConsultationServiceMock.Setup(x =>
-                    x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
+                    x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
                 .ThrowsAsync(new ParticipantNotFoundException(request.RequestedBy));
 
             var result = await Controller.StartConsultationRequestAsync(request);
@@ -77,7 +77,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
                 .ReturnsAsync(_testRoom);
             ConsultationServiceMock
-                .Setup(x => x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
+                .Setup(x => x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label))
                 .ThrowsAsync(kinlyApiException);
 
             var result = await Controller.StartConsultationRequestAsync(request);
@@ -112,7 +112,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 It.IsAny<VideoApi.Domain.Enums.VirtualCourtRoomType>(), It.IsAny<bool>())).ReturnsAsync(_testRoom);
 
             ConsultationServiceMock.Setup(x =>
-                x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
+                x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);
 
@@ -128,7 +128,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .ThrowsAsync(new ConferenceNotFoundException(request.ConferenceId));
 
             ConsultationServiceMock.Setup(x =>
-                x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
+                x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);
 
@@ -144,7 +144,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .ThrowsAsync(new ParticipantNotFoundException(Guid.NewGuid()));
 
             ConsultationServiceMock.Setup(x =>
-                x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
+                x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);
 
@@ -160,7 +160,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .ThrowsAsync(new KinlyApiException("Error", 400, "Response", null, null));
 
             ConsultationServiceMock.Setup(x =>
-                x.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
+                x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testRoom.Label));
 
             var result = await Controller.StartNewConsultationRequestAsync(request);
 

@@ -42,6 +42,7 @@ namespace VideoApi.DAL.Queries
             
             return await _context.Rooms
                 .Include(x => x.RoomParticipants)
+                .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId && x.Type == query.CourtRoomType)
                 .Where(x => x.Status == RoomStatus.Live)
