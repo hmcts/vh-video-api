@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             await Controller.RespondToConsultationRequestAsync(request);
 
-            ConsultationServiceMock.Verify(x => x.JoinConsultationRoomAsync(conferenceId, participant.Id, request.RoomLabel),
+            ConsultationServiceMock.Verify(x => x.ParticipantTransferToRoomAsync(conferenceId, participant.Id, request.RoomLabel),
                 Times.Once);
             ConsultationServiceMock.VerifyNoOtherCalls();
         }

@@ -225,7 +225,8 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                DefenceAdvocateId = defenceAdvocate.Id
+                DefenceAdvocateId = defenceAdvocate.Id,
+                RoomLabel = "name"
             };
 
             SerialiseEndpointConsultationRequest(request);

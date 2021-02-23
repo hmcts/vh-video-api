@@ -44,8 +44,8 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(UpdateEndpointStatusAndRoomCommand command)
         {
             var conference = await _context.Conferences
-                .Include(x => x.Endpoints)
-                .ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomEndpoints)
+                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomEndpoints)
+                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomParticipants)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -67,7 +67,9 @@ namespace VideoApi.DAL.Commands
                 virtualRoom = virtualRooms.LastOrDefault();
                 if (!command.Room.HasValue && virtualRoom == null && command.Status != EndpointState.Disconnected)
                 {
-                    throw new RoomNotFoundException(command.RoomLabel);
+                    var vhoConsultation = new Room(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
+                    _context.Rooms.Add(vhoConsultation);
+                    virtualRoom = vhoConsultation;
                 }
             }
 
@@ -75,7 +77,6 @@ namespace VideoApi.DAL.Commands
             endpoint.UpdateStatus(command.Status);
             endpoint.UpdateCurrentRoom(command.Room);
             endpoint.UpdateCurrentVirtualRoom(virtualRoom);
-
             await _context.SaveChangesAsync();
         }
 

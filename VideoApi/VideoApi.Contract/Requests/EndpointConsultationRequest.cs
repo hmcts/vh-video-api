@@ -20,6 +20,11 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Video Endpoint's UUID
         /// </summary>
-        public Guid EndpointId { get; set; } 
+        public Guid EndpointId { get; set; }
+
+        /// <summary>
+        /// The label / name of the room to lock/unlock
+        /// </summary>
+        public string RoomLabel { get; set; }
     }
 }

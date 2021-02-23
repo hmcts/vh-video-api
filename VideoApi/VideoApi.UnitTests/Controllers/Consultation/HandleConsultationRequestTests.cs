@@ -34,7 +34,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             CommandHandlerMock.Verify(x => x.Handle(It.Is<SaveEventCommand>(s => s.Reason == $"Adding {requestedFor.DisplayName} to {request.RoomLabel}")), Times.Once);
             ConsultationServiceMock.Verify(x =>
-                x.JoinConsultationRoomAsync(TestConference.Id, requestedFor.Id, "Room1"), Times.Once);
+                x.ParticipantTransferToRoomAsync(TestConference.Id, requestedFor.Id, "Room1"), Times.Once);
             ConsultationServiceMock.VerifyNoOtherCalls();
         }
 

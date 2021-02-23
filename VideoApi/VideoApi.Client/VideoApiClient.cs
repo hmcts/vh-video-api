@@ -361,14 +361,14 @@ namespace VideoApi.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RespondToConsultationRequestAsync(ConsultationRequestResponse request, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <summary>Add an endpoint to a private consultation</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task StartConsultationWithEndpointAsync(EndpointConsultationRequest request);
+        System.Threading.Tasks.Task JoinEndpointToConsultationAsync(EndpointConsultationRequest request);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <summary>Add an endpoint to a private consultation</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task StartConsultationWithEndpointAsync(EndpointConsultationRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task JoinEndpointToConsultationAsync(EndpointConsultationRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LockRoomAsync(LockRoomRequest request);
@@ -3179,17 +3179,17 @@ namespace VideoApi.Client
             }
         }
     
-        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <summary>Add an endpoint to a private consultation</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
+        public System.Threading.Tasks.Task JoinEndpointToConsultationAsync(EndpointConsultationRequest request)
         {
-            return StartConsultationWithEndpointAsync(request, System.Threading.CancellationToken.None);
+            return JoinEndpointToConsultationAsync(request, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <summary>Add an endpoint to a private consultation</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task StartConsultationWithEndpointAsync(EndpointConsultationRequest request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task JoinEndpointToConsultationAsync(EndpointConsultationRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");

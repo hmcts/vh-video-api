@@ -99,18 +99,18 @@ namespace VideoApi.Controllers
                 ParticipantId = request.RequestedBy
             };
             await _commandHandler.Handle(command);
-            await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, requestedFor.Id, request.RoomLabel);
+            await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, requestedFor.Id, request.RoomLabel);
 
             return NoContent();
         }
 
         /// <summary>
-        /// Start a private consultation with a video endpoint
+        /// Add an endpoint to a private consultation
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("endpoint")]
-        [OpenApiOperation("StartConsultationWithEndpoint")]
+        [OpenApiOperation("JoinEndpointToConsultation")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -153,10 +153,21 @@ namespace VideoApi.Controllers
                 return Unauthorized(message);
             }
 
-            var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
-            await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, defenceAdvocate.Id, room.Label);
-            await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, endpoint.Id, room.Label);
+            var roomQuery = new GetRoomByIdQuery(request.ConferenceId, request.RoomLabel);
+            var room = await _queryHandler.Handle<GetRoomByIdQuery, Room>(roomQuery);
+            if (room == null)
+            {
+                _logger.LogWarning($"Unable to find room {request.RoomLabel}");
+                return NotFound($"Unable to find room {request.RoomLabel}");
+            }
 
+            if (room.RoomEndpoints.Any())
+            {
+                _logger.LogWarning("Unable to join endpoint {endpointId} to {RoomLabel}", endpoint.Id, request.RoomLabel);
+                return BadRequest("Room already has an active endpoint");
+            }
+
+            await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
             return Ok();
         }
 
@@ -192,7 +203,7 @@ namespace VideoApi.Controllers
             try
             {
                 var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
-                await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
                 var response = RoomToDetailsResponseMapper.MapRoomToResponse(room);
                 return Ok(response);
@@ -232,7 +243,7 @@ namespace VideoApi.Controllers
             {
                 var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
                     request.RoomType.MapToDomainEnum());
-                await _consultationService.JoinConsultationRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
                 return Accepted();
             }
