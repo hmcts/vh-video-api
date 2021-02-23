@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Events
         [TestCase(RoomType.ConsultationRoom, RoomType.WaitingRoom, EndpointState.Connected)]
         [TestCase(RoomType.ConsultationRoom, RoomType.HearingRoom, EndpointState.Connected)]
         [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom, EndpointState.InConsultation)]
-        public async Task Should_send_participant__status_messages_to_clients_and_asb_when_transfer_occurs(RoomType from, RoomType to, EndpointState status)
+        public async Task Should_send_participant_status_messages_to_clients_and_asb_when_transfer_occurs(RoomType from, RoomType to, EndpointState status)
         {
             var conference = TestConference;
             var endpointForEvent = conference.GetEndpoints().First();
@@ -43,32 +43,6 @@ namespace VideoApi.UnitTests.Events
                     command.EndpointId == endpointForEvent.Id &&
                     command.Status == status &&
                     command.Room == to)), Times.Once);
-        }
-        
-        [Test]
-        public void Should_throw_exception_when_transfer_cannot_be_mapped_to_endpoint_status()
-        {
-            var conference = TestConference;
-            var endpointForEvent = conference.GetEndpoints().First();
-
-            var callbackEvent = new CallbackEvent
-            {
-                EventType = EventType.Transfer,
-                EventId = Guid.NewGuid().ToString(),
-                ConferenceId = conference.Id,
-                ParticipantId = endpointForEvent.Id,
-                TransferFrom = RoomType.WaitingRoom,
-                TransferTo = RoomType.WaitingRoom,
-                TransferredFromRoomLabel = RoomType.WaitingRoom.ToString(),
-                TransferredToRoomLabel = RoomType.WaitingRoom.ToString(),
-                TimeStampUtc = DateTime.UtcNow
-            };
-
-            Assert.ThrowsAsync<RoomTransferException>(() =>
-                _sut.HandleAsync(callbackEvent));
-
-            CommandHandlerMock.Verify(
-                x => x.Handle(It.IsAny<UpdateEndpointStatusAndRoomCommand>()), Times.Never);
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
+using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -111,7 +112,57 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             actionResult.Should().NotBeNull();
             actionResult.Value.Should().Be("Defence advocate is not allowed to speak to requested endpoint");
         }
-        
+
+        [Test]
+        public async Task should_return_bad_request_when_endpoint_is_already_in_room()
+        {
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var defenceAdvocate = TestConference.GetParticipants().First(x =>
+                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
+                    StringComparison.CurrentCultureIgnoreCase));
+
+            var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
+            room.AddEndpoint(new RoomEndpoint(Guid.NewGuid()));
+            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
+
+            var request = new EndpointConsultationRequest()
+            {
+                ConferenceId = TestConference.Id,
+                EndpointId = endpointWithDefenceAdvocate.Id,
+                DefenceAdvocateId = defenceAdvocate.Id,
+                RoomLabel = "Label"
+            };
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
+
+            var actionResult = result.As<BadRequestObjectResult>();
+            actionResult.Should().NotBeNull();
+            actionResult.Value.Should().Be("Room already has an active endpoint");
+        }
+
+        [Test]
+        public async Task should_return_not_found_when_endpoint_is_requested_to_not_found_room()
+        {
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var defenceAdvocate = TestConference.GetParticipants().First(x =>
+                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
+                    StringComparison.CurrentCultureIgnoreCase));
+
+            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(null as Room);
+
+            var request = new EndpointConsultationRequest()
+            {
+                ConferenceId = TestConference.Id,
+                EndpointId = endpointWithDefenceAdvocate.Id,
+                DefenceAdvocateId = defenceAdvocate.Id,
+                RoomLabel = "Label"
+            };
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
+
+            var actionResult = result.As<NotFoundObjectResult>();
+            actionResult.Should().NotBeNull();
+            actionResult.Value.Should().Be($"Unable to find room {request.RoomLabel}");
+        }
+
         [Test]
         public async Task should_return_ok_when_endpoint_is_linked_with_defence_advocate()
         {
@@ -121,14 +172,14 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                     StringComparison.CurrentCultureIgnoreCase));
 
             var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
-            ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(TestConference.Id, VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false)).ReturnsAsync(room);
-
+            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
 
             var request = new EndpointConsultationRequest()
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithDefenceAdvocate.Id,
-                DefenceAdvocateId = defenceAdvocate.Id
+                DefenceAdvocateId = defenceAdvocate.Id,
+                RoomLabel = "Label"
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
 

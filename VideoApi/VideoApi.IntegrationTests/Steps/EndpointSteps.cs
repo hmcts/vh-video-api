@@ -13,10 +13,12 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory.EPEndpoints;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -43,7 +45,29 @@ namespace VideoApi.IntegrationTests.Steps
         {
             await _commonSteps.GivenIHaveAConference();
         }
-        
+
+        [Given(@"I have a conference with endpoints and endpoint defence advocate is in a consultation")]
+        public async Task GivenTheDefenceAdvocateIsInConsultationRoom()
+        {
+            var conference1 = new ConferenceBuilder()
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant", "rep@hmcts.net")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
+                .WithParticipant(UserRole.Judge, null)
+                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hmcts.net")
+                .WithEndpoint("Display2", Internet.FreeEmail())
+                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
+                .WithAudioRecordingRequired(false).Build();
+
+            var vRoom = new Room(conference1.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
+            var defenseAdvocate = conference1.Participants.Single(x => x.Username == "rep@hmcts.net");
+            defenseAdvocate.UpdateCurrentVirtualRoom(vRoom);
+
+            _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
+            _context.Test.Conferences.Add(_context.Test.Conference);
+        }
+
         [Given(@"I have a conference with endpoints")]
         public async Task GivenIHaveAConferenceWithEndpoints()
         {

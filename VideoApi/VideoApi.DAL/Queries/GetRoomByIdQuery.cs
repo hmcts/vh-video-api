@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
@@ -36,7 +35,7 @@ namespace VideoApi.DAL.Queries
                 .Include(x => x.RoomParticipants)
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
-                .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel && x.Status == RoomStatus.Live)
+                .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel)
                 .FirstOrDefaultAsync();
         }
     }

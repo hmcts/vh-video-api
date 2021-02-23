@@ -36,14 +36,18 @@ namespace VideoApi.Events.Handlers
                     callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
             await CommandHandler.Handle(command);
 
-            if (!callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation"))
+            if (!callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation") || callbackEvent.TransferTo == RoomType.HearingRoom)
             {
                 return;
             }
 
             var roomQuery = new GetRoomByIdQuery(SourceConference.Id, callbackEvent.TransferredFromRoomLabel);
             var room = await QueryHandler.Handle<GetRoomByIdQuery, Room>(roomQuery);
-            if (!room.RoomParticipants.Any())
+            if (room == null)
+            {
+                _logger.LogError("Unable to find room {roomLabel} in conference {conferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
+            }
+            else if (room.Status == RoomStatus.Live && !room.RoomParticipants.Any())
             {
                 foreach (var endpoint in room.RoomEndpoints)
                 {
@@ -58,27 +62,15 @@ namespace VideoApi.Events.Handlers
             {
                 return ParticipantState.InConsultation;
             }
-            
-            
-            if (callbackEvent.TransferFrom == RoomType.WaitingRoom &&
-                callbackEvent.TransferTo == RoomType.ConsultationRoom)
-                return ParticipantState.InConsultation;
 
-            if ((callbackEvent.TransferFrom == RoomType.ConsultationRoom || 
-                 callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation")) &&
-                callbackEvent.TransferTo == RoomType.WaitingRoom)
-                return ParticipantState.Available;
-
-            if (callbackEvent.TransferFrom == RoomType.ConsultationRoom &&
-                callbackEvent.TransferTo == RoomType.HearingRoom)
-                return ParticipantState.InHearing;
-
-            switch (callbackEvent.TransferFrom)
+            switch (callbackEvent.TransferTo)
             {
-                case RoomType.WaitingRoom when callbackEvent.TransferTo == RoomType.HearingRoom:
-                    return ParticipantState.InHearing;
-                case RoomType.HearingRoom when callbackEvent.TransferTo == RoomType.WaitingRoom:
+                case RoomType.ConsultationRoom:
+                    return ParticipantState.InConsultation;
+                case RoomType.WaitingRoom:
                     return ParticipantState.Available;
+                case RoomType.HearingRoom:
+                    return ParticipantState.InHearing;
                 default:
                     throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel,
                         callbackEvent.TransferredToRoomLabel);
