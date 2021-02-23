@@ -78,8 +78,19 @@ namespace VideoApi.Services
 
             return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
         }
-        
-        public async Task JoinConsultationRoomAsync(Guid conferenceId, Guid participantId, string room)
+
+
+        public async Task EndpointTransferToRoomAsync(Guid conferenceId, Guid endpointId, string room)
+        {
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
+            var endpint = conference.GetEndpoints().Single(x => x.Id == endpointId);
+
+            await TransferParticipantAsync(conferenceId, endpointId, endpint.GetCurrentRoom(), room);
+        }
+
+        public async Task ParticipantTransferToRoomAsync(Guid conferenceId, Guid participantId, string room)
         {
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(

@@ -4,7 +4,7 @@ Feature: Start Private Endpoint Consultation
   I want to start private consultations with endpoints on behalf of defence advocates
     
   Scenario: Successfully start a private consultation with an endpoint
-    Given I have a conference with endpoints
+    Given I have a conference with endpoints and endpoint defence advocate is in a consultation
     And I have a start endpoint consultation with a linked defence advocate
     When I send the request to the endpoint
     Then the response should have the status OK and success status True

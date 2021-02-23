@@ -10,7 +10,9 @@ namespace VideoApi.Services.Contracts
     {
         Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType);
 
-        Task JoinConsultationRoomAsync(Guid conferenceId, Guid participantId, string room);
+        Task EndpointTransferToRoomAsync(Guid conferenceId, Guid endpointId, string room);
+
+        Task ParticipantTransferToRoomAsync(Guid conferenceId, Guid participantId, string room);
 
         Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom);
 

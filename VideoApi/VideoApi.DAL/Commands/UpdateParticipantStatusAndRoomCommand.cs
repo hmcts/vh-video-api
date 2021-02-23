@@ -43,13 +43,20 @@ namespace VideoApi.DAL.Commands
         
         public async Task Handle(UpdateParticipantStatusAndRoomCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Participants)
-                .ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomParticipants)
+            var conference = await _context.Conferences
+                .Include(x => x.Participants).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomParticipants)
+                .Include(x => x.Participants).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomEndpoints)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
+            }
+
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == command.ParticipantId);
+            if (participant == null)
+            {
+                throw new ParticipantNotFoundException(command.ParticipantId);
             }
 
             Room virtualRoom = null;
@@ -64,12 +71,6 @@ namespace VideoApi.DAL.Commands
                     _context.Rooms.Add(vhoConsultation);
                     virtualRoom = vhoConsultation;
                 }
-            }
-
-            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == command.ParticipantId);
-            if (participant == null)
-            {
-                throw new ParticipantNotFoundException(command.ParticipantId);
             }
 
             UpdateRoom(command.ParticipantState, virtualRoom, participant);

@@ -30,7 +30,7 @@ namespace VideoApi.DAL.Queries
             return _context.Conferences
                 .Include(x => x.Participants).ThenInclude(x => x.CurrentVirtualRoom)
                 .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
-                .Include(x => x.Endpoints)
+                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentVirtualRoom)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
         }

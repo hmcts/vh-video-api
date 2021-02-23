@@ -99,7 +99,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             var room = _rooms.First(x => x.ConferenceId.Equals(_request.ConferenceId));
             var participant =
                 TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
-            await _consultationService.JoinConsultationRoomAsync(_request.ConferenceId, _request.RequestedBy,
+            await _consultationService.ParticipantTransferToRoomAsync(_request.ConferenceId, _request.RequestedBy,
                 room.Label);
 
             var request = new TransferParticipantParams

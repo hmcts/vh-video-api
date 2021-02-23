@@ -34,5 +34,10 @@ namespace VideoApi.Contract.Responses
         /// The defence advocate
         /// </summary>
         public string DefenceAdvocate { get; set; }
+
+        /// <summary>
+        /// Current consultation room details
+        /// </summary>
+        public RoomResponse CurrentRoom { get; set; }
     }
 }
