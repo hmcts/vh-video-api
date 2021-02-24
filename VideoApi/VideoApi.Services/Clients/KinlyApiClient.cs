@@ -1708,7 +1708,7 @@ namespace VideoApi.Services.Kinly
         public string Room_type { get; set; }
     
         [Newtonsoft.Json.JsonProperty("tile_number", Required = Newtonsoft.Json.Required.Always)]
-        public int Tile_number { get; set; }
+        public string Tile_number { get; set; }
     
         [Newtonsoft.Json.JsonProperty("participant_room_id", Required = Newtonsoft.Json.Required.Always)]
         public string Participant_room_id { get; set; }

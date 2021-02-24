@@ -692,8 +692,7 @@
           "type": "string"
         },
         "tile_number": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "participant_room_id": {
           "type": "string"
