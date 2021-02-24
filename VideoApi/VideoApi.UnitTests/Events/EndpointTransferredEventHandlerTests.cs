@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
-using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 
