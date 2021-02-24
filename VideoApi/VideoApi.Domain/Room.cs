@@ -115,7 +115,7 @@ namespace VideoApi.Domain
             return RoomEndpoints.Any(x => x.EndpointId == endpoint.EndpointId);
         }
 
-        public void UpdateRoomDetails(string label, string ingestUrl, string pexipNode, string participantUri)
+        public void AddRoomConnectionDetails(string label, string ingestUrl, string pexipNode, string participantUri)
         {
             Label = label;
             IngestUrl = ingestUrl;

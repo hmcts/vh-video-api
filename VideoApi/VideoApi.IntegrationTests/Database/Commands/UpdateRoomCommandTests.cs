@@ -38,7 +38,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var room = new Room(_newConferenceId, VirtualCourtRoomType.Civilian, false);
             await TestDataManager.SeedRoom(room);
 
-            var label = "InterpreterRoom1";
+            var label = "Interpreter1";
             var ingestUrl = "dummyurl";
             var node = "node";
             var uri = "fakeuri";

@@ -47,7 +47,7 @@ namespace VideoApi.DAL.Commands
                 throw new RoomNotFoundException(command.ConferenceId, command.Label);
             }
 
-            room.UpdateRoomDetails(command.Label, command.IngestUrl, command.PexipNode, command.ParticipantUri);
+            room.AddRoomConnectionDetails(command.Label, command.IngestUrl, command.PexipNode, command.ParticipantUri);
             await _context.SaveChangesAsync();
         }
     }

@@ -30,11 +30,11 @@ namespace VideoApi.Services
             
                 
             var room = new Room(Guid.NewGuid(), VirtualCourtRoomType.Civilian, false);
-            var label = $"InterpreterRoom{_roomCount + 1}";
+            var label = $"Interpreter{_roomCount + 1}";
             var ingest = $"{conference.IngestUrl}/{_roomCount}";
             var node = "sip.node.com";
             var joinUri = "interpreter__waiting_room";
-            room.UpdateRoomDetails(label, ingest, node, joinUri);
+            room.AddRoomConnectionDetails(label, ingest, node, joinUri);
             _roomCount++;
             _rooms.Add(room, new List<Participant>{participant});
             return Task.FromResult(room);

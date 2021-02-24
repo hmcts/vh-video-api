@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_create_room_and_set_status_to_created()
         {
             var conferenceId = Guid.NewGuid();
-            var label = "Room1";
+            var label = "Interpreter1";
 
             var room = new Room(conferenceId, label, VirtualCourtRoomType.JudgeJOH, false);
             room.Status.Should().Be(RoomStatus.Live);
@@ -215,17 +215,17 @@ namespace VideoApi.UnitTests.Domain
         }
 
         [Test]
-        public void should_update_room_details()
+        public void should_add_room_connection_details()
         {
             var room = new Room(Guid.NewGuid(), VirtualCourtRoomType.Civilian, false);
             room.Label.Should().BeNull();
 
-            var label = "InterpreterRoom1";
+            var label = "Interpreter1";
             var ingestUrl = $"rtmps://hostserver/hearingId1/hearingId1/{room.Id}";
             var node = "sip.test.com";
             var participantUri = "env-foo-interpeterroom";
             
-            room.UpdateRoomDetails(label, ingestUrl, node, participantUri);
+            room.AddRoomConnectionDetails(label, ingestUrl, node, participantUri);
 
             room.Label.Should().Be(label);
             room.IngestUrl.Should().Be(ingestUrl);

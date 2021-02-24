@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         public async Task should_reuse_empty_interpreter_room()
         {
             var participant = _conference.Participants[0];
-            var emptyInterpreterRoom = new Room(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian,
+            var emptyInterpreterRoom = new Room(_conference.Id, "Interpreter1", VirtualCourtRoomType.Civilian,
                 false);
 
             _mocker.Mock<IQueryHandler>().Setup(x =>
@@ -53,9 +53,9 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         {
             var participant = _conference.Participants[0];
             var participantB = _conference.Participants[1];
-            var emptyInterpreterRoom = new Room(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian,
+            var emptyInterpreterRoom = new Room(_conference.Id, "Interpreter1", VirtualCourtRoomType.Civilian,
                 false);
-            var interpreterRoom = new Room(_conference.Id, "InterpreterRoom2", VirtualCourtRoomType.Civilian,
+            var interpreterRoom = new Room(_conference.Id, "Interpreter2", VirtualCourtRoomType.Civilian,
                 false);
             interpreterRoom.AddParticipant(new RoomParticipant(participantB.Id));
             
@@ -77,7 +77,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             var expectedRoom = new Room(_conference.Id, VirtualCourtRoomType.Civilian, false);
             var newVmrRoom = new BookedParticipantRoomResponse
             {
-                Display_name = "InterpreterRoom1",
+                Display_name = "Interpreter1",
                 Uris = new Uris
                 {
                     Participant = "wertyui__interpreter",
@@ -94,7 +94,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
 
             _mocker.Mock<ICommandHandler>().Setup(x =>
                 x.Handle(It.IsAny<UpdateRoomCommand>())).Callback(() =>
-                expectedRoom.UpdateRoomDetails(newVmrRoom.Display_name, "ingesturl", newVmrRoom.Uris.Pexip_node,
+                expectedRoom.AddRoomConnectionDetails(newVmrRoom.Display_name, "ingesturl", newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 
             _mocker.Mock<IKinlyApiClient>().Setup(x =>

@@ -33,14 +33,16 @@ namespace VideoApi.Services
         public async Task<Room> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
         {
             var conferenceId = conference.Id;
-
-            // get a room
             var roomPrefix = "Interpreter";
             var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.Civilian, conferenceId);
             var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
-            var interpreterRooms = listOfRooms.Where(x => x.Label.Contains(roomPrefix)).ToList();
+            var interpreterRooms = listOfRooms.Where(x => x.Label.StartsWith(roomPrefix)).ToList();
+            var count = interpreterRooms
+                .Select(x => int.TryParse(x.Label.Replace(roomPrefix, string.Empty), out var n) ? n : 0)
+                .DefaultIfEmpty()
+                .Max();
             var room = GetRoomForParticipant(conferenceId, interpreterRooms, participant) ??
-                       await CreateAnInterpreterRoom(conference, interpreterRooms.Count);
+                       await CreateAnInterpreterRoom(conference, count);
 
             return room;
         }
@@ -87,16 +89,13 @@ namespace VideoApi.Services
             var participantIds = participant.LinkedParticipants.Select(lp => lp.LinkedId).ToList();
             participantIds.Add(participant.Id);
 
-            // first check if a room with linked participants for current participant exist
             var matchingRooms = participantIds
                 .Select(l => rooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(l))))
                 .Where(m => m != null)
-                .Select(matching => matching)
                 .ToList();
 
             var existingRoom = matchingRooms.FirstOrDefault();
-            // return an empty room, if possible
-            return existingRoom ?? rooms.FirstOrDefault(x => x.RoomParticipants.Count == 0);
+            return existingRoom ?? rooms.FirstOrDefault(x => !x.RoomParticipants.Any());
 
         }
     }

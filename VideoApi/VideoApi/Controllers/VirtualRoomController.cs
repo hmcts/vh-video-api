@@ -57,7 +57,7 @@ namespace VideoApi.Controllers
                 return NotFound("Conference does not exist");
             }
             
-            var participant = conference.GetParticipants().FirstOrDefault(x => x.Id == participantId);
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
             if (participant == null)
             {
                 _logger.LogWarning(
