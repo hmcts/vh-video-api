@@ -1,14 +1,18 @@
 using System.Collections.Generic;
+using System.Linq;
 using Autofac.Extras.Moq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.DAL.Commands;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services;
+using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Services.VirtualRoom
@@ -64,6 +68,45 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             var room = await _service.GetOrCreateAnInterpreterVirtualRoom(_conference, participant);
             room.Should().NotBeNull();
             room.Should().BeEquivalentTo(interpreterRoom);
+        }
+
+        [Test]
+        public async Task should_create_vmr_with_kinly_if_room_is_not_available()
+        {
+            var participant = _conference.Participants.First(x => !x.IsJudge());
+            var expectedRoom = new Room(_conference.Id, VirtualCourtRoomType.Civilian, false);
+            var newVmrRoom = new BookedParticipantRoomResponse
+            {
+                Display_name = "InterpreterRoom1",
+                Uris = new Uris
+                {
+                    Participant = "wertyui__interpreter",
+                    Pexip_node = "test.node.com"
+                }
+            };
+            
+            
+            _mocker.Mock<IQueryHandler>().SetupSequence(x =>
+                    x.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(It.Is<GetAvailableRoomByRoomTypeQuery>(q =>
+                        q.ConferenceId == _conference.Id && q.CourtRoomType == VirtualCourtRoomType.Civilian)))
+                .ReturnsAsync(new List<Room>())
+                .ReturnsAsync(new List<Room>{expectedRoom});
+
+            _mocker.Mock<ICommandHandler>().Setup(x =>
+                x.Handle(It.IsAny<UpdateRoomCommand>())).Callback(() =>
+                expectedRoom.UpdateRoomDetails(newVmrRoom.Display_name, "ingesturl", newVmrRoom.Uris.Pexip_node,
+                    newVmrRoom.Uris.Participant));
+
+            _mocker.Mock<IKinlyApiClient>().Setup(x =>
+                x.CreateParticipantRoomAsync(_conference.Id.ToString(), It.IsAny<CreateParticipantRoomParams>()))
+                .ReturnsAsync(newVmrRoom);
+            
+            var room = await _service.GetOrCreateAnInterpreterVirtualRoom(_conference, participant);
+
+            room.Should().NotBeNull();
+            room.Label.Should().Be(newVmrRoom.Display_name);
+            room.PexipNode.Should().Be(newVmrRoom.Uris.Pexip_node);
+            room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
         }
 
         private Conference InitConference()

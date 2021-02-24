@@ -45,7 +45,7 @@ namespace VideoApi.Services
             return room;
         }
 
-        public async Task<Room> CreateAnInterpreterRoom(Conference conference, int existingRooms)
+        private async Task<Room> CreateAnInterpreterRoom(Conference conference, int existingRooms)
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
             var createRoomCommand = new CreateRoomCommand(conference.Id, null, VirtualCourtRoomType.Civilian, false);
