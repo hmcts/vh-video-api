@@ -1095,7 +1095,7 @@ namespace VideoApi.Services.Kinly
                     var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(createParticipantRoomParams, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -1116,7 +1116,7 @@ namespace VideoApi.Services.Kinly
                         ProcessResponse(client_, response_);
     
                         var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200") 
+                        if (status_ == "201") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<BookedParticipantRoomResponse>(response_, headers_).ConfigureAwait(false);
                             return objectResponse_.Object;
@@ -1504,7 +1504,7 @@ namespace VideoApi.Services.Kinly
         public string Pexip_node { get; set; }
     
         /// <summary>prepackaged URL for admin iframe</summary>
-        [Newtonsoft.Json.JsonProperty("admin", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("admin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Admin { get; set; }
     
         /// <summary>Webrtc URI for participants.</summary>

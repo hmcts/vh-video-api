@@ -48,7 +48,10 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var room = new Room(command.ConferenceId, command.Label, command.Type, command.Locked);
+            var room = string.IsNullOrWhiteSpace(command.Label)
+                ? new Room(command.ConferenceId, command.Type, command.Locked)
+                : new Room(command.ConferenceId, command.Label, command.Type, command.Locked);
+            
 
             _context.Rooms.Add(room);
 

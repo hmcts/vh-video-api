@@ -20,6 +20,10 @@ namespace VideoApi.Domain
             Locked = locked;
         }
 
+        public Room(Guid conferenceId, VirtualCourtRoomType type, bool locked) : this(conferenceId, null, type, locked)
+        {
+        }
+
         public Guid ConferenceId { get; private set; }
         public string Label { get; private set; }
         public VirtualCourtRoomType Type { get; private set; }
@@ -27,6 +31,10 @@ namespace VideoApi.Domain
         public virtual List<RoomParticipant> RoomParticipants { get; }
         public virtual List<RoomEndpoint> RoomEndpoints { get; }
         public bool Locked { get; private set; }
+        
+        public string IngestUrl { get; private set; }
+        public string PexipNode { get; private set; }
+        public string ParticipantUri { get; private set; }
 
         public void UpdateRoomLock(bool locked)
         {
@@ -105,6 +113,14 @@ namespace VideoApi.Domain
         public bool DoesEndpointExist(RoomEndpoint endpoint)
         {
             return RoomEndpoints.Any(x => x.EndpointId == endpoint.EndpointId);
+        }
+
+        public void UpdateRoomDetails(string label, string ingestUrl, string pexipNode, string participantUri)
+        {
+            Label = label;
+            IngestUrl = ingestUrl;
+            PexipNode = pexipNode;
+            ParticipantUri = participantUri;
         }
     }
 }

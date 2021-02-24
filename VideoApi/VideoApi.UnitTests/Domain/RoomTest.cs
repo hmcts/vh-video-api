@@ -213,5 +213,24 @@ namespace VideoApi.UnitTests.Domain
             var participantsList = room.GetRoomParticipants();
             participantsList.Count.Should().Be(1);
         }
+
+        [Test]
+        public void should_update_room_details()
+        {
+            var room = new Room(Guid.NewGuid(), VirtualCourtRoomType.Civilian, false);
+            room.Label.Should().BeNull();
+
+            var label = "InterpreterRoom1";
+            var ingestUrl = $"rtmps://hostserver/hearingId1/hearingId1/{room.Id}";
+            var node = "sip.test.com";
+            var participantUri = "env-foo-interpeterroom";
+            
+            room.UpdateRoomDetails(label, ingestUrl, node, participantUri);
+
+            room.Label.Should().Be(label);
+            room.IngestUrl.Should().Be(ingestUrl);
+            room.PexipNode.Should().Be(node);
+            room.ParticipantUri.Should().Be(participantUri);
+        }
     }
 }

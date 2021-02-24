@@ -116,5 +116,13 @@ namespace Testing.Common.Helper
             public static string SuspendVideoHearing(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/suspend";
             public static string TransferParticipant(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/transfer";
         }
+
+        public static class VirtualRoomEndpoints
+        {
+            private const string ApiRoot = "conferences";
+
+            public static string GetInterpreterRoomForParticipant(Guid conferenceId, Guid participantId) =>
+                $"{ApiRoot}/{conferenceId}/rooms/interpreter/{participantId}";
+        }
     }
 }

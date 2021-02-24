@@ -358,7 +358,7 @@
       }
     },
     "/hearing/{virtual_courtroom_id}/participant-room":  {
-      "post": {
+      "put": {
         "operationId": "createParticipantRoom",
         "description": "Create participant room",
         "tags": [
@@ -381,7 +381,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "New participant room",
             "schema": {
               "$ref": "#/definitions/bookedParticipantRoomResponse"
@@ -533,7 +533,6 @@
       "type": "object",
       "required": [
         "pexip_node",
-        "admin",
         "participant"
       ],
       "properties": {
