@@ -112,6 +112,46 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedEvent.EndpointFlag.Should().BeFalse();
             savedEvent.Phone.Should().Be(command.Phone);
         }
+        
+        [Test]
+        public async Task Should_save_event_with_room_id()
+        {
+            var seededConference = await TestDataManager.SeedConference();
+            TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
+            _newConferenceId = seededConference.Id;
+
+            var externalEventId = "AutomatedEventTestRoomIdIsSaved";
+            var externalTimeStamp = DateTime.UtcNow.AddMinutes(-10);
+            var participantId = seededConference.GetParticipants().First().Id;
+            RoomType? transferredFrom = RoomType.WaitingRoom;
+            RoomType? transferredTo = RoomType.ConsultationRoom;
+            var reason = "Automated";
+            var eventType = EventType.Disconnected;
+            var roomId = new Random().Next();
+
+            var command = new SaveEventCommand(_newConferenceId, externalEventId, eventType, externalTimeStamp,
+                    transferredFrom, transferredTo, reason, null)
+                { ParticipantId = participantId, ParticipantRoomId = roomId};
+            await _handler.Handle(command);
+
+            Event savedEvent;
+            await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
+            {
+                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                    x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
+            }
+
+            savedEvent.Should().NotBeNull();
+            savedEvent.ExternalEventId.Should().Be(externalEventId);
+            savedEvent.EventType.Should().Be(eventType);
+            savedEvent.ExternalTimestamp.Should().Be(externalTimeStamp);
+            savedEvent.TransferredFrom.Should().Be(transferredFrom);
+            savedEvent.TransferredTo.Should().Be(transferredTo);
+            savedEvent.Reason.Should().Be(reason);
+            savedEvent.EndpointFlag.Should().BeFalse();
+            savedEvent.Phone.Should().Be(command.Phone);
+            savedEvent.ParticipantRoomId.Should().Be(command.ParticipantRoomId);
+        }
 
         [Test]
         public async Task should_set_endpoint_flag_to_true_when_endpoint_event()

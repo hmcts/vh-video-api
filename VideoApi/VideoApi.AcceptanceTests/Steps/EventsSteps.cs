@@ -52,6 +52,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.TransferTo = RoomType.HearingRoom.ToString())
                 .With(x => x.Reason = "Automated")
                 .With(x => x.Phone = null)
+                .With(x => x.ParticipantRoomId = null)
                 .Build();
 
             _context.Request = _context.Post(EventsEndpoints.Event, request);
