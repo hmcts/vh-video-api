@@ -6,9 +6,9 @@ using VideoApi.DAL.Exceptions;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateRoomCommand : ICommand
+    public class UpdateRoomConnectionDetailsCommand : ICommand
     {
-        public UpdateRoomCommand(Guid conferenceId, long roomId, string label, string ingestUrl, string pexipNode,
+        public UpdateRoomConnectionDetailsCommand(Guid conferenceId, long roomId, string label, string ingestUrl, string pexipNode,
             string participantUri)
         {
             ConferenceId = conferenceId;
@@ -28,26 +28,26 @@ namespace VideoApi.DAL.Commands
         public string ParticipantUri { get; }
     }
 
-    public class UpdateRoomCommandHandler : ICommandHandler<UpdateRoomCommand>
+    public class UpdateRoomConnectionDetailsCommandHandler : ICommandHandler<UpdateRoomConnectionDetailsCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public UpdateRoomCommandHandler(VideoApiDbContext context)
+        public UpdateRoomConnectionDetailsCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(UpdateRoomCommand command)
+        public async Task Handle(UpdateRoomConnectionDetailsCommand connectionDetailsCommand)
         {
             var room = await _context.Rooms
-                .SingleOrDefaultAsync(x => x.ConferenceId == command.ConferenceId &&  x.Id == command.RoomId);
+                .SingleOrDefaultAsync(x => x.ConferenceId == connectionDetailsCommand.ConferenceId &&  x.Id == connectionDetailsCommand.RoomId);
 
             if (room == null)
             {
-                throw new RoomNotFoundException(command.ConferenceId, command.Label);
+                throw new RoomNotFoundException(connectionDetailsCommand.ConferenceId, connectionDetailsCommand.Label);
             }
 
-            room.AddRoomConnectionDetails(command.Label, command.IngestUrl, command.PexipNode, command.ParticipantUri);
+            room.UpdateRoomConnectionDetails(connectionDetailsCommand.Label, connectionDetailsCommand.IngestUrl, connectionDetailsCommand.PexipNode, connectionDetailsCommand.ParticipantUri);
             await _context.SaveChangesAsync();
         }
     }

@@ -10,23 +10,23 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
-    public class UpdateRoomCommandTests :DatabaseTestsBase
+    public class UpdateRoomConnectionDetailsCommandTests :DatabaseTestsBase
     {
-        private UpdateRoomCommandHandler _handler;
+        private UpdateRoomConnectionDetailsCommandHandler _handler;
         private Guid _newConferenceId;
         
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new UpdateRoomCommandHandler(context);
+            _handler = new UpdateRoomConnectionDetailsCommandHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
         [Test]
         public void should_throw_exception_if_room_does_not_exist()
         {
-            var command = new UpdateRoomCommand(Guid.NewGuid(), int.MaxValue, "Label", "ingest", "node", "uri");
+            var command = new UpdateRoomConnectionDetailsCommand(Guid.NewGuid(), int.MaxValue, "Label", "ingest", "node", "uri");
             Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -42,7 +42,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var ingestUrl = "dummyurl";
             var node = "node";
             var uri = "fakeuri";
-            var command = new UpdateRoomCommand(_newConferenceId, room.Id, label, ingestUrl, node, uri);
+            var command = new UpdateRoomConnectionDetailsCommand(_newConferenceId, room.Id, label, ingestUrl, node, uri);
             await _handler.Handle(command);
             var roomId = command.RoomId;
 

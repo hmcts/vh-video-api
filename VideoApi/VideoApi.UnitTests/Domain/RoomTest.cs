@@ -227,7 +227,7 @@ namespace VideoApi.UnitTests.Domain
         }
 
         [Test]
-        public void should_add_room_connection_details()
+        public void should_update_room_connection_details()
         {
             var room = new Room(Guid.NewGuid(), VirtualCourtRoomType.Civilian, false);
             room.Label.Should().BeNull();
@@ -237,7 +237,7 @@ namespace VideoApi.UnitTests.Domain
             var node = "sip.test.com";
             var participantUri = "env-foo-interpeterroom";
             
-            room.AddRoomConnectionDetails(label, ingestUrl, node, participantUri);
+            room.UpdateRoomConnectionDetails(label, ingestUrl, node, participantUri);
 
             room.Label.Should().Be(label);
             room.IngestUrl.Should().Be(ingestUrl);

@@ -70,7 +70,7 @@ namespace VideoApi.Services
             };
             var newVmr = await _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
 
-            var updateCommand = new UpdateRoomCommand(conference.Id, roomId, newVmr.Display_name, ingestUrl,
+            var updateCommand = new UpdateRoomConnectionDetailsCommand(conference.Id, roomId, newVmr.Display_name, ingestUrl,
                 newVmr.Uris.Pexip_node, newVmr.Uris.Participant);
             await _commandHandler.Handle(updateCommand);
             _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,

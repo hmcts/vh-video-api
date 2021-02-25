@@ -93,8 +93,8 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                 .ReturnsAsync(new List<Room>{expectedRoom});
 
             _mocker.Mock<ICommandHandler>().Setup(x =>
-                x.Handle(It.IsAny<UpdateRoomCommand>())).Callback(() =>
-                expectedRoom.AddRoomConnectionDetails(newVmrRoom.Display_name, "ingesturl", newVmrRoom.Uris.Pexip_node,
+                x.Handle(It.IsAny<UpdateRoomConnectionDetailsCommand>())).Callback(() =>
+                expectedRoom.UpdateRoomConnectionDetails(newVmrRoom.Display_name, "ingesturl", newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 
             _mocker.Mock<IKinlyApiClient>().Setup(x =>
