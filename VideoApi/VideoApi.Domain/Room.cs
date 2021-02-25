@@ -89,7 +89,8 @@ namespace VideoApi.Domain
 
         private void UpdateStatus()
         {
-            if (Status != RoomStatus.Closed && !RoomParticipants.Any() && !RoomEndpoints.Any())
+            if (Status != RoomStatus.Closed && !RoomParticipants.Any() && !RoomEndpoints.Any() &&
+                Type != VirtualCourtRoomType.Civilian)
             {
                 Status = RoomStatus.Closed;
             }
