@@ -72,7 +72,6 @@ namespace VideoApi.DAL.Commands
                     virtualRoom = vhoConsultation;
                 }
             }
-
             UpdateRoom(command.ParticipantState, virtualRoom, participant);
             participant.UpdateParticipantStatus(command.ParticipantState);
             participant.UpdateCurrentRoom(command.Room);
@@ -85,6 +84,12 @@ namespace VideoApi.DAL.Commands
             var isDynamicConsultationRoom = virtualRoom != null;
             if (status == ParticipantState.InConsultation && isDynamicConsultationRoom)
             {
+                //If a participant is switching to a new consultation room, then remove the participant from the last consultation room
+                if(participant.CurrentVirtualRoom ?.Label != virtualRoom.Label)
+                {
+                    participant.CurrentVirtualRoom?.RemoveParticipant(new RoomParticipant(participant.Id));
+                }
+                
                 virtualRoom.AddParticipant(new RoomParticipant(participant.Id));
             }
 
