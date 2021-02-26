@@ -25,6 +25,7 @@ java:
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
         - applicationinsights--instrumentationkey
+        - connectionstrings--videoapi
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -35,7 +36,6 @@ java:
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
-        - connectionstrings--videoapi
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
