@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
@@ -45,7 +44,7 @@ namespace VideoApi.Services
             IEnumerable<EndpointDto> endpoints)
         {
             _logger.LogInformation(
-                "Booking a conference for {conferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
+                "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
                 _kinlyConfigOptions.CallbackUri, _kinlyConfigOptions.KinlyApiUrl);
 
             try
@@ -107,7 +106,7 @@ namespace VideoApi.Services
                 _ => pauseBetweenFailures,
                 retryAttempt =>
                     _logger.LogWarning(
-                        "Failed to retrieve test score for participant {participantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}",
+                        "Failed to retrieve test score for participant {ParticipantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}",
                         participantId, _kinlyConfigOptions.KinlySelfTestApiUrl, retryAttempt),
                 callResult => callResult == null,
                 () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
@@ -120,7 +119,7 @@ namespace VideoApi.Services
             string toRoom)
         {
             _logger.LogInformation(
-                "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
+                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
                 participantId, fromRoom, toRoom, conferenceId);
 
             var request = new TransferParticipantParams
@@ -131,27 +130,6 @@ namespace VideoApi.Services
             };
 
             return _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
-        }
-
-        public async Task StopConsultationAsync(Conference conference, string consultationRoom)
-        {
-            var participants = conference.GetParticipants()
-                .Where(x => x.GetCurrentStatus().ParticipantState == ParticipantState.InConsultation &&
-                            x.CurrentVirtualRoom == null &&
-                            x.GetCurrentRoom() == consultationRoom);
-
-            foreach (var participant in participants)
-            {
-                await TransferParticipantAsync(conference.Id, participant.Id, consultationRoom,
-                    RoomType.WaitingRoom.ToString());
-            }
-
-            var endpoints = conference.GetEndpoints()
-                .Where(x => x.State == EndpointState.InConsultation && x.GetCurrentRoom() == consultationRoom);
-            foreach (var endpoint in endpoints)
-            {
-                await TransferParticipantAsync(conference.Id, endpoint.Id, consultationRoom, RoomType.WaitingRoom.ToString());
-            }
         }
 
         public Task DeleteVirtualCourtRoomAsync(Guid conferenceId)

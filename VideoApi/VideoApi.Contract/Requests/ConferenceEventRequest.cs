@@ -31,6 +31,11 @@ namespace VideoApi.Contract.Requests
         /// Id of participant (uuid).
         /// </summary>
         public string ParticipantId { get; set; }
+        
+        /// <summary>
+        /// Id of participant room (uuid). This only applies to VMR events
+        /// </summary>
+        public string ParticipantRoomId { get; set; }
 
         /// <summary>
         /// Room from where the participant is transferred from.

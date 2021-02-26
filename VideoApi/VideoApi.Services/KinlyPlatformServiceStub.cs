@@ -50,17 +50,6 @@ namespace VideoApi.Services
         {
             return Task.CompletedTask;
         }
-
-        public Task StartEndpointPrivateConsultationAsync(Conference conference, Endpoint endpoint, Participant defenceAdvocate)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task StopConsultationAsync(Conference conference, string consultationRoom)
-        {
-            return Task.CompletedTask;
-        }
-
         public Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
         {
             return Task.CompletedTask;

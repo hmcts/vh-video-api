@@ -32,9 +32,10 @@ namespace VideoApi.DAL.Commands
         public RoomType? TransferredTo { get; }
         public string Reason { get; }
         public bool IsEndpoint { get; }
-        public string Phone { get; set; }
+        public string Phone { get; }
         public string TransferredFromRoomLabel { get; set; }
         public string TransferredToRoomLabel { get; set; }
+        public long? ParticipantRoomId { get; set; }
     }
 
     public class SaveEventCommandHandler : ICommandHandler<SaveEventCommand>
@@ -61,7 +62,8 @@ namespace VideoApi.DAL.Commands
                 ParticipantId = command.ParticipantId,
                 EndpointFlag = command.IsEndpoint,
                 TransferredFromRoomLabel = command.TransferredFromRoomLabel,
-                TransferredToRoomLabel = command.TransferredToRoomLabel
+                TransferredToRoomLabel = command.TransferredToRoomLabel,
+                ParticipantRoomId = command.ParticipantRoomId
             };
         }
     }
