@@ -16,8 +16,6 @@ java:
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
       usePodIdentity: true
       secrets:
-        - customtoken--secret
-        - customtoken--thirdpartysecret
         - cvpconfiguration--managedidentityclientid
         - cvpconfiguration--storageaccountKey
         - azuread--vhvideowebclientid
@@ -26,6 +24,7 @@ java:
         - wowzaconfiguration--password
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
+        - applicationinsights--instrumentationkey
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -33,8 +32,6 @@ java:
       secrets:
         - azuread--clientsecret
         - azuread--clientid
-        - applicationinsights-instrumentationkey
-        - applicationinsights-connection-string
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
