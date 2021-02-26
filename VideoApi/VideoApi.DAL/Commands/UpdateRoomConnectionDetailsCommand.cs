@@ -37,17 +37,17 @@ namespace VideoApi.DAL.Commands
             _context = context;
         }
 
-        public async Task Handle(UpdateRoomConnectionDetailsCommand connectionDetailsCommand)
+        public async Task Handle(UpdateRoomConnectionDetailsCommand command)
         {
             var room = await _context.Rooms
-                .SingleOrDefaultAsync(x => x.ConferenceId == connectionDetailsCommand.ConferenceId &&  x.Id == connectionDetailsCommand.RoomId);
+                .SingleOrDefaultAsync(x => x.ConferenceId == command.ConferenceId &&  x.Id == command.RoomId);
 
             if (room == null)
             {
-                throw new RoomNotFoundException(connectionDetailsCommand.ConferenceId, connectionDetailsCommand.Label);
+                throw new RoomNotFoundException(command.ConferenceId, command.Label);
             }
 
-            room.UpdateRoomConnectionDetails(connectionDetailsCommand.Label, connectionDetailsCommand.IngestUrl, connectionDetailsCommand.PexipNode, connectionDetailsCommand.ParticipantUri);
+            room.UpdateRoomConnectionDetails(command.Label, command.IngestUrl, command.PexipNode, command.ParticipantUri);
             await _context.SaveChangesAsync();
         }
     }
