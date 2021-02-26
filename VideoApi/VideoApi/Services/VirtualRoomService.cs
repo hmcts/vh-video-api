@@ -66,7 +66,7 @@ namespace VideoApi.Services
                 Room_label_prefix = roomPrefix,
                 Room_type = roomPrefix,
                 Display_name = $"{roomPrefix}{existingRooms + 1}",
-                Tile_number = $"T{existingRooms + 1}"
+                Tile_number = $"I{existingRooms + 1}"
             };
             var newVmr = await _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
 
