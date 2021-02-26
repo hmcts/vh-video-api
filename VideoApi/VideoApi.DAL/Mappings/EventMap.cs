@@ -21,6 +21,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.TransferredTo);
             builder.Property(x => x.Reason);
             builder.Property(x => x.EndpointFlag).HasDefaultValue(false);
+            builder.Property(x => x.ParticipantRoomId).HasDefaultValue();
         }
     }
 }

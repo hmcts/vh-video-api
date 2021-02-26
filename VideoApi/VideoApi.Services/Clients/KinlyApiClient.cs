@@ -138,6 +138,28 @@ namespace VideoApi.Services.Kinly
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams, System.Threading.CancellationToken cancellationToken);
     
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>New participant room</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>New participant room</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams, System.Threading.CancellationToken cancellationToken);
+    
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>All participant rooms</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>All participant rooms</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
+    
         /// <returns>Health Check</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync();
@@ -1044,6 +1066,167 @@ namespace VideoApi.Services.Kinly
             }
         }
     
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>New participant room</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams)
+        {
+            return CreateParticipantRoomAsync(virtual_courtroom_id, createParticipantRoomParams, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>New participant room</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams, System.Threading.CancellationToken cancellationToken)
+        {
+            if (virtual_courtroom_id == null)
+                throw new System.ArgumentNullException("virtual_courtroom_id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearing/{virtual_courtroom_id}/participant-room");
+            urlBuilder_.Replace("{virtual_courtroom_id}", System.Uri.EscapeDataString(ConvertToString(virtual_courtroom_id, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(createParticipantRoomParams, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "201") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BookedParticipantRoomResponse>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new KinlyApiException("Data is malformed", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(BookedParticipantRoomResponse);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>All participant rooms</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id)
+        {
+            return GetParticipantRoomsAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>All participant rooms</returns>
+        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (virtual_courtroom_id == null)
+                throw new System.ArgumentNullException("virtual_courtroom_id");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearing/{virtual_courtroom_id}/participant-room");
+            urlBuilder_.Replace("{virtual_courtroom_id}", System.Uri.EscapeDataString(ConvertToString(virtual_courtroom_id, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ListParticipantRoomResponse>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new KinlyApiException("Data is malformed", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(ListParticipantRoomResponse);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
         /// <returns>Health Check</returns>
         /// <exception cref="KinlyApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync()
@@ -1321,7 +1504,7 @@ namespace VideoApi.Services.Kinly
         public string Pexip_node { get; set; }
     
         /// <summary>prepackaged URL for admin iframe</summary>
-        [Newtonsoft.Json.JsonProperty("admin", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("admin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Admin { get; set; }
     
         /// <summary>Webrtc URI for participants.</summary>
@@ -1505,6 +1688,81 @@ namespace VideoApi.Services.Kinly
         public static CreateConsultationRoomResponse FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<CreateConsultationRoomResponse>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class CreateParticipantRoomParams 
+    {
+        [Newtonsoft.Json.JsonProperty("room_label_prefix", Required = Newtonsoft.Json.Required.Always)]
+        public string Room_label_prefix { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("audio_recording_url", Required = Newtonsoft.Json.Required.Always)]
+        public string Audio_recording_url { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("participant_type", Required = Newtonsoft.Json.Required.Always)]
+        public string Participant_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("room_type", Required = Newtonsoft.Json.Required.Always)]
+        public string Room_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("tile_number", Required = Newtonsoft.Json.Required.Always)]
+        public string Tile_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("participant_room_id", Required = Newtonsoft.Json.Required.Always)]
+        public string Participant_room_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Always)]
+        public string Display_name { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static CreateParticipantRoomParams FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<CreateParticipantRoomParams>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class BookedParticipantRoomResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("uris", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Uris Uris { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static BookedParticipantRoomResponse FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<BookedParticipantRoomResponse>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.3.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ListParticipantRoomResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("bookedParticipantRooms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<BookedParticipantRoomResponse> BookedParticipantRooms { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static ListParticipantRoomResponse FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ListParticipantRoomResponse>(data);
         }
     
     }

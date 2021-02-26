@@ -35,5 +35,7 @@ namespace VideoApi.Domain
         public DateTime Timestamp { get; set; }
         public bool EndpointFlag { get; set; }
         public string Phone { get; set; }
+        
+        public long? ParticipantRoomId { get; set; }
     }
 }

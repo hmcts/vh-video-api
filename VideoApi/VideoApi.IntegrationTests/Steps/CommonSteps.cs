@@ -531,6 +531,15 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
         }
         
+        [Given(@"I have a civilian interpreter room")]
+        public async Task GivenIHaveACivilianInterpreterRoom()
+        {
+            var conference = _context.Test.Conference;
+            var vRoom = new Room(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+                VirtualCourtRoomType.Civilian, false);
+            _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+        }
+        
         [When(@"I send the request to the endpoint")]
         [When(@"I send the same request twice")]
         public async Task WhenISendTheRequestToTheEndpoint()

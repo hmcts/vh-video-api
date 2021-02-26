@@ -21,6 +21,11 @@ namespace VideoApi.Mappings
 
             command.TransferredFromRoomLabel = request.TransferFrom;
             command.TransferredToRoomLabel = request.TransferTo;
+            
+            if (long.TryParse(request.ParticipantRoomId, out var roomParticipantId))
+            {
+                command.ParticipantRoomId = roomParticipantId;
+            }
 
             return command;
         }

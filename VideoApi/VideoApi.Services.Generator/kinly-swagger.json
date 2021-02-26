@@ -357,6 +357,69 @@
         }
       }
     },
+    "/hearing/{virtual_courtroom_id}/participant-room":  {
+      "put": {
+        "operationId": "createParticipantRoom",
+        "description": "Create participant room",
+        "tags": [
+          "hearing"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "virtual_courtroom_id",
+            "type": "string",
+            "required": true,
+            "description": "Hearing ID"
+          },
+          {
+            "name": "CreateParticipantRoomParams",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/createParticipantRoomParams"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New participant room",
+            "schema": {
+              "$ref": "#/definitions/bookedParticipantRoomResponse"
+            }
+          },
+          "400": {
+            "description": "Data is malformed"
+          }
+        }
+      },
+      "get": {
+        "operationId": "getParticipantRooms",
+        "description": "Get participant rooms for hearing",
+        "tags": [
+          "hearing"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "virtual_courtroom_id",
+            "type": "string",
+            "required": true,
+            "description": "Hearing ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All participant rooms",
+            "schema": {
+              "$ref": "#/definitions/listParticipantRoomResponse"
+            }
+          },
+          "400": {
+            "description": "Data is malformed"
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "operationId": "healthCheck",
@@ -470,7 +533,6 @@
       "type": "object",
       "required": [
         "pexip_node",
-        "admin",
         "participant"
       ],
       "properties": {
@@ -601,6 +663,63 @@
       "properties": {
         "room_label": {
           "type": "string"
+        }
+      }
+    },
+    "createParticipantRoomParams": {
+      "type": "object",
+      "required": [
+        "room_label_prefix",
+        "audio_recording_url",
+        "participant_type",
+        "room_type",
+        "tile_number",
+        "participant_room_id",
+        "display_name"
+      ],
+      "properties": {
+        "room_label_prefix": {
+          "type": "string"
+        },
+        "audio_recording_url": {
+          "type": "string"
+        },
+        "participant_type": {
+          "type": "string"
+        },
+        "room_type": {
+          "type": "string"
+        },
+        "tile_number": {
+          "type": "string"
+        },
+        "participant_room_id": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        }
+      }
+    },
+    "bookedParticipantRoomResponse": {
+      "type": "object",
+      "properties": {
+        "uris": {
+          "$ref": "#/definitions/uris"
+        },
+        "display_name": {
+          "type": "string"
+        }
+      }
+    },
+    "listParticipantRoomResponse": {
+      "type": "object",
+      "properties": {
+        "bookedParticipantRooms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bookedParticipantRoomResponse"
+          }
         }
       }
     }

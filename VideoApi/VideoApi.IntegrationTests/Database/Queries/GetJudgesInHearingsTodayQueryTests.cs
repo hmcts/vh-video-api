@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -100,7 +102,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var conferences = await _handler.Handle(new GetJudgesInHearingsTodayQuery());
 
-            conferences.Should().BeEmpty();
+            conferences.Select(x => x.Id).Should().NotContain(new List<Guid>
+            {
+                _newConferenceId1, _newConferenceId2,_newConferenceId3, _newConferenceId4,_newConferenceId5 ,_newConferenceId6
+            });
         }
         
         [Test]
@@ -160,7 +165,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var conferences = await _handler.Handle(new GetJudgesInHearingsTodayQuery());
 
             conferences.Should().NotBeEmpty();
-            conferences.Count.Should().Be(2);
+            conferences.Select(x => x.Id).Should().Contain(new List<Guid>
+            {
+                _newConferenceId2, _newConferenceId6
+            });
         }
     }
 }

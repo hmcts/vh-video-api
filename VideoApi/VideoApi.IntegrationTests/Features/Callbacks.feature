@@ -97,3 +97,15 @@ Feature: Callbacks
     | SelectingMedia         |
     | ConnectingToConference |
 
+  Scenario Outline: Should accept and process an event request with a participant room id
+    Given I have a conference
+    And I have a civilian interpreter room
+    And I have a valid conference event request with a room id for event type <EventType>
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    Examples:
+      | EventType              |
+      | Joined                 |
+      | Disconnected           |
+      | Transfer               |
+

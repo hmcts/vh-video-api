@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_create_room_and_set_status_to_created()
         {
             var conferenceId = Guid.NewGuid();
-            var label = "Room1";
+            var label = "Interpreter1";
 
             var room = new Room(conferenceId, label, VirtualCourtRoomType.JudgeJOH, false);
             room.Status.Should().Be(RoomStatus.Live);
@@ -183,6 +183,18 @@ namespace VideoApi.UnitTests.Domain
             room.Status.Should().Be(RoomStatus.Live);
         }
 
+        [Test]
+        public void should_not_update_room_status_to_closed_when_room_type_is_civilian()
+        {
+            var room = new Room(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Civilian, false);
+            var roomParticipant = new RoomParticipant(Guid.NewGuid());
+            room.AddParticipant(roomParticipant);
+            room.Status.Should().Be(RoomStatus.Live);
+
+            room.RemoveParticipant(roomParticipant);
+
+            room.Status.Should().Be(RoomStatus.Live);
+        }
 
         [Test]
         public void Should_not_update_room_status_to_closed_on_last_participant_remove_if_has_endpoint()
@@ -212,6 +224,25 @@ namespace VideoApi.UnitTests.Domain
 
             var participantsList = room.GetRoomParticipants();
             participantsList.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void should_update_room_connection_details()
+        {
+            var room = new Room(Guid.NewGuid(), VirtualCourtRoomType.Civilian, false);
+            room.Label.Should().BeNull();
+
+            var label = "Interpreter1";
+            var ingestUrl = $"rtmps://hostserver/hearingId1/hearingId1/{room.Id}";
+            var node = "sip.test.com";
+            var participantUri = "env-foo-interpeterroom";
+            
+            room.UpdateRoomConnectionDetails(label, ingestUrl, node, participantUri);
+
+            room.Label.Should().Be(label);
+            room.IngestUrl.Should().Be(ingestUrl);
+            room.PexipNode.Should().Be(node);
+            room.ParticipantUri.Should().Be(participantUri);
         }
     }
 }
