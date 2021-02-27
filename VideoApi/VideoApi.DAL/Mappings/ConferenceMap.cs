@@ -34,6 +34,9 @@ namespace VideoApi.DAL.Mappings
             builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.ParticipantUri).HasColumnName("ParticipantUri");
             builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.PexipNode).HasColumnName("PexipNode");
             builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.TelephoneConferenceId).HasColumnName("TelephoneConferenceId");
+
+            var roomNavigation = builder.Metadata.FindNavigation(nameof(Conference.Rooms));
+            roomNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
