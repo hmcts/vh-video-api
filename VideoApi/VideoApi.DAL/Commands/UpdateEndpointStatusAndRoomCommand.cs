@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
@@ -59,39 +60,32 @@ namespace VideoApi.DAL.Commands
                 throw new EndpointNotFoundException(command.EndpointId);
             }
 
-            Room virtualRoom = null;
-            if (command.Status == EndpointState.InConsultation)
-            {
-                var virtualRooms = await _context.Rooms
-                    .Where(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId).ToListAsync();
-                virtualRoom = virtualRooms.LastOrDefault();
-                if (!command.Room.HasValue && virtualRoom == null && command.Status != EndpointState.Disconnected)
-                {
-                    var vhoConsultation = new Room(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
-                    _context.Rooms.Add(vhoConsultation);
-                    virtualRoom = vhoConsultation;
-                }
-            }
+            var transferToRoom = await GetTransferToRoom(command).ConfigureAwait(true);
+            transferToRoom?.AddEndpoint(new RoomEndpoint(endpoint.Id));
 
-            UpdateRoom(command.Status, virtualRoom, endpoint);
             endpoint.UpdateStatus(command.Status);
             endpoint.UpdateCurrentRoom(command.Room);
-            endpoint.UpdateCurrentVirtualRoom(virtualRoom);
+            endpoint.UpdateCurrentVirtualRoom(transferToRoom);
             await _context.SaveChangesAsync();
         }
 
-        private void UpdateRoom(EndpointState status, Room virtualRoom, Endpoint endpoint)
+        private async Task<Room> GetTransferToRoom(UpdateEndpointStatusAndRoomCommand command)
         {
-            var isDynamicConsultationRoom = virtualRoom != null;
-            if (status == EndpointState.InConsultation && isDynamicConsultationRoom)
+            if (command.Status != EndpointState.InConsultation)
             {
-                virtualRoom.AddEndpoint(new RoomEndpoint(endpoint.Id));
+                return null;
             }
 
-            if (status != EndpointState.InConsultation)
+            var transferToRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId).ConfigureAwait(true);
+            if (transferToRoom == null)
             {
-                endpoint.CurrentVirtualRoom?.RemoveEndpoint(new RoomEndpoint(endpoint.Id));
+                // The only way for the room not to have been created by us (where it would already be in the table) is by kinly via a VHO consultation.
+                var vhoConsultation = new Room(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
+                _context.Rooms.Add(vhoConsultation);
+                transferToRoom = vhoConsultation;
             }
+
+            return transferToRoom;
         }
     }
 }

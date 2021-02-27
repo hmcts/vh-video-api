@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
@@ -59,39 +60,32 @@ namespace VideoApi.DAL.Commands
                 throw new ParticipantNotFoundException(command.ParticipantId);
             }
 
-            Room virtualRoom = null;
-            if (command.ParticipantState == ParticipantState.InConsultation)
-            {
-                var virtualRooms = await _context.Rooms
-                    .Where(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId).ToListAsync();
-                virtualRoom = virtualRooms.LastOrDefault();
-                if (!command.Room.HasValue && virtualRoom == null && command.ParticipantState != ParticipantState.Disconnected)
-                {
-                    var vhoConsultation = new Room(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
-                    _context.Rooms.Add(vhoConsultation);
-                    virtualRoom = vhoConsultation;
-                }
-            }
+            var transferToRoom = await GetTransferToRoom(command).ConfigureAwait(true);
+            transferToRoom?.AddParticipant(new RoomParticipant(participant.Id));
 
-            UpdateRoom(command.ParticipantState, virtualRoom, participant);
             participant.UpdateParticipantStatus(command.ParticipantState);
             participant.UpdateCurrentRoom(command.Room);
-            participant.UpdateCurrentVirtualRoom(virtualRoom);
+            participant.UpdateCurrentVirtualRoom(transferToRoom);
             await _context.SaveChangesAsync();
         }
 
-        private void UpdateRoom(ParticipantState status, Room virtualRoom, Participant participant)
+        private async Task<Room> GetTransferToRoom(UpdateParticipantStatusAndRoomCommand command)
         {
-            var isDynamicConsultationRoom = virtualRoom != null;
-            if (status == ParticipantState.InConsultation && isDynamicConsultationRoom)
+            if (command.ParticipantState != ParticipantState.InConsultation)
             {
-                virtualRoom.AddParticipant(new RoomParticipant(participant.Id));
+                return null;
             }
 
-            if (status != ParticipantState.InConsultation)
+            var transferToRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId).ConfigureAwait(true);
+            if (transferToRoom == null)
             {
-                participant.CurrentVirtualRoom?.RemoveParticipant(new RoomParticipant(participant.Id));
+                // The only way for the room not to have been created by us (where it would already be in the table) is by kinly via a VHO consultation.
+                var vhoConsultation = new Room(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
+                _context.Rooms.Add(vhoConsultation);
+                transferToRoom = vhoConsultation;
             }
+
+            return transferToRoom;
         }
     }
 }
