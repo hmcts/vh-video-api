@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using Faker;
 using FizzWare.NBuilder;
@@ -167,6 +168,23 @@ namespace Testing.Common.Helper.Builders.Domain
         public ConferenceBuilder WithAudioRecordingRequired(bool required)
         {
             _conference.AudioRecordingRequired = required;
+            return this;
+        }
+
+        public ConferenceBuilder WithCivilianRoom()
+        {
+            if (_conference.Participants.Count < 2)
+            {
+                WithParticipants(2);
+            }
+            var room = new Builder(_builderSettings).CreateNew<Room>().WithFactory(() =>
+                new Room(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian, false)).Build();
+            
+            var nonJudges = _conference.Participants.Where(x => !x.IsJudge()).ToList();
+            room.AddParticipant(new RoomParticipant(nonJudges[0].Id));
+            room.AddParticipant(new RoomParticipant(nonJudges[1].Id));
+            room.SetProtectedProperty(nameof(room.Id), new Random().Next());
+            _conference.SetProtectedField("_rooms", new List<Room> {room});
             return this;
         }
     }

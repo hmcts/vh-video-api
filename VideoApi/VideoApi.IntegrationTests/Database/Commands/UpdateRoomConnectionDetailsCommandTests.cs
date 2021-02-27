@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
@@ -47,7 +49,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var roomId = command.RoomId;
 
             await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            var updatedRoom = await db.Rooms.FindAsync(roomId);
+            var updatedConference = await db.Conferences.Include(x => x.Rooms).AsNoTracking()
+                .SingleAsync(c => c.Id == _newConferenceId);
+            var updatedRoom = updatedConference.Rooms.First(x => x.Id == roomId);
             updatedRoom.Label.Should().Be(label);
             updatedRoom.IngestUrl.Should().Be(ingestUrl);
             updatedRoom.PexipNode.Should().Be(node);
