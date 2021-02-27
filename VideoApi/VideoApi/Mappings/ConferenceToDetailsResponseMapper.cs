@@ -1,6 +1,7 @@
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
@@ -10,6 +11,8 @@ namespace VideoApi.Mappings
         public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
             string pexipSelfTestNode)
         {
+            var civilianRooms = conference.Rooms.Where(x => x.Type == VirtualCourtRoomType.Civilian)
+                .Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
             var response = new ConferenceDetailsResponse
             {
                 Id = conference.Id,
@@ -27,6 +30,7 @@ namespace VideoApi.Mappings
                 Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
                 HearingVenueName = conference.HearingVenueName,
                 AudioRecordingRequired = conference.AudioRecordingRequired,
+                CivilianRooms = civilianRooms
             };
 
             if (response.MeetingRoom != null)

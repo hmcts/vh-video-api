@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using FluentAssertions.Equivalency;
 using NUnit.Framework;
@@ -20,6 +21,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithParticipants(3)
                 .WithMessages(5)
+                .WithCivilianRoom()
                 .Build();
 
             var pexipSelfTestNode = "selttest@pexip.node";
@@ -35,6 +37,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.ActualStartTime)
                 .Excluding(x => x.Endpoints)
                 .Excluding(x => x.CreatedDateTime)
+                .Excluding(x => x.Rooms)
              );
 
             response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);
@@ -52,6 +55,13 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.State)
                 .Excluding(x => x.LinkedParticipants)
             );
+
+            var civilianRoom = response.CivilianRooms.First();
+            var room = conference.Rooms.First();
+            civilianRoom.Id.Should().Be(room.Id);
+            civilianRoom.Label.Should().Be(room.Label);
+            civilianRoom.Participants.Select(x => x).Should()
+                .BeEquivalentTo(room.RoomParticipants.Select(x => x.ParticipantId));
         }
 
         

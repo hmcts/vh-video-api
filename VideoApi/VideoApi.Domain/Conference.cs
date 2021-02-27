@@ -18,6 +18,7 @@ namespace VideoApi.Domain
             InstantMessageHistory = new List<InstantMessage>();
             MeetingRoom = new MeetingRoom();
             Endpoints = new List<Endpoint>();
+            _rooms = new List<Room>();
 
             HearingRefId = hearingRefId;
             CaseType = caseType;
@@ -50,6 +51,11 @@ namespace VideoApi.Domain
         public bool AudioRecordingRequired { get; set; }
         public string IngestUrl { get; set; }
         public DateTime? CreatedDateTime { get; private set; }
+
+        private List<Room> _rooms;
+        public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
+        
+        
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode,
             string telephoneConferenceId)
         {
