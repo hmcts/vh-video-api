@@ -57,6 +57,7 @@ namespace VideoApi.Domain
 
         public void UpdateCurrentVirtualRoom(Room room)
         {
+            CurrentVirtualRoom?.RemoveEndpoint(new RoomEndpoint(Id));
             CurrentVirtualRoom = room;
         }
     }
