@@ -20,5 +20,6 @@ namespace VideoApi.Events.Models
 
         public string Reason { get; set; }
         public string Phone { get; set; }
+        public long? RoomId { get; set; }
     }
 }

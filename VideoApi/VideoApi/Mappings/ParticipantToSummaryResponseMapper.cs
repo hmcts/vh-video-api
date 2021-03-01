@@ -1,3 +1,4 @@
+using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -18,6 +19,8 @@ namespace VideoApi.Mappings
                     ? participant.CaseTypeGroup
                     : string.Empty;
 
+            var links = participant.LinkedParticipants.Select(LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse)
+                .ToList();
 
             return new ParticipantSummaryResponse
             {
@@ -33,7 +36,8 @@ namespace VideoApi.Mappings
                 LastName = participant.LastName,
                 ContactEmail = participant.ContactEmail,
                 ContactTelephone = participant.ContactTelephone,
-                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentVirtualRoom)
+                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentVirtualRoom),
+                LinkedParticipants = links
             };
         }
     }

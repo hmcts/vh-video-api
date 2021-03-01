@@ -18,7 +18,6 @@ namespace VideoApi.UnitTests.Mappings
             var response = LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse(linkedParticipant);
             
             response.LinkedId.Should().Be(linkedParticipant.LinkedId);
-            response.ParticipantId.Should().Be(linkedParticipant.ParticipantId);
             response.Type.Should().Be(linkedParticipant.Type);
         }
     }
