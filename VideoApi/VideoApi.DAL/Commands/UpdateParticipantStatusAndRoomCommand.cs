@@ -45,6 +45,8 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(UpdateParticipantStatusAndRoomCommand command)
         {
             var conference = await _context.Conferences
+                .Include(x=> x.Rooms).ThenInclude(x=> x.RoomEndpoints)
+                .Include(x=> x.Rooms).ThenInclude(x=> x.RoomParticipants)
                 .Include(x => x.Participants).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomParticipants)
                 .Include(x => x.Participants).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomEndpoints)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
@@ -71,6 +73,13 @@ namespace VideoApi.DAL.Commands
 
         private async Task<Room> GetTransferToRoom(UpdateParticipantStatusAndRoomCommand command)
         {
+            if (command.RoomLabel != null &&
+                (command.ParticipantState == ParticipantState.Available ||
+                 command.ParticipantState == ParticipantState.Disconnected))
+            {
+                return await GetCivilianRoom(command.ConferenceId, command.RoomLabel);
+            }
+            
             if (command.ParticipantState != ParticipantState.InConsultation)
             {
                 return null;
@@ -86,6 +95,14 @@ namespace VideoApi.DAL.Commands
             }
 
             return transferToRoom;
+        }
+
+        private async Task<Room> GetCivilianRoom(Guid conferenceId, string label)
+        {
+            return await _context.Rooms
+                .Include(x => x.RoomParticipants).Include(x => x.RoomEndpoints)
+                .SingleOrDefaultAsync(x =>
+                    x.Label == label && x.ConferenceId == conferenceId && x.Type == VirtualCourtRoomType.Civilian);
         }
     }
 }

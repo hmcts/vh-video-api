@@ -23,7 +23,7 @@ namespace VideoApi.Events.Handlers
             var participantState =  ParticipantState.Available;
             var room = RoomType.WaitingRoom;
             var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
-                participantState, room, null);
+                participantState, room, SourceRoom?.Label);
             return CommandHandler.Handle(command);
         }
 

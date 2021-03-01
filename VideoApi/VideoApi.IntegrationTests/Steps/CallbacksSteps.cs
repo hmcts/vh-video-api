@@ -17,7 +17,6 @@ using VideoApi.Extensions;
 using static Testing.Common.Helper.ApiUriFactory;
 using Task = System.Threading.Tasks.Task;
 using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;
-using VirtualCourtRoomType = VideoApi.Domain.Enums.VirtualCourtRoomType;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -104,6 +103,35 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = RequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        [Given(@"I have a valid conference event request with a room id and participant id for event type (.*)")]
+        public void GivenIHaveAValidConferenceEventRequestWithARoomIdAndParticipantIdForEventType(EventType eventType)
+        {
+            var room = _context.Test.Room;
+            var participantId = room.RoomParticipants.First().ParticipantId;
+            var request = BuildRequest(eventType, _context.Test.Conference, null, room.Id.ToString());
+            request.ParticipantId = participantId.ToString();
+            _context.Uri = EventsEndpoints.Event;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = RequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        [Then(@"the room count should differ by (.*)")]
+        public async Task GivenIHaveAValidConferenceEventRequestWithARoomIdForEventType(int countDifference)
+        {
+            var roomId = _context.Test.Room.Id;
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var updatedConference = db.Conferences
+                .Include(x=> x.Rooms).ThenInclude(x=> x.RoomEndpoints)
+                .Include(x=> x.Rooms).ThenInclude(x=> x.RoomParticipants)
+                .Single(x => x.Id == _context.Test.Conference.Id);
+
+            var updatedRoom = updatedConference.Rooms.First(x => x.Id == roomId);
+            var before = _context.Test.Room.RoomParticipants.Count;
+            var after = updatedRoom.RoomParticipants.Count;
+            (after - before).Should().Be(countDifference);
         }
         
         [Given(@"I have a (.*) conference event request")]

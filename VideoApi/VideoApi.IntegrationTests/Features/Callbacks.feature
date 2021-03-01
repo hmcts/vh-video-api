@@ -103,9 +103,19 @@ Feature: Callbacks
     And I have a valid conference event request with a room id for event type <EventType>
     When I send the request to the endpoint
     Then the response should have the status NoContent and success status True
+    And the room count should differ by <RoomCount>
     Examples:
-      | EventType              |
-      | Joined                 |
-      | Disconnected           |
-      | Transfer               |
+      | EventType              |RoomCount |
+      | Joined                 | 1        |
+
+  Scenario Outline: Should accept and process an event request with an existing participant room id
+    Given I have a conference
+    And I have a civilian interpreter room with a participant
+    And I have a valid conference event request with a room id and participant id for event type <EventType>
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the room count should differ by <RoomCount>
+    Examples:
+      | EventType              |RoomCount |
+      | Disconnected           | -1       |
 

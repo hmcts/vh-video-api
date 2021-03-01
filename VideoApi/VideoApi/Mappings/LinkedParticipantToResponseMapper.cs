@@ -11,9 +11,7 @@ namespace VideoApi.Mappings
             return new LinkedParticipantResponse()
             {
                 Type = linkedParticipant.Type.MapToContractEnum(),
-                LinkedId = linkedParticipant.LinkedId,
-                ParticipantId = linkedParticipant.ParticipantId
-
+                LinkedId = linkedParticipant.LinkedId
             };
         }
     }

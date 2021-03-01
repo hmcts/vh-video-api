@@ -34,7 +34,8 @@ namespace VideoApi.Mappings
             ConferenceEventRequest request)
         {
             GetRoomTypeEnums(request, out var transferTo, out var transferFrom);
-
+            var isValidRoomId = long.TryParse(request.ParticipantRoomId, out var roomId);
+            
             return new CallbackEvent
             {
                 EventId = request.EventId,
@@ -47,7 +48,8 @@ namespace VideoApi.Mappings
                 ParticipantId = participantId,
                 Phone = request.Phone,
                 TransferredFromRoomLabel = request.TransferFrom,
-                TransferredToRoomLabel = request.TransferTo
+                TransferredToRoomLabel = request.TransferTo,
+                RoomId = isValidRoomId ? roomId : (long?) null
             };
         }
 

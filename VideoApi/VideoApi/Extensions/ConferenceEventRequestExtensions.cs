@@ -1,4 +1,3 @@
-using Castle.Core.Internal;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Enums;
 
@@ -12,7 +11,6 @@ namespace VideoApi.Extensions
                 || conferenceEvent.EventType == EventType.ConnectingToEventHub
                 || conferenceEvent.EventType == EventType.CountdownFinished
                 || conferenceEvent.EventType == EventType.Help
-                || conferenceEvent.EventType == EventType.SelectingMedia
-                || !conferenceEvent.ParticipantRoomId.IsNullOrEmpty();
+                || conferenceEvent.EventType == EventType.SelectingMedia;
     }
 }

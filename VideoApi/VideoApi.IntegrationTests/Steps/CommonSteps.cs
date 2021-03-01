@@ -5,6 +5,7 @@ using System.Net;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
@@ -538,6 +539,23 @@ namespace VideoApi.IntegrationTests.Steps
             var vRoom = new Room(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.Civilian, false);
             _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+        }
+        
+        [Given(@"I have a civilian interpreter room with a participant")]
+        public async Task GivenIHaveACivilianInterpreterRoomWithAParticipant()
+        {
+            var conference = _context.Test.Conference;
+            var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
+            var vRoom = new Room(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+                VirtualCourtRoomType.Civilian, false);
+            vRoom.AddParticipant(new RoomParticipant(participant.Id));
+            _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+            
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var dbParticipant = db.Participants.First(x => x.Id == participant.Id);
+            dbParticipant.UpdateCurrentRoom(RoomType.WaitingRoom);
+            dbParticipant.UpdateCurrentVirtualRoom(vRoom);
+            await db.SaveChangesAsync();
         }
         
         [When(@"I send the request to the endpoint")]

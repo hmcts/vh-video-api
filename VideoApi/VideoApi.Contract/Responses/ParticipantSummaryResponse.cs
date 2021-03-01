@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
@@ -69,5 +70,7 @@ namespace VideoApi.Contract.Responses
         /// Current consultation room details
         /// </summary>
         public RoomResponse CurrentRoom { get; set; }
+        
+        public List<LinkedParticipantResponse> LinkedParticipants { get; set; }
     }
 }
