@@ -5,6 +5,11 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// The room label
         /// </summary>
+        public long Id { get; set; }
+        
+        /// <summary>
+        /// The room label
+        /// </summary>
         public string Label { get; set; }
 
         /// <summary>

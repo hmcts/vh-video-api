@@ -14,6 +14,7 @@ namespace VideoApi.Mappings
 
             return new RoomResponse
             {
+                Id = room.Id,
                 Label = room.Label,
                 Locked = room.Locked
             };

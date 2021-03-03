@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -312,6 +313,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetParticipantsByConferenceId")]
         [ProducesResponseType(typeof(List<ParticipantSummaryResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [AllowAnonymous]
         public async Task<IActionResult> GetParticipantsByConferenceId(Guid conferenceId)
         {
             _logger.LogDebug("GetParticipantsByConferenceId");
