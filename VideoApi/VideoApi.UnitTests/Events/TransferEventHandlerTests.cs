@@ -176,6 +176,46 @@ namespace VideoApi.UnitTests.Events
         }
 
         [Test]
+        public async Task Should_transfer_endpoints_out_of_room_when_defense_advocate_participant_leaves_and_room_not_empty()
+        {
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Representative && x.Username == "DA1@test.com");
+            var room = new Room(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
+            room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
+            room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
+            foreach (var endpoint in conference.GetEndpoints())
+            {
+                room.AddEndpoint(new RoomEndpoint(endpoint.Id));
+            }
+
+            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
+
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Transfer,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
+                TransferFrom = null,
+                TransferTo = RoomType.WaitingRoom,
+                TransferredFromRoomLabel = "ConsultationRoom2",
+                TransferredToRoomLabel = RoomType.WaitingRoom.ToString(),
+                TimeStampUtc = DateTime.UtcNow
+            };
+            await _sut.HandleAsync(callbackEvent);
+
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.Available &&
+                    command.Room == RoomType.WaitingRoom &&
+                    command.RoomLabel == RoomType.WaitingRoom.ToString())), Times.Once);
+
+            _mocker.Mock<IConsultationService>().Verify(x => x.EndpointTransferToRoomAsync(conference.Id, It.IsAny<Guid>(), RoomType.WaitingRoom.ToString()), Times.Once);
+        }
+
+        [Test]
         public async Task Should_not_transfer_endpoints_out_of_room_when_last_participant_leaves_if_transferring_to_hearing()
         {
             var conference = TestConference;
