@@ -179,7 +179,7 @@ namespace VideoApi.UnitTests.Events
         public async Task Should_transfer_endpoints_out_of_room_when_defense_advocate_participant_leaves_and_room_not_empty()
         {
             var conference = TestConference;
-            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Representative && x.Username == "da1@test.com");
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Representative && x.Username == "DA1@test.com");
             var room = new Room(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
             room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
             room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
