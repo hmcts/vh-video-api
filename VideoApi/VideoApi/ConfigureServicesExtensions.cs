@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using Azure.Identity;
@@ -40,23 +41,18 @@ namespace VideoApi
             services.AddSingleton<FluentValidationSchemaProcessor>();
             services.AddOpenApiDocument((document, serviceProvider) =>
             {
+                document.AddSecurity("JWT", Enumerable.Empty<string>(),
+                    new OpenApiSecurityScheme
+                    {
+                        Type = OpenApiSecuritySchemeType.ApiKey,
+                        Name = "Authorization",
+                        In = OpenApiSecurityApiKeyLocation.Header,
+                        Description = "Type into the textbox: Bearer {your JWT token}.",
+                        Scheme = "bearer"
+                    });
                 document.Title = "Video API";
-                document.DocumentProcessors.Add(
-                    new SecurityDefinitionAppender("JWT",
-                        new OpenApiSecurityScheme
-                        {
-                            Type = OpenApiSecuritySchemeType.ApiKey,
-                            Name = "Authorization",
-                            In = OpenApiSecurityApiKeyLocation.Header,
-                            Description = "Type into the textbox: Bearer {your JWT token}.",
-                            Scheme = "bearer"
-                        }));
                 document.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
                 document.OperationProcessors.Add(new AuthResponseOperationProcessor());
-                var fluentValidationSchemaProcessor = serviceProvider.GetService<FluentValidationSchemaProcessor>();
-
-                // Add the fluent validations schema processor
-                document.SchemaProcessors.Add(fluentValidationSchemaProcessor);
             });
             return services;
         }
