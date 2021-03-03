@@ -50,7 +50,7 @@ namespace VideoApi
                         Description = "Type into the textbox: Bearer {your JWT token}.",
                         Scheme = "bearer"
                     });
-                document.Title = "Bookings API";
+                document.Title = "Video API";
                 document.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
                 document.OperationProcessors.Add(new AuthResponseOperationProcessor());
             });
