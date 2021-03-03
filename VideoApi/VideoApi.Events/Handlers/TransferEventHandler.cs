@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using System.Linq;
-using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
@@ -29,11 +28,17 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
+            var isVmr = SourceParticipant.CurrentVirtualRoom?.Type == VirtualCourtRoomType.Civilian;
+            var targetRoomLabel = isVmr ? SourceParticipant.CurrentVirtualRoom?.Label :  callbackEvent.TransferredToRoomLabel;
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
 
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
-                    callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
+                    callbackEvent.TransferTo, targetRoomLabel)
+                {
+                    StayInCurrentRoom = isVmr
+                };
+
             await CommandHandler.Handle(command);
 
             if (!callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation") || callbackEvent.TransferTo == RoomType.HearingRoom)

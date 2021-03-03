@@ -87,6 +87,10 @@ namespace VideoApi.Domain
 
         public void UpdateCurrentVirtualRoom(Room room)
         {
+            if (room?.Id == CurrentVirtualRoomId)
+            {
+                return;
+            }
             CurrentVirtualRoom?.RemoveParticipant(new RoomParticipant(Id));
             CurrentVirtualRoom = room;
         }
