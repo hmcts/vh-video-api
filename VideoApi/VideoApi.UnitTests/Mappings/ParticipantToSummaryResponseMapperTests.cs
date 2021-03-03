@@ -43,14 +43,7 @@ namespace VideoApi.UnitTests.Mappings
             );
             response.Status.Should().BeEquivalentTo(participant.State);
             response.Status.Should().BeEquivalentTo(participant.GetCurrentStatus().ParticipantState);
-            if (participant.UserRole == UserRole.Individual || participant.UserRole == UserRole.Representative)
-            {
-                response.CaseGroup.Should().Be(participant.CaseTypeGroup);
-            }
-            else
-            {
-                response.CaseGroup.Should().BeEmpty();
-            }
+            response.CaseGroup.Should().Be(participant.CaseTypeGroup);
         }
     }
 }
