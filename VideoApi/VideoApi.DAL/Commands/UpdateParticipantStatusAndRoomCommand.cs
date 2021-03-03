@@ -17,6 +17,7 @@ namespace VideoApi.DAL.Commands
         public ParticipantState ParticipantState { get; }
         public RoomType? Room { get; }
         public string RoomLabel { get; }
+        public bool StayInCurrentRoom { get; set; }
 
         public UpdateParticipantStatusAndRoomCommand(
             Guid conferenceId,
@@ -63,7 +64,10 @@ namespace VideoApi.DAL.Commands
             }
 
             var transferToRoom = await GetTransferToRoom(command).ConfigureAwait(true);
-            transferToRoom?.AddParticipant(new RoomParticipant(participant.Id));
+            if (!command.StayInCurrentRoom)
+            {
+                transferToRoom?.AddParticipant(new RoomParticipant(participant.Id));
+            }
 
             participant.UpdateParticipantStatus(command.ParticipantState);
             participant.UpdateCurrentRoom(command.Room);
@@ -75,7 +79,8 @@ namespace VideoApi.DAL.Commands
         {
             if (command.RoomLabel != null &&
                 (command.ParticipantState == ParticipantState.Available ||
-                 command.ParticipantState == ParticipantState.Disconnected))
+                 command.ParticipantState == ParticipantState.Disconnected ||
+                 command.StayInCurrentRoom))
             {
                 return await GetCivilianRoom(command.ConferenceId, command.RoomLabel);
             }

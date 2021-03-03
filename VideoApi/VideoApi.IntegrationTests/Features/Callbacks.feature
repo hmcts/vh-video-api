@@ -116,6 +116,7 @@ Feature: Callbacks
     Then the response should have the status NoContent and success status True
     And the room count should differ by <RoomCount>
     Examples:
-      | EventType              |RoomCount |
-      | Disconnected           | -1       |
+      | EventType    |RoomCount |
+      | Disconnected | -1       |
+      | Transfer     | 0        |
 
