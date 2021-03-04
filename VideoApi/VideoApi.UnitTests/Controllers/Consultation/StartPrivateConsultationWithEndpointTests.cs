@@ -189,19 +189,20 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_ok_when_vho_invites()
         {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
-            var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
-
+            // Arrange
+            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
             var request = new EndpointConsultationRequest()
             {
                 ConferenceId = TestConference.Id,
-                EndpointId = endpointWithDefenceAdvocate.Id,
+                EndpointId = endpointWithoutDefenceAdvocate.Id,
                 DefenceAdvocateId = Guid.Empty,
-                RoomLabel = "Label"
+                RoomLabel = "NewRoom_NotInDb"
             };
+
+            // Act
             var result = await Controller.StartConsultationWithEndpointAsync(request);
 
+            // Assert
             result.Should().BeOfType<OkResult>();
         }
     }
