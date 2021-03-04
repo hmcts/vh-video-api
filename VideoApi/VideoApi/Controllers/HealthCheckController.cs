@@ -17,7 +17,6 @@ using HealthCheckResponse = VideoApi.Contract.Responses.HealthCheckResponse;
 namespace VideoApi.Controllers
 {
     [Produces("application/json")]
-    [Route("HealthCheck")]
     [AllowAnonymous]
     [ApiController]
     public class HealthCheckController : ControllerBase
@@ -38,7 +37,8 @@ namespace VideoApi.Controllers
         /// Check Service Health
         /// </summary>
         /// <returns>Error if fails, otherwise OK status</returns>
-        [HttpGet("health")]
+        [HttpGet("HealthCheck/health")]
+        [HttpGet("health/liveness")]
         [OpenApiOperation("CheckServiceHealth")]
         [ProducesResponseType(typeof(HealthCheckResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(HealthCheckResponse), (int)HttpStatusCode.InternalServerError)]

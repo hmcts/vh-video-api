@@ -5,5 +5,5 @@ services:
     image: ${DOCKER_REGISTRY-}videoapi:latest
     build:
       context: .
-      dockerfile: VideoApi/Dockerfile
+      dockerfile: VideoApi/VideoApi/Dockerfile
       
