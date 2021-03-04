@@ -15,6 +15,7 @@ WORKDIR /src
 COPY VideoApi .
 RUN dotnet restore --configfile nuget.config "VideoApi/VideoApi.csproj"
 WORKDIR "/src/VideoApi"
+COPY --from=gitversion /version/AssemblyInfo.cs .
 RUN dotnet build "VideoApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
