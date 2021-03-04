@@ -1,5 +1,10 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
+FROM gittools/gitversion:5.3.5-linux-alpine.3.10-x64-netcoreapp3.1 AS gitversion
+WORKDIR /version 
+COPY .git .git
+RUN /tools/dotnet-gitversion /ensureassemblyinfo /updateassemblyinfo AssemblyInfo.cs /nofetch /config /GitVersion.yml
+
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
@@ -7,17 +12,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["VideoApi/VideoApi.csproj", "VideoApi/"]
-COPY ["VideoApi.Common/VideoApi.Common.csproj", "VideoApi.Common/"]
-COPY ["VideoApi.Contract/VideoApi.Contract.csproj", "VideoApi.Contract/"]
-COPY ["VideoApi.Domain/VideoApi.Domain.csproj", "VideoApi.Domain/"]
-COPY ["VideoApi.Services/VideoApi.Services.csproj", "VideoApi.Services/"]
-COPY ["VideoApi.Services.Generator/VideoApi.Services.Generator.csproj", "VideoApi.Services.Generator/"]
-COPY ["VideoApi.DAL/VideoApi.DAL.csproj", "VideoApi.DAL/"]
-COPY ["VideoApi.Events/VideoApi.Events.csproj", "VideoApi.Events/"]
-COPY ["nuget.config", "nuget.config"]
+COPY VideoApi .
 RUN dotnet restore --configfile nuget.config "VideoApi/VideoApi.csproj"
-COPY . .
 WORKDIR "/src/VideoApi"
 RUN dotnet build "VideoApi.csproj" -c Release -o /app/build
 
