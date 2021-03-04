@@ -116,6 +116,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
+            var isVhoRequest = request.DefenceAdvocateId == Guid.Empty;
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
@@ -133,7 +134,7 @@ namespace VideoApi.Controllers
             }
 
             var defenceAdvocate = conference.GetParticipants().SingleOrDefault(x => x.Id == request.DefenceAdvocateId);
-            if (defenceAdvocate == null)
+            if (!isVhoRequest && defenceAdvocate == null)
             {
                 _logger.LogWarning("Unable to find defence advocate");
                 return NotFound($"Unable to find defence advocate {request.DefenceAdvocateId}");
@@ -146,7 +147,7 @@ namespace VideoApi.Controllers
                 return Unauthorized(message);
             }
 
-            if (!endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
+            if (!isVhoRequest && !endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 const string message = "Defence advocate is not allowed to speak to requested endpoint";
                 _logger.LogWarning(message);

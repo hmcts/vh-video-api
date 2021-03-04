@@ -62,20 +62,5 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == EndpointConsultationRequestValidation.NoEndpointError)
                 .Should().BeTrue();
         }
-
-        [Test]
-        public async Task Should_fail_validation_when_defence_advocate_id_is_empty()
-        {
-            var request = new EndpointConsultationRequest
-            {
-                ConferenceId = Guid.NewGuid(),
-                EndpointId = Guid.NewGuid(),
-                DefenceAdvocateId = Guid.Empty
-            };
-
-            var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == EndpointConsultationRequestValidation.NoDefenceAdvocateError)
-                .Should().BeTrue();
-        }
     }
 }
