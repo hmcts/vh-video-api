@@ -129,8 +129,14 @@ namespace VideoApi.Controllers
                 return NotFound($"Unable to find endpoint {request.EndpointId}");
             }
 
+            if (isVhoRequest)
+            {
+                await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
+                return Ok();
+            }
+
             var defenceAdvocate = conference.GetParticipants().SingleOrDefault(x => x.Id == request.DefenceAdvocateId);
-            if (!isVhoRequest && defenceAdvocate == null)
+            if (defenceAdvocate == null)
             {
                 _logger.LogWarning("Unable to find defence advocate");
                 return NotFound($"Unable to find defence advocate {request.DefenceAdvocateId}");
@@ -143,7 +149,7 @@ namespace VideoApi.Controllers
                 return Unauthorized(message);
             }
 
-            if (!isVhoRequest && !endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
+            if (!endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 const string message = "Defence advocate is not allowed to speak to requested endpoint";
                 _logger.LogWarning(message);
