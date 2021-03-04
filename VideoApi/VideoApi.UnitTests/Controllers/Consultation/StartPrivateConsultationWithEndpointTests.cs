@@ -189,7 +189,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_ok_when_vho_invites()
         {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
             var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
             QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
 

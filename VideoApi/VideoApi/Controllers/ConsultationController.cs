@@ -136,7 +136,7 @@ namespace VideoApi.Controllers
                 return NotFound($"Unable to find defence advocate {request.DefenceAdvocateId}");
             }
 
-            if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
+            if (!isVhoRequest && string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
             {
                 const string message = "Endpoint does not have a defence advocate linked";
                 _logger.LogWarning(message);
