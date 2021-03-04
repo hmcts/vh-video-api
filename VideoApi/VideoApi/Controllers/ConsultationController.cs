@@ -64,14 +64,10 @@ namespace VideoApi.Controllers
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
-            if (request.RequestedBy != Guid.Empty)
+            if (request.RequestedBy != Guid.Empty && requestedBy == null)
             {
-                // Participants other than VHO
-                if (requestedBy == null)
-                {
-                    _logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
-                    return NotFound();
-                }
+                _logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
+                return NotFound();
             }
             
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
