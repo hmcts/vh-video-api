@@ -33,11 +33,6 @@ namespace VideoApi
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.ConfigureAppConfiguration(configBuilder =>
-                    {
-                        configBuilder.AddAksKeyVaultSecretProvider(vhInfraCore);
-                        configBuilder.AddAksKeyVaultSecretProvider(vhVideoApi);
-                    });
                 });
         }
     }
