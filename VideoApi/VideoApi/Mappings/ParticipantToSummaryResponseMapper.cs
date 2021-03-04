@@ -14,10 +14,7 @@ namespace VideoApi.Mappings
                 ? participant.GetCurrentStatus().ParticipantState
                 : ParticipantState.None;
 
-            var caseGroup =
-                participant.UserRole == UserRole.Individual || participant.UserRole == UserRole.Representative
-                    ? participant.CaseTypeGroup
-                    : string.Empty;
+            var caseGroup = participant.CaseTypeGroup ?? string.Empty;
 
             var links = participant.LinkedParticipants.Select(LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse)
                 .ToList();
