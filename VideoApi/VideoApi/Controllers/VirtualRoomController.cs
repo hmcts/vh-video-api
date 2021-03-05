@@ -13,7 +13,6 @@ using VideoApi.Domain;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Validations.Models;
-using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Controllers
 {
