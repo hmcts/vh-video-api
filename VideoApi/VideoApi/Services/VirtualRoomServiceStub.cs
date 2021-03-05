@@ -15,25 +15,35 @@ namespace VideoApi.Services
         private readonly Dictionary<Room, List<Participant>> _rooms = new Dictionary<Room, List<Participant>>();
         public Task<Room> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
         {
+            var label = $"Interpreter{_roomCount + 1}";
+            var joinUri = "interpreter__waiting_room";
+            return CreateRoom(conference, participant, VirtualCourtRoomType.Witness, label, joinUri);
+        }
+
+        public Task<Room> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
+        {
+            var label = $"Witness{_roomCount + 1}";
+            var joinUri = "witness__waiting_room";
+            return CreateRoom(conference, participant, VirtualCourtRoomType.Witness, label, joinUri);
+        }
+
+        private Task<Room> CreateRoom(Conference conference, Participant participant, VirtualCourtRoomType type, string label, string joinUri)
+        {
             var ids = participant.LinkedParticipants.Select(x => x.Id).ToList();
             ids.Add(participant.Id);
-
+            
             foreach (var (key, value) in _rooms)
             {
                 var roomParticipantIds = value.Select(x => x.Id);
-                if (roomParticipantIds.Any(rpid => ids.Contains(rpid)))
-                {
-                    _rooms[key].Add(participant);
-                    return Task.FromResult(key);
-                }
+                if (!roomParticipantIds.Any(rpid => ids.Contains(rpid))) continue;
+                _rooms[key].Add(participant);
+                return Task.FromResult(key);
             }
-            
-                
-            var room = new Room(Guid.NewGuid(), VirtualCourtRoomType.Civilian, false);
-            var label = $"Interpreter{_roomCount + 1}";
             var ingest = $"{conference.IngestUrl}/{_roomCount}";
             var node = "sip.node.com";
-            var joinUri = "interpreter__waiting_room";
+            var room = new Room(Guid.NewGuid(), type, false);
+            room.UpdateRoomConnectionDetails(label, ingest, node, joinUri);
+            
             room.UpdateRoomConnectionDetails(label, ingest, node, joinUri);
             _roomCount++;
             _rooms.Add(room, new List<Participant>{participant});

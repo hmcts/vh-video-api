@@ -11,6 +11,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services
 {
@@ -42,43 +43,80 @@ namespace VideoApi.Services
                 .DefaultIfEmpty()
                 .Max();
             var room = GetRoomForParticipant(conferenceId, interpreterRooms, participant) ??
-                       await CreateAnInterpreterRoom(conference, count);
+                       await CreateAnInterpreterRoom(conference, count, roomPrefix);
 
             return room;
         }
-
-        private async Task<Room> CreateAnInterpreterRoom(Conference conference, int existingRooms)
+        
+        private async Task<Room> CreateAnInterpreterRoom(Conference conference, int existingRooms, string roomPrefix)
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
-            var createRoomCommand = new CreateRoomCommand(conference.Id, null, VirtualCourtRoomType.Civilian, false);
-            await _commandHandler.Handle(createRoomCommand);
-            var roomId = createRoomCommand.NewRoomId;
+            var roomId = await CreateRoom(conference.Id, VirtualCourtRoomType.Civilian);
             _logger.LogInformation("Creating a new civilian room {Room} for conference {Conference}", roomId,
                 conference.Id);
             var ingestUrl = $"{conference.IngestUrl}/{roomId}";
-            var roomPrefix = "Interpreter";
 
+            var vmr = await CreateVmr(conference, roomId, roomPrefix, ingestUrl, VirtualCourtRoomType.Civilian, "I",
+                existingRooms);
+
+            await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
+            _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,
+                conference.Id);
+            return await GetUpdatedRoom(conference, roomId);
+        }
+
+        public async Task<Room> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
+        {
+            var conferenceId = conference.Id;
+            var roomPrefix = "Witness";
+            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.Witness, conferenceId);
+            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
+            var witnessRooms = listOfRooms.Where(x => x.Label.StartsWith(roomPrefix)).ToList();
+            var count = witnessRooms
+                .Select(x => int.TryParse(x.Label.Replace(roomPrefix, string.Empty), out var n) ? n : 0)
+                .DefaultIfEmpty()
+                .Max();
+            
+            var room = GetRoomForParticipant(conferenceId, witnessRooms, participant) ??
+                       await CreateAWitnessRoom(conference, count, roomPrefix);
+            return room;
+        }
+
+        private async Task<Room> CreateAWitnessRoom(Conference conference, int existingRooms, string roomPrefix)
+        {
+            _logger.LogInformation("Creating a new witness room for conference {Conference}", conference.Id);
+            var roomId = await CreateRoom(conference.Id, VirtualCourtRoomType.Witness);
+            _logger.LogInformation("Creating a new witness room {Room} for conference {Conference}", roomId,
+                conference.Id);
+            var ingestUrl = $"{conference.IngestUrl}/{roomId}";
+
+            var vmr = await CreateVmr(conference, roomId, roomPrefix, ingestUrl, VirtualCourtRoomType.Witness, "W", existingRooms);
+            await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
+            _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,
+                conference.Id);
+            return await GetUpdatedRoom(conference, roomId);
+        }
+
+        private async Task<long> CreateRoom(Guid conferenceId, VirtualCourtRoomType type)
+        {
+            var createRoomCommand = new CreateRoomCommand(conferenceId, null, type, false);
+            await _commandHandler.Handle(createRoomCommand);
+            return createRoomCommand.NewRoomId;
+        }
+
+        private Task<BookedParticipantRoomResponse> CreateVmr(Conference conference, long roomId, string roomPrefix, string ingestUrl, VirtualCourtRoomType roomType, string tilePrefix, int existingRooms)
+        {
             var newRoomParams = new CreateParticipantRoomParams
             {
                 Audio_recording_url = ingestUrl,
                 Participant_room_id = roomId.ToString(),
-                Participant_type = VirtualCourtRoomType.Civilian.ToString(),
+                Participant_type = roomType.ToString(),
                 Room_label_prefix = roomPrefix,
                 Room_type = roomPrefix,
                 Display_name = $"{roomPrefix}{existingRooms + 1}",
-                Tile_number = $"I{existingRooms + 1}"
+                Tile_number = $"{tilePrefix}{existingRooms + 1}"
             };
-            var newVmr = await _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
-
-            var updateCommand = new UpdateRoomConnectionDetailsCommand(conference.Id, roomId, newVmr.Display_name, ingestUrl,
-                newVmr.Uris.Pexip_node, newVmr.Uris.Participant);
-            await _commandHandler.Handle(updateCommand);
-            _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,
-                conference.Id);
-            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.Civilian, conference.Id);
-            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
-
-            return listOfRooms.First(x => x.Id == roomId);
+            return _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
         }
 
         private Room GetRoomForParticipant(Guid conferenceId, IReadOnlyCollection<Room> rooms, Participant participant)
@@ -97,6 +135,20 @@ namespace VideoApi.Services
             var existingRoom = matchingRooms.FirstOrDefault();
             return existingRoom ?? rooms.FirstOrDefault(x => !x.RoomParticipants.Any());
 
+        }
+
+        private Task UpdateRoomConnectionDetails(Conference conference, long roomId, BookedParticipantRoomResponse vmr, string ingestUrl)
+        {
+            var updateCommand = new UpdateRoomConnectionDetailsCommand(conference.Id, roomId, vmr.Display_name,
+                ingestUrl, vmr.Uris.Pexip_node, vmr.Uris.Participant);
+            return _commandHandler.Handle(updateCommand);
+        }
+
+        private async Task<Room> GetUpdatedRoom(Conference conference, long roomId)
+        {
+            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.Civilian, conference.Id);
+            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
+            return listOfRooms.First(x => x.Id == roomId);
         }
     }
 }
