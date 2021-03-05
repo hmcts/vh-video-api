@@ -29,11 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi.Services", "VideoA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi.Services.Generator", "VideoApi.Services.Generator\VideoApi.Services.Generator.csproj", "{7CE3EB5E-BB10-421C-95F3-E214875194A1}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1AA310C5-D155-44E7-A18D-4D2564868DE0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{0FE3BACE-4843-45CB-9587-DA2DAE34A206}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoApi.Client", "VideoApi.Client\VideoApi.Client.csproj", "{2C785344-9BF3-4750-8549-0B644BE5E740}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi.Client", "VideoApi.Client\VideoApi.Client.csproj", "{2C785344-9BF3-4750-8549-0B644BE5E740}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\docker-compose.dcproj", "{1AA310C5-D155-44E7-A18D-4D2564868DE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,14 +89,14 @@ Global
 		{7CE3EB5E-BB10-421C-95F3-E214875194A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CE3EB5E-BB10-421C-95F3-E214875194A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CE3EB5E-BB10-421C-95F3-E214875194A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C785344-9BF3-4750-8549-0B644BE5E740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C785344-9BF3-4750-8549-0B644BE5E740}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C785344-9BF3-4750-8549-0B644BE5E740}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C785344-9BF3-4750-8549-0B644BE5E740}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA310C5-D155-44E7-A18D-4D2564868DE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
