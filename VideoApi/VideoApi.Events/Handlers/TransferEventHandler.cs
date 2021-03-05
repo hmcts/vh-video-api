@@ -28,7 +28,8 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var isVmr = SourceParticipant.CurrentVirtualRoom?.Type == VirtualCourtRoomType.Civilian;
+            var isVmr = SourceParticipant.CurrentVirtualRoom?.Type == VirtualCourtRoomType.Civilian || 
+                        SourceParticipant.CurrentVirtualRoom?.Type == VirtualCourtRoomType.Witness;
             var targetRoomLabel = isVmr ? SourceParticipant.CurrentVirtualRoom?.Label :  callbackEvent.TransferredToRoomLabel;
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
 
