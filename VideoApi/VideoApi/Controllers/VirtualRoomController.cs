@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
+using VideoApi.Validations.Models;
 
 namespace VideoApi.Controllers
 {
@@ -33,44 +35,98 @@ namespace VideoApi.Controllers
         }
 
         /// <summary>
-        /// Get a VMR or return an existing one for a participant
+        /// Get a civilian VMR or return an existing one for a participant
         /// </summary>
         /// <param name="conferenceId"></param>
         /// <param name="participantId"></param>
         /// <returns></returns>
         [HttpGet("{conferenceId}/rooms/interpreter/{participantId}")]
         [OpenApiOperation("GetInterpreterRoomForParticipant")]
-        [ProducesResponseType(typeof(InterpreterRoomResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(SharedParticipantRoomResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInterpreterRoomForParticipant(Guid conferenceId, Guid participantId)
+        {
+            var validation = await ValidateConferenceAndParticipant(conferenceId, participantId);
+            if (validation.FailedResult != null)
+            {
+                return validation.FailedResult;
+            }
+            
+            var response = await GetVmr(validation.Conference,validation.Participant, VirtualCourtRoomType.Civilian);
+            return Ok(response);
+        }
+        
+        /// <summary>
+        /// Get a witness VMR or return an existing one for a participant
+        /// </summary>
+        /// <param name="conferenceId"></param>
+        /// <param name="participantId"></param>
+        /// <returns></returns>
+        [HttpGet("{conferenceId}/rooms/witness/{participantId}")]
+        [OpenApiOperation("GetWitnessRoomForParticipant")]
+        [ProducesResponseType(typeof(SharedParticipantRoomResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetWitnessRoomForParticipant(Guid conferenceId, Guid participantId)
+        {
+            var validation = await ValidateConferenceAndParticipant(conferenceId, participantId);
+            if (validation.FailedResult != null)
+            {
+                return validation.FailedResult;
+            }
+            
+            var response = await GetVmr(validation.Conference,validation.Participant, VirtualCourtRoomType.Witness);
+            return Ok(response);
+        }
+
+        private async Task<ConferenceParticipantExists> ValidateConferenceAndParticipant(Guid conferenceId,
+            Guid participantId)
         {
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
 
+            var validation = new ConferenceParticipantExists();
             if (conference == null)
             {
                 _logger.LogWarning(
-                    "Failed to get an interpreter room for conference {Conference} because it does not exist",
+                    "Failed to get a room for conference {Conference} because it does not exist",
                     conferenceId);
-                return NotFound("Conference does not exist");
+                validation.FailedResult = NotFound("Conference does not exist");
+                return validation;
             }
-            
+
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
             if (participant == null)
             {
                 _logger.LogWarning(
-                    "Failed to get an interpreter room for conference {Conference} because {Participant} does not exist",
+                    "Failed to get an room for conference {Conference} because {Participant} does not exist",
                     conferenceId, participantId);
-                return NotFound("Participant does not exist");
+                validation.FailedResult = NotFound("Participant does not exist");
+                return validation;
             }
-            var room = await _roomService.GetOrCreateAnInterpreterVirtualRoom(conference, participant);
+
+            validation.Conference = conference;
+            validation.Participant = participant;
+            return validation;
+        }
+
+        private async Task<SharedParticipantRoomResponse> GetVmr(Conference conference, Participant participant, VirtualCourtRoomType roomType)
+        {
+            Room room;
+            switch (roomType)
+            {
+                case VirtualCourtRoomType.Witness:
+                    room = await _roomService.GetOrCreateAWitnessVirtualRoom(conference, participant);
+                    break;
+                default:
+                    room = await _roomService.GetOrCreateAnInterpreterVirtualRoom(conference, participant);
+                    break;
+            }
+            
             _logger.LogDebug(
                 "Returning interpreter room {Room} for participant {Participant} in conference {Conference}", room.Id,
                 participant.Id, conference.Id);
-            var response = InterpreterRoomResponseMapper.MapRoomToResponse(room);
-            return Ok(response);
+            return SharedParticipantRoomResponseMapper.MapRoomToResponse(room);
         }
-
     }
 }

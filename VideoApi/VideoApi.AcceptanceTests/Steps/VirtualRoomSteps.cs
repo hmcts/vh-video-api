@@ -28,10 +28,19 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetInterpreterRoomForParticipant(conference.Id, participant.Id));
         }
         
+        [Given(@"I have a get witness room request")]
+        public void GivenIHaveAGetWitnessRoomRequest()
+        {
+            var conference = _context.Test.ConferenceResponse;
+            var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
+            
+            _context.Request = _context.Get(GetWitnessRoomForParticipant(conference.Id, participant.Id));
+        }
+        
         [Then(@"the response should have connection details for the room")]
         public void ThenTheResponseShouldHaveConnectionDetailsForTheRoom()
         {
-            var interpreterRoom = RequestHelper.Deserialise<InterpreterRoomResponse>(_context.Response.Content);
+            var interpreterRoom = RequestHelper.Deserialise<SharedParticipantRoomResponse>(_context.Response.Content);
             interpreterRoom.Should().NotBeNull();
             interpreterRoom.PexipNode.Should().NotBeNullOrWhiteSpace();
             interpreterRoom.ParticipantJoinUri.Should().NotBeNullOrWhiteSpace();

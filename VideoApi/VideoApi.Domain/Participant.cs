@@ -42,7 +42,7 @@ namespace VideoApi.Domain
         public string DisplayName { get; set; }
         public string Username { get; set; }
         public UserRole UserRole { get; set; }
-        public string HearingRole { get; }
+        public string HearingRole { get; private set; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
         public RoomType? CurrentRoom { get;  set; }

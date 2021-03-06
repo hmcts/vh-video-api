@@ -123,6 +123,9 @@ namespace Testing.Common.Helper
 
             public static string GetInterpreterRoomForParticipant(Guid conferenceId, Guid participantId) =>
                 $"{ApiRoot}/{conferenceId}/rooms/interpreter/{participantId}";
+            
+            public static string GetWitnessRoomForParticipant(Guid conferenceId, Guid participantId) =>
+                $"{ApiRoot}/{conferenceId}/rooms/witness/{participantId}";
         }
     }
 }

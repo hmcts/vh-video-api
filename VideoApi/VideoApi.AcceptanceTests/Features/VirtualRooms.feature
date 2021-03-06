@@ -9,3 +9,10 @@ Feature: Virtual Rooms
     When I send the request to the endpoint
     Then the response should have the status Ok and success status True
     And the response should have connection details for the room
+
+  Scenario: Get a witness room
+    Given I have a conference
+    And I have a get witness room request
+    When I send the request to the endpoint
+    Then the response should have the status Ok and success status True
+    And the response should have connection details for the room

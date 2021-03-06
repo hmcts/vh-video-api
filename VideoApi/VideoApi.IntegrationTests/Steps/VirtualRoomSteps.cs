@@ -45,11 +45,35 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
         
+        [Given(@"I have a get witness room request")]
+        public void GivenIHaveAGetWitnessRoomRequest()
+        {
+            var conference = _context.Test.Conference;
+            var participant = conference.Participants.First(x => !x.IsJudge());
+            _context.Uri = GetWitnessRoomForParticipant(conference.Id, participant.Id);
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I have a get witness room request for a non-existent conference")]
+        public void GivenIHaveAGetWitnessRoomRequestForANon_ExistentConference()
+        {
+            _context.Uri = GetWitnessRoomForParticipant(Guid.NewGuid(), Guid.NewGuid());
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I have a get witness room request for a non-existent participant")]
+        public void GivenIHaveAGetWitnessRoomRequestForANon_ExistentParticipant()
+        {
+            var conference = _context.Test.Conference;
+            _context.Uri = GetWitnessRoomForParticipant(conference.Id,Guid.NewGuid());
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
         [Then(@"the response should have connection details for the room")]
         public async Task ThenTheResponseShouldHaveConnectionDetailsForTheRoom()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var room = RequestHelper.Deserialise<InterpreterRoomResponse>(json);
+            var room = RequestHelper.Deserialise<SharedParticipantRoomResponse>(json);
             room.PexipNode.Should().NotBeNullOrWhiteSpace();
             room.ParticipantJoinUri.Should().NotBeNullOrWhiteSpace();
         }

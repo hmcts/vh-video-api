@@ -119,7 +119,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
         
         [Then(@"the room count should differ by (.*)")]
-        public async Task GivenIHaveAValidConferenceEventRequestWithARoomIdForEventType(int countDifference)
+        public async Task ThenTheRoomCountShouldDifferBy(int countDifference)
         {
             var roomId = _context.Test.Room.Id;
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
