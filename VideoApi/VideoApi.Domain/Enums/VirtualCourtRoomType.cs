@@ -6,6 +6,6 @@ namespace VideoApi.Domain.Enums
         Participant = 2,
         WaitingRoom = 3,
         Civilian = 4,
-        Witness = 4
+        Witness = 5
     }
 }

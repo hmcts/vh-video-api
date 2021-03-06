@@ -713,21 +713,21 @@ namespace VideoApi.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RaiseVideoEventAsync(ConferenceEventRequest request, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a civilian VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a civilian VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a witness VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a witness VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
     
@@ -6037,7 +6037,7 @@ namespace VideoApi.Client
             }
         }
     
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a civilian VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
         {
@@ -6045,7 +6045,7 @@ namespace VideoApi.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a civilian VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
@@ -6129,7 +6129,7 @@ namespace VideoApi.Client
             }
         }
     
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a witness VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
         {
@@ -6137,7 +6137,7 @@ namespace VideoApi.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a VMR or return an existing one for a participant</summary>
+        /// <summary>Get a witness VMR or return an existing one for a participant</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
