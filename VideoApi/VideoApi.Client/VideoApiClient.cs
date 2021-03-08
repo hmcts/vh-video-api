@@ -748,7 +748,7 @@ namespace VideoApi.Client
     
         private Newtonsoft.Json.JsonSerializerSettings CreateSerializerSettings()
         {
-            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            var settings = ConfigureVhJsonSettings(new Newtonsoft.Json.JsonSerializerSettings {  });
             UpdateJsonSerializerSettings(settings);
             return settings;
         }

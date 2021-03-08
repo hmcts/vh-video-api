@@ -25,5 +25,14 @@ namespace VideoApi.Client
             apiClient.BaseUrl = baseUrl;
             return apiClient;
         }
+        
+        private JsonSerializerSettings ConfigureVhJsonSettings(JsonSerializerSettings jsonSerializerSettings)
+        {
+            ReadResponseAsString = true;
+            jsonSerializerSettings.ContractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()};
+            jsonSerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+            jsonSerializerSettings.Converters.Add(new StringEnumConverter());
+            return jsonSerializerSettings;
+        }
     }
 }
