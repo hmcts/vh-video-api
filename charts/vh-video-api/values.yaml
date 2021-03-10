@@ -61,7 +61,7 @@ java:
     SERVICES__VIDEOAPIRESOURCEID: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
     SNAPSHOTDEBUGGER_EXTENSION_VERSION: disabled
     VIDEOAPPURL: https://vh-video-web.{{ .Values.global.environment }}.hearings.reform.hmcts.net
-    WOWZACONFIGURATION__AZURESTORAGEDIRECTORY: ${com.wowza.wms.context.…Home}/content/azurecopy
+    WOWZACONFIGURATION__AZURESTORAGEDIRECTORY: ${com.wowza.wms.context.VHostConfigHome}/content/azurecopy
     WOWZACONFIGURATION__HOSTNAME: _defaultVHost_
     WOWZACONFIGURATION__RESTAPIENDPOINT: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
     WOWZACONFIGURATION__RESTAPIENDPOINT__0: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
