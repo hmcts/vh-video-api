@@ -90,7 +90,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             expectedRoom.SetProtectedProperty(nameof(expectedRoom.Id), expectedRoomId);
             var newVmrRoom = new BookedParticipantRoomResponse
             {
-                Display_name = "Interpreter2",
+                Room_label = "Interpreter2",
                 Uris = new Uris
                 {
                     Participant = "wertyui__interpreter",
@@ -112,7 +112,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             
             _mocker.Mock<ICommandHandler>().Setup(x =>
                 x.Handle(It.IsAny<UpdateRoomConnectionDetailsCommand>())).Callback(() =>
-                expectedRoom.UpdateRoomConnectionDetails(newVmrRoom.Display_name, "ingesturl", newVmrRoom.Uris.Pexip_node,
+                expectedRoom.UpdateRoomConnectionDetails(newVmrRoom.Room_label, "ingesturl", newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 
             _mocker.Mock<IKinlyApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
@@ -122,7 +122,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             var room = await _service.GetOrCreateAnInterpreterVirtualRoom(_conference, participant);
 
             room.Should().NotBeNull();
-            room.Label.Should().Be(newVmrRoom.Display_name);
+            room.Label.Should().Be(newVmrRoom.Room_label);
             room.PexipNode.Should().Be(newVmrRoom.Uris.Pexip_node);
             room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
             

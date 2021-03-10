@@ -132,7 +132,7 @@ namespace VideoApi.Services
         private Task UpdateRoomConnectionDetails(Conference conference, long roomId, BookedParticipantRoomResponse vmr,
             string ingestUrl)
         {
-            var updateCommand = new UpdateRoomConnectionDetailsCommand(conference.Id, roomId, vmr.Display_name,
+            var updateCommand = new UpdateRoomConnectionDetailsCommand(conference.Id, roomId, vmr.Room_label,
                 ingestUrl, vmr.Uris.Pexip_node, vmr.Uris.Participant);
             return _commandHandler.Handle(updateCommand);
         }

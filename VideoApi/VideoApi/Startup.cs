@@ -55,7 +55,8 @@ namespace VideoApi
 
             services.AddJsonOptions();
             RegisterSettings(services);
-            bool useStub = !bool.TryParse(Configuration["UseStub"], out useStub) || useStub;
+            var configExists = !bool.TryParse(Configuration["UseStub"], out var useStubConfigValue);
+            var useStub = configExists && useStubConfigValue;
             services.AddCustomTypes(Environment, useStub);
             RegisterAuth(services);
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
