@@ -358,7 +358,7 @@
       }
     },
     "/hearing/{virtual_courtroom_id}/participant-room":  {
-      "put": {
+      "post": {
         "operationId": "createParticipantRoom",
         "description": "Create participant room",
         "tags": [
@@ -707,7 +707,7 @@
         "uris": {
           "$ref": "#/definitions/uris"
         },
-        "display_name": {
+        "room_label": {
           "type": "string"
         }
       }
