@@ -38,9 +38,6 @@ java:
         - azuread--clientid
   environment:
     ASPNETCORE_URLS: http://+:8080
-    APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
-    APPINSIGHTS_SNAPSHOTFEATURE_VERSION: disabled
-    APPLICATIONINSIGHTSAGENT_EXTENSION_VERSION: ~2
     AZUREAD__TENANTID: "fb6e0e22-0da3-4c35-972a-9d61eb256508"
     AZUREAD__VHVIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
     CVPCONFIGURATION__STORAGEACCOUNTNAME: cvprecordings{{ .Values.global.environment }}sa
