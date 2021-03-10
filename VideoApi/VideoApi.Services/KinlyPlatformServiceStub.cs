@@ -46,7 +46,7 @@ namespace VideoApi.Services
             return Task.FromResult<TestCallResult>(null);
         }
 
-        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
+        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom)
         {
             return Task.CompletedTask;
         }

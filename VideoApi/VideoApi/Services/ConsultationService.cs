@@ -87,7 +87,7 @@ namespace VideoApi.Services
                     new GetConferenceByIdQuery(conferenceId));
             var endpint = conference.GetEndpoints().Single(x => x.Id == endpointId);
 
-            await TransferParticipantAsync(conferenceId, endpointId, endpint.GetCurrentRoom(), room);
+            await TransferParticipantAsync(conferenceId, endpointId.ToString(), endpint.GetCurrentRoom(), room);
         }
 
         public async Task ParticipantTransferToRoomAsync(Guid conferenceId, Guid participantId, string room)
@@ -97,15 +97,15 @@ namespace VideoApi.Services
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
-            await TransferParticipantAsync(conferenceId, participantId, participant.GetCurrentRoom(), room);
+            await TransferParticipantAsync(conferenceId, participantId.ToString(), participant.GetCurrentRoom(), room);
         }
         
         public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
         {
-            await TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom);
+            await TransferParticipantAsync(conferenceId, participantId.ToString(), fromRoom, toRoom);
         }
         
-        private async Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom,
+        private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
             string toRoom)
         {
             _logger.LogTrace(

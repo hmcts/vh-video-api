@@ -74,7 +74,7 @@ namespace VideoApi.Controllers
             }
             catch (KinlyApiException ex)
             {
-                _logger.LogError(ex, $"Error from Kinly API. Unable to pause video hearing");
+                _logger.LogError(ex, "Error from Kinly API. Unable to pause video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -134,7 +134,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.Accepted)]
         public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId, TransferParticipantRequest transferRequest)
         {
-            var participantId = transferRequest.ParticipantId;
+            var participantId = transferRequest.ParticipantId?.ToString() ?? transferRequest.RoomId.ToString();
             var transferType = transferRequest.TransferType;
             try
             {
@@ -143,15 +143,13 @@ namespace VideoApi.Controllers
                     case TransferType.Call:
                         _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
                             participantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId,
-                            transferRequest.ParticipantId,
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId, participantId,
                             RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
                             participantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId,
-                            transferRequest.ParticipantId,
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId, participantId,
                             RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
                         break;
                     default:
