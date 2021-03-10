@@ -22,7 +22,7 @@ namespace VideoApi.Contract.Requests
         public Guid? ParticipantId { get; set; }
         
         /// <summary>
-        /// Participant Id
+        /// Room Id
         /// </summary>
         public long? RoomId { get; set; }
         
