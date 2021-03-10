@@ -27,7 +27,25 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             result.Should().BeOfType<AcceptedResult>();
             
             VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.WaitingRoom.ToString(),
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
+                    RoomType.HearingRoom.ToString()), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_move_room_into_hearing_room()
+        {
+            var conferenceId = Guid.NewGuid();
+            var request = new TransferParticipantRequest
+            {
+                RoomId = 10293,
+                TransferType = TransferType.Call
+            };
+            
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+            
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.RoomId.ToString(), RoomType.WaitingRoom.ToString(),
                     RoomType.HearingRoom.ToString()), Times.Once);
         }
         
@@ -45,7 +63,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             result.Should().BeOfType<AcceptedResult>();
 
             VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, RoomType.HearingRoom.ToString(),
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.HearingRoom.ToString(),
                     RoomType.WaitingRoom.ToString()), Times.Once);
         }
         
@@ -63,7 +81,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 Controller.TransferParticipantAsync(conferenceId, request));
             
             VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId, It.IsAny<string>(),
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), It.IsAny<string>(),
                     It.IsAny<string>()), Times.Never);
         }
 
@@ -82,7 +100,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var exception =
                 new KinlyApiException(message, statusCode, response, null, null);
             VideoPlatformServiceMock
-                .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(),
+                .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
                     It.IsAny<string>())).ThrowsAsync(exception);
 
             var result = await Controller.TransferParticipantAsync(conferenceId, request);

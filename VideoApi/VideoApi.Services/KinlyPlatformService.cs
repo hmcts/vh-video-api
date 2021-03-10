@@ -115,7 +115,7 @@ namespace VideoApi.Services
             return result;
         }
 
-        public Task TransferParticipantAsync(Guid conferenceId, Guid participantId, string fromRoom,
+        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
             string toRoom)
         {
             _logger.LogInformation(
