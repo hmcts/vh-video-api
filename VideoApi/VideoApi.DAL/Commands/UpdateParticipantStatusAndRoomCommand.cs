@@ -107,7 +107,8 @@ namespace VideoApi.DAL.Commands
             return await _context.Rooms
                 .Include(x => x.RoomParticipants).Include(x => x.RoomEndpoints)
                 .SingleOrDefaultAsync(x =>
-                    x.Label == label && x.ConferenceId == conferenceId && x.Type == VirtualCourtRoomType.Civilian);
+                    x.Label == label && x.ConferenceId == conferenceId && 
+                    (x.Type == VirtualCourtRoomType.Civilian || x.Type == VirtualCourtRoomType.Witness));
         }
     }
 }
