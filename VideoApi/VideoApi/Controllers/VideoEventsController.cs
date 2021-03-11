@@ -40,7 +40,6 @@ namespace VideoApi.Controllers
         [OpenApiOperation("RaiseVideoEvent")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [AllowAnonymous]
         public async Task<IActionResult> PostEventAsync(ConferenceEventRequest request)
         {
             Guid.TryParse(request.ConferenceId, out var conferenceId);

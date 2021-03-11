@@ -11,7 +11,8 @@ namespace VideoApi.Mappings
         public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
             string pexipSelfTestNode)
         {
-            var civilianRooms = conference.Rooms.Where(x => x.Type == VirtualCourtRoomType.Civilian)
+            var civilianRooms = conference.Rooms
+                .Where(x => x.Type == VirtualCourtRoomType.Civilian || x.Type == VirtualCourtRoomType.Witness)
                 .Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
             var response = new ConferenceDetailsResponse
             {
