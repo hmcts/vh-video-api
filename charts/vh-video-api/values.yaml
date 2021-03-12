@@ -47,7 +47,7 @@ java:
     KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "+442033183131"
     KINLYCONFIGURATION__CONFERENCEUSERNAME: "ola@hearings.hmcts.net"
     KINLYCONFIGURATION__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.hearings.hmcts.net/callback/conference
-    KINLYCONFIGURATION__KINLYAPIURL: "https://test.hearings.hmcts.net/virtual-court/api/v1"
+    KINLYCONFIGURATION__KINLYAPIURL: https://test.hearings.hmcts.net/virtual-court/api/v1
     KINLYCONFIGURATION__KINLYSELFTESTAPIURL: https://test.self-test.hearings.hmcts.net/api/v1
     KINLYCONFIGURATION__PEXINODE: sip.test.hearings.hmcts.net
     KINLYCONFIGURATION__PEXIPSELFTESTNODE: sip.test.self-test.hearings.hmcts.net
