@@ -18,9 +18,9 @@ java:
       secrets:
         - cvpconfiguration--managedidentityclientid
         - cvpconfiguration--storageaccountKey
-        - azuread--vhvideowebclientid
+        #- azuread--vhvideowebclientid
         - servicebusqueue--connectionstring
-        - services--videowebclientid
+        #- services--videowebclientid
         - wowzaconfiguration--password
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
