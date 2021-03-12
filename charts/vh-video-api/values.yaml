@@ -39,12 +39,11 @@ java:
   environment:
     ASPNETCORE_URLS: http://+:8080
     AZUREAD__TENANTID: "fb6e0e22-0da3-4c35-972a-9d61eb256508"
-    AZUREAD__VHVIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    AZUREAD__AUTHORITY: https://login.microsoftonline.com/
     CVPCONFIGURATION__STORAGEACCOUNTNAME: cvprecordings{{ .Values.global.environment }}sa
     CVPCONFIGURATION__STORAGECONTAINERNAME: recordings
     CVPCONFIGURATION__STORAGEENDPOINT: https://cvprecordings{{ .Values.global.environment }}sa.blob.core.windows.net/
     DISABLEHTTPSREDIRECTION: true
-    INSTRUMENTATIONENGINE_EXTENSION_VERSION: ~1
     KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "+442033183131"
     KINLYCONFIGURATION__CONFERENCEUSERNAME: "ola@hearings.hmcts.net"
     KINLYCONFIGURATION__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.hearings.hmcts.net/callback/conference
@@ -52,10 +51,9 @@ java:
     KINLYCONFIGURATION__KINLYSELFTESTAPIURL: https://test.self-test.hearings.hmcts.net/api/v1
     KINLYCONFIGURATION__PEXINODE: sip.test.hearings.hmcts.net
     KINLYCONFIGURATION__PEXIPSELFTESTNODE: sip.test.self-test.hearings.hmcts.net
-    MSDEPLOY_RENAME_LOCKED_FILES: 1
     SERVICEBUSQUEUE__QUEUENAME: video
     SERVICES__CALLBACKURI: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback/conference
-    SERVICES__VIDEOAPIRESOURCEID: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    SERVICES__VIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
     SNAPSHOTDEBUGGER_EXTENSION_VERSION: disabled
     VIDEOAPPURL: https://vh-video-web.{{ .Values.global.environment }}.hearings.reform.hmcts.net
     WOWZACONFIGURATION__AZURESTORAGEDIRECTORY: ${com.wowza.wms.context.VHostConfigHome}/content/azurecopy
