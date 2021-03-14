@@ -33,9 +33,9 @@ namespace VideoApi.DAL.Queries
         public async Task<Conference> Handle(GetNonClosedConferenceByHearingRefIdQuery query)
         {
             var efQuery = _context.Conferences
-                .Include(x => x.Participants).ThenInclude(x => x.CurrentVirtualRoom)
+                .Include(x => x.Participants).ThenInclude(x => x.CurrentConsultationRoom)
                 .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
-                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentVirtualRoom)
+                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentConsultationRoom)
                 .AsNoTracking();
             
             if (!query.IncludeClosedConferences)

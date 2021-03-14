@@ -33,7 +33,7 @@ namespace VideoApi.Mappings
                 LastName = participant.LastName,
                 ContactEmail = participant.ContactEmail,
                 ContactTelephone = participant.ContactTelephone,
-                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentVirtualRoom),
+                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentConsultationRoom),
                 LinkedParticipants = links
             };
         }

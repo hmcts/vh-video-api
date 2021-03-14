@@ -31,23 +31,23 @@ namespace VideoApi.Services
             _queryHandler = queryHandler;
         }
 
-        public async Task<Room> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false)
+        public async Task<ConsultationRoom> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false)
         {
             var consultationRoomParams = new CreateConsultationRoomParams
             {
                 Room_label_prefix = roomType.ToString()
             };
             var createConsultationRoomResponse = await CreateConsultationRoomAsync(conferenceId.ToString(), consultationRoomParams);
-            var createRoomCommand = new CreateRoomCommand(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
+            var createRoomCommand = new CreateConsultationRoomCommand(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
             await _commandHandler.Handle(createRoomCommand);
-            var room = new Room(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
+            var room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
             return room;
         }
 
-        public async Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
+        public async Task<ConsultationRoom> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
-            var query = new GetAvailableRoomByRoomTypeQuery(roomType, conferenceId);
-            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
+            var query = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
+            var listOfRooms = await _queryHandler.Handle<GetAvailableConsultationRoomsByRoomTypeQuery, List<ConsultationRoom>>(query);
             var room = listOfRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
             if (room == null)
             {
@@ -58,12 +58,12 @@ namespace VideoApi.Services
                 var createConsultationRoomResponse =
                     await CreateConsultationRoomAsync(conferenceId.ToString(),
                         consultationRoomParams);
-                var createRoomCommand = new CreateRoomCommand(conferenceId,
+                var createRoomCommand = new CreateConsultationRoomCommand(conferenceId,
                     createConsultationRoomResponse.Room_label,
                     roomType,
                     false);
                 await _commandHandler.Handle(createRoomCommand);
-                room = new Room(conferenceId, createConsultationRoomResponse.Room_label, roomType, false);
+                room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.Room_label, roomType, false);
             }
 
             return room;

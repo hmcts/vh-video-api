@@ -19,7 +19,21 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.Label);
             builder.Property(x => x.Type);
             builder.Property(x => x.Status);
-
+        }
+    }
+    
+    public class ConsultationRoomMap : IEntityTypeConfiguration<ConsultationRoom>
+    {
+        public void Configure(EntityTypeBuilder<ConsultationRoom> builder)
+        {
+            // Method intentionally left empty.
+        }
+    }
+    
+    public class InterpreterRoomMap : IEntityTypeConfiguration<InterpreterRoom>
+    {
+        public void Configure(EntityTypeBuilder<InterpreterRoom> builder)
+        {
             builder.Property(x => x.IngestUrl);
             builder.Property(x => x.PexipNode);
             builder.Property(x => x.ParticipantUri);

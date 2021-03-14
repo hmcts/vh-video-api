@@ -8,7 +8,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class CreateRoomCommand : ICommand
+    public class CreateConsultationRoomCommand : ICommand
     {
         public Guid ConferenceId { get; }
         public string Label { get; }
@@ -16,7 +16,7 @@ namespace VideoApi.DAL.Commands
         public long NewRoomId { get; private set; }
         public bool Locked { get; private set; }
 
-        public CreateRoomCommand(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
+        public CreateConsultationRoomCommand(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
         {
             ConferenceId = conferenceId;
             Label = label;
@@ -30,16 +30,16 @@ namespace VideoApi.DAL.Commands
         }
     }
 
-    public class CreateRoomCommandHandler : ICommandHandler<CreateRoomCommand>
+    public class CreateConsultationRoomCommandHandler : ICommandHandler<CreateConsultationRoomCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public CreateRoomCommandHandler(VideoApiDbContext context)
+        public CreateConsultationRoomCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(CreateRoomCommand command)
+        public async Task Handle(CreateConsultationRoomCommand command)
         {
             var conference = await _context.Conferences.SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
@@ -49,8 +49,8 @@ namespace VideoApi.DAL.Commands
             }
 
             var room = string.IsNullOrWhiteSpace(command.Label)
-                ? new Room(command.ConferenceId, command.Type, command.Locked)
-                : new Room(command.ConferenceId, command.Label, command.Type, command.Locked);
+                ? new ConsultationRoom(command.ConferenceId, command.Type, command.Locked)
+                : new ConsultationRoom(command.ConferenceId, command.Label, command.Type, command.Locked);
             
 
             _context.Rooms.Add(room);

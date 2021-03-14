@@ -33,52 +33,48 @@ namespace VideoApi.Services
             _queryHandler = queryHandler;
         }
 
-        public Task<Room> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
+        public Task<InterpreterRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
         {
-            return GetOrCreateVirtualRoom(conference, participant, VirtualCourtRoomType.Civilian);
+            return GetOrCreateInterpreterRoom(conference, participant, VirtualCourtRoomType.Civilian);
         }
 
-        public Task<Room> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
+        public Task<InterpreterRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
         {
-            return GetOrCreateVirtualRoom(conference, participant, VirtualCourtRoomType.Witness);
+            return GetOrCreateInterpreterRoom(conference, participant, VirtualCourtRoomType.Witness);
         }
 
-        private async Task<Room> GetOrCreateVirtualRoom(Conference conference, Participant participant,
+        private async Task<InterpreterRoom> GetOrCreateInterpreterRoom(Conference conference, Participant participant,
             VirtualCourtRoomType type)
         {
             var conferenceId = conference.Id;
             var interpreterRooms = await RetrieveAllInterpreterRooms(conferenceId);
+
+            var interpreterRoom = GetInterpreterRoomForParticipant(conferenceId, interpreterRooms, participant, type);
+            if (interpreterRoom != null) return interpreterRoom;
             var count = interpreterRooms
                 .Select(x => int.TryParse(x.Label.Replace(RoomPrefix, string.Empty), out var n) ? n : 0)
                 .DefaultIfEmpty()
                 .Max();
-            var room = GetRoomForParticipant(conferenceId, interpreterRooms, participant, type) ??
-                       await CreateAVmrAndRoom(conference, count, type);
+            interpreterRoom = await CreateAVmrAndRoom(conference, count, type);
 
-            return room;
+            return interpreterRoom;
         }
 
-        private async Task<IReadOnlyCollection<Room>> RetrieveAllInterpreterRooms(Guid conferenceId)
+        private async Task<IReadOnlyCollection<InterpreterRoom>> RetrieveAllInterpreterRooms(Guid conferenceId)
         {
             var interpreterRoomsQuery =
-                new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.Civilian, conferenceId);
-            var witnessInterpreterRoomsQuery =
-                new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.Witness, conferenceId);
+                new GetInterpreterRoomsForConferenceQuery(conferenceId);
 
             var interpreterRooms =
-                await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(interpreterRoomsQuery);
-            var witnessInterpreterRooms =
-                await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(witnessInterpreterRoomsQuery);
-
-            var rooms = new List<Room>(interpreterRooms).Concat(witnessInterpreterRooms);
-            return rooms.Where(x => x.Label.StartsWith(RoomPrefix)).ToList().AsReadOnly();
+                await _queryHandler.Handle<GetInterpreterRoomsForConferenceQuery, List<InterpreterRoom>>(interpreterRoomsQuery);
+            return interpreterRooms.Where(x => x.Label.StartsWith(RoomPrefix)).ToList().AsReadOnly();
         }
 
-        private async Task<Room> CreateAVmrAndRoom(Conference conference, int existingRooms,
+        private async Task<InterpreterRoom> CreateAVmrAndRoom(Conference conference, int existingRooms,
             VirtualCourtRoomType roomType)
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
-            var roomId = await CreateRoom(conference.Id, roomType);
+            var roomId = await CreateInterpreterRoom(conference.Id, roomType);
             var ingestUrl = $"{conference.IngestUrl}/{roomId}";
             var vmr = await CreateVmr(conference, roomId, ingestUrl, roomType, existingRooms);
             await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
@@ -88,9 +84,9 @@ namespace VideoApi.Services
             return await GetUpdatedRoom(conference, roomId, roomType);
         }
 
-        private async Task<long> CreateRoom(Guid conferenceId, VirtualCourtRoomType type)
+        private async Task<long> CreateInterpreterRoom(Guid conferenceId, VirtualCourtRoomType type)
         {
-            var createRoomCommand = new CreateRoomCommand(conferenceId, null, type, false);
+            var createRoomCommand = new CreateInterpreterRoomCommand(conferenceId, type);
             await _commandHandler.Handle(createRoomCommand);
             return createRoomCommand.NewRoomId;
         }
@@ -111,7 +107,7 @@ namespace VideoApi.Services
             return _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
         }
 
-        private Room GetRoomForParticipant(Guid conferenceId, IReadOnlyCollection<Room> rooms, Participant participant,
+        private InterpreterRoom GetInterpreterRoomForParticipant(Guid conferenceId, IReadOnlyCollection<InterpreterRoom> rooms, Participant participant,
             VirtualCourtRoomType roomType)
         {
             _logger.LogInformation(
@@ -132,15 +128,15 @@ namespace VideoApi.Services
         private Task UpdateRoomConnectionDetails(Conference conference, long roomId, BookedParticipantRoomResponse vmr,
             string ingestUrl)
         {
-            var updateCommand = new UpdateRoomConnectionDetailsCommand(conference.Id, roomId, vmr.Room_label,
+            var updateCommand = new UpdateInterpreterRoomConnectionDetailsCommand(conference.Id, roomId, vmr.Room_label,
                 ingestUrl, vmr.Uris.Pexip_node, vmr.Uris.Participant);
             return _commandHandler.Handle(updateCommand);
         }
 
-        private async Task<Room> GetUpdatedRoom(Conference conference, long roomId, VirtualCourtRoomType type)
+        private async Task<InterpreterRoom> GetUpdatedRoom(Conference conference, long roomId, VirtualCourtRoomType type)
         {
-            var query = new GetAvailableRoomByRoomTypeQuery(type, conference.Id);
-            var listOfRooms = await _queryHandler.Handle<GetAvailableRoomByRoomTypeQuery, List<Room>>(query);
+            var query = new GetInterpreterRoomsForConferenceQuery(conference.Id);
+            var listOfRooms = await _queryHandler.Handle<GetInterpreterRoomsForConferenceQuery, List<InterpreterRoom>>(query);
             return listOfRooms.First(x => x.Id == roomId);
         }
     }

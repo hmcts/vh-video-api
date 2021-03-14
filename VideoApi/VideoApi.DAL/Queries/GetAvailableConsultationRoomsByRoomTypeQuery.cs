@@ -10,28 +10,28 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetAvailableRoomByRoomTypeQuery : IQuery
+    public class GetAvailableConsultationRoomsByRoomTypeQuery : IQuery
     {
         public VirtualCourtRoomType CourtRoomType { get; }
         public Guid ConferenceId { get; }
 
-        public GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType courtRoomType, Guid conferenceId)
+        public GetAvailableConsultationRoomsByRoomTypeQuery(VirtualCourtRoomType courtRoomType, Guid conferenceId)
         {
             CourtRoomType = courtRoomType;
             ConferenceId = conferenceId;
         }
     }
 
-    public class GetAvailableRoomByRoomTypeQueryHandler : IQueryHandler<GetAvailableRoomByRoomTypeQuery, List<Room>>
+    public class GetAvailableConsultationRoomsByRoomTypeQueryHandler : IQueryHandler<GetAvailableConsultationRoomsByRoomTypeQuery, List<ConsultationRoom>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetAvailableRoomByRoomTypeQueryHandler(VideoApiDbContext context)
+        public GetAvailableConsultationRoomsByRoomTypeQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Room>> Handle(GetAvailableRoomByRoomTypeQuery query)
+        public async Task<List<ConsultationRoom>> Handle(GetAvailableConsultationRoomsByRoomTypeQuery query)
         {
             var conference = await _context.Conferences.FindAsync(query.ConferenceId);
             
@@ -40,13 +40,15 @@ namespace VideoApi.DAL.Queries
                 throw new ConferenceNotFoundException(query.ConferenceId);
             }
             
-            return await _context.Rooms
+            var rooms =  await _context.Rooms
                 .Include(x => x.RoomParticipants)
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId && x.Type == query.CourtRoomType)
                 .Where(x => x.Status == RoomStatus.Live)
                 .ToListAsync();
+
+            return rooms.Cast<ConsultationRoom>().ToList();
         }
     }
 }

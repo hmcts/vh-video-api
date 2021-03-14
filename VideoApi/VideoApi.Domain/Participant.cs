@@ -46,8 +46,8 @@ namespace VideoApi.Domain
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
         public RoomType? CurrentRoom { get;  set; }
-        public long? CurrentVirtualRoomId { get; set; }
-        public virtual Room CurrentVirtualRoom { get; set; }
+        public long? CurrentConsultationRoomId { get; set; }
+        public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
         public long? TestCallResultId { get; set; }
         public virtual TestCallResult TestCallResult { get; private set; }
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
@@ -77,7 +77,7 @@ namespace VideoApi.Domain
 
         public string GetCurrentRoom()
         {
-            return CurrentVirtualRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
+            return CurrentConsultationRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)
@@ -85,14 +85,14 @@ namespace VideoApi.Domain
             CurrentRoom = currentRoom;
         }
 
-        public void UpdateCurrentVirtualRoom(Room room)
+        public void UpdateCurrentVirtualRoom(ConsultationRoom consultationRoom)
         {
-            if (room?.Id == CurrentVirtualRoomId)
+            if (consultationRoom?.Id == CurrentConsultationRoomId)
             {
                 return;
             }
-            CurrentVirtualRoom?.RemoveParticipant(new RoomParticipant(Id));
-            CurrentVirtualRoom = room;
+            CurrentConsultationRoom?.RemoveParticipant(new RoomParticipant(Id));
+            CurrentConsultationRoom = consultationRoom;
         }
 
         public bool IsJudge()

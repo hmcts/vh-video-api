@@ -156,8 +156,8 @@ namespace VideoApi.Controllers
                 return Unauthorized(message);
             }
 
-            var roomQuery = new GetRoomByIdQuery(request.ConferenceId, request.RoomLabel);
-            var room = await _queryHandler.Handle<GetRoomByIdQuery, Room>(roomQuery);
+            var roomQuery = new GetConsultationRoomByIdQuery(request.ConferenceId, request.RoomLabel);
+            var room = await _queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
                 _logger.LogWarning($"Unable to find room {request.RoomLabel}");
@@ -301,7 +301,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            if (!participant.CurrentVirtualRoomId.HasValue)
+            if (!participant.CurrentConsultationRoomId.HasValue)
             {
                 return BadRequest("Participant is not in a consultation");
             }

@@ -11,8 +11,9 @@ namespace VideoApi.Mappings
         public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
             string pexipSelfTestNode)
         {
-            var civilianRooms = conference.Rooms
+            var interpreterRooms = conference.Rooms
                 .Where(x => x.Type == VirtualCourtRoomType.Civilian || x.Type == VirtualCourtRoomType.Witness)
+                .Cast<InterpreterRoom>()
                 .Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
             var response = new ConferenceDetailsResponse
             {
@@ -31,7 +32,7 @@ namespace VideoApi.Mappings
                 Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
                 HearingVenueName = conference.HearingVenueName,
                 AudioRecordingRequired = conference.AudioRecordingRequired,
-                CivilianRooms = civilianRooms
+                CivilianRooms = interpreterRooms
             };
 
             if (response.MeetingRoom != null)

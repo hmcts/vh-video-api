@@ -121,9 +121,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
                     StringComparison.CurrentCultureIgnoreCase));
 
-            var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
+            var room = new ConsultationRoom(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
             room.AddEndpoint(new RoomEndpoint(Guid.NewGuid()));
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
 
             var request = new EndpointConsultationRequest()
             {
@@ -147,7 +147,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
                     StringComparison.CurrentCultureIgnoreCase));
 
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(null as Room);
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(null as ConsultationRoom);
 
             var request = new EndpointConsultationRequest()
             {
@@ -171,8 +171,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
                     StringComparison.CurrentCultureIgnoreCase));
 
-            var room = new Room(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
+            var room = new ConsultationRoom(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
 
             var request = new EndpointConsultationRequest()
             {

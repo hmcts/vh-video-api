@@ -22,7 +22,7 @@ namespace Testing.Common.Helper.Builders.Domain
             if (ignoreId)
             {
                 _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.TestCallResultId);
-                _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.CurrentVirtualRoomId);
+                _builderSettings.DisablePropertyNamingFor<Participant, long?>(x => x.CurrentConsultationRoomId);
                 _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
                 _builderSettings.DisablePropertyNamingFor<Task, long>(x => x.Id);
@@ -88,7 +88,7 @@ namespace Testing.Common.Helper.Builders.Domain
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
                     userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
                 .And(x=> x.TestCallResultId = null)
-                .And(x=> x.CurrentVirtualRoomId = null)
+                .And(x=> x.CurrentConsultationRoomId = null)
                 .Build();
 
             if (userRole == UserRole.Representative)
@@ -101,8 +101,8 @@ namespace Testing.Common.Helper.Builders.Domain
                 participant.UpdateCurrentRoom(roomType);
                 if (roomType == RoomType.ConsultationRoom)
                 {
-                    participant.CurrentVirtualRoomId = 1;
-                    participant.UpdateCurrentVirtualRoom(new Room(Guid.Empty, "Room1", VirtualCourtRoomType.Participant, false));
+                    participant.CurrentConsultationRoomId = 1;
+                    participant.UpdateCurrentVirtualRoom(new ConsultationRoom(Guid.Empty, "Room1", VirtualCourtRoomType.Participant, false));
                 }
             }
 
@@ -171,14 +171,14 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ConferenceBuilder WithCivilianRoom()
+        public ConferenceBuilder WithInterpreterRoom()
         {
             if (_conference.Participants.Count < 2)
             {
                 WithParticipants(2);
             }
-            var room = new Builder(_builderSettings).CreateNew<Room>().WithFactory(() =>
-                new Room(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian, false)).Build();
+            var room = new Builder(_builderSettings).CreateNew<InterpreterRoom>().WithFactory(() =>
+                new InterpreterRoom(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
             
             var nonJudges = _conference.Participants.Where(x => !x.IsJudge()).ToList();
             room.AddParticipant(new RoomParticipant(nonJudges[0].Id));

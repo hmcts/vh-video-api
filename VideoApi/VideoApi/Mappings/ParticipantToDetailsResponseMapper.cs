@@ -29,7 +29,7 @@ namespace VideoApi.Mappings
                 LinkedParticipants = 
                     participant.LinkedParticipants
                         .Select(LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse).ToList(),
-                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentVirtualRoom)
+                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentConsultationRoom)
             })
             .ToList();
         }

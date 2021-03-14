@@ -60,7 +60,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
 
-            var vRoom = new Room(conference1.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
+            var vRoom = new ConsultationRoom(conference1.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
             var defenseAdvocate = conference1.Participants.Single(x => x.Username == "rep@hmcts.net");
             defenseAdvocate.UpdateCurrentVirtualRoom(vRoom);
 

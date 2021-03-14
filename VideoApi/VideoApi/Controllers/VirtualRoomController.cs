@@ -112,21 +112,21 @@ namespace VideoApi.Controllers
 
         private async Task<SharedParticipantRoomResponse> GetVmr(Conference conference, Participant participant, VirtualCourtRoomType roomType)
         {
-            Room room;
+            InterpreterRoom consultationRoom;
             switch (roomType)
             {
                 case VirtualCourtRoomType.Witness:
-                    room = await _roomService.GetOrCreateAWitnessVirtualRoom(conference, participant);
+                    consultationRoom = await _roomService.GetOrCreateAWitnessVirtualRoom(conference, participant);
                     break;
                 default:
-                    room = await _roomService.GetOrCreateAnInterpreterVirtualRoom(conference, participant);
+                    consultationRoom = await _roomService.GetOrCreateAnInterpreterVirtualRoom(conference, participant);
                     break;
             }
             
             _logger.LogDebug(
-                "Returning interpreter room {Room} for participant {Participant} in conference {Conference}", room.Id,
+                "Returning interpreter room {Room} for participant {Participant} in conference {Conference}", consultationRoom.Id,
                 participant.Id, conference.Id);
-            return SharedParticipantRoomResponseMapper.MapRoomToResponse(room);
+            return SharedParticipantRoomResponseMapper.MapRoomToResponse(consultationRoom);
         }
     }
 }

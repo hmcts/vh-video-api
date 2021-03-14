@@ -13,9 +13,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetAvailableRoomByRoomTypeQueryTests : DatabaseTestsBase
+    public class GetAvailableConsultationRoomsByRoomTypeQueryTests : DatabaseTestsBase
     {
-        private GetAvailableRoomByRoomTypeQueryHandler _handler;
+        private GetAvailableConsultationRoomsByRoomTypeQueryHandler _handler;
         private Guid _newConferenceId;
         private List<long> _expectedIds;
         private List<long> _notExpectedIds;
@@ -23,9 +23,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [SetUp]
         public void Setup()
         {
+            _newConferenceId = Guid.Empty;
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetAvailableRoomByRoomTypeQueryHandler(context);
-
+            _handler = new GetAvailableConsultationRoomsByRoomTypeQueryHandler(context);
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             roomToUpdate.RemoveParticipant(new RoomParticipant(participant.Id));
             await db.SaveChangesAsync();
 
-            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, _newConferenceId);
+            var query = new GetAvailableConsultationRoomsByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, _newConferenceId);
             var result = await _handler.Handle(query);
 
             result.Should().NotBeEmpty();
@@ -59,32 +59,32 @@ namespace VideoApi.IntegrationTests.Database.Queries
             result.Any(x => x.Id == _expectedIds[2]).Should().Be(true);
             result.Any(x => x.Id == _notExpectedIds[0]).Should().Be(false);
             result.Any(x => x.Id == _notExpectedIds[1]).Should().Be(false);
-
-            await TearDown();
         }
 
         [Test]
         public void Should_Throw_Conference_Not_Found_Exception_If_Conference_Does_Not_Exist()
         {
             var fakeConferenceId = Guid.NewGuid();
-            var query = new GetAvailableRoomByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, fakeConferenceId);
+            var query = new GetAvailableConsultationRoomsByRoomTypeQuery(VirtualCourtRoomType.JudgeJOH, fakeConferenceId);
             _handler.Invoking(x => x.Handle(query)).Should().ThrowAsync<ConferenceNotFoundException>();
         }
         
-        private List<Room> GetListRoom(Guid conferenceId)
+        private List<ConsultationRoom> GetListRoom(Guid conferenceId)
         {
-            return new List<Room>
+            return new List<ConsultationRoom>
             {
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
-                new Room(conferenceId, "RoomTest", VirtualCourtRoomType.Participant, false),
+                new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
+                new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.Participant, false),
             };
         }
         
+        [TearDown]
         public async Task TearDown()
         {
+            if (_newConferenceId == Guid.Empty) return;
             TestContext.WriteLine("Cleaning conferences for GetAvailableRoomByRoomTypeQuery");
             await TestDataManager.RemoveConference(_newConferenceId);
             

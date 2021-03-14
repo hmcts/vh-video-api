@@ -112,7 +112,7 @@ namespace VideoApi.UnitTests.Events
         {
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(new Room(conference.Id, "JudgeConsultationRoom3", VirtualCourtRoomType.JudgeJOH, false));
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(new ConsultationRoom(conference.Id, "JudgeConsultationRoom3", VirtualCourtRoomType.JudgeJOH, false));
 
             var callbackEvent = new CallbackEvent
             {
@@ -142,10 +142,10 @@ namespace VideoApi.UnitTests.Events
         {
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            var room = new Room(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
+            var room = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
             room.AddEndpoint(new RoomEndpoint(Guid.NewGuid()));
             room.AddEndpoint(new RoomEndpoint(Guid.NewGuid()));
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
 
             var callbackEvent = new CallbackEvent
             {
@@ -180,7 +180,7 @@ namespace VideoApi.UnitTests.Events
         {
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Representative && x.Username == "DA1@test.com");
-            var room = new Room(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
+            var room = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
             room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
             room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
             foreach (var endpoint in conference.GetEndpoints())
@@ -188,7 +188,7 @@ namespace VideoApi.UnitTests.Events
                 room.AddEndpoint(new RoomEndpoint(endpoint.Id));
             }
 
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
 
             var callbackEvent = new CallbackEvent
             {
@@ -220,10 +220,10 @@ namespace VideoApi.UnitTests.Events
         {
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            var room = new Room(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
+            var room = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
             room.AddEndpoint(new RoomEndpoint(Guid.NewGuid()));
             room.AddEndpoint(new RoomEndpoint(Guid.NewGuid()));
-            QueryHandlerMock.Setup(x => x.Handle<GetRoomByIdQuery, Room>(It.IsAny<GetRoomByIdQuery>())).ReturnsAsync(room);
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
 
             var callbackEvent = new CallbackEvent
             {

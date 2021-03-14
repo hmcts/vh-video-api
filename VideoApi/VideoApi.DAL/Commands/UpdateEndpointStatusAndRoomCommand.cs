@@ -45,8 +45,8 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(UpdateEndpointStatusAndRoomCommand command)
         {
             var conference = await _context.Conferences
-                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomEndpoints)
-                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentVirtualRoom).ThenInclude(x => x.RoomParticipants)
+                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentConsultationRoom).ThenInclude(x => x.RoomEndpoints)
+                .Include(x => x.Endpoints).ThenInclude(x => x.CurrentConsultationRoom).ThenInclude(x => x.RoomParticipants)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -69,18 +69,20 @@ namespace VideoApi.DAL.Commands
             await _context.SaveChangesAsync();
         }
 
-        private async Task<Room> GetTransferToRoom(UpdateEndpointStatusAndRoomCommand command)
+        private async Task<ConsultationRoom> GetTransferToRoom(UpdateEndpointStatusAndRoomCommand command)
         {
             if (command.Status != EndpointState.InConsultation)
             {
                 return null;
             }
 
-            var transferToRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId).ConfigureAwait(true);
+            var transferToRoom = await _context.Rooms.OfType<ConsultationRoom>()
+                .SingleOrDefaultAsync(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId)
+                .ConfigureAwait(true);
             if (transferToRoom == null)
             {
                 // The only way for the room not to have been created by us (where it would already be in the table) is by kinly via a VHO consultation.
-                var vhoConsultation = new Room(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
+                var vhoConsultation = new ConsultationRoom(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
                 _context.Rooms.Add(vhoConsultation);
                 transferToRoom = vhoConsultation;
             }

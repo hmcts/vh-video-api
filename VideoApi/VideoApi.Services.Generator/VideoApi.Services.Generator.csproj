@@ -12,9 +12,9 @@
         </PackageReference>
     </ItemGroup>
 
-    <Target Name="NSwag" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
-        <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
-        <Exec Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:Configuration=$(Configuration)" />
-        <RemoveDir Directories="$(OutDir)References" />
-    </Target>
+<!--    <Target Name="NSwag" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">-->
+<!--        <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />-->
+<!--        <Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:Configuration=$(Configuration)" />-->
+<!--        <RemoveDir Directories="$(OutDir)References" />-->
+<!--    </Target>-->
 </Project>

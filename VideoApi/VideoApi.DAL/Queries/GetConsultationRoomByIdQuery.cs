@@ -7,9 +7,9 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetRoomByIdQuery : IQuery
+    public class GetConsultationRoomByIdQuery : IQuery
     {
-        public GetRoomByIdQuery(Guid conferenceId, string roomLabel)
+        public GetConsultationRoomByIdQuery(Guid conferenceId, string roomLabel)
         {
             ConferenceId = conferenceId;
             RoomLabel = roomLabel;
@@ -20,7 +20,7 @@ namespace VideoApi.DAL.Queries
         public string RoomLabel { get; }
     }
 
-    public class GetRoomByIdQueryHandler : IQueryHandler<GetRoomByIdQuery, Room>
+    public class GetRoomByIdQueryHandler : IQueryHandler<GetConsultationRoomByIdQuery, ConsultationRoom>
     {
         private readonly VideoApiDbContext _context;
 
@@ -29,14 +29,17 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
 
-        public Task<Room> Handle(GetRoomByIdQuery query)
+        public async Task<ConsultationRoom> Handle(GetConsultationRoomByIdQuery query)
         {
-            return _context.Rooms
+            var room = await _context.Rooms
                 .Include(x => x.RoomParticipants)
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
-                .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel)
+                .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel
+                && x is ConsultationRoom)
                 .FirstOrDefaultAsync();
+
+            return (ConsultationRoom)room;
         }
     }
 }
