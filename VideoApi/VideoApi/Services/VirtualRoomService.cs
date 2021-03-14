@@ -81,7 +81,7 @@ namespace VideoApi.Services
             _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,
                 conference.Id);
 
-            return await GetUpdatedRoom(conference, roomId, roomType);
+            return await GetUpdatedRoom(conference, roomId);
         }
 
         private async Task<long> CreateInterpreterRoom(Guid conferenceId, VirtualCourtRoomType type)
@@ -133,7 +133,7 @@ namespace VideoApi.Services
             return _commandHandler.Handle(updateCommand);
         }
 
-        private async Task<InterpreterRoom> GetUpdatedRoom(Conference conference, long roomId, VirtualCourtRoomType type)
+        private async Task<InterpreterRoom> GetUpdatedRoom(Conference conference, long roomId)
         {
             var query = new GetInterpreterRoomsForConferenceQuery(conference.Id);
             var listOfRooms = await _queryHandler.Handle<GetInterpreterRoomsForConferenceQuery, List<InterpreterRoom>>(query);

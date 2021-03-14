@@ -49,7 +49,7 @@ namespace VideoApi.Mappings
                 Phone = request.Phone,
                 TransferredFromRoomLabel = request.TransferFrom,
                 TransferredToRoomLabel = request.TransferTo,
-                RoomId = isValidRoomId ? roomId : (long?) null
+                ParticipantRoomId = isValidRoomId ? roomId : (long?) null
             };
         }
 

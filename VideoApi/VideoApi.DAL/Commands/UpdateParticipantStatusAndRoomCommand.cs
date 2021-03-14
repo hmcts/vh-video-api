@@ -68,7 +68,7 @@ namespace VideoApi.DAL.Commands
 
             participant.UpdateParticipantStatus(command.ParticipantState);
             participant.UpdateCurrentRoom(command.Room);
-            participant.UpdateCurrentVirtualRoom(transferToRoom);
+            participant.UpdateCurrentConsultationRoom(transferToRoom);
             await _context.SaveChangesAsync();
         }
 

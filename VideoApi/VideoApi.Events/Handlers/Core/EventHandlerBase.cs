@@ -46,7 +46,7 @@ namespace VideoApi.Events.Handlers.Core
                 .SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
 
             SourceEndpoint = SourceConference.GetEndpoints().SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
-            SourceInterpreterRoom = SourceConference.Rooms.Cast<InterpreterRoom>().SingleOrDefault(x => x.Id == callbackEvent.RoomId);
+            SourceInterpreterRoom = SourceConference.Rooms.SingleOrDefault(x => x is InterpreterRoom && x.Id == callbackEvent.ParticipantRoomId) as InterpreterRoom;
             
             await PublishStatusAsync(callbackEvent);
             _logger.LogDebug("Handled callback in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);

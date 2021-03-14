@@ -102,7 +102,7 @@ namespace Testing.Common.Helper.Builders.Domain
                 if (roomType == RoomType.ConsultationRoom)
                 {
                     participant.CurrentConsultationRoomId = 1;
-                    participant.UpdateCurrentVirtualRoom(new ConsultationRoom(Guid.Empty, "Room1", VirtualCourtRoomType.Participant, false));
+                    participant.UpdateCurrentConsultationRoom(new ConsultationRoom(Guid.Empty, "Room1", VirtualCourtRoomType.Participant, false));
                 }
             }
 

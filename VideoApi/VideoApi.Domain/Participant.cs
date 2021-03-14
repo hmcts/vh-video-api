@@ -85,7 +85,7 @@ namespace VideoApi.Domain
             CurrentRoom = currentRoom;
         }
 
-        public void UpdateCurrentVirtualRoom(ConsultationRoom consultationRoom)
+        public void UpdateCurrentConsultationRoom(ConsultationRoom consultationRoom)
         {
             if (consultationRoom?.Id == CurrentConsultationRoomId)
             {

@@ -17,7 +17,7 @@ namespace VideoApi.Domain
         public virtual List<RoomEndpoint> RoomEndpoints { get; }
         public bool Locked { get; private set; }
         
-        public Room(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
+        protected Room(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
         {
             ConferenceId = conferenceId;
             Label = label;
@@ -28,7 +28,7 @@ namespace VideoApi.Domain
             Locked = locked;
         }
 
-        public Room(Guid conferenceId, VirtualCourtRoomType type, bool locked) : this(conferenceId, null, type, locked)
+        protected Room(Guid conferenceId, VirtualCourtRoomType type, bool locked) : this(conferenceId, null, type, locked)
         {
         }
         
@@ -36,14 +36,18 @@ namespace VideoApi.Domain
         {
             Locked = locked;
         }
-        
+
         private void UpdateStatus()
         {
-            if (Status != RoomStatus.Closed && !RoomParticipants.Any() && !RoomEndpoints.Any() &&
-                Type != VirtualCourtRoomType.Civilian && Type != VirtualCourtRoomType.Witness)
+            if (Status != RoomStatus.Closed && !RoomParticipants.Any() && !RoomEndpoints.Any() && IsCloseableRoom())
             {
                 Status = RoomStatus.Closed;
             }
+        }
+
+        private bool IsCloseableRoom()
+        {
+            return Type != VirtualCourtRoomType.Civilian && Type != VirtualCourtRoomType.Witness;
         }
 
         public void AddParticipant(RoomParticipant participant)

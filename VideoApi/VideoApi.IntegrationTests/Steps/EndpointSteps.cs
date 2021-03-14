@@ -62,7 +62,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             var vRoom = new ConsultationRoom(conference1.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
             var defenseAdvocate = conference1.Participants.Single(x => x.Username == "rep@hmcts.net");
-            defenseAdvocate.UpdateCurrentVirtualRoom(vRoom);
+            defenseAdvocate.UpdateCurrentConsultationRoom(vRoom);
 
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
             _context.Test.Conferences.Add(_context.Test.Conference);

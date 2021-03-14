@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Domain.Participants
             participant.CurrentConsultationRoom.Should().BeNull();
 
             var newRoom = new ConsultationRoom(Guid.NewGuid(), "TestRoom1", VirtualCourtRoomType.JudgeJOH, false);
-            participant.UpdateCurrentVirtualRoom(newRoom);
+            participant.UpdateCurrentConsultationRoom(newRoom);
 
             participant.CurrentConsultationRoom.Should().Be(newRoom);
         }

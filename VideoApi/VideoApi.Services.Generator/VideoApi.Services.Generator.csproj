@@ -6,15 +6,19 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-        <PackageReference Include="NSwag.MSBuild" Version="13.10.7">
+        <PackageReference Include="NSwag.MSBuild" Version="13.10.8">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
-<!--    <Target Name="NSwag" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">-->
-<!--        <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />-->
-<!--        <Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:Configuration=$(Configuration)" />-->
-<!--        <RemoveDir Directories="$(OutDir)References" />-->
-<!--    </Target>-->
+    <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' AND '$(Configuration)'=='Debug'">
+        <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
+        <Exec
+            ConsoleToMSBuild="true"
+            ContinueOnError="true"
+            EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" 
+            Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:Configuration=$(Configuration)" />
+        <RemoveDir Directories="$(OutDir)References" />
+    </Target>
 </Project>

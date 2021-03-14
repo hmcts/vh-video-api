@@ -379,7 +379,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .SingleAsync(x => x.Id == conferenceResponse.Id);
 
             var judge = conference.Participants.First(x => x.Id == judgeResponse.Id);
-            judge.UpdateCurrentVirtualRoom(vRoom);
+            judge.UpdateCurrentConsultationRoom(vRoom);
 
             await db.SaveChangesAsync();
         }
@@ -472,7 +472,7 @@ namespace VideoApi.IntegrationTests.Steps
                 var room = new ConsultationRoom(_context.Test.Conference.Id, "TestRoom", VirtualCourtRoomType.Participant, false);
                 var participant = conference.Participants.Single(x => x.Id == participantId);
                 participant.UpdateCurrentRoom(RoomType.ConsultationRoom);
-                participant.UpdateCurrentVirtualRoom(room);
+                participant.UpdateCurrentConsultationRoom(room);
 
                 await db.SaveChangesAsync();
 

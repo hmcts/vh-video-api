@@ -34,8 +34,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.15.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.10.7" />
-    <PackageReference Include="NSwag.MSBuild" Version="13.10.7">
+    <PackageReference Include="NSwag.AspNetCore" Version="13.10.8" />
+    <PackageReference Include="NSwag.MSBuild" Version="13.10.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -68,9 +68,9 @@
     </Content>
   </ItemGroup>
 
-<!--  <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' AND '$(Configuration)'=='Debug'">-->
-<!--    <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />-->
-<!--    <Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:ProjectPath=&quot;$(MSBuildProjectFullPath)&quot;" />-->
-<!--    <RemoveDir Directories="$(OutDir)References" />-->
-<!--  </Target>-->
+  <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' AND '$(Configuration)'=='Debug'">
+    <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
+    <Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:ProjectPath=&quot;$(MSBuildProjectFullPath)&quot;" />
+    <RemoveDir Directories="$(OutDir)References" />
+  </Target>
 </Project>
