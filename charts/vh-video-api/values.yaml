@@ -18,9 +18,7 @@ java:
       secrets:
         - cvpconfiguration--managedidentityclientid
         - cvpconfiguration--storageaccountKey
-        #- azuread--vhvideowebclientid
         - servicebusqueue--connectionstring
-        #- services--videowebclientid
         - wowzaconfiguration--password
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
@@ -56,7 +54,9 @@ java:
     SERVICES__VIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
     WOWZACONFIGURATION__AZURESTORAGEDIRECTORY: ${com.wowza.wms.context.VHostConfigHome}/content/azurecopy
     WOWZACONFIGURATION__HOSTNAME: _defaultVHost_
-    WOWZACONFIGURATION__RESTAPIENDPOINT: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
+    WOWZACONFIGURATION__RESTAPIENDPOINT:
+      - https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
+      - https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
     WOWZACONFIGURATION__RESTAPIENDPOINT__0: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
     WOWZACONFIGURATION__RESTAPIENDPOINT__1: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
     WOWZACONFIGURATION__SERVERNAME: _defaultServer_
