@@ -35,6 +35,7 @@ namespace VideoApi.DAL.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Discriminator",
                 table: "Room",
+                defaultValue:"ConsultationRoom",
                 nullable: false);
 
             migrationBuilder.CreateIndex(
@@ -62,6 +63,8 @@ namespace VideoApi.DAL.Migrations
                 principalTable: "Room",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.Sql("Update Room SET Discriminator = 'InterpreterRoom' WHERE [Type] in (4, 5)");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
