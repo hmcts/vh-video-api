@@ -371,7 +371,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
                 conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
-            var vRoom = new ConsultationRoom(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
+            var consultationRoom = new ConsultationRoom(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
 
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var conference = await db.Conferences
@@ -379,7 +379,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .SingleAsync(x => x.Id == conferenceResponse.Id);
 
             var judge = conference.Participants.First(x => x.Id == judgeResponse.Id);
-            judge.UpdateCurrentConsultationRoom(vRoom);
+            judge.UpdateCurrentConsultationRoom(consultationRoom);
 
             await db.SaveChangesAsync();
         }

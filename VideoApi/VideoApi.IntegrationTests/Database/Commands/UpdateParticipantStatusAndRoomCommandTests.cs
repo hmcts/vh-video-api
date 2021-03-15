@@ -125,9 +125,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceIds.Add(seededConference.Id);
-            var vRoom = new ConsultationRoom(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+            var consultationRoom = new ConsultationRoom(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH, false);
-            var seededRoom = await TestDataManager.SeedRoom(vRoom);
+            var seededRoom = await TestDataManager.SeedRoom(consultationRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
             var participant = seededConference.GetParticipants().First(p => p.IsJudge());
@@ -155,10 +155,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             // Arrange conference with participant in consultation room
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceIds.Add(seededConference.Id);
-            var vRoom = new ConsultationRoom(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+            var consultationRoom = new ConsultationRoom(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH, false);
             
-            var room = await TestDataManager.SeedRoom(vRoom);
+            var room = await TestDataManager.SeedRoom(consultationRoom);
             var newRoomId = room.Id;
 
             var pat1 = seededConference.Participants[0].Id;

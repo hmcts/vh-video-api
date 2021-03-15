@@ -29,16 +29,14 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
 
-        public async Task<ConsultationRoom> Handle(GetConsultationRoomByIdQuery query)
+        public Task<ConsultationRoom> Handle(GetConsultationRoomByIdQuery query)
         {
-            var room = await _context.Rooms.OfType<ConsultationRoom>()
+            return _context.Rooms.OfType<ConsultationRoom>()
                 .Include(x => x.RoomParticipants)
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel)
                 .FirstOrDefaultAsync();
-
-            return room;
         }
     }
 }

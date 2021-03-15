@@ -527,18 +527,18 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveADynamicConsultationRoom()
         {
             var conference = _context.Test.Conference;
-            var vRoom = new ConsultationRoom(conference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+            var consultationRoom = new ConsultationRoom(conference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH, false);
-            _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+            _context.Test.Room =  await _context.TestDataManager.SeedRoom(consultationRoom);
         }
         
         [Given(@"I have a civilian interpreter room")]
         public async Task GivenIHaveACivilianInterpreterRoom()
         {
             var conference = _context.Test.Conference;
-            var vRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+            var interpreterRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.Civilian);
-            var seedRooms = await _context.TestDataManager.SeedRooms(new []{vRoom});
+            var seedRooms = await _context.TestDataManager.SeedRooms(new []{interpreterRoom});
             _context.Test.Room = seedRooms.First();
         }
         
@@ -547,10 +547,10 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = _context.Test.Conference;
             var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
-            var vRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+            var interpreterRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.Civilian);
-            vRoom.AddParticipant(new RoomParticipant(participant.Id));
-            var seedRooms = await _context.TestDataManager.SeedRooms(new []{vRoom});
+            interpreterRoom.AddParticipant(new RoomParticipant(participant.Id));
+            var seedRooms = await _context.TestDataManager.SeedRooms(new []{interpreterRoom});
             _context.Test.Room = seedRooms.First();
             
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
