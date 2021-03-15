@@ -18,7 +18,7 @@ namespace VideoApi.Domain
         {
         }
 
-        public void UpdateRoomConnectionDetails(string label, string ingestUrl, string pexipNode, string participantUri)
+        public void UpdateConnectionDetails(string label, string ingestUrl, string pexipNode, string participantUri)
         {
             Label = label;
             IngestUrl = ingestUrl;

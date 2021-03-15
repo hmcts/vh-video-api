@@ -20,26 +20,25 @@ namespace VideoApi.DAL.Queries
         public string RoomLabel { get; }
     }
 
-    public class GetRoomByIdQueryHandler : IQueryHandler<GetConsultationRoomByIdQuery, ConsultationRoom>
+    public class GetConsultationRoomByIdQueryHandler : IQueryHandler<GetConsultationRoomByIdQuery, ConsultationRoom>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetRoomByIdQueryHandler(VideoApiDbContext context)
+        public GetConsultationRoomByIdQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
         public async Task<ConsultationRoom> Handle(GetConsultationRoomByIdQuery query)
         {
-            var room = await _context.Rooms
+            var room = await _context.Rooms.OfType<ConsultationRoom>()
                 .Include(x => x.RoomParticipants)
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
-                .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel
-                && x is ConsultationRoom)
+                .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel)
                 .FirstOrDefaultAsync();
 
-            return (ConsultationRoom)room;
+            return room;
         }
     }
 }

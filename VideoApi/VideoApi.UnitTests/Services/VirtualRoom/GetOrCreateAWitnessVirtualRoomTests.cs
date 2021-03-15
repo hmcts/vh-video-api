@@ -70,7 +70,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
 
             _mocker.Mock<ICommandHandler>().Setup(x =>
                 x.Handle(It.IsAny<UpdateInterpreterRoomConnectionDetailsCommand>())).Callback(() =>
-                expectedRoom.UpdateRoomConnectionDetails(newVmrRoom.Room_label, "ingesturl",
+                expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, "ingesturl",
                     newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 

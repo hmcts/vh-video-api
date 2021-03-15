@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using Faker;
 using FluentAssertions;
@@ -60,9 +59,9 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
 
-            var vRoom = new ConsultationRoom(conference1.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
+            var consultationRoom = new ConsultationRoom(conference1.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
             var defenseAdvocate = conference1.Participants.Single(x => x.Username == "rep@hmcts.net");
-            defenseAdvocate.UpdateCurrentConsultationRoom(vRoom);
+            defenseAdvocate.UpdateCurrentConsultationRoom(consultationRoom);
 
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
             _context.Test.Conferences.Add(_context.Test.Conference);

@@ -42,9 +42,9 @@ namespace VideoApi.Services
             var ingest = $"{conference.IngestUrl}/{_roomCount}";
             var node = "sip.node.com";
             var room = new InterpreterRoom(Guid.NewGuid(), type);
-            room.UpdateRoomConnectionDetails(label, ingest, node, joinUri);
+            room.UpdateConnectionDetails(label, ingest, node, joinUri);
             
-            room.UpdateRoomConnectionDetails(label, ingest, node, joinUri);
+            room.UpdateConnectionDetails(label, ingest, node, joinUri);
             _roomCount++;
             _rooms.Add(room, new List<Participant>{participant});
             return Task.FromResult(room);

@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Domain.Rooms
             var node = "sip.test.com";
             var participantUri = "env-foo-interpeterroom";
             
-            room.UpdateRoomConnectionDetails(label, ingestUrl, node, participantUri);
+            room.UpdateConnectionDetails(label, ingestUrl, node, participantUri);
 
             room.Label.Should().Be(label);
             room.IngestUrl.Should().Be(ingestUrl);
