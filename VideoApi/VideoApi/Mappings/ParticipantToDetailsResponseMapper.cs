@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
@@ -8,9 +7,14 @@ namespace VideoApi.Mappings
 {
     public static class ParticipantToDetailsResponseMapper
     {
-        public static List<ParticipantDetailsResponse> MapParticipantsToResponse(IEnumerable<Participant> participants)
+        public static ParticipantDetailsResponse MapParticipantToResponse(Participant participant,
+            InterpreterRoom interpreterRoom = null)
         {
-            return participants.Select(participant => new ParticipantDetailsResponse
+            var interpreterRoomMapped = interpreterRoom == null
+                ? null
+                : RoomToDetailsResponseMapper.MapConsultationRoomToResponse(interpreterRoom);
+
+            return new ParticipantDetailsResponse
             {
                 Id = participant.Id,
                 RefId = participant.ParticipantRefId,
@@ -26,12 +30,13 @@ namespace VideoApi.Mappings
                 CurrentStatus = participant.State.MapToContractEnum(),
                 ContactEmail = participant.ContactEmail,
                 ContactTelephone = participant.ContactTelephone,
-                LinkedParticipants = 
+                LinkedParticipants =
                     participant.LinkedParticipants
                         .Select(LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse).ToList(),
-                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentConsultationRoom)
-            })
-            .ToList();
+                CurrentRoom =
+                    RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participant.CurrentConsultationRoom),
+                CurrentInterpreterRoom = interpreterRoomMapped
+            };
         }
     }
 }

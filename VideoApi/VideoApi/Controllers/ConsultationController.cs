@@ -208,7 +208,7 @@ namespace VideoApi.Controllers
                 var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
                 await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
-                var response = RoomToDetailsResponseMapper.MapRoomToResponse(room);
+                var response = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room);
                 return Ok(response);
             }
             catch (ConferenceNotFoundException ex)

@@ -80,6 +80,11 @@ namespace VideoApi.Contract.Responses
         /// Current consultation room details
         /// </summary>
         public RoomResponse CurrentRoom { get; set; }
+        
+        /// <summary>
+        /// Current interpreter room details
+        /// </summary>
+        public RoomResponse CurrentInterpreterRoom { get; set; }
 
         /// <summary>
         /// Linked Participants - example interperter and "interpretee"

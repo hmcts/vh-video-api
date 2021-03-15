@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
@@ -11,10 +11,8 @@ namespace VideoApi.Mappings
         public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
             string pexipSelfTestNode)
         {
-            var interpreterRooms = conference.Rooms
-                .Where(x => x.Type == VirtualCourtRoomType.Civilian || x.Type == VirtualCourtRoomType.Witness)
-                .Cast<InterpreterRoom>()
-                .Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
+            var allInterpreterRooms = conference.Rooms.OfType<InterpreterRoom>().ToList();
+            var interpreterRooms = allInterpreterRooms.Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
             var response = new ConferenceDetailsResponse
             {
                 Id = conference.Id,
@@ -27,7 +25,7 @@ namespace VideoApi.Mappings
                 ClosedDateTime = conference.ClosedDateTime,
                 ScheduledDuration = conference.ScheduledDuration,
                 CurrentStatus = conference.GetCurrentStatus().MapToContractEnum(),
-                Participants = ParticipantToDetailsResponseMapper.MapParticipantsToResponse(conference.GetParticipants()),
+                Participants = MapParticipants(conference.Participants, allInterpreterRooms),
                 MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom()),
                 Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
                 HearingVenueName = conference.HearingVenueName,
@@ -41,6 +39,17 @@ namespace VideoApi.Mappings
             }
             
             return response;
+        }
+
+        private static List<ParticipantDetailsResponse> MapParticipants(IList<Participant> participants,
+            List<InterpreterRoom> interpreterRooms)
+        {
+            return participants.Select(x =>
+            {
+                var interpreterRoom =
+                    interpreterRooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(x.Id)));
+                return ParticipantToDetailsResponseMapper.MapParticipantToResponse(x, interpreterRoom);
+            }).ToList();
         }
     }
 }

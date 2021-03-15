@@ -16,7 +16,7 @@ namespace VideoApi.Mappings
                 DisplayName = endpoint.DisplayName,
                 SipAddress = endpoint.SipAddress,
                 DefenceAdvocate = endpoint.DefenceAdvocate,
-                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(endpoint.CurrentConsultationRoom)
+                CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(endpoint.CurrentConsultationRoom)
             };
         }
     }

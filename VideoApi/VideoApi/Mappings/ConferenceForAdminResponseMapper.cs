@@ -14,7 +14,7 @@ namespace VideoApi.Mappings
         {
             var phoneNumber = configuration.ConferencePhoneNumber;
             var participants = conference.GetParticipants()
-                .Select(ParticipantToSummaryResponseMapper.MapParticipantToSummary)
+                .Select(p => ParticipantToSummaryResponseMapper.MapParticipantToSummary(p))
                 .ToList();
 
             return new ConferenceForAdminResponse

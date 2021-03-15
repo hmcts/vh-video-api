@@ -5,18 +5,18 @@ namespace VideoApi.Mappings
 {
     public static class RoomToDetailsResponseMapper
     {
-        public static RoomResponse MapRoomToResponse(ConsultationRoom consultationRoom)
+        public static RoomResponse MapConsultationRoomToResponse(Room room)
         {
-            if (consultationRoom == null)
+            if (room == null)
             {
                 return null;
             }
 
             return new RoomResponse
             {
-                Id = consultationRoom.Id,
-                Label = consultationRoom.Label,
-                Locked = consultationRoom.Locked
+                Id = room.Id,
+                Label = room.Label,
+                Locked = room.Locked
             };
         }
     }

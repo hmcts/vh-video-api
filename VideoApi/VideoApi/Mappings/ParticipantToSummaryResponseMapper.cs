@@ -8,8 +8,12 @@ namespace VideoApi.Mappings
 {
     public static class ParticipantToSummaryResponseMapper
     {
-        public static ParticipantSummaryResponse MapParticipantToSummary(Participant participant)
+        public static ParticipantSummaryResponse MapParticipantToSummary(Participant participant, InterpreterRoom interpreterRoom = null)
         {
+            var interpreterRoomMapped = interpreterRoom == null
+                ? null
+                : RoomToDetailsResponseMapper.MapConsultationRoomToResponse(interpreterRoom);
+            
             var participantStatus = participant.GetCurrentStatus() != null
                 ? participant.GetCurrentStatus().ParticipantState
                 : ParticipantState.None;
@@ -33,8 +37,9 @@ namespace VideoApi.Mappings
                 LastName = participant.LastName,
                 ContactEmail = participant.ContactEmail,
                 ContactTelephone = participant.ContactTelephone,
-                CurrentRoom = RoomToDetailsResponseMapper.MapRoomToResponse(participant.CurrentConsultationRoom),
-                LinkedParticipants = links
+                CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participant.CurrentConsultationRoom),
+                LinkedParticipants = links,
+                InterpreterRoom = interpreterRoomMapped
             };
         }
     }
