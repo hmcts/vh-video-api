@@ -20,7 +20,10 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            if (SourceParticipant == null) return;
+            if (SourceParticipant == null)
+            {
+                return;
+            }
             var participantState =  ParticipantState.Disconnected;
             var updateParticipantCommand = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
                 participantState, null, null);
@@ -35,12 +38,12 @@ namespace VideoApi.Events.Handlers
             }
         }
         
-        private async Task AddDisconnectedTask()
+        private Task AddDisconnectedTask()
         {
             var taskType = SourceParticipant.IsJudge() ? TaskType.Judge : TaskType.Participant;
             var disconnected = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
 
-            await CommandHandler.Handle(disconnected);
+            return CommandHandler.Handle(disconnected);
         }
     }
 }
