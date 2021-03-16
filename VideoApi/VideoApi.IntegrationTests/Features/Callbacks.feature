@@ -106,7 +106,7 @@ Feature: Callbacks
     And the room count should differ by <RoomCount>
     Examples:
       | EventType              |RoomCount |
-      | Joined                 | 1        |
+      | RoomParticipantJoined  | 1        |
 
   Scenario Outline: Should accept and process an event request with an existing participant room id
     Given I have a conference
@@ -116,7 +116,7 @@ Feature: Callbacks
     Then the response should have the status NoContent and success status True
     And the room count should differ by <RoomCount>
     Examples:
-      | EventType    |RoomCount |
-      | Disconnected | -1       |
-      | Transfer     | 0        |
+      | EventType                   |RoomCount |
+      | RoomParticipantDisconnected | -1       |
+      | RoomParticipantTransfer     | 0        |
 

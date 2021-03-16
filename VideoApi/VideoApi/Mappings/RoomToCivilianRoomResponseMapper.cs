@@ -6,13 +6,13 @@ namespace VideoApi.Mappings
 {
     public static class RoomToCivilianRoomResponseMapper
     {
-        public static CivilianRoomResponse MapToResponse(Room room)
+        public static CivilianRoomResponse MapToResponse(InterpreterRoom consultationRoom)
         {
             return new CivilianRoomResponse
             {
-                Id = room.Id,
-                Label = room.Label,
-                Participants = room.RoomParticipants.Select(x => x.ParticipantId).ToList()
+                Id = consultationRoom.Id,
+                Label = consultationRoom.Label,
+                Participants = consultationRoom.RoomParticipants.Select(x => x.ParticipantId).ToList()
             };
         }
     }

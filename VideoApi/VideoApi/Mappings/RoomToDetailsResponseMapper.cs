@@ -5,7 +5,7 @@ namespace VideoApi.Mappings
 {
     public static class RoomToDetailsResponseMapper
     {
-        public static RoomResponse MapRoomToResponse(Room room)
+        public static RoomResponse MapConsultationRoomToResponse(Room room)
         {
             if (room == null)
             {

@@ -28,17 +28,11 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var isVmr = SourceParticipant.CurrentVirtualRoom?.Type == VirtualCourtRoomType.Civilian || 
-                        SourceParticipant.CurrentVirtualRoom?.Type == VirtualCourtRoomType.Witness;
-            var targetRoomLabel = isVmr ? SourceParticipant.CurrentVirtualRoom?.Label :  callbackEvent.TransferredToRoomLabel;
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
 
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
-                    callbackEvent.TransferTo, targetRoomLabel)
-                {
-                    StayInCurrentRoom = isVmr
-                };
+                    callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
 
             await CommandHandler.Handle(command);
 
@@ -47,8 +41,8 @@ namespace VideoApi.Events.Handlers
                 return;
             }
 
-            var roomQuery = new GetRoomByIdQuery(SourceConference.Id, callbackEvent.TransferredFromRoomLabel);
-            var room = await QueryHandler.Handle<GetRoomByIdQuery, Room>(roomQuery);
+            var roomQuery = new GetConsultationRoomByIdQuery(SourceConference.Id, callbackEvent.TransferredFromRoomLabel);
+            var room = await QueryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
                 _logger.LogError("Unable to find room {roomLabel} in conference {conferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);

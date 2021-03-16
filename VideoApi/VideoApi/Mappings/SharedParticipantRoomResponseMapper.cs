@@ -7,14 +7,14 @@ namespace VideoApi.Mappings
 {
     public static class SharedParticipantRoomResponseMapper
     {
-        public static SharedParticipantRoomResponse MapRoomToResponse(Room room)
+        public static SharedParticipantRoomResponse MapRoomToResponse(InterpreterRoom consultationRoom)
         {
             return new SharedParticipantRoomResponse
             {
-                Label = room.Label,
-                ParticipantJoinUri = room.ParticipantUri,
-                PexipNode = room.PexipNode,
-                RoomType = Enum.Parse<VirtualCourtRoomType>(room.Type.ToString(), true)
+                Label = consultationRoom.Label,
+                ParticipantJoinUri = consultationRoom.ParticipantUri,
+                PexipNode = consultationRoom.PexipNode,
+                RoomType = Enum.Parse<VirtualCourtRoomType>(consultationRoom.Type.ToString(), true)
             };
         }
     }

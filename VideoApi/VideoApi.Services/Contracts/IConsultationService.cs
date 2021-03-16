@@ -8,7 +8,7 @@ namespace VideoApi.Services.Contracts
 {
     public interface IConsultationService
     {
-        Task<Room> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType);
+        Task<ConsultationRoom> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType);
 
         Task EndpointTransferToRoomAsync(Guid conferenceId, Guid endpointId, string room);
 
@@ -16,6 +16,6 @@ namespace VideoApi.Services.Contracts
 
         Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom);
 
-        Task<Room> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false);
+        Task<ConsultationRoom> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false);
     }
 }

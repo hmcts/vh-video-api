@@ -13,8 +13,8 @@ namespace VideoApi.Domain
         public EndpointState State { get; private set; }
         public string DefenceAdvocate { get; private set; }
         public RoomType? CurrentRoom { get; private set; }
-        public long? CurrentVirtualRoomId { get; set; }
-        public virtual Room CurrentVirtualRoom { get; set; }
+        public long? CurrentConsultationRoomId { get; set; }
+        public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
 
         private Endpoint()
         {
@@ -47,7 +47,7 @@ namespace VideoApi.Domain
 
         public string GetCurrentRoom()
         {
-            return CurrentVirtualRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Endpoint is not in a room");
+            return CurrentConsultationRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Endpoint is not in a room");
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)
@@ -55,10 +55,10 @@ namespace VideoApi.Domain
             CurrentRoom = currentRoom;
         }
 
-        public void UpdateCurrentVirtualRoom(Room room)
+        public void UpdateCurrentVirtualRoom(ConsultationRoom consultationRoom)
         {
-            CurrentVirtualRoom?.RemoveEndpoint(new RoomEndpoint(Id));
-            CurrentVirtualRoom = room;
+            CurrentConsultationRoom?.RemoveEndpoint(new RoomEndpoint(Id));
+            CurrentConsultationRoom = consultationRoom;
         }
     }
 }

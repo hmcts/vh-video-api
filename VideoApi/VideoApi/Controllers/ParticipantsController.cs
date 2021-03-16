@@ -324,7 +324,13 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var participants = conference.Participants.Select(x => ParticipantToSummaryResponseMapper.MapParticipantToSummary(x)).ToList();
+            var interpreterRooms = conference.Rooms.OfType<InterpreterRoom>().ToList();
+            var participants = conference.Participants.Select(x =>
+            {
+                var interpreterRoom =
+                    interpreterRooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(x.Id)));
+                return ParticipantToSummaryResponseMapper.MapParticipantToSummary(x, interpreterRoom);
+            }).ToList();
             return Ok(participants);
         }
     }

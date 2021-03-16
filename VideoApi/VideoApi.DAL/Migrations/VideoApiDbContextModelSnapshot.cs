@@ -101,11 +101,11 @@ namespace VideoApi.DAL.Migrations
                     b.Property<Guid?>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<long?>("CurrentConsultationRoomId")
+                        .HasColumnType("bigint");
+
                     b.Property<int?>("CurrentRoom")
                         .HasColumnType("int");
-
-                    b.Property<long?>("CurrentVirtualRoomId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("DefenceAdvocate")
                         .HasColumnType("nvarchar(450)")
@@ -130,7 +130,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasIndex("ConferenceId");
 
-                    b.HasIndex("CurrentVirtualRoomId");
+                    b.HasIndex("CurrentConsultationRoomId");
 
                     b.HasIndex("SipAddress")
                         .IsUnique();
@@ -327,11 +327,11 @@ namespace VideoApi.DAL.Migrations
                     b.Property<string>("ContactTelephone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("CurrentConsultationRoomId")
+                        .HasColumnType("bigint");
+
                     b.Property<int?>("CurrentRoom")
                         .HasColumnType("int");
-
-                    b.Property<long?>("CurrentVirtualRoomId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -372,7 +372,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasIndex("ConferenceId");
 
-                    b.HasIndex("CurrentVirtualRoomId");
+                    b.HasIndex("CurrentConsultationRoomId");
 
                     b.HasIndex("TestCallResultId");
 
@@ -412,7 +412,8 @@ namespace VideoApi.DAL.Migrations
                     b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("IngestUrl")
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Label")
@@ -420,12 +421,6 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<bool>("Locked")
                         .HasColumnType("bit");
-
-                    b.Property<string>("ParticipantUri")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PexipNode")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -435,7 +430,11 @@ namespace VideoApi.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ConferenceId");
+
                     b.ToTable("Room");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Room");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.RoomEndpoint", b =>
@@ -532,6 +531,29 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("TestCallResult");
                 });
 
+            modelBuilder.Entity("VideoApi.Domain.ConsultationRoom", b =>
+                {
+                    b.HasBaseType("VideoApi.Domain.Room");
+
+                    b.HasDiscriminator().HasValue("ConsultationRoom");
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.InterpreterRoom", b =>
+                {
+                    b.HasBaseType("VideoApi.Domain.Room");
+
+                    b.Property<string>("IngestUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ParticipantUri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PexipNode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("InterpreterRoom");
+                });
+
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
                     b.OwnsOne("VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
@@ -583,9 +605,9 @@ namespace VideoApi.DAL.Migrations
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("VideoApi.Domain.Room", "CurrentVirtualRoom")
+                    b.HasOne("VideoApi.Domain.ConsultationRoom", "CurrentConsultationRoom")
                         .WithMany()
-                        .HasForeignKey("CurrentVirtualRoomId");
+                        .HasForeignKey("CurrentConsultationRoomId");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
@@ -619,9 +641,9 @@ namespace VideoApi.DAL.Migrations
                         .HasForeignKey("ConferenceId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("VideoApi.Domain.Room", "CurrentVirtualRoom")
+                    b.HasOne("VideoApi.Domain.ConsultationRoom", "CurrentConsultationRoom")
                         .WithMany()
-                        .HasForeignKey("CurrentVirtualRoomId");
+                        .HasForeignKey("CurrentConsultationRoomId");
 
                     b.HasOne("VideoApi.Domain.TestCallResult", "TestCallResult")
                         .WithMany()
@@ -634,6 +656,15 @@ namespace VideoApi.DAL.Migrations
                         .WithMany("ParticipantStatuses")
                         .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.Room", b =>
+                {
+                    b.HasOne("VideoApi.Domain.Conference", null)
+                        .WithMany("ConsultationRooms")
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VideoApi.Domain.RoomEndpoint", b =>

@@ -24,6 +24,9 @@ namespace VideoApi.Domain.Enums
         EndpointTransfer = 21,
         ConnectingToEventHub = 22,
         SelectingMedia = 23,
-        ConnectingToConference = 24
+        ConnectingToConference = 24,
+        RoomParticipantJoined = 25,
+        RoomParticipantDisconnected = 26,
+        RoomParticipantTransfer = 27
     }
 }

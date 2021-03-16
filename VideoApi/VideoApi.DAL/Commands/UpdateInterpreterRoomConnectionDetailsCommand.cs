@@ -1,14 +1,16 @@
 using System;
-using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
+using VideoApi.Domain;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateRoomConnectionDetailsCommand : ICommand
+    public class UpdateInterpreterRoomConnectionDetailsCommand : ICommand
     {
-        public UpdateRoomConnectionDetailsCommand(Guid conferenceId, long roomId, string label, string ingestUrl, string pexipNode,
+        public UpdateInterpreterRoomConnectionDetailsCommand(Guid conferenceId, long roomId, string label, string ingestUrl, string pexipNode,
             string participantUri)
         {
             ConferenceId = conferenceId;
@@ -20,7 +22,6 @@ namespace VideoApi.DAL.Commands
         }
 
         public Guid ConferenceId { get; }
-
         public long RoomId { get; }
         public string Label { get; }
         public string IngestUrl { get; }
@@ -28,18 +29,18 @@ namespace VideoApi.DAL.Commands
         public string ParticipantUri { get; }
     }
 
-    public class UpdateRoomConnectionDetailsCommandHandler : ICommandHandler<UpdateRoomConnectionDetailsCommand>
+    public class UpdateInterpreterRoomConnectionDetailsCommandHandler : ICommandHandler<UpdateInterpreterRoomConnectionDetailsCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public UpdateRoomConnectionDetailsCommandHandler(VideoApiDbContext context)
+        public UpdateInterpreterRoomConnectionDetailsCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(UpdateRoomConnectionDetailsCommand command)
+        public async Task Handle(UpdateInterpreterRoomConnectionDetailsCommand command)
         {
-            var room = await _context.Rooms
+            var room = await _context.Rooms.OfType<InterpreterRoom>()
                 .SingleOrDefaultAsync(x => x.ConferenceId == command.ConferenceId &&  x.Id == command.RoomId);
 
             if (room == null)
@@ -47,7 +48,7 @@ namespace VideoApi.DAL.Commands
                 throw new RoomNotFoundException(command.ConferenceId, command.Label);
             }
 
-            room.UpdateRoomConnectionDetails(command.Label, command.IngestUrl, command.PexipNode, command.ParticipantUri);
+            room.UpdateConnectionDetails(command.Label, command.IngestUrl, command.PexipNode, command.ParticipantUri);
             await _context.SaveChangesAsync();
         }
     }

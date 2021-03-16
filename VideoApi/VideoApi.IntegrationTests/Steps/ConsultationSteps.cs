@@ -371,7 +371,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
                 conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
-            var vRoom = new Room(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
+            var consultationRoom = new ConsultationRoom(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
 
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var conference = await db.Conferences
@@ -379,7 +379,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .SingleAsync(x => x.Id == conferenceResponse.Id);
 
             var judge = conference.Participants.First(x => x.Id == judgeResponse.Id);
-            judge.UpdateCurrentVirtualRoom(vRoom);
+            judge.UpdateCurrentConsultationRoom(consultationRoom);
 
             await db.SaveChangesAsync();
         }
@@ -469,10 +469,10 @@ namespace VideoApi.IntegrationTests.Steps
                     .Include("Participants")
                     .SingleAsync(x => x.Id == _context.Test.Conference.Id);
 
-                var room = new Room(_context.Test.Conference.Id, "TestRoom", VirtualCourtRoomType.Participant, false);
+                var room = new ConsultationRoom(_context.Test.Conference.Id, "TestRoom", VirtualCourtRoomType.Participant, false);
                 var participant = conference.Participants.Single(x => x.Id == participantId);
                 participant.UpdateCurrentRoom(RoomType.ConsultationRoom);
-                participant.UpdateCurrentVirtualRoom(room);
+                participant.UpdateCurrentConsultationRoom(room);
 
                 await db.SaveChangesAsync();
 

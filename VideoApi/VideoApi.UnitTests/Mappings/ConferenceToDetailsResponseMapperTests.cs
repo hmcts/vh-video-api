@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithParticipants(3)
                 .WithMessages(5)
-                .WithCivilianRoom()
+                .WithInterpreterRoom()
                 .Build();
 
             var pexipSelfTestNode = "selttest@pexip.node";
@@ -49,8 +49,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.ParticipantRefId)
                 .Excluding(x => x.TestCallResultId)
                 .Excluding(x => x.TestCallResult)
-                .Excluding(x => x.CurrentVirtualRoomId)
-                .Excluding(x => x.CurrentVirtualRoom)
+                .Excluding(x => x.CurrentConsultationRoomId)
+                .Excluding(x => x.CurrentConsultationRoom)
                 .Excluding(x => x.CurrentRoom)
                 .Excluding(x => x.State)
                 .Excluding(x => x.LinkedParticipants)

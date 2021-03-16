@@ -41,9 +41,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
-            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH, false);
-            TestConference.Participants[0].CurrentVirtualRoom = vRoom;
-            TestConference.Participants[0].CurrentVirtualRoomId = 1;
+            var consultationRoom = new ConsultationRoom(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH, false);
+            TestConference.Participants[0].CurrentConsultationRoom = consultationRoom;
+            TestConference.Participants[0].CurrentConsultationRoomId = 1;
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
@@ -67,8 +67,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var conferenceId = TestConference.Id;
             var participantId = TestConference.Participants[0].Id;
-            var vRoom = new Room(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH, false);
-            TestConference.Participants[0].CurrentVirtualRoom = vRoom;
+            var consultationRoom = new ConsultationRoom(TestConference.Id, "ConsultationRoom", VirtualCourtRoomType.JudgeJOH, false);
+            TestConference.Participants[0].CurrentConsultationRoom = consultationRoom;
             var fromRoom = "ConsultationRoom";
             var toRoom = "WaitingRoom";
             var leaveConsultationRequest = new LeaveConsultationRequest

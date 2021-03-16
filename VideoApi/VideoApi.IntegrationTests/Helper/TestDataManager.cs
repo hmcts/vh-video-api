@@ -162,13 +162,13 @@ namespace VideoApi.IntegrationTests.Helper
             await db.SaveChangesAsync();
         }
 
-        public async Task<Room> SeedRoom(Room room)
+        public async Task<ConsultationRoom> SeedRoom(ConsultationRoom consultationRoom)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
-            await db.Rooms.AddAsync(room);
+            await db.Rooms.AddAsync(consultationRoom);
             await db.SaveChangesAsync();
 
-            return room;
+            return consultationRoom;
         }
 
         public async Task<List<Room>> SeedRooms(IEnumerable<Room> rooms)
@@ -181,17 +181,16 @@ namespace VideoApi.IntegrationTests.Helper
             return seedRooms;
         }
 
-        public async Task<Room> SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
+        public async Task SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
             var room = db.Rooms.Include(x => x.RoomParticipants).First(x => x.Id == roomId);
             room.AddParticipant(roomParticipant);
 
             var participant = await db.Participants.FindAsync(roomParticipant.ParticipantId);
-            participant.CurrentVirtualRoomId = roomId;
+            participant.CurrentConsultationRoomId = roomId;
             
             await db.SaveChangesAsync();
-            return room;
         }
     }
 }

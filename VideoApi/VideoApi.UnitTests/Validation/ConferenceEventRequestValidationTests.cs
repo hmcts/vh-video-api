@@ -148,6 +148,36 @@ namespace VideoApi.UnitTests.Validation
             result.IsValid.Should().BeFalse();
         }
 
+        [TestCase(EventType.RoomParticipantDisconnected)]
+        [TestCase(EventType.RoomParticipantJoined)]
+        [TestCase(EventType.RoomParticipantTransfer)]
+        public async Task should_return_valid_when_room_participant_event(EventType eventType)
+        {
+            var request = BuildRoomParticipantRequest();
+            request.EventType = eventType;
+            
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeTrue();
+        }
+
+        [TestCase(EventType.RoomParticipantDisconnected)]
+        [TestCase(EventType.RoomParticipantJoined)]
+        [TestCase(EventType.RoomParticipantTransfer)]
+        public async Task should_fail_validation_when_room_event_but_room_id_is_missing(EventType eventType)
+        {
+            var request = BuildRoomParticipantRequest();
+            request.EventType = eventType;
+            request.ParticipantRoomId = null;
+            
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoParticipantRoomIdErrorMessage)
+                .Should().BeTrue();
+        }
+
         private ConferenceEventRequest BuildRequest()
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
@@ -155,6 +185,22 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.ParticipantId = Guid.NewGuid().ToString())
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = EventType.Transfer)
+                .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
+                .With(x => x.TransferTo = "ConsultationRoom")
+                .With(x => x.Phone = null)
+                .With(x => x.ParticipantRoomId = null)
+                .Build();
+            return request;
+        }
+
+        private ConferenceEventRequest BuildRoomParticipantRequest()
+        {
+            var request = Builder<ConferenceEventRequest>.CreateNew()
+                .With(x => x.ConferenceId = Guid.NewGuid().ToString())
+                .With(x => x.ParticipantId = Guid.NewGuid().ToString())
+                .With(x => x.ParticipantRoomId = "1")
+                .With(x => x.EventId = Guid.NewGuid().ToString())
+                .With(x => x.EventType = EventType.RoomParticipantJoined)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
                 .With(x => x.TransferTo = "ConsultationRoom")
                 .With(x => x.Phone = null)

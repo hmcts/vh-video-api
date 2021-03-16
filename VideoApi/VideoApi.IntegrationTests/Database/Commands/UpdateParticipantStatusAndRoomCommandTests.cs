@@ -74,7 +74,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             afterState.ParticipantState.Should().Be(state);
             updatedParticipant.CurrentRoom.Should().BeNull();
-            updatedParticipant.CurrentVirtualRoom.Label.Should().Be(staticRoomlabel);
+            updatedParticipant.CurrentConsultationRoom.Label.Should().Be(staticRoomlabel);
         }
 
 
@@ -125,9 +125,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceIds.Add(seededConference.Id);
-            var vRoom = new Room(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+            var consultationRoom = new ConsultationRoom(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH, false);
-            var seededRoom = await TestDataManager.SeedRoom(vRoom);
+            var seededRoom = await TestDataManager.SeedRoom(consultationRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
             var participant = seededConference.GetParticipants().First(p => p.IsJudge());
@@ -145,7 +145,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterState.Should().NotBe(beforeState);
             afterState.ParticipantState.Should().Be(state);
             updatedParticipant.CurrentRoom.Should().BeNull();
-            updatedParticipant.CurrentVirtualRoom.Label.Should().Be(seededRoom.Label);
+            updatedParticipant.CurrentConsultationRoom.Label.Should().Be(seededRoom.Label);
         }
 
 
@@ -155,10 +155,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             // Arrange conference with participant in consultation room
             var seededConference = await TestDataManager.SeedConference();
             _newConferenceIds.Add(seededConference.Id);
-            var vRoom = new Room(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+            var consultationRoom = new ConsultationRoom(seededConference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH, false);
             
-            var room = await TestDataManager.SeedRoom(vRoom);
+            var room = await TestDataManager.SeedRoom(consultationRoom);
             var newRoomId = room.Id;
 
             var pat1 = seededConference.Participants[0].Id;
@@ -175,7 +175,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Id == pat1);
             updatedParticipant.State.Should().Be(ParticipantState.Disconnected);
             updatedParticipant.CurrentRoom.Should().BeNull();
-            updatedParticipant.CurrentVirtualRoom.Should().BeNull();
+            updatedParticipant.CurrentConsultationRoom.Should().BeNull();
         }
         
         [TearDown]

@@ -16,12 +16,12 @@ namespace VideoApi.UnitTests.Domain.Participants
                 .WithCaseTypeGroup("Applicant")
                 .Build();
 
-            participant.CurrentVirtualRoom.Should().BeNull();
+            participant.CurrentConsultationRoom.Should().BeNull();
 
-            var newRoom = new Room(Guid.NewGuid(), "TestRoom1", VirtualCourtRoomType.JudgeJOH, false);
-            participant.UpdateCurrentVirtualRoom(newRoom);
+            var newRoom = new ConsultationRoom(Guid.NewGuid(), "TestRoom1", VirtualCourtRoomType.JudgeJOH, false);
+            participant.UpdateCurrentConsultationRoom(newRoom);
 
-            participant.CurrentVirtualRoom.Should().Be(newRoom);
+            participant.CurrentConsultationRoom.Should().Be(newRoom);
         }
     }
 

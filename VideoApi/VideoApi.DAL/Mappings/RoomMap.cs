@@ -19,10 +19,6 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.Label);
             builder.Property(x => x.Type);
             builder.Property(x => x.Status);
-
-            builder.Property(x => x.IngestUrl);
-            builder.Property(x => x.PexipNode);
-            builder.Property(x => x.ParticipantUri);
         }
     }
 }

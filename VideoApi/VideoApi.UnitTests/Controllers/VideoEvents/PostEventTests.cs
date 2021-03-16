@@ -53,6 +53,9 @@ namespace VideoApi.UnitTests.Controllers.VideoEvents
         [TestCase(EventType.ConnectingToEventHub, false)]
         [TestCase(EventType.SelectingMedia, false)]
         [TestCase(EventType.ConnectingToConference, false)]
+        [TestCase(EventType.RoomParticipantJoined, true)]
+        [TestCase(EventType.RoomParticipantDisconnected, true)]
+        [TestCase(EventType.RoomParticipantTransfer, true)]
         public async Task PostEventAsync_FireEvent(EventType eventType, bool shouldHandleEvent)
         {
             // Arrange

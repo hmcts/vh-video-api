@@ -13,6 +13,7 @@ namespace VideoApi.Validations
         public static readonly string NoParticipantIdErrorMessage = "ParticipantId is required";
         public static readonly string InvalidParticipantIdFormatErrorMessage = "ParticipantId format is not recognised";
         public static readonly string NoEventTypeErrorMessage = "EventType is required";
+        public static readonly string NoParticipantRoomIdErrorMessage = "ParticipantRoomId is required";
 
         public ConferenceEventRequestValidation()
         {
@@ -28,6 +29,15 @@ namespace VideoApi.Validations
             RuleFor(x => x.EventType)
                 .IsInEnum().WithMessage(NoEventTypeErrorMessage)
                 .NotEqual(EventType.None).WithMessage(NoEventTypeErrorMessage);
+            
+            RuleFor(x => x.ParticipantRoomId).Must(x => long.TryParse(x, out _)).When(EventIsRoomEvent).WithMessage(NoParticipantRoomIdErrorMessage);
+        }
+
+        private bool EventIsRoomEvent(ConferenceEventRequest request)
+        {
+            return request.EventType == EventType.RoomParticipantDisconnected ||
+                   request.EventType == EventType.RoomParticipantJoined ||
+                   request.EventType == EventType.RoomParticipantTransfer;
         }
     }
 }

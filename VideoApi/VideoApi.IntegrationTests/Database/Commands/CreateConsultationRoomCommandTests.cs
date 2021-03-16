@@ -9,18 +9,17 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
 {
-    public class CreateRoomCommandTests : DatabaseTestsBase
+    public class CreateConsultationRoomCommandTests : DatabaseTestsBase
     {
-        private CreateRoomCommandHandler _handler;
+        private CreateConsultationRoomCommandHandler _handler;
         private Guid _newConferenceId;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new CreateRoomCommandHandler(context);
+            _handler = new CreateConsultationRoomCommandHandler(context);
         }
-
 
         [Test]
         public async Task Should_save_new_room()
@@ -30,7 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
 
 
-            var command = new CreateRoomCommand(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH, false);
+            var command = new CreateConsultationRoomCommand(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH, false);
 
             await _handler.Handle(command);
 
@@ -39,11 +38,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             command.Type.Should().Be(VirtualCourtRoomType.JudgeJOH);
         }
 
-
         [Test]
         public void Should_throw_exception_if_no_conference_found()
         {
-            var command = new CreateRoomCommand(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
+            var command = new CreateConsultationRoomCommand(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 

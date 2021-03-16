@@ -527,18 +527,19 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveADynamicConsultationRoom()
         {
             var conference = _context.Test.Conference;
-            var vRoom = new Room(conference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
+            var consultationRoom = new ConsultationRoom(conference.Id, $"JudgeConsultationRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.JudgeJOH, false);
-            _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+            _context.Test.Room =  await _context.TestDataManager.SeedRoom(consultationRoom);
         }
         
         [Given(@"I have a civilian interpreter room")]
         public async Task GivenIHaveACivilianInterpreterRoom()
         {
             var conference = _context.Test.Conference;
-            var vRoom = new Room(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.Civilian, false);
-            _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+            var interpreterRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+                VirtualCourtRoomType.Civilian);
+            var seedRooms = await _context.TestDataManager.SeedRooms(new []{interpreterRoom});
+            _context.Test.Room = seedRooms.First();
         }
         
         [Given(@"I have a civilian interpreter room with a participant")]
@@ -546,15 +547,15 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = _context.Test.Conference;
             var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
-            var vRoom = new Room(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
-                VirtualCourtRoomType.Civilian, false);
-            vRoom.AddParticipant(new RoomParticipant(participant.Id));
-            _context.Test.Room =  await _context.TestDataManager.SeedRoom(vRoom);
+            var interpreterRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+                VirtualCourtRoomType.Civilian);
+            interpreterRoom.AddParticipant(new RoomParticipant(participant.Id));
+            var seedRooms = await _context.TestDataManager.SeedRooms(new []{interpreterRoom});
+            _context.Test.Room = seedRooms.First();
             
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var dbParticipant = db.Participants.First(x => x.Id == participant.Id);
             dbParticipant.UpdateCurrentRoom(RoomType.WaitingRoom);
-            dbParticipant.UpdateCurrentVirtualRoom(vRoom);
             await db.SaveChangesAsync();
         }
         

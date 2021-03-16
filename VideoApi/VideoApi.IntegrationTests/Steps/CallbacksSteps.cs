@@ -180,7 +180,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conference = _context.Test.Conference;
             var room = _context.Test.Room;
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
-            var updatedConference = await db.Conferences.Include(x => x.Participants).ThenInclude(x => x.CurrentVirtualRoom)
+            var updatedConference = await db.Conferences.Include(x => x.Participants).ThenInclude(x => x.CurrentConsultationRoom)
                 .ThenInclude(x => x.RoomParticipants).SingleAsync(x => x.Id == conference.Id);
             var judge = updatedConference.Participants.First(x => x.IsJudge());
 

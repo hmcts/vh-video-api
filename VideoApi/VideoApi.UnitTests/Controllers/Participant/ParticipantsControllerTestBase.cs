@@ -34,6 +34,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
               .WithParticipant(UserRole.Representative, "Applicant")
               .WithParticipant(UserRole.Individual, "Respondent")
               .WithParticipant(UserRole.Representative, "Respondent")
+              .WithInterpreterRoom()
               .Build();
 
             Controller = new ParticipantsController(MockCommandHandler.Object, MockQueryHandler.Object,

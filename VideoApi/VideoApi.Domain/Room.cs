@@ -7,9 +7,17 @@ using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
-    public class Room : Entity<long>
-    {
-        public Room(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
+    public abstract class Room : Entity<long>
+    { 
+        public Guid ConferenceId { get; private set; }
+        public string Label { get; protected set; }
+        public VirtualCourtRoomType Type { get; private set; }
+        public RoomStatus Status { get; private set; }
+        public virtual List<RoomParticipant> RoomParticipants { get; }
+        public virtual List<RoomEndpoint> RoomEndpoints { get; }
+        public bool Locked { get; private set; }
+        
+        protected Room(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
         {
             ConferenceId = conferenceId;
             Label = label;
@@ -20,25 +28,26 @@ namespace VideoApi.Domain
             Locked = locked;
         }
 
-        public Room(Guid conferenceId, VirtualCourtRoomType type, bool locked) : this(conferenceId, null, type, locked)
+        protected Room(Guid conferenceId, VirtualCourtRoomType type, bool locked) : this(conferenceId, null, type, locked)
         {
         }
-
-        public Guid ConferenceId { get; private set; }
-        public string Label { get; private set; }
-        public VirtualCourtRoomType Type { get; private set; }
-        public RoomStatus Status { get; private set; }
-        public virtual List<RoomParticipant> RoomParticipants { get; }
-        public virtual List<RoomEndpoint> RoomEndpoints { get; }
-        public bool Locked { get; private set; }
         
-        public string IngestUrl { get; private set; }
-        public string PexipNode { get; private set; }
-        public string ParticipantUri { get; private set; }
-
         public void UpdateRoomLock(bool locked)
         {
             Locked = locked;
+        }
+
+        private void UpdateStatus()
+        {
+            if (Status != RoomStatus.Closed && !RoomParticipants.Any() && !RoomEndpoints.Any() && IsCloseableRoom())
+            {
+                Status = RoomStatus.Closed;
+            }
+        }
+
+        private bool IsCloseableRoom()
+        {
+            return Type != VirtualCourtRoomType.Civilian && Type != VirtualCourtRoomType.Witness;
         }
 
         public void AddParticipant(RoomParticipant participant)
@@ -86,16 +95,7 @@ namespace VideoApi.Domain
             RoomEndpoints.Remove(existingParticipant);
             UpdateStatus();
         }
-
-        private void UpdateStatus()
-        {
-            if (Status != RoomStatus.Closed && !RoomParticipants.Any() && !RoomEndpoints.Any() &&
-                Type != VirtualCourtRoomType.Civilian && Type != VirtualCourtRoomType.Witness)
-            {
-                Status = RoomStatus.Closed;
-            }
-        }
-
+        
         public List<RoomParticipant> GetRoomParticipants()
         {
             return RoomParticipants;
@@ -114,14 +114,6 @@ namespace VideoApi.Domain
         public bool DoesEndpointExist(RoomEndpoint endpoint)
         {
             return RoomEndpoints.Any(x => x.EndpointId == endpoint.EndpointId);
-        }
-
-        public void UpdateRoomConnectionDetails(string label, string ingestUrl, string pexipNode, string participantUri)
-        {
-            Label = label;
-            IngestUrl = ingestUrl;
-            PexipNode = pexipNode;
-            ParticipantUri = participantUri;
         }
     }
 }
