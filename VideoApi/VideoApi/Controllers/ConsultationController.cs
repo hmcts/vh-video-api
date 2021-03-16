@@ -112,7 +112,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
-            var isVhoRequest = request.DefenceAdvocateId == Guid.Empty;
+            var isVhoRequest = request.RequestedById == Guid.Empty;
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
@@ -129,27 +129,28 @@ namespace VideoApi.Controllers
                 return NotFound($"Unable to find endpoint {request.EndpointId}");
             }
 
-            if (isVhoRequest)
+            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedById);
+            if (isVhoRequest || requestedBy?.UserRole == UserRole.Judge || requestedBy?.UserRole == UserRole.JudicialOfficeHolder)
             {
                 await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
                 return Ok();
             }
 
-            var defenceAdvocate = conference.GetParticipants().SingleOrDefault(x => x.Id == request.DefenceAdvocateId);
-            if (defenceAdvocate == null)
+            
+            if (requestedBy == null)
             {
                 _logger.LogWarning("Unable to find defence advocate");
-                return NotFound($"Unable to find defence advocate {request.DefenceAdvocateId}");
+                return NotFound($"Unable to find defence advocate {request.RequestedById}");
             }
 
-            if (!isVhoRequest && string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
+            if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
             {
                 const string message = "Endpoint does not have a defence advocate linked";
                 _logger.LogWarning(message);
                 return Unauthorized(message);
             }
 
-            if (!endpoint.DefenceAdvocate.Trim().Equals(defenceAdvocate.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
+            if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 const string message = "Defence advocate is not allowed to speak to requested endpoint";
                 _logger.LogWarning(message);

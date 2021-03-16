@@ -61,13 +61,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = conferenceId,
                 EndpointId = endpointId,
-                DefenceAdvocateId = defenceAdvocateId
+                RequestedById = defenceAdvocateId
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
-            actionResult.Value.Should().Be($"Unable to find defence advocate {request.DefenceAdvocateId}");
+            actionResult.Value.Should().Be($"Unable to find defence advocate {request.RequestedById}");
         }
         
         [Test]
@@ -83,7 +83,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithoutDefenceAdvocate.Id,
-                DefenceAdvocateId = defenceAdvocate.Id
+                RequestedById = defenceAdvocate.Id
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
 
@@ -98,13 +98,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
             var defenceAdvocate = TestConference.GetParticipants().First(x =>
                 !x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
-                    StringComparison.CurrentCultureIgnoreCase));
+                    StringComparison.CurrentCultureIgnoreCase) && x.UserRole != VideoApi.Domain.Enums.UserRole.Judge);
             
             var request = new EndpointConsultationRequest()
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithDefenceAdvocate.Id,
-                DefenceAdvocateId = defenceAdvocate.Id
+                RequestedById = defenceAdvocate.Id
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
 
@@ -129,7 +129,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithDefenceAdvocate.Id,
-                DefenceAdvocateId = defenceAdvocate.Id,
+                RequestedById = defenceAdvocate.Id,
                 RoomLabel = "Label"
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
@@ -153,7 +153,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithDefenceAdvocate.Id,
-                DefenceAdvocateId = defenceAdvocate.Id,
+                RequestedById = defenceAdvocate.Id,
                 RoomLabel = "Label"
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
@@ -178,7 +178,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithDefenceAdvocate.Id,
-                DefenceAdvocateId = defenceAdvocate.Id,
+                RequestedById = defenceAdvocate.Id,
                 RoomLabel = "Label"
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
@@ -195,7 +195,29 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithoutDefenceAdvocate.Id,
-                DefenceAdvocateId = Guid.Empty,
+                RequestedById = Guid.Empty,
+                RoomLabel = "NewRoom_NotInDb"
+            };
+
+            // Act
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
+
+            // Assert
+            result.Should().BeOfType<OkResult>();
+        }
+
+
+        [Test]
+        public async Task should_return_ok_when_judge_invites()
+        {
+            // Arrange
+            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var requestedByJudge = TestConference.GetParticipants().First(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge);
+            var request = new EndpointConsultationRequest()
+            {
+                ConferenceId = TestConference.Id,
+                EndpointId = endpointWithoutDefenceAdvocate.Id,
+                RequestedById = requestedByJudge.Id,
                 RoomLabel = "NewRoom_NotInDb"
             };
 
