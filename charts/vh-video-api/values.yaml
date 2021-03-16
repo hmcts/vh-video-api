@@ -55,10 +55,10 @@ java:
     WOWZACONFIGURATION__AZURESTORAGEDIRECTORY: ${com.wowza.wms.context.VHostConfigHome}/content/azurecopy
     WOWZACONFIGURATION__HOSTNAME: _defaultVHost_
     WOWZACONFIGURATION__RESTAPIENDPOINT:
-      - https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
-      - https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
-    WOWZACONFIGURATION__RESTAPIENDPOINT__0: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
-    WOWZACONFIGURATION__RESTAPIENDPOINT__1: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
+      - https://sds-vh-wowza-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
+      - https://sds-vh-wowza-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
+    WOWZACONFIGURATION__RESTAPIENDPOINT__0: https://sds-vh-wowza-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
+    WOWZACONFIGURATION__RESTAPIENDPOINT__1: https://sds-vh-wowza-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
     WOWZACONFIGURATION__SERVERNAME: _defaultServer_
     WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhwowza{{ .Values.global.environment }}
     WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
