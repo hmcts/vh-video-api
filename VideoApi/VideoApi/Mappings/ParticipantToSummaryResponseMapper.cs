@@ -39,7 +39,7 @@ namespace VideoApi.Mappings
                 ContactTelephone = participant.ContactTelephone,
                 CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participant.CurrentConsultationRoom),
                 LinkedParticipants = links,
-                InterpreterRoom = interpreterRoomMapped
+                CurrentInterpreterRoom = interpreterRoomMapped
             };
         }
     }

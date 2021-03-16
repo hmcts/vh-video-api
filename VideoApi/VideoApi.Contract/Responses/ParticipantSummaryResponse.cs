@@ -74,7 +74,7 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// Current interpreter room details
         /// </summary>
-        public RoomResponse InterpreterRoom { get; set; }
+        public RoomResponse CurrentInterpreterRoom { get; set; }
         
         public List<LinkedParticipantResponse> LinkedParticipants { get; set; }
     }
