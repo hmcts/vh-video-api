@@ -75,6 +75,22 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2));
         }
 
+        [Given(@"I have a conference with a linked participant")]
+        public void GivenIHaveAConferenceWithALinkedParticipant()
+        {
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
+                .WithJudge()
+                .WithIndividualAndInterpreter()
+                .WithHearingRefId(Guid.NewGuid())
+                .Build();
+            _context.Request = _context.Post(BookNewConference, request);
+            _context.Response = _context.Client().Execute(_context.Request);
+            _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
+            conference.Should().NotBeNull();
+            _context.Test.ConferenceResponse = conference;
+        }
+
         [Given(@"I have a conference with an audio recording")]
         public void GivenIHaveAConferenceWithAudioRecording()
         {
@@ -237,6 +253,21 @@ namespace VideoApi.AcceptanceTests.Steps
             AssertConferenceDetailsResponse.ForConferenceEndpoints(conference);
         }
 
+        [Then(@"the admin response should contain the conference")]
+        public void ThenTheAdminResponseShouldContainTheConference()
+        {
+            var conferences = RequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
+            conferences.Should().NotBeNull();
+            var conference = conferences.Single(x => x.CaseName.StartsWith(_context.Test.ConferenceResponse.CaseName));
+
+            foreach (var participant in conference.Participants)
+            {
+                var expectedParticipant =
+                    _context.Test.ConferenceResponse.Participants.Single(x => x.Username.Equals(participant.Username));
+                participant.Should().BeEquivalentTo(expectedParticipant, x => x.ExcludingMissingMembers());
+            }
+        }
+
         [Then(@"a list containing only todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
         {
@@ -368,12 +399,12 @@ namespace VideoApi.AcceptanceTests.Steps
             var judge1 = $"Automation_{Name.First()}{ RandomNumber.Next()}";
             var judge2 = $"Automation_{Name.First()}{ RandomNumber.Next()}";
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge1 : null);
                 _context.Test.ConferenceDetailsResponses.Add(_context.Test.ConferenceResponse);
             }
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 CreateConference(DateTime.Now.ToLocalTime().AddMinutes(2), addDuplicateFirstNames ? judge2 : null);
                 _context.Test.ConferenceDetailsResponses.Add(_context.Test.ConferenceResponse);

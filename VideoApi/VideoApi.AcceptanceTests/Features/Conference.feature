@@ -45,6 +45,13 @@ Feature: Conference
 	  Then the response should have the status OK and success status True
 	  And a list containing only todays hearings conference details should be retrieved
 
+  Scenario: Get conferences today for vho with linked participants
+	  Given I have a conference with a linked participant
+	  And I have a get conferences today for a vho request
+	  When I send the request to the endpoint
+	  Then the response should have the status OK and success status True
+	  And the admin response should contain the conference
+
   Scenario: Get conferences today for judge
 	  Given I have a conference
 	  And I have another conference

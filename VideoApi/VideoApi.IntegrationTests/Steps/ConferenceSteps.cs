@@ -484,23 +484,19 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the heartbeats should be deleted")]
         public async Task ThenTheHeartbeatsShouldBeDeleted()
         {
-            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
-            {
-                var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
-                heartbeats.Should().NotBeNull();
-                heartbeats.Count.Should().Be(0);
-            }
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
+            heartbeats.Should().NotBeNull();
+            heartbeats.Count.Should().Be(0);
         }
 
         [Then(@"the heartbeats should not be deleted")]
         public async Task ThenTheHeartbeatsShouldNotBeDeleted()
         {
-            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
-            {
-                var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
-                heartbeats.Should().NotBeNull();
-                heartbeats.Count.Should().Be(3);
-            }
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
+            heartbeats.Should().NotBeNull();
+            heartbeats.Count.Should().Be(3);
         }
     }
 }
