@@ -12,14 +12,14 @@ namespace VideoApi.DAL.Commands
     {
         public long RoomId { get; }
         public Guid ParticipantId { get; }
-        
+
         public AddParticipantToInterpreterRoomCommand(long roomId, Guid participantId)
         {
             RoomId = roomId;
             ParticipantId = participantId;
         }
     }
-    
+
     public class AddParticipantToInterpreterRoomCommandHandler : ICommandHandler<AddParticipantToInterpreterRoomCommand>
     {
         private readonly VideoApiDbContext _context;
@@ -37,10 +37,9 @@ namespace VideoApi.DAL.Commands
             {
                 throw new RoomNotFoundException(command.RoomId);
             }
-            
+
             room.AddParticipant(new RoomParticipant(command.ParticipantId));
             await _context.SaveChangesAsync();
         }
     }
-
 }
