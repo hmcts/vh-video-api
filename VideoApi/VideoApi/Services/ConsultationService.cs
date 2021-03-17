@@ -97,8 +97,8 @@ namespace VideoApi.Services
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
-            var patId = participant.GetInterpreterRoom()?.Id.ToString() ?? participantId.ToString(); 
-            await TransferParticipantAsync(conferenceId, patId, participant.GetCurrentRoom(), room);
+            var kinlyParticipantId = participant.GetInterpreterRoom()?.Id.ToString() ?? participantId.ToString(); 
+            await TransferParticipantAsync(conferenceId, kinlyParticipantId, participant.GetCurrentRoom(), room);
         }
         
         public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
