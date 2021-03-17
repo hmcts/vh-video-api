@@ -40,6 +40,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CurrentConsultationRoom)
                 .Excluding(x => x.State)
                 .Excluding(x => x.LinkedParticipants)
+                .Excluding(x => x.RoomParticipants)
             );
             response.Status.Should().BeEquivalentTo(participant.State);
             response.Status.Should().BeEquivalentTo(participant.GetCurrentStatus().ParticipantState);

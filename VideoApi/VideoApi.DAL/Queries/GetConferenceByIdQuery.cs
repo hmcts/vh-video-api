@@ -31,6 +31,7 @@ namespace VideoApi.DAL.Queries
                 .Include(x=> x.Rooms).ThenInclude(x=> x.RoomEndpoints)
                 .Include(x=> x.Rooms).ThenInclude(x=> x.RoomParticipants)
                 .Include(x => x.Participants).ThenInclude(x => x.CurrentConsultationRoom)
+                .Include(x => x.Participants).ThenInclude(x => x.RoomParticipants).ThenInclude(x=> x.Room)
                 .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .Include(x => x.Endpoints).ThenInclude(x => x.CurrentConsultationRoom)
                 .AsNoTracking()

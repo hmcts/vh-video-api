@@ -15,6 +15,7 @@ namespace VideoApi.Contract.Requests
         
         /// <summary>
         /// Requestor's UUID
+        /// This value can be empty is the consultation is requested by a VHO
         /// </summary>
         public Guid RequestedBy { get; set; }
         

@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 ConferenceId = Guid.NewGuid(),
                 EndpointId = Guid.NewGuid(),
-                DefenceAdvocateId = Guid.NewGuid()
+                RequestedById = Guid.NewGuid()
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 ConferenceId = Guid.Empty,
                 EndpointId = Guid.NewGuid(),
-                DefenceAdvocateId = Guid.NewGuid()
+                RequestedById = Guid.NewGuid()
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -55,7 +55,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 ConferenceId = Guid.NewGuid(),
                 EndpointId = Guid.Empty,
-                DefenceAdvocateId = Guid.NewGuid()
+                RequestedById = Guid.NewGuid()
             };
 
             var result = await _validator.ValidateAsync(request);
