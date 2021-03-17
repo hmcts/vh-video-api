@@ -526,10 +526,13 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a conference with a linked participant")]
         public async Task GivenIHaveAConferenceWithALinkedParticipant()
         {
-            var conference = new ConferenceBuilder(true, null, DateTime.Today.AddHours(10))
+            var pexipNode = "int-test.pexip.com";
+            var username = "confTodayIntTest";
+            var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
                 .WithLinkedParticipant(UserRole.Individual, "Applicant")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
+                .WithMeetingRoom(pexipNode, username)
                 .Build();
 
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference);
