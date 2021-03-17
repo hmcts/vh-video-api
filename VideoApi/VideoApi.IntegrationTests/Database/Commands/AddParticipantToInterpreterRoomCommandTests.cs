@@ -6,6 +6,7 @@ using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
+using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
@@ -15,6 +16,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
     public class AddParticipantToInterpreterRoomCommandTests : DatabaseTestsBase
     {
         private AddParticipantToInterpreterRoomCommandHandler _handler;
+        private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         private Guid _newConferenceId;
         
         [SetUp]
@@ -22,6 +24,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new AddParticipantToInterpreterRoomCommandHandler(context);
+            _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
         }
         
         [TearDown]
@@ -57,6 +60,16 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 .SingleAsync(r => r.Id == interpreterRoom.Id);
 
             updatedRoom.RoomParticipants.Any(p => p.ParticipantId == participant.Id).Should().BeTrue();
+
+            var updatedParticipantFromDb = await db.Participants.Include(x => x.RoomParticipants).ThenInclude(x=> x.Room).AsNoTracking()
+                .SingleAsync(p => p.Id == participant.Id);
+
+            updatedParticipantFromDb.RoomParticipants.Any(r => r.RoomId == interpreterRoom.Id).Should().BeTrue();
+            
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var updatedParticipant = updatedConference.Participants.First(x => x.Id == participant.Id);
+            updatedParticipant.GetInterpreterRoom().Should().NotBeNull();
+            updatedParticipant.GetInterpreterRoom().Id.Should().Be(interpreterRoom.Id);
         }
         
         [Test]
