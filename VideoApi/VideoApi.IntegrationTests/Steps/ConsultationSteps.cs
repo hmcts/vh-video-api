@@ -225,7 +225,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                DefenceAdvocateId = defenceAdvocate.Id,
+                RequestedById = defenceAdvocate.Id,
                 RoomLabel = "name"
             };
 
@@ -244,7 +244,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                DefenceAdvocateId = defenceAdvocate.Id
+                RequestedById = defenceAdvocate.Id
             };
 
             SerialiseEndpointConsultationRequest(request);
@@ -261,7 +261,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 ConferenceId = Guid.NewGuid(),
                 EndpointId = endpoint.Id,
-                DefenceAdvocateId = defenceAdvocate.Id
+                RequestedById = defenceAdvocate.Id
             };
 
             SerialiseEndpointConsultationRequest(request);
@@ -275,7 +275,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 ConferenceId = conference.Id,
                 EndpointId = Guid.NewGuid(),
-                DefenceAdvocateId = Guid.NewGuid()
+                RequestedById = Guid.NewGuid()
             };
 
             SerialiseEndpointConsultationRequest(request);
@@ -290,7 +290,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                DefenceAdvocateId = Guid.NewGuid()
+                RequestedById = Guid.NewGuid()
             };
 
             SerialiseEndpointConsultationRequest(request);
@@ -308,7 +308,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                DefenceAdvocateId = defenceAdvocate.Id
+                RequestedById = defenceAdvocate.Id
             };
 
             SerialiseEndpointConsultationRequest(request);

@@ -13,9 +13,9 @@ namespace VideoApi.Contract.Requests
         public Guid ConferenceId { get; set; }
         
         /// <summary>
-        /// Defence Advocate's UUID
+        /// Defence Advocate or Judge or JOH's UUID
         /// </summary>
-        public Guid DefenceAdvocateId { get; set; }
+        public Guid RequestedById { get; set; }
         
         /// <summary>
         /// Video Endpoint's UUID
