@@ -14,6 +14,7 @@ namespace VideoApi.Domain
             Id = Guid.NewGuid();
             ParticipantStatuses = new List<ParticipantStatus>();
             LinkedParticipants = new List<LinkedParticipant>();
+            RoomParticipants = new List<RoomParticipant>();
         }
 
         public Participant(Guid participantRefId, string name, string firstName, string lastName, string displayName,
@@ -53,6 +54,8 @@ namespace VideoApi.Domain
         protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
         public ParticipantState State { get; set; }
         public virtual IList<LinkedParticipant> LinkedParticipants { get; set; }
+        
+        public virtual IList<RoomParticipant> RoomParticipants { get; }
 
         public IList<ParticipantStatus> GetParticipantStatuses()
         {
@@ -78,6 +81,11 @@ namespace VideoApi.Domain
         public string GetCurrentRoom()
         {
             return CurrentConsultationRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
+        }
+
+        public InterpreterRoom GetInterpreterRoom()
+        {
+            return RoomParticipants.Select(x => x.Room).OfType<InterpreterRoom>().FirstOrDefault();
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)

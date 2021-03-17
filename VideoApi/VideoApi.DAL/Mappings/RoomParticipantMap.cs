@@ -12,6 +12,8 @@ namespace VideoApi.DAL.Mappings
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.ParticipantId);
+            builder.HasOne(x => x.Participant).WithMany(x => x.RoomParticipants).HasForeignKey(x => x.ParticipantId);
+            builder.HasOne(x => x.Room).WithMany(x => x.RoomParticipants).HasForeignKey(x => x.RoomId);
         }
     }
 }
