@@ -60,8 +60,8 @@ java:
     WOWZACONFIGURATION__RESTAPIENDPOINTS:
       - https://vh-wowza-sds-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
       - https://vh-wowza-sds-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
-    WOWZACONFIGURATION__RESTAPIENDPOINT__0: https://vh-wowza-sds-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
-    WOWZACONFIGURATION__RESTAPIENDPOINT__1: https://vh-wowza-sds-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
+    WOWZACONFIGURATION__RESTAPIENDPOINTS__0: https://vh-wowza-sds-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
+    WOWZACONFIGURATION__RESTAPIENDPOINTS__1: https://vh-wowza-sds-{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
     WOWZACONFIGURATION__SERVERNAME: _defaultServer_
     WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhwowza{{ .Values.global.environment }}
     WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
