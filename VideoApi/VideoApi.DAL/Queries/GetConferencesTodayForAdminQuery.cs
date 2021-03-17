@@ -15,8 +15,7 @@ namespace VideoApi.DAL.Queries
         public IEnumerable<string> UserNames { get; set; }
     }
 
-    public class
-        GetConferencesTodayForAdminQueryHandler : IQueryHandler<GetConferencesTodayForAdminQuery, List<Conference>>
+    public class GetConferencesTodayForAdminQueryHandler : IQueryHandler<GetConferencesTodayForAdminQuery, List<Conference>>
     {
         private readonly VideoApiDbContext _context;
 
@@ -31,7 +30,7 @@ namespace VideoApi.DAL.Queries
             var tomorrow = DateTime.Today.AddDays(1);
 
             var adminQuery = _context.Conferences
-                .Include(x => x.Participants)
+                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
 

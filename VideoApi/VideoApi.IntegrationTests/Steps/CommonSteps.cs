@@ -523,6 +523,20 @@ namespace VideoApi.IntegrationTests.Steps
             }
         }
 
+        [Given(@"I have a conference with a linked participant")]
+        public async Task GivenIHaveAConferenceWithALinkedParticipant()
+        {
+            var conference = new ConferenceBuilder(true, null, DateTime.Today.AddHours(10))
+                .WithLinkedParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Judge, null)
+                .WithConferenceStatus(ConferenceState.InSession)
+                .Build();
+
+            _context.Test.Conference = await _context.TestDataManager.SeedConference(conference);
+            _context.Test.Alerts = await _context.TestDataManager.SeedAlerts(new[]
+                {new Alert(conference.Id, conference.Id, "Suspended", TaskType.Hearing)});
+        }
+
         [Given(@"I have a judge consultation room")]
         public async Task GivenIHaveADynamicConsultationRoom()
         {

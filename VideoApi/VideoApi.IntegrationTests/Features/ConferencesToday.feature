@@ -11,7 +11,7 @@ Feature: Conferences Today
     And only todays conferences should be retrieved for vho
 
   Scenario: Get list of conferences for vho with linked participants
-    Given I have a conference with a linked partcipant
+    Given I have a conference with a linked participant
     And I have a get conferences for a vho request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
