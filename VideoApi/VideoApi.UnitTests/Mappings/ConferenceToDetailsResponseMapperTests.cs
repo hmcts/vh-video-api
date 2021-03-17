@@ -54,6 +54,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CurrentRoom)
                 .Excluding(x => x.State)
                 .Excluding(x => x.LinkedParticipants)
+                .Excluding(x => x.RoomParticipants)
             );
 
             var civilianRoom = response.CivilianRooms.First();

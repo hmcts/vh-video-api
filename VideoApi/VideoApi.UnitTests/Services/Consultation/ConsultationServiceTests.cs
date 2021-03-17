@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -104,7 +105,7 @@ namespace VideoApi.UnitTests.Services.Consultation
 
             var request = new TransferParticipantParams
             {
-                From = participant.GetCurrentRoom().ToString(),
+                From = participant.GetCurrentRoom(),
                 To = room.Label,
                 Part_id = participant.Id.ToString()
             };
@@ -115,6 +116,42 @@ namespace VideoApi.UnitTests.Services.Consultation
                 Times.Once);
         }
 
+        [Test]
+        public async Task should_use_interpreter_room_when_participant_is_in_an_interpreter_room_on_transfer()
+        {
+            var participant =
+                TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
+            var interpreterRoom = new InterpreterRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
+            interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
+            var roomParticipant = new RoomParticipant(participant.Id)
+            {
+                Room = interpreterRoom,
+                RoomId = interpreterRoom.Id
+            };
+            interpreterRoom.AddParticipant(roomParticipant);
+            participant.RoomParticipants.Add(roomParticipant);
+            
+            _queryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
+
+            var room = _rooms.First(x => x.ConferenceId.Equals(_request.ConferenceId));
+            await _consultationService.ParticipantTransferToRoomAsync(_request.ConferenceId, _request.RequestedBy,
+                room.Label);
+            
+            
+            var request = new TransferParticipantParams
+            {
+                From = participant.GetCurrentRoom(),
+                To = room.Label,
+                Part_id = interpreterRoom.Id.ToString()
+            };
+            
+            _kinlyApiClient.Verify(x => x.TransferParticipantAsync(It.Is<string>(
+                    y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
+                    y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
+                Times.Once);
+        }
+        
         private StartConsultationRequest RequestBuilder()
         {
             if (TestConference.Participants == null)

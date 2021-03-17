@@ -25,7 +25,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CurrentConsultationRoom)
                 .Excluding(x => x.CurrentRoom)
                 .Excluding(x => x.State)
-                .Excluding(x => x.LinkedParticipants));
+                .Excluding(x => x.LinkedParticipants)
+                .Excluding(x => x.RoomParticipants));
         }
 
         [Test]
@@ -47,7 +48,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CurrentConsultationRoom)
                 .Excluding(x => x.CurrentRoom)
                 .Excluding(x => x.State)
-                .Excluding(x => x.LinkedParticipants));
+                .Excluding(x => x.LinkedParticipants)
+                .Excluding(x => x.RoomParticipants));
 
             response.CurrentInterpreterRoom.Should().NotBeNull();
             response.CurrentInterpreterRoom.Id.Should().Be(interpreterRoom.Id);

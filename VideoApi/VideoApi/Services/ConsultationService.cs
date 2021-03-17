@@ -97,7 +97,8 @@ namespace VideoApi.Services
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
-            await TransferParticipantAsync(conferenceId, participantId.ToString(), participant.GetCurrentRoom(), room);
+            var patId = participant.GetInterpreterRoom()?.Id.ToString() ?? participantId.ToString(); 
+            await TransferParticipantAsync(conferenceId, patId, participant.GetCurrentRoom(), room);
         }
         
         public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
@@ -116,7 +117,7 @@ namespace VideoApi.Services
             {
                 From = fromRoom,
                 To = toRoom,
-                Part_id = participantId.ToString()
+                Part_id = participantId
             };
 
             await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
