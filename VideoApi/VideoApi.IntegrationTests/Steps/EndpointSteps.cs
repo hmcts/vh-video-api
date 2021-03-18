@@ -207,13 +207,11 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the endpoint status should be (.*)")]
         public async Task ThenTheEndpointsStateShouldBe(EndpointState state)
         {
-            await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
-            {
-                var conf = await db.Conferences.Include(x => x.Endpoints)
-                    .SingleAsync(x => x.Id == _context.Test.Conference.Id);
-                var endpoint = conf.GetEndpoints().First(x => x.Id == _context.Test.ParticipantId);
-                endpoint.State.Should().Be(state);
-            }
+            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+            var conf = await db.Conferences.Include(x => x.Endpoints)
+                .SingleAsync(x => x.Id == _context.Test.Conference.Id);
+            var endpoint = conf.GetEndpoints().First(x => x.Id == _context.Test.ParticipantId);
+            endpoint.State.Should().Be(state);
         }
         
         private async Task AssertEndpointLength(int length)

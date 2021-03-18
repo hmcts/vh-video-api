@@ -52,7 +52,7 @@ namespace VideoApi.Domain
         public string IngestUrl { get; set; }
         public DateTime? CreatedDateTime { get; private set; }
 
-        private List<Room> _rooms;
+        private readonly List<Room> _rooms;
         public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
         
         
