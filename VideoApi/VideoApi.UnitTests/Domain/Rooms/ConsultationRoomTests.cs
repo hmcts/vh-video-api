@@ -47,7 +47,7 @@ namespace VideoApi.UnitTests.Domain.Rooms
         }
 
         [Test]
-        public void Should_not_add_existing_participant_to_room_and_throw_exception()
+        public void Should_not_add_existing_participant_to_room_twice()
         {
             var participantId = Guid.NewGuid();
             var roomParticipant = new RoomParticipant(participantId);
@@ -55,14 +55,13 @@ namespace VideoApi.UnitTests.Domain.Rooms
             room.AddParticipant(roomParticipant);
             var beforeCount = room.RoomParticipants.Count;
 
-            Action action = () => room.AddParticipant(roomParticipant);
-
-            action.Should().Throw<DomainRuleException>();
+            room.AddParticipant(roomParticipant);
+            
             room.RoomParticipants.Count.Should().Be(beforeCount);
         }
 
         [Test]
-        public void Should_not_add_existing_endpoint_to_room_and_throw_exception()
+        public void Should_not_add_existing_endpoint_to_room_twice()
         {
             var endpointId = Guid.NewGuid();
             var roomEndpoint = new RoomEndpoint(endpointId);
@@ -70,9 +69,8 @@ namespace VideoApi.UnitTests.Domain.Rooms
             room.AddEndpoint(roomEndpoint);
             var beforeCount = room.RoomEndpoints.Count;
 
-            Action action = () => room.AddEndpoint(roomEndpoint);
-
-            action.Should().Throw<DomainRuleException>();
+            room.AddEndpoint(roomEndpoint);
+            
             room.RoomEndpoints.Count.Should().Be(beforeCount);
         }
 
@@ -102,37 +100,6 @@ namespace VideoApi.UnitTests.Domain.Rooms
             room.RemoveEndpoint(roomEndpoint);
 
             room.RoomEndpoints.Count.Should().Be(beforeCount - 1);
-        }
-
-        [Test]
-        public void Should_throw_exception_for_remove_non_existing_participant_from_room()
-        {
-            var participantId = Guid.NewGuid();
-            var roomParticipant = new RoomParticipant(participantId);
-            var room = new ConsultationRoom(Guid.NewGuid(), "Room1", VirtualCourtRoomType.JudgeJOH, false);
-            room.AddParticipant(roomParticipant);
-            var beforeCount = room.RoomParticipants.Count;
-
-            Action action = () => room.RemoveParticipant(new RoomParticipant(Guid.NewGuid()));
-
-            action.Should().Throw<DomainRuleException>();
-            room.RoomParticipants.Count.Should().Be(beforeCount);
-        }
-
-
-        [Test]
-        public void Should_throw_exception_for_remove_non_existing_endpoint_from_room()
-        {
-            var endpointId = Guid.NewGuid();
-            var roomEndpoint = new RoomEndpoint(endpointId);
-            var room = new ConsultationRoom(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
-            room.AddEndpoint(roomEndpoint);
-            var beforeCount = room.RoomEndpoints.Count;
-
-            Action action = () => room.RemoveEndpoint(new RoomEndpoint(Guid.NewGuid()));
-
-            action.Should().Throw<DomainRuleException>();
-            room.RoomEndpoints.Count.Should().Be(beforeCount);
         }
 
         [Test]

@@ -52,48 +52,40 @@ namespace VideoApi.Domain
 
         public void AddParticipant(RoomParticipant participant)
         {
-            if (DoesParticipantExist(participant))
+            if (!DoesParticipantExist(participant))
             {
-                throw new DomainRuleException(nameof(participant), "Participant already exists in room");
+                RoomParticipants.Add(participant);
             }
-
-            RoomParticipants.Add(participant);
         }
 
         public void RemoveParticipant(RoomParticipant participant)
         {
-            if (!DoesParticipantExist(participant))
+            if (DoesParticipantExist(participant))
             {
-                throw new DomainRuleException(nameof(participant), "Participant does not exist in room");
+                var existingParticipant = RoomParticipants.Single(x => x.ParticipantId == participant.ParticipantId);
+
+                RoomParticipants.Remove(existingParticipant);
+                UpdateStatus();
             }
-
-            var existingParticipant = RoomParticipants.Single(x => x.ParticipantId == participant.ParticipantId);
-
-            RoomParticipants.Remove(existingParticipant);
-            UpdateStatus();
         }
 
         public void AddEndpoint(RoomEndpoint endpoint)
         {
-            if (DoesEndpointExist(endpoint))
+            if (!DoesEndpointExist(endpoint))
             {
-                throw new DomainRuleException(nameof(endpoint), "Endpoint already exists in room");
+                RoomEndpoints.Add(endpoint);
             }
-
-            RoomEndpoints.Add(endpoint);
         }
 
         public void RemoveEndpoint(RoomEndpoint endpoint)
         {
-            if (!DoesEndpointExist(endpoint))
+            if (DoesEndpointExist(endpoint))
             {
-                throw new DomainRuleException(nameof(endpoint), "Endpoint does not exist in room");
+                var existingParticipant = RoomEndpoints.Single(x => x.EndpointId == endpoint.EndpointId);
+
+                RoomEndpoints.Remove(existingParticipant);
+                UpdateStatus();
             }
-
-            var existingParticipant = RoomEndpoints.Single(x => x.EndpointId == endpoint.EndpointId);
-
-            RoomEndpoints.Remove(existingParticipant);
-            UpdateStatus();
         }
         
         public List<RoomParticipant> GetRoomParticipants()
