@@ -1,10 +1,14 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using VideoApi.Contract.Requests;
+using VideoApi.DAL.Queries;
+using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
@@ -20,13 +24,15 @@ namespace VideoApi.Controllers
     public class ConferenceManagementController : ControllerBase
     {
         private readonly IVideoPlatformService _videoPlatformService;
+        private readonly IQueryHandler _queryHandler;
         private readonly ILogger<ConferenceManagementController> _logger;
 
         public ConferenceManagementController(IVideoPlatformService videoPlatformService,
-            ILogger<ConferenceManagementController> logger)
+            ILogger<ConferenceManagementController> logger, IQueryHandler queryHandler)
         {
             _videoPlatformService = videoPlatformService;
             _logger = logger;
+            _queryHandler = queryHandler;
         }
 
         /// <summary>
@@ -134,7 +140,11 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.Accepted)]
         public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId, TransferParticipantRequest transferRequest)
         {
-            var participantId = transferRequest.ParticipantId?.ToString() ?? transferRequest.RoomId.ToString();
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
+            var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
+            var kinlyParticipantId = participant.GetInterpreterRoom()?.Id.ToString() ?? participant.Id.ToString();
             var transferType = transferRequest.TransferType;
             try
             {
@@ -142,19 +152,19 @@ namespace VideoApi.Controllers
                 {
                     case TransferType.Call:
                         _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
-                            participantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId, participantId,
+                            kinlyParticipantId, conferenceId);
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId, kinlyParticipantId,
                             RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
-                            participantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId, participantId,
+                            kinlyParticipantId, conferenceId);
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId, kinlyParticipantId,
                             RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
                         break;
                     default:
                         _logger.LogWarning("Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
-                             participantId, conferenceId, transferType);
+                            kinlyParticipantId, conferenceId, transferType);
                         throw new InvalidOperationException($"Unsupported transfer type: {transferType}");
                 }
 
@@ -164,7 +174,7 @@ namespace VideoApi.Controllers
             {
                 _logger.LogError(ex,
                     "Error from Kinly API. Unable to {TransferType} Participant {Participant} in/from {Conference}",
-                    transferType, participantId, conferenceId);
+                    transferType, kinlyParticipantId, conferenceId);
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
