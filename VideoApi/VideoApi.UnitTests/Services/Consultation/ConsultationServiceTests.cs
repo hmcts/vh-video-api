@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             _consultationService = new ConsultationService(_kinlyApiClient.Object, _logger.Object, _commandHandler.Object, _queryHandler.Object);
 
             SetupTestConference();
-            _request = RequestBuilder();
+            _request = InitConsultationRequestForJudge();
             _rooms = CreateTestRooms(_request);
         }
 
@@ -152,7 +152,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 Times.Once);
         }
         
-        private StartConsultationRequest RequestBuilder()
+        private StartConsultationRequest InitConsultationRequestForJudge()
         {
             if (TestConference.Participants == null)
             {
@@ -186,6 +186,9 @@ namespace VideoApi.UnitTests.Services.Consultation
             var participantId = TestConference.Participants[0].Id;
             var _fromRoom = "ConsultationRoom";
             var _toRoom = "WaitingRoom";
+            _queryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
+            
             await _consultationService.LeaveConsultationAsync(TestConference.Id, participantId, _fromRoom, _toRoom);
 
             _kinlyApiClient.Verify(x =>
@@ -196,6 +199,43 @@ namespace VideoApi.UnitTests.Services.Consultation
                         )
                     )
                 , Times.Exactly(1));
+        }
+        
+        [Test]
+        public async Task should_use_interpreter_room_when_participant_is_in_an_interpreter_room_on_leave()
+        {
+            var fromRoom = "ParticipantConsultationRoom1";
+            var toRoom = RoomType.WaitingRoom.ToString();
+            var participant =
+                TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
+            var interpreterRoom = new InterpreterRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
+            interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
+            var roomParticipant = new RoomParticipant(participant.Id)
+            {
+                Room = interpreterRoom,
+                RoomId = interpreterRoom.Id
+            };
+            interpreterRoom.AddParticipant(roomParticipant);
+            participant.RoomParticipants.Add(roomParticipant);
+            
+            _queryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
+
+            var room = _rooms.First(x => x.ConferenceId.Equals(_request.ConferenceId));
+            await _consultationService.LeaveConsultationAsync(_request.ConferenceId, participant.Id, fromRoom, toRoom);
+            
+            
+            var request = new TransferParticipantParams
+            {
+                From = fromRoom,
+                To = toRoom,
+                Part_id = interpreterRoom.Id.ToString()
+            };
+            
+            _kinlyApiClient.Verify(x => x.TransferParticipantAsync(It.Is<string>(
+                    y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
+                    y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
+                Times.Once);
         }
 
         [Test]

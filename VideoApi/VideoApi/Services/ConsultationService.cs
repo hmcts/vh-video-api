@@ -103,7 +103,13 @@ namespace VideoApi.Services
         
         public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
         {
-            await TransferParticipantAsync(conferenceId, participantId.ToString(), fromRoom, toRoom);
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
+            var participant = conference.GetParticipants().Single(x => x.Id == participantId);
+
+            var kinlyParticipantId = participant.GetInterpreterRoom()?.Id.ToString() ?? participantId.ToString(); 
+            await TransferParticipantAsync(conferenceId, kinlyParticipantId, fromRoom, toRoom);
         }
         
         private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
