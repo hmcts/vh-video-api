@@ -20,12 +20,7 @@ namespace VideoApi.Contract.Requests
         /// Participant Id
         /// </summary>
         public Guid? ParticipantId { get; set; }
-        
-        /// <summary>
-        /// Room Id
-        /// </summary>
-        public long? RoomId { get; set; }
-        
+
         /// <summary>
         /// Direction of transfer in regards to a conference
         /// </summary>

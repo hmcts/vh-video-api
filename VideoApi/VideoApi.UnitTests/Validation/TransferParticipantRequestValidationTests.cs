@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Validation
     public class TransferParticipantRequestValidationTests
     {
         private TransferParticipantRequestValidation _validator;
-        
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -19,7 +19,7 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task should_pass_validation_when_participant_id_is_set()
+        public async Task should_pass_validation()
         {
             var request = new TransferParticipantRequest
             {
@@ -30,48 +30,20 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeTrue();
         }
-        
-        [Test]
-        public async Task should_pass_validation_when_room_id_is_set()
-        {
-            var request = new TransferParticipantRequest
-            {
-                RoomId = 1027,
-                TransferType = TransferType.Call
-            };
-            var result = await _validator.ValidateAsync(request);
 
-            result.IsValid.Should().BeTrue();
-        }
-        
         [Test]
-        public async Task should_fail_validation_when_participant_id_is_invalid_and_room_id_is_null()
+        public async Task should_fail_validation_when_participant_id_is_invalid()
         {
             var request = new TransferParticipantRequest
             {
                 ParticipantId = Guid.Empty,
-                RoomId = null,
                 TransferType = TransferType.Call
             };
             var result = await _validator.ValidateAsync(request);
             result.Errors.Any(x => x.ErrorMessage == TransferParticipantRequestValidation.MissingParticipantId)
                 .Should().BeTrue();
         }
-        
-        [Test]
-        public async Task should_fail_validation_when_room_id_is_negative_and_participant_id_is_null()
-        {
-            var request = new TransferParticipantRequest
-            {
-                ParticipantId = null,
-                RoomId = -3837,
-                TransferType = TransferType.Call
-            };
-            var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == TransferParticipantRequestValidation.MissingParticipantId)
-                .Should().BeTrue();
-        }
-        
+
         [Test]
         public async Task should_fail_validation_when_transfer_type_is_invalid()
         {

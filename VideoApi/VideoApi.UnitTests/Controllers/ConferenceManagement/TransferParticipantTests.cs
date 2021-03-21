@@ -1,13 +1,16 @@
 using System;
+using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Kinly;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
@@ -16,10 +19,11 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         public async Task should_move_participant_into_hearing_room()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
             var request = new TransferParticipantRequest
             {
-                ParticipantId = Guid.NewGuid(),
+                ParticipantId = participant.Id,
                 TransferType = TransferType.Call
             };
             
@@ -34,28 +38,41 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         public async Task should_move_room_into_hearing_room()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
+            var interpreterRoom = new InterpreterRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
+            interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
+            var roomParticipant = new RoomParticipant(participant.Id)
+            {
+                Room = interpreterRoom,
+                RoomId = interpreterRoom.Id
+            };
+            interpreterRoom.AddParticipant(roomParticipant);
+            participant.RoomParticipants.Add(roomParticipant);
+            UpdateConferenceQueryMock();
+            
             var request = new TransferParticipantRequest
             {
-                RoomId = 10293,
+                ParticipantId = participant.Id,
                 TransferType = TransferType.Call
             };
             
             var result = await Controller.TransferParticipantAsync(conferenceId, request);
             result.Should().BeOfType<AcceptedResult>();
-            
+
             VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.RoomId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString()), Times.Once);
+                x => x.TransferParticipantAsync(conferenceId, interpreterRoom.Id.ToString(),
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
         }
         
         [Test]
         public async Task should_dismiss_participant_from_hearing_room()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
             var request = new TransferParticipantRequest
             {
-                ParticipantId = Guid.NewGuid(),
+                ParticipantId = participant.Id,
                 TransferType = TransferType.Dismiss
             };
             
@@ -70,10 +87,11 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         public void should_return_internal_server_error_when_transfer_type_is_not_handled()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
             var request = new TransferParticipantRequest
             {
-                ParticipantId = Guid.NewGuid(),
+                ParticipantId = participant.Id,
                 TransferType = null
             };
 
@@ -88,10 +106,11 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         public async Task should_return_kinly_status_code_on_error()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
             var request = new TransferParticipantRequest
             {
-                ParticipantId = Guid.NewGuid(),
+                ParticipantId = participant.Id,
                 TransferType = TransferType.Call
             };
             var message = "Transfer Error";
