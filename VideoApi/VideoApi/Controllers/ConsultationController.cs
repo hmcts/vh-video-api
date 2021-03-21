@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -89,8 +90,9 @@ namespace VideoApi.Controllers
                 return NoContent();
             }
 
+            var displayName = requestedFor.GetInterpreterRoom()?.Label ?? requestedFor.DisplayName;
             var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
-                DateTime.UtcNow, null, null, $"Adding {requestedFor.DisplayName} to {request.RoomLabel}", null)
+                DateTime.UtcNow, null, null, $"Adding {displayName} to {request.RoomLabel}", null)
             {
                 ParticipantId = request.RequestedBy
             };
