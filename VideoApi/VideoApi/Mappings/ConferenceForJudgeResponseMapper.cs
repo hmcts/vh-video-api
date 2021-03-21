@@ -50,6 +50,7 @@ namespace VideoApi.Mappings
         {
             return new ParticipantForJudgeResponse
             {
+                Id = participant.Id,
                 Role = participant.UserRole.MapToContractEnum(),
                 DisplayName = participant.DisplayName,
                 Representee = participant.Representee,
