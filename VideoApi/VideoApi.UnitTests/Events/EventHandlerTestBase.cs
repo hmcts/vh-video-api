@@ -37,6 +37,8 @@ namespace VideoApi.UnitTests.Events
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent", "DA1@test.com")
+                .WithLinkedParticipant(UserRole.Individual, "Applicant")
+                .WithInterpreterRoom()
                 .Build();
 
             QueryHandlerMock

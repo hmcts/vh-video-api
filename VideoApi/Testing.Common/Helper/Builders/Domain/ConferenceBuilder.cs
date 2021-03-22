@@ -179,8 +179,12 @@ namespace Testing.Common.Helper.Builders.Domain
             }
             var room = new Builder(_builderSettings).CreateNew<InterpreterRoom>().WithFactory(() =>
                 new InterpreterRoom(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
-            
+
             var nonJudges = _conference.Participants.Where(x => !x.IsJudge()).ToList();
+            if (_conference.Participants.Count(x => x.LinkedParticipants.Any()) >= 2)
+            {
+                nonJudges = _conference.Participants.Where(x => x.LinkedParticipants.Any()).ToList();
+            }
             room.AddParticipant(new RoomParticipant(nonJudges[0].Id));
             room.AddParticipant(new RoomParticipant(nonJudges[1].Id));
             room.SetProtectedProperty(nameof(room.Id), new Random().Next());

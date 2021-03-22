@@ -6,14 +6,19 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.Events.Handlers
 {
     public class RoomParticipantDisconnectedEventHandler : EventHandlerBase<RoomParticipantDisconnectedEventHandler>
     {
+        private readonly IConsultationService _consultationService;
+
         public RoomParticipantDisconnectedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            ILogger<RoomParticipantDisconnectedEventHandler> logger) : base(queryHandler, commandHandler, logger)
+            ILogger<RoomParticipantDisconnectedEventHandler> logger, IConsultationService consultationService) : base(
+            queryHandler, commandHandler, logger)
         {
+            _consultationService = consultationService;
         }
 
         public override EventType EventType => EventType.RoomParticipantDisconnected;
@@ -24,6 +29,9 @@ namespace VideoApi.Events.Handlers
             {
                 return;
             }
+
+            await ReturnRoomParticipantToWaitingRoom();
+            
             var participantState =  ParticipantState.Disconnected;
             var updateParticipantCommand = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
                 participantState, null, null);
@@ -32,9 +40,19 @@ namespace VideoApi.Events.Handlers
                 new RemoveParticipantFromInterpreterRoomCommand(SourceInterpreterRoom.Id, SourceParticipant.Id);
             await CommandHandler.Handle(removeFromRoomCommand);
             
-            if (SourceConference.State != ConferenceState.Closed)
+            if (!SourceConference.IsClosed())
             {
                 await AddDisconnectedTask();
+            }
+        }
+
+        private async Task ReturnRoomParticipantToWaitingRoom()
+        {
+            if (SourceParticipant.State == ParticipantState.InConsultation)
+            {
+                var currentConsultationRoom = SourceParticipant.GetCurrentRoom();
+                await _consultationService.LeaveConsultationAsync(SourceConference.Id, SourceParticipant.Id,
+                    currentConsultationRoom, RoomType.WaitingRoom.ToString());
             }
         }
         
