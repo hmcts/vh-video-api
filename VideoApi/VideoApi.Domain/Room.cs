@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {

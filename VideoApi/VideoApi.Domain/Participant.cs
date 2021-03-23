@@ -107,9 +107,15 @@ namespace VideoApi.Domain
         {
             return UserRole == UserRole.Judge;
         }
+        
         public bool IsVideoHearingOfficer()
         {
             return UserRole == UserRole.VideoHearingsOfficer;
+        }
+        
+        public bool IsAWitness()
+        {
+            return HearingRole.Equals("Witness", StringComparison.CurrentCultureIgnoreCase);
         }
         
         public void AddLink(Guid linkedId, LinkedParticipantType linkType)

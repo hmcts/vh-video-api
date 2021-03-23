@@ -36,7 +36,7 @@ namespace VideoApi.UnitTests.Controllers.VideoEvents
         [TestCase(EventType.Transfer, true)]
         [TestCase(EventType.Help, false)]
         [TestCase(EventType.Start, true)]
-        [TestCase(EventType.CountdownFinished, false)]
+        [TestCase(EventType.CountdownFinished, true)]
         [TestCase(EventType.Pause, true)]
         [TestCase(EventType.Close, true)]
         [TestCase(EventType.Leave, true)]

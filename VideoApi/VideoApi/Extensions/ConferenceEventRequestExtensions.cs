@@ -9,7 +9,6 @@ namespace VideoApi.Extensions
             !string.IsNullOrEmpty(conferenceEvent.Phone)
                 || conferenceEvent.EventType == EventType.ConnectingToConference
                 || conferenceEvent.EventType == EventType.ConnectingToEventHub
-                || conferenceEvent.EventType == EventType.CountdownFinished
                 || conferenceEvent.EventType == EventType.Help
                 || conferenceEvent.EventType == EventType.SelectingMedia;
     }
