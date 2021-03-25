@@ -46,7 +46,8 @@ namespace VideoApi.Domain
 
         private bool IsCloseableRoom()
         {
-            return Type != VirtualCourtRoomType.Civilian && Type != VirtualCourtRoomType.Witness;
+            return Type != VirtualCourtRoomType.Civilian && Type != VirtualCourtRoomType.Witness &&
+                   Type != VirtualCourtRoomType.JudicialShared;
         }
 
         public void AddParticipant(RoomParticipant participant)

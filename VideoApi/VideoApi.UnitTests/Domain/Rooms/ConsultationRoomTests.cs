@@ -161,6 +161,19 @@ namespace VideoApi.UnitTests.Domain.Rooms
 
             room.Status.Should().Be(RoomStatus.Live);
         }
+        
+        [Test]
+        public void should_not_update_room_status_to_closed_when_room_type_is_JudicialShared()
+        {
+            var room = new ConsultationRoom(Guid.NewGuid(), "PanelMember1", VirtualCourtRoomType.JudicialShared, false);
+            var roomParticipant = new RoomParticipant(Guid.NewGuid());
+            room.AddParticipant(roomParticipant);
+            room.Status.Should().Be(RoomStatus.Live);
+
+            room.RemoveParticipant(roomParticipant);
+
+            room.Status.Should().Be(RoomStatus.Live);
+        }
 
         [Test]
         public void Should_not_update_room_status_to_closed_on_last_participant_remove_if_has_endpoint()

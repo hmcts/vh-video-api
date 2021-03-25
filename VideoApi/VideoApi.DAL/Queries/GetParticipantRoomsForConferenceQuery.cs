@@ -30,11 +30,12 @@ namespace VideoApi.DAL.Queries
 
         public Task<List<ParticipantRoom>> Handle(GetParticipantRoomsForConferenceQuery query)
         {
+            var sharedRoomTypes = new List<VirtualCourtRoomType>()
+                {VirtualCourtRoomType.Civilian, VirtualCourtRoomType.Witness, VirtualCourtRoomType.JudicialShared};
             return _context.Rooms.OfType<ParticipantRoom>()
                 .Include(x => x.RoomParticipants)
                 .AsNoTracking()
-                .Where(x => x.ConferenceId == query.ConferenceId && 
-                            (x.Type == VirtualCourtRoomType.Witness|| x.Type == VirtualCourtRoomType.Civilian))
+                .Where(x => x.ConferenceId == query.ConferenceId && sharedRoomTypes.Contains(x.Type))
                 .ToListAsync();
         }
     }
