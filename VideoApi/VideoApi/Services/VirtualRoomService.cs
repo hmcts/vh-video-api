@@ -100,7 +100,7 @@ namespace VideoApi.Services
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
             var roomId = await CreateInterpreterRoom(conference.Id, roomType);
-            var ingestUrl = $"{conference.IngestUrl}/{roomId}";
+            var ingestUrl = roomType == VirtualCourtRoomType.JudicialShared? null : $"{conference.IngestUrl}/{roomId}";
             var vmr = await CreateVmr(conference, roomId, ingestUrl, roomType, existingRooms, kinlyRoomType);
             await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
             _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,
