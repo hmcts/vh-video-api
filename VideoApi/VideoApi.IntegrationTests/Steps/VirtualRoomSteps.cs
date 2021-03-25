@@ -79,6 +79,21 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
         }
         
+        [Given(@"I have a get judicial office holder room request for a non-existent conference")]
+        public void GivenIHaveAGetJudicialRoomRequestNonExistentConference()
+        {
+            _context.Uri = GetJudicialRoomForParticipant(Guid.NewGuid(), Guid.NewGuid());
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I have a get judicial office holder room request for a non-existent participant")]
+        public void GivenIHaveAGetJudicialRoomRequestNonExistentParticipant()
+        {
+            var conference = _context.Test.Conference;
+            _context.Uri = GetJudicialRoomForParticipant(conference.Id,Guid.NewGuid());
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
         [Then(@"the response should have connection details for the room")]
         public async Task ThenTheResponseShouldHaveConnectionDetailsForTheRoom()
         {
