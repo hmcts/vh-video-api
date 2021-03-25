@@ -52,14 +52,12 @@ Feature: Virtual Rooms
     Given I have a conference
     And I have a get judicial office holder room request for a non-existent conference
     When I send the request to the endpoint
-    Then the response should have the status Ok and success status True
-    And the response should have connection details for the room
+    Then the response should have the status NotFound and success status False
 
   Scenario: Get a judicial office holder room non-existent participant
     Given I have a conference
     And I have a get judicial office holder room request for a non-existent participant
     When I send the request to the endpoint
-    Then the response should have the status Ok and success status True
-    And the response should have connection details for the room
+    Then the response should have the status NotFound and success status False
     
   
