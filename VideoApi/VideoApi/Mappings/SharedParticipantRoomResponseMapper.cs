@@ -7,7 +7,7 @@ namespace VideoApi.Mappings
 {
     public static class SharedParticipantRoomResponseMapper
     {
-        public static SharedParticipantRoomResponse MapRoomToResponse(InterpreterRoom consultationRoom)
+        public static SharedParticipantRoomResponse MapRoomToResponse(ParticipantRoom consultationRoom)
         {
             return new SharedParticipantRoomResponse
             {

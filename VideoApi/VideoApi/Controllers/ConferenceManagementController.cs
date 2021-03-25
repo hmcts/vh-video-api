@@ -144,7 +144,7 @@ namespace VideoApi.Controllers
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
-            var kinlyParticipantId = participant.GetInterpreterRoom()?.Id.ToString() ?? participant.Id.ToString();
+            var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
             var transferType = transferRequest.TransferType;
             try
             {

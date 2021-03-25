@@ -8,29 +8,29 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class CreateInterpreterRoomCommand : ICommand
+    public class CreateParticipantRoomCommand : ICommand
     {
         public Guid ConferenceId { get; }
         public VirtualCourtRoomType Type { get; }
         public long NewRoomId { get; internal set; }
         
-        public CreateInterpreterRoomCommand(Guid conferenceId, VirtualCourtRoomType type)
+        public CreateParticipantRoomCommand(Guid conferenceId, VirtualCourtRoomType type)
         {
             ConferenceId = conferenceId;
             Type = type;
         }
     }
     
-    public class CreateInterpreterRoomCommandHandler : ICommandHandler<CreateInterpreterRoomCommand>
+    public class CreateParticipantRoomCommandHandler : ICommandHandler<CreateParticipantRoomCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public CreateInterpreterRoomCommandHandler(VideoApiDbContext context)
+        public CreateParticipantRoomCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(CreateInterpreterRoomCommand command)
+        public async Task Handle(CreateParticipantRoomCommand command)
         {
             var conference = await _context.Conferences.SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
@@ -39,7 +39,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var room = new InterpreterRoom(command.ConferenceId, command.Type);
+            var room = new ParticipantRoom(command.ConferenceId, command.Type);
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
             command.NewRoomId = room.Id;

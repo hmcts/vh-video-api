@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Rooms
         [Test]
         public void should_update_room_connection_details()
         {
-            var room = new InterpreterRoom(Guid.NewGuid(), VirtualCourtRoomType.Civilian);
+            var room = new ParticipantRoom(Guid.NewGuid(), VirtualCourtRoomType.Civilian);
             room.Label.Should().BeNull();
 
             var label = "Interpreter1";

@@ -11,14 +11,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class CreateInterpreterRoomCommandTest : DatabaseTestsBase
     {
-        private CreateInterpreterRoomCommandHandler _handler;
+        private CreateParticipantRoomCommandHandler _handler;
         private Guid _newConferenceId;
         
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new CreateInterpreterRoomCommandHandler(context);
+            _handler = new CreateParticipantRoomCommandHandler(context);
         }
         
         [Test]
@@ -29,7 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
 
 
-            var command = new CreateInterpreterRoomCommand(_newConferenceId,  VirtualCourtRoomType.Civilian);
+            var command = new CreateParticipantRoomCommand(_newConferenceId,  VirtualCourtRoomType.Civilian);
 
             await _handler.Handle(command);
 
@@ -41,7 +41,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public void Should_throw_exception_if_no_conference_found()
         {
-            var command = new CreateInterpreterRoomCommand(Guid.NewGuid(), VirtualCourtRoomType.Civilian);
+            var command = new CreateParticipantRoomCommand(Guid.NewGuid(), VirtualCourtRoomType.Civilian);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
         

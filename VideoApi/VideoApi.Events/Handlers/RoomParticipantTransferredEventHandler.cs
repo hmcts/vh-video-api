@@ -21,7 +21,7 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            foreach (var participant in SourceInterpreterRoom.RoomParticipants)
+            foreach (var participant in SourceParticipantRoom.RoomParticipants)
             {
                 var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
                 var command =

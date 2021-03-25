@@ -9,9 +9,9 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetInterpreterRoomsForConferenceQuery : IQuery
+    public class GetParticipantRoomsForConferenceQuery : IQuery
     {
-        public GetInterpreterRoomsForConferenceQuery(Guid conferenceId)
+        public GetParticipantRoomsForConferenceQuery(Guid conferenceId)
         {
             ConferenceId = conferenceId;
         }
@@ -19,18 +19,18 @@ namespace VideoApi.DAL.Queries
         public Guid ConferenceId { get; }
     }
     
-    public class GetInterpreterRoomsForConferenceQueryHandler : IQueryHandler<GetInterpreterRoomsForConferenceQuery, List<InterpreterRoom>>
+    public class GetParticipantRoomsForConferenceQueryHandler : IQueryHandler<GetParticipantRoomsForConferenceQuery, List<ParticipantRoom>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetInterpreterRoomsForConferenceQueryHandler(VideoApiDbContext context)
+        public GetParticipantRoomsForConferenceQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public Task<List<InterpreterRoom>> Handle(GetInterpreterRoomsForConferenceQuery query)
+        public Task<List<ParticipantRoom>> Handle(GetParticipantRoomsForConferenceQuery query)
         {
-            return _context.Rooms.OfType<InterpreterRoom>()
+            return _context.Rooms.OfType<ParticipantRoom>()
                 .Include(x => x.RoomParticipants)
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId && 

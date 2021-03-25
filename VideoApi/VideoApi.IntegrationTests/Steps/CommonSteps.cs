@@ -553,7 +553,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task GivenIHaveACivilianInterpreterRoom()
         {
             var conference = _context.Test.Conference;
-            var interpreterRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+            var interpreterRoom = new ParticipantRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.Civilian);
             var seedRooms = await _context.TestDataManager.SeedRooms(new []{interpreterRoom});
             _context.Test.Room = seedRooms.First();
@@ -564,7 +564,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = _context.Test.Conference;
             var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
-            var interpreterRoom = new InterpreterRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
+            var interpreterRoom = new ParticipantRoom(conference.Id, $"InterpreterRoom{DateTime.UtcNow.Ticks}",
                 VirtualCourtRoomType.Civilian);
             interpreterRoom.AddParticipant(new RoomParticipant(participant.Id));
             var seedRooms = await _context.TestDataManager.SeedRooms(new []{interpreterRoom});

@@ -11,7 +11,7 @@ namespace VideoApi.Services.Contracts
         /// <param name="conference"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        Task<InterpreterRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant);
+        Task<ParticipantRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant);
         
         /// <summary>
         /// Create a room for linked participants of type witness.
@@ -21,6 +21,16 @@ namespace VideoApi.Services.Contracts
         /// <param name="conference"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        Task<InterpreterRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant);
+        Task<ParticipantRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant);
+        
+        /// <summary>
+        /// Create a room for linked participants of type witness.
+        /// This room, like witnesses, will not be pulled into a hearing when a hearing starts.
+        /// A judge will transfer them in or out like normal participants.
+        /// </summary>
+        /// <param name="conference"></param>
+        /// <param name="participant"></param>
+        /// <returns></returns>
+        Task<ParticipantRoom> GetOrCreateAJudicialVirtualRoom(Conference conference, Participant participant);
     }
 }

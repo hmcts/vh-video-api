@@ -177,8 +177,8 @@ namespace Testing.Common.Helper.Builders.Domain
             {
                 WithParticipants(2);
             }
-            var room = new Builder(_builderSettings).CreateNew<InterpreterRoom>().WithFactory(() =>
-                new InterpreterRoom(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
+            var room = new Builder(_builderSettings).CreateNew<ParticipantRoom>().WithFactory(() =>
+                new ParticipantRoom(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
 
             var nonJudges = _conference.Participants.Where(x => !x.IsJudge()).ToList();
             if (_conference.Participants.Count(x => x.LinkedParticipants.Any()) >= 2)

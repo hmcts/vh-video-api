@@ -13,8 +13,8 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void should_map_domain_room_to_interpreter_response()
         {
-            var room = Builder<InterpreterRoom>.CreateNew()
-                .WithFactory(() => new InterpreterRoom(Guid.NewGuid(), VirtualCourtRoomType.Civilian)).Build();
+            var room = Builder<ParticipantRoom>.CreateNew()
+                .WithFactory(() => new ParticipantRoom(Guid.NewGuid(), VirtualCourtRoomType.Civilian)).Build();
             var response = SharedParticipantRoomResponseMapper.MapRoomToResponse(room);
 
             response.Label.Should().Be(room.Label);

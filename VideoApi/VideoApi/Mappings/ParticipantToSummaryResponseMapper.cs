@@ -8,11 +8,11 @@ namespace VideoApi.Mappings
 {
     public static class ParticipantToSummaryResponseMapper
     {
-        public static ParticipantSummaryResponse MapParticipantToSummary(Participant participant, InterpreterRoom interpreterRoom = null)
+        public static ParticipantSummaryResponse MapParticipantToSummary(Participant participant, ParticipantRoom participantRoom = null)
         {
-            var interpreterRoomMapped = interpreterRoom == null
+            var interpreterRoomMapped = participantRoom == null
                 ? null
-                : RoomToDetailsResponseMapper.MapConsultationRoomToResponse(interpreterRoom);
+                : RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participantRoom);
             
             var participantStatus = participant.GetCurrentStatus() != null
                 ? participant.GetCurrentStatus().ParticipantState

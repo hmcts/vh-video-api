@@ -112,7 +112,7 @@ namespace VideoApi.Controllers
 
         private async Task<SharedParticipantRoomResponse> GetVmr(Conference conference, Participant participant, VirtualCourtRoomType roomType)
         {
-            InterpreterRoom consultationRoom;
+            ParticipantRoom consultationRoom;
             switch (roomType)
             {
                 case VirtualCourtRoomType.Witness:

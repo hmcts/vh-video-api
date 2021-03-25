@@ -83,9 +83,9 @@ namespace VideoApi.Domain
             return CurrentConsultationRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
         }
 
-        public InterpreterRoom GetInterpreterRoom()
+        public ParticipantRoom GetParticipantRoom()
         {
-            return RoomParticipants.Select(x => x.Room).OfType<InterpreterRoom>().FirstOrDefault();
+            return RoomParticipants.Select(x => x.Room).OfType<ParticipantRoom>().FirstOrDefault();
         }
 
         public void UpdateCurrentRoom(RoomType? currentRoom)

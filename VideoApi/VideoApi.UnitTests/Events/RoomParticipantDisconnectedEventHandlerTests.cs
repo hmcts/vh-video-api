@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Events
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants()
                 .First(x => x.UserRole == UserRole.Individual && x.LinkedParticipants.Any());
-            var interpreterRoomId = conference.Rooms.OfType<InterpreterRoom>().First().Id;
+            var interpreterRoomId = conference.Rooms.OfType<ParticipantRoom>().First().Id;
             var consultationRoom = new ConsultationRoom(conference.Id, "ConsultationRoom1",
                 VirtualCourtRoomType.Participant, false);
             participantForEvent.State = ParticipantState.InConsultation;

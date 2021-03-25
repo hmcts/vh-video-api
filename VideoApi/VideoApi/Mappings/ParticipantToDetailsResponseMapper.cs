@@ -8,11 +8,11 @@ namespace VideoApi.Mappings
     public static class ParticipantToDetailsResponseMapper
     {
         public static ParticipantDetailsResponse MapParticipantToResponse(Participant participant,
-            InterpreterRoom interpreterRoom = null)
+            ParticipantRoom participantRoom = null)
         {
-            var interpreterRoomMapped = interpreterRoom == null
+            var participantRoomMapped = participantRoom == null
                 ? null
-                : RoomToDetailsResponseMapper.MapConsultationRoomToResponse(interpreterRoom);
+                : RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participantRoom);
 
             return new ParticipantDetailsResponse
             {
@@ -35,7 +35,7 @@ namespace VideoApi.Mappings
                         .Select(LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse).ToList(),
                 CurrentRoom =
                     RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participant.CurrentConsultationRoom),
-                CurrentInterpreterRoom = interpreterRoomMapped
+                CurrentInterpreterRoom = participantRoomMapped
             };
         }
     }

@@ -11,7 +11,7 @@ namespace VideoApi.Mappings
         public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference,
             string pexipSelfTestNode)
         {
-            var allInterpreterRooms = conference.Rooms.OfType<InterpreterRoom>().ToList();
+            var allInterpreterRooms = conference.Rooms.OfType<ParticipantRoom>().ToList();
             var interpreterRooms = allInterpreterRooms.Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
             var response = new ConferenceDetailsResponse
             {
@@ -42,7 +42,7 @@ namespace VideoApi.Mappings
         }
 
         private static List<ParticipantDetailsResponse> MapParticipants(IList<Participant> participants,
-            List<InterpreterRoom> interpreterRooms)
+            List<ParticipantRoom> interpreterRooms)
         {
             return participants.Select(x =>
             {

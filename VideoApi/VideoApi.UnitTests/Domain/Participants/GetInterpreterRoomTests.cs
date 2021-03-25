@@ -16,7 +16,7 @@ namespace VideoApi.UnitTests.Domain.Participants
                 .WithCaseTypeGroup("Applicant")
                 .Build();
 
-            participant.GetInterpreterRoom().Should().BeNull();
+            participant.GetParticipantRoom().Should().BeNull();
         }
         
         [Test]
@@ -37,7 +37,7 @@ namespace VideoApi.UnitTests.Domain.Participants
             consultationRoom.AddParticipant(roomParticipant);
             participant.RoomParticipants.Add(roomParticipant);
 
-            participant.GetInterpreterRoom().Should().BeNull();
+            participant.GetParticipantRoom().Should().BeNull();
         }
         
         [Test]
@@ -51,7 +51,7 @@ namespace VideoApi.UnitTests.Domain.Participants
                 VirtualCourtRoomType.Participant, false);
             consultationRoom.SetProtectedProperty(nameof(consultationRoom.Id), 998);
             
-            var interpreterRoom = new InterpreterRoom(conferenceId, "Interpreter1", VirtualCourtRoomType.Civilian);
+            var interpreterRoom = new ParticipantRoom(conferenceId, "Interpreter1", VirtualCourtRoomType.Civilian);
             interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
             
             var consultationRoomParticipant = new RoomParticipant(participant.Id)
@@ -69,7 +69,7 @@ namespace VideoApi.UnitTests.Domain.Participants
             participant.RoomParticipants.Add(interpreterRoomParticipant);
             participant.RoomParticipants.Add(consultationRoomParticipant);
 
-            participant.GetInterpreterRoom().Should().Be(interpreterRoom);
+            participant.GetParticipantRoom().Should().Be(interpreterRoom);
         }
     }
 }

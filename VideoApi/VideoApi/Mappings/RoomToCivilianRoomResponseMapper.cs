@@ -6,7 +6,7 @@ namespace VideoApi.Mappings
 {
     public static class RoomToCivilianRoomResponseMapper
     {
-        public static CivilianRoomResponse MapToResponse(InterpreterRoom consultationRoom)
+        public static CivilianRoomResponse MapToResponse(ParticipantRoom consultationRoom)
         {
             return new CivilianRoomResponse
             {

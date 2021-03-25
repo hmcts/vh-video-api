@@ -4,9 +4,9 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Mappings
 {
-    public class InterpreterRoomMap : IEntityTypeConfiguration<InterpreterRoom>
+    public class ParticipantRoomMap : IEntityTypeConfiguration<ParticipantRoom>
     {
-        public void Configure(EntityTypeBuilder<InterpreterRoom> builder)
+        public void Configure(EntityTypeBuilder<ParticipantRoom> builder)
         {
             builder.Property(x => x.IngestUrl);
             builder.Property(x => x.PexipNode);

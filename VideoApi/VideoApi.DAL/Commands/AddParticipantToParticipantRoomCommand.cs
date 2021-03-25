@@ -8,30 +8,30 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class AddParticipantToInterpreterRoomCommand : ICommand
+    public class AddParticipantToParticipantRoomCommand : ICommand
     {
         public long RoomId { get; }
         public Guid ParticipantId { get; }
 
-        public AddParticipantToInterpreterRoomCommand(long roomId, Guid participantId)
+        public AddParticipantToParticipantRoomCommand(long roomId, Guid participantId)
         {
             RoomId = roomId;
             ParticipantId = participantId;
         }
     }
 
-    public class AddParticipantToInterpreterRoomCommandHandler : ICommandHandler<AddParticipantToInterpreterRoomCommand>
+    public class AddParticipantToParticipantRoomCommandHandler : ICommandHandler<AddParticipantToParticipantRoomCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public AddParticipantToInterpreterRoomCommandHandler(VideoApiDbContext context)
+        public AddParticipantToParticipantRoomCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(AddParticipantToInterpreterRoomCommand command)
+        public async Task Handle(AddParticipantToParticipantRoomCommand command)
         {
-            var room = await _context.Rooms.OfType<InterpreterRoom>().SingleOrDefaultAsync(x => x.Id == command.RoomId);
+            var room = await _context.Rooms.OfType<ParticipantRoom>().SingleOrDefaultAsync(x => x.Id == command.RoomId);
 
             if (room == null)
             {

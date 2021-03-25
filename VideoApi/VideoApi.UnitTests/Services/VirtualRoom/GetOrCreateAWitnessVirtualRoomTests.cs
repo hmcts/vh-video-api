@@ -30,12 +30,12 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             _service = _mocker.Create<VirtualRoomService>();
             _conference = InitConference();
 
-            var emptyCivilianInterpreterRoom = new InterpreterRoom(_conference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
+            var emptyCivilianInterpreterRoom = new ParticipantRoom(_conference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
             emptyCivilianInterpreterRoom.SetProtectedProperty(nameof(emptyCivilianInterpreterRoom.Id), 1);
             _mocker.Mock<IQueryHandler>().Setup(x =>
-                    x.Handle<GetInterpreterRoomsForConferenceQuery, List<InterpreterRoom>>(It.Is<GetInterpreterRoomsForConferenceQuery>(q =>
+                    x.Handle<GetParticipantRoomsForConferenceQuery, List<ParticipantRoom>>(It.Is<GetParticipantRoomsForConferenceQuery>(q =>
                         q.ConferenceId == _conference.Id)))
-                .ReturnsAsync(new List<InterpreterRoom> {emptyCivilianInterpreterRoom});
+                .ReturnsAsync(new List<ParticipantRoom> {emptyCivilianInterpreterRoom});
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         {
             var expectedRoomId = 2;
             var participant = _conference.Participants.First(x => !x.IsJudge());
-            var expectedRoom = new InterpreterRoom(_conference.Id, VirtualCourtRoomType.Witness);
+            var expectedRoom = new ParticipantRoom(_conference.Id, VirtualCourtRoomType.Witness);
             expectedRoom.SetProtectedProperty(nameof(expectedRoom.Id), expectedRoomId);
             var newVmrRoom = new BookedParticipantRoomResponse
             {
@@ -57,19 +57,19 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
 
 
             _mocker.Mock<IQueryHandler>().SetupSequence(x =>
-                    x.Handle<GetInterpreterRoomsForConferenceQuery, List<InterpreterRoom>>(It.Is<GetInterpreterRoomsForConferenceQuery>(q =>
+                    x.Handle<GetParticipantRoomsForConferenceQuery, List<ParticipantRoom>>(It.Is<GetParticipantRoomsForConferenceQuery>(q =>
                         q.ConferenceId == _conference.Id)))
-                .ReturnsAsync(new List<InterpreterRoom>())
-                .ReturnsAsync(new List<InterpreterRoom> {expectedRoom});
+                .ReturnsAsync(new List<ParticipantRoom>())
+                .ReturnsAsync(new List<ParticipantRoom> {expectedRoom});
 
             _mocker.Mock<ICommandHandler>().Setup(x =>
-                x.Handle(It.IsAny<CreateInterpreterRoomCommand>())).Callback<CreateInterpreterRoomCommand>(command =>
+                x.Handle(It.IsAny<CreateParticipantRoomCommand>())).Callback<CreateParticipantRoomCommand>(command =>
             {
                 command.SetProtectedProperty(nameof(command.NewRoomId), expectedRoomId);
             });
 
             _mocker.Mock<ICommandHandler>().Setup(x =>
-                x.Handle(It.IsAny<UpdateInterpreterRoomConnectionDetailsCommand>())).Callback(() =>
+                x.Handle(It.IsAny<UpdateParticipantRoomConnectionDetailsCommand>())).Callback(() =>
                 expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, "ingesturl",
                     newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
