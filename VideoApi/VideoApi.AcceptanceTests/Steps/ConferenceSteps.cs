@@ -432,6 +432,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge(judgeFirstName)
+                .WithJudicialOfficeHolder()
                 .WithRepresentative("Applicant").WithIndividual("Applicant")
                 .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .WithHearingRefId(Guid.NewGuid())

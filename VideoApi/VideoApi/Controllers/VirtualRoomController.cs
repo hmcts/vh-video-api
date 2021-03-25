@@ -77,6 +77,28 @@ namespace VideoApi.Controllers
             var response = await GetVmr(validation.Conference,validation.Participant, VirtualCourtRoomType.Witness);
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Get a judicial office holder VMR or return an existing one for a participant
+        /// </summary>
+        /// <param name="conferenceId"></param>
+        /// <param name="participantId"></param>
+        /// <returns></returns>
+        [HttpGet("{conferenceId}/rooms/judicial/{participantId}")]
+        [OpenApiOperation("GetJudicialRoomForParticipant")]
+        [ProducesResponseType(typeof(SharedParticipantRoomResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetJudicialRoomForParticipant(Guid conferenceId, Guid participantId)
+        {
+            var validation = await ValidateConferenceAndParticipant(conferenceId, participantId);
+            if (validation.FailedResult != null)
+            {
+                return validation.FailedResult;
+            }
+            
+            var response = await GetVmr(validation.Conference,validation.Participant, VirtualCourtRoomType.JudicialShared);
+            return Ok(response);
+        }
 
         private async Task<ConferenceParticipantExists> ValidateConferenceAndParticipant(Guid conferenceId,
             Guid participantId)
@@ -112,21 +134,24 @@ namespace VideoApi.Controllers
 
         private async Task<SharedParticipantRoomResponse> GetVmr(Conference conference, Participant participant, VirtualCourtRoomType roomType)
         {
-            ParticipantRoom consultationRoom;
+            ParticipantRoom participantRoom;
             switch (roomType)
             {
                 case VirtualCourtRoomType.Witness:
-                    consultationRoom = await _roomService.GetOrCreateAWitnessVirtualRoom(conference, participant);
+                    participantRoom = await _roomService.GetOrCreateAWitnessVirtualRoom(conference, participant);
+                    break;
+                case VirtualCourtRoomType.JudicialShared:
+                    participantRoom = await _roomService.GetOrCreateAJudicialVirtualRoom(conference, participant);
                     break;
                 default:
-                    consultationRoom = await _roomService.GetOrCreateAnInterpreterVirtualRoom(conference, participant);
+                    participantRoom = await _roomService.GetOrCreateAnInterpreterVirtualRoom(conference, participant);
                     break;
             }
             
             _logger.LogDebug(
-                "Returning interpreter room {Room} for participant {Participant} in conference {Conference}", consultationRoom.Id,
+                "Returning participant room {Room} for participant {Participant} in conference {Conference}", participantRoom.Id,
                 participant.Id, conference.Id);
-            return SharedParticipantRoomResponseMapper.MapRoomToResponse(consultationRoom);
+            return SharedParticipantRoomResponseMapper.MapRoomToResponse(participantRoom);
         }
     }
 }

@@ -6,6 +6,7 @@ using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Responses;
+using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using static Testing.Common.Helper.ApiUriFactory.VirtualRoomEndpoints;
 
@@ -66,6 +67,15 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = _context.Test.Conference;
             _context.Uri = GetWitnessRoomForParticipant(conference.Id,Guid.NewGuid());
+            _context.HttpMethod = HttpMethod.Get;
+        }
+        
+        [Given(@"I have a get judicial office holder room request")]
+        public void GivenIHaveAGetJudicialOfficeHolderRoomRequest()
+        {
+            var conference = _context.Test.Conference;
+            var participant = conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
+            _context.Uri = GetJudicialRoomForParticipant(conference.Id, participant.Id);
             _context.HttpMethod = HttpMethod.Get;
         }
         
