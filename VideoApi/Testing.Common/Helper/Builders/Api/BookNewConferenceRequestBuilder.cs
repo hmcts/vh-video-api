@@ -31,13 +31,24 @@ namespace Testing.Common.Helper.Builders.Api
 
         public BookNewConferenceRequestBuilder WithJudge(string firstName = null)
         {
+            return WithJudicialParticipant(UserRole.Judge, firstName);
+        }
+        
+        public BookNewConferenceRequestBuilder WithJudicialOfficeHolder(string firstName = null)
+        {
+            return WithJudicialParticipant(UserRole.JudicialOfficeHolder, firstName);
+        }
+
+        private BookNewConferenceRequestBuilder WithJudicialParticipant(UserRole role, string firstName = null)
+        {
+            var hearingRole = role == UserRole.Judge ? "Judge" : "PanelMember";
             var participant = Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Name.First()}{RandomNumber.Next()}")
                 .With(x => x.FirstName = $"Automation_{Name.First()}")
                 .With(x => x.LastName = $"Automation_{Name.Last()}")
                 .With(x => x.DisplayName = $"Automation_{Internet.UserName()}")
-                .With(x => x.UserRole = UserRole.Judge)
-                .With(x => x.HearingRole = "Judge")
+                .With(x => x.UserRole = role)
+                .With(x => x.HearingRole =  hearingRole)
                 .With(x => x.ParticipantRefId = Guid.NewGuid())
                 .With(x => x.ContactEmail = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")
                 .With(x => x.Username = $"Automation_Video_APi_{RandomNumber.Next()}@hmcts.net")

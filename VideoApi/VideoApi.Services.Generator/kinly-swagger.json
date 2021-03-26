@@ -688,7 +688,11 @@
           "type": "string"
         },
         "room_type": {
-          "type": "string"
+          "oneOf": [
+            {
+              "$ref": "#/definitions/KinlyRoomType"
+            }
+          ]
         },
         "tile_number": {
           "type": "string"
@@ -700,6 +704,12 @@
           "type": "string"
         }
       }
+    },
+    "KinlyRoomType": {
+      "enum": [
+        "Interpreter",
+        "Panel Member"
+      ]
     },
     "bookedParticipantRoomResponse": {
       "type": "object",

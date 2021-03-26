@@ -121,7 +121,7 @@ namespace VideoApi.UnitTests.Services.Consultation
         {
             var participant =
                 TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
-            var interpreterRoom = new InterpreterRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
+            var interpreterRoom = new ParticipantRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
             interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
             var roomParticipant = new RoomParticipant(participant.Id)
             {
@@ -208,7 +208,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             var toRoom = RoomType.WaitingRoom.ToString();
             var participant =
                 TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
-            var interpreterRoom = new InterpreterRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
+            var interpreterRoom = new ParticipantRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
             interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
             var roomParticipant = new RoomParticipant(participant.Id)
             {
@@ -221,7 +221,6 @@ namespace VideoApi.UnitTests.Services.Consultation
             _queryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
 
-            var room = _rooms.First(x => x.ConferenceId.Equals(_request.ConferenceId));
             await _consultationService.LeaveConsultationAsync(_request.ConferenceId, participant.Id, fromRoom, toRoom);
             
             

@@ -8,9 +8,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateInterpreterRoomConnectionDetailsCommand : ICommand
+    public class UpdateParticipantRoomConnectionDetailsCommand : ICommand
     {
-        public UpdateInterpreterRoomConnectionDetailsCommand(Guid conferenceId, long roomId, string label, string ingestUrl, string pexipNode,
+        public UpdateParticipantRoomConnectionDetailsCommand(Guid conferenceId, long roomId, string label, string ingestUrl, string pexipNode,
             string participantUri)
         {
             ConferenceId = conferenceId;
@@ -29,18 +29,18 @@ namespace VideoApi.DAL.Commands
         public string ParticipantUri { get; }
     }
 
-    public class UpdateInterpreterRoomConnectionDetailsCommandHandler : ICommandHandler<UpdateInterpreterRoomConnectionDetailsCommand>
+    public class UpdateParticipantRoomConnectionDetailsCommandHandler : ICommandHandler<UpdateParticipantRoomConnectionDetailsCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public UpdateInterpreterRoomConnectionDetailsCommandHandler(VideoApiDbContext context)
+        public UpdateParticipantRoomConnectionDetailsCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(UpdateInterpreterRoomConnectionDetailsCommand command)
+        public async Task Handle(UpdateParticipantRoomConnectionDetailsCommand command)
         {
-            var room = await _context.Rooms.OfType<InterpreterRoom>()
+            var room = await _context.Rooms.OfType<ParticipantRoom>()
                 .SingleOrDefaultAsync(x => x.ConferenceId == command.ConferenceId &&  x.Id == command.RoomId);
 
             if (room == null)

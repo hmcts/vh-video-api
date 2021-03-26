@@ -13,7 +13,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 {
     public class GetInterpreterRoomsForConferenceQueryTests : DatabaseTestsBase
     {
-        private GetInterpreterRoomsForConferenceQueryHandler _handler;
+        private GetParticipantRoomsForConferenceQueryHandler _handler;
         private Guid _newConferenceId;
         private List<Room> _rooms;
 
@@ -23,14 +23,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _newConferenceId = Guid.Empty;
             _rooms = null;
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetInterpreterRoomsForConferenceQueryHandler(context);
+            _handler = new GetParticipantRoomsForConferenceQueryHandler(context);
         }
 
         [Test]
         public async Task Should_return_an_empty_list_if_conference_does_not_exist()
         {
             var fakeConferenceId = Guid.NewGuid();
-            var query = new GetInterpreterRoomsForConferenceQuery(fakeConferenceId);
+            var query = new GetParticipantRoomsForConferenceQuery(fakeConferenceId);
             var result = await _handler.Handle(query);
 
             result.Should().BeEmpty();
@@ -43,9 +43,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _newConferenceId = conference.Id;
             _rooms = CreateRoomsForConference(conference.Id);
             await TestDataManager.SeedRooms(_rooms);
-            var interpreterRooms = _rooms.Where(r => r is InterpreterRoom).ToList();
+            var interpreterRooms = _rooms.Where(r => r is ParticipantRoom).ToList();
             
-            var query = new GetInterpreterRoomsForConferenceQuery(conference.Id);
+            var query = new GetParticipantRoomsForConferenceQuery(conference.Id);
             var result = await _handler.Handle(query);
 
 
@@ -72,8 +72,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
             {
                 new ConsultationRoom(conferenceId, "ConsultationRoom1", VirtualCourtRoomType.Participant, false),
                 new ConsultationRoom(conferenceId, "JudgeJOHConsultationRoom1", VirtualCourtRoomType.JudgeJOH, false),
-                new InterpreterRoom(conferenceId, "InterpreterRoom1", VirtualCourtRoomType.Witness),
-                new InterpreterRoom(conferenceId, VirtualCourtRoomType.Civilian)
+                new ParticipantRoom(conferenceId, "InterpreterRoom1", VirtualCourtRoomType.Witness),
+                new ParticipantRoom(conferenceId, VirtualCourtRoomType.Civilian)
             };
         }
     }

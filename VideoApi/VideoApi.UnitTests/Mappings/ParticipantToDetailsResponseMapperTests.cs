@@ -36,7 +36,7 @@ namespace VideoApi.UnitTests.Mappings
                 VirtualCourtRoomType.Participant, true);
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual).Build();
             participant.UpdateCurrentConsultationRoom(consultationRoom);
-            var interpreterRoom = new InterpreterRoom(Guid.NewGuid(), "Interpreter1", VirtualCourtRoomType.Witness);
+            var interpreterRoom = new ParticipantRoom(Guid.NewGuid(), "Interpreter1", VirtualCourtRoomType.Witness);
             
             var response = ParticipantToDetailsResponseMapper.MapParticipantToResponse(participant, interpreterRoom);
             

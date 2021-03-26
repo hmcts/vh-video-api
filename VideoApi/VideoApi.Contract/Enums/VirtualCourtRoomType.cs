@@ -6,6 +6,7 @@ namespace VideoApi.Contract.Enums
         Participant = 2,
         WaitingRoom = 3,
         Civilian = 4,
-        Witness = 5
+        Witness = 5,
+        JudicialShared = 6
     }
 }

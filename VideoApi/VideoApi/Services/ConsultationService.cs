@@ -97,7 +97,7 @@ namespace VideoApi.Services
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
-            var kinlyParticipantId = participant.GetInterpreterRoom()?.Id.ToString() ?? participantId.ToString(); 
+            var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
             await TransferParticipantAsync(conferenceId, kinlyParticipantId, participant.GetCurrentRoom(), room);
         }
         
@@ -108,7 +108,7 @@ namespace VideoApi.Services
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
-            var kinlyParticipantId = participant.GetInterpreterRoom()?.Id.ToString() ?? participantId.ToString(); 
+            var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
             await TransferParticipantAsync(conferenceId, kinlyParticipantId, fromRoom, toRoom);
         }
         

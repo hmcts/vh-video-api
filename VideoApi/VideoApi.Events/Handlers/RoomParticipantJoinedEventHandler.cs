@@ -26,7 +26,7 @@ namespace VideoApi.Events.Handlers
                 participantState, room, null);
             await CommandHandler.Handle(updateParticipantCommand);
             var addParticipantToRoomCommand =
-                new AddParticipantToInterpreterRoomCommand(SourceInterpreterRoom.Id, SourceParticipant.Id);
+                new AddParticipantToParticipantRoomCommand(SourceParticipantRoom.Id, SourceParticipant.Id);
             await CommandHandler.Handle(addParticipantToRoomCommand);
         }
     }

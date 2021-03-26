@@ -37,7 +37,7 @@ namespace VideoApi.Events.Handlers
                 participantState, null, null);
             await CommandHandler.Handle(updateParticipantCommand);
             var removeFromRoomCommand =
-                new RemoveParticipantFromInterpreterRoomCommand(SourceInterpreterRoom.Id, SourceParticipant.Id);
+                new RemoveParticipantFromParticipantRoomCommand(SourceParticipantRoom.Id, SourceParticipant.Id);
             await CommandHandler.Handle(removeFromRoomCommand);
             
             if (!SourceConference.IsClosed())

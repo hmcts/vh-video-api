@@ -9,30 +9,30 @@ using Task = System.Threading.Tasks.Task;
 namespace VideoApi.DAL.Commands
 {
    
-    public class RemoveParticipantFromInterpreterRoomCommand : ICommand
+    public class RemoveParticipantFromParticipantRoomCommand : ICommand
     {
         public long RoomId { get; }
         public Guid ParticipantId { get; }
         
-        public RemoveParticipantFromInterpreterRoomCommand(long roomId, Guid participantId)
+        public RemoveParticipantFromParticipantRoomCommand(long roomId, Guid participantId)
         {
             RoomId = roomId;
             ParticipantId = participantId;
         }
     }
 
-    public class RemoveParticipantFromInterpreterRoomCommandHandler : ICommandHandler<RemoveParticipantFromInterpreterRoomCommand>
+    public class RemoveParticipantFromParticipantRoomCommandHandler : ICommandHandler<RemoveParticipantFromParticipantRoomCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public RemoveParticipantFromInterpreterRoomCommandHandler(VideoApiDbContext context)
+        public RemoveParticipantFromParticipantRoomCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(RemoveParticipantFromInterpreterRoomCommand command)
+        public async Task Handle(RemoveParticipantFromParticipantRoomCommand command)
         {
-            var room = await _context.Rooms.OfType<InterpreterRoom>().Include(x => x.RoomParticipants)
+            var room = await _context.Rooms.OfType<ParticipantRoom>().Include(x => x.RoomParticipants)
                 .SingleOrDefaultAsync(x => x.Id == command.RoomId);
 
             if (room == null)

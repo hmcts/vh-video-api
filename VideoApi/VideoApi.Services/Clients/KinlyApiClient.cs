@@ -1801,7 +1801,7 @@ namespace VideoApi.Services.Kinly
         public string Participant_type { get; set; }
     
         [Newtonsoft.Json.JsonProperty("room_type", Required = Newtonsoft.Json.Required.Always)]
-        public string Room_type { get; set; }
+        public KinlyRoomType Room_type { get; set; }
     
         [Newtonsoft.Json.JsonProperty("tile_number", Required = Newtonsoft.Json.Required.Always)]
         public string Tile_number { get; set; }
@@ -1821,6 +1821,17 @@ namespace VideoApi.Services.Kinly
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<CreateParticipantRoomParams>(data);
         }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.11.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum KinlyRoomType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Interpreter")]
+        Interpreter = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Panel Member")]
+        Panel_Member = 1,
     
     }
     

@@ -89,7 +89,7 @@ namespace VideoApi.Controllers
                 return NoContent();
             }
 
-            var displayName = requestedFor.GetInterpreterRoom()?.Label ?? requestedFor.DisplayName;
+            var displayName = requestedFor.GetParticipantRoom()?.Label ?? requestedFor.DisplayName;
             var command = new SaveEventCommand(conference.Id, Guid.NewGuid().ToString(), EventType.Consultation,
                 DateTime.UtcNow, null, null, $"Adding {displayName} to {request.RoomLabel}", null)
             {

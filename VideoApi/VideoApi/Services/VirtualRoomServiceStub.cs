@@ -12,22 +12,31 @@ namespace VideoApi.Services
     public class VirtualRoomServiceStub : IVirtualRoomService
     {
         private int _roomCount;
-        private readonly Dictionary<InterpreterRoom, List<Participant>> _rooms = new Dictionary<InterpreterRoom, List<Participant>>();
-        public Task<InterpreterRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
+        private readonly Dictionary<ParticipantRoom, List<Participant>> _rooms = new Dictionary<ParticipantRoom, List<Participant>>();
+        public Task<ParticipantRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
         {
             var label = $"Interpreter{_roomCount + 1}";
             var joinUri = "interpreter__waiting_room";
             return CreateRoom(conference, participant, VirtualCourtRoomType.Witness, label, joinUri);
         }
 
-        public Task<InterpreterRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
+        public Task<ParticipantRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
         {
             var label = $"Witness{_roomCount + 1}";
             var joinUri = "witness__waiting_room";
             return CreateRoom(conference, participant, VirtualCourtRoomType.Witness, label, joinUri);
         }
 
-        private Task<InterpreterRoom> CreateRoom(Conference conference, Participant participant, VirtualCourtRoomType type, string label, string joinUri)
+        public Task<ParticipantRoom> GetOrCreateAJudicialVirtualRoom(Conference conference, Participant participant)
+        {
+            var node = "sip.node.com";
+            var joinUri = "panelmember__waiting_room";
+            var room = new ParticipantRoom(conference.Id, VirtualCourtRoomType.JudicialShared);
+            room.UpdateConnectionDetails("PanelMemberRoom1", null, node, joinUri);
+            return Task.FromResult(room);
+        }
+
+        private Task<ParticipantRoom> CreateRoom(Conference conference, Participant participant, VirtualCourtRoomType type, string label, string joinUri)
         {
             var ids = participant.LinkedParticipants.Select(x => x.Id).ToList();
             ids.Add(participant.Id);
@@ -41,10 +50,9 @@ namespace VideoApi.Services
             }
             var ingest = $"{conference.IngestUrl}/{_roomCount}";
             var node = "sip.node.com";
-            var room = new InterpreterRoom(Guid.NewGuid(), type);
+            var room = new ParticipantRoom(Guid.NewGuid(), type);
             room.UpdateConnectionDetails(label, ingest, node, joinUri);
             
-            room.UpdateConnectionDetails(label, ingest, node, joinUri);
             _roomCount++;
             _rooms.Add(room, new List<Participant>{participant});
             return Task.FromResult(room);

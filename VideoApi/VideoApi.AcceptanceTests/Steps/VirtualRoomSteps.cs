@@ -37,6 +37,15 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetWitnessRoomForParticipant(conference.Id, participant.Id));
         }
         
+        [Given(@"I have a get judicial room request")]
+        public void GivenIHaveAGetJudicialRoomRequest()
+        {
+            var conference = _context.Test.ConferenceResponse;
+            var participant = conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
+            
+            _context.Request = _context.Get(GetJudicialRoomForParticipant(conference.Id, participant.Id));
+        }
+        
         [Then(@"the response should have connection details for the room")]
         public void ThenTheResponseShouldHaveConnectionDetailsForTheRoom()
         {

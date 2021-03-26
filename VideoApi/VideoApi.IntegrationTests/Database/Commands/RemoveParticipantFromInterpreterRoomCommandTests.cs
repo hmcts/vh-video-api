@@ -15,15 +15,15 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class RemoveParticipantFromInterpreterRoomCommandTests : DatabaseTestsBase
     {
-        private RemoveParticipantFromInterpreterRoomCommandHandler _handler;
+        private RemoveParticipantFromParticipantRoomCommandHandler _handler;
         private Guid _newConferenceId;
-        private InterpreterRoom _room;
+        private ParticipantRoom _room;
         
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new RemoveParticipantFromInterpreterRoomCommandHandler(context);
+            _handler = new RemoveParticipantFromParticipantRoomCommandHandler(context);
         }
         
         [TearDown]
@@ -43,7 +43,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public void Should_throw_exception_if_no_room_found()
         {
-            var command = new RemoveParticipantFromInterpreterRoomCommand(999, Guid.NewGuid());
+            var command = new RemoveParticipantFromParticipantRoomCommand(999, Guid.NewGuid());
             Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
         
@@ -56,7 +56,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
             var participant = _room.RoomParticipants.First();
 
-            var command = new RemoveParticipantFromInterpreterRoomCommand(_room.Id, participant.ParticipantId);
+            var command = new RemoveParticipantFromParticipantRoomCommand(_room.Id, participant.ParticipantId);
             await _handler.Handle(command);
 
             var updatedRoom = await GetInterpreterRoom();
@@ -66,13 +66,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
         private async Task SetupRoomWithParticipant(Conference conference)
         {
-            var interpreterRoom = new InterpreterRoom(_newConferenceId, "InterpreterRoom1", VirtualCourtRoomType.Witness);
+            var interpreterRoom = new ParticipantRoom(_newConferenceId, "InterpreterRoom1", VirtualCourtRoomType.Witness);
             var rooms = await TestDataManager.SeedRooms(new[] {interpreterRoom});
-            _room = (InterpreterRoom) rooms[0];
+            _room = (ParticipantRoom) rooms[0];
             var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
             
             await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            var room = await db.Rooms.OfType<InterpreterRoom>()
+            var room = await db.Rooms.OfType<ParticipantRoom>()
                 .Include(r => r.RoomParticipants)
                 .SingleAsync(r => r.Id == _room.Id);
             room.AddParticipant(new RoomParticipant(participant.Id));
@@ -80,10 +80,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _room = room;
         }
 
-        private async Task<InterpreterRoom> GetInterpreterRoom()
+        private async Task<ParticipantRoom> GetInterpreterRoom()
         {
             await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            return await db.Rooms.OfType<InterpreterRoom>()
+            return await db.Rooms.OfType<ParticipantRoom>()
                 .Include(r => r.RoomParticipants)
                 .SingleAsync(r => r.Id == _room.Id);
         }

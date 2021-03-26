@@ -28,7 +28,7 @@ namespace VideoApi.Events.Handlers.Core
         protected Conference SourceConference { get; set; }
         protected Participant SourceParticipant { get; set; }
         protected Endpoint SourceEndpoint { get; set; }
-        protected InterpreterRoom SourceInterpreterRoom { get; set; }
+        protected ParticipantRoom SourceParticipantRoom { get; set; }
 
         public abstract EventType EventType { get; }
 
@@ -46,7 +46,7 @@ namespace VideoApi.Events.Handlers.Core
                 .SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
 
             SourceEndpoint = SourceConference.GetEndpoints().SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
-            SourceInterpreterRoom = SourceConference.Rooms.OfType<InterpreterRoom>().SingleOrDefault(x =>x.Id == callbackEvent.ParticipantRoomId);
+            SourceParticipantRoom = SourceConference.Rooms.OfType<ParticipantRoom>().SingleOrDefault(x =>x.Id == callbackEvent.ParticipantRoomId);
             
             await PublishStatusAsync(callbackEvent);
             _logger.LogDebug("Handled callback in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);

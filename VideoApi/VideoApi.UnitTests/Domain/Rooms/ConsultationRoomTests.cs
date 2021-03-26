@@ -3,7 +3,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Domain.Validations;
 
 namespace VideoApi.UnitTests.Domain.Rooms
 {
@@ -154,6 +153,19 @@ namespace VideoApi.UnitTests.Domain.Rooms
         public void should_not_update_room_status_to_closed_when_room_type_is_civilian()
         {
             var room = new ConsultationRoom(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Civilian, false);
+            var roomParticipant = new RoomParticipant(Guid.NewGuid());
+            room.AddParticipant(roomParticipant);
+            room.Status.Should().Be(RoomStatus.Live);
+
+            room.RemoveParticipant(roomParticipant);
+
+            room.Status.Should().Be(RoomStatus.Live);
+        }
+        
+        [Test]
+        public void should_not_update_room_status_to_closed_when_room_type_is_JudicialShared()
+        {
+            var room = new ConsultationRoom(Guid.NewGuid(), "PanelMember1", VirtualCourtRoomType.JudicialShared, false);
             var roomParticipant = new RoomParticipant(Guid.NewGuid());
             room.AddParticipant(roomParticipant);
             room.Status.Should().Be(RoomStatus.Live);

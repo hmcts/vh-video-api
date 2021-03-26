@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
-            var interpreterRoom = new InterpreterRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
+            var interpreterRoom = new ParticipantRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
             interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
             var roomParticipant = new RoomParticipant(participant.Id)
             {
