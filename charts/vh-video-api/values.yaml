@@ -66,7 +66,7 @@ java:
     WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhinfrawowza{{ .Values.global.environment }}
     WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
     WOWZACONFIGURATION__STORAGEDIRECTORY: ${com.wowza.wms.context.VHostConfigHome}/content/
-    WOWZACONFIGURATION__STORAGEENDPOINT: https://vhinfrawowza{{ .Values.global.environment }}.privatelink.blob.core.windows.net/
+    WOWZACONFIGURATION__STORAGEENDPOINT: https://vhinfrawowza{{ .Values.global.environment }}.blob.core.windows.net/
     WOWZACONFIGURATION__STREAMINGENDPOINT: rtmps://vh-wowza-{{ .Values.global.environment }}.hearings.reform.hmcts.net:443/
     WOWZACONFIGURATION__USERNAME: wowza
     Logging__LogLevel__Default: debug
