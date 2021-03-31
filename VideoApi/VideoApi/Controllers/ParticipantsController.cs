@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -295,6 +296,7 @@ namespace VideoApi.Controllers
         [HttpGet("participants/Judge/firstname")]
         [OpenApiOperation("GetDistinctJudgeNames")]
         [ProducesResponseType(typeof(JudgeNameListResponse), (int)HttpStatusCode.OK)]
+        [AllowAnonymous]
         public async Task<IActionResult> GetDistinctJudgeNamesAsync()
         {
             _logger.LogDebug("GetDistinctJudgeNames");
