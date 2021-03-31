@@ -296,7 +296,6 @@ namespace VideoApi.Controllers
         [HttpGet("participants/Judge/firstname")]
         [OpenApiOperation("GetDistinctJudgeNames")]
         [ProducesResponseType(typeof(JudgeNameListResponse), (int)HttpStatusCode.OK)]
-        [AllowAnonymous]
         public async Task<IActionResult> GetDistinctJudgeNamesAsync()
         {
             _logger.LogDebug("GetDistinctJudgeNames");
