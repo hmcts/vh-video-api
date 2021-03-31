@@ -25,8 +25,7 @@ namespace VideoApi.DAL.Queries
             var participants = await _context.Participants
                 .AsNoTracking()
                 .Where(p => p.UserRole == UserRole.Judge && !string.IsNullOrEmpty(p.FirstName))
-                .Where(p => p.UserRole == UserRole.Judge)
-                .Where(p => !p.Username.Contains("@hmcts.net1"))
+                .Where(p => !p.Username.Contains("@hmcts.net1") && !p.Username.Contains("@email.net"))
                 .Select(x => x.FirstName)
                 .Distinct()
                 .ToListAsync();
