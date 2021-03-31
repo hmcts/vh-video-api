@@ -87,8 +87,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _conferenceIds.Add(newConference.Id);
             await TestDataManager.SeedConference(newConference);
 
-            var judgelist = await _handler.Handle(new GetDistinctJudgeListByFirstNameQuery());
-            judgelist.Should().NotBeEmpty();
+            var judgeList = await _handler.Handle(new GetDistinctJudgeListByFirstNameQuery());
+            judgeList.Should().NotBeEmpty();
+            judgeList.Should().NotContain("JudgeLondon");
         }
 
         private async Task CreateConference(string judge)
