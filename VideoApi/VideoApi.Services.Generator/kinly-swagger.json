@@ -673,7 +673,6 @@
         "audio_recording_url",
         "participant_type",
         "room_type",
-        "tile_number",
         "participant_room_id",
         "display_name"
       ],
@@ -693,9 +692,6 @@
               "$ref": "#/definitions/KinlyRoomType"
             }
           ]
-        },
-        "tile_number": {
-          "type": "string"
         },
         "participant_room_id": {
           "type": "string"

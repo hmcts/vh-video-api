@@ -1803,9 +1803,6 @@ namespace VideoApi.Services.Kinly
         [Newtonsoft.Json.JsonProperty("room_type", Required = Newtonsoft.Json.Required.Always)]
         public KinlyRoomType Room_type { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("tile_number", Required = Newtonsoft.Json.Required.Always)]
-        public string Tile_number { get; set; }
-    
         [Newtonsoft.Json.JsonProperty("participant_room_id", Required = Newtonsoft.Json.Required.Always)]
         public string Participant_room_id { get; set; }
     

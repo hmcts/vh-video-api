@@ -119,7 +119,6 @@ namespace VideoApi.Services
         private Task<BookedParticipantRoomResponse> CreateVmr(Conference conference, long roomId, string ingestUrl,
             VirtualCourtRoomType roomType, int existingRooms, KinlyRoomType kinlyRoomType)
         {
-            var startTilePosition = kinlyRoomType == KinlyRoomType.Interpreter ? 200 : 400;
             var ingest = kinlyRoomType == KinlyRoomType.Panel_Member ? string.Empty : ingestUrl;
             var kinlyParticipantType = roomType == VirtualCourtRoomType.Witness ? "Witness" : "Civilian";
             var roomPrefix = kinlyRoomType == KinlyRoomType.Panel_Member
@@ -133,8 +132,7 @@ namespace VideoApi.Services
                 Participant_type = kinlyParticipantType,
                 Room_label_prefix = roomPrefix,
                 Room_type = kinlyRoomType,
-                Display_name = $"{roomPrefix}{existingRooms + 1}",
-                Tile_number = $"T{startTilePosition + existingRooms + 1}"
+                Display_name = $"{roomPrefix}{existingRooms + 1}"
             };
             return _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
         }
