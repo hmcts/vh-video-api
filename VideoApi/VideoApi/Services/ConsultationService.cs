@@ -73,7 +73,7 @@ namespace VideoApi.Services
             CreateConsultationRoomParams createConsultationRoomParams)
         {
             _logger.LogTrace(
-                "Creating a consultation for VirtualCourtRoomId: {virtualCourtRoomId} with prefix {createConsultationRoomParamsPrefix}",
+                "Creating a consultation for VirtualCourtRoomId: {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix}",
                 virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix);
 
             return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
@@ -106,17 +106,49 @@ namespace VideoApi.Services
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
+            
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
             var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
             await TransferParticipantAsync(conferenceId, kinlyParticipantId, fromRoom, toRoom);
+
+            var lastLinkedParticipant =
+                await RetrieveLastParticipantIfLinkedAndLeftAlone(conference, participant, fromRoom); 
+            if (lastLinkedParticipant != null)
+            {
+                await TransferParticipantAsync(conferenceId, lastLinkedParticipant.GetParticipantRoom()?.Id.ToString(), fromRoom, toRoom);
+            }
         }
-        
+
+        private async Task<Participant> RetrieveLastParticipantIfLinkedAndLeftAlone(Conference conference, Participant participant,
+            string fromRoomLabel)
+        {
+            if (participant.GetParticipantRoom() != null)
+            {
+                return null;
+            }
+
+            var roomQuery = new GetConsultationRoomByIdQuery(conference.Id, fromRoomLabel);
+            var consultationRoom =
+                await _queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
+            var remainingParticipants =
+                consultationRoom.RoomParticipants.Where(x => x.ParticipantId != participant.Id).ToList();
+            if (remainingParticipants.Count != 2)
+            {
+                return null;
+            }
+
+            var participantIds = remainingParticipants.Select(x => x.ParticipantId);
+
+            var firstRemaining = conference.Participants.First(x => participantIds.Contains(x.Id));
+            return firstRemaining.LinkedParticipants.Any(x => participantIds.Contains(x.LinkedId)) ? firstRemaining : null;
+        }
+
         private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
             string toRoom)
         {
             _logger.LogTrace(
-                "Transferring participant {participantId} from {fromRoom} to {toRoom} in conference: {conferenceId}",
+                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
                 participantId, fromRoom, toRoom, conferenceId);
 
             var request = new TransferParticipantParams

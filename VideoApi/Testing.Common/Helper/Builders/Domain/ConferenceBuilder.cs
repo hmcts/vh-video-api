@@ -49,7 +49,9 @@ namespace Testing.Common.Helper.Builders.Domain
                 .WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
                         $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net",
-                        Phone.Number())).Build();
+                        Phone.Number()))
+                .All().With(x=> x.CurrentConsultationRoomId = null)
+                .Build();
 
             foreach (var participant in participants)
             {
@@ -188,6 +190,14 @@ namespace Testing.Common.Helper.Builders.Domain
             room.AddParticipant(new RoomParticipant(nonJudges[0].Id));
             room.AddParticipant(new RoomParticipant(nonJudges[1].Id));
             room.SetProtectedProperty(nameof(room.Id), new Random().Next());
+            foreach (var roomParticipant in room.RoomParticipants)
+            {
+                roomParticipant.Room = room;
+                roomParticipant.RoomId = room.Id;
+                var participant = _conference.Participants.First(x => x.Id == roomParticipant.ParticipantId);
+                participant.RoomParticipants.Add(roomParticipant);
+                roomParticipant.Participant = participant;
+            }
             _conference.SetProtectedField("_rooms", new List<Room> {room});
             return this;
         }

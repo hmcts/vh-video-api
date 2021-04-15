@@ -183,19 +183,23 @@ namespace VideoApi.UnitTests.Services.Consultation
         [Test]
         public async Task should_remove_a_participant_in_room()
         {
-            var participantId = TestConference.Participants[0].Id;
-            var _fromRoom = "ConsultationRoom";
-            var _toRoom = "WaitingRoom";
+            var participant = TestConference.Participants[0];
+            var consultationRoom = new ConsultationRoom(TestConference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
+            consultationRoom.AddParticipant(new RoomParticipant(participant.Id));
+            _queryHandler.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(consultationRoom);
+            var participantId = participant.Id;
+            var fromRoom = consultationRoom.Label;
+            var toRoom = "WaitingRoom";
             _queryHandler.Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
             
-            await _consultationService.LeaveConsultationAsync(TestConference.Id, participantId, _fromRoom, _toRoom);
+            await _consultationService.LeaveConsultationAsync(TestConference.Id, participantId, fromRoom, toRoom);
 
             _kinlyApiClient.Verify(x =>
                     x.TransferParticipantAsync(TestConference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
-                            r.From == "ConsultationRoom" &&
-                            r.To == "WaitingRoom"
+                            r.From == fromRoom &&
+                            r.To == toRoom
                         )
                     )
                 , Times.Exactly(1));

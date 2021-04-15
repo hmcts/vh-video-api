@@ -32,7 +32,7 @@ namespace VideoApi.DAL.Queries
         public Task<ConsultationRoom> Handle(GetConsultationRoomByIdQuery query)
         {
             return _context.Rooms.OfType<ConsultationRoom>()
-                .Include(x => x.RoomParticipants)
+                .Include(x => x.RoomParticipants).ThenInclude(x => x.Participant)
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
                 .Where(x => x.ConferenceId == query.ConferenceId && x.Label == query.RoomLabel)
