@@ -88,6 +88,8 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue($"New conference is created but was {_context.Response.StatusCode} with error message '{_context.Response.Content}'");
             var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
+            conference.Participants.SelectMany(x => x.LinkedParticipants)
+                .Any(x => x.Type == LinkedParticipantType.Interpreter).Should().BeTrue();
             _context.Test.ConferenceResponse = conference;
         }
 
