@@ -101,10 +101,7 @@ namespace VideoApi.Services
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
             var roomId = await CreateInterpreterRoom(conference.Id, roomType);
-            var ingestUrl = roomType == VirtualCourtRoomType.JudicialShared? null :
-                                kinlyRoomType == KinlyRoomType.Interpreter? 
-                                $"{conference.IngestUrl}/{roomId}/{InterpreterSuffix}": 
-                                $"{conference.IngestUrl}/{roomId}";
+            var ingestUrl = GetIngestUrl(conference, roomType, kinlyRoomType, roomId);
 
             var vmr = await CreateVmr(conference, roomId, ingestUrl, roomType, existingRooms, kinlyRoomType);
             await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
@@ -112,6 +109,16 @@ namespace VideoApi.Services
                 conference.Id);
 
             return await GetUpdatedRoom(conference, roomId);
+        }
+
+        private string GetIngestUrl(Conference conference, VirtualCourtRoomType roomType, KinlyRoomType kinlyRoomType, long roomId)
+        {
+            if (roomType == VirtualCourtRoomType.JudicialShared)
+                return null;
+
+            return kinlyRoomType == KinlyRoomType.Interpreter ?
+                    $"{conference.IngestUrl}/{roomId}/{InterpreterSuffix}" :
+                    $"{ conference.IngestUrl}/{ roomId}";
         }
 
         private async Task<long> CreateInterpreterRoom(Guid conferenceId, VirtualCourtRoomType type)
@@ -128,8 +135,8 @@ namespace VideoApi.Services
             var kinlyParticipantType = roomType == VirtualCourtRoomType.Witness ? "Witness" : "Civilian";
             var roomPrefix = kinlyRoomType == KinlyRoomType.Panel_Member
                 ? PanelMemberRoomPrefix
-                : InterpreterRoomPrefix; 
-            
+                : InterpreterRoomPrefix;
+
             var newRoomParams = new CreateParticipantRoomParams
             {
                 Audio_recording_url = ingest,
