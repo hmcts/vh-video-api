@@ -24,6 +24,7 @@ namespace VideoApi.Services
 
         private string InterpreterRoomPrefix => "Interpreter";
         private string PanelMemberRoomPrefix => "Panel Member";
+        private string InterpreterSuffix => "_interpreter";
 
         public VirtualRoomService(IKinlyApiClient kinlyApiClient, ILogger<VirtualRoomService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
@@ -100,7 +101,11 @@ namespace VideoApi.Services
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
             var roomId = await CreateInterpreterRoom(conference.Id, roomType);
-            var ingestUrl = roomType == VirtualCourtRoomType.JudicialShared? null : $"{conference.IngestUrl}/{roomId}";
+            var ingestUrl = roomType == VirtualCourtRoomType.JudicialShared? null :
+                                kinlyRoomType == KinlyRoomType.Interpreter? 
+                                $"{conference.IngestUrl}/{roomId}/{InterpreterSuffix}": 
+                                $"{conference.IngestUrl}/{roomId}";
+
             var vmr = await CreateVmr(conference, roomId, ingestUrl, roomType, existingRooms, kinlyRoomType);
             await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
             _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,
