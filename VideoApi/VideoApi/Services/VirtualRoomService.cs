@@ -117,8 +117,7 @@ namespace VideoApi.Services
                 return null;
 
             return kinlyRoomType == KinlyRoomType.Interpreter ?
-                    $"{conference.IngestUrl}{InterpreterSuffix}{roomId}" :
-                    $"{ conference.IngestUrl}/{roomId}";
+                    $"{conference.IngestUrl}{InterpreterSuffix}{roomId}" : null;
         }
 
         private async Task<long> CreateInterpreterRoom(Guid conferenceId, VirtualCourtRoomType type)
