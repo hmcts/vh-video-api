@@ -24,7 +24,7 @@ namespace VideoApi.Services
 
         private string InterpreterRoomPrefix => "Interpreter";
         private string PanelMemberRoomPrefix => "Panel Member";
-        private string InterpreterSuffix => "_interpreter";
+        private string InterpreterSuffix => "_interpreter_";
 
         public VirtualRoomService(IKinlyApiClient kinlyApiClient, ILogger<VirtualRoomService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
@@ -117,8 +117,8 @@ namespace VideoApi.Services
                 return null;
 
             return kinlyRoomType == KinlyRoomType.Interpreter ?
-                    $"{conference.IngestUrl}/{InterpreterSuffix}" :
-                    $"{ conference.IngestUrl}/{ roomId}";
+                    $"{conference.IngestUrl}{InterpreterSuffix}{roomId}" :
+                    $"{ conference.IngestUrl}/{roomId}";
         }
 
         private async Task<long> CreateInterpreterRoom(Guid conferenceId, VirtualCourtRoomType type)
