@@ -117,7 +117,7 @@ namespace VideoApi.Services
                 return null;
 
             return kinlyRoomType == KinlyRoomType.Interpreter ?
-                    $"{conference.IngestUrl}/{roomId}/{InterpreterSuffix}" :
+                    $"{conference.IngestUrl}/{InterpreterSuffix}" :
                     $"{ conference.IngestUrl}/{ roomId}";
         }
 
