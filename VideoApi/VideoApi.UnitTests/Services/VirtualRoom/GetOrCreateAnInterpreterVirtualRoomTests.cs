@@ -108,7 +108,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             
             _mocker.Mock<ICommandHandler>().Setup(x =>
                 x.Handle(It.IsAny<UpdateParticipantRoomConnectionDetailsCommand>())).Callback(() =>
-                expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, "ingesturl", newVmrRoom.Uris.Pexip_node,
+                expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, "ingesturl_interpreter_2", newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 
             _mocker.Mock<IKinlyApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
@@ -121,6 +121,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             room.Label.Should().Be(newVmrRoom.Room_label);
             room.PexipNode.Should().Be(newVmrRoom.Uris.Pexip_node);
             room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
+            room.IngestUrl.Contains("_interpreter_").Should().Be(true);
             
             _mocker.Mock<IKinlyApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
                 It.Is<CreateParticipantRoomParams>(createParams => 
