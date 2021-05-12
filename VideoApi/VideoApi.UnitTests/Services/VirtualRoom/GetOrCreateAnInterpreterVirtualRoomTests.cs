@@ -114,15 +114,17 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             _mocker.Mock<IKinlyApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
                     It.Is<CreateParticipantRoomParams>(vmrRequest => vmrRequest.Participant_type == "Civilian")))
                 .ReturnsAsync(newVmrRoom);
-            
+            var prefix = _conference.IngestUrl;
             var room = await _service.GetOrCreateAnInterpreterVirtualRoom(_conference, participant);
+            var interpreterSuffix = "_interpreter_";
+            var expectedIngestUrl = $"{prefix}{interpreterSuffix}{expectedRoomId}";
 
             room.Should().NotBeNull();
             room.Label.Should().Be(newVmrRoom.Room_label);
             room.PexipNode.Should().Be(newVmrRoom.Uris.Pexip_node);
             room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
-            room.IngestUrl.Contains("_interpreter_").Should().Be(true);
-            
+            room.IngestUrl.Equals(expectedIngestUrl).Should().Be(true);
+
             _mocker.Mock<IKinlyApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
                 It.Is<CreateParticipantRoomParams>(createParams => 
                     createParams.Room_label_prefix == "Interpreter" && 
