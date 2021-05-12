@@ -83,6 +83,9 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             var expectedRoomId = 2;
             var participant = _conference.Participants.First(x => !x.IsJudge());
             var expectedRoom = new ParticipantRoom(_conference.Id, VirtualCourtRoomType.Civilian);
+            var interpreterSuffix = "_interpreter_";
+            var expectedIngestUrl = $"{_conference.IngestUrl}{interpreterSuffix}{expectedRoomId}";
+
             expectedRoom.SetProtectedProperty(nameof(expectedRoom.Id), expectedRoomId);
             var newVmrRoom = new BookedParticipantRoomResponse
             {
@@ -108,20 +111,20 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             
             _mocker.Mock<ICommandHandler>().Setup(x =>
                 x.Handle(It.IsAny<UpdateParticipantRoomConnectionDetailsCommand>())).Callback(() =>
-                expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, "ingesturl", newVmrRoom.Uris.Pexip_node,
+                expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, expectedIngestUrl, newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 
             _mocker.Mock<IKinlyApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
                     It.Is<CreateParticipantRoomParams>(vmrRequest => vmrRequest.Participant_type == "Civilian")))
                 .ReturnsAsync(newVmrRoom);
-            
             var room = await _service.GetOrCreateAnInterpreterVirtualRoom(_conference, participant);
 
             room.Should().NotBeNull();
             room.Label.Should().Be(newVmrRoom.Room_label);
             room.PexipNode.Should().Be(newVmrRoom.Uris.Pexip_node);
             room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
-            
+            room.IngestUrl.Should().Be(expectedIngestUrl);
+
             _mocker.Mock<IKinlyApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
                 It.Is<CreateParticipantRoomParams>(createParams => 
                     createParams.Room_label_prefix == "Interpreter" && 
