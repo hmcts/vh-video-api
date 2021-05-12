@@ -111,7 +111,6 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             room.Label.Should().Be(newVmrRoom.Room_label);
             room.PexipNode.Should().Be(newVmrRoom.Uris.Pexip_node);
             room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
-
             room.IngestUrl.Should().BeNull();
             _mocker.Mock<IKinlyApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
                 It.Is<CreateParticipantRoomParams>(createParams => 
