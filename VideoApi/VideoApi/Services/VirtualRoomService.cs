@@ -24,7 +24,7 @@ namespace VideoApi.Services
 
         private string InterpreterRoomPrefix => "Interpreter";
         private string PanelMemberRoomPrefix => "Panel Member";
-        private string InterpreterSuffix => "_interpreter";
+        private string InterpreterSuffix => "_interpreter_";
 
         public VirtualRoomService(IKinlyApiClient kinlyApiClient, ILogger<VirtualRoomService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
@@ -101,7 +101,7 @@ namespace VideoApi.Services
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
             var roomId = await CreateInterpreterRoom(conference.Id, roomType);
-            var ingestUrl = GetIngestUrl(conference, roomType, kinlyRoomType, roomId);
+            var ingestUrl = GetIngestUrl(conference, kinlyRoomType, roomId);
 
             var vmr = await CreateVmr(conference, roomId, ingestUrl, roomType, existingRooms, kinlyRoomType);
             await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
@@ -111,14 +111,12 @@ namespace VideoApi.Services
             return await GetUpdatedRoom(conference, roomId);
         }
 
-        private string GetIngestUrl(Conference conference, VirtualCourtRoomType roomType, KinlyRoomType kinlyRoomType, long roomId)
+        private string GetIngestUrl(Conference conference, KinlyRoomType kinlyRoomType, long roomId)
         {
-            if (roomType == VirtualCourtRoomType.JudicialShared)
-                return null;
+            if (kinlyRoomType == KinlyRoomType.Interpreter)
+                return $"{conference.IngestUrl}{InterpreterSuffix}{roomId}";
 
-            return kinlyRoomType == KinlyRoomType.Interpreter ?
-                    $"{conference.IngestUrl}/{roomId}/{InterpreterSuffix}" :
-                    $"{ conference.IngestUrl}/{ roomId}";
+            return null;
         }
 
         private async Task<long> CreateInterpreterRoom(Guid conferenceId, VirtualCourtRoomType type)
