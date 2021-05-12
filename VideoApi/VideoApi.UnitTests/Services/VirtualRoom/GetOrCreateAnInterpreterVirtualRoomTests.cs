@@ -84,6 +84,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             var participant = _conference.Participants.First(x => !x.IsJudge());
             var expectedRoom = new ParticipantRoom(_conference.Id, VirtualCourtRoomType.Civilian);
             var interpreterSuffix = "_interpreter_";
+            var expectedIngestUrl = $"{_conference.IngestUrl}{interpreterSuffix}{expectedRoomId}";
 
             expectedRoom.SetProtectedProperty(nameof(expectedRoom.Id), expectedRoomId);
             var newVmrRoom = new BookedParticipantRoomResponse
@@ -110,14 +111,13 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             
             _mocker.Mock<ICommandHandler>().Setup(x =>
                 x.Handle(It.IsAny<UpdateParticipantRoomConnectionDetailsCommand>())).Callback(() =>
-                expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, $"{_conference.IngestUrl}{interpreterSuffix}{expectedRoomId}", newVmrRoom.Uris.Pexip_node,
+                expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, expectedIngestUrl, newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 
             _mocker.Mock<IKinlyApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
                     It.Is<CreateParticipantRoomParams>(vmrRequest => vmrRequest.Participant_type == "Civilian")))
                 .ReturnsAsync(newVmrRoom);
             var room = await _service.GetOrCreateAnInterpreterVirtualRoom(_conference, participant);
-            var expectedIngestUrl = $"{_conference.IngestUrl}{interpreterSuffix}{expectedRoomId}";
 
             room.Should().NotBeNull();
             room.Label.Should().Be(newVmrRoom.Room_label);
