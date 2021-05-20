@@ -22,13 +22,12 @@ namespace VideoApi.UnitTests.Domain.Participants
         }
         
         [Test]
-        public void Should_add_link_and_corresponding_link()
+        public void Should_add_link()
         {
             _participantA.AddLink(_participantB.Id, LinkedParticipantType.Interpreter);
 
-            _participantA.LinkedParticipants.Should().HaveCount(2);
-            _participantA.LinkedParticipants.Where(x => x.ParticipantId == _participantA.Id && x.LinkedId == _participantB.Id).Should().HaveCount(1);
-            _participantA.LinkedParticipants.Where(x => x.ParticipantId == _participantB.Id && x.LinkedId == _participantA.Id).Should().HaveCount(1);
+            _participantA.LinkedParticipants.Should().HaveCount(1);
+            _participantA.LinkedParticipants.Where(x => x.ParticipantId == _participantA.Id && x.LinkedId == _participantB.Id && x.Type == LinkedParticipantType.Interpreter).Should().HaveCount(1);
         }
         
         [Test]
