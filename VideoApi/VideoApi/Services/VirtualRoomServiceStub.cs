@@ -16,21 +16,21 @@ namespace VideoApi.Services
         public Task<ParticipantRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
         {
             var label = $"Interpreter{_roomCount + 1}";
-            var joinUri = "interpreter__waiting_room";
+            var joinUri = "interpreter__waiting_room_test_stub";
             return CreateRoom(conference, participant, VirtualCourtRoomType.Witness, label, joinUri);
         }
 
         public Task<ParticipantRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
         {
             var label = $"Witness{_roomCount + 1}";
-            var joinUri = "witness__waiting_room";
+            var joinUri = "witness__waiting_room_test_stub";
             return CreateRoom(conference, participant, VirtualCourtRoomType.Witness, label, joinUri);
         }
 
         public Task<ParticipantRoom> GetOrCreateAJudicialVirtualRoom(Conference conference, Participant participant)
         {
             var node = "sip.node.com";
-            var joinUri = "panelmember__waiting_room";
+            var joinUri = "panelmember__waiting_room_test_stub";
             var room = new ParticipantRoom(conference.Id, VirtualCourtRoomType.JudicialShared);
             room.UpdateConnectionDetails("PanelMemberRoom1", null, node, joinUri);
             return Task.FromResult(room);
