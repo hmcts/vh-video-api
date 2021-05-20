@@ -121,11 +121,10 @@ namespace VideoApi.Domain
         public void AddLink(Guid linkedId, LinkedParticipantType linkType)
         {
             var existingLink = LinkedParticipants.SingleOrDefault(x => x.LinkedId == linkedId && x.Type == linkType);
-            if (existingLink != null)
+            if (existingLink == null)
             {
-                throw new DomainRuleException("LinkedParticipant", "Participant is already linked with the same link type");
+                LinkedParticipants.Add(new LinkedParticipant(Id, linkedId, linkType));
             }
-            LinkedParticipants.Add(new LinkedParticipant(Id, linkedId, linkType));
         }
 
         public void RemoveLink(LinkedParticipant linkedParticipant)
