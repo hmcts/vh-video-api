@@ -25,17 +25,22 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void Should_add_link()
         {
             _participantA.AddLink(_participantB.Id, LinkedParticipantType.Interpreter);
-            var linkedId = _participantA.LinkedParticipants.Select(x => x.LinkedId);
-            linkedId.Should().BeEquivalentTo(_participantB.Id);
+
+            _participantA.LinkedParticipants.Should().HaveCount(1);
+            _participantA.LinkedParticipants.Where(x => x.ParticipantId == _participantA.Id && x.LinkedId == _participantB.Id && x.Type == LinkedParticipantType.Interpreter).Should().HaveCount(1);
         }
         
         [Test]
-        public void Should_throw_exception_when_link_already_exists()
+        public void Should_not_add_when_link_already_exists()
         {
             _participantA.AddLink(_participantB.Id, LinkedParticipantType.Interpreter);
+            var before = _participantA.LinkedParticipants.ToList();
 
-            _participantA.Invoking(x => x.AddLink(_participantB.Id, LinkedParticipantType.Interpreter)).Should()
-                .Throw<DomainRuleException>();
+            _participantA.Invoking(x => x.AddLink(_participantB.Id, LinkedParticipantType.Interpreter));
+
+            var after = _participantA.LinkedParticipants.ToList();
+
+            before.Should().BeEquivalentTo(after);
         }
         
         [Test]

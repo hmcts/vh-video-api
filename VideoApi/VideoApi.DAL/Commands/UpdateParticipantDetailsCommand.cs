@@ -106,8 +106,9 @@ namespace VideoApi.DAL.Commands
                 
                     var secondaryParticipant =
                         conference.Participants.Single(x => x.ParticipantRefId == linkedParticipant.LinkedRefId);
-                    
+
                     primaryParticipant.AddLink(secondaryParticipant.Id, linkedParticipant.Type);
+                    secondaryParticipant.AddLink(primaryParticipant.Id, linkedParticipant.Type);
                 }
                 catch (Exception)
                 {
