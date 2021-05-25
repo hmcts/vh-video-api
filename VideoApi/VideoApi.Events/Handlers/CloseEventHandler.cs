@@ -23,6 +23,9 @@ namespace VideoApi.Events.Handlers
             var conferenceState = ConferenceState.Closed;
 
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
+            
+            _logger.LogInformation("{ConferenceId} Close callback - {Tags}",
+                SourceConference.Id, new [] {"VIH-7730", "HearingEvent"});
             return CommandHandler.Handle(command);
         }
     }

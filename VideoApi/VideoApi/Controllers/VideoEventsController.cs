@@ -21,7 +21,8 @@ namespace VideoApi.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly IEventHandlerFactory _eventHandlerFactory;
         private readonly ILogger<VideoEventsController> _logger;
-
+        private const string tags = "VIH-7730";
+        
         public VideoEventsController(ICommandHandler commandHandler, IEventHandlerFactory eventHandlerFactory,
             ILogger<VideoEventsController> logger)
         {
@@ -46,13 +47,13 @@ namespace VideoApi.Controllers
 
             var command = EventRequestMapper.MapEventRequestToEventCommand(conferenceId, request);
 
-            _logger.LogWarning("Handling {ConferenceEventRequest}", nameof(ConferenceEventRequest));
+            _logger.LogTrace("Handling {ConferenceEventRequest} {Tags}", nameof(ConferenceEventRequest), tags);
             
             await _commandHandler.Handle(command);
 
             if (request.ShouldSkipEventHandler())
             {
-                _logger.LogDebug("Handling CallbackEvent skipped due to result of ShouldHandleEvent");
+                _logger.LogTrace("Handling CallbackEvent skipped due to result of ShouldHandleEvent {Tags}", tags);
                 return NoContent();
             }
 

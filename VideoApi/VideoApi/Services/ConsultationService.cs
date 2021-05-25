@@ -69,14 +69,15 @@ namespace VideoApi.Services
             return room;
         }
         
-        private Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
+        private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
             CreateConsultationRoomParams createConsultationRoomParams)
         {
-            _logger.LogTrace(
-                "Creating a consultation for VirtualCourtRoomId: {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix}",
-                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix);
+            var response = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
+            _logger.LogInformation(
+                "{VirtualCourtRoomId} Created a consultation with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel} - {Tags}",
+                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response.Room_label, new [] {"VIH-7730", "ConsultationRoom"});
 
-            return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
+            return response;
         }
 
 
@@ -147,9 +148,9 @@ namespace VideoApi.Services
         private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
             string toRoom)
         {
-            _logger.LogTrace(
-                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
-                participantId, fromRoom, toRoom, conferenceId);
+            _logger.LogInformation(
+                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId} - {Tags}",
+                participantId, fromRoom, toRoom, conferenceId, new[] { "VIH-7730", "TransferParticipant" });
 
             var request = new TransferParticipantParams
             {

@@ -35,7 +35,8 @@ namespace VideoApi.Events.Handlers
             }
 
             var taskCommand = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, reason, TaskType.Hearing);
-            
+            _logger.LogInformation("{ConferenceId} Suspend callback - {Tags}",
+                SourceConference.Id, new [] {"VIH-7730", "HearingEvent"});
             await CommandHandler.Handle(taskCommand);
         }
     }

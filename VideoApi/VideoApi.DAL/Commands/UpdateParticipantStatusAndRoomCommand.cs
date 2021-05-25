@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
@@ -36,10 +37,12 @@ namespace VideoApi.DAL.Commands
     public class UpdateParticipantStatusAndRoomCommandHandler : ICommandHandler<UpdateParticipantStatusAndRoomCommand>
     {
         private readonly VideoApiDbContext _context;
-        
-        public UpdateParticipantStatusAndRoomCommandHandler(VideoApiDbContext context)
+        private readonly ILogger<UpdateParticipantStatusAndRoomCommandHandler> _logger;
+
+        public UpdateParticipantStatusAndRoomCommandHandler(VideoApiDbContext context, ILogger<UpdateParticipantStatusAndRoomCommandHandler> logger)
         {
             _context = context;
+            _logger = logger;
         }
         
         public async Task Handle(UpdateParticipantStatusAndRoomCommand command)
@@ -64,8 +67,17 @@ namespace VideoApi.DAL.Commands
 
             var transferToRoom = await GetTransferToConsultationRoom(command).ConfigureAwait(true);
             transferToRoom?.AddParticipant(new RoomParticipant(participant.Id));
-        
 
+            string participantCurrentRoom = null;
+            try
+            {
+                participantCurrentRoom = participant.GetCurrentRoom();
+            }
+            catch (Exception) { /* ignore as debugging */ }
+
+            _logger.LogInformation("Updating participant ({ParticipantId}) in conference ({ConferenceId})- current status ({CurrentStatus}) - new status ({NewStatus}) - existing room {ExistingRoom} - new room {NewRoom} label {NewRoomLabel} - {Tags}",
+                participant.Id, conference.Id, participant.GetCurrentStatus().ParticipantState, command.ParticipantState, participantCurrentRoom, command.Room, transferToRoom?.Label, new [] {"VIH-7730", "RoomOrStatusUpdate"});
+            
             participant.UpdateParticipantStatus(command.ParticipantState);
             participant.UpdateCurrentRoom(command.Room);
             participant.UpdateCurrentConsultationRoom(transferToRoom);

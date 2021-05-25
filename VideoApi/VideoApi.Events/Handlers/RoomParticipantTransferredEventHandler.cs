@@ -21,9 +21,14 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
+            var i = 0;
             foreach (var participant in SourceParticipantRoom.RoomParticipants)
             {
+                i++;
                 var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
+                _logger.LogInformation("{ConferenceId} Room Participant Transferred ({Iteration}) callback - {ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus} - {Tags}",
+                    SourceConference.Id, i, participant.Id, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel, participantStatus, new [] {"VIH-7730", "HearingEvent"});
+
                 var command =
                     new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, participant.ParticipantId, participantStatus,
                         callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
