@@ -345,7 +345,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Participant transferred",
             "schema": {
               "$ref": "#/definitions/createConsultationRoomResponse"
