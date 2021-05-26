@@ -168,7 +168,7 @@
           }
         ],
         "responses": {
-          "204": {
+          "202": {
             "description": "Deleted"
           }
         }
@@ -345,7 +345,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Participant transferred",
             "schema": {
               "$ref": "#/definitions/createConsultationRoomResponse"
