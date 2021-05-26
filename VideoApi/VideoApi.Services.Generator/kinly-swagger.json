@@ -168,7 +168,7 @@
           }
         ],
         "responses": {
-          "204": {
+          "202": {
             "description": "Deleted"
           }
         }
