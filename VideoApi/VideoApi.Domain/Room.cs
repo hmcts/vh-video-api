@@ -87,6 +87,11 @@ namespace VideoApi.Domain
                 UpdateStatus();
             }
         }
+
+        public void CloseRoom()
+        {
+            Status = RoomStatus.Closed;
+        }
         
         public List<RoomParticipant> GetRoomParticipants()
         {

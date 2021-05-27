@@ -150,6 +150,16 @@ namespace VideoApi.UnitTests.Domain.Rooms
         }
 
         [Test]
+        public void Should_set_room_status_to_closed()
+        {
+            var room = new ConsultationRoom(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Participant, false);
+
+            room.CloseRoom();
+
+            room.Status.Should().Be(RoomStatus.Closed);
+        }
+        
+        [Test]
         public void should_not_update_room_status_to_closed_when_room_type_is_civilian()
         {
             var room = new ConsultationRoom(Guid.NewGuid(), "Room1", VirtualCourtRoomType.Civilian, false);

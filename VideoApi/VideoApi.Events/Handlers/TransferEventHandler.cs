@@ -67,8 +67,6 @@ namespace VideoApi.Events.Handlers
             }
         }
 
-
-
         private ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
             if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))

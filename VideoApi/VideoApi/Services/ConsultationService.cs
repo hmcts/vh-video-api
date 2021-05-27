@@ -46,9 +46,10 @@ namespace VideoApi.Services
 
         public async Task<ConsultationRoom> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
-            var query = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
-            var listOfRooms = await _queryHandler.Handle<GetAvailableConsultationRoomsByRoomTypeQuery, List<ConsultationRoom>>(query);
-            var room = listOfRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
+            var getAvailableConsultationRoomsByRoomTypeQuery = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
+            var liveRooms = await GetLiveRooms(getAvailableConsultationRoomsByRoomTypeQuery);
+            
+            var room = liveRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
             if (room == null)
             {
                 var consultationRoomParams = new CreateConsultationRoomParams
@@ -68,14 +69,35 @@ namespace VideoApi.Services
 
             return room;
         }
-        
+
+        private async Task<IEnumerable<ConsultationRoom>> GetLiveRooms<TQuery>(TQuery query) where TQuery : IQuery
+        {
+            List<ConsultationRoom> liveRooms = new List<ConsultationRoom>();
+            var listOfRooms = await _queryHandler.Handle<TQuery, List<ConsultationRoom>>(query);
+            foreach (var consultationRoom in listOfRooms)
+            {
+                if (!consultationRoom.RoomParticipants.Any())
+                {
+                    var closeRoomCommand = new CloseConsultationRoomCommand(consultationRoom.Id);
+                    await _commandHandler.Handle(closeRoomCommand);
+                    consultationRoom.CloseRoom();
+                    continue;
+                }
+                
+                liveRooms.Add(consultationRoom);
+            }
+
+            return liveRooms;
+        }
+
+
         private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
             CreateConsultationRoomParams createConsultationRoomParams)
         {
             var response = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
                 "{VirtualCourtRoomId} Created a consultation with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel} - {Tags}",
-                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response.Room_label, new [] {"VIH-7730", "ConsultationRoom"});
+                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label, new [] {"VIH-7730", "ConsultationRoom"});
 
             return response;
         }
