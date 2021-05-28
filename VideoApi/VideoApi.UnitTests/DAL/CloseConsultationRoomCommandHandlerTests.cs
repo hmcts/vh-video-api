@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.DAL
 
         [TestCase(VirtualCourtRoomType.Participant)]
         [TestCase(VirtualCourtRoomType.JudgeJOH)]
-        public async System.Threading.Tasks.Task Should_close_the_room(VirtualCourtRoomType roomType)
+        public async Task Should_close_the_room(VirtualCourtRoomType roomType)
         {
             // Arrange
             const string roomLabel = "label";
@@ -48,7 +48,7 @@ namespace VideoApi.UnitTests.DAL
         [TestCase(VirtualCourtRoomType.JudicialShared)]
         [TestCase(VirtualCourtRoomType.Witness)]
         [TestCase(VirtualCourtRoomType.Civilian)]
-        public async System.Threading.Tasks.Task Should_throw_invalid_room_type_exception(VirtualCourtRoomType roomType)
+        public async Task Should_throw_invalid_room_type_exception(VirtualCourtRoomType roomType)
         {
             // Arrange
             const string roomLabel = "label";
@@ -59,6 +59,17 @@ namespace VideoApi.UnitTests.DAL
             // Act & Assert
             Func<Task> act = async () => await _handlerUnderTest.Handle(new CloseConsultationRoomCommand(room.Id));
             await act.Should().ThrowAsync<InvalidVirtualCourtRoomTypeException>();
+        }
+        
+        [Test]
+        public async Task Should_throw_room_not_found_exception()
+        {
+            // Arrange
+            const long roomId = 42;
+            
+            // Act & Assert
+            Func<Task> act = async () => await _handlerUnderTest.Handle(new CloseConsultationRoomCommand(roomId));
+            (await act.Should().ThrowAsync<RoomNotFoundException>()).And.Message.Should().Contain($"Room '{roomId}' not found");
         }
     }
 }

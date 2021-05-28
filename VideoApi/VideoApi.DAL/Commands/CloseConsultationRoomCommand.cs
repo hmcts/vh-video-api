@@ -30,7 +30,7 @@ namespace VideoApi.DAL.Commands
             var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == command.RoomId);
             
             if (room == null)
-                throw new RoomNotFoundException(command.RoomId.ToString());
+                throw new RoomNotFoundException(command.RoomId);
 
             if (room.Type != VirtualCourtRoomType.Participant && room.Type != VirtualCourtRoomType.JudgeJOH)
                 throw new InvalidVirtualCourtRoomTypeException(room.Type, "CloseConsultationRoomCommandHandler");
