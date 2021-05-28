@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
@@ -36,7 +37,7 @@ namespace VideoApi.DAL.Commands
     public class UpdateParticipantStatusAndRoomCommandHandler : ICommandHandler<UpdateParticipantStatusAndRoomCommand>
     {
         private readonly VideoApiDbContext _context;
-        
+
         public UpdateParticipantStatusAndRoomCommandHandler(VideoApiDbContext context)
         {
             _context = context;
@@ -64,8 +65,7 @@ namespace VideoApi.DAL.Commands
 
             var transferToRoom = await GetTransferToConsultationRoom(command).ConfigureAwait(true);
             transferToRoom?.AddParticipant(new RoomParticipant(participant.Id));
-        
-
+            
             participant.UpdateParticipantStatus(command.ParticipantState);
             participant.UpdateCurrentRoom(command.Room);
             participant.UpdateCurrentConsultationRoom(transferToRoom);

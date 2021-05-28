@@ -46,9 +46,10 @@ namespace VideoApi.Services
 
         public async Task<ConsultationRoom> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
-            var query = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
-            var listOfRooms = await _queryHandler.Handle<GetAvailableConsultationRoomsByRoomTypeQuery, List<ConsultationRoom>>(query);
-            var room = listOfRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
+            var getAvailableConsultationRoomsByRoomTypeQuery = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
+            var liveRooms = await GetLiveRooms(getAvailableConsultationRoomsByRoomTypeQuery);
+            
+            var room = liveRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
             if (room == null)
             {
                 var consultationRoomParams = new CreateConsultationRoomParams
@@ -68,15 +69,37 @@ namespace VideoApi.Services
 
             return room;
         }
-        
-        private Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
+
+        private async Task<IEnumerable<ConsultationRoom>> GetLiveRooms<TQuery>(TQuery query) where TQuery : IQuery
+        {
+            List<ConsultationRoom> liveRooms = new List<ConsultationRoom>();
+            var listOfRooms = await _queryHandler.Handle<TQuery, List<ConsultationRoom>>(query);
+            foreach (var consultationRoom in listOfRooms)
+            {
+                if (!consultationRoom.RoomParticipants.Any())
+                {
+                    var closeRoomCommand = new CloseConsultationRoomCommand(consultationRoom.Id);
+                    await _commandHandler.Handle(closeRoomCommand);
+                    consultationRoom.CloseRoom();
+                    continue;
+                }
+                
+                liveRooms.Add(consultationRoom);
+            }
+
+            return liveRooms;
+        }
+
+
+        private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
             CreateConsultationRoomParams createConsultationRoomParams)
         {
-            _logger.LogTrace(
-                "Creating a consultation for VirtualCourtRoomId: {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix}",
-                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix);
+            var response = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
+            _logger.LogInformation(
+                "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",
+                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label);
 
-            return _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
+            return response;
         }
 
 
@@ -147,7 +170,7 @@ namespace VideoApi.Services
         private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
             string toRoom)
         {
-            _logger.LogTrace(
+            _logger.LogInformation(
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
                 participantId, fromRoom, toRoom, conferenceId);
 

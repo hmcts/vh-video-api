@@ -21,6 +21,9 @@ namespace VideoApi.Events.Handlers
         protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, ParticipantState.Disconnected);
+            
+            _logger.LogInformation("Leave callback received - {ConferenceId}/{ParticipantId}",
+                SourceConference.Id, SourceParticipant.Id);
             return CommandHandler.Handle(command);
         }
     }
