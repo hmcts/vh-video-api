@@ -86,6 +86,11 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                     It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(TestConference);
+            QueryHandlerMock
+                .Setup(x =>
+                    x.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<VideoApi.Domain.Conference>>(
+                        It.IsAny<GetConferencesTodayForAdminByHearingVenueNameQuery>()))
+                .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
 
             QueryHandlerMock
                 .Setup(x =>

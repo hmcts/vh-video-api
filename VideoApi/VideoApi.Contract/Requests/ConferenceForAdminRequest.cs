@@ -5,5 +5,7 @@ namespace VideoApi.Contract.Requests
     public class ConferenceForAdminRequest
     {
         public IEnumerable<string> UserNames { get; set; }
+        public IEnumerable<string> HearingVenueNames { get; set; }
+
     }
 }
