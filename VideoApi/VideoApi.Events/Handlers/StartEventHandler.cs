@@ -22,8 +22,8 @@ namespace VideoApi.Events.Handlers
         {
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
             
-            _logger.LogInformation("Start callback received - {ConferenceId} - {Tags}",
-                SourceConference.Id, new [] {"VIH-7730", "HearingEvent"});
+            _logger.LogInformation("Start callback received - {ConferenceId}",
+                SourceConference.Id);
             return CommandHandler.Handle(command);
         }
     }

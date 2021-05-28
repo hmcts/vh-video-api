@@ -96,8 +96,8 @@ namespace VideoApi.Services
         {
             var response = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
-                "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel} - {Tags}",
-                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label, new [] {"VIH-7730", "ConsultationRoom"});
+                "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",
+                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label);
 
             return response;
         }
@@ -171,8 +171,8 @@ namespace VideoApi.Services
             string toRoom)
         {
             _logger.LogInformation(
-                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId} - {Tags}",
-                participantId, fromRoom, toRoom, conferenceId, new[] { "VIH-7730", "TransferParticipant" });
+                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
+                participantId, fromRoom, toRoom, conferenceId);
 
             var request = new TransferParticipantParams
             {

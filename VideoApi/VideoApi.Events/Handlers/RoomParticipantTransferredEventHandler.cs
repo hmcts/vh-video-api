@@ -26,8 +26,8 @@ namespace VideoApi.Events.Handlers
             {
                 i++;
                 var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
-                _logger.LogInformation("Room Participant Transferred ({Iteration}) callback received - {ConferenceId}/{ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus} - {Tags}",
-                     i, SourceConference.Id, participant.Id, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel, participantStatus, new [] {"VIH-7730", "HearingEvent"});
+                _logger.LogInformation("Room Participant Transferred ({Iteration}) callback received - {ConferenceId}/{ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus}",
+                     i, SourceConference.Id, participant.Id, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel, participantStatus);
 
                 var command =
                     new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, participant.ParticipantId, participantStatus,
