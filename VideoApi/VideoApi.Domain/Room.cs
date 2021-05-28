@@ -90,6 +90,9 @@ namespace VideoApi.Domain
 
         public void CloseRoom()
         {
+            if (RoomParticipants.Count > 0)
+                throw new InvalidOperationException("Cannot close a room that has participants in it.");
+            
             Status = RoomStatus.Closed;
         }
         

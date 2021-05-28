@@ -57,8 +57,8 @@ namespace VideoApi.UnitTests.DAL
             await _dbContext.SaveChangesAsync();
             
             // Act & Assert
-            Func<Task> action = async () => await _handlerUnderTest.Handle(new CloseConsultationRoomCommand(room.Id));
-            await action.Should().ThrowAsync<InvalidVirtualCourtRoomTypeException>();
+            Func<Task> act = async () => await _handlerUnderTest.Handle(new CloseConsultationRoomCommand(room.Id));
+            await act.Should().ThrowAsync<InvalidVirtualCourtRoomTypeException>();
         }
     }
 }
