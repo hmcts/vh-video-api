@@ -28,7 +28,7 @@ namespace VideoApi.Events.Handlers
             var addParticipantToRoomCommand =
                 new AddParticipantToParticipantRoomCommand(SourceParticipantRoom.Id, SourceParticipant.Id);
             
-            _logger.LogInformation("{ConferenceId} Room Participant Joined callback - {ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom} - {Tags}",
+            _logger.LogInformation("Room Participant Joined callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom} - {Tags}",
                 SourceConference.Id, SourceParticipant.Id, participantState, room, null, SourceParticipantRoom.Id, new [] {"VIH-7730", "HearingEvent"});
 
             await CommandHandler.Handle(addParticipantToRoomCommand);

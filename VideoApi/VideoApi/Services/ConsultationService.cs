@@ -96,7 +96,7 @@ namespace VideoApi.Services
         {
             var response = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
-                "{VirtualCourtRoomId} Created a consultation with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel} - {Tags}",
+                "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel} - {Tags}",
                 virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label, new [] {"VIH-7730", "ConsultationRoom"});
 
             return response;

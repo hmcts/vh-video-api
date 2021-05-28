@@ -23,7 +23,7 @@ namespace VideoApi.Events.Handlers
             var conferenceState = ConferenceState.Paused;
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
             
-            _logger.LogInformation("{ConferenceId} Pause callback - {Tags}",
+            _logger.LogInformation("Pause callback received - {ConferenceId} - {Tags}",
                 SourceConference.Id, new [] {"VIH-7730", "HearingEvent"});
             return CommandHandler.Handle(command);
         }

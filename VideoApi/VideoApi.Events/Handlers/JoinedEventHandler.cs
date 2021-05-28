@@ -25,7 +25,7 @@ namespace VideoApi.Events.Handlers
             var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
                 participantState, room, null);
             
-            _logger.LogInformation("{ConferenceId} {ParticipantId} Joined callback - {Tags}",
+            _logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId} - {Tags}",
                 SourceConference.Id, SourceParticipant.Id, new [] {"VIH-7730", "HearingEvent"});
             return CommandHandler.Handle(command);
         }
