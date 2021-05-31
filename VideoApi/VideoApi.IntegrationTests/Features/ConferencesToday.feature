@@ -17,19 +17,19 @@ Feature: Conferences Today
     Then the response should have the status OK and success status True
     And only todays conferences should be retrieved for vho
 
-  Scenario Outline: Get list of conferences for vho with username filter
-    Given I have several conferences with users
+  Scenario Outline: Get list of conferences for vho with hearingVenueName filter
+    Given I have several conferences with hearing venue name
     And I have a get conferences for a vho request
-    And I filter by <usernames>
+    And I filter by <hearingVenueNames>
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And I get <result> hearing(s)
     Examples:
-      | usernames  | result |
-      | JudgeOne   | 3      |
-      | JudgeTwo   | 1      |
-      | JudgeThree | 0      |
-      | JudgeFour  | 2      |
+      | hearingVenueNames           | result |
+      | Manchester,Birmingham       | 5      |
+      | Birmingham                  | 2      |
+      | Luton                       | 1      |
+      | JudgeFour                   | 0      |
 
   Scenario: Get list of conferences for judge with valid username
     Given I have a conference
