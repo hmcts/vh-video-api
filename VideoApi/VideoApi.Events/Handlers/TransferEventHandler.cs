@@ -28,6 +28,9 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
+            _logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
+                SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.ParticipantRoomId, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
+            
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
 
             var command =
@@ -63,8 +66,6 @@ namespace VideoApi.Events.Handlers
                 }
             }
         }
-
-
 
         private ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {

@@ -21,7 +21,7 @@ namespace VideoApi.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly IEventHandlerFactory _eventHandlerFactory;
         private readonly ILogger<VideoEventsController> _logger;
-
+        
         public VideoEventsController(ICommandHandler commandHandler, IEventHandlerFactory eventHandlerFactory,
             ILogger<VideoEventsController> logger)
         {
@@ -45,14 +45,13 @@ namespace VideoApi.Controllers
             Guid.TryParse(request.ParticipantId, out var participantId);
 
             var command = EventRequestMapper.MapEventRequestToEventCommand(conferenceId, request);
-
-            _logger.LogWarning("Handling {ConferenceEventRequest}", nameof(ConferenceEventRequest));
+            
             
             await _commandHandler.Handle(command);
 
             if (request.ShouldSkipEventHandler())
             {
-                _logger.LogDebug("Handling CallbackEvent skipped due to result of ShouldHandleEvent");
+                _logger.LogTrace("Handling CallbackEvent ({@Request}) skipped due to result of ShouldHandleEvent", request);
                 return NoContent();
             }
 

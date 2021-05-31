@@ -24,6 +24,9 @@ namespace VideoApi.Events.Handlers
             var room = RoomType.WaitingRoom;
             var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
                 participantState, room, null);
+            
+            _logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId}",
+                SourceConference.Id, SourceParticipant.Id);
             return CommandHandler.Handle(command);
         }
 

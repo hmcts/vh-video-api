@@ -44,6 +44,9 @@ namespace VideoApi.Events.Handlers
             {
                 await AddDisconnectedTask();
             }
+            
+            _logger.LogInformation("Room Participant Disconnected callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom}",
+                SourceConference.Id, SourceParticipant.Id, participantState, null, null, SourceParticipantRoom.Id);
         }
 
         private async Task ReturnRoomParticipantToWaitingRoom()
