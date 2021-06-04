@@ -13,7 +13,7 @@ namespace VideoApi.Services.Contracts
 
         Task<string> CreateSharedAccessSignature(string filePath, TimeSpan validUntil);
 
-        IAsyncEnumerable<BlobClient> GetAllBlobsAsync(string filePathPrefix);
+        Task<List<Azure.Storage.Blobs.Models.BlobItem>> GetAllBlobsAsync(string filePathPrefix);
 
         Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix);
 

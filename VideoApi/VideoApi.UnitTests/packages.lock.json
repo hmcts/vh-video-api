@@ -96,14 +96,15 @@
       },
       "Azure.Core": {
         "type": "Transitive",
-        "resolved": "1.2.1",
-        "contentHash": "U0zPuK0/ssiz0gvli1/sslqPKANZpCa7muDM3K4Vj6Pf6YKYNnpByQsnqFQTYafzr6cQ41mr1nM07I8jOm5UkA==",
+        "resolved": "1.6.0",
+        "contentHash": "kI4m2NsODPOrxo0OoKjk6B3ADbdovhDQIEmI4039upjjZKRaewVLx/Uz4DfRa/NtnIRZQPUALe1yvdHWAoRt4w==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.0.0",
           "System.Buffers": "4.5.0",
           "System.Diagnostics.DiagnosticSource": "4.6.0",
           "System.Memory": "4.5.3",
           "System.Numerics.Vectors": "4.5.0",
+          "System.Text.Json": "4.6.0",
           "System.Threading.Tasks.Extensions": "4.5.2"
         }
       },
@@ -122,19 +123,19 @@
       },
       "Azure.Storage.Blobs": {
         "type": "Transitive",
-        "resolved": "12.4.2",
-        "contentHash": "fhUwOl4qXy23StKvBHDHV5ALM34SczEETRgJWDJHwPW3sZNIYAi3GTBXlWAYPm4SNKR1JgpZSYTbMHrNYCr1DQ==",
+        "resolved": "12.7.0",
+        "contentHash": "sOO8tIET7AqLsQ0Rd7Vft9ykCw65RUwfRdD+2wg3FWToO5YqkhOP+liJggQm+n8C7JnZAG0Jkb2u6RhBT2F9ew==",
         "dependencies": {
-          "Azure.Core": "1.2.1",
-          "Azure.Storage.Common": "12.4.1"
+          "Azure.Storage.Common": "12.6.0",
+          "System.Text.Json": "4.6.0"
         }
       },
       "Azure.Storage.Common": {
         "type": "Transitive",
-        "resolved": "12.4.1",
-        "contentHash": "Q1/w9P9wJCKo+q2LF4pgZxNwgmqmArkxHjPW+Q1pugdc894T6HU4+3hmrFda1otS9CbAPhBLG98WOZ37jMPmFg==",
+        "resolved": "12.6.0",
+        "contentHash": "plL0m1CA4UVKYpQxs3PaKyVyGmY0Z4pcizXLrHwYgmh7MCeYnm1r1WrbflFrzeSOpFSycsbErj7qxt3qqpz4zA==",
         "dependencies": {
-          "Azure.Core": "1.2.1"
+          "Azure.Core": "1.6.0"
         }
       },
       "Castle.Core": {
@@ -1991,6 +1992,11 @@
           "System.Runtime.Extensions": "4.3.0"
         }
       },
+      "System.Linq.Async": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "cPtIuuH8TIjVHSi2ewwReWGW1PfChPE0LxPIDlfwVcLuTM9GANFTXiMB7k3aC4sk3f0cQU25LNKzx+jZMxijqw=="
+      },
       "System.Linq.Expressions": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -2846,7 +2852,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Identity": "1.1.1",
-          "Azure.Storage.Blobs": "12.4.2",
+          "Azure.Storage.Blobs": "12.7.0",
           "FluentValidation.AspNetCore": "9.3.0",
           "MicroElements.Swashbuckle.FluentValidation": "3.0.0-rc.4",
           "Microsoft.ApplicationInsights.AspNetCore": "2.15.0",
@@ -2915,11 +2921,12 @@
       "videoapi.services": {
         "type": "Project",
         "dependencies": {
-          "Azure.Storage.Blobs": "12.4.2",
+          "Azure.Storage.Blobs": "12.7.0",
           "Microsoft.AspNetCore.Mvc.Abstractions": "2.2.0",
           "Microsoft.Extensions.Configuration": "5.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
           "Polly": "7.2.0",
+          "System.Linq.Async": "5.0.0",
           "VideoApi.Common": "1.0.0",
           "VideoApi.Contract": "1.0.0",
           "VideoApi.Domain": "1.0.0",

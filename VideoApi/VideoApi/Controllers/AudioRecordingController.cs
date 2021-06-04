@@ -275,25 +275,19 @@ namespace VideoApi.Controllers
             }
         }
 
-        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoom, string date, string caseReference)
+        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoom, string date, string caseReference, string fileExtension = ".mp4")
         {
-            var responses = new List<CvpAudioFileResponse>();
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
-            var allBlobsAsync = azureStorageService.GetAllBlobsAsync(!string.IsNullOrWhiteSpace(cloudRoom) ? $"audiostream{cloudRoom}" : string.Empty);
-            await foreach (var blob in allBlobsAsync)
-            {
-                var blobName = blob.Name.ToLower();
-                if (!blobName.Contains(date.ToLower()) || !blobName.Contains(caseReference != null ? caseReference.ToLower() : ""))
-                {
-                    continue;
-                }
+            var allBlobsAsync = await azureStorageService.GetAllBlobsAsync(!string.IsNullOrWhiteSpace(cloudRoom) ? $"audiostream{cloudRoom}" : string.Empty);
 
-                responses.Add(new CvpAudioFileResponse
+            var stringMatch = (caseReference != null ? caseReference.ToLower() : "") + "-" + date.ToLower();
+
+            var responses = allBlobsAsync.Where(b => b.Name.Contains(stringMatch) && b.Name.EndsWith(fileExtension)).
+                Select( b => new CvpAudioFileResponse
                 {
-                    FileName = blob.Name.Substring(blob.Name.LastIndexOf("/") + 1),
-                    SasTokenUrl = await azureStorageService.CreateSharedAccessSignature(blob.Name, TimeSpan.FromDays(3))
-                });
-            }
+                    FileName = b.Name.Substring(b.Name.LastIndexOf("/") + 1),
+                    SasTokenUrl = azureStorageService.CreateSharedAccessSignature(b.Name, TimeSpan.FromDays(3)).Result
+                }).ToList();
 
             return responses;
         }

@@ -5,6 +5,7 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using VideoApi.Common.Configuration;
+using System.Linq;
 
 namespace VideoApi.Services
 {
@@ -33,19 +34,27 @@ namespace VideoApi.Services
                 validUntil,
                 _useUserDelegation);
 
-        public async IAsyncEnumerable<BlobClient> GetAllBlobsAsync(string filePathPrefix)
+        //public async IAsyncEnumerable<BlobClient> GetAllBlobsAsync(string filePathPrefix)
+        //{
+        //    var container = _serviceClient.GetBlobContainerClient(_blobStorageConfiguration.StorageContainerName);
+
+        //    await foreach (var page in container.GetBlobsAsync(prefix: filePathPrefix))
+        //    {
+        //        yield return container.GetBlobClient(page.Name);
+        //    }
+        //}
+
+        public async Task<List<Azure.Storage.Blobs.Models.BlobItem>> GetAllBlobsAsync(string filePathPrefix)
         {
             var container = _serviceClient.GetBlobContainerClient(_blobStorageConfiguration.StorageContainerName);
-            await foreach (var page in container.GetBlobsAsync(prefix: filePathPrefix))
-            {
-                yield return container.GetBlobClient(page.Name);
-            }
+
+            return await container.GetBlobsAsync(prefix: filePathPrefix).ToListAsync();
         }
 
         public Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix)
         {
             var allBlobsAsync = GetAllBlobsAsync(filePathPrefix);
-            return GetAllBlobNamesByFileExtension(allBlobsAsync);
+            return GetAllBlobNamesByFileExtension((IAsyncEnumerable<BlobClient>)allBlobsAsync);
         }
 
         private async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
@@ -61,7 +70,7 @@ namespace VideoApi.Services
 
             return blobFullNames;
         }
-
+        
         private async Task<string> GenerateSharedAccessSignature(string filePath,
             string storageContainerName,
             string storageEndpoint,

@@ -2267,6 +2267,11 @@
           "System.Runtime.Extensions": "4.3.0"
         }
       },
+      "System.Linq.Async": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "cPtIuuH8TIjVHSi2ewwReWGW1PfChPE0LxPIDlfwVcLuTM9GANFTXiMB7k3aC4sk3f0cQU25LNKzx+jZMxijqw=="
+      },
       "System.Linq.Expressions": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -3143,7 +3148,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Identity": "1.1.1",
-          "Azure.Storage.Blobs": "12.4.2",
+          "Azure.Storage.Blobs": "12.7.0",
           "FluentValidation.AspNetCore": "9.3.0",
           "MicroElements.Swashbuckle.FluentValidation": "3.0.0-rc.4",
           "Microsoft.ApplicationInsights.AspNetCore": "2.15.0",
@@ -3212,11 +3217,12 @@
       "videoapi.services": {
         "type": "Project",
         "dependencies": {
-          "Azure.Storage.Blobs": "12.4.2",
+          "Azure.Storage.Blobs": "12.7.0",
           "Microsoft.AspNetCore.Mvc.Abstractions": "2.2.0",
           "Microsoft.Extensions.Configuration": "5.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
           "Polly": "7.2.0",
+          "System.Linq.Async": "5.0.0",
           "VideoApi.Common": "1.0.0",
           "VideoApi.Contract": "1.0.0",
           "VideoApi.Domain": "1.0.0",
