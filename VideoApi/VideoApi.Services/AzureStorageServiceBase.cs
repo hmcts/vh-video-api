@@ -34,16 +34,6 @@ namespace VideoApi.Services
                 validUntil,
                 _useUserDelegation);
 
-        //public async IAsyncEnumerable<BlobClient> GetAllBlobsAsync(string filePathPrefix)
-        //{
-        //    var container = _serviceClient.GetBlobContainerClient(_blobStorageConfiguration.StorageContainerName);
-
-        //    await foreach (var page in container.GetBlobsAsync(prefix: filePathPrefix))
-        //    {
-        //        yield return container.GetBlobClient(page.Name);
-        //    }
-        //}
-
         public async Task<List<Azure.Storage.Blobs.Models.BlobItem>> GetAllBlobsAsync(string filePathPrefix)
         {
             var container = _serviceClient.GetBlobContainerClient(_blobStorageConfiguration.StorageContainerName);

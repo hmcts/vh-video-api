@@ -100,7 +100,7 @@ namespace VideoApi.UnitTests.Services
             
             var service = new CvpAzureStorageService(blobServiceClient.Object, config, true);
 
-            await foreach (var item in service.GetAllBlobsAsync(filePathPrefix))
+            foreach (var item in await service.GetAllBlobsAsync(filePathPrefix))
             {
                 item.Should().NotBeNull();
             }
