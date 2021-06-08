@@ -174,13 +174,13 @@ namespace VideoApi.Client
         /// <summary>Get today's conferences by HearingVenueName</summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> userNames, System.Collections.Generic.IEnumerable<string> hearingVenueNames);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get today's conferences by HearingVenueName</summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> userNames, System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get all conferences for a judge</summary>
         /// <param name="username">judge username</param>
@@ -1982,23 +1982,19 @@ namespace VideoApi.Client
         /// <summary>Get today's conferences by HearingVenueName</summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> userNames, System.Collections.Generic.IEnumerable<string> hearingVenueNames)
+        public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames)
         {
-            return GetConferencesTodayForAdminByHearingVenueNameAsync(userNames, hearingVenueNames, System.Threading.CancellationToken.None);
+            return GetConferencesTodayForAdminByHearingVenueNameAsync(hearingVenueNames, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get today's conferences by HearingVenueName</summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> userNames, System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/today/vho?");
-            if (userNames != null)
-            {
-                foreach (var item_ in userNames) { urlBuilder_.Append(System.Uri.EscapeDataString("UserNames") + "=").Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append("&"); }
-            }
             if (hearingVenueNames != null)
             {
                 foreach (var item_ in hearingVenueNames) { urlBuilder_.Append(System.Uri.EscapeDataString("HearingVenueNames") + "=").Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append("&"); }
