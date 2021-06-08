@@ -142,97 +142,35 @@ namespace VideoApi.IntegrationTests.Steps
             });
         }
 
-        [Given(@"I have several conferences with users")]
-        public async Task GivenIHaveSeveralConferencesWithUsers()
+        [Given(@"I have several conferences with hearing venue name")]
+        public async Task GivenIHaveSeveralConferencesAtDifferentVenues()
         {
-            var caseGroup = "ChildrenAct";
+            var hearingVenueName1 = @"Manchester";
+            var hearingVenueName2 = @"Birmingham";
+            var hearingVenueName3 = @"Luton";
+
             var today = DateTime.Today.AddMinutes(10);
-            var conference1 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipants(new List<Participant>
-                {
-                    new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@hmcts.net", UserRole.Judge,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge1@hmcts.net", "01234"),
-                    new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
-                        "IndividualOne.Smith@hmcts.net", UserRole.Individual,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual1@hmcts.net", "01234")
-                })
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: hearingVenueName1)
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(20);
-            var conference2 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipants(new List<Participant>
-                {
-                    new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@hmcts.net", UserRole.Judge,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge1@hmcts.net", "01234"),
-                    new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
-                        "RepresentativeOne.Green@hmcts.net", UserRole.Individual,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual2@hmcts.net", "01234")
-                })
+            var conference2 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: hearingVenueName1)
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(30);
-            var conference3 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipants(new List<Participant>
-                {
-                    new Participant(Guid.NewGuid(), "", "JudgeOne", "Smith", "JudgeOne Smith",
-                        "JudgeOne.Smith@hmcts.net", UserRole.Judge,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge1@hmcts.net", "01234"),
-                    new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Brown", "RepresentativeTwo Brown",
-                        "RepresentativeTwo.Brown@hmcts.net", UserRole.Individual,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual3@hmcts.net", "01234")
-                })
+            var conference3 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: hearingVenueName1)
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(35);
-            var conference4 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipants(new List<Participant>
-                {
-                    new Participant(Guid.NewGuid(), "", "JudgeTwo", "Dave", "JudgeTwo Dave", "JudgeTwo.Dave@hmcts.net",
-                        UserRole.Judge, ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge2@hmcts.net", "01234"),
-                    new Participant(Guid.NewGuid(), "", "RepresentativeOne", "Green", "RepresentativeOne Green",
-                        "RepresentativeOne.Green@hmcts.net", UserRole.Individual,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual2@hmcts.net", "01234")
-                })
+            var conference4 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: hearingVenueName2)
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(40);
-            var conference5 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipants(new List<Participant>
-                {
-                    new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
-                        "JudgeFour.Matt@hmcts.net", UserRole.Judge,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge4@hmcts.net", "01234"),
-                    new Participant(Guid.NewGuid(), "", "RepresentativeTwo", "Dredd", "RepresentativeTwo Dredd",
-                        "RepresentativeTwo.Dredd@hmcts.net", UserRole.Individual,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup, "rep2@hmcts.net",
-                        "01234")
-                })
+            var conference5 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: hearingVenueName2)
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             today = DateTime.Today.AddMinutes(45);
-            var conference6 = new ConferenceBuilder(true, scheduledDateTime: today)
-                .WithParticipants(new List<Participant>
-                {
-                    new Participant(Guid.NewGuid(), "", "JudgeFour", "Matt", "JudgeFour Matt",
-                        "JudgeFour.Matt@hmcts.net", UserRole.Judge,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "judge4@hmcts.net", "01234"),
-                    new Participant(Guid.NewGuid(), "", "IndividualOne", "Brown", "IndividualOne Brown",
-                        "IndividualOne.Smith@hmcts.net", UserRole.Individual,
-                        ParticipantBuilder.DetermineHearingRole(UserRole.Judge, caseGroup), caseGroup,
-                        "individual1@hmcts.net", "01234")
-                })
+            var conference6 = new ConferenceBuilder(true, scheduledDateTime: today, venueName: hearingVenueName3)
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             await _context.TestDataManager.SeedConference(conference1);

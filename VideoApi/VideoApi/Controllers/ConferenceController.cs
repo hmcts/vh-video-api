@@ -228,25 +228,25 @@ namespace VideoApi.Controllers
         }
 
         /// <summary>
-        /// Get todays conferences
+        /// Get today's conferences by HearingVenueName
         /// </summary>
         /// <returns>Conference details</returns>
         [HttpGet("today/vho")]
-        [OpenApiOperation("GetConferencesTodayForAdmin")]
-        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesTodayForAdminByUsernameAsync(
+        [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
+        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync(
             [FromQuery] ConferenceForAdminRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
 
-            var query = new GetConferencesTodayForAdminQuery
+            var query = new GetConferencesTodayForAdminByHearingVenueNameQuery
             {
-                UserNames = request.UserNames
+                HearingVenueNames = request.HearingVenueNames
             };
 
-            var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminQuery, List<Conference>>(query);
+            var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
 
-            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c , _kinlyConfiguration));
+            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c, _kinlyConfiguration));
 
             return Ok(response);
         }

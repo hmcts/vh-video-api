@@ -6,25 +6,24 @@ using Castle.Core.Internal;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetConferencesTodayForAdminQuery : IQuery
+    public class GetConferencesTodayForAdminByHearingVenueNameQuery : IQuery
     {
-        public IEnumerable<string> UserNames { get; set; }
+        public IEnumerable<string> HearingVenueNames { get; set; }
     }
 
-    public class GetConferencesTodayForAdminQueryHandler : IQueryHandler<GetConferencesTodayForAdminQuery, List<Conference>>
+    public class GetConferencesTodayForAdminByHearingVenueNameQueryHandler : IQueryHandler<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetConferencesTodayForAdminQueryHandler(VideoApiDbContext context)
+        public GetConferencesTodayForAdminByHearingVenueNameQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Conference>> Handle(GetConferencesTodayForAdminQuery query)
+        public async Task<List<Conference>> Handle(GetConferencesTodayForAdminByHearingVenueNameQuery query)
         {
             var today = DateTime.Today;
             var tomorrow = DateTime.Today.AddDays(1);
@@ -34,10 +33,9 @@ namespace VideoApi.DAL.Queries
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
 
-            if (!query.UserNames.IsNullOrEmpty())
+            if (!query.HearingVenueNames.IsNullOrEmpty())
             {
-                adminQuery = adminQuery.Where(p => p.Participants.Any(j => j.UserRole == UserRole.Judge
-                    && query.UserNames.Contains(j.FirstName))).Distinct();
+                adminQuery = adminQuery.Where(p => query.HearingVenueNames.Contains(p.HearingVenueName)).Distinct();
             }
 
             return await adminQuery
