@@ -25,20 +25,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             _conferenceForAdminRequest.HearingVenueNames = hearingVenueNames;
             var result = await Controller.GetConferencesTodayForAdminByHearingVenueNameAsync(_conferenceForAdminRequest);
 
-            var typedResult = (OkObjectResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
-        }
-
-        [Test]
-        public async Task Should_return_not_found_with_no_matching_conference()
-        {
-            var hearingVenueNames = new List<string>(new string[] { It.IsAny<string>() });
-
-            _conferenceForAdminRequest.HearingVenueNames = hearingVenueNames;
-            var result = await Controller.GetConferencesTodayForAdminByHearingVenueNameAsync(_conferenceForAdminRequest);
-
-            var typedResult = (OkObjectResult)result;
-            typedResult.Should().NotBeNull();
+            result.As<OkObjectResult>().StatusCode.Should().Be((int) HttpStatusCode.OK);
         }
     }
 }

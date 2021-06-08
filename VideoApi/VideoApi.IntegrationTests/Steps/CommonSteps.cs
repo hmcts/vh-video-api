@@ -143,7 +143,7 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"I have several conferences with hearing venue name")]
-        public async Task GivenIHaveSeveralConferencesWithUsers()
+        public async Task GivenIHaveSeveralConferencesAtDifferentVenues()
         {
             var hearingVenueName1 = @"Manchester";
             var hearingVenueName2 = @"Birmingham";
