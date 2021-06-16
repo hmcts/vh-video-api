@@ -63,7 +63,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             List<Heartbeat> heartbeats;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _conference1Id).ToListAsync();
+                heartbeats = await db.Heartbeats.AsQueryable().Where(x => x.ConferenceId == _conference1Id).ToListAsync();
             }
 
             var afterCount = heartbeats.Count;
@@ -106,7 +106,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             List<Heartbeat> heartbeats;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _conference1Id).ToListAsync();
+                heartbeats = await db.Heartbeats.AsQueryable().Where(x => x.ConferenceId == _conference1Id).ToListAsync();
             }
 
             var afterCount = heartbeats.Count;

@@ -59,7 +59,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Event savedEvent;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                savedEvent = await db.Events.AsQueryable().FirstOrDefaultAsync(x =>
                     x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
             }
 
@@ -98,7 +98,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Event savedEvent;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                savedEvent = await db.Events.AsQueryable().FirstOrDefaultAsync(x =>
                     x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
             }
 
@@ -137,7 +137,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Event savedEvent;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                savedEvent = await db.Events.AsQueryable().FirstOrDefaultAsync(x =>
                     x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
             }
 
@@ -177,7 +177,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Event savedEvent;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedEvent = await db.Events.FirstOrDefaultAsync(x =>
+                savedEvent = await db.Events.AsQueryable().FirstOrDefaultAsync(x =>
                     x.ExternalEventId == externalEventId && x.ParticipantId == participantId);
             }
 

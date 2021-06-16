@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             List<Alert> alerts;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                alerts = await db.Tasks.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
+                alerts = await db.Tasks.AsQueryable().Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
             var updatedAlert = alerts.First(x => x.Id == task.Id);

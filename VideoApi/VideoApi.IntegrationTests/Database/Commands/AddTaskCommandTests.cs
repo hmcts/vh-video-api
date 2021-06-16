@@ -42,7 +42,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             List<Domain.Task> tasks;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                tasks = await db.Tasks.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
+                tasks = await db.Tasks.AsQueryable().Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
             var savedAlert = tasks.First(x => x.Body == body && x.Type == taskType);

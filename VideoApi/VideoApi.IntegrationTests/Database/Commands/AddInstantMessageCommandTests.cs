@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
                 instantMessages = await db.InstantMessages
-                                .Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
+                                .AsQueryable().Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
             var message = instantMessages.First();

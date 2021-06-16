@@ -186,7 +186,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             judge.State.Should().Be(expectedState);
             
-            var updatedRoom = await db.Rooms.SingleAsync(x => x.Label == room.Label);
+            var updatedRoom = await db.Rooms.AsQueryable().SingleAsync(x => x.Label == room.Label);
             updatedRoom.RoomParticipants.Any(x => x.ParticipantId == judge.Id).Should().Be(shouldBeInRoom);
         }
         

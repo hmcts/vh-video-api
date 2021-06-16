@@ -55,7 +55,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             await _handler.Handle(command);
             
             await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            var updatedRoom = await db.Rooms.OfType<ParticipantRoom>().AsNoTracking()
+            var updatedRoom = await db.Rooms.AsQueryable().OfType<ParticipantRoom>().AsNoTracking()
                 .Include(r => r.RoomParticipants)
                 .SingleAsync(r => r.Id == interpreterRoom.Id);
 

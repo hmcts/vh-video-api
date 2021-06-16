@@ -367,7 +367,7 @@ namespace VideoApi.IntegrationTests.Steps
             Conference removedConference;
             await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
             {
-                removedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
+                removedConference = await db.Conferences.AsQueryable().SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
             }
             removedConference.Should().BeNull();
         }
@@ -378,7 +378,7 @@ namespace VideoApi.IntegrationTests.Steps
             Conference updatedConference;
             await using (var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions))
             {
-                updatedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
+                updatedConference = await db.Conferences.AsQueryable().SingleOrDefaultAsync(x => x.Id == _context.Test.Conference.Id);
             }
             updatedConference.Should().NotBeNull();
             updatedConference.AudioRecordingRequired.Should().BeTrue();
@@ -485,7 +485,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheHeartbeatsShouldBeDeleted()
         {
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
-            var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
+            var heartbeats = await db.Heartbeats.AsQueryable().Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
             heartbeats.Should().NotBeNull();
             heartbeats.Count.Should().Be(0);
         }
@@ -494,7 +494,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheHeartbeatsShouldNotBeDeleted()
         {
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
-            var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
+            var heartbeats = await db.Heartbeats.AsQueryable().Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
             heartbeats.Should().NotBeNull();
             heartbeats.Count.Should().Be(3);
         }

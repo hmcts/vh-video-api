@@ -72,7 +72,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
             
             await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            var room = await db.Rooms.OfType<ParticipantRoom>()
+            var room = await db.Rooms.AsQueryable().OfType<ParticipantRoom>()
                 .Include(r => r.RoomParticipants)
                 .SingleAsync(r => r.Id == _room.Id);
             room.AddParticipant(new RoomParticipant(participant.Id));
@@ -83,7 +83,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         private async Task<ParticipantRoom> GetInterpreterRoom()
         {
             await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            return await db.Rooms.OfType<ParticipantRoom>()
+            return await db.Rooms.AsQueryable().OfType<ParticipantRoom>()
                 .Include(r => r.RoomParticipants)
                 .SingleAsync(r => r.Id == _room.Id);
         }

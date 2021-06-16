@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +38,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Heartbeat savedHeartbeat;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                savedHeartbeat = await db.Heartbeats.FirstOrDefaultAsync(x =>
+                savedHeartbeat = await db.Heartbeats.AsQueryable().FirstOrDefaultAsync(x =>
                     x.ConferenceId == _newConferenceId && x.ParticipantId == participantId);
             }
 

@@ -43,7 +43,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             List<InstantMessage> messages;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                messages = await db.InstantMessages.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
+                messages = await db.InstantMessages.AsQueryable().Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
             }
 
             var afterCount = messages.Count;

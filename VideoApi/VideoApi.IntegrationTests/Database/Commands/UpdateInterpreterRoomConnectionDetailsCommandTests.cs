@@ -49,7 +49,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var roomId = command.RoomId;
 
             await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            var updatedRoom = await db.Rooms.OfType<ParticipantRoom>().AsNoTracking()
+            var updatedRoom = await db.Rooms.AsQueryable().OfType<ParticipantRoom>().AsNoTracking()
                 .SingleAsync(c => c.Id == roomId);
             updatedRoom.Label.Should().Be(label);
             updatedRoom.IngestUrl.Should().Be(ingestUrl);
