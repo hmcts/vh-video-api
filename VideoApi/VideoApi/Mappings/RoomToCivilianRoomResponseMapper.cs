@@ -1,6 +1,7 @@
 using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
@@ -12,7 +13,8 @@ namespace VideoApi.Mappings
             {
                 Id = consultationRoom.Id,
                 Label = consultationRoom.Label,
-                Participants = consultationRoom.RoomParticipants.Select(x => x.ParticipantId).ToList()
+                Participants = consultationRoom.RoomParticipants.Select(x => x.ParticipantId).ToList(), 
+                Status = consultationRoom.Status.MapToContractEnum()
             };
         }
     }

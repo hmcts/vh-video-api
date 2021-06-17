@@ -74,5 +74,9 @@ namespace VideoApi.Extensions
         {
             return Enum.Parse<Domain.Enums.LinkedParticipantType>(taskType.ToString());
         }
+        public static Contract.Enums.RoomStatus MapToContractEnum(this Domain.Enums.RoomStatus taskType)
+        {
+            return Enum.Parse<Contract.Enums.RoomStatus>(taskType.ToString());
+        }
     }
 }
