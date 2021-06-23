@@ -95,14 +95,7 @@ namespace VideoApi.DAL.Commands
             {
                 try
                 {
-                    var primaryParticipant =
-                        conference.Participants.Single(x => x.ParticipantRefId == linkedParticipant.ParticipantRefId);
-
-                    var secondaryParticipant =
-                        conference.Participants.Single(x => x.ParticipantRefId == linkedParticipant.LinkedRefId);
-
-                    primaryParticipant.AddLink(secondaryParticipant.Id, linkedParticipant.Type);
-                    secondaryParticipant.AddLink(primaryParticipant.Id, linkedParticipant.Type);
+                    conference.AddLinkedParticipants(linkedParticipant.ParticipantRefId, linkedParticipant.LinkedRefId, linkedParticipant.Type);
                 }
                 catch (Exception)
                 {

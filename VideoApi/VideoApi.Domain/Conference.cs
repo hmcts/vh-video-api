@@ -214,5 +214,17 @@ namespace VideoApi.Domain
         {
             InstantMessageHistory.Clear();
         }
+
+        public void AddLinkedParticipants(Guid primaryParticipantRefId, Guid secondaryParticipantRefId, LinkedParticipantType linkedParticipantType)
+        {
+            var primaryParticipant =
+                Participants.Single(x => x.ParticipantRefId == primaryParticipantRefId);
+
+            var secondaryParticipant =
+                Participants.Single(x => x.ParticipantRefId == secondaryParticipantRefId);
+
+            primaryParticipant.AddLink(secondaryParticipant.Id, linkedParticipantType);
+            secondaryParticipant.AddLink(primaryParticipant.Id, linkedParticipantType);
+        }
     }
 }
