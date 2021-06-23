@@ -34,6 +34,31 @@ namespace VideoApi.Domain
             ContactTelephone = contactTelephone;
         }
 
+        /// <summary>
+        /// This constructor is used for existing participants, e.g. when updating an existing participant
+        /// </summary>
+        /// <param name="participantRefId"></param>
+        /// <param name="contactEmail"></param>
+        /// <param name="contactTelephone"></param>
+        /// <param name="displayName"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="name"></param>
+        /// <param name="username"></param>
+        public Participant(Guid participantRefId, string contactEmail, string contactTelephone,
+             string displayName, string firstName, string lastName, string name, string username
+            ) : this()
+        {
+            ParticipantRefId = participantRefId;
+            ContactEmail = contactEmail;
+            ContactTelephone = contactTelephone;
+            DisplayName = displayName;
+            FirstName = firstName;
+            LastName = lastName;
+            Name = name;
+            Username = username;
+        }
+
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }
         public string FirstName { get; set; }

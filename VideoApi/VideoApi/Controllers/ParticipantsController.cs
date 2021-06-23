@@ -89,6 +89,66 @@ namespace VideoApi.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Update a conference's participants
+        /// </summary>
+        /// <param name="conferenceId">Id of conference to look up</param>
+        /// <param name="request">Information about the participants</param>
+        /// <returns></returns>
+        [HttpPatch("{conferenceId}/UpdateConferenceParticipants", Name = "UpdateConferenceParticipants")]
+        [OpenApiOperation("UpdateConferenceParticipants")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateConferenceParticipantsAsync(Guid conferenceId, UpdateConferenceParticipantsRequest request)
+        {
+            try
+            {
+                var existingParticipants = request.ExistingParticipants.Select(x =>
+                        new Participant(x.ParticipantRefId, x.ContactEmail, x.ContactTelephone, x.DisplayName,
+                        x.FirstName, x.LastName, x.Fullname, x.Username)
+                        {
+                            Representee = x.Representee
+                        })
+                    .ToList();
+
+                var newParticipants = request.NewParticipants.Select(x =>
+                        new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
+                            x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole.MapToDomainEnum(),
+                            x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
+                        {
+                            Representee = x.Representee
+                        })
+                    .ToList();
+
+                var linkedParticipants = request.LinkedParticipants
+                    .Select(x => new LinkedParticipantDto()
+                    {
+                        ParticipantRefId = x.ParticipantRefId,
+                        LinkedRefId = x.LinkedRefId,
+                        Type = x.Type.MapToDomainEnum()
+                    }).ToList();
+
+                var updateHearingParticipantsCommand = new UpdateConferenceParticipantsCommand(conferenceId, existingParticipants, newParticipants,
+                    request.RemovedParticipants, linkedParticipants);
+
+                await _commandHandler.Handle(updateHearingParticipantsCommand);
+
+                return NoContent();
+            }
+            catch (ConferenceNotFoundException ex)
+            {
+                _logger.LogError(ex, "Unable to find conference");
+                return NotFound();
+            }
+            catch (ParticipantNotFoundException ex)
+            {
+                _logger.LogError(ex, "Unable to find participant");
+                return NotFound();
+            }
+        }
+
         /// <summary>
         /// Update participant details
         /// </summary>
