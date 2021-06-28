@@ -103,6 +103,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateConferenceParticipantsAsync(Guid conferenceId, UpdateConferenceParticipantsRequest request)
         {
+            _logger.LogDebug("UpdateConferenceParticipants");
             try
             {
                 var existingParticipants = request.ExistingParticipants.Select(x =>
