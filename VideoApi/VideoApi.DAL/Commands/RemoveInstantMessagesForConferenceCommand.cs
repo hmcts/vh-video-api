@@ -30,7 +30,6 @@ namespace VideoApi.DAL.Commands
             var instantMessages = await _context.InstantMessages.Where(x => x.ConferenceId == command.ConferenceId).ToListAsync();
 
             _context.RemoveRange(instantMessages);
-            
             await _context.SaveChangesAsync();
         }
     }
