@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace VideoApi.Contract.Requests
@@ -8,7 +9,12 @@ namespace VideoApi.Contract.Requests
         {
             LinkedParticipants = new List<LinkedParticipantRequest>();
         }
-        
+
+        /// <summary>
+        ///     Participant Ref Id
+        /// </summary>
+        public Guid ParticipantRefId { get; set; }
+
         /// <summary>
         ///     Participant Fullname
         /// </summary>

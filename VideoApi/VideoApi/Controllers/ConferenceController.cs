@@ -245,7 +245,6 @@ namespace VideoApi.Controllers
             };
 
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-
             var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c, _kinlyConfiguration));
 
             return Ok(response);
