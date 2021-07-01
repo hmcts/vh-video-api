@@ -15,6 +15,8 @@ namespace VideoApi.Services.Contracts
 
         Task<List<Azure.Storage.Blobs.Models.BlobItem>> GetAllBlobsAsync(string filePathPrefix);
 
+        Task<List<string>> GetAllBlobsAsync2(string filePathPrefix, string date, string caseReference);
+
         Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix);
 
     }

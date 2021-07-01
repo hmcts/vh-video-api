@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
+using System.Linq;
 using VideoApi.Common.Configuration;
 using System.Linq;
+using System.Globalization;
 
 namespace VideoApi.Services
 {
@@ -39,6 +42,15 @@ namespace VideoApi.Services
             var container = _serviceClient.GetBlobContainerClient(_blobStorageConfiguration.StorageContainerName);
 
             return await container.GetBlobsAsync(prefix: filePathPrefix).ToListAsync();
+        }
+
+        public async Task<List<string>> GetAllBlobsAsync2(string filePathPrefix, string date, string caseReference)
+        {
+            var container = _serviceClient.GetBlobContainerClient(_blobStorageConfiguration.StorageContainerName);
+            DateTime dt = DateTime.ParseExact(date, "yyyy-MM-dd",CultureInfo.InvariantCulture);
+            async ValueTask<bool> Selector(BlobItem x) => x.Properties.LastModified.Value.Date == dt && x.Name.ToLower().Contains(caseReference != null ? caseReference.ToLower() : "");
+            var blobsAsync = await container.GetBlobsAsync(prefix: filePathPrefix).WhereAwait(Selector).Select(x => x.Name).ToListAsync();
+            return blobsAsync;
         }
 
         public Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix)

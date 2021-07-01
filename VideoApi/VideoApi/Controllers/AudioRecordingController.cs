@@ -275,20 +275,21 @@ namespace VideoApi.Controllers
             }
         }
 
-        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoom, string date, string caseReference, string fileExtension = ".mp4")
+        private async Task<List<CvpAudioFileResponse>> GetCvpAudioFiles(string cloudRoom, string date, string caseReference)
         {
+            var responses = new List<CvpAudioFileResponse>();
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Cvp);
-            var allBlobsAsync = await azureStorageService.GetAllBlobsAsync(!string.IsNullOrWhiteSpace(cloudRoom) ? $"audiostream{cloudRoom}" : string.Empty);
+            var allBlobsAsync2 = await azureStorageService.GetAllBlobsAsync2(!string.IsNullOrWhiteSpace(cloudRoom) ? $"audiostream{cloudRoom}" : string.Empty , date, caseReference);
 
-            var stringMatch = (caseReference != null ? caseReference.ToLower() : "") + "-" + date.ToLower();
 
-            var responses = allBlobsAsync.Where(b => b.Name.Contains(stringMatch) && b.Name.EndsWith(fileExtension)).
-                Select( b => new CvpAudioFileResponse
+            foreach (var blob in allBlobsAsync2)
+            {
+                responses.Add(new CvpAudioFileResponse
                 {
-                    FileName = b.Name.Substring(b.Name.LastIndexOf("/") + 1),
-                    SasTokenUrl = azureStorageService.CreateSharedAccessSignature(b.Name, TimeSpan.FromDays(3)).Result
-                }).ToList();
-
+                    FileName = blob.Substring(blob.LastIndexOf("/") + 1),
+                    SasTokenUrl = await azureStorageService.CreateSharedAccessSignature(blob, TimeSpan.FromDays(3))
+                });
+            }            
             return responses;
         }
 
