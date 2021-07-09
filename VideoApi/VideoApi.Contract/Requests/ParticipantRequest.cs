@@ -10,7 +10,8 @@ namespace VideoApi.Contract.Requests
         {
             LinkedParticipants = new List<LinkedParticipantRequest>();
         }
-        
+
+        public Guid Id { get; set; }
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
