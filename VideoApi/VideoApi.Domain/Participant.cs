@@ -19,8 +19,12 @@ namespace VideoApi.Domain
 
         public Participant(Guid participantRefId, string name, string firstName, string lastName, string displayName,
             string username, UserRole userRole, string hearingRole, string caseTypeGroup, string contactEmail,
-            string contactTelephone) : this()
+            string contactTelephone, Guid? id = null) : this()
         {
+            if(id != null && id != Guid.Empty)
+            {
+                Id = (Guid)id;
+            }
             ParticipantRefId = participantRefId;
             DisplayName = displayName;
             Username = username;
