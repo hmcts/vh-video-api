@@ -38,40 +38,48 @@ java:
         - azuread--clientid
         - applicationinsights-instrumentationkey
         - applicationinsights-connection-string
+  secrets:
+  AZUREAD__CLIENTSECRET:
+    secretRef: /mnt/secret/vh-core-infra
+    key: vh-video-api-key
+  AZUREAD__CLIENTID:
+    secretRef: /mnt/secret/vh-core-infra
+    key: vh-video-api-appid
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
     APPINSIGHTS_SNAPSHOTFEATURE_VERSION: disabled
     APPLICATIONINSIGHTSAGENT_EXTENSION_VERSION: ~2
     AZUREAD__TENANTID: "fb6e0e22-0da3-4c35-972a-9d61eb256508"
-    AZUREAD__VHVIDEOAPIRESOURCEID: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    AZUREAD__VHVIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
     CVPCONFIGURATION__STORAGEACCOUNTNAME: cvprecordings{{ .Values.global.environment }}sa
     CVPCONFIGURATION__STORAGECONTAINERNAME: recordings
-    CVPCONFIGURATION__STORAGEENDPOINT: http://cvprecordings{{ .Values.global.environment }}sa.blob.core.windows.net/
+    CVPCONFIGURATION__STORAGEENDPOINT: https://cvprecordings{{ .Values.global.environment }}sa.blob.core.windows.net/
     DISABLEHTTPSREDIRECTION: true
     INSTRUMENTATIONENGINE_EXTENSION_VERSION: ~1
     KINLYCONFIGURATION__TELEPHONECONFERENCENUMBER: +442033183131
     MSDEPLOY_RENAME_LOCKED_FILES: 1
-    SERVICES__CALLBACKURI: http://vh-video-web.{{ .Values.global.environment }}.hearings.hmcts.net/callback
-    SERVICES__KINLYAPIURL: http://hmcts-java.dev.kinlycloud.net/virtual-court/api/v1
-    SERVICES__KINLYSELFTESTAPIURL: http://test.self-test.hearings.hmcts.net
+    SERVICES__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.hearings.hmcts.net/callback
+    SERVICES__KINLYAPIURL: https://hmcts-java.dev.kinlycloud.net/virtual-court/api/v1
+    SERVICES__KINLYSELFTESTAPIURL: https://test.self-test.hearings.hmcts.net
     SERVICES__PEXIPSELFTESTNODE: sip.test.self-test.hearings.hmcts.net
-    SERVICES__USERAPIRESOURCEID: http://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
-    SERVICES__USERAPIURL: http://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
-    SERVICES__VHVIDEOAPIRESOURCEID: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
-    SERVICES__VIDEOAPIURL: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    SERVICES__USERAPIRESOURCEID: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
+    SERVICES__USERAPIURL: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
+    SERVICES__VHVIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    SERVICES__VIDEOAPIURL: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
     SNAPSHOTDEBUGGER_EXTENSION_VERSION: disabled
-    VideoAppUrl: http://vh-video-web.{{ .Values.global.environment }}.hearings.reform.hmcts.net
+    VideoAppUrl: https://vh-video-web.{{ .Values.global.environment }}.hearings.reform.hmcts.net
     WOWZACONFIGURATION__AZURESTORAGEDIRECTORY: /wowzadata/azurecopy
     WOWZACONFIGURATION__HOSTNAME: _defaultVHost_
-    WOWZACONFIGURATION__RESTAPIENDPOINT: http://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
-    WOWZACONFIGURATION__RESTAPIENDPOINT__0: http://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
-    WOWZACONFIGURATION__RESTAPIENDPOINT__1: http://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
+    WOWZACONFIGURATION__MANAGEDIDENTITYCLIENTID: 27431cb9-d1fb-4c04-8f9d-68ae6c6de53d
+    WOWZACONFIGURATION__RESTAPIENDPOINT: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
+    WOWZACONFIGURATION__RESTAPIENDPOINT__0: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8090/
+    WOWZACONFIGURATION__RESTAPIENDPOINT__1: https://vh-wowza.{{ .Values.global.environment }}.hearings.reform.hmcts.net:8091/
     WOWZACONFIGURATION__SERVERNAME: _defaultServer_
     WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhwowza{{ .Values.global.environment }}
     WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
     WOWZACONFIGURATION__STORAGEDIRECTORY: ${com.wowza.wms.context.VHostConfigHome}/content/
-    WOWZACONFIGURATION__STORAGEENDPOINT: http://vhwowza{{ .Values.global.environment }}.blob.core.windows.net/
+    WOWZACONFIGURATION__STORAGEENDPOINT: https://vhwowza{{ .Values.global.environment }}.blob.core.windows.net/
     WOWZACONFIGURATION__STREAMINGENDPOINT: rtmps://vh-wowza-{{ .Values.global.environment }}.hearings.reform.hmcts.net:443/
     WOWZACONFIGURATION__USERNAME: wowza
     Logging__LogLevel__Default: debug
