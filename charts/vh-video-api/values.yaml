@@ -44,6 +44,13 @@ java:
         - azuread--clientid
         - applicationinsights-instrumentationkey
         - applicationinsights-connection-string
+  secrets:
+  AZUREAD__CLIENTSECRET:
+    secretRef: /mnt/secret/vh-core-infra
+    key: vh-video-api-key
+  AZUREAD__CLIENTID:
+    secretRef: /mnt/secret/vh-core-infra
+    key: vh-video-api-appid
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
@@ -58,7 +65,7 @@ java:
     INSTRUMENTATIONENGINE_EXTENSION_VERSION: ~1
     KINLYCONFIGURATION__TELEPHONECONFERENCENUMBER: +442033183131
     MSDEPLOY_RENAME_LOCKED_FILES: 1
-    SERVICES__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/callback
+    SERVICES__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.hearings.hmcts.net/callback
     SERVICES__KINLYAPIURL: https://hmcts-java.dev.kinlycloud.net/virtual-court/api/v1
     SERVICES__KINLYSELFTESTAPIURL: https://test.self-test.hearings.hmcts.net
     SERVICES__PEXIPSELFTESTNODE: sip.test.self-test.hearings.hmcts.net
