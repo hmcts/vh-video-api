@@ -10,7 +10,7 @@ namespace VideoApi.Domain
             ParticipantId = participantId;
         }
         public Guid ParticipantId { get; private set; }
-        public virtual Participant Participant { get; set; }
+        public virtual ParticipantBase Participant { get; set; }
         public long RoomId { get; set; }
         
         public virtual Room Room { get; set; }

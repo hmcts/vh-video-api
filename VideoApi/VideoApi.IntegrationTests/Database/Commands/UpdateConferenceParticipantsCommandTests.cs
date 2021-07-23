@@ -22,8 +22,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
         private Conference _conference;
 
-        private IList<Participant> _existingParticipants { get; set; }
-        private IList<Participant> _newParticipants { get; set; }
+        private IList<ParticipantBase> _existingParticipants { get; set; }
+        private IList<ParticipantBase> _newParticipants { get; set; }
         private IList<Guid> _removedParticipantIds { get; set; }
         private IList<LinkedParticipantDto> _linkedParticipants { get; set; }
 
@@ -34,8 +34,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _handler = new UpdateConferencParticipantsCommandHandler(context);
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
 
-            _existingParticipants = new List<Participant>();
-            _newParticipants = new List<Participant>();
+            _existingParticipants = new List<ParticipantBase>();
+            _newParticipants = new List<ParticipantBase>();
             _removedParticipantIds = new List<Guid>();
             _linkedParticipants = new List<LinkedParticipantDto>();
 
@@ -64,7 +64,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantTwo = new ParticipantBuilder(true).Build();
             participantTwo.Username = "participantTwoUsername";
 
-            _newParticipants = new List<Participant>() { participantOne, participantTwo };
+            _newParticipants = new List<ParticipantBase>() { participantOne, participantTwo };
 
             var command = BuildCommand();
 
@@ -115,14 +115,18 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantOne = _conference.Participants[0];
             var participantOnesLinkedParticipant = _conference.Participants[1];
 
-            participantOne.ContactEmail = "hi@dontcontactme.com";
-            participantOne.ContactTelephone = "07123456789";
             participantOne.DisplayName = "UpdatedDisplayName";
-            participantOne.FirstName = "UpdatedFirstName";
-            participantOne.LastName = "UpdatedLastName";
             participantOne.Name = "UpdatedName";
-            participantOne.Representee = "UpdatedRepresentee";
             participantOne.Username = "UpdatedUsername";
+
+            if (participantOne is Participant participantOneCasted)
+            {
+                participantOneCasted.ContactEmail = "hi@dontcontactme.com";
+                participantOneCasted.ContactTelephone = "07123456789";
+                participantOneCasted.FirstName = "UpdatedFirstName";
+                participantOneCasted.LastName = "UpdatedLastName";
+                participantOneCasted.Representee = "UpdatedRepresentee";
+            }
 
             _existingParticipants.Add(participantOne);
             _existingParticipants.Add(participantOnesLinkedParticipant);
@@ -135,16 +139,20 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedParticipantsLinkedParticipant = conference.Participants.SingleOrDefault(x => x.Id == participantOnesLinkedParticipant.Id);
 
             //Assert
-            updatedParticipant.ContactEmail.Should().Be(participantOne.ContactEmail);
-            updatedParticipant.ContactTelephone.Should().Be(participantOne.ContactTelephone);
             updatedParticipant.DisplayName.Should().Be(participantOne.DisplayName);
-            updatedParticipant.FirstName.Should().Be(participantOne.FirstName);
-            updatedParticipant.LastName.Should().Be(participantOne.LastName);
             updatedParticipant.Name.Should().Be(participantOne.Name);
-            updatedParticipant.Representee.Should().Be(participantOne.Representee);
             updatedParticipant.Username.Should().Be(participantOne.Username);
             updatedParticipant.LinkedParticipants.Should().BeEmpty();
             updatedParticipantsLinkedParticipant.LinkedParticipants.Should().BeEmpty();
+
+            if (participantOne is Participant participantCasted)
+            {
+                ((Participant)updatedParticipant).ContactEmail.Should().Be(participantCasted.ContactEmail);
+                ((Participant)updatedParticipant).ContactTelephone.Should().Be(participantCasted.ContactTelephone);
+                ((Participant)updatedParticipant).FirstName.Should().Be(participantCasted.FirstName);
+                ((Participant)updatedParticipant).LastName.Should().Be(participantCasted.LastName);
+                ((Participant)updatedParticipant).Representee.Should().Be(participantCasted.Representee);
+            }
         }
 
         [Test]

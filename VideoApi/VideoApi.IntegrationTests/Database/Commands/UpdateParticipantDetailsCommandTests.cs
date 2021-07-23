@@ -71,10 +71,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
             updatedParticipant.DisplayName.Should().Be("displayname");
             updatedParticipant.Name.Should().Be("fullname");
-            updatedParticipant.FirstName.Should().Be("firstName");
-            updatedParticipant.LastName.Should().Be("lastName");
-            updatedParticipant.ContactEmail.Should().Be("new@hmcts.net");
-            updatedParticipant.ContactTelephone.Should().Be("0123456789");
+
+            if (updatedParticipant is Participant updatedParticipantCasted)
+            {
+                updatedParticipantCasted.FirstName.Should().Be("firstName");
+                updatedParticipantCasted.LastName.Should().Be("lastName");
+                updatedParticipantCasted.ContactEmail.Should().Be("new@hmcts.net");
+                updatedParticipantCasted.ContactTelephone.Should().Be("0123456789");
+            }
         }
         
         [Test]
@@ -272,11 +276,15 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 updatedConference.GetParticipants().Single(x => x.Id == participant.Id);
             updatedParticipant.DisplayName.Should().Be("displayname");
             updatedParticipant.Name.Should().Be("fullname");
-            updatedParticipant.FirstName.Should().Be("firstName");
-            updatedParticipant.LastName.Should().Be("lastName");
-            updatedParticipant.ContactEmail.Should().Be("new@hmcts.net");
-            updatedParticipant.ContactTelephone.Should().Be("0123456789");
             updatedParticipant.Username.Should().Be(command.Username);
+
+            if (updatedParticipant is Participant updatedParticipantCasted)
+            {
+                updatedParticipantCasted.FirstName.Should().Be("firstName");
+                updatedParticipantCasted.LastName.Should().Be("lastName");
+                updatedParticipantCasted.ContactEmail.Should().Be("new@hmcts.net");
+                updatedParticipantCasted.ContactTelephone.Should().Be("0123456789");
+            }
         }
 
 

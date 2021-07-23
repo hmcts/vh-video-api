@@ -13,10 +13,10 @@ namespace VideoApi.DAL.Commands
     public class AddParticipantsToConferenceCommand : ICommand
     {
         public Guid ConferenceId { get; set; }
-        public List<Participant> Participants { get; set; }
+        public List<ParticipantBase> Participants { get; set; }
         public List<LinkedParticipantDto> LinkedParticipants { get; set; }
 
-        public AddParticipantsToConferenceCommand(Guid conferenceId, List<Participant> participants, List<LinkedParticipantDto> linkedParticipants)
+        public AddParticipantsToConferenceCommand(Guid conferenceId, List<ParticipantBase> participants, List<LinkedParticipantDto> linkedParticipants)
         {
             ConferenceId = conferenceId;
             Participants = participants;

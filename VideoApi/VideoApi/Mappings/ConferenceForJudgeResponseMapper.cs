@@ -31,14 +31,14 @@ namespace VideoApi.Mappings
             var conferenceId = conference.Id;
             
             return conference.Participants
-            .Where(x => x.IsJudge())    
+            .Where(x => x is Participant && ((Participant)x).IsJudge())    
             .Select(x => new JudgeInHearingResponse
             {
                 Id = x.Id,
                 ConferenceId = conferenceId,
                 Status = x.State.MapToContractEnum(),
                 Username = x.Username,
-                CaseGroup = x.CaseTypeGroup,
+                CaseGroup = ((Participant)x).CaseTypeGroup,
                 UserRole = x.UserRole.MapToContractEnum()
             });
         }
@@ -46,17 +46,23 @@ namespace VideoApi.Mappings
     
     public static class ParticipantForJudgeResponseMapper
     {
-        public static ParticipantForJudgeResponse MapParticipantSummaryToModel(Participant participant)
+        public static ParticipantForJudgeResponse MapParticipantSummaryToModel(ParticipantBase participant)
         {
-            return new ParticipantForJudgeResponse
+            var participantForJudgeResponse = new ParticipantForJudgeResponse
             {
                 Id = participant.Id,
                 Role = participant.UserRole.MapToContractEnum(),
                 DisplayName = participant.DisplayName,
-                Representee = participant.Representee,
-                CaseTypeGroup = participant.CaseTypeGroup,
-                HearingRole = participant.HearingRole
             };
+
+            if (participant is Participant participantCasted)
+            {
+                participantForJudgeResponse.Representee = participantCasted.Representee;
+                participantForJudgeResponse.CaseTypeGroup = participantCasted.CaseTypeGroup;
+                participantForJudgeResponse.HearingRole = participantCasted.HearingRole;
+            }
+
+            return participantForJudgeResponse;
         }
     }
 }

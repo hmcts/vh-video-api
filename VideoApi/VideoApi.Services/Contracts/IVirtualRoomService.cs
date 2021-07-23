@@ -11,7 +11,7 @@ namespace VideoApi.Services.Contracts
         /// <param name="conference"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        Task<ParticipantRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant);
+        Task<ParticipantRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, ParticipantBase participant);
         
         /// <summary>
         /// Create a room for linked participants of type witness.
@@ -21,7 +21,7 @@ namespace VideoApi.Services.Contracts
         /// <param name="conference"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        Task<ParticipantRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant);
+        Task<ParticipantRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, ParticipantBase participant);
         
         /// <summary>
         /// Create a room for linked participants of type witness.
@@ -31,6 +31,6 @@ namespace VideoApi.Services.Contracts
         /// <param name="conference"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        Task<ParticipantRoom> GetOrCreateAJudicialVirtualRoom(Conference conference, Participant participant);
+        Task<ParticipantRoom> GetOrCreateAJudicialVirtualRoom(Conference conference, ParticipantBase participant);
     }
 }

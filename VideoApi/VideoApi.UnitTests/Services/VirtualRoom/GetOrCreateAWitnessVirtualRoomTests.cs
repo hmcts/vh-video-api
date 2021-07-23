@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         public async Task should_create_vmr_with_kinly_if_room_is_not_available()
         {
             var expectedRoomId = 2;
-            var participant = _conference.Participants.First(x => !x.IsJudge());
+            var participant = _conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge());
             var expectedRoom = new ParticipantRoom(_conference.Id, VirtualCourtRoomType.Witness);
             var interpreterSuffix = "_interpreter_";
             var expectedIngestUrl = $"{_conference.IngestUrl}{interpreterSuffix}{expectedRoomId}";
@@ -102,8 +102,10 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             var participantB = conference.Participants[1];
 
             participantA.AddLink(participantB.Id, LinkedParticipantType.Interpreter);
-            participantA.SetProtectedProperty(nameof(participantA.HearingRole), "Witness");
             participantB.AddLink(participantA.Id, LinkedParticipantType.Interpreter);
+
+            if (participantA is Participant participantACasted)
+                participantA.SetProtectedProperty(nameof(participantACasted.HearingRole), "Witness");
 
             return conference;
         }

@@ -35,18 +35,18 @@ namespace VideoApi.Services
             _queryHandler = queryHandler;
         }
 
-        public Task<ParticipantRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, Participant participant)
+        public Task<ParticipantRoom> GetOrCreateAnInterpreterVirtualRoom(Conference conference, ParticipantBase participant)
         {
             return GetOrCreateInterpreterRoom(conference, participant, VirtualCourtRoomType.Civilian);
         }
 
-        public Task<ParticipantRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, Participant participant)
+        public Task<ParticipantRoom> GetOrCreateAWitnessVirtualRoom(Conference conference, ParticipantBase participant)
         {
             return GetOrCreateInterpreterRoom(conference, participant, VirtualCourtRoomType.Witness);
         }
 
         public async Task<ParticipantRoom> GetOrCreateAJudicialVirtualRoom(Conference conference,
-            Participant participant)
+            ParticipantBase participant)
         {
             var conferenceId = conference.Id;
             var judicialRoom = await RetrieveJudicialRoomForConference(conferenceId);
@@ -57,7 +57,7 @@ namespace VideoApi.Services
             return judicialRoom;
         }
 
-        private async Task<ParticipantRoom> GetOrCreateInterpreterRoom(Conference conference, Participant participant,
+        private async Task<ParticipantRoom> GetOrCreateInterpreterRoom(Conference conference, ParticipantBase participant,
             VirtualCourtRoomType type)
         {
             var conferenceId = conference.Id;
@@ -148,7 +148,7 @@ namespace VideoApi.Services
         }
 
         private ParticipantRoom GetInterpreterRoomForParticipant(Guid conferenceId,
-            IReadOnlyCollection<ParticipantRoom> rooms, Participant participant,
+            IReadOnlyCollection<ParticipantRoom> rooms, ParticipantBase participant,
             VirtualCourtRoomType roomType)
         {
             _logger.LogInformation(

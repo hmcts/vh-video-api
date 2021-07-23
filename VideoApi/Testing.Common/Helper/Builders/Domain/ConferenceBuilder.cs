@@ -182,7 +182,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var room = new Builder(_builderSettings).CreateNew<ParticipantRoom>().WithFactory(() =>
                 new ParticipantRoom(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
 
-            var nonJudges = _conference.Participants.Where(x => !x.IsJudge()).ToList();
+            var nonJudges = _conference.Participants.Where(x => x is Participant && !((Participant)x).IsJudge()).ToList();
             if (_conference.Participants.Count(x => x.LinkedParticipants.Any()) >= 2)
             {
                 nonJudges = _conference.Participants.Where(x => x.LinkedParticipants.Any()).ToList();

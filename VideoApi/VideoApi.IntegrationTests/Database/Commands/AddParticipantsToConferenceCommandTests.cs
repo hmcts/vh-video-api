@@ -40,7 +40,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var beforeCount = seededConference.GetParticipants().Count;
 
             var participant = new ParticipantBuilder(true).Build();
-            var participants = new List<Participant>() {participant};
+            var participants = new List<ParticipantBase>() {participant};
             var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants, new List<LinkedParticipantDto>());
 
             await _handler.Handle(command);
@@ -56,7 +56,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var participants = new List<Participant>();
+            var participants = new List<ParticipantBase>();
 
             var command = new AddParticipantsToConferenceCommand(conferenceId, participants, new List<LinkedParticipantDto>());
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
@@ -77,7 +77,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 new LinkedParticipantDto() { ParticipantRefId = participantB.ParticipantRefId, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
             };
 
-            var participants = new List<Participant>() {participantA, participantB};
+            var participants = new List<ParticipantBase>() {participantA, participantB};
 
             var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants, linkedParticipants);
             
@@ -113,7 +113,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 new LinkedParticipantDto() { ParticipantRefId = fakeIdB, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
             };
 
-            var participants = new List<Participant>() {participantA, participantB};
+            var participants = new List<ParticipantBase>() {participantA, participantB};
 
             var command = new AddParticipantsToConferenceCommand(_newConferenceId, participants, linkedParticipants);
 

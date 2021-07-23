@@ -7,6 +7,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
@@ -48,7 +49,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
             _conference1Id = conference1.Id;
             conferenceList.Add(conference1);
-            var conference1Rep = conference1.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            var conference1Rep = (Participant)conference1.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
 
             foreach (var c in conferenceList)
             {
@@ -63,7 +64,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             conference.Should().NotBeNull();
 
             conference.CaseName.Should().NotBe(conference1.CaseName);
-            var representative = conference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            var representative = (Participant)conference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
             representative.DisplayName.Should().NotBe(conference1Rep.DisplayName);
             representative.FirstName.Should().NotBe(conference1Rep.FirstName);
             representative.LastName.Should().NotBe(conference1Rep.LastName);
@@ -157,7 +158,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
             _conference1Id = conference1.Id;
             conferenceList.Add(conference1);
-            var conference1Rep = conference1.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            var conference1Rep = (Participant)conference1.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
 
             foreach (var c in conferenceList)
             {
@@ -172,7 +173,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             anonymisedConference.Should().NotBeNull();
 
             anonymisedConference.CaseName.Should().NotBe(conference1.CaseName);
-            var anonymisedRepresentative = anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            var anonymisedRepresentative = (Participant)anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
             anonymisedRepresentative.DisplayName.Should().NotBe(conference1Rep.DisplayName);
             anonymisedRepresentative.FirstName.Should().NotBe(conference1Rep.FirstName);
             anonymisedRepresentative.LastName.Should().NotBe(conference1Rep.LastName);
@@ -190,7 +191,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             notAnonymisedConference.Should().NotBeNull();
 
             notAnonymisedConference.CaseName.Should().Be(anonymisedConference.CaseName);
-            var notAnonymisedRepresentative = anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
+            var notAnonymisedRepresentative = (Participant)anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
             notAnonymisedRepresentative.DisplayName.Should().Be(anonymisedRepresentative.DisplayName);
             notAnonymisedRepresentative.FirstName.Should().Be(anonymisedRepresentative.FirstName);
             notAnonymisedRepresentative.LastName.Should().Be(anonymisedRepresentative.LastName);

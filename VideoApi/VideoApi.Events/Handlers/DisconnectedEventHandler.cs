@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers
 {
@@ -40,7 +42,7 @@ namespace VideoApi.Events.Handlers
 
         private async Task AddDisconnectedTask()
         {
-            var taskType = SourceParticipant.IsJudge() ? TaskType.Judge : TaskType.Participant;
+            var taskType = SourceParticipant is Participant && ((Participant)SourceParticipant).IsJudge() ? TaskType.Judge : TaskType.Participant;
             var disconnected = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, "Disconnected", taskType);
 
             await CommandHandler.Handle(disconnected);
