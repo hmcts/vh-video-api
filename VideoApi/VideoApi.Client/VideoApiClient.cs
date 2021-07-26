@@ -543,11 +543,11 @@ namespace VideoApi.Client
         System.Threading.Tasks.Task<bool> ValidateMagicLinkAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, MagicLinkParticipant participant);
+        System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, MagicLinkParticipant participant, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Add participants to a conference</summary>
         /// <param name="conferenceId">The id of the conference to add participants to</param>
@@ -4845,20 +4845,20 @@ namespace VideoApi.Client
         }
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, MagicLinkParticipant participant)
+        public System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest)
         {
-            return ValidateMagicLink2Async(hearingId, participant, System.Threading.CancellationToken.None);
+            return ValidateMagicLink2Async(hearingId, magicLinkParticipantRequest, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, MagicLinkParticipant participant, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<FileResponse> ValidateMagicLink2Async(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
                 throw new System.ArgumentNullException("hearingId");
     
-            if (participant == null)
-                throw new System.ArgumentNullException("participant");
+            if (magicLinkParticipantRequest == null)
+                throw new System.ArgumentNullException("magicLinkParticipantRequest");
     
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/quickjoin/AddMagicLinkParticipant/{hearingId}");
@@ -4870,7 +4870,7 @@ namespace VideoApi.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(participant, _settings.Value));
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(magicLinkParticipantRequest, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");

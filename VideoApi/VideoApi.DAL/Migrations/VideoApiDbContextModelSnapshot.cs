@@ -393,9 +393,6 @@ namespace VideoApi.DAL.Migrations
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Jwt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

@@ -7,7 +7,6 @@ namespace VideoApi.Domain
     {
         public string Jwt { get; set; }
         public DateTime ExpiresAt { get; set; }
-        public bool IsRevoked { get; set; }
         public Guid ParticipantId { get; set; }
         public MagicLinkParticipant Participant { get; set; }
     }

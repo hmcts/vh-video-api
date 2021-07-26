@@ -11,7 +11,7 @@ using VideoApi.Domain.Enums;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    [Migration("20210723164000_AddMagicLinkParticipantDiscriminator")]
+    [Migration("20210726140937_AddMagicLinkParticipantDiscriminator")]
     partial class AddMagicLinkParticipantDiscriminator
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -394,9 +394,6 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Jwt")
                         .IsRequired()

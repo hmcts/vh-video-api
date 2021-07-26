@@ -22,7 +22,6 @@ namespace VideoApi.DAL.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Jwt = table.Column<string>(nullable: false),
                     ExpiresAt = table.Column<DateTime>(nullable: false),
-                    IsRevoked = table.Column<bool>(nullable: false),
                     ParticipantId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
