@@ -6,6 +6,7 @@ using NSwag.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.DTOs;
@@ -13,6 +14,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 
 namespace VideoApi.Controllers
 {
@@ -60,7 +62,7 @@ namespace VideoApi.Controllers
         [HttpPost("AddMagicLinkParticipant/{hearingId}")]
         [AllowAnonymous]
         [OpenApiOperation("ValidateMagicLink")]
-        public async Task<IActionResult> AddMagicLinkParticipant(Guid hearingId, MagicLinkParticipant participant)
+        public async Task<IActionResult> AddMagicLinkParticipant(Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest)
         {
             try
             {
@@ -68,9 +70,12 @@ namespace VideoApi.Controllers
                 var conference =
                     await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
+                var participant = new MagicLinkParticipant(magicLinkParticipantRequest.Name, magicLinkParticipantRequest.UserRole.MapToDomainEnum());
+
                 var participantsToAdd = new List<ParticipantBase> { participant };
 
                 var command = new AddParticipantsToConferenceCommand(conference.Id, participantsToAdd, new List<LinkedParticipantDto>());
+
                 await _commandHandler.Handle(command);
 
                 return Ok();
