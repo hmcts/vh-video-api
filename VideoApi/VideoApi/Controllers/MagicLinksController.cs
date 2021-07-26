@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -46,6 +49,31 @@ namespace VideoApi.Controllers
                 if (conference == null || conference.IsClosed())
                     return Ok(false);
                 return Ok(true);
+            }
+            catch (ConferenceNotFoundException ex)
+            {
+                _logger.LogError(ex, "Unable to find conference");
+                return NotFound(false);
+            }
+        }
+
+        [HttpPost("AddMagicLinkParticipant/{hearingId}")]
+        [AllowAnonymous]
+        [OpenApiOperation("ValidateMagicLink")]
+        public async Task<IActionResult> AddMagicLinkParticipant(Guid hearingId, MagicLinkParticipant participant)
+        {
+            try
+            {
+                var query = new GetConferenceByHearingRefIdQuery(hearingId);
+                var conference =
+                    await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+
+                var participantsToAdd = new List<ParticipantBase> { participant };
+
+                var command = new AddParticipantsToConferenceCommand(conference.Id, participantsToAdd, new List<LinkedParticipantDto>());
+                await _commandHandler.Handle(command);
+
+                return Ok();
             }
             catch (ConferenceNotFoundException ex)
             {
