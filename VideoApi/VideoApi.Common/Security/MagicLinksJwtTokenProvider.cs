@@ -43,6 +43,8 @@ namespace VideoApi.Common.Security
                 Subject = claims,
                 NotBefore = DateTime.UtcNow.AddMinutes(-1),
                 Expires = DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
+                Issuer = _magicLinksConfiguration.Issuer,
+                IssuedAt = DateTime.Now,
                 SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512)
             };
 
