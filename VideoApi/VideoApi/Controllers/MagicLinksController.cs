@@ -6,6 +6,7 @@ using NSwag.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -24,19 +25,20 @@ namespace VideoApi.Controllers
     public class MagicLinksController : Controller
     {
         private readonly IQueryHandler _queryHandler;
+        private readonly IMagicLinksJwtTokenProvider _magicLinksJwtTokenProvider;
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<MagicLinksController> _logger;
 
-        public MagicLinksController(ICommandHandler commandHandler, IQueryHandler queryHandler, ILogger<MagicLinksController> logger)
+        public MagicLinksController(ICommandHandler commandHandler, IQueryHandler queryHandler, IMagicLinksJwtTokenProvider magicLinksJwtTokenProvider, ILogger<MagicLinksController> logger)
         {
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
+            _magicLinksJwtTokenProvider = magicLinksJwtTokenProvider;
             _logger = logger;
 
         }
 
         [HttpGet("ValidateMagicLink/{hearingId}")]
-        [AllowAnonymous]
         [OpenApiOperation("ValidateMagicLink")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(bool), StatusCodes.Status404NotFound)]
@@ -50,6 +52,7 @@ namespace VideoApi.Controllers
 
                 if (conference == null || conference.IsClosed())
                     return Ok(false);
+                
                 return Ok(true);
             }
             catch (ConferenceNotFoundException ex)
@@ -60,8 +63,8 @@ namespace VideoApi.Controllers
         }
 
         [HttpPost("AddMagicLinkParticipant/{hearingId}")]
-        [AllowAnonymous]
-        [OpenApiOperation("ValidateMagicLink")]
+        [OpenApiOperation("AddMagicLinkParticipant")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> AddMagicLinkParticipant(Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest)
         {
             try
@@ -74,11 +77,18 @@ namespace VideoApi.Controllers
 
                 var participantsToAdd = new List<ParticipantBase> { participant };
 
-                var command = new AddParticipantsToConferenceCommand(conference.Id, participantsToAdd, new List<LinkedParticipantDto>());
+                var addParticipantsToConferenceCommand = new AddParticipantsToConferenceCommand(conference.Id, participantsToAdd, new List<LinkedParticipantDto>());
 
-                await _commandHandler.Handle(command);
+                await _commandHandler.Handle(addParticipantsToConferenceCommand);
 
-                return Ok();
+                var jwtDetails = _magicLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username,
+                    participant.UserRole);
+
+                var addMagicLinkParticipantTokenCommand = new AddMagicLinkParticipantTokenCommand(participant.Id, jwtDetails);
+                
+                await _commandHandler.Handle(addMagicLinkParticipantTokenCommand);
+                
+                return Ok(jwtDetails.Token);
             }
             catch (ConferenceNotFoundException ex)
             {

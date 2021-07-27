@@ -29,7 +29,5 @@ namespace VideoApi.Events.Handlers
                 SourceConference.Id, SourceParticipant.Id);
             return CommandHandler.Handle(command);
         }
-
-       
     }
 }
