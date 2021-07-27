@@ -8,6 +8,7 @@ namespace VideoApi.DAL.Mappings
     {
         public void Configure(EntityTypeBuilder<ParticipantToken> builder)
         {
+            builder.ToTable(nameof(ParticipantToken));
             builder.Property(x => x.Jwt).IsRequired();
             builder.Property(x => x.ExpiresAt).IsRequired();
         }
