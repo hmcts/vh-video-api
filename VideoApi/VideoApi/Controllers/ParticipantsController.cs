@@ -132,7 +132,7 @@ namespace VideoApi.Controllers
                         Type = x.Type.MapToDomainEnum()
                     }).ToList();
 
-                var updateHearingParticipantsCommand = new UpdateConferenceParticipantsCommand(conferenceId, existingParticipants.Select(x => x as ParticipantBase).ToList(), (IList<ParticipantBase>)newParticipants,
+                var updateHearingParticipantsCommand = new UpdateConferenceParticipantsCommand(conferenceId, existingParticipants.Select(x => x as ParticipantBase).ToList(), newParticipants.Select(x => x as ParticipantBase).ToList(),
                     request.RemovedParticipants, linkedParticipants);
 
                 await _commandHandler.Handle(updateHearingParticipantsCommand);
