@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -34,8 +33,8 @@ namespace VideoApi.Controllers
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
             _magicLinksJwtTokenProvider = magicLinksJwtTokenProvider;
-            _logger = logger;
 
+            _logger = logger;
         }
 
         [HttpGet("ValidateMagicLink/{hearingId}")]

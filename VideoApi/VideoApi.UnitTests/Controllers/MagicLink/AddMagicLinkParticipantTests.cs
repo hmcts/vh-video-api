@@ -1,76 +1,38 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System;
-using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
-using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
-using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain.Enums;
+using VideoApi.Extensions;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.MagicLink
 {
-    public class AddMagicLinkParticipantTests
+    public class AddMagicLinkParticipantTests : MagicLinkControllerTestsBase
     {
-        private Mock<IQueryHandler> _queryHandler;
-        private Mock<ICommandHandler> _commandHandler;
-        private Mock<ILogger<MagicLinksController>> _logger;
-
-        private MagicLinksController _controller;
-
-        private Guid _hearingId;
-        private AddMagicLinkParticipantRequest _addMagicLinkParticipantRequest;
-        private VideoApi.Domain.Conference _conference;
-        
-        [SetUp]
-        public void SetUp()
-        {
-            _queryHandler = new Mock<IQueryHandler>();
-            _commandHandler = new Mock<ICommandHandler>();
-            _logger = new Mock<ILogger<MagicLinksController>>();
-
-
-            _conference = new ConferenceBuilder()
-                .WithParticipant(UserRole.Judge, null)
-                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
-                .WithParticipant(UserRole.Representative, "Applicant")
-                .Build();
-            
-            _queryHandler.Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
-                It.IsAny<GetConferenceByHearingRefIdQuery>())).ReturnsAsync(_conference);
-
-            _hearingId = Guid.NewGuid();
-            _addMagicLinkParticipantRequest = new AddMagicLinkParticipantRequest { Name = "Name", UserRole = Contract.Enums.UserRole.MagicLinkParticipant };
-
-            _controller = new MagicLinksController(_commandHandler.Object, _queryHandler.Object, _logger.Object);
-        }
-
         [Test]
-        public async Task Should_call_query_handler_to_get_conference()
+        public async Task Should_call_query_handler_to_getConference()
         {
             //Arrange/Act
-            await _controller.AddMagicLinkParticipant(_hearingId, _addMagicLinkParticipantRequest);
+            await Controller.AddMagicLinkParticipant(HearingId, AddMagicLinkParticipantRequest);
 
             //Assert
-            _queryHandler.Verify(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+            QueryHandler.Verify(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                 It.IsAny<GetConferenceByHearingRefIdQuery>()), Times.Once);
         }
 
         [Test]
-        public async Task Should_return_not_found_result_if_conference_is_not_found()
+        public async Task Should_return_not_found_result_ifConference_is_not_found()
         {
             //Arrange
-            _queryHandler.Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
-                It.IsAny<GetConferenceByHearingRefIdQuery>())).ThrowsAsync(new ConferenceNotFoundException(_hearingId));
+            QueryHandler.Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
+                It.IsAny<GetConferenceByHearingRefIdQuery>())).ThrowsAsync(new ConferenceNotFoundException(HearingId));
 
             //Act
-            var result = await _controller.AddMagicLinkParticipant(_hearingId, _addMagicLinkParticipantRequest) as NotFoundObjectResult;
+            var result = await Controller.AddMagicLinkParticipant(HearingId, AddMagicLinkParticipantRequest) as NotFoundObjectResult;
 
             //Assert
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
@@ -78,28 +40,52 @@ namespace VideoApi.UnitTests.Controllers.MagicLink
         }
 
         [Test]
-        public async Task Should_call_command_handler_to_add_participant_to_conference()
+        public async Task Should_call_command_handler_to_add_participant_toConference()
         {
             //Arrange/Act
-            await _controller.AddMagicLinkParticipant(_hearingId, _addMagicLinkParticipantRequest);
+            await Controller.AddMagicLinkParticipant(HearingId, AddMagicLinkParticipantRequest);
 
             //Assert
-            _commandHandler.Verify(x => x.Handle(It.Is<AddParticipantsToConferenceCommand>(x =>
-                x.ConferenceId == _conference.Id &&
-                x.Participants[0].Name == _addMagicLinkParticipantRequest.Name &&
-                (int)x.Participants[0].UserRole == (int)_addMagicLinkParticipantRequest.UserRole &&
+            CommandHandler.Verify(x => x.Handle(It.Is<AddParticipantsToConferenceCommand>(x =>
+                x.ConferenceId == Conference.Id &&
+                x.Participants[0].Name == AddMagicLinkParticipantRequest.Name &&
+                (int)x.Participants[0].UserRole == (int)AddMagicLinkParticipantRequest.UserRole &&
                 x.LinkedParticipants.Count == 0
             )), Times.Once);
         }
 
         [Test]
-        public async Task Should_return_ok_result()
+        public async Task Should_call_token_provider_to_generate_token()
         {
             //Arrange/Act
-            var result = await _controller.AddMagicLinkParticipant(_hearingId, _addMagicLinkParticipantRequest) as OkResult;
+            await Controller.AddMagicLinkParticipant(HearingId, AddMagicLinkParticipantRequest);
 
             //Assert
-            Assert.IsInstanceOf<OkResult>(result);
+            MagicLinksJwtTokenProvider.Verify(x => x.GenerateToken(
+                AddMagicLinkParticipantRequest.Name,
+                It.IsAny<string>(),
+                AddMagicLinkParticipantRequest.UserRole.MapToDomainEnum()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_call_command_handler_to_add_participant_token()
+        {
+            //Arrange/Act
+            await Controller.AddMagicLinkParticipant(HearingId, AddMagicLinkParticipantRequest);
+
+            //Assert
+            CommandHandler.Verify(x => x.Handle(It.IsAny<AddMagicLinkParticipantTokenCommand>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_return_ok_result_containing_token()
+        {
+            //Arrange/Act
+            var result = await Controller.AddMagicLinkParticipant(HearingId, AddMagicLinkParticipantRequest) as OkObjectResult;
+
+            //Assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.AreEqual(result.Value, MagicLinksJwtDetails.Token);
         }
     }
 }
