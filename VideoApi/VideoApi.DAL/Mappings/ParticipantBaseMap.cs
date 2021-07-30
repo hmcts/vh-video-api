@@ -12,19 +12,6 @@ namespace VideoApi.DAL.Mappings
             builder.ToTable(nameof(Participant));
             builder.HasKey(x => x.Id);
 
-            builder
-                .HasDiscriminator<UserRole>("UserRole")
-                .HasValue<Participant>(UserRole.CaseAdmin)
-                .HasValue<Participant>(UserRole.HearingFacilitationSupport)
-                .HasValue<Participant>(UserRole.Individual)
-                .HasValue<Participant>(UserRole.Judge)
-                .HasValue<Participant>(UserRole.JudicialOfficeHolder)
-                .HasValue<Participant>(UserRole.None)
-                .HasValue<Participant>(UserRole.Representative)
-                .HasValue<Participant>(UserRole.VideoHearingsOfficer)
-                .HasValue<MagicLinkParticipant>(UserRole.MagicLinkObserver)
-                .HasValue<MagicLinkParticipant>(UserRole.MagicLinkParticipant);
-
             builder.Property(x => x.ParticipantRefId);
             builder.Property(x => x.Name);
             builder.Property(x => x.DisplayName);
