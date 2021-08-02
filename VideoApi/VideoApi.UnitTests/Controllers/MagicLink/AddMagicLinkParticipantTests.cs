@@ -1,12 +1,16 @@
+using System.Linq;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Extensions;
+using VideoApi.Mappings;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.MagicLink
@@ -85,7 +89,12 @@ namespace VideoApi.UnitTests.Controllers.MagicLink
 
             //Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
-            Assert.AreEqual(result.Value, MagicLinksJwtDetails.Token);
+            var magicLinkResponse = result?.Value.Should().BeAssignableTo<AddMagicLinkParticipantResponse>().Which;
+            magicLinkResponse?.Token.Should().Be(MagicLinksJwtDetails.Token);
+            magicLinkResponse?.ConferenceId.Should().Be(Conference.Id);
+            magicLinkResponse?.ParticipantDetails.Should().NotBeNull();
+            magicLinkResponse?.ParticipantDetails.Name.Should().Be(AddMagicLinkParticipantRequest.Name);
+            magicLinkResponse?.ParticipantDetails.UserRole.Should().Be(AddMagicLinkParticipantRequest.UserRole);
         }
     }
 }
