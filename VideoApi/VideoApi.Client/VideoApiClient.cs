@@ -543,11 +543,11 @@ namespace VideoApi.Client
         System.Threading.Tasks.Task<bool> ValidateMagicLinkAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest);
+        System.Threading.Tasks.Task<AddMagicLinkParticipantResponse> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<AddMagicLinkParticipantResponse> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Add participants to a conference</summary>
         /// <param name="conferenceId">The id of the conference to add participants to</param>
@@ -4845,14 +4845,14 @@ namespace VideoApi.Client
         }
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<string> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest)
+        public System.Threading.Tasks.Task<AddMagicLinkParticipantResponse> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest)
         {
             return AddMagicLinkParticipantAsync(hearingId, magicLinkParticipantRequest, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<string> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<AddMagicLinkParticipantResponse> AddMagicLinkParticipantAsync(System.Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
                 throw new System.ArgumentNullException("hearingId");
@@ -4899,12 +4899,22 @@ namespace VideoApi.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<AddMagicLinkParticipantResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<bool>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
