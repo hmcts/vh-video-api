@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.DTOs;
@@ -15,6 +16,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Extensions;
+using VideoApi.Mappings;
 
 namespace VideoApi.Controllers
 {
@@ -63,7 +65,8 @@ namespace VideoApi.Controllers
 
         [HttpPost("AddMagicLinkParticipant/{hearingId}")]
         [OpenApiOperation("AddMagicLinkParticipant")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AddMagicLinkParticipantResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddMagicLinkParticipant(Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest)
         {
             try
@@ -87,7 +90,14 @@ namespace VideoApi.Controllers
                 
                 await _commandHandler.Handle(addMagicLinkParticipantTokenCommand);
                 
-                return Ok(jwtDetails.Token);
+                var response = new AddMagicLinkParticipantResponse
+                {
+                    Token = jwtDetails.Token,
+                    ConferenceId = conference.Id,
+                    ParticipantDetails = ParticipantToDetailsResponseMapper.MapParticipantToResponse(participant)
+                };
+                
+                return Ok(response);
             }
             catch (ConferenceNotFoundException ex)
             {
