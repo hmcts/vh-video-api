@@ -7,12 +7,14 @@ namespace VideoApi.Domain
     {
         public ParticipantToken Token { get; set; }
 
+        public const string DOMAIN = "@magic-link-participant.com";
+
         public MagicLinkParticipant(string name, UserRole userRole)
         {
             Id = Guid.NewGuid();
             ParticipantRefId = Id;
             DisplayName = name;
-            Username = $"{Id}@magic-link-participant.com";
+            Username = $"{Id}{DOMAIN}";
             UserRole = userRole;
             Name = name;
         }

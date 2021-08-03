@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,6 +23,7 @@ namespace VideoApi.Controllers
 {
     [Produces("application/json")]
     [ApiController]
+    [AllowAnonymous]
     [Route("quickjoin")]
     public class MagicLinksController : Controller
     {

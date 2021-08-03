@@ -62,7 +62,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var participantOne = new ParticipantBuilder(true).Build();
             var participantTwo = new ParticipantBuilder(true).Build();
-            participantTwo.Username = "participantTwoUsername";
+            participantTwo.Username = "participantTwoUsername@participant.com";
 
             _newParticipants = new List<ParticipantBase>() { participantOne, participantTwo };
 
@@ -117,7 +117,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             participantOne.DisplayName = "UpdatedDisplayName";
             participantOne.Name = "UpdatedName";
-            participantOne.Username = "UpdatedUsername";
+            participantOne.Username = "UpdatedUsername@username.com";
 
             if (participantOne is Participant participantOneCasted)
             {

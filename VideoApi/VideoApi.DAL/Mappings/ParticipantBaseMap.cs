@@ -5,6 +5,7 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Mappings
 {
+
     public class ParticipantBaseMap : IEntityTypeConfiguration<ParticipantBase>
     {
         public void Configure(EntityTypeBuilder<ParticipantBase> builder)
@@ -15,7 +16,9 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.ParticipantRefId);
             builder.Property(x => x.Name);
             builder.Property(x => x.DisplayName);
-            builder.Property(x => x.Username);
+            builder.Property(x => x.Username).HasConversion(v =>
+                v.Replace(MagicLinkParticipant.DOMAIN, "")
+            , v => v.IndexOf('@') == -1 ? $"{v}@magic-link-participant.com" : v);
             builder.Property(x => x.UserRole);
             builder.Property(x => x.CurrentRoom);
 
