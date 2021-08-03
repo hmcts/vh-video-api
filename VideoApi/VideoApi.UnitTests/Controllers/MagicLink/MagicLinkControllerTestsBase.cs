@@ -33,7 +33,6 @@ namespace VideoApi.UnitTests.Controllers.MagicLink
             MagicLinksJwtTokenProvider = new Mock<IMagicLinksJwtTokenProvider>();
             Logger = new Mock<ILogger<MagicLinksController>>();
 
-
             Conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)

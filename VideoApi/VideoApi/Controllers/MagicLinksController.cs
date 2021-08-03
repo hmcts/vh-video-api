@@ -53,10 +53,9 @@ namespace VideoApi.Controllers
                 var conference =
                     await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
-                if (conference == null || conference.IsClosed())
-                    return Ok(false);
+                var isMagicLinkValid = MagicLink.IsValid(conference);
                 
-                return Ok(true);
+                return Ok(isMagicLinkValid);
             }
             catch (ConferenceNotFoundException ex)
             {
