@@ -111,7 +111,13 @@ parameters:
       value: $(ConferenceUsername)
     - name: KinlyConfiguration:CallbackUri
       value: $(CallbackUri)
-
+    
+    # Magic Links Configuration
+    - name: MagicLinks:Issuer
+      value: $(video_api_url)
+    - name: MagicLinks:JwtProviderSecret
+      value: $(JwtProviderSecret)
+    
 - name: appSettings
   type: object
   default:
@@ -202,6 +208,12 @@ parameters:
       value: VhVideoDatabaseConnectionString
       secret: true
 
+    # Magic Links Configuration
+    - name: MagicLinks:Issuer
+      value: $(video_api_url)
+    - name: MagicLinks:JwtProviderSecret
+      value: $(JwtProviderSecret)
+
 variables:
   - group: vh-domains-and-urls
   - group: vh-apps-settings-generic
@@ -210,6 +222,7 @@ variables:
   - group: vh-preview
   - group: KinlyConfiguration_Test
   - group: vh-video-api
+  - group: MagicLinks_Dev
 
 trigger:
   branches:
