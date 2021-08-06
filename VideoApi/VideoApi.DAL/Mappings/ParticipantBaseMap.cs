@@ -17,8 +17,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.Name);
             builder.Property(x => x.DisplayName);
             builder.Property(x => x.Username).HasConversion(v =>
-                v.Replace(MagicLinkParticipant.DOMAIN, "")
-            , v => v.IndexOf('@') == -1 ? $"{v}{MagicLinkParticipant.DOMAIN}" : v);
+                v.Replace(QuickLinkParticipant.DOMAIN, "")
+            , v => v.IndexOf('@') == -1 ? $"{v}{QuickLinkParticipant.DOMAIN}" : v);
             builder.Property(x => x.UserRole);
             builder.Property(x => x.CurrentRoom);
 

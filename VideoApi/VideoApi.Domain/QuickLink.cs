@@ -2,7 +2,7 @@ using System;
 
 namespace VideoApi.Domain
 {
-    public static class MagicLink
+    public static class QuickLink
     {
         public static bool IsValid(Conference conference)
         {

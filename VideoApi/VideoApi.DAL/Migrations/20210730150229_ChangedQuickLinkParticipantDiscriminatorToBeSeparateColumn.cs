@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VideoApi.DAL.Migrations
 {
-    public partial class ChangedMagicLinkParticipantDiscriminatorToBeSeparateColumn : Migration
+    public partial class ChangedQuickLinkParticipantDiscriminatorToBeSeparateColumn : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

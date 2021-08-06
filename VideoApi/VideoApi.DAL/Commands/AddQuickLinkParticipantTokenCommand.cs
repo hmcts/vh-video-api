@@ -1,36 +1,33 @@
-﻿using System;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System;
 using VideoApi.Common.Security;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class AddMagicLinkParticipantTokenCommand : ICommand
+    public class AddQuickLinkParticipantTokenCommand : ICommand
     {
-        public AddMagicLinkParticipantTokenCommand(Guid participantId, MagicLinksJwtDetails jwtDetails)
+        public AddQuickLinkParticipantTokenCommand(Guid participantId, QuickLinksJwtDetails jwtDetails)
         {
             ParticipantId = participantId;
             JwtDetails = jwtDetails;
         }
         
         public Guid ParticipantId { get; }
-        public MagicLinksJwtDetails JwtDetails { get; }
+        public QuickLinksJwtDetails JwtDetails { get; }
     }
     
-    public class AddMagicLinkParticipantTokenCommandHandler : ICommandHandler<AddMagicLinkParticipantTokenCommand>
+    public class AddQuickLinkParticipantTokenCommandHandler : ICommandHandler<AddQuickLinkParticipantTokenCommand>
     {
         private readonly VideoApiDbContext _context;
 
-        public AddMagicLinkParticipantTokenCommandHandler(VideoApiDbContext context)
+        public AddQuickLinkParticipantTokenCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(AddMagicLinkParticipantTokenCommand command)
+        public async Task Handle(AddQuickLinkParticipantTokenCommand command)
         {
             await _context.ParticipantTokens.AddAsync(new ParticipantToken()
             {

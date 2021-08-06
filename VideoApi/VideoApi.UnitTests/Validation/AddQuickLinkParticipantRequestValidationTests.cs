@@ -10,14 +10,14 @@ using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
 {
-    public class AddMagicLinkParticipantRequestValidationTests
+    public class AddQuickLinkParticipantRequestValidationTests
     {
-        private AddMagicLinkParticipantRequestValidation _validator;
+        private AddQuickLinkParticipantRequestValidation _validator;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _validator = new AddMagicLinkParticipantRequestValidation();
+            _validator = new AddQuickLinkParticipantRequestValidation();
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == AddMagicLinkParticipantRequestValidation.NoNameErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.NoNameErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -54,13 +54,13 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == AddMagicLinkParticipantRequestValidation.NoUserRoleErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.NoUserRoleErrorMessage)
                 .Should().BeTrue();
         }
         
-        private AddMagicLinkParticipantRequest BuildRequest()
+        private AddQuickLinkParticipantRequest BuildRequest()
         {
-            return Builder<AddMagicLinkParticipantRequest>.CreateNew()
+            return Builder<AddQuickLinkParticipantRequest>.CreateNew()
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.Name = Name.FullName())
                 .Build();

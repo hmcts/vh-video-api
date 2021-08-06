@@ -6,7 +6,7 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.Domain
 {
-    public class MagicLinkTests
+    public class QuickLinkTests
     {
         private VideoApi.Domain.Conference _conference;
 
@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Domain
             _conference.UpdateConferenceStatus(ConferenceState.Closed);
 
             ///Act
-            var result = MagicLink.IsValid(_conference);
+            var result = QuickLink.IsValid(_conference);
 
             //Assert
             Assert.False(result);
@@ -44,7 +44,7 @@ namespace VideoApi.UnitTests.Domain
                 .Build();
 
             ///Act
-            var result = MagicLink.IsValid(_conference);
+            var result = QuickLink.IsValid(_conference);
 
             //Assert
             Assert.False(result);
@@ -54,7 +54,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_return_false_if_conference_is_null()
         {
             //Arrange/Act
-            var result = MagicLink.IsValid(null);
+            var result = QuickLink.IsValid(null);
 
             //Assert
             Assert.False(result);
@@ -64,7 +64,7 @@ namespace VideoApi.UnitTests.Domain
         public void Should_return_true()
         {
             //Arrange/Act
-            var result = MagicLink.IsValid(_conference);
+            var result = QuickLink.IsValid(_conference);
 
             //Assert
             Assert.True(result);

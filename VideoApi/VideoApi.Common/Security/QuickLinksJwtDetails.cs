@@ -2,12 +2,12 @@
 
 namespace VideoApi.Common.Security
 {
-    public class MagicLinksJwtDetails
+    public class QuickLinksJwtDetails
     {
         public string Token { get; }
         public DateTime Expiry { get; }
 
-        public MagicLinksJwtDetails(string token, DateTime expiry)
+        public QuickLinksJwtDetails(string token, DateTime expiry)
         {
             Token = token;
             Expiry = expiry;

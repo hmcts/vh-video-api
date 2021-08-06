@@ -1,22 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System;
-using Testing.Common.Helper.Builders.Domain;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.UnitTests.Controllers.MagicLink
+namespace VideoApi.UnitTests.Controllers.QuickLink
 {
-    public class ValidateMagicLinkTests : MagicLinkControllerTestsBase
+    public class ValidateQuickLinkTests : QuickLinkControllerTestsBase
     {
         [Test]
         public async Task Should_call_query_handler_to_getConference()
         {
             //Arrange/Act
-            await Controller.ValidateMagicLink(HearingId);
+            await Controller.ValidateQuickLink(HearingId);
 
             //Assert
             QueryHandler.Verify(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
@@ -32,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers.MagicLink
                 It.IsAny<GetConferenceByHearingRefIdQuery>())).ReturnsAsync(Conference);
 
             ///Act
-            var result = await Controller.ValidateMagicLink(HearingId) as OkObjectResult;
+            var result = await Controller.ValidateQuickLink(HearingId) as OkObjectResult;
 
             //Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
@@ -43,7 +39,7 @@ namespace VideoApi.UnitTests.Controllers.MagicLink
         public async Task Should_return_true_ok_result()
         {
             //Arrange/Act
-            var result = await Controller.ValidateMagicLink(HearingId) as OkObjectResult;
+            var result = await Controller.ValidateQuickLink(HearingId) as OkObjectResult;
 
             //Assert
             Assert.IsInstanceOf<OkObjectResult>(result);

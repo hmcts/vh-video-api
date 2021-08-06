@@ -11,27 +11,27 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 
-namespace VideoApi.UnitTests.Controllers.MagicLink
+namespace VideoApi.UnitTests.Controllers.QuickLink
 {
-    public class MagicLinkControllerTestsBase
+    public class QuickLinkControllerTestsBase
     {
         public Mock<IQueryHandler> QueryHandler;
         public Mock<ICommandHandler> CommandHandler;
-        public Mock<IMagicLinksJwtTokenProvider> MagicLinksJwtTokenProvider;
-        public Mock<ILogger<MagicLinksController>> Logger;
-        public MagicLinksController Controller;
+        public Mock<IQuickLinksJwtTokenProvider> QuickLinksJwtTokenProvider;
+        public Mock<ILogger<QuickLinksController>> Logger;
+        public QuickLinksController Controller;
         public Guid HearingId;
-        public AddMagicLinkParticipantRequest AddMagicLinkParticipantRequest;
+        public AddQuickLinkParticipantRequest AddQuickLinkParticipantRequest;
         public VideoApi.Domain.Conference Conference;
-        public MagicLinksJwtDetails MagicLinksJwtDetails;
+        public QuickLinksJwtDetails QuickLinksJwtDetails;
 
         [SetUp]
         public void SetUp()
         {
             QueryHandler = new Mock<IQueryHandler>();
             CommandHandler = new Mock<ICommandHandler>();
-            MagicLinksJwtTokenProvider = new Mock<IMagicLinksJwtTokenProvider>();
-            Logger = new Mock<ILogger<MagicLinksController>>();
+            QuickLinksJwtTokenProvider = new Mock<IQuickLinksJwtTokenProvider>();
+            Logger = new Mock<ILogger<QuickLinksController>>();
 
             Conference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -42,14 +42,14 @@ namespace VideoApi.UnitTests.Controllers.MagicLink
             QueryHandler.Setup(x => x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                 It.IsAny<GetConferenceByHearingRefIdQuery>())).ReturnsAsync(Conference);
 
-            MagicLinksJwtDetails = new MagicLinksJwtDetails("token", DateTime.Today.AddDays(1));
-            MagicLinksJwtTokenProvider.Setup(x => x.GenerateToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserRole>()))
-                .Returns(MagicLinksJwtDetails);
+            QuickLinksJwtDetails = new QuickLinksJwtDetails("token", DateTime.Today.AddDays(1));
+            QuickLinksJwtTokenProvider.Setup(x => x.GenerateToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserRole>()))
+                .Returns(QuickLinksJwtDetails);
 
             HearingId = Guid.NewGuid();
-            AddMagicLinkParticipantRequest = new AddMagicLinkParticipantRequest { Name = "Name", UserRole = Contract.Enums.UserRole.MagicLinkParticipant };
+            AddQuickLinkParticipantRequest = new AddQuickLinkParticipantRequest { Name = "Name", UserRole = Contract.Enums.UserRole.QuickLinkParticipant };
 
-            Controller = new MagicLinksController(CommandHandler.Object, QueryHandler.Object, MagicLinksJwtTokenProvider.Object, Logger.Object);
+            Controller = new QuickLinksController(CommandHandler.Object, QueryHandler.Object, QuickLinksJwtTokenProvider.Object, Logger.Object);
         }
     }
 }

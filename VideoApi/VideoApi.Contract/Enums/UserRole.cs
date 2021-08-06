@@ -10,7 +10,7 @@ namespace VideoApi.Contract.Enums
         Individual = 5,
         Representative = 6,
         JudicialOfficeHolder = 7,
-        MagicLinkParticipant = 8,
-        MagicLinkObserver = 9
+        QuickLinkParticipant = 8,
+        QuickLinkObserver = 9
     }
 }

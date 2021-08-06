@@ -78,7 +78,7 @@ namespace VideoApi
             services.Configure<WowzaConfiguration>(options => Configuration.Bind("WowzaConfiguration", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
             services.Configure<CvpConfiguration>(options => Configuration.Bind("CvpConfiguration", options));
-            services.Configure<MagicLinksConfiguration>(options => Configuration.Bind("MagicLinks", options));
+            services.Configure<QuickLinksConfiguration>(options => Configuration.Bind("QuickLinks", options));
             services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
             services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
         }

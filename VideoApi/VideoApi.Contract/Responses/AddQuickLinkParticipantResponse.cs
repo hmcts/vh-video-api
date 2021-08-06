@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace VideoApi.Contract.Responses
 {
-    public class AddMagicLinkParticipantResponse
+    public class AddQuickLinkParticipantResponse
     {
         public ParticipantDetailsResponse ParticipantDetails { get; set; }
         public string Token { get; set; }

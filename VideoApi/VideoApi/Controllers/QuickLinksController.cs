@@ -23,29 +23,28 @@ namespace VideoApi.Controllers
 {
     [Produces("application/json")]
     [ApiController]
-    [AllowAnonymous]
     [Route("quickjoin")]
-    public class MagicLinksController : Controller
+    public class QuickLinksController : Controller
     {
         private readonly IQueryHandler _queryHandler;
-        private readonly IMagicLinksJwtTokenProvider _magicLinksJwtTokenProvider;
+        private readonly IQuickLinksJwtTokenProvider _quickLinksJwtTokenProvider;
         private readonly ICommandHandler _commandHandler;
-        private readonly ILogger<MagicLinksController> _logger;
+        private readonly ILogger<QuickLinksController> _logger;
 
-        public MagicLinksController(ICommandHandler commandHandler, IQueryHandler queryHandler, IMagicLinksJwtTokenProvider magicLinksJwtTokenProvider, ILogger<MagicLinksController> logger)
+        public QuickLinksController(ICommandHandler commandHandler, IQueryHandler queryHandler, IQuickLinksJwtTokenProvider quickLinksJwtTokenProvider, ILogger<QuickLinksController> logger)
         {
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
-            _magicLinksJwtTokenProvider = magicLinksJwtTokenProvider;
+            _quickLinksJwtTokenProvider = quickLinksJwtTokenProvider;
 
             _logger = logger;
         }
 
-        [HttpGet("ValidateMagicLink/{hearingId}")]
-        [OpenApiOperation("ValidateMagicLink")]
+        [HttpGet("ValidateQuickLink/{hearingId}")]
+        [OpenApiOperation("ValidateQuickLink")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(bool), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ValidateMagicLink(Guid hearingId)
+        public async Task<IActionResult> ValidateQuickLink(Guid hearingId)
         {
             try
             {
@@ -53,9 +52,9 @@ namespace VideoApi.Controllers
                 var conference =
                     await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
-                var isMagicLinkValid = MagicLink.IsValid(conference);
+                var isQuickLinkValid = QuickLink.IsValid(conference);
                 
-                return Ok(isMagicLinkValid);
+                return Ok(isQuickLinkValid);
             }
             catch (ConferenceNotFoundException ex)
             {
@@ -64,11 +63,11 @@ namespace VideoApi.Controllers
             }
         }
 
-        [HttpPost("AddMagicLinkParticipant/{hearingId}")]
-        [OpenApiOperation("AddMagicLinkParticipant")]
-        [ProducesResponseType(typeof(AddMagicLinkParticipantResponse), StatusCodes.Status200OK)]
+        [HttpPost("AddQuickLinkParticipant/{hearingId}")]
+        [OpenApiOperation("AddQuickLinkParticipant")]
+        [ProducesResponseType(typeof(AddQuickLinkParticipantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(bool), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddMagicLinkParticipant(Guid hearingId, AddMagicLinkParticipantRequest magicLinkParticipantRequest)
+        public async Task<IActionResult> AddQuickLinkParticipant(Guid hearingId, AddQuickLinkParticipantRequest quickLinkParticipantRequest)
         {
             try
             {
@@ -76,7 +75,7 @@ namespace VideoApi.Controllers
                 var conference =
                     await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
-                var participant = new MagicLinkParticipant(magicLinkParticipantRequest.Name, magicLinkParticipantRequest.UserRole.MapToDomainEnum());
+                var participant = new QuickLinkParticipant(quickLinkParticipantRequest.Name, quickLinkParticipantRequest.UserRole.MapToDomainEnum());
 
                 var participantsToAdd = new List<ParticipantBase> { participant };
 
@@ -84,14 +83,14 @@ namespace VideoApi.Controllers
 
                 await _commandHandler.Handle(addParticipantsToConferenceCommand);
 
-                var jwtDetails = _magicLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username,
+                var jwtDetails = _quickLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username,
                     participant.UserRole);
 
-                var addMagicLinkParticipantTokenCommand = new AddMagicLinkParticipantTokenCommand(participant.Id, jwtDetails);
+                var addQuickLinkParticipantTokenCommand = new AddQuickLinkParticipantTokenCommand(participant.Id, jwtDetails);
                 
-                await _commandHandler.Handle(addMagicLinkParticipantTokenCommand);
+                await _commandHandler.Handle(addQuickLinkParticipantTokenCommand);
                 
-                var response = new AddMagicLinkParticipantResponse
+                var response = new AddQuickLinkParticipantResponse
                 {
                     Token = jwtDetails.Token,
                     ConferenceId = conference.Id,

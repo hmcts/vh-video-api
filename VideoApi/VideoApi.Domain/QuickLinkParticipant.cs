@@ -3,13 +3,13 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.Domain
 {
-    public class MagicLinkParticipant : ParticipantBase
+    public class QuickLinkParticipant : ParticipantBase
     {
         public ParticipantToken Token { get; set; }
 
-        public const string DOMAIN = "@magic-link-participant.com";
+        public const string DOMAIN = "@quick-link-participant.com";
 
-        public MagicLinkParticipant(string name, UserRole userRole)
+        public QuickLinkParticipant(string name, UserRole userRole)
         {
             Id = Guid.NewGuid();
             ParticipantRefId = Id;

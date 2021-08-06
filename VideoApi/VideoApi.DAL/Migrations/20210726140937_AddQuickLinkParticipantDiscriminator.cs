@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VideoApi.DAL.Migrations
 {
-    public partial class AddMagicLinkParticipantDiscriminator : Migration
+    public partial class AddQuickLinkParticipantDiscriminator : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

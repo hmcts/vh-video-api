@@ -8,19 +8,19 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.Common.Security
 {
-    public class MagicLinksJwtTokenProvider : IMagicLinksJwtTokenProvider
+    public class QuickLinksJwtTokenProvider : IQuickLinksJwtTokenProvider
     {
-        private readonly MagicLinksConfiguration _magicLinksConfiguration;
+        private readonly QuickLinksConfiguration _quickLinksConfiguration;
         public const int ExpiryTimeInMinutes = 60 * 8;
 
-        public MagicLinksJwtTokenProvider(IOptions<MagicLinksConfiguration> magicLinksConfiguration)
+        public QuickLinksJwtTokenProvider(IOptions<QuickLinksConfiguration> quickLinksConfiguration)
         {
-            _magicLinksConfiguration = magicLinksConfiguration.Value;
+            _quickLinksConfiguration = quickLinksConfiguration.Value;
         }
 
-        public MagicLinksJwtDetails GenerateToken(string name, string userName, UserRole role)
+        public QuickLinksJwtDetails GenerateToken(string name, string userName, UserRole role)
         {
-            var key = Convert.FromBase64String(_magicLinksConfiguration.JwtProviderSecret);
+            var key = Convert.FromBase64String(_quickLinksConfiguration.JwtProviderSecret);
 
             var claims = new ClaimsIdentity(new[]
             {
@@ -35,7 +35,7 @@ namespace VideoApi.Common.Security
             return BuildToken(claims, ExpiryTimeInMinutes, key);
         }
 
-        private MagicLinksJwtDetails BuildToken(ClaimsIdentity claims, int expiresInMinutes, byte[] key)
+        private QuickLinksJwtDetails BuildToken(ClaimsIdentity claims, int expiresInMinutes, byte[] key)
         {
             var securityKey = new SymmetricSecurityKey(key);
             var descriptor = new SecurityTokenDescriptor
@@ -43,7 +43,7 @@ namespace VideoApi.Common.Security
                 Subject = claims,
                 NotBefore = DateTime.UtcNow.AddMinutes(-1),
                 Expires = DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
-                Issuer = _magicLinksConfiguration.Issuer,
+                Issuer = _quickLinksConfiguration.Issuer,
                 IssuedAt = DateTime.Now,
                 SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512)
             };
@@ -51,7 +51,7 @@ namespace VideoApi.Common.Security
             var handler = new JwtSecurityTokenHandler();
             var token = handler.CreateJwtSecurityToken(descriptor);
 
-            return new MagicLinksJwtDetails(handler.WriteToken(token), descriptor.Expires.Value);
+            return new QuickLinksJwtDetails(handler.WriteToken(token), descriptor.Expires.Value);
         }
     }
 }

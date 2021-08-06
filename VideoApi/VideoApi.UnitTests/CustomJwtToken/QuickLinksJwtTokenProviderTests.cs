@@ -8,28 +8,28 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.CustomJwtToken
 {
-    public class MagicLinksJwtTokenProviderTests
+    public class QuickLinksJwtTokenProviderTests
     {
-        private MagicLinksJwtTokenProvider _tokenProvider;
-        private Mock<IOptions<MagicLinksConfiguration>> magicLinksConfiguration;
+        private QuickLinksJwtTokenProvider _tokenProvider;
+        private Mock<IOptions<QuickLinksConfiguration>> quickLinksConfiguration;
 
         [SetUp]
         public void SetUp()
         {
-            magicLinksConfiguration = new Mock<IOptions<MagicLinksConfiguration>>();
-            magicLinksConfiguration.SetupGet(x => x.Value).Returns(new MagicLinksConfiguration
+            quickLinksConfiguration = new Mock<IOptions<QuickLinksConfiguration>>();
+            quickLinksConfiguration.SetupGet(x => x.Value).Returns(new QuickLinksConfiguration
             {
                 Issuer = "Issuer",
                 JwtProviderSecret = "WNi3oF3NfduzvwUiOPlnDdUUjIlMcv7fX28ms3udpPM="
             });
-            _tokenProvider = new MagicLinksJwtTokenProvider(magicLinksConfiguration.Object);
+            _tokenProvider = new QuickLinksJwtTokenProvider(quickLinksConfiguration.Object);
         }
 
         [Test]
         public void GenerateToken_should_build_and_return_jwt_details()
         {
             //Arrange
-            var expiryAfter = DateTime.UtcNow.AddMinutes(MagicLinksJwtTokenProvider.ExpiryTimeInMinutes);
+            var expiryAfter = DateTime.UtcNow.AddMinutes(QuickLinksJwtTokenProvider.ExpiryTimeInMinutes);
 
             //Act
             var token = _tokenProvider.GenerateToken("name", "username", UserRole.Individual);
