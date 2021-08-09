@@ -117,7 +117,7 @@ namespace VideoApi.Controllers
                 var newParticipants = request.NewParticipants.Select(x =>
                         new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
                             x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole.MapToDomainEnum(),
-                            x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
+                            x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone, x.Id)
                         {
                             Representee = x.Representee
                         })
