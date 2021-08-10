@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Events
             TestConference.Participants.Add(witnessToAdd);
             var consultationRoom = new ConsultationRoom(TestConference.Id, "ConsultationRoom1",
                 VirtualCourtRoomType.Participant, false);
-            var witnesses = TestConference.Participants.Where(x=> x.IsAWitness()).ToList();
+            var witnesses = TestConference.Participants.Where(x=> x is Participant && ((Participant)x).IsAWitness()).ToList();
             foreach (var witness in witnesses)
             {
                 witness.State = ParticipantState.InConsultation;

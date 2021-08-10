@@ -1,9 +1,8 @@
-using System.Collections.Generic;
-using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Net;
 using VideoApi.Contract.Requests;
 using Task = System.Threading.Tasks.Task;
 

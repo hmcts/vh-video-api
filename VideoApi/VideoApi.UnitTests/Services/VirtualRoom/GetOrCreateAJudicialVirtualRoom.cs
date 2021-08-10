@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             existingInterpreterRoom.SetProtectedProperty(nameof(existingInterpreterRoom.Id), 2);
             var existingJohRoom = new ParticipantRoom(_conference.Id, "PanelMember1", VirtualCourtRoomType.JudicialShared);
             existingJohRoom.SetProtectedProperty(nameof(existingJohRoom.Id), 1);
-            var joh = _conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
+            var joh = (Participant)_conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
             
             _mocker.Mock<IQueryHandler>().Setup(x =>
                     x.Handle<GetParticipantRoomsForConferenceQuery, List<ParticipantRoom>>(
@@ -79,7 +79,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                 }
             };
             
-            var joh = _conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
+            var joh = (Participant)_conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
             
             _mocker.Mock<IQueryHandler>().SetupSequence(x =>
                     x.Handle<GetParticipantRoomsForConferenceQuery, List<ParticipantRoom>>(

@@ -33,7 +33,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var participants = new List<Participant>();
+            var participants = new List<ParticipantBase>();
 
             var command = new RemoveParticipantsFromConferenceCommand(conferenceId, participants);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
@@ -48,7 +48,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var beforeCount = seededConference.GetParticipants().Count;
 
             var participantToRemove = seededConference.GetParticipants().First();
-            var participants = new List<Participant> {participantToRemove};
+            var participants = new List<ParticipantBase> {participantToRemove};
             var command = new RemoveParticipantsFromConferenceCommand(_newConferenceId, participants);
             await _handler.Handle(command);
 
@@ -82,7 +82,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var beforeCount = seededConference.GetParticipants().Count;
 
             var participantToRemove = seededConference.GetParticipants().First();
-            var participants = new List<Participant> {participantToRemove};
+            var participants = new List<ParticipantBase> {participantToRemove};
             var command = new RemoveParticipantsFromConferenceCommand(_newConferenceId, participants);
             await _handler.Handle(command);
 

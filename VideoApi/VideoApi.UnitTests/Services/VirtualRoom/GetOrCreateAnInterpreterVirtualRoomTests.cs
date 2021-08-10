@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using Autofac.Extras.Moq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -81,7 +81,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         public async Task should_create_vmr_with_kinly_if_room_is_not_available()
         {
             var expectedRoomId = 2;
-            var participant = _conference.Participants.First(x => !x.IsJudge());
+            var participant = _conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge());
             var expectedRoom = new ParticipantRoom(_conference.Id, VirtualCourtRoomType.Civilian);
             var interpreterSuffix = "_interpreter_";
             var expectedIngestUrl = $"{_conference.IngestUrl}{interpreterSuffix}{expectedRoomId}";

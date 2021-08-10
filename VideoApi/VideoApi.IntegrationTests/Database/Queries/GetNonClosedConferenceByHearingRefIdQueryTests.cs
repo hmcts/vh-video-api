@@ -112,7 +112,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.DisplayName.Should().NotBeNullOrEmpty();
                 participant.ParticipantRefId.Should().NotBeEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
-                participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
+
+                if (participant is Participant participantCast)
+                    participantCast.CaseTypeGroup.Should().NotBeNullOrEmpty();
             }
 
             var endpoints = actual.GetEndpoints();

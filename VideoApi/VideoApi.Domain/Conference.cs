@@ -13,7 +13,7 @@ namespace VideoApi.Domain
             string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl)
         {
             Id = Guid.NewGuid();
-            Participants = new List<Participant>();
+            Participants = new List<ParticipantBase>();
             ConferenceStatuses = new List<ConferenceStatus>();
             InstantMessageHistory = new List<InstantMessage>();
             MeetingRoom = new MeetingRoom();
@@ -43,7 +43,7 @@ namespace VideoApi.Domain
         public MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
         public ConferenceState State { get; private set; }
-        public virtual IList<Participant> Participants { get; }
+        public virtual IList<ParticipantBase> Participants { get; }
         public virtual IList<Endpoint> Endpoints { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
         public virtual IList<InstantMessage> InstantMessageHistory { get; }
@@ -67,7 +67,7 @@ namespace VideoApi.Domain
             return MeetingRoom.IsSet() ? MeetingRoom : null;
         }
 
-        public void AddParticipant(Participant participant)
+        public void AddParticipant(ParticipantBase participant)
         {
             if (DoesParticipantExist(participant.Username))
             {
@@ -77,7 +77,7 @@ namespace VideoApi.Domain
             Participants.Add(participant);
         }
 
-        public void RemoveParticipant(Participant participant)
+        public void RemoveParticipant(ParticipantBase participant)
         {
             if (!DoesParticipantExist(participant.Username))
             {
@@ -93,7 +93,7 @@ namespace VideoApi.Domain
             return Participants.Any(x => x.Username == username);
         }
 
-        public IList<Participant> GetParticipants()
+        public IList<ParticipantBase> GetParticipants()
         {
             return Participants;
         }
@@ -185,14 +185,14 @@ namespace VideoApi.Domain
             AudioRecordingRequired = audioRecordingRequired;
         }
 
-        public Participant GetJudge()
+        public ParticipantBase GetJudge()
         {
-            return Participants.SingleOrDefault(x => x.IsJudge());
+            return Participants.SingleOrDefault(x => x is Participant && ((Participant)x).IsJudge());
         }
 
-        public Participant GetVideoHearingOfficer()
+        public ParticipantBase GetVideoHearingOfficer()
         {
-            return Participants.SingleOrDefault(x => x.IsVideoHearingOfficer());
+            return Participants.SingleOrDefault(x => x is Participant && ((Participant)x).IsVideoHearingOfficer());
         }
 
         public IList<InstantMessage> GetInstantMessageHistory()
@@ -223,8 +223,12 @@ namespace VideoApi.Domain
             var secondaryParticipant =
                 Participants.Single(x => x.ParticipantRefId == secondaryParticipantRefId);
 
-            primaryParticipant.AddLink(secondaryParticipant.Id, linkedParticipantType);
-            secondaryParticipant.AddLink(primaryParticipant.Id, linkedParticipantType);
+            if (primaryParticipant is Participant && secondaryParticipant is Participant)
+            {
+
+                ((Participant)primaryParticipant).AddLink(secondaryParticipant.Id, linkedParticipantType);
+                ((Participant)secondaryParticipant).AddLink(primaryParticipant.Id, linkedParticipantType);
+            }
         }
     }
 }

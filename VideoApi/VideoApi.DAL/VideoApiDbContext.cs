@@ -21,6 +21,7 @@ namespace VideoApi.DAL
         public DbSet<Participant> Participants { get; set; }
 
         public DbSet<Room> Rooms { get; set; }
+        public DbSet<ParticipantToken> ParticipantTokens { get; set; }
 
         public VideoApiDbContext(DbContextOptions options) : base(options)
         {

@@ -46,7 +46,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conference = _context.Test.Conference;
             var room = _context.Test.Room;
             var request = BuildRequest(EventType.Transfer, _context.Test.Conference);
-            request.ParticipantId = conference.Participants.First(x => x.IsJudge()).Id.ToString();
+            request.ParticipantId = conference.Participants.First(x => x is Participant && ((Participant)x).IsJudge()).Id.ToString();
             request.TransferFrom = RoomType.WaitingRoom.ToString();
             request.TransferTo = room.Label;
             _context.Uri = EventsEndpoints.Event;
@@ -61,7 +61,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conference = _context.Test.Conference;
             var room = _context.Test.Room;
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
-            var judge = conference.Participants.Single(x => x.IsJudge());
+            var judge = conference.Participants.Single(x => x is Participant && ((Participant)x).IsJudge());
 
             var dbRoom = await db.Rooms.Include(x => x.RoomParticipants).SingleAsync(x=> x.Label == room.Label);
             dbRoom.AddParticipant(new RoomParticipant(judge.Id));
@@ -75,7 +75,7 @@ namespace VideoApi.IntegrationTests.Steps
             var conference = _context.Test.Conference;
             var room = _context.Test.Room;
             var request = BuildRequest(EventType.Transfer, _context.Test.Conference);
-            request.ParticipantId = conference.Participants.First(x => x.IsJudge()).Id.ToString();
+            request.ParticipantId = conference.Participants.First(x => x is Participant && ((Participant)x).IsJudge()).Id.ToString();
             request.TransferFrom = room.Label;
             request.TransferTo = RoomType.WaitingRoom.ToString();
             _context.Uri = EventsEndpoints.Event;
@@ -182,7 +182,7 @@ namespace VideoApi.IntegrationTests.Steps
             await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
             var updatedConference = await db.Conferences.Include(x => x.Participants).ThenInclude(x => x.CurrentConsultationRoom)
                 .ThenInclude(x => x.RoomParticipants).SingleAsync(x => x.Id == conference.Id);
-            var judge = updatedConference.Participants.First(x => x.IsJudge());
+            var judge = updatedConference.Participants.First(x => x is Participant && ((Participant)x).IsJudge());
 
             judge.State.Should().Be(expectedState);
             

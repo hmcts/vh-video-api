@@ -12,6 +12,8 @@ namespace VideoApi.Domain
             TimeStamp = DateTime.UtcNow;
         }
 
+        public Guid ParticipantId { get; set; }
+        public ParticipantBase Participant { get; set; }
         public ParticipantState ParticipantState { get; set; }
         public DateTime TimeStamp { get; set; }
     }

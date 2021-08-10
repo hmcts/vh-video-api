@@ -12,9 +12,9 @@ namespace VideoApi.DAL.Commands
     public class RemoveParticipantsFromConferenceCommand : ICommand
     {
         public Guid ConferenceId { get; set; }
-        public List<Participant> Participants { get; set; }
+        public List<ParticipantBase> Participants { get; set; }
 
-        public RemoveParticipantsFromConferenceCommand(Guid conferenceId, List<Participant> participants)
+        public RemoveParticipantsFromConferenceCommand(Guid conferenceId, List<ParticipantBase> participants)
         {
             ConferenceId = conferenceId;
             Participants = participants;

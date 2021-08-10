@@ -7,14 +7,11 @@ using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
-    public class Participant : Entity<Guid>
+    public class Participant : ParticipantBase
     {
         private Participant()
         {
             Id = Guid.NewGuid();
-            ParticipantStatuses = new List<ParticipantStatus>();
-            LinkedParticipants = new List<LinkedParticipant>();
-            RoomParticipants = new List<RoomParticipant>();
         }
 
         public Participant(Guid participantRefId, string name, string firstName, string lastName, string displayName,
@@ -63,74 +60,13 @@ namespace VideoApi.Domain
             Username = username;
         }
 
-        public Guid ParticipantRefId { get; set; }
-        public string Name { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ContactEmail { get; set; }
         public string ContactTelephone { get; set; }
-        public string DisplayName { get; set; }
-        public string Username { get; set; }
-        public UserRole UserRole { get; set; }
         public string HearingRole { get; private set; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
-        public RoomType? CurrentRoom { get;  set; }
-        public long? CurrentConsultationRoomId { get; set; }
-        public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
-        public long? TestCallResultId { get; set; }
-        public virtual TestCallResult TestCallResult { get; private set; }
-        protected virtual IList<ParticipantStatus> ParticipantStatuses { get; set; }
-        public ParticipantState State { get; set; }
-        public virtual IList<LinkedParticipant> LinkedParticipants { get; set; }
-        
-        public virtual IList<RoomParticipant> RoomParticipants { get; }
-
-        public IList<ParticipantStatus> GetParticipantStatuses()
-        {
-            return ParticipantStatuses;
-        }
-
-        public ParticipantStatus GetCurrentStatus()
-        {
-            return new ParticipantStatus(State);
-        }
-
-        public void UpdateParticipantStatus(ParticipantState status)
-        {
-            State = status;
-            ParticipantStatuses.Add(new ParticipantStatus(status));
-        }
-
-        public void UpdateTestCallResult(bool passed, TestScore score)
-        {
-            TestCallResult = new TestCallResult(passed, score);
-        }
-
-        public string GetCurrentRoom()
-        {
-            return CurrentConsultationRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
-        }
-
-        public ParticipantRoom GetParticipantRoom()
-        {
-            return RoomParticipants.Select(x => x.Room).OfType<ParticipantRoom>().FirstOrDefault();
-        }
-
-        public void UpdateCurrentRoom(RoomType? currentRoom)
-        {
-            CurrentRoom = currentRoom;
-        }
-
-        public void UpdateCurrentConsultationRoom(ConsultationRoom consultationRoom)
-        {
-            if (consultationRoom?.Id == CurrentConsultationRoomId)
-            {
-                return;
-            }
-            CurrentConsultationRoom?.RemoveParticipant(new RoomParticipant(Id));
-            CurrentConsultationRoom = consultationRoom;
-        }
 
         public bool IsJudge()
         {
@@ -147,7 +83,7 @@ namespace VideoApi.Domain
             return HearingRole.Equals("Witness", StringComparison.CurrentCultureIgnoreCase);
         }
         
-        public void AddLink(Guid linkedId, LinkedParticipantType linkType)
+        public override void AddLink(Guid linkedId, LinkedParticipantType linkType)
         {
             var existingLink = LinkedParticipants.SingleOrDefault(x => x.LinkedId == linkedId && x.Type == linkType);
             if (existingLink == null)
@@ -156,7 +92,7 @@ namespace VideoApi.Domain
             }
         }
 
-        public void RemoveLink(LinkedParticipant linkedParticipant)
+        public override void RemoveLink(LinkedParticipant linkedParticipant)
         {
             var link = LinkedParticipants.SingleOrDefault(
                 x => x.LinkedId == linkedParticipant.LinkedId && x.Type == linkedParticipant.Type);
@@ -168,7 +104,7 @@ namespace VideoApi.Domain
             LinkedParticipants.Remove(linkedParticipant);
         }
         
-        public void RemoveAllLinks()
+        public override void RemoveAllLinks()
         {
             LinkedParticipants.Clear();
         }

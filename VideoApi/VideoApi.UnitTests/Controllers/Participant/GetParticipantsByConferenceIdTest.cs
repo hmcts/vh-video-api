@@ -28,20 +28,25 @@ namespace VideoApi.UnitTests.Controllers.Participant
             participantsSummary.Count.Should().Be(5);
 
             var participant = participantsSummary[1];
-            var exspectedParticipant = TestConference.Participants[1];
+            var expectedParticipant = TestConference.Participants[1];
 
-            participant.CaseGroup.Should().Be(exspectedParticipant.CaseTypeGroup);
-            participant.Id.Should().Be(exspectedParticipant.Id);
-            participant.Username.Should().Be(exspectedParticipant.Username);
-            participant.DisplayName.Should().Be(exspectedParticipant.DisplayName);
-            participant.FirstName.Should().Be(exspectedParticipant.FirstName);
-            participant.LastName.Should().Be(exspectedParticipant.LastName);
-            participant.Status.Should().Be(exspectedParticipant.State);
-            participant.UserRole.Should().Be(exspectedParticipant.UserRole);
-            participant.HearingRole.Should().Be(exspectedParticipant.HearingRole);
-            participant.Representee.Should().Be(exspectedParticipant.Representee);
-            participant.ContactEmail.Should().Be(exspectedParticipant.ContactEmail);
-            participant.ContactTelephone.Should().Be(exspectedParticipant.ContactTelephone);
+            participant.Id.Should().Be(expectedParticipant.Id);
+            participant.Username.Should().Be(expectedParticipant.Username);
+            participant.DisplayName.Should().Be(expectedParticipant.DisplayName);
+            participant.Status.Should().Be(expectedParticipant.State);
+            participant.UserRole.Should().Be(expectedParticipant.UserRole);
+
+            if (expectedParticipant is VideoApi.Domain.Participant expectedParticipantCasted)
+            {
+                participant.CaseGroup.Should().Be(expectedParticipantCasted.CaseTypeGroup);
+                participant.FirstName.Should().Be(expectedParticipantCasted.FirstName);
+                participant.LastName.Should().Be(expectedParticipantCasted.LastName);
+                participant.HearingRole.Should().Be(expectedParticipantCasted.HearingRole);
+                participant.Representee.Should().Be(expectedParticipantCasted.Representee);
+                participant.ContactEmail.Should().Be(expectedParticipantCasted.ContactEmail);
+                participant.ContactTelephone.Should().Be(expectedParticipantCasted.ContactTelephone);
+            }
+
         }
 
         [Test]

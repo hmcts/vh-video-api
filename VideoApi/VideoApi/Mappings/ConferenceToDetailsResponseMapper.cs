@@ -41,7 +41,7 @@ namespace VideoApi.Mappings
             return response;
         }
 
-        private static List<ParticipantDetailsResponse> MapParticipants(IList<Participant> participants,
+        private static List<ParticipantDetailsResponse> MapParticipants(IList<ParticipantBase> participants,
             List<ParticipantRoom> interpreterRooms)
         {
             return participants.Select(x =>

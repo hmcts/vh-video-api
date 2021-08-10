@@ -132,7 +132,7 @@ namespace VideoApi.Controllers
             return validation;
         }
 
-        private async Task<SharedParticipantRoomResponse> GetVmr(Conference conference, Participant participant, VirtualCourtRoomType roomType)
+        private async Task<SharedParticipantRoomResponse> GetVmr(Conference conference, ParticipantBase participant, VirtualCourtRoomType roomType)
         {
             ParticipantRoom participantRoom;
             switch (roomType)
