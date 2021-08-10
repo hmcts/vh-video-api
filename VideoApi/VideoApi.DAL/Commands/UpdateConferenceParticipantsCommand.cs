@@ -13,15 +13,15 @@ namespace VideoApi.DAL.Commands
     public class UpdateConferenceParticipantsCommand : ICommand
     {
         public Guid ConferenceId { get; set; }
-        public IList<Participant> ExistingParticipants { get; set; }
-        public IList<Participant> NewParticipants { get; set; }
+        public IList<ParticipantBase> ExistingParticipants { get; set; }
+        public IList<ParticipantBase> NewParticipants { get; set; }
         public IList<Guid> RemovedParticipantRefIds { get; set; }
         public IList<LinkedParticipantDto> LinkedParticipants { get; set; }
 
         public UpdateConferenceParticipantsCommand(
             Guid conferenceId,
-            IList<Participant> existingParticipants,
-            IList<Participant> newParticipants,
+            IList<ParticipantBase> existingParticipants,
+            IList<ParticipantBase> newParticipants,
             IList<Guid> removedParticipants,
             IList<LinkedParticipantDto> linkedParticipants)
         {
@@ -79,14 +79,18 @@ namespace VideoApi.DAL.Commands
                     throw new ParticipantNotFoundException(existingParticipant.ParticipantRefId);
                 }
 
-                participant.ContactEmail = existingParticipant.ContactEmail ?? participant.ContactEmail;
-                participant.ContactTelephone = existingParticipant.ContactTelephone ?? participant.ContactTelephone;
                 participant.DisplayName = existingParticipant.DisplayName;
-                participant.FirstName = existingParticipant.FirstName;
-                participant.LastName = existingParticipant.LastName;
                 participant.Name = existingParticipant.Name;
-                participant.Representee = existingParticipant.Representee;
                 participant.Username = existingParticipant.Username ?? participant.Username;
+
+                if (participant is Participant participantCasted)
+                {
+                    participantCasted.ContactEmail = ((Participant)existingParticipant).ContactEmail ?? participantCasted.ContactEmail;
+                    participantCasted.ContactTelephone = ((Participant)existingParticipant).ContactTelephone ?? participantCasted.ContactTelephone;
+                    participantCasted.FirstName = ((Participant)existingParticipant).FirstName;
+                    participantCasted.LastName = ((Participant)existingParticipant).LastName;
+                    participantCasted.Representee = ((Participant)existingParticipant).Representee;
+                }
 
                 participant.RemoveAllLinks();
             }

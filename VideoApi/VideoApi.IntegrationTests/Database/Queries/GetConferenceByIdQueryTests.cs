@@ -4,7 +4,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Queries;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
@@ -49,10 +51,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 participant.DisplayName.Should().NotBeNullOrEmpty();
                 participant.ParticipantRefId.Should().NotBeEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
-                participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
-                if (participant.UserRole == UserRole.Representative)
+
+                if (participant is Participant participantCasted)
                 {
-                    participant.Representee.Should().NotBeNullOrEmpty();
+                    participantCasted.CaseTypeGroup.Should().NotBeNullOrEmpty();
+                    if (participant.UserRole == UserRole.Representative)
+                    {
+                        participantCasted.Representee.Should().NotBeNullOrEmpty();
+                    }
                 }
             }
 

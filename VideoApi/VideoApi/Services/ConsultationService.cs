@@ -143,7 +143,7 @@ namespace VideoApi.Services
             }
         }
 
-        private async Task<Participant> RetrieveLastParticipantIfLinkedAndLeftAlone(Conference conference, Participant participant,
+        private async Task<Participant> RetrieveLastParticipantIfLinkedAndLeftAlone(Conference conference, ParticipantBase participant,
             string fromRoomLabel)
         {
             if (participant.GetParticipantRoom() != null)
@@ -164,7 +164,8 @@ namespace VideoApi.Services
             var participantIds = remainingParticipants.Select(x => x.ParticipantId);
 
             var firstRemaining = conference.Participants.First(x => participantIds.Contains(x.Id));
-            return firstRemaining.LinkedParticipants.Any(x => participantIds.Contains(x.LinkedId)) ? firstRemaining : null;
+            return firstRemaining is Participant && ((Participant)firstRemaining).LinkedParticipants.Any(x => participantIds.Contains(x.LinkedId))
+                ? ((Participant)firstRemaining): null;
         }
 
         private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,

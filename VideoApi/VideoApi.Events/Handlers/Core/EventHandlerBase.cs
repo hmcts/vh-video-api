@@ -26,7 +26,7 @@ namespace VideoApi.Events.Handlers.Core
         }
 
         protected Conference SourceConference { get; set; }
-        protected Participant SourceParticipant { get; set; }
+        protected ParticipantBase SourceParticipant { get; set; }
         protected Endpoint SourceEndpoint { get; set; }
         protected ParticipantRoom SourceParticipantRoom { get; set; }
 

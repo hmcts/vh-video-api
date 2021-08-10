@@ -77,7 +77,8 @@ namespace VideoApi.Controllers
 
             try
             {
-                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants, linkedParticipants);
+                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants.Select(x => x as ParticipantBase).ToList(), linkedParticipants);
+
                 await _commandHandler.Handle(addParticipantCommand);
 
                 return NoContent();
@@ -131,7 +132,7 @@ namespace VideoApi.Controllers
                         Type = x.Type.MapToDomainEnum()
                     }).ToList();
 
-                var updateHearingParticipantsCommand = new UpdateConferenceParticipantsCommand(conferenceId, existingParticipants, newParticipants,
+                var updateHearingParticipantsCommand = new UpdateConferenceParticipantsCommand(conferenceId, existingParticipants.Select(x => x as ParticipantBase).ToList(), newParticipants.Select(x => x as ParticipantBase).ToList(),
                     request.RemovedParticipants, linkedParticipants);
 
                 await _commandHandler.Handle(updateHearingParticipantsCommand);
@@ -228,7 +229,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var participants = new List<Participant> {participant};
+            var participants = new List<ParticipantBase> {participant};
             var command = new RemoveParticipantsFromConferenceCommand(conferenceId, participants);
             await _commandHandler.Handle(command);
             return NoContent();

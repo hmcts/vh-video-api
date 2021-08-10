@@ -131,6 +131,7 @@ namespace VideoApi
 
             services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
+            services.AddScoped<IQuickLinksJwtTokenProvider, QuickLinksJwtTokenProvider>();
 
             if (environment.IsDevelopment())
             {

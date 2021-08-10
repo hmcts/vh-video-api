@@ -37,10 +37,10 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .Build();
             
             var interpreterRoom = conference.Rooms.OfType<ParticipantRoom>().First();
-            var participant = conference.Participants.First(x => !x.IsJudge() && x.GetParticipantRoom() == null);
+            var participant = conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge() && x.GetParticipantRoom() == null);
             var consultationRoom = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
 
-            foreach (var p in conference.Participants.Where(x=> !x.IsJudge()))
+            foreach (var p in conference.Participants.Where(x=> x is Participant && !((Participant)x).IsJudge()))
             {
                 consultationRoom.AddParticipant(new RoomParticipant(p.Id));
             }
@@ -88,10 +88,10 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .Build();
             
             var interpreterRoom = conference.Rooms.OfType<ParticipantRoom>().First();
-            var participant = conference.Participants.First(x => !x.IsJudge() && x.GetParticipantRoom() == null);
+            var participant = conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge() && x.GetParticipantRoom() == null);
             var consultationRoom = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
 
-            foreach (var p in conference.Participants.Where(x=> !x.IsJudge()))
+            foreach (var p in conference.Participants.Where(x=> x is Participant && !((Participant)x).IsJudge()))
             {
                 consultationRoom.AddParticipant(new RoomParticipant(p.Id));
             }
@@ -137,10 +137,10 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .Build();
             
-            var participant = conference.Participants.First(x => !x.IsJudge() && x.GetParticipantRoom() == null);
+            var participant = conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge() && x.GetParticipantRoom() == null);
             var consultationRoom = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
 
-            foreach (var p in conference.Participants.Where(x=> !x.IsJudge()))
+            foreach (var p in conference.Participants.Where(x=> x is Participant && !((Participant)x).IsJudge()))
             {
                 consultationRoom.AddParticipant(new RoomParticipant(p.Id));
             }

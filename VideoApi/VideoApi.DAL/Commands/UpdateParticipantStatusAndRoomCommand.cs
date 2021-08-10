@@ -1,8 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;

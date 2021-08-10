@@ -130,7 +130,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var seededRoom = await TestDataManager.SeedRoom(consultationRoom);
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             TestContext.WriteLine($"New seeded room id: {seededRoom.Id}");
-            var participant = seededConference.GetParticipants().First(p => p.IsJudge());
+            var participant = seededConference.GetParticipants().First(p => p is Participant && ((Participant)p).IsJudge());
             const ParticipantState state = ParticipantState.InConsultation;
 
             var beforeState = participant.GetCurrentStatus();

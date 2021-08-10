@@ -136,7 +136,6 @@ namespace VideoApi.Controllers
                 await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
                 return Ok();
             }
-
             
             if (requestedBy == null)
             {

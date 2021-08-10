@@ -65,14 +65,17 @@ namespace VideoApi.DAL.Commands
             }
 
             participant.Name = command.Fullname;
-            participant.FirstName = command.FirstName;
-            participant.LastName = command.LastName;
             participant.DisplayName = command.DisplayName;
-            participant.Representee = command.Representee;
-            
-            participant.ContactEmail = command.ContactEmail ?? participant.ContactEmail;
-            participant.ContactTelephone = command.ContactTelephone ?? participant.ContactTelephone;
             participant.Username = command.Username ?? participant.Username;
+
+            if (participant is Participant participantCasted)
+            {
+                participantCasted.FirstName = command.FirstName;
+                participantCasted.LastName = command.LastName;
+                participantCasted.Representee = command.Representee;
+                participantCasted.ContactEmail = command.ContactEmail ?? participantCasted.ContactEmail;
+                participantCasted.ContactTelephone = command.ContactTelephone ?? participantCasted.ContactTelephone;
+            }
 
             // remove all linked participants where the current participant is the secondary, i.e., LinkedId
             //

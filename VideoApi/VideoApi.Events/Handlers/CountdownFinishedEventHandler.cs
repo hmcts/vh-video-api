@@ -23,7 +23,7 @@ namespace VideoApi.Events.Handlers
         
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            var allWitnessesInConsultation = SourceConference.Participants.Where(x => x.IsAWitness())
+            var allWitnessesInConsultation = SourceConference.Participants.Where(x => x is Participant && ((Participant)x).IsAWitness())
                 .Where(x => x.State == ParticipantState.InConsultation);
             foreach (var witness in allWitnessesInConsultation)
             {
@@ -31,7 +31,7 @@ namespace VideoApi.Events.Handlers
             }
         }
         
-        private async Task ReturnParticipantToWaitingRoom(Participant witness)
+        private async Task ReturnParticipantToWaitingRoom(ParticipantBase witness)
         {
             var currentConsultationRoom = witness.GetCurrentRoom();
             await _consultationService.LeaveConsultationAsync(SourceConference.Id, witness.Id,

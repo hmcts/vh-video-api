@@ -6,9 +6,11 @@ using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Responses;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using static Testing.Common.Helper.ApiUriFactory.VirtualRoomEndpoints;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -26,7 +28,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAGetInterpreterRoomRequest()
         {
             var conference = _context.Test.Conference;
-            var participant = conference.Participants.First(x => !x.IsJudge());
+            var participant = conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge());
             _context.Uri = GetInterpreterRoomForParticipant(conference.Id, participant.Id);
             _context.HttpMethod = HttpMethod.Get;
         }
@@ -50,7 +52,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAGetWitnessRoomRequest()
         {
             var conference = _context.Test.Conference;
-            var participant = conference.Participants.First(x => !x.IsJudge());
+            var participant = conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge());
             _context.Uri = GetWitnessRoomForParticipant(conference.Id, participant.Id);
             _context.HttpMethod = HttpMethod.Get;
         }
