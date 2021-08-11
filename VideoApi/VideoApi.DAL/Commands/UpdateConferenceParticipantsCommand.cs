@@ -51,6 +51,19 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
+            foreach (var removedParticipantRefId in command.RemovedParticipantRefIds)
+            {
+                var participant = conference.GetParticipants().SingleOrDefault(x => x.ParticipantRefId == removedParticipantRefId);
+
+                if (participant == null)
+                {
+                    throw new ParticipantNotFoundException(removedParticipantRefId);
+                }
+
+                participant.RemoveAllLinks();
+                conference.RemoveParticipant(participant);
+            }
+
             foreach (var participant in command.NewParticipants)
             {
                 conference.AddParticipant(participant);
@@ -80,19 +93,6 @@ namespace VideoApi.DAL.Commands
                 }
 
                 participant.RemoveAllLinks();
-            }
-
-            foreach (var removedParticipantRefId in command.RemovedParticipantRefIds)
-            {
-                var participant = conference.GetParticipants().SingleOrDefault(x => x.ParticipantRefId == removedParticipantRefId);
-                
-                if (participant == null)
-                {
-                    throw new ParticipantNotFoundException(removedParticipantRefId);
-                }
-
-                participant.RemoveAllLinks();
-                conference.RemoveParticipant(participant);
             }
 
             foreach (var linkedParticipant in command.LinkedParticipants)
