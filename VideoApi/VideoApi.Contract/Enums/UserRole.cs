@@ -9,6 +9,7 @@ namespace VideoApi.Contract.Enums
         Judge = 4,
         Individual = 5,
         Representative = 6,
-        JudicialOfficeHolder = 7
+        JudicialOfficeHolder = 7,
+        StaffMember = 8
     }
 }
