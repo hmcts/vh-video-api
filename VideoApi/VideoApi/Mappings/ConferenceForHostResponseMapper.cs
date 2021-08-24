@@ -6,11 +6,11 @@ using VideoApi.Extensions;
 
 namespace VideoApi.Mappings
 {
-    public static class ConferenceForJudgeResponseMapper
+    public static class ConferenceForHostResponseMapper
     {
-        public static ConferenceForJudgeResponse MapConferenceSummaryToModel(Conference conference)
+        public static ConferenceForHostResponse MapConferenceSummaryToModel(Conference conference)
         {
-            return new ConferenceForJudgeResponse
+            return new ConferenceForHostResponse
             {
                 Id = conference.Id,
                 Status = conference.GetCurrentStatus().MapToContractEnum(),
@@ -46,9 +46,9 @@ namespace VideoApi.Mappings
     
     public static class ParticipantForJudgeResponseMapper
     {
-        public static ParticipantForJudgeResponse MapParticipantSummaryToModel(ParticipantBase participant)
+        public static ParticipantForHostResponse MapParticipantSummaryToModel(ParticipantBase participant)
         {
-            var participantForJudgeResponse = new ParticipantForJudgeResponse
+            var participantForJudgeResponse = new ParticipantForHostResponse
             {
                 Id = participant.Id,
                 Role = participant.UserRole.MapToContractEnum(),

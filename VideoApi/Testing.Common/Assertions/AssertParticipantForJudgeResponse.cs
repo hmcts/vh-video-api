@@ -6,7 +6,7 @@ namespace Testing.Common.Assertions
 {
     public static class AssertParticipantForJudgeResponse
     {
-        public static void ForParticipant(ParticipantForJudgeResponse participant)
+        public static void ForParticipant(ParticipantForHostResponse participant)
         {
             participant.Should().NotBeNull();
             participant.Role.Should().NotBeNull();

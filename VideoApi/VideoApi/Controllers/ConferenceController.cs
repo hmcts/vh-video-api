@@ -257,7 +257,7 @@ namespace VideoApi.Controllers
         /// <returns>List of conferences for judge</returns>
         [HttpGet("today/judge")]
         [OpenApiOperation("GetConferencesTodayForJudgeByUsername")]
-        [ProducesResponseType(typeof(List<ConferenceForJudgeResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
@@ -272,9 +272,38 @@ namespace VideoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var query = new GetConferencesForTodayByJudgeQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesForTodayByJudgeQuery, List<Conference>>(query);
-            var response = conferences.Select(ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel);
+            var query = new GetConferencesForTodayByHostQuery(username.ToLower().Trim());
+            var conferences = await _queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
+            var response = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get all conferences for a host
+        /// </summary>
+        /// <param name="username">Host username</param>
+        /// <returns>List of conferences for host</returns>
+        [HttpGet("today/host")]
+        [OpenApiOperation("GetConferencesTodayForHost")]
+        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesTodayForHostAsync([FromQuery] string username)
+        {
+            _logger.LogDebug("GetConferencesTodayForHost {Username}", username);
+
+            if (!username.IsValidEmail())
+            {
+                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
+
+                _logger.LogWarning("Invalid username {Username}", username);
+
+                return BadRequest(ModelState);
+            }
+
+            var query = new GetConferencesForTodayByHostQuery(username.ToLower().Trim());
+            var conferences = await _queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
+            var response = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
 
             return Ok(response);
         }
@@ -424,7 +453,7 @@ namespace VideoApi.Controllers
                     new GetJudgesInHearingsTodayQuery());
 
             var response =
-                conferences.SelectMany(ConferenceForJudgeResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
+                conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
 
             return Ok(response);
         }

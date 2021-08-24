@@ -23,7 +23,7 @@ namespace Testing.Common.Configuration
         public ConferenceDetailsResponse ConferenceResponse { get; set; }
         public List<ConferenceDetailsResponse> ConferenceDetailsResponses { get; set; }
         public List<ConferenceForAdminResponse> ConferenceResponses { get; set; }
-        public List<ConferenceForJudgeResponse> ConferenceJudgeResponses { get; set; }
+        public List<ConferenceForHostResponse> ConferenceJudgeResponses { get; set; }
         public List<ConferenceForIndividualResponse> ConferenceIndividualResponses { get; set; }
         public Guid TomorrowsConference { get; set; }
         public List<Conference> Conferences { get; set; }
