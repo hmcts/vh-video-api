@@ -263,18 +263,12 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("GetConferencesTodayForJudgeByUsername {Username}", username);
 
-            if (!username.IsValidEmail())
+            var response = await GetHostConferencesForToday(username);
+
+            if (response is null)
             {
-                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-
-                _logger.LogWarning("Invalid username {Username}", username);
-
                 return BadRequest(ModelState);
             }
-
-            var query = new GetConferencesForTodayByHostQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
-            var response = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
 
             return Ok(response);
         }
@@ -292,18 +286,12 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("GetConferencesTodayForHost {Username}", username);
 
-            if (!username.IsValidEmail())
+            var response = await GetHostConferencesForToday(username);
+
+            if (response is null)
             {
-                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-
-                _logger.LogWarning("Invalid username {Username}", username);
-
                 return BadRequest(ModelState);
             }
-
-            var query = new GetConferencesForTodayByHostQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
-            var response = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
 
             return Ok(response);
         }
@@ -647,6 +635,24 @@ namespace VideoApi.Controllers
             );
 
             return result;
+        }
+
+        private async Task<IEnumerable<ConferenceForHostResponse>> GetHostConferencesForToday(string username)
+        {
+
+            if (!username.IsValidEmail())
+            {
+                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
+
+                _logger.LogWarning("Invalid username {Username}", username);
+
+                return null;
+            }
+
+            var query = new GetConferencesForTodayByHostQuery(username.ToLower().Trim());
+            var conferences = await _queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
+            var conferenceForHostResponse = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
+            return conferenceForHostResponse;
         }
     }
 }
