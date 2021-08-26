@@ -8,7 +8,7 @@ namespace VideoApi.DAL.Mappings
     {
         public void Configure(EntityTypeBuilder<QuickLinkParticipant> builder)
         {
-            builder.HasOne(x => x.Token).WithOne(x => x.Participant);
+            builder.HasOne(x => x.Token).WithOne(x => x.Participant);    
         }
     }
 }

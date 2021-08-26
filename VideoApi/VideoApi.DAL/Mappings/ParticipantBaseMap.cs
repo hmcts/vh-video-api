@@ -22,6 +22,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.UserRole);
             builder.Property(x => x.CurrentRoom);
 
+            builder.Property(x => x.HearingRole);
+
             builder.Property(x => x.TestCallResultId).IsRequired(false);
             builder.Property(x => x.CurrentConsultationRoomId).IsRequired(false);
             builder.Property(x => x.State).HasDefaultValue(ParticipantState.NotSignedIn);
