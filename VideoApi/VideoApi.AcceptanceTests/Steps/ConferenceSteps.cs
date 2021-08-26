@@ -294,7 +294,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"a list containing only judge todays hearings conference details should be retrieved")]
         public void ThenAListOfTheConferenceDetailsForJudgeShouldBeRetrieved()
         {
-            var conferences = RequestHelper.Deserialise<List<ConferenceForJudgeResponse>>(_context.Response.Content);
+            var conferences = RequestHelper.Deserialise<List<ConferenceForHostResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
             foreach (var conference in conferences)
             {

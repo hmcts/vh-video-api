@@ -55,7 +55,7 @@ namespace VideoApi.AcceptanceTests.Hooks
                 ConferenceIds = new List<Guid>(),
                 ConferenceResponses = new List<ConferenceForAdminResponse>(),
                 ConferenceDetailsResponses = new List<ConferenceDetailsResponse>(),
-                ConferenceJudgeResponses = new List<ConferenceForJudgeResponse>(),
+                ConferenceJudgeResponses = new List<ConferenceForHostResponse>(),
                 ConferenceIndividualResponses = new List<ConferenceForIndividualResponse>()
             };
             context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
