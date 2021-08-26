@@ -14,7 +14,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 {
     public class GetConferencesForTodayByJudgeQueryTests : DatabaseTestsBase
     {
-        private GetConferencesForTodayByJudgeQueryHandler _handler;
+        private GetConferencesForTodayByHostQueryHandler _handler;
         private Guid _newConferenceId1;
         private Guid _newConferenceId2;
         private Guid _newConferenceId3;
@@ -28,7 +28,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetConferencesForTodayByJudgeQueryHandler(context);
+            _handler = new GetConferencesForTodayByHostQueryHandler(context);
             _newConferenceId1 = Guid.Empty;
             _newConferenceId2 = Guid.Empty;
             _newConferenceId3 = Guid.Empty;
@@ -115,7 +115,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference8);
 
             var expectedConferences = new List<Conference> {conference1, conference2, conference3, conference4, conference7};
-            var conferences = await _handler.Handle(new GetConferencesForTodayByJudgeQuery(username));
+            var conferences = await _handler.Handle(new GetConferencesForTodayByHostQuery(username));
 
             conferences.Should().NotBeEmpty();
             conferences.Select(x => x.Id).Should().BeEquivalentTo(expectedConferences.Select(x => x.Id));
