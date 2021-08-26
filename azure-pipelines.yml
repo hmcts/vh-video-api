@@ -222,7 +222,7 @@ variables:
   - group: vh-preview
   - group: KinlyConfiguration_Test
   - group: vh-video-api
-  - group: QuickLinks_Dev
+  - group: QuickLinks_Preview
 
 trigger:
   branches:
