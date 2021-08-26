@@ -36,7 +36,7 @@ parameters:
 variables:
   - group: vh-domains-and-urls
   - group: vh-apps-settings-generic
-  - group: vh-video-api
+  - group: vh-video-api  
   - ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
     - ${{ if containsValue(parameters.prodEnvs, parameters.environment) }}:
       - group: vh-prod
@@ -160,6 +160,9 @@ extends:
           - group: QuickLinks_Sandbox
             env:
              - Sandbox
+          - group: QuickLinks_Preview
+            env:
+             - Preview
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
@@ -247,7 +250,12 @@ extends:
           - name: ConnectionStrings:VideoApi
             value: VhVideoDatabaseConnectionString
             secret: true
-            
+          # Quick Links Configuration
+          - name: QuickLinks:Issuer
+            value: $(video_api_url)
+          - name: QuickLinks:JwtProviderSecret
+            value: $(JwtProviderSecret)
+                        
         acceptanceTestSettings:
           # AzureAd
           - name: AzureAd:TenantId
@@ -266,3 +274,9 @@ extends:
             secret: true
           - name: Services:VideoApiUrl
             value: $(video_api_url_staging)
+           
+          # Quick Links Configuration
+          - name: QuickLinks:Issuer
+            value: $(video_api_url)
+          - name: QuickLinks:JwtProviderSecret
+            value: $(JwtProviderSecret)
