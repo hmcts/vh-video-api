@@ -20,7 +20,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithEndpoint("3000","sip address")
                 .Build();
 
-            var response = ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel(conference);
+            var response = ConferenceForHostResponseMapper.MapConferenceSummaryToModel(conference);
             
             response.Id.Should().Be(conference.Id);
             response.ScheduledDateTime.Should().Be(conference.ScheduledDateTime);
@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithParticipants(1)
                 .Build();
 
-            var response = ConferenceForJudgeResponseMapper.MapConferenceSummaryToModel(conference);
+            var response = ConferenceForHostResponseMapper.MapConferenceSummaryToModel(conference);
 
             response.Id.Should().Be(conference.Id);
             response.NumberOfEndpoints.Should().Be(0);

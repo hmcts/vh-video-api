@@ -4,7 +4,7 @@ using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
 {
-    public class ConferenceForJudgeResponse
+    public class ConferenceForHostResponse
     {
         /// <summary>
         /// Conference UUID
@@ -49,7 +49,7 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// The conference participants
         /// </summary>
-        public List<ParticipantForJudgeResponse> Participants { get; set; }
+        public List<ParticipantForHostResponse> Participants { get; set; }
 
         /// <summary>
         /// The number of video access endpoints for the hearing
@@ -57,7 +57,7 @@ namespace VideoApi.Contract.Responses
         public int NumberOfEndpoints { get; set; }
     }
 
-    public class ParticipantForJudgeResponse
+    public class ParticipantForHostResponse
     {
         /// <summary>
         /// The participant Id

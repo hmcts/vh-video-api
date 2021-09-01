@@ -8,26 +8,26 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetConferencesForTodayByJudgeQuery : IQuery
+    public class GetConferencesForTodayByHostQuery : IQuery
     {
         public string Username { get; set; }
 
-        public GetConferencesForTodayByJudgeQuery(string username)
+        public GetConferencesForTodayByHostQuery(string username)
         {
             Username = username;
         }
     }
 
-    public class GetConferencesForTodayByJudgeQueryHandler : IQueryHandler<GetConferencesForTodayByJudgeQuery, List<Conference>>
+    public class GetConferencesForTodayByHostQueryHandler : IQueryHandler<GetConferencesForTodayByHostQuery, List<Conference>>
     {
         private readonly VideoApiDbContext _context;
 
-        public GetConferencesForTodayByJudgeQueryHandler(VideoApiDbContext context)
+        public GetConferencesForTodayByHostQueryHandler(VideoApiDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Conference>> Handle(GetConferencesForTodayByJudgeQuery query)
+        public async Task<List<Conference>> Handle(GetConferencesForTodayByHostQuery query)
         {
             query.Username = query.Username.ToLower().Trim();
             var today = DateTime.Today;

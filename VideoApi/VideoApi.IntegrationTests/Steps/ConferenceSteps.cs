@@ -323,7 +323,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the summary of conference details should be retrieved for judges")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ConferenceForJudgeResponse>>(_context.Response.Content);
+            var conferences = await Response.GetResponses<List<ConferenceForHostResponse>>(_context.Response.Content);
             conferences.Should().NotBeNullOrEmpty();
             foreach (var conference in conferences)
             {

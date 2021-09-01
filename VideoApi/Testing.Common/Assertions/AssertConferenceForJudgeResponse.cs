@@ -7,7 +7,7 @@ namespace Testing.Common.Assertions
 {
     public static class AssertConferenceForJudgeResponse
     {
-        public static void ForConference(ConferenceForJudgeResponse conference)
+        public static void ForConference(ConferenceForHostResponse conference)
         {
             conference.Should().NotBeNull();
             conference.CaseType.Should().NotBeNullOrEmpty();
