@@ -2,7 +2,7 @@ namespace VideoApi.Domain.Enums
 {
     public enum QuickLinkHearingRole
     {
-        Witness = 8,
+        Participant = 8,
         Observer = 9
     }
 }
