@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi", "VideoApi\VideoApi.csproj", "{2131B290-9EA1-4523-BBC2-52E889B2C4E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi.Domain", "VideoApi.Domain\VideoApi.Domain.csproj", "{4FC26285-CE9D-4900-93D1-2AEF62DA7DCE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{56E4BBC7-E3EC-46B1-8675-FAF1EFAC430A} = {56E4BBC7-E3EC-46B1-8675-FAF1EFAC430A}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoApi.DAL", "VideoApi.DAL\VideoApi.DAL.csproj", "{180F7229-726E-4EB7-B5A1-253C4E5F7075}"
 EndProject
