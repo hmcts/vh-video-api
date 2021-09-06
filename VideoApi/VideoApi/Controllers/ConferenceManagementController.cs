@@ -13,6 +13,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
+using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
 
 namespace VideoApi.Controllers
 {
@@ -52,7 +53,7 @@ namespace VideoApi.Controllers
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
-                await _videoPlatformService.StartHearingAsync(conferenceId, hearingLayout);
+                await _videoPlatformService.StartHearingAsync(conferenceId, request.ParticipantsToForceTransfer, hearingLayout);
                 return Accepted();
             }
             catch (KinlyApiException ex)
