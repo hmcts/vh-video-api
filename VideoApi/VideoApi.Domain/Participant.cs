@@ -64,7 +64,6 @@ namespace VideoApi.Domain
         public string LastName { get; set; }
         public string ContactEmail { get; set; }
         public string ContactTelephone { get; set; }
-        public string HearingRole { get; private set; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
 

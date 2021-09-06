@@ -22,6 +22,7 @@ namespace VideoApi.Mappings
                 Username = participant.Username,
                 DisplayName = participant.DisplayName,
                 UserRole = participant.UserRole.MapToContractEnum(),
+                HearingRole = participant.HearingRole,
                 CurrentStatus = participant.State.MapToContractEnum(),
                 LinkedParticipants =
                     participant.LinkedParticipants

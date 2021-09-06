@@ -30,7 +30,7 @@ namespace VideoApi.Mappings
                 DisplayName = participant.DisplayName,
                 Status = participantStatus.MapToContractEnum(),
                 UserRole = participant.UserRole.MapToContractEnum(),
-                HearingRole = participant is Participant ? ((Participant)participant).HearingRole : null,
+                HearingRole = participant.HearingRole,
                 Representee = participant is Participant ? ((Participant)participant).Representee : null,
                 CaseGroup = caseGroup,
                 FirstName = participant is Participant ? ((Participant)participant).FirstName : null,

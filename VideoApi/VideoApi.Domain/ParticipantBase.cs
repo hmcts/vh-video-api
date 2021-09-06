@@ -13,6 +13,7 @@ namespace VideoApi.Domain
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public UserRole UserRole { get; set; }
+        public string HearingRole { get; set; }
         public string Username { get; set; }
         public virtual IList<LinkedParticipant> LinkedParticipants { get; set; } = new List<LinkedParticipant>();
         public ParticipantState State { get; set; }

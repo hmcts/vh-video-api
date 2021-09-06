@@ -163,6 +163,11 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
+      "Enums.NET": {
+        "type": "Transitive",
+        "resolved": "4.0.0",
+        "contentHash": "d47SgeuGxKpalKhYoHqFkDPmO9SoE3amSwVNDoUdy4d675/tX7bLyZFHdjfo3Tobth9Y80VnjfasQ/PD4LqUuA=="
+      },
       "Faker.NETCore": {
         "type": "Transitive",
         "resolved": "1.0.2",
@@ -2903,7 +2908,11 @@
         }
       },
       "videoapi.domain": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "Enums.NET": "4.0.0",
+          "System.ComponentModel.Annotations": "4.7.0"
+        }
       },
       "videoapi.events": {
         "type": "Project",
