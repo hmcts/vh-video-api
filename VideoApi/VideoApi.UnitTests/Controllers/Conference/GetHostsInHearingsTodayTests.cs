@@ -13,7 +13,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
-    public class GetJudgesInHearingsTodayTests : ConferenceControllerTestBase
+    public class GetHostsInHearingsTodayTests : ConferenceControllerTestBase
     {
         [Test]
         public async Task Should_return_ok_result_and_many_judges_only_from_multiple_conferences()
@@ -22,7 +22,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             conferences.AddRange(Enumerable.Range(1, 5).Select(x => BuildDefaultConference()));
             
             QueryHandlerMock
-                .Setup(x => x.Handle<GetJudgesInHearingsTodayQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetJudgesInHearingsTodayQuery>()))
+                .Setup(x => x.Handle<GetHostsInHearingsTodayQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetHostsInHearingsTodayQuery>()))
                 .ReturnsAsync(conferences);
 
             var result = (OkObjectResult)await Controller.GetJudgesInHearingsTodayAsync();
