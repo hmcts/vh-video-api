@@ -12,7 +12,6 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.LastName);
             builder.Property(x => x.ContactEmail);
             builder.Property(x => x.ContactTelephone);
-            builder.Property(x => x.HearingRole);
             builder.Property(x => x.CaseTypeGroup);
             builder.Property(x => x.Representee);
             builder.Property(x => x.CurrentRoom);
