@@ -3,7 +3,7 @@ using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
 {
-    public class JudgeInHearingResponse
+    public class ParticipantInHearingResponse
     {
         /// <summary>
         /// The participant id

@@ -26,13 +26,13 @@ namespace VideoApi.Mappings
             };
         }
         
-        public static IEnumerable<JudgeInHearingResponse> MapConferenceSummaryToJudgeInHearingResponse(Conference conference)
+        public static IEnumerable<ParticipantInHearingResponse> MapConferenceSummaryToJudgeInHearingResponse(Conference conference)
         {
             var conferenceId = conference.Id;
             
             return conference.Participants
             .Where(x => x is Participant && ((Participant)x).IsJudge())    
-            .Select(x => new JudgeInHearingResponse
+            .Select(x => new ParticipantInHearingResponse
             {
                 Id = x.Id,
                 ConferenceId = conferenceId,

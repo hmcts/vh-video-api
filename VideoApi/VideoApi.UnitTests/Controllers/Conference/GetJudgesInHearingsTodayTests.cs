@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             var result = (OkObjectResult)await Controller.GetJudgesInHearingsTodayAsync();
             result.StatusCode.Should().Be((int)HttpStatusCode.OK);
             result.Value.Should().NotBeNull();
-            var results = result.Value as IEnumerable<JudgeInHearingResponse>;
+            var results = result.Value as IEnumerable<ParticipantInHearingResponse>;
             results.Should().NotBeNull();
             results.Count().Should().Be(5);
         }

@@ -34,7 +34,7 @@ namespace Testing.Common.Configuration
         public List<Conference> TodaysConferences { get; set; }
         public UpdateTaskRequest UpdateTaskRequest { get; set; }
         public Conference YesterdayClosedConference { get; set; }
-        public List<JudgeInHearingResponse> JudgeInHearings { get; set; }
+        public List<ParticipantInHearingResponse> JudgeInHearings { get; set; }
         public List<string> CvpFileNamesOnStorage { get; set; }
         public Room Room { get; set; }
     }

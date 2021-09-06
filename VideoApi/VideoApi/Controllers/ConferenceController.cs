@@ -431,7 +431,28 @@ namespace VideoApi.Controllers
         /// <returns>Conference details</returns>
         [HttpGet("today/judgesinhearings")]
         [OpenApiOperation("GetJudgesInHearingsToday")]
-        [ProducesResponseType(typeof(List<JudgeInHearingResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ParticipantInHearingResponse>), (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
+        {
+            _logger.LogDebug("GetJudgesInHearingsToday");
+
+            var conferences =
+                await _queryHandler.Handle<GetJudgesInHearingsTodayQuery, List<Conference>>(
+                    new GetJudgesInHearingsTodayQuery());
+
+            var response =
+                conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get today's conferences where hosts are in hearings
+        /// </summary>
+        /// <returns>Conference details</returns>
+        [HttpGet("today/judgesinhearings")]
+        [OpenApiOperation("GetJudgesInHearingsToday")]
+        [ProducesResponseType(typeof(List<ParticipantInHearingResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
         {
             _logger.LogDebug("GetJudgesInHearingsToday");

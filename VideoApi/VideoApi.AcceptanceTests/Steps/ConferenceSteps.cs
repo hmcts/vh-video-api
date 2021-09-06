@@ -386,7 +386,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the Judges in hearings should be retrieved")]
         public void ThenTheJudgeInHearingResponseShouldBeRetrieved()
         {
-            var judgeInHearings = RequestHelper.Deserialise<List<JudgeInHearingResponse>>(_context.Response.Content);
+            var judgeInHearings = RequestHelper.Deserialise<List<ParticipantInHearingResponse>>(_context.Response.Content);
             judgeInHearings.Should().NotBeNull();
             var judge = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
             var expectedHearing = judgeInHearings.First(x => x.ConferenceId.Equals(_context.Test.ConferenceResponse.Id));
