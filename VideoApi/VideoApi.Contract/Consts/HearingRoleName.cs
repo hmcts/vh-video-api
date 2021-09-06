@@ -33,5 +33,7 @@ namespace VideoApi.Contract.Consts
         public const string StateLIP = "State LIP";
         public const string Winger = "Winger";
         public const string Witness = "Witness";
+        public const string QuickLinkParticipant = "Quick Link Participant";
+        public const string QuickLinkObserver = "Quick Link Observer";
     }
 }

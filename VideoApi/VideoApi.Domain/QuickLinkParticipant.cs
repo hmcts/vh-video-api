@@ -1,3 +1,4 @@
+using EnumsNET;
 using System;
 using VideoApi.Domain.Enums;
 
@@ -17,7 +18,7 @@ namespace VideoApi.Domain
             Username = $"{Id}{DOMAIN}";
             UserRole = userRole;
             Name = name;
-            HearingRole = ((QuickLinkHearingRole)Enum.Parse(typeof(UserRole), userRole.ToString())).ToString();
+            HearingRole = ((QuickLinkHearingRole)Enum.Parse(typeof(UserRole), userRole.ToString())).AsString(EnumFormat.Description);
         }
     }
 }
