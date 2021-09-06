@@ -51,5 +51,27 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be(statusCode);
             typedResult.Value.Should().Be(response);
         }
+
+        [Test]
+        public async Task should_return_bad_request_when_user_a_kinly_api_error_is_thrown_with_400()
+        {
+            var conferenceId = Guid.NewGuid();
+            var message = "Auto Test Error";
+            var response = "No participants to transfer";
+            var statusCode = (int) HttpStatusCode.BadRequest;
+            var exception =
+                new KinlyApiException(message, statusCode, response, null, null);
+            VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<Layout>(), It.IsAny<bool>()))
+                .ThrowsAsync(exception);
+
+            var result =
+                await Controller.StartVideoHearingAsync(conferenceId, new Contract.Requests.StartHearingRequest());
+            var typedResult = result.Should().BeAssignableTo<BadRequestObjectResult>().Subject;
+            typedResult.Should().NotBeNull();
+            typedResult.StatusCode.Should().Be(statusCode);
+            typedResult.Value.Should().BeAssignableTo<string>().Which.Should()
+                .Contain("Invalid list of participants provided for");
+        }
     }
 }
