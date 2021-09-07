@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,9 +11,9 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetJudgesInHearingsTodayQueryTests : DatabaseTestsBase
+    public class GetHostsInHearingsTodayQueryTests : DatabaseTestsBase
     {
-        private GetJudgesInHearingsTodayQueryHandler _handler;
+        private GetHostsInHearingsTodayQueryHandler _handler;
         private Guid _newConferenceId1;
         private Guid _newConferenceId2;
         private Guid _newConferenceId3;
@@ -25,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetJudgesInHearingsTodayQueryHandler(context);
+            _handler = new GetHostsInHearingsTodayQueryHandler(context);
             _newConferenceId1 = Guid.Empty;
             _newConferenceId2 = Guid.Empty;
             _newConferenceId3 = Guid.Empty;
@@ -100,7 +100,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
 
-            var conferences = await _handler.Handle(new GetJudgesInHearingsTodayQuery());
+            var conferences = await _handler.Handle(new GetHostsInHearingsTodayQuery(judgesOnly: true));
 
             conferences.Select(x => x.Id).Should().NotContain(new List<Guid>
             {
@@ -162,7 +162,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
 
-            var conferences = await _handler.Handle(new GetJudgesInHearingsTodayQuery());
+            var conferences = await _handler.Handle(new GetHostsInHearingsTodayQuery(judgesOnly: true));
 
             conferences.Should().NotBeEmpty();
             conferences.Select(x => x.Id).Should().Contain(new List<Guid>
