@@ -36,15 +36,15 @@ namespace VideoApi.DAL.Queries
             var queryToExecute = _context.Conferences
                 .Include(x => x.Participants)
                 .AsNoTracking()
-                .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
-                .Where(x => x.Participants.Any(p =>
-                    (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)));
+                .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
 
             if (query.JudgesOnly)
-                queryToExecute = queryToExecute.Where(x => x.Participants.Any(p => p.UserRole == UserRole.Judge));
+                queryToExecute = queryToExecute.Where(x => x.Participants.Any(p => p.UserRole == UserRole.Judge
+                 && (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)));
             else
                 queryToExecute = queryToExecute
-                    .Where(x => x.Participants.Any(p => p.UserRole == UserRole.Judge || p.UserRole == UserRole.StaffMember));
+                    .Where(x => x.Participants.Any(p => (p.UserRole == UserRole.Judge || p.UserRole == UserRole.StaffMember)
+                 && (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)));
 
             return await queryToExecute.OrderBy(x => x.ScheduledDateTime).ToListAsync();
         }

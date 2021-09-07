@@ -13,20 +13,19 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
-    public class GetHostsInHearingsTodayTests : ConferenceControllerTestBase
+    public class GetJudgesInHearingsTodayTests : ConferenceControllerTestBase
     {
         [Test]
-        public async Task Should_return_ok_result_and_many_hosts_from_multiple_conferences()
+        public async Task Should_return_ok_result_and_many_judges_only_from_multiple_conferences()
         {
             var conferences = new List<VideoApi.Domain.Conference>();
-            conferences.AddRange(Enumerable.Range(1, 5).Select(x => BuildDefaultConference(x % 2 == 0 
-                ? UserRole.Judge : UserRole.StaffMember)));
+            conferences.AddRange(Enumerable.Range(1, 5).Select(x => BuildDefaultConference()));
             
             QueryHandlerMock
                 .Setup(x => x.Handle<GetHostsInHearingsTodayQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetHostsInHearingsTodayQuery>()))
                 .ReturnsAsync(conferences);
 
-            var result = (OkObjectResult)await Controller.GetHostsInHearingsTodayAsync();
+            var result = (OkObjectResult)await Controller.GetJudgesInHearingsTodayAsync();
             result.StatusCode.Should().Be((int)HttpStatusCode.OK);
             result.Value.Should().NotBeNull();
             var results = result.Value as IEnumerable<ParticipantInHearingResponse>;
@@ -34,10 +33,10 @@ namespace VideoApi.UnitTests.Controllers.Conference
             results.Count().Should().Be(5);
         }
 
-        private static VideoApi.Domain.Conference BuildDefaultConference(UserRole role)
+        private static VideoApi.Domain.Conference BuildDefaultConference()
         {
             return new ConferenceBuilder()
-                .WithParticipant(role, null)
+                .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")

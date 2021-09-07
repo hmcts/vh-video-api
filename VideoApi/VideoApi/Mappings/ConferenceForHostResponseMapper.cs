@@ -25,13 +25,30 @@ namespace VideoApi.Mappings
                 NumberOfEndpoints = conference.Endpoints.Count
             };
         }
-        
+
         public static IEnumerable<ParticipantInHearingResponse> MapConferenceSummaryToJudgeInHearingResponse(Conference conference)
         {
             var conferenceId = conference.Id;
-            
+
             return conference.Participants
-            .Where(x => x is Participant && ((Participant)x).IsJudge())    
+            .Where(x => x is Participant && ((Participant)x).IsJudge())
+            .Select(x => new ParticipantInHearingResponse
+            {
+                Id = x.Id,
+                ConferenceId = conferenceId,
+                Status = x.State.MapToContractEnum(),
+                Username = x.Username,
+                CaseGroup = ((Participant)x).CaseTypeGroup,
+                UserRole = x.UserRole.MapToContractEnum()
+            });
+        }
+
+        public static IEnumerable<ParticipantInHearingResponse> MapConferenceSummaryToHostInHearingResponse(Conference conference)
+        {
+            var conferenceId = conference.Id;
+
+            return conference.Participants
+            .Where(x => x is Participant && ((Participant)x).IsJudge() || ((Participant)x).IsStaffMember())
             .Select(x => new ParticipantInHearingResponse
             {
                 Id = x.Id,
