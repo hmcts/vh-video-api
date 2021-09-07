@@ -148,10 +148,10 @@ namespace VideoApi.Services
                 });
         }
 
-        public Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
+        public Task StartHearingAsync(Guid conferenceId, IEnumerable<string> participantsToForceTransfer = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = true)
         {
-            return _kinlyApiClient.StartHearingAsync(conferenceId.ToString(),
-                new StartHearingParams {Hearing_layout = layout});
+            return _kinlyApiClient.StartAsync(conferenceId.ToString(),
+                new StartHearingRequest { Hearing_layout = layout, Mute_guests = muteGuests, Force_transfer_participant_ids = participantsToForceTransfer?.ToList()});
         }
 
         public Task PauseHearingAsync(Guid conferenceId)

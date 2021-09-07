@@ -174,38 +174,53 @@
         }
       }
     },
-    "/hearing/{virtual_courtroom_id}/start": {
+    "/hearing/{hearingId}/start": {
       "post": {
-        "operationId": "startHearing",
-        "description": "Starts or resumes the hearing, triggers related events and operations.",
         "tags": [
-          "hearing"
+          "Hearing"
         ],
+        "summary": "Start hearing",
+        "operationId": "start",
         "parameters": [
           {
+            "name": "hearingId",
             "in": "path",
-            "name": "virtual_courtroom_id",
-            "type": "string",
             "required": true,
-            "description": "Hearing ID"
+            "schema": {
+              "type": "string"
+            }
           },
           {
-            "name": "StartHearingParams",
+            "name": "StartHearingRequest",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/startHearingParams"
+              "$ref": "#/components/schemas/StartHearingRequest"
             }
           }
         ],
         "responses": {
           "202": {
-            "description": "Start hearing backend processes"
+            "description": "Tries to start Hearing"
+          },
+          "400": {
+            "description": "Absent or empty force_transfer_participant_ids",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBadRequest"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "The hearing is started/starting."
+            "description": "Absent or Invalid JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseJwt"
+                }
+              }
+            }
           }
         }
       }
@@ -321,7 +336,7 @@
         }
       }
     },
-    "/hearing/{virtual_courtroom_id}/consultation-room":  {
+    "/hearing/{virtual_courtroom_id}/consultation-room": {
       "post": {
         "operationId": "createConsultationRoom",
         "description": "Create consultation room",
@@ -357,7 +372,7 @@
         }
       }
     },
-    "/hearing/{virtual_courtroom_id}/participant-room":  {
+    "/hearing/{virtual_courtroom_id}/participant-room": {
       "post": {
         "operationId": "createParticipantRoom",
         "description": "Create participant room",
@@ -497,11 +512,8 @@
         }
       }
     },
-    "startHearingParams": {
+    "StartHearingRequest": {
       "type": "object",
-      "required": [
-        "hearing_layout"
-      ],
       "properties": {
         "hearing_layout": {
           "allOf": [
@@ -509,6 +521,15 @@
               "$ref": "#/definitions/layout"
             }
           ]
+        },
+        "mute_guests": {
+          "type": "boolean"
+        },
+        "force_transfer_participant_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -594,7 +615,7 @@
         }
       }
     },
-    "createConsultationRoomParams":  {
+    "createConsultationRoomParams": {
       "type": "object",
       "required": [
         "room_label_prefix"

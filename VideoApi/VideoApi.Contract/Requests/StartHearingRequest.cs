@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace VideoApi.Contract.Requests
 {
     public enum HearingLayout
@@ -13,5 +15,7 @@ namespace VideoApi.Contract.Requests
             Layout = HearingLayout.Dynamic;
         }
         public HearingLayout? Layout { get; set; }
+        public IEnumerable<string> ParticipantsToForceTransfer { get; set; }
+        public bool? MuteGuests { get; set; }
     }
 }

@@ -60,7 +60,8 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
 
-        public Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
+        public Task StartHearingAsync(Guid conferenceId, IEnumerable<string> participantsToForceTransfer = null,
+            Layout layout = Layout.AUTOMATIC, bool muteGuests = true)
         {
             return Task.CompletedTask;
         }
