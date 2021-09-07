@@ -33,20 +33,17 @@ namespace VideoApi.DAL.Queries
             var today = DateTime.Today;
             var tomorrow = DateTime.Today.AddDays(1);
 
-            var queryToExecute = _context.Conferences
+            var userRoles = new List<UserRole> { UserRole.Judge };
+
+            if (!query.JudgesOnly) userRoles.Add(UserRole.StaffMember);
+
+            return await _context.Conferences
                 .Include(x => x.Participants)
                 .AsNoTracking()
-                .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow);
-
-            if (query.JudgesOnly)
-                queryToExecute = queryToExecute.Where(x => x.Participants.Any(p => p.UserRole == UserRole.Judge
-                 && (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)));
-            else
-                queryToExecute = queryToExecute
-                    .Where(x => x.Participants.Any(p => (p.UserRole == UserRole.Judge || p.UserRole == UserRole.StaffMember)
-                 && (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)));
-
-            return await queryToExecute.OrderBy(x => x.ScheduledDateTime).ToListAsync();
+                .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
+                .Where(x => x.Participants.Any(p => userRoles.Contains(p.UserRole)
+                    && (p.State == ParticipantState.InHearing || p.State == ParticipantState.Available)))
+                .OrderBy(x => x.ScheduledDateTime).ToListAsync();
         }
     }
 }
