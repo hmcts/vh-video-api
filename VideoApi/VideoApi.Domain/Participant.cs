@@ -71,7 +71,12 @@ namespace VideoApi.Domain
         {
             return UserRole == UserRole.Judge;
         }
-        
+
+        public bool IsStaffMember()
+        {
+            return UserRole == UserRole.StaffMember;
+        }
+
         public bool IsVideoHearingOfficer()
         {
             return UserRole == UserRole.VideoHearingsOfficer;
