@@ -13,6 +13,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
+using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
 
 namespace VideoApi.Controllers
 {
@@ -43,7 +44,8 @@ namespace VideoApi.Controllers
         /// <returns>No Content status</returns>
         [HttpPost("{conferenceId}/start")]
         [OpenApiOperation("StartOrResumeVideoHearing")]
-        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int) HttpStatusCode.Accepted)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartVideoHearingAsync(Guid conferenceId, StartHearingRequest request)
         {
             try
@@ -52,16 +54,23 @@ namespace VideoApi.Controllers
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
-                await _videoPlatformService.StartHearingAsync(conferenceId, hearingLayout);
+                await _videoPlatformService.StartHearingAsync(conferenceId, request.ParticipantsToForceTransfer,
+                    hearingLayout);
                 return Accepted();
             }
             catch (KinlyApiException ex)
             {
+                if (ex.StatusCode == (int) HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(
+                        $"Invalid list of participants provided for {nameof(request.ParticipantsToForceTransfer)}. {request.ParticipantsToForceTransfer}");
+                }
+
                 _logger.LogError(ex, "Error from Kinly API. Unable to start video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
-        
+
         /// <summary>
         /// Pause a video hearing
         /// </summary>

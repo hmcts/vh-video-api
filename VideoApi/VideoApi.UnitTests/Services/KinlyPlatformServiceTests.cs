@@ -18,6 +18,7 @@ using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
 using VideoApi.Services.Mappers;
+using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Services
@@ -252,8 +253,8 @@ namespace VideoApi.UnitTests.Services
             var conferenceId = Guid.NewGuid();
             await _kinlyPlatformService.StartHearingAsync(conferenceId);
             _kinlyApiClientMock.Verify(
-                x => x.StartHearingAsync(conferenceId.ToString(),
-                    It.Is<StartHearingParams>(l => l.Hearing_layout == Layout.AUTOMATIC)), Times.Once);
+                x => x.StartAsync(conferenceId.ToString(),
+                    It.Is<VideoApi.Services.Kinly.StartHearingRequest>(l => l.Hearing_layout == Layout.AUTOMATIC)), Times.Once);
         }
         
         [Test]
@@ -261,10 +262,12 @@ namespace VideoApi.UnitTests.Services
         {
             var conferenceId = Guid.NewGuid();
             var layout = Layout.ONE_PLUS_SEVEN;
-            await _kinlyPlatformService.StartHearingAsync(conferenceId, layout);
+            var participantsToForceTransfer = new[] {"participant-one", "participant-two"};
+            var muteGuests = false;
+            await _kinlyPlatformService.StartHearingAsync(conferenceId, participantsToForceTransfer, layout, muteGuests);
             _kinlyApiClientMock.Verify(
-                x => x.StartHearingAsync(conferenceId.ToString(),
-                    It.Is<StartHearingParams>(l => l.Hearing_layout == layout)), Times.Once);
+                x => x.StartAsync(conferenceId.ToString(),
+                    It.Is<VideoApi.Services.Kinly.StartHearingRequest>(l => l.Hearing_layout == layout && l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) && l.Mute_guests == muteGuests)), Times.Once);
         }
         
         [Test]

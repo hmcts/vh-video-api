@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Security.Kinly;
+using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Kinly;
@@ -13,6 +14,7 @@ using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Mappers;
+using StartHearingRequest = VideoApi.Services.Kinly.StartHearingRequest;
 
 namespace VideoApi.Services
 {
@@ -148,10 +150,10 @@ namespace VideoApi.Services
                 });
         }
 
-        public Task StartHearingAsync(Guid conferenceId, Layout layout = Layout.AUTOMATIC)
+        public Task StartHearingAsync(Guid conferenceId, IEnumerable<string> participantsToForceTransfer = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = true)
         {
-            return _kinlyApiClient.StartHearingAsync(conferenceId.ToString(),
-                new StartHearingParams {Hearing_layout = layout});
+            return _kinlyApiClient.StartAsync(conferenceId.ToString(),
+                new StartHearingRequest { Hearing_layout = layout, Mute_guests = muteGuests, Force_transfer_participant_ids = participantsToForceTransfer?.ToList()});
         }
 
         public Task PauseHearingAsync(Guid conferenceId)
