@@ -15,7 +15,7 @@ namespace VideoApi.Validations
         public AddQuickLinkParticipantRequestValidation()
         {
             RuleFor(x => x.Name).NotEmpty().WithMessage(NoNameErrorMessage);
-            RuleFor(x => x.Name).Matches(RegexName).WithMessage(SpecialCharNameErrorMessage).When(x => !string.IsNullOrEmpty(x.Name) ); ;
+            RuleFor(x => x.Name).Matches(RegexName).WithMessage(SpecialCharNameErrorMessage).When(x => !string.IsNullOrEmpty(x.Name));
             RuleFor(x => x.UserRole).NotEmpty().WithMessage(NoUserRoleErrorMessage);
         }
     }
