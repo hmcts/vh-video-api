@@ -25,6 +25,9 @@ namespace VideoApi.UnitTests.Validation
         {
             var request = BuildRequest();
 
+            request.Name = "Peter Costello";
+            request.UserRole = UserRole.QuickLinkParticipant;
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeTrue();
