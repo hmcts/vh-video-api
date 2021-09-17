@@ -62,6 +62,7 @@ namespace VideoApi.UnitTests.Validation
         public async Task Should_return_missing_user_role_error()
         {
             var request = BuildRequest();
+            request.Name = "Peter Costello";
             request.UserRole = UserRole.None;
 
             var result = await _validator.ValidateAsync(request);
