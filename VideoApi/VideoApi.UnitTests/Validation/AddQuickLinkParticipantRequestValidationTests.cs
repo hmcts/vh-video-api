@@ -25,6 +25,9 @@ namespace VideoApi.UnitTests.Validation
         {
             var request = BuildRequest();
 
+            request.Name = "Peter Costello";
+            request.UserRole = UserRole.QuickLinkParticipant;
+
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeTrue();
@@ -45,9 +48,24 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
+        public async Task Should_return_special_chars_not_allowed_name_error()
+        {
+            var request = BuildRequest();
+            request.Name = "#Peter Co$tello";
+
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.SpecialCharNameErrorMessage)
+                .Should().BeTrue();
+        }
+
+        [Test]
         public async Task Should_return_missing_user_role_error()
         {
             var request = BuildRequest();
+            request.Name = "Peter Costello";
             request.UserRole = UserRole.None;
 
             var result = await _validator.ValidateAsync(request);
