@@ -132,7 +132,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         [TestCase(UserRole.QuickLinkObserver)]
         [TestCase(UserRole.QuickLinkParticipant)]
-        public async Task Room_To_Transfer_From_Is_Consutation_Property_Is_Valid(UserRole userRole)
+        public async Task Room_To_Transfer_From_Is_Set_To_Consutation_Room_For_Valid_Request(UserRole userRole)
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First();
@@ -157,7 +157,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         [TestCase(UserRole.QuickLinkObserver)]
         [TestCase(UserRole.QuickLinkParticipant)]
-        public async Task Room_To_Transfer_From_Is_Waiting_Room_When_ConsultationRoom_Is_Invalid(UserRole userRole)
+        public async Task Room_To_Transfer_From_Is_Set_To_Waiting_Room_When_ConsultationRoom_Is_Invalid(UserRole userRole)
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First();
@@ -182,7 +182,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         [TestCase(UserRole.QuickLinkObserver, null)]
         [TestCase(UserRole.QuickLinkParticipant, "")]
-        public async Task Room_To_Transfer_From_Is_Waiting_Room_When_ConsultationRoomLabel_Is_Invalid(UserRole userRole, string roomLabel)
+        public async Task Room_To_Transfer_From_Is_Set_To_Waiting_Room_When_ConsultationRoomLabel_Is_Invalid(UserRole userRole, string roomLabel)
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First();
