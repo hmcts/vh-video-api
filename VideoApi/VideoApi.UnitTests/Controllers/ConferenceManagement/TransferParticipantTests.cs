@@ -128,5 +128,30 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be(statusCode);
             typedResult.Value.Should().Be(response);
         }
+
+        [Test]
+        [TestCase(UserRole.QuickLinkObserver)]
+        [TestCase(UserRole.QuickLinkParticipant)]
+        public async Task Room_To_Transfer_From_Is_Not_Set_To_Waiting_Room_When_Participant_CurrentConsultationRoom_Is_Defined(UserRole userRole)
+        {
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First();
+            participant.UserRole = userRole;
+            participant.CurrentConsultationRoom = new ConsultationRoom(conferenceId, "consultation room", VirtualCourtRoomType.Participant, false);
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = participant.Id,
+                TransferType = TransferType.Call
+            };
+
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+
+
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), participant.CurrentConsultationRoom.Label,
+                    RoomType.HearingRoom.ToString()), Times.Once);
+
+        }
     }
 }
