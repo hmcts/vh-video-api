@@ -162,8 +162,9 @@ namespace VideoApi.Controllers
                     case TransferType.Call:
                         _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
                             kinlyParticipantId, conferenceId);
+                        var fromRoom = participant.CurrentConsultationRoom?.Label ?? RoomType.WaitingRoom.ToString();
                         await _videoPlatformService.TransferParticipantAsync(conferenceId, kinlyParticipantId,
-                            RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
+                            fromRoom, RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
