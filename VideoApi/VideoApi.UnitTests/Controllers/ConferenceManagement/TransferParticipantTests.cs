@@ -132,7 +132,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         [TestCase(UserRole.QuickLinkObserver)]
         [TestCase(UserRole.QuickLinkParticipant)]
-        public async Task Room_To_Transfer_From_Is_Not_Set_To_Waiting_Room_When_Participant_CurrentConsultationRoom_Is_Defined(UserRole userRole)
+        public async Task Room_To_Transfer_From_Is_Consutation_Property_Is_Valid(UserRole userRole)
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First();
@@ -150,6 +150,56 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), participant.CurrentConsultationRoom.Label,
+                    RoomType.HearingRoom.ToString()), Times.Once);
+
+        }
+
+        [Test]
+        [TestCase(UserRole.QuickLinkObserver)]
+        [TestCase(UserRole.QuickLinkParticipant)]
+        public async Task Room_To_Transfer_From_Is_Waiting_Room_When_ConsultationRoom_Is_Invalid(UserRole userRole)
+        {
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First();
+            participant.UserRole = userRole;
+            participant.CurrentConsultationRoom = null;
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = participant.Id,
+                TransferType = TransferType.Call
+            };
+
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+
+
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
+                    RoomType.HearingRoom.ToString()), Times.Once);
+
+        }
+
+        [Test]
+        [TestCase(UserRole.QuickLinkObserver, null)]
+        [TestCase(UserRole.QuickLinkParticipant, "")]
+        public async Task Room_To_Transfer_From_Is_Waiting_Room_When_ConsultationRoomLabel_Is_Invalid(UserRole userRole, string roomLabel)
+        {
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First();
+            participant.UserRole = userRole;
+            participant.CurrentConsultationRoom = new ConsultationRoom(conferenceId, roomLabel, VirtualCourtRoomType.Participant, false); ;
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = participant.Id,
+                TransferType = TransferType.Call
+            };
+
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+
+
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
                     RoomType.HearingRoom.ToString()), Times.Once);
 
         }
