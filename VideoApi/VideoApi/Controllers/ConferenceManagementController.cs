@@ -190,7 +190,7 @@ namespace VideoApi.Controllers
 
         private string TransferFromRoomType(ParticipantBase participant)
         {
-            return (participant.UserRole == UserRole.QuickLinkParticipant || participant.UserRole == UserRole.QuickLinkObserver) && participant.CurrentConsultationRoom != null && !string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom.Label) ? participant.CurrentConsultationRoom.Label : RoomType.WaitingRoom.ToString();
+            return (participant.UserRole == UserRole.QuickLinkParticipant || participant.UserRole == UserRole.QuickLinkObserver) && !string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom?.Label) ? participant.CurrentConsultationRoom.Label : RoomType.WaitingRoom.ToString();
         }
     }
 }
