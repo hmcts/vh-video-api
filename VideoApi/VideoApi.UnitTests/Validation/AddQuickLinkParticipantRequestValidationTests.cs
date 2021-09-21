@@ -50,15 +50,18 @@ namespace VideoApi.UnitTests.Validation
         [Test]
         public async Task Should_return_special_chars_not_allowed_name_error()
         {
-            var request = BuildRequest();
-            request.Name = "#Peter Co$tello";
+            foreach (char specialCase in AddQuickLinkParticipantRequestValidation.invalidSpecialCases)
+            {
+                var request = BuildRequest();
+                request.Name = $"Peter Co{specialCase}tello";
 
-            var result = await _validator.ValidateAsync(request);
+                var result = await _validator.ValidateAsync(request);
 
-            result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.SpecialCharNameErrorMessage)
-                .Should().BeTrue();
+                result.IsValid.Should().BeFalse();
+                result.Errors.Count.Should().Be(1);
+                result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.SpecialCharNameErrorMessage)
+                    .Should().BeTrue();
+            }
         }
 
         [Test]

@@ -6,11 +6,12 @@ namespace VideoApi.Validations
 {
     public class AddQuickLinkParticipantRequestValidation : AbstractValidator<AddQuickLinkParticipantRequest>
     {
+        public static readonly string invalidSpecialCases = @"^[^!”#$%&()*+,./:;<=>?@[\\\]^_`{|}~""£¬]+$";
         public static readonly string NoNameErrorMessage = "Name is required";
         public static readonly string NoUserRoleErrorMessage = "UserRole is required";
-        public static readonly string SpecialCharNameErrorMessage = @"Name must not contain the following characters ! ” # $ % & ( ) * + , . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~";
+        public static readonly string SpecialCharNameErrorMessage = @"Name must not contain the following characters ! ” # $ % & ( ) * + , . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~ "" £ ¬";
 
-        public static readonly string RegexName = new Regex(@"^[^!”#$%&()*+,./:;<=>?@[\\\]^_`{|}~]+$").ToString();
+        public static readonly string RegexName = new Regex(invalidSpecialCases).ToString();
 
         public AddQuickLinkParticipantRequestValidation()
         {
