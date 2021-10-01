@@ -101,7 +101,7 @@ extends:
           - group: KinlyConfiguration_Test2
             env:
              - Demo
-          - group: KinlyConfiguration_Test
+          - group: KinlyConfiguration_Preprod
             env:
              - Preprod
           - group: KinlyConfiguration_Prod
