@@ -30,13 +30,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task Should_remove_heartbeats_for_conferences_older_than_14_days()
+        public async Task Should_remove_heartbeats_for_conferences_older_than_30_days()
         {
             _conferenceList = new List<Conference>();
             var utcDate = DateTime.UtcNow;
-            var hearingOlderThan14Days = utcDate.AddDays(-14);
+            var hearingOlderThan30Days = utcDate.AddDays(-30);
 
-            var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingOlderThan14Days)
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingOlderThan30Days)
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
@@ -71,13 +71,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task Should_not_remove_heartbeats_for_conferences_within_14_days()
+        public async Task Should_not_remove_heartbeats_for_conferences_within_30_days()
         {
             _conferenceList = new List<Conference>();
             var utcDate = DateTime.UtcNow;
-            var hearingWithin14Days = utcDate.AddDays(-13);
+            var hearingWithin30Days = utcDate.AddDays(-29);
 
-            var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingWithin14Days)
+            var conference1 = new ConferenceBuilder(true, scheduledDateTime: hearingWithin30Days)
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
