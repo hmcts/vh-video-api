@@ -34,5 +34,10 @@ namespace VideoApi.Contract.Responses
         /// The conference closed datetime
         /// </summary>
         public DateTime? ClosedDateTime { get; set; }
+
+        /// <summary>
+        /// The conference hearing venue name
+        /// </summary>
+        public string HearingVenueName { get; set; }
     }
 }

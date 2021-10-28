@@ -27,6 +27,7 @@ namespace VideoApi.UnitTests.Mappings
             response.CaseNumber.Should().Be(conference.CaseNumber);
             response.Status.Should().Be(conference.State);
             response.ClosedDateTime.Should().Be(conference.ClosedDateTime);
+            response.HearingVenueName.Should().Be(conference.HearingVenueName);
         }
     }
 }

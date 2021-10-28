@@ -15,7 +15,8 @@ namespace VideoApi.Mappings
                 CaseNumber = conference.CaseNumber,
                 ScheduledDateTime = conference.ScheduledDateTime,
                 Status = conference.GetCurrentStatus().MapToContractEnum(),
-                ClosedDateTime = conference.ClosedDateTime
+                ClosedDateTime = conference.ClosedDateTime,
+                HearingVenueName = conference.HearingVenueName
             };
         }
     }

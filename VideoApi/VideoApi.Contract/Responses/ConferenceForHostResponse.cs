@@ -55,6 +55,11 @@ namespace VideoApi.Contract.Responses
         /// The number of video access endpoints for the hearing
         /// </summary>
         public int NumberOfEndpoints { get; set; }
+
+        /// <summary>
+        /// The conference hearing venue name
+        /// </summary>
+        public string HearingVenueName { get; set; }
     }
 
     public class ParticipantForHostResponse

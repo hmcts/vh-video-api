@@ -32,6 +32,7 @@ namespace VideoApi.UnitTests.Mappings
             response.Status.ToString().Should().Be(conference.State.ToString());
             response.Participants.Count.Should().Be(conference.Participants.Count);
             response.NumberOfEndpoints.Should().Be(conference.Endpoints.Count);
+            response.HearingVenueName.Should().Be(conference.HearingVenueName);
         }
 
         [Test]
