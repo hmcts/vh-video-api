@@ -67,6 +67,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Mappings\Extensions\" />
+  </ItemGroup>
 
   <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' AND '$(Configuration)'=='Debug'">
     <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />

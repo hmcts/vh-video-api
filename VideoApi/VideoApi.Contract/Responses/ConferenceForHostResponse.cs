@@ -57,9 +57,9 @@ namespace VideoApi.Contract.Responses
         public int NumberOfEndpoints { get; set; }
 
         /// <summary>
-        /// The conference hearing venue name
+        /// Flags true when hearing venue is in Scotland
         /// </summary>
-        public string HearingVenueName { get; set; }
+        public bool HearingVenueIsScottish { get; set; }
     }
 
     public class ParticipantForHostResponse

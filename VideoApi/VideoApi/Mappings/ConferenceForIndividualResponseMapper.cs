@@ -16,7 +16,7 @@ namespace VideoApi.Mappings
                 ScheduledDateTime = conference.ScheduledDateTime,
                 Status = conference.GetCurrentStatus().MapToContractEnum(),
                 ClosedDateTime = conference.ClosedDateTime,
-                HearingVenueName = conference.HearingVenueName
+                HearingVenueIsScottish = conference.IsHearingVenueInScotland()
             };
         }
     }
