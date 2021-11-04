@@ -30,7 +30,8 @@ namespace VideoApi.Mappings
                 Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
                 HearingVenueName = conference.HearingVenueName,
                 AudioRecordingRequired = conference.AudioRecordingRequired,
-                CivilianRooms = interpreterRooms
+                CivilianRooms = interpreterRooms,
+                HearingVenueIsScottish = conference.IsHearingVenueInScotland()
             };
 
             if (response.MeetingRoom != null)

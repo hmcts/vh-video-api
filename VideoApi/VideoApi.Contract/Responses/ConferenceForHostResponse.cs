@@ -55,6 +55,11 @@ namespace VideoApi.Contract.Responses
         /// The number of video access endpoints for the hearing
         /// </summary>
         public int NumberOfEndpoints { get; set; }
+
+        /// <summary>
+        /// Flags true when hearing venue is in Scotland
+        /// </summary>
+        public bool HearingVenueIsScottish { get; set; }
     }
 
     public class ParticipantForHostResponse

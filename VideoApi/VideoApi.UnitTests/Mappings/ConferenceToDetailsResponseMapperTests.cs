@@ -3,6 +3,7 @@ using FluentAssertions;
 using FluentAssertions.Equivalency;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Consts;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
@@ -65,7 +66,27 @@ namespace VideoApi.UnitTests.Mappings
                 .BeEquivalentTo(room.RoomParticipants.Select(x => x.ParticipantId));
         }
 
-        
+        [Test]
+        [TestCase(HearingVenueNames.Aberdeen, true)]
+        [TestCase(HearingVenueNames.Dundee, true)]
+        [TestCase(HearingVenueNames.Edinburgh, true)]
+        [TestCase(HearingVenueNames.Glasgow, true)]
+        [TestCase(HearingVenueNames.Inverness, true)]
+        [TestCase("Crown Court", false)]
+        [TestCase("Birmingham", false)]
+        [TestCase(null, false)]
+        [TestCase("", false)]
+        public void Maps_Venue_Flag_Correctly(string venueName, bool expectedValue)
+        {
+            var conference = new ConferenceBuilder(false, null, null, venueName).Build();
+            var pexipSelfTestNode = "selttest@pexip.node";
+
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, pexipSelfTestNode);
+
+            response.HearingVenueIsScottish.Should().Be(expectedValue);
+        }
+
+
         bool ExcludeIdFromMessage(IMemberInfo member)
         {
             return member.SelectedMemberPath.Contains(nameof(InstantMessage)) && member.SelectedMemberInfo.Name.Contains("Id");

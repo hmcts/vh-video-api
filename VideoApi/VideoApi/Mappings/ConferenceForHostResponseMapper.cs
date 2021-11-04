@@ -23,7 +23,8 @@ namespace VideoApi.Mappings
                 ClosedDateTime = conference.ClosedDateTime,
                 Participants = conference.Participants
                     .Select(ParticipantForJudgeResponseMapper.MapParticipantSummaryToModel).ToList(),
-                NumberOfEndpoints = conference.Endpoints.Count
+                NumberOfEndpoints = conference.Endpoints.Count,
+                HearingVenueIsScottish = conference.IsHearingVenueInScotland()
             };
         }
 
@@ -57,7 +58,7 @@ namespace VideoApi.Mappings
             });
         }
     }
-    
+
     public static class ParticipantForJudgeResponseMapper
     {
         public static ParticipantForHostResponse MapParticipantSummaryToModel(ParticipantBase participant)

@@ -82,5 +82,10 @@ namespace VideoApi.Contract.Responses
         public bool AudioRecordingRequired { get; set; }
         
         public List<CivilianRoomResponse> CivilianRooms { get; set; }
+
+        /// <summary>
+        /// Flags true when hearing venue is in Scotland
+        /// </summary>
+        public bool HearingVenueIsScottish { get; set; }
     }
 }

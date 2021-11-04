@@ -1,13 +1,15 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Consts;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 
 namespace VideoApi.UnitTests.Mappings
 {
-    public class ConferenceForJudgeResponseMapperTests
+    public class ConferenceForHostResponseMapperTests
     {
+
         [Test]
         public void should_map_all_properties()
         {
@@ -47,6 +49,25 @@ namespace VideoApi.UnitTests.Mappings
 
             response.Id.Should().Be(conference.Id);
             response.NumberOfEndpoints.Should().Be(0);
+        }
+
+        [Test]
+        [TestCase(HearingVenueNames.Aberdeen, true)]
+        [TestCase(HearingVenueNames.Dundee, true)]
+        [TestCase(HearingVenueNames.Edinburgh, true)]
+        [TestCase(HearingVenueNames.Glasgow, true)]
+        [TestCase(HearingVenueNames.Inverness, true)]
+        [TestCase("Crown Court", false)]
+        [TestCase("Birmingham", false)]
+        [TestCase(null, false)]
+        [TestCase("", false)]
+        public void Maps_Venue_Flag_Correctly(string venueName, bool expectedValue)
+        {
+            var conference = new ConferenceBuilder(false, null, null, venueName).Build();
+
+            var response = ConferenceForHostResponseMapper.MapConferenceSummaryToModel(conference);
+
+            response.HearingVenueIsScottish.Should().Be(expectedValue);
         }
     }
 }
