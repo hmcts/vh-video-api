@@ -163,7 +163,7 @@ namespace VideoApi.Controllers
                         _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
                             kinlyParticipantId, conferenceId);
                         await _videoPlatformService.TransferParticipantAsync(conferenceId, kinlyParticipantId,
-                           TransferFromRoomType(participant) , RoomType.HearingRoom.ToString());
+                           TransferFromRoomType(participant), RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
@@ -190,7 +190,7 @@ namespace VideoApi.Controllers
 
         private string TransferFromRoomType(ParticipantBase participant)
         {
-            return (participant.UserRole == UserRole.QuickLinkParticipant || participant.UserRole == UserRole.QuickLinkObserver) && !string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom?.Label) ? participant.CurrentConsultationRoom.Label : RoomType.WaitingRoom.ToString();
+            return string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom?.Label) ? RoomType.WaitingRoom.ToString() : participant.CurrentConsultationRoom.Label;
         }
     }
 }
