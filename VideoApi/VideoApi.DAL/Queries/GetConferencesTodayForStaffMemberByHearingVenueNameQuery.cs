@@ -25,8 +25,8 @@ namespace VideoApi.DAL.Queries
 
         public async Task<List<Conference>> Handle(GetConferencesTodayForStaffMemberByHearingVenueNameQuery query)
         {
-            var today = DateTime.Today;
-            var tomorrow = DateTime.Today.AddDays(1);
+            var today = DateTime.UtcNow.Date;
+            var tomorrow = DateTime.UtcNow.Date.AddDays(1);
 
             return await _context.Conferences
                 .Include(x => x.Participants)
