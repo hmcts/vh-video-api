@@ -7,7 +7,7 @@ using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
-    public abstract class ParticipantBase : Entity<Guid>
+    public class ParticipantBase : Entity<Guid>
     {
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }

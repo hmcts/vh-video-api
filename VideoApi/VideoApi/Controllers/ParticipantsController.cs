@@ -395,5 +395,38 @@ namespace VideoApi.Controllers
             }).ToList();
             return Ok(participants);
         }
+        
+        /// <summary>
+        /// Add staff member to a conference
+        /// </summary>
+        /// <param name="conferenceId">The id of the conference to add participants to</param>
+        /// <param name="request">Details of the participant</param>
+        /// <returns></returns>
+        [HttpPut("{conferenceId}/staffMember")]
+        [OpenApiOperation("AddStaffMemberToConference")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddStaffMemberToConferenceAsync(Guid conferenceId,
+            AddStaffMemberRequest request)
+        {
+            _logger.LogDebug("AddStaffMemberToConference");
+            var participant = new Participant(request.Name.Trim(), request.FirstName.Trim(), request.LastName.Trim(),
+                request.DisplayName.Trim(), request.Username.ToLowerInvariant().Trim(), request.UserRole.MapToDomainEnum(),
+                request.HearingRole, request.ContactEmail);
+            try
+            {
+                var addParticipantCommand = new AddStaffMemberToConferenceCommand(conferenceId,participant);
+
+                await _commandHandler.Handle(addParticipantCommand);
+
+                return NoContent();
+            }
+            catch (ConferenceNotFoundException ex)
+            {
+                _logger.LogError(ex, "Unable to find conference");
+                return NotFound();
+            }
+        }
     }
 }
