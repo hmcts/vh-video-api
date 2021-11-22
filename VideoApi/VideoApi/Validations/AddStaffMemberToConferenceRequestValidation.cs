@@ -5,7 +5,6 @@ namespace VideoApi.Validations
 {
     public class AddStaffMemberToConferenceRequestValidation : AbstractValidator<AddStaffMemberRequest>
     {
-        
         public AddStaffMemberToConferenceRequestValidation()
         {
             RuleFor(x => x.Name).NotEmpty();
