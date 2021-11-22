@@ -5,6 +5,7 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using System.Linq;
+using Moq;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Enums;
 using VideoApi.DAL.Exceptions;
@@ -56,9 +57,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var participant = new ParticipantBase();
 
-            var command = new AddStaffMemberToConferenceCommand(conferenceId, participant);
+            var command = new AddStaffMemberToConferenceCommand(conferenceId, It.IsAny<ParticipantBase>());
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
