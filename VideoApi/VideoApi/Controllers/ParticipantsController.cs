@@ -416,7 +416,7 @@ namespace VideoApi.Controllers
                 request.HearingRole, request.ContactEmail);
             try
             {
-                var addParticipantCommand = new AddStaffMemberToConferenceCommand(conferenceId,participant);
+                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId,new List<ParticipantBase>(){participant},new List<LinkedParticipantDto>());
 
                 await _commandHandler.Handle(addParticipantCommand);
 

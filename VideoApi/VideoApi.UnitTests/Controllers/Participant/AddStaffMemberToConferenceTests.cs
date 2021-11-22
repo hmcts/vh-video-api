@@ -5,9 +5,9 @@ using NUnit.Framework;
 using System;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
-using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Contract.Enums;
+using VideoApi.DAL.Commands;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Participant
@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         {
             var result = await Controller.AddStaffMemberToConferenceAsync(TestConference.Id, _request);
 
-            MockCommandHandler.Verify(c => c.Handle(It.IsAny<AddStaffMemberToConferenceCommand>()), Times.Once);
+            MockCommandHandler.Verify(c => c.Handle(It.IsAny<AddParticipantsToConferenceCommand>()), Times.Once);
             var typedResult = (NoContentResult)result;
             typedResult.Should().NotBeNull();
         }
@@ -37,7 +37,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         {
             MockCommandHandler
                 .Setup(
-                    x => x.Handle(It.IsAny<AddStaffMemberToConferenceCommand>()))
+                    x => x.Handle(It.IsAny<AddParticipantsToConferenceCommand>()))
                 .ThrowsAsync(new ConferenceNotFoundException(TestConference.Id));                     
             
             var result = await Controller.AddStaffMemberToConferenceAsync(Guid.NewGuid(), _request);
