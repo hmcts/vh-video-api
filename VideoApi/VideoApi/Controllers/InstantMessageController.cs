@@ -102,7 +102,6 @@ namespace VideoApi.Controllers
         [OpenApiOperation("RemoveInstantMessages")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveInstantMessagesForConferenceAsync(Guid conferenceId)
 
         {
@@ -111,7 +110,7 @@ namespace VideoApi.Controllers
             {
                 var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
                 await _commandHandler.Handle(command);
-                return NoContent();
+                return Ok("InstantMessage deleted");
             }
             catch (Exception e)
             {
