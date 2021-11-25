@@ -45,7 +45,9 @@ variables:
   - ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
     - ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: vh-prod
-    - ${{ if not(or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))) }}:
+    - ${{ if startswith(variables['Build.SourceBranch'], 'refs/heads/demo/') }}:
+      - group: vh-demo
+    - ${{ if not(or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startswith(variables['Build.SourceBranch'], 'refs/heads/demo/'))) }}:
       - group: vh-preview
 
 trigger: none
@@ -67,6 +69,7 @@ resources:
       - master
       - hotfix/*
       - release/*
+      - demo/*
 
 extends:
     template: templates/vh-release.yml@templates

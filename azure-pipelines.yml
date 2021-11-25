@@ -230,6 +230,7 @@ trigger:
     - master
     - release/*
     - hotfix/*
+    - demo/*
 
 pr:
   branches:
