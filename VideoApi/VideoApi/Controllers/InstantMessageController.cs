@@ -110,7 +110,8 @@ namespace VideoApi.Controllers
             {
                 var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
                 await _commandHandler.Handle(command);
-                return Ok("InstantMessage deleted");
+                _logger.LogDebug("InstantMessage deleted");
+                return Ok();
             }
             catch (Exception e)
             {
