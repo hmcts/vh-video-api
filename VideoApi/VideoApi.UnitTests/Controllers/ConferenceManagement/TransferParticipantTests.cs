@@ -238,7 +238,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First();
             participant.UserRole = userRole;
-            participant.CurrentConsultationRoom = new ConsultationRoom(conferenceId, roomLabel, VirtualCourtRoomType.Participant, false); ;
+            participant.CurrentConsultationRoom = new ConsultationRoom(conferenceId, roomLabel, VirtualCourtRoomType.Participant, false);
             var request = new TransferParticipantRequest
             {
                 ParticipantId = participant.Id,
