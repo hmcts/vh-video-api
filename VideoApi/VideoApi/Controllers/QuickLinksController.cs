@@ -108,22 +108,28 @@ namespace VideoApi.Controllers
         
         [HttpGet("GetQuickLinkParticipantByUserName/{userName}")]
         [OpenApiOperation("GetQuickLinkParticipantByUserName")]
-        [ProducesResponseType(typeof(ParticipantBase), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ParticipantBase), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ParticipantSummaryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ParticipantSummaryResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetQuickLinkParticipantByUserName(string userName)
         {
             try
             {
-                var query = new GetQuickLinkParticipantByIdQuery(Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain,string.Empty)));
+                var query = new GetQuickLinkParticipantByIdQuery(
+                    Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain, string.Empty)));
                 var quickLinkParticipant =
                     await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
-                
-                return Ok(quickLinkParticipant);
+
+                return Ok(new ParticipantSummaryResponse()
+                {
+                    Id = quickLinkParticipant.Id,
+                    Username = quickLinkParticipant.Username,
+                    DisplayName = quickLinkParticipant.DisplayName
+                });
             }
             catch (ParticipantNotFoundException ex)
             {
                 _logger.LogError(ex, "Unable to find QuickLink participant");
-                return NotFound(false);
+                return NotFound();
             }
         }
     }

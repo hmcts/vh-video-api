@@ -726,11 +726,11 @@ namespace VideoApi.Client
         System.Threading.Tasks.Task<AddQuickLinkParticipantResponse> AddQuickLinkParticipantAsync(System.Guid hearingId, AddQuickLinkParticipantRequest quickLinkParticipantRequest, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ParticipantBase> GetQuickLinkParticipantByUserNameAsync(string userName);
+        System.Threading.Tasks.Task<ParticipantSummaryResponse> GetQuickLinkParticipantByUserNameAsync(string userName);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ParticipantBase> GetQuickLinkParticipantByUserNameAsync(string userName, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ParticipantSummaryResponse> GetQuickLinkParticipantByUserNameAsync(string userName, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get the pexip service configuration.</summary>
         /// <returns>Returns the pexip node</returns>
@@ -6313,14 +6313,14 @@ namespace VideoApi.Client
         }
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<ParticipantBase> GetQuickLinkParticipantByUserNameAsync(string userName)
+        public System.Threading.Tasks.Task<ParticipantSummaryResponse> GetQuickLinkParticipantByUserNameAsync(string userName)
         {
             return GetQuickLinkParticipantByUserNameAsync(userName, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<ParticipantBase> GetQuickLinkParticipantByUserNameAsync(string userName, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<ParticipantSummaryResponse> GetQuickLinkParticipantByUserNameAsync(string userName, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/quickjoin/GetQuickLinkParticipantByUserName/{userName}");
@@ -6358,7 +6358,7 @@ namespace VideoApi.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ParticipantBase>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ParticipantSummaryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6368,12 +6368,12 @@ namespace VideoApi.Client
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ParticipantBase>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ParticipantSummaryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new VideoApiException<ParticipantBase>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiException<ParticipantSummaryResponse>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
