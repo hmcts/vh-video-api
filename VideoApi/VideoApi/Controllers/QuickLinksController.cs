@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Common.Security;
+using VideoApi.Contract.Consts;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -114,7 +114,7 @@ namespace VideoApi.Controllers
         {
             try
             {
-                var query = new GetQuickLinkParticipantByIdQuery(Guid.Parse(userName.Replace(QuickLinkParticipant.DOMAIN,string.Empty)));
+                var query = new GetQuickLinkParticipantByIdQuery(Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain,string.Empty)));
                 var quickLinkParticipant =
                     await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
                 
