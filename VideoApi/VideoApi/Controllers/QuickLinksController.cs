@@ -105,5 +105,26 @@ namespace VideoApi.Controllers
                 return NotFound(false);
             }
         }
+        
+        [HttpGet("GetQuickLinkParticipantByUserName/{userName}")]
+        [OpenApiOperation("GetQuickLinkParticipantByUserName")]
+        [ProducesResponseType(typeof(ParticipantBase), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ParticipantBase), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetQuickLinkParticipantByUserName(string userName)
+        {
+            try
+            {
+                var query = new GetQuickLinkParticipantByIdQuery(Guid.Parse(userName.Replace(QuickLinkParticipant.DOMAIN,string.Empty)));
+                var quickLinkParticipant =
+                    await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
+                
+                return Ok(quickLinkParticipant);
+            }
+            catch (ParticipantNotFoundException ex)
+            {
+                _logger.LogError(ex, "Unable to find QuickLink participant");
+                return NotFound(false);
+            }
+        }
     }
 }
