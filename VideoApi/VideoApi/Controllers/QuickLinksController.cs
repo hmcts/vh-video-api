@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Consts;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -123,7 +124,8 @@ namespace VideoApi.Controllers
                 {
                     Id = quickLinkParticipant.Id,
                     Username = quickLinkParticipant.Username,
-                    DisplayName = quickLinkParticipant.DisplayName
+                    DisplayName = quickLinkParticipant.DisplayName,
+                    UserRole = (UserRole)quickLinkParticipant.UserRole
                 });
             }
             catch (ParticipantNotFoundException ex)
