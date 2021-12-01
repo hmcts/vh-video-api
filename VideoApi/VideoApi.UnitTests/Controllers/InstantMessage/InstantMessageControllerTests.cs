@@ -58,8 +58,8 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
         {
             var result = await _instantMessageController.RemoveInstantMessagesForConferenceAsync(Guid.NewGuid());
 
-            var typedResult = (NoContentResult)result;
-            typedResult.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
+            var typedResult = (OkResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
             _commandHandler.Verify(c => c.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
         }
         
