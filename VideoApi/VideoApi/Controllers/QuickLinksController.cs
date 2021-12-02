@@ -106,33 +106,32 @@ namespace VideoApi.Controllers
                 return NotFound(false);
             }
         }
-        
+
         [HttpGet("GetQuickLinkParticipantByUserName/{userName}")]
         [OpenApiOperation("GetQuickLinkParticipantByUserName")]
         [ProducesResponseType(typeof(ParticipantSummaryResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ParticipantSummaryResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetQuickLinkParticipantByUserName(string userName)
         {
-            try
-            {
-                var query = new GetQuickLinkParticipantByIdQuery(
-                    Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain, string.Empty)));
-                var quickLinkParticipant =
-                    await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
 
-                return Ok(new ParticipantSummaryResponse()
-                {
-                    Id = quickLinkParticipant.Id,
-                    Username = quickLinkParticipant.Username,
-                    DisplayName = quickLinkParticipant.DisplayName,
-                    UserRole = (UserRole)quickLinkParticipant.UserRole
-                });
-            }
-            catch (ParticipantNotFoundException ex)
+            var query = new GetQuickLinkParticipantByIdQuery(
+                Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain, string.Empty)));
+            var quickLinkParticipant =
+                await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
+
+            if (quickLinkParticipant == null)
             {
-                _logger.LogError(ex, "Unable to find QuickLink participant");
+                _logger.LogError($"Unable to find QuickLink participant {userName}");
                 return NotFound();
             }
+
+            return Ok(new ParticipantSummaryResponse()
+            {
+                Id = quickLinkParticipant.Id,
+                Username = quickLinkParticipant.Username,
+                DisplayName = quickLinkParticipant.DisplayName,
+                UserRole = (UserRole)quickLinkParticipant.UserRole
+            });
         }
     }
 }
