@@ -12,6 +12,11 @@ namespace VideoApi.DAL.Queries
         {
             ParticipantId = participantId;
         }
+
+        public GetQuickLinkParticipantByIdQuery()
+        {
+        }
+
         public Guid ParticipantId { get; set; }
 
     }

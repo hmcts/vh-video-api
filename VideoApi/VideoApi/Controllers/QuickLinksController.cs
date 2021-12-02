@@ -128,7 +128,7 @@ namespace VideoApi.Controllers
             return Ok(new ParticipantSummaryResponse()
             {
                 Id = quickLinkParticipant.Id,
-                Username = quickLinkParticipant.Username,
+                Username = quickLinkParticipant.Id.ToString(),
                 DisplayName = quickLinkParticipant.DisplayName,
                 UserRole = (UserRole)quickLinkParticipant.UserRole
             });
