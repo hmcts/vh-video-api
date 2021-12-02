@@ -25,20 +25,24 @@ namespace VideoApi.UnitTests.DAL.Queries
         }
 
         [Test]
-        public async Task Returns_Conferences_Set_For_Today_With_Specified_Hearing_Venues()
+        public async Task Returns_quick_link_participant_when_query_by_Id()
         {
             var quickLinksParticipant = new QuickLinkParticipant("DisplayName", UserRole.QuickLinkParticipant);
             var participant = ParticipantMapper.MapParticipant(quickLinksParticipant);
             
-            _dbContext.Participants.Remove(participant);
-            await _dbContext.SaveChangesAsync();
-            
+            var isExisting = await _handler.Handle(new GetQuickLinkParticipantByIdQuery { ParticipantId = participant.Id }) != null;
+
+            if (isExisting)
+            {
+                _dbContext.Participants.Remove(participant);
+                await _dbContext.SaveChangesAsync();
+            }
+
             await _dbContext.Participants.AddAsync(participant);
             await _dbContext.SaveChangesAsync();
             var result = await _handler.Handle(new GetQuickLinkParticipantByIdQuery { ParticipantId = participant.Id });
 
             result.DisplayName.Should().Be(quickLinksParticipant.DisplayName);
-            result.Id.Should().Be(quickLinksParticipant.Id);
             result.UserRole.Should().Be(quickLinksParticipant.UserRole);
             result.Username.Should().Be(quickLinksParticipant.Username);
             
