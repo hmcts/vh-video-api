@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using VideoApi.Contract.Consts;
 using VideoApi.Domain;
+using VideoApi.Domain.Consts;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Mappings

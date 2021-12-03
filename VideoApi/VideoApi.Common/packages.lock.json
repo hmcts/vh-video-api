@@ -1682,18 +1682,11 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
-      "videoapi.contract": {
-        "type": "Project",
-        "dependencies": {
-          "System.ComponentModel.Annotations": "4.7.0"
-        }
-      },
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {
           "Enums.NET": "4.0.0",
-          "System.ComponentModel.Annotations": "4.7.0",
-          "VideoApi.Contract": "1.0.0"
+          "System.ComponentModel.Annotations": "4.7.0"
         }
       }
     }

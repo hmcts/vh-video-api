@@ -1,6 +1,6 @@
 using EnumsNET;
 using System;
-using VideoApi.Contract.Consts;
+using VideoApi.Domain.Consts;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Domain
