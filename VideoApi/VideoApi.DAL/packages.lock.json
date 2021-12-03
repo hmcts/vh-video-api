@@ -1939,6 +1939,7 @@
           "VideoApi.Domain": "1.0.0"
         }
       },
+
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {

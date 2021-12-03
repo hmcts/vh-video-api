@@ -7,7 +7,7 @@ namespace VideoApi.Domain
 {
     public class Participant : ParticipantBase
     {
-        private Participant()
+        public Participant()
         {
             Id = Guid.NewGuid();
         }
