@@ -6,8 +6,7 @@ namespace VideoApi.Mappings
     {
         public static Participant MapParticipant(ParticipantBase participantBase)
         {
-
-            var s = new Participant()
+            return new Participant()
             {
                 ParticipantRefId = participantBase.Id,
                 Name = participantBase.Name,
@@ -16,8 +15,6 @@ namespace VideoApi.Mappings
                 UserRole = participantBase.UserRole,
                 State = participantBase.State,
             };
-            return s;
-
         }
     }
 }
