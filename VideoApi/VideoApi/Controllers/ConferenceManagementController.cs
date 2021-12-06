@@ -54,7 +54,9 @@ namespace VideoApi.Controllers
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
-                await _videoPlatformService.StartHearingAsync(conferenceId, request.ParticipantsToForceTransfer, hearingLayout);
+                await _videoPlatformService.StartHearingAsync(
+                    conferenceId, request.ParticipantsToForceTransfer, hearingLayout, request.MuteGuests ?? false
+                );
                 return Accepted();
             }
             catch (KinlyApiException ex)
