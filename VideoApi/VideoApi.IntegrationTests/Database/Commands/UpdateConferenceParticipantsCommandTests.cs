@@ -256,6 +256,79 @@ namespace VideoApi.IntegrationTests.Database.Commands
             participantTwo.LinkedParticipants[0].Type.Should().Be(LinkedParticipantType.Interpreter);
         }
 
+        [Test]
+        public async Task Should_remove_a_participant_then_add_with_another_hearing_role()
+        {
+            // Arrange
+            var participantOne = _conference.Participants[0];
+            var participantTwo = _conference.Participants[1];
+
+            _existingParticipants.Add(participantOne);
+            _existingParticipants.Add(participantTwo);
+
+            var removedParticipantId = participantOne.ParticipantRefId;
+            _removedParticipantIds = new List<Guid>() { removedParticipantId };
+
+            var updatedParticipant = new ParticipantBuilder(true).Build();
+            updatedParticipant.ParticipantRefId = participantOne.ParticipantRefId;
+            updatedParticipant.Username = participantOne.Username;
+            updatedParticipant.UserRole = UserRole.Representative;
+
+            _newParticipants.Add(updatedParticipant);
+
+            var command = BuildCommand();
+
+            // Act
+            await _handler.Handle(command);
+            var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_conference.Id));
+            var participants = conference.GetParticipants();
+
+            //Assert
+            participants.Count.Should().Be(6);
+            participants.SingleOrDefault(x => x.Id == removedParticipantId).Should().BeNull();
+            participants.SingleOrDefault(x => x.Id == updatedParticipant.Id).Should().NotBeNull();
+        }
+        
+        [Test]
+        public async Task Should_remove_multiple_participants_then_add_participant_with_another_hearing_role()
+        {
+            // Arrange
+            var participantOne = _conference.Participants[0];
+            var participantTwo = _conference.Participants[1];
+
+            _existingParticipants.Add(participantOne);
+            _existingParticipants.Add(participantTwo);
+
+            _removedParticipantIds = new List<Guid>() { participantOne.ParticipantRefId, participantTwo.ParticipantRefId };
+
+            var updatedParticipant1 = new ParticipantBuilder(true).Build();
+            var updatedParticipant2 = new ParticipantBuilder(true).Build();
+
+            updatedParticipant1.ParticipantRefId = participantOne.ParticipantRefId;
+            updatedParticipant1.Username = participantOne.Username;
+            updatedParticipant1.UserRole = UserRole.Representative;
+            
+            updatedParticipant2.ParticipantRefId = participantTwo.ParticipantRefId;
+            updatedParticipant2.Username = participantTwo.Username;
+            updatedParticipant2.UserRole = UserRole.Representative;
+
+            _newParticipants.Add(updatedParticipant1);
+            _newParticipants.Add(updatedParticipant2);
+
+            var command = BuildCommand();
+
+            // Act
+            await _handler.Handle(command);
+            var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_conference.Id));
+            var participants = conference.GetParticipants();
+
+            //Assert
+            participants.Count.Should().Be(6);
+            participants.SingleOrDefault(x => x.Id == participantOne.ParticipantRefId).Should().BeNull();
+            participants.SingleOrDefault(x => x.Id == updatedParticipant1.Id).Should().NotBeNull();
+            participants.SingleOrDefault(x => x.Id == updatedParticipant2.Id).Should().NotBeNull();
+        }
+
         private UpdateConferenceParticipantsCommand BuildCommand()
         {
             return new UpdateConferenceParticipantsCommand(_conference.Id, _existingParticipants, _newParticipants, _removedParticipantIds, _linkedParticipants);
