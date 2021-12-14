@@ -404,7 +404,7 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPut("{conferenceId}/staffMember")]
         [OpenApiOperation("AddStaffMemberToConference")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddStaffMemberToConferenceAsync(Guid conferenceId,
@@ -420,7 +420,13 @@ namespace VideoApi.Controllers
 
                 await _commandHandler.Handle(addParticipantCommand);
 
-                return NoContent();
+                var response = new AddStaffMemberResponse
+                {
+                    ConferenceId = conferenceId,
+                    ParticipantDetails = ParticipantToDetailsResponseMapper.MapParticipantToResponse(participant)
+                };
+                
+                return Ok(response);
             }
             catch (ConferenceNotFoundException ex)
             {
