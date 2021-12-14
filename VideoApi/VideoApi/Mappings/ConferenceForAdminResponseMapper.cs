@@ -12,7 +12,7 @@ namespace VideoApi.Mappings
         public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference,
             KinlyConfiguration configuration)
         {
-            var phoneNumber = configuration.ConferencePhoneNumber;
+            var phoneNumbers = $"{configuration.ConferencePhoneNumber},{configuration.ConferencePhoneNumberWelsh}";
             var participants = conference.GetParticipants()
                 .Select(p => ParticipantToSummaryResponseMapper.MapParticipantToSummary(p))
                 .ToList();
@@ -32,7 +32,7 @@ namespace VideoApi.Mappings
                 HearingRefId = conference.HearingRefId,
                 HearingVenueName = conference.HearingVenueName,
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
-                TelephoneConferenceNumber = phoneNumber,
+                TelephoneConferenceNumbers = phoneNumbers,
                 CreatedDateTime = conference.CreatedDateTime
             };
         }

@@ -1,218 +1,222 @@
 parameters:
-- name: PackageApp
-  displayName: Package App
-  type: boolean
-  default: true
+  - name: PackageApp
+    displayName: Package App
+    type: boolean
+    default: true
 
-- name: PackageACTests
-  displayName: Package Acceptance Tests
-  type: boolean
-  default: true
+  - name: PackageACTests
+    displayName: Package Acceptance Tests
+    type: boolean
+    default: true
 
-- name: PackageNuget
-  displayName: Package Nuget Project
-  type: boolean
-  default: true
+  - name: PackageNuget
+    displayName: Package Nuget Project
+    type: boolean
+    default: true
 
-- name: RunUnitTests
-  displayName: Run Unit Tests
-  type: boolean
-  default: true
+  - name: RunUnitTests
+    displayName: Run Unit Tests
+    type: boolean
+    default: true
 
-- name: RunIntegTests
-  displayName: Run Integration Tests
-  type: boolean
-  default: true
+  - name: RunIntegTests
+    displayName: Run Integration Tests
+    type: boolean
+    default: true
 
-- name: RunSonarCloudTests
-  displayName: Run Sonar Cloud Analysis
-  type: boolean
-  default: true
+  - name: RunSonarCloudTests
+    displayName: Run Sonar Cloud Analysis
+    type: boolean
+    default: true
 
-- name: RunMutationTests
-  displayName: Run Mutation Tests
-  type: boolean
-  default: false
+  - name: RunMutationTests
+    displayName: Run Mutation Tests
+    type: boolean
+    default: false
 
-- name: RunACTests
-  displayName: Run Acceptance Tests
-  type: boolean
-  default: true
+  - name: RunACTests
+    displayName: Run Acceptance Tests
+    type: boolean
+    default: true
 
-- name: testSettings
-  type: object
-  default:
-    - name: ApplicationInsights:InstrumentationKey
-      value: vh-core-infra-AppInsightsKey
-      secret: true
-    - name: AzureAd:ClientId
-      value: vh-video-api-appid
-      secret: true
-    - name: AzureAd:ClientSecret
-      value: vh-video-api-key
-      secret: true
-    - name: AzureAd:TenantId
-      value: tenantid
-      secret: true
-      
-    # Services Configuration
-    - name: Services:CallbackUri
-      value: $(CallbackUri)
-    - name: Services:VideoApiResourceId
-      value: vh-video-api-identifieruris
-      secret: true
+  - name: testSettings
+    type: object
+    default:
+      - name: ApplicationInsights:InstrumentationKey
+        value: vh-core-infra-AppInsightsKey
+        secret: true
+      - name: AzureAd:ClientId
+        value: vh-video-api-appid
+        secret: true
+      - name: AzureAd:ClientSecret
+        value: vh-video-api-key
+        secret: true
+      - name: AzureAd:TenantId
+        value: tenantid
+        secret: true
 
-    # Wowza Configuration
-    - name: WowzaConfiguration:RestApiEndpoints
-      value: $(wowza_restApiEndpoints)
-    - name: WowzaConfiguration:StreamingEndpoint
-      value: $(wowza_streamingEndpoint)
-    - name: WowzaConfiguration:ServerName
-      value: $(wowza_serverName)
-    - name: WowzaConfiguration:HostName
-      value: $(wowza_hostName)
-    - name: WowzaConfiguration:Username
-      value: $(wowza_userName)
-    - name: WowzaConfiguration:Password
-      value: $(wowza_password)
-    - name: WowzaConfiguration:StorageDirectory
-      value: $(wowza_storageDirectory)
-    - name: WowzaConfiguration:StorageAccountName
-      value: $(wowza_storageAccountName)
-    - name: WowzaConfiguration:StorageAccountKey
-      value: $(wowza_storageAccountKey)
-    - name: WowzaConfiguration:StorageContainerName
-      value: $(wowza_storageContainerName)
-    - name: WowzaConfiguration:StorageEndpoint
-      value: $(wowza_storageEndpoint)
-    - name: WowzaConfiguration:ManagedIdentityClientId
-      value: $(wowza_managedIdentityClientId)
+      # Services Configuration
+      - name: Services:CallbackUri
+        value: $(CallbackUri)
+      - name: Services:VideoApiResourceId
+        value: vh-video-api-identifieruris
+        secret: true
 
-    # CVP Configuration
-    - name: CvpConfiguration:StorageAccountName
-      value: $(cvp_storageAccountName)
-    - name: CvpConfiguration:StorageAccountKey
-      value: $(cvp_storageAccountKey)
-    - name: CvpConfiguration:StorageContainerName
-      value: $(cvp_storageContainerName)
-    - name: CvpConfiguration:StorageEndpoint
-      value: $(cvp_storageEndpoint)
-    - name: CvpConfiguration:ManagedIdentityClientId
-      value: $(wowza_managedIdentityClientId)
+      # Wowza Configuration
+      - name: WowzaConfiguration:RestApiEndpoints
+        value: $(wowza_restApiEndpoints)
+      - name: WowzaConfiguration:StreamingEndpoint
+        value: $(wowza_streamingEndpoint)
+      - name: WowzaConfiguration:ServerName
+        value: $(wowza_serverName)
+      - name: WowzaConfiguration:HostName
+        value: $(wowza_hostName)
+      - name: WowzaConfiguration:Username
+        value: $(wowza_userName)
+      - name: WowzaConfiguration:Password
+        value: $(wowza_password)
+      - name: WowzaConfiguration:StorageDirectory
+        value: $(wowza_storageDirectory)
+      - name: WowzaConfiguration:StorageAccountName
+        value: $(wowza_storageAccountName)
+      - name: WowzaConfiguration:StorageAccountKey
+        value: $(wowza_storageAccountKey)
+      - name: WowzaConfiguration:StorageContainerName
+        value: $(wowza_storageContainerName)
+      - name: WowzaConfiguration:StorageEndpoint
+        value: $(wowza_storageEndpoint)
+      - name: WowzaConfiguration:ManagedIdentityClientId
+        value: $(wowza_managedIdentityClientId)
 
-    # Kinly Configuration
-    - name: KinlyConfiguration:ConferencePhoneNumber
-      value: $(ConferencePhoneNumber)
-    - name: KinlyConfiguration:KinlyApiUrl
-      value: $(KinlyApiUrl)
-    - name: KinlyConfiguration:KinlySelfTestApiUrl
-      value: $(KinlySelfTestApiUrl)
-    - name: KinlyConfiguration:ConferenceUsername
-      value: $(ConferenceUsername)
-    - name: KinlyConfiguration:CallbackUri
-      value: $(CallbackUri)
-    
-    # Quick Links Configuration
-    - name: QuickLinks:Issuer
-      value: $(video_api_url)
-    - name: QuickLinks:JwtProviderSecret
-      value: $(JwtProviderSecret)
-    
-- name: appSettings
-  type: object
-  default:
-    - name: ApplicationInsights:InstrumentationKey
-      value: vh-core-infra-AppInsightsKey
-      secret: true
-    - name: AzureAd:ClientId
-      value: vh-video-api-appid
-      secret: true
-    - name: AzureAd:ClientSecret
-      value: vh-video-api-key
-      secret: true
-    - name: AzureAd:TenantId
-      value: tenantid
-      secret: true
-    - name: UseStub
-      value: "false"
-      
-    # Services Configuration
-    - name: Services:CallbackUri
-      value: $(CallbackUri)
-    - name: Services:VideoApiResourceId
-      value: vh-video-api-identifieruris
-      secret: true
+      # CVP Configuration
+      - name: CvpConfiguration:StorageAccountName
+        value: $(cvp_storageAccountName)
+      - name: CvpConfiguration:StorageAccountKey
+        value: $(cvp_storageAccountKey)
+      - name: CvpConfiguration:StorageContainerName
+        value: $(cvp_storageContainerName)
+      - name: CvpConfiguration:StorageEndpoint
+        value: $(cvp_storageEndpoint)
+      - name: CvpConfiguration:ManagedIdentityClientId
+        value: $(wowza_managedIdentityClientId)
 
-    # Wowza Configuration
-    - name: WowzaConfiguration:RestApiEndpoints
-      value: $(wowza_restApiEndpoints)
-    - name: WowzaConfiguration:StreamingEndpoint
-      value: $(wowza_streamingEndpoint)
-    - name: WowzaConfiguration:ServerName
-      value: $(wowza_serverName)
-    - name: WowzaConfiguration:HostName
-      value: $(wowza_hostName)
-    - name: WowzaConfiguration:Username
-      value: $(wowza_userName)
-    - name: WowzaConfiguration:Password
-      value: $(wowza_password)
-    - name: WowzaConfiguration:StorageDirectory
-      value: $(wowza_storageDirectory)
-    - name: WowzaConfiguration:StorageAccountName
-      value: $(wowza_storageAccountName)
-    - name: WowzaConfiguration:StorageAccountKey
-      value: $(wowza_storageAccountKey)
-    - name: WowzaConfiguration:StorageContainerName
-      value: $(wowza_storageContainerName)
-    - name: WowzaConfiguration:StorageEndpoint
-      value: $(wowza_storageEndpoint)
-    - name: WowzaConfiguration:ManagedIdentityClientId
-      value: $(wowza_managedIdentityClientId)
+      # Kinly Configuration
+      - name: KinlyConfiguration:ConferencePhoneNumber
+        value: $(ConferencePhoneNumber)
+      - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+        value: $(ConferencePhoneNumberWelsh)
+      - name: KinlyConfiguration:KinlyApiUrl
+        value: $(KinlyApiUrl)
+      - name: KinlyConfiguration:KinlySelfTestApiUrl
+        value: $(KinlySelfTestApiUrl)
+      - name: KinlyConfiguration:ConferenceUsername
+        value: $(ConferenceUsername)
+      - name: KinlyConfiguration:CallbackUri
+        value: $(CallbackUri)
 
-    # CVP Configuration
-    - name: CvpConfiguration:StorageAccountName
-      value: $(cvp_storageAccountName)
-    - name: CvpConfiguration:StorageAccountKey
-      value: $(cvp_storageAccountKey)
-    - name: CvpConfiguration:StorageContainerName
-      value: $(cvp_storageContainerName)
-    - name: CvpConfiguration:StorageEndpoint
-      value: $(cvp_storageEndpoint)
-    - name: CvpConfiguration:ManagedIdentityClientId
-      value: $(wowza_managedIdentityClientId)
+      # Quick Links Configuration
+      - name: QuickLinks:Issuer
+        value: $(video_api_url)
+      - name: QuickLinks:JwtProviderSecret
+        value: $(JwtProviderSecret)
 
-    # Kinly Configuration
-    - name: KinlyConfiguration:ConferencePhoneNumber
-      value: $(ConferencePhoneNumber)
-    - name: KinlyConfiguration:ApiSecret
-      value: $(KinlyApiKey)
-    - name: KinlyConfiguration:CallbackSecret
-      value: $(CallbackKey)
-    - name: KinlyConfiguration:SelfTestApiSecret
-      value: $(SelfTestApiKey)
-    - name: KinlyConfiguration:KinlyApiUrl
-      value: $(KinlyApiUrl)
-    - name: KinlyConfiguration:KinlySelfTestApiUrl
-      value: $(KinlySelfTestApiUrl)
-    - name: KinlyConfiguration:ConferenceUsername
-      value: $(ConferenceUsername)
-    - name: KinlyConfiguration:CallbackUri
-      value: $(CallbackUri)
-    - name: KinlyConfiguration:PexipNode
-      value: $(PexipNode)
-    - name: KinlyConfiguration:PexipSelfTestNode
-      value: $(PexipSelfTestNode)
+  - name: appSettings
+    type: object
+    default:
+      - name: ApplicationInsights:InstrumentationKey
+        value: vh-core-infra-AppInsightsKey
+        secret: true
+      - name: AzureAd:ClientId
+        value: vh-video-api-appid
+        secret: true
+      - name: AzureAd:ClientSecret
+        value: vh-video-api-key
+        secret: true
+      - name: AzureAd:TenantId
+        value: tenantid
+        secret: true
+      - name: UseStub
+        value: 'false'
 
-    # Connection strings
-    - name: ConnectionStrings:VideoApi
-      value: VhVideoDatabaseConnectionString
-      secret: true
+      # Services Configuration
+      - name: Services:CallbackUri
+        value: $(CallbackUri)
+      - name: Services:VideoApiResourceId
+        value: vh-video-api-identifieruris
+        secret: true
 
-    # Quick Links Configuration
-    - name: QuickLinks:Issuer
-      value: $(video_api_url)
-    - name: QuickLinks:JwtProviderSecret
-      value: $(JwtProviderSecret)
+      # Wowza Configuration
+      - name: WowzaConfiguration:RestApiEndpoints
+        value: $(wowza_restApiEndpoints)
+      - name: WowzaConfiguration:StreamingEndpoint
+        value: $(wowza_streamingEndpoint)
+      - name: WowzaConfiguration:ServerName
+        value: $(wowza_serverName)
+      - name: WowzaConfiguration:HostName
+        value: $(wowza_hostName)
+      - name: WowzaConfiguration:Username
+        value: $(wowza_userName)
+      - name: WowzaConfiguration:Password
+        value: $(wowza_password)
+      - name: WowzaConfiguration:StorageDirectory
+        value: $(wowza_storageDirectory)
+      - name: WowzaConfiguration:StorageAccountName
+        value: $(wowza_storageAccountName)
+      - name: WowzaConfiguration:StorageAccountKey
+        value: $(wowza_storageAccountKey)
+      - name: WowzaConfiguration:StorageContainerName
+        value: $(wowza_storageContainerName)
+      - name: WowzaConfiguration:StorageEndpoint
+        value: $(wowza_storageEndpoint)
+      - name: WowzaConfiguration:ManagedIdentityClientId
+        value: $(wowza_managedIdentityClientId)
+
+      # CVP Configuration
+      - name: CvpConfiguration:StorageAccountName
+        value: $(cvp_storageAccountName)
+      - name: CvpConfiguration:StorageAccountKey
+        value: $(cvp_storageAccountKey)
+      - name: CvpConfiguration:StorageContainerName
+        value: $(cvp_storageContainerName)
+      - name: CvpConfiguration:StorageEndpoint
+        value: $(cvp_storageEndpoint)
+      - name: CvpConfiguration:ManagedIdentityClientId
+        value: $(wowza_managedIdentityClientId)
+
+      # Kinly Configuration
+      - name: KinlyConfiguration:ConferencePhoneNumber
+        value: $(ConferencePhoneNumber)
+      - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+        value: $(ConferencePhoneNumberWelsh)
+      - name: KinlyConfiguration:ApiSecret
+        value: $(KinlyApiKey)
+      - name: KinlyConfiguration:CallbackSecret
+        value: $(CallbackKey)
+      - name: KinlyConfiguration:SelfTestApiSecret
+        value: $(SelfTestApiKey)
+      - name: KinlyConfiguration:KinlyApiUrl
+        value: $(KinlyApiUrl)
+      - name: KinlyConfiguration:KinlySelfTestApiUrl
+        value: $(KinlySelfTestApiUrl)
+      - name: KinlyConfiguration:ConferenceUsername
+        value: $(ConferenceUsername)
+      - name: KinlyConfiguration:CallbackUri
+        value: $(CallbackUri)
+      - name: KinlyConfiguration:PexipNode
+        value: $(PexipNode)
+      - name: KinlyConfiguration:PexipSelfTestNode
+        value: $(PexipSelfTestNode)
+
+      # Connection strings
+      - name: ConnectionStrings:VideoApi
+        value: VhVideoDatabaseConnectionString
+        secret: true
+
+      # Quick Links Configuration
+      - name: QuickLinks:Issuer
+        value: $(video_api_url)
+      - name: QuickLinks:JwtProviderSecret
+        value: $(JwtProviderSecret)
 
 variables:
   - group: vh-domains-and-urls
@@ -227,14 +231,14 @@ variables:
 trigger:
   branches:
     include:
-    - master
-    - release/*
-    - hotfix/*
+      - master
+      - release/*
+      - hotfix/*
 
 pr:
   branches:
     include:
-    - master
+      - master
 
 resources:
   repositories:
@@ -244,12 +248,12 @@ resources:
       ref: refs/heads/master
       endpoint: hmcts
   containers:
-  - container: dotnetsdk
-    image: sspublicsbox.azurecr.io/vh/dotnet:3.1.102
-    endpoint: sspublicsbox
-  - container: dotnetsdk-cipipeline
-    image: sspublicsbox.azurecr.io/vh/dotnet-cipipeline:3.1.102
-    endpoint: sspublicsbox
+    - container: dotnetsdk
+      image: sspublicsbox.azurecr.io/vh/dotnet:3.1.102
+      endpoint: sspublicsbox
+    - container: dotnetsdk-cipipeline
+      image: sspublicsbox.azurecr.io/vh/dotnet-cipipeline:3.1.102
+      endpoint: sspublicsbox
 
 extends:
   template: stages\dotnet-package.yml@templates
@@ -274,17 +278,17 @@ extends:
       RunStryker: ${{ parameters.RunMutationTests }}
       IntegrationTestSettings:
         - ${{ each setting in parameters.testSettings }}:
-          - name: ${{ setting.name }}
-            value: ${{ setting.value }}
-            secret: ${{ setting.secret }}
-            type: ${{ setting.type }}
+            - name: ${{ setting.name }}
+              value: ${{ setting.value }}
+              secret: ${{ setting.secret }}
+              type: ${{ setting.type }}
       variables:
         - group: vh-video-api
       coverletCoverageExclusions:
-        - "[VideoApi.*Tests?]*"
-        - "[VideoApi]Startup"
-        - "[VideoApi.Common]*"
-        - "[VideoApi.Common]*"
+        - '[VideoApi.*Tests?]*'
+        - '[VideoApi]Startup'
+        - '[VideoApi.Common]*'
+        - '[VideoApi.Common]*'
       sonarCloud_ExtraProperties: |
         sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
         sonar.coverage.exclusions=**/Program.cs,**/Startup.cs,**/VideoApi/Extensions/**,**/VideoApiI/Swagger/**,**/VideoApi/ConfigureServicesExtensions.cs,**/Testing.Common/**/*,**/VideoApi.Common/**,**/VideoApi.DAL/Mappings/**,**/VideoApi.DAL/SeedData/**,**/VideoApi.DAL/VideoApiDbContext.cs,**/VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,**/VideoApi.DAL/Migrations/*,**/VideoApi.Domain/Ddd/*,**/VideoApi.Domain/Validations/*
@@ -309,6 +313,6 @@ extends:
         - name: Services:VideoApiUrl
           value: $(video_api_url_staging)
         - ${{ each setting in parameters.testSettings }}:
-          - name: ${{ setting.name }}
-            value: ${{ setting.value }}
-            secret: ${{ setting.secret }}
+            - name: ${{ setting.name }}
+              value: ${{ setting.value }}
+              secret: ${{ setting.secret }}

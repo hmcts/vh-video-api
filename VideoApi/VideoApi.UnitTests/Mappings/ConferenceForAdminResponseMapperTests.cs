@@ -23,8 +23,10 @@ namespace VideoApi.UnitTests.Mappings
                 .Build();
 
             const string conferencePhoneNumber = "+441234567890";
+            const string conferencePhoneNumberWelsh = "+449876543210";
             var configuration = Builder<KinlyConfiguration>.CreateNew()
-                .With(x => x.ConferencePhoneNumber = conferencePhoneNumber).Build();
+                .With(x => x.ConferencePhoneNumber = conferencePhoneNumber)
+                .With(x => x.ConferencePhoneNumberWelsh = conferencePhoneNumberWelsh).Build();
 
             var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, configuration);
             response.Should().BeEquivalentTo(conference, options => options
@@ -46,7 +48,7 @@ namespace VideoApi.UnitTests.Mappings
             response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus());
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
-            response.TelephoneConferenceNumber.Should().Be(conferencePhoneNumber);
+            response.TelephoneConferenceNumbers.Should().Be($"{conferencePhoneNumber},{conferencePhoneNumberWelsh}");
             response.CreatedDateTime.Should().Be(conference.CreatedDateTime);
         }
     }
