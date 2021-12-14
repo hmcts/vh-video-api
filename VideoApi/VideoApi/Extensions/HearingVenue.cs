@@ -7,7 +7,7 @@ namespace VideoApi.Extensions
 {
     public static class HearingVenue
     {
-        private static readonly List<string> ScottishHearingVenues = new List<string> { HearingVenueNames.Aberdeen, HearingVenueNames.Dundee, HearingVenueNames.Edinburgh, HearingVenueNames.Glasgow, HearingVenueNames.Inverness };
+        private static readonly List<string> ScottishHearingVenues = new List<string> { HearingVenueNames.Aberdeen, HearingVenueNames.Dundee, HearingVenueNames.Edinburgh, HearingVenueNames.Glasgow, HearingVenueNames.Inverness, HearingVenueNames.Ayr};
 
         public static bool IsHearingVenueInScotland(this Conference conference)
         {
