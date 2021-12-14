@@ -19,7 +19,7 @@ namespace VideoApi.Contract.Responses
         public Guid HearingRefId { get; set; }
         public string HearingVenueName { get; set; }
         public string TelephoneConferenceId { get; set; }
-        public string TelephoneConferenceNumber { get; set; }
+        public string TelephoneConferenceNumbers { get; set; }
         public DateTime? CreatedDateTime { get; set; }
     }
 }
