@@ -45,7 +45,6 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(UpdateConferenceParticipantsCommand command)
         {
             var conference = await _context.Conferences.Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants).SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
-            
             if (conference == null)
             {
                 throw new ConferenceNotFoundException(command.ConferenceId);
@@ -53,6 +52,7 @@ namespace VideoApi.DAL.Commands
 
             foreach (var removedParticipantRefId in command.RemovedParticipantRefIds)
             {
+                command.ExistingParticipants = command.ExistingParticipants.Where(p => p.ParticipantRefId != removedParticipantRefId).ToList();
                 var participant = conference.GetParticipants().SingleOrDefault(x => x.ParticipantRefId == removedParticipantRefId);
 
                 if (participant == null)
@@ -73,7 +73,6 @@ namespace VideoApi.DAL.Commands
             foreach (var existingParticipant in command.ExistingParticipants)
             {
                 var participant = conference.GetParticipants().SingleOrDefault(x => x.ParticipantRefId == existingParticipant.ParticipantRefId);
-                
                 if (participant == null)
                 {
                     throw new ParticipantNotFoundException(existingParticipant.ParticipantRefId);
