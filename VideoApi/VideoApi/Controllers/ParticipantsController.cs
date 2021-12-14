@@ -404,7 +404,7 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPut("{conferenceId}/staffMember")]
         [OpenApiOperation("AddStaffMemberToConference")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(AddStaffMemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddStaffMemberToConferenceAsync(Guid conferenceId,
