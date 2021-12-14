@@ -9,6 +9,8 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Contract.Responses;
+using VideoApi.Contract.Consts;
 
 namespace VideoApi.UnitTests.Controllers.Participant
 {
@@ -25,11 +27,16 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Should_add_participants_to_conference()
         {
-            var result = await Controller.AddStaffMemberToConferenceAsync(TestConference.Id, _request);
-
+            var result = await Controller.AddStaffMemberToConferenceAsync(TestConference.Id, _request) as OkObjectResult;
             MockCommandHandler.Verify(c => c.Handle(It.IsAny<AddParticipantsToConferenceCommand>()), Times.Once);
-            var typedResult = (NoContentResult)result;
-            typedResult.Should().NotBeNull();
+
+            result.Should().NotBeNull();
+            var response = result?.Value.Should().BeAssignableTo<AddStaffMemberResponse>().Which;
+            response.ConferenceId.Should().Be(TestConference.Id);
+            response.ParticipantDetails.Should().NotBeNull();
+            response.ParticipantDetails.HearingRole.Should().Be(HearingRoleName.StaffMember);
+            response.ParticipantDetails.LastName.Should().Be(_request.LastName);
+            response.ParticipantDetails.CurrentInterpreterRoom.Should().BeNull();
         }
 
         [Test]
