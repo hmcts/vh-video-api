@@ -149,7 +149,17 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState, DateTime? timeStamp = null)
         {
+            if (conferenceState == ConferenceState.InSession && !_conference.ActualStartTime.HasValue)
+            {
+                _conference.ActualStartTime = DateTime.UtcNow;
+            }
+
+            if (conferenceState == ConferenceState.Closed)
+            {
+                _conference.ClosedDateTime = DateTime.UtcNow;
+            }
             timeStamp ??= DateTime.UtcNow;
+            _conference.State = conferenceState;
             _conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState, timeStamp));
             return this;
         }
