@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -477,6 +478,36 @@ namespace VideoApi.Controllers
             var response = await GetHostsInHearingsToday();
 
             return Ok(response);
+        }
+        
+        /// <summary>
+        /// Get conferences Hearing rooms
+        /// </summary>
+        /// <returns>Hearing rooms details</returns>
+        [HttpGet("dateStamp/hearingRooms")]
+        [OpenApiOperation("GetConferencesHearingRooms")]
+        [ProducesResponseType(typeof(List<ParticipantInHearingResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetConferencesHearingRoomsAsync([FromQuery]string dateStamp)
+        {
+            _logger.LogDebug("GetConferencesHearingRooms");
+
+            try
+            {
+                var date = DateTime.ParseExact(dateStamp, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var conferences =
+                    await _queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<Conference>>(
+                        new GetConferenceHearingRoomsByDateQuery(date));
+
+                var response = ConferenceHearingRoomsResponseMapper.Map(conferences, date);
+
+                return Ok(response);
+            }
+            catch (FormatException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NoContent();
+            }
         }
 
         /// <summary>

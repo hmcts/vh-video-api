@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -100,6 +102,36 @@ namespace VideoApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Get conferences Hearing rooms
+        /// </summary>
+        /// <returns>Hearing rooms details</returns>
+        [HttpGet("dateStamp/interpreterRooms")]
+        [OpenApiOperation("GetConferencesInterpreterRooms")]
+        [ProducesResponseType(typeof(List<SharedParticipantRoomResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetConferencesInterpreterRoomsAsync([FromQuery]string dateStamp)
+        {
+            _logger.LogDebug("GetConferencesInterpreterRooms");
+
+            try
+            {
+                var date = DateTime.ParseExact(dateStamp, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var conferences =
+                    await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<Conference>>(
+                        new GetConferenceInterpreterRoomsByDateQuery(date));
+
+                var response = ConferenceInterpreterRoomsResponseMapper.Map(conferences);
+
+                return Ok(response);
+            }
+            catch (FormatException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NoContent();
+            }
+        }
+        
         private async Task<ConferenceParticipantExists> ValidateConferenceAndParticipant(Guid conferenceId,
             Guid participantId)
         {
