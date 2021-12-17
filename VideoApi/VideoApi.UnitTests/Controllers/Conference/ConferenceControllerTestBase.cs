@@ -33,7 +33,10 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IOptions<ServicesConfiguration>> ServicesConfiguration;
         protected Mock<IOptions<KinlyConfiguration>> KinlyConfiguration;
         protected MeetingRoom MeetingRoom;
-        protected VideoApi.Domain.Conference TestConference;
+        protected VideoApi.Domain.Conference TestConference1;
+        protected VideoApi.Domain.Conference TestConference2;
+        protected VideoApi.Domain.Conference TestConference3;
+        protected List<VideoApi.Domain.Conference> TestConferences;
         protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
         protected Mock<IAzureStorageServiceFactory> AzureStorageServiceFactoryMock;
         protected Mock<IAzureStorageService> AzureStorageServiceMock;
@@ -61,20 +64,52 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 new Endpoint("two", "867744", "5678", "Defence Sol")
             };
 
-            TestConference = new ConferenceBuilder()
+            TestConference1 = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
                 .WithEndpoints(TestEndpoints)
                 .Build();
-
+            
+            TestConference2 = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
+                .WithParticipant(UserRole.Representative, "Respondent")
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithEndpoints(TestEndpoints)
+                .Build();
+            
+            TestConference3 = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithEndpoints(TestEndpoints)
+                .Build();
+            TestConferences = new List<VideoApi.Domain.Conference>();
+            TestConferences.Add(TestConference1);
+            TestConferences.Add(TestConference2);
+            TestConferences.Add(TestConference3);
 
             QueryHandlerMock
                 .Setup(x =>
                     x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
-                .ReturnsAsync(TestConference);
+                .ReturnsAsync(TestConference1);
 
             QueryHandlerMock
                 .Setup(x =>
@@ -85,18 +120,18 @@ namespace VideoApi.UnitTests.Controllers.Conference
             QueryHandlerMock
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                     It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
-                .ReturnsAsync(TestConference);
+                .ReturnsAsync(TestConference1);
             QueryHandlerMock
                 .Setup(x =>
                     x.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<VideoApi.Domain.Conference>>(
                         It.IsAny<GetConferencesTodayForAdminByHearingVenueNameQuery>()))
-                .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
+                .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference1 });
 
             QueryHandlerMock
                 .Setup(x =>
                     x.Handle<GetExpiredAudiorecordingConferencesQuery, List<VideoApi.Domain.Conference>>(
                         It.IsAny<GetExpiredAudiorecordingConferencesQuery>()))
-                .ReturnsAsync(new List<VideoApi.Domain.Conference> {TestConference});
+                .ReturnsAsync(new List<VideoApi.Domain.Conference> {TestConference1});
 
             CommandHandlerMock
                 .Setup(x => x.Handle(It.IsAny<SaveEventCommand>()))
@@ -107,6 +142,12 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode",
                 "12345678");
+            
+            QueryHandlerMock
+                .Setup(x =>
+                    x.Handle<GetConferenceHearingRoomsByDateQuery, List<VideoApi.Domain.Conference>>(
+                        It.IsAny<GetConferenceHearingRoomsByDateQuery>()))
+                .ReturnsAsync(TestConferences);
             
             Controller = Mocker.Create<ConferenceController>();
         }

@@ -307,13 +307,13 @@ namespace VideoApi.Client
         /// <summary>Get conferences Hearing rooms</summary>
         /// <returns>Hearing rooms details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetConferencesHearingRoomsAsync(string dateStamp);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceHearingRoomsResponse>> GetConferencesHearingRoomsAsync(string dateStamp);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get conferences Hearing rooms</summary>
         /// <returns>Hearing rooms details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetConferencesHearingRoomsAsync(string dateStamp, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceHearingRoomsResponse>> GetConferencesHearingRoomsAsync(string dateStamp, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Anonymises the Conference and Participant data.</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
@@ -3017,7 +3017,7 @@ namespace VideoApi.Client
         /// <summary>Get conferences Hearing rooms</summary>
         /// <returns>Hearing rooms details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetConferencesHearingRoomsAsync(string dateStamp)
+        public System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceHearingRoomsResponse>> GetConferencesHearingRoomsAsync(string dateStamp)
         {
             return GetConferencesHearingRoomsAsync(dateStamp, System.Threading.CancellationToken.None);
         }
@@ -3026,7 +3026,7 @@ namespace VideoApi.Client
         /// <summary>Get conferences Hearing rooms</summary>
         /// <returns>Hearing rooms details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetConferencesHearingRoomsAsync(string dateStamp, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceHearingRoomsResponse>> GetConferencesHearingRoomsAsync(string dateStamp, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/dateStamp/hearingRooms?");
@@ -3068,7 +3068,7 @@ namespace VideoApi.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ParticipantInHearingResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceHearingRoomsResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);

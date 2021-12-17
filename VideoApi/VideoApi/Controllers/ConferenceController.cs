@@ -486,7 +486,7 @@ namespace VideoApi.Controllers
         /// <returns>Hearing rooms details</returns>
         [HttpGet("dateStamp/hearingRooms")]
         [OpenApiOperation("GetConferencesHearingRooms")]
-        [ProducesResponseType(typeof(List<ParticipantInHearingResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ConferenceHearingRoomsResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetConferencesHearingRoomsAsync([FromQuery]string dateStamp)
         {

@@ -147,9 +147,10 @@ namespace Testing.Common.Helper.Builders.Domain
             return _conference;
         }
 
-        public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState)
+        public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState, DateTime? timeStamp = null)
         {
-            _conference.UpdateConferenceStatus(conferenceState);
+            timeStamp ??= DateTime.UtcNow;
+            _conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState, timeStamp));
             return this;
         }
 

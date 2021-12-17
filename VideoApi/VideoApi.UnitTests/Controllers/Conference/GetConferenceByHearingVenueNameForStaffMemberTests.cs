@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             .Setup(x =>
                 x.Handle<GetConferencesTodayForStaffMemberByHearingVenueNameQuery, List<VideoApi.Domain.Conference>>(
                     It.IsAny<GetConferencesTodayForStaffMemberByHearingVenueNameQuery>()))
-            .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
+            .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference1 });
 
             var result = await Controller.GetConferencesTodayForStaffMemberByHearingVenueName(_request);
 
