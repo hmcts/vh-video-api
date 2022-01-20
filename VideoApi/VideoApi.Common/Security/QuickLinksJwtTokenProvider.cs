@@ -57,15 +57,5 @@ namespace VideoApi.Common.Security
 
             return new QuickLinksJwtDetails(handler.WriteToken(token), descriptor.Expires.Value);
         }
-
-        private void GenerateKeys()
-        {
-            using RSA rsa = RSA.Create(2048);
-            var publicKey = Convert.ToBase64String(rsa.ExportRSAPublicKey());
-            var privateKey = Convert.ToBase64String(rsa.ExportRSAPrivateKey());
-
-            Console.WriteLine(publicKey);
-            Console.WriteLine(privateKey);
-        }
     }
 }
