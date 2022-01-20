@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VideoApi.Domain;
+using VideoApi.Domain.Consts;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Mappings
@@ -17,8 +18,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.Name);
             builder.Property(x => x.DisplayName);
             builder.Property(x => x.Username).HasConversion(v =>
-                v.Replace(QuickLinkParticipant.DOMAIN, "")
-            , v => v.IndexOf('@') == -1 ? $"{v}{QuickLinkParticipant.DOMAIN}" : v);
+                v.Replace(QuickLinkParticipantConst.Domain, "")
+            , v => v.IndexOf('@') == -1 ? $"{v}{QuickLinkParticipantConst.Domain}" : v);
             builder.Property(x => x.UserRole);
             builder.Property(x => x.CurrentRoom);
 

@@ -36,6 +36,7 @@ namespace VideoApi.UnitTests.Mappings
         [TestCase(HearingVenueNames.Edinburgh, true)]
         [TestCase(HearingVenueNames.Glasgow, true)]
         [TestCase(HearingVenueNames.Inverness, true)]
+        [TestCase(HearingVenueNames.Ayr, true)]
         [TestCase("Crown Court", false)]
         [TestCase("Birmingham", false)]
         [TestCase(null, false)]

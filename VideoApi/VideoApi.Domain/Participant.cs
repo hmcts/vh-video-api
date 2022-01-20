@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 
@@ -9,7 +7,7 @@ namespace VideoApi.Domain
 {
     public class Participant : ParticipantBase
     {
-        private Participant()
+        public Participant()
         {
             Id = Guid.NewGuid();
         }
@@ -33,6 +31,23 @@ namespace VideoApi.Domain
             LastName = lastName;
             ContactEmail = contactEmail;
             ContactTelephone = contactTelephone;
+        }
+        
+        public Participant(string name, string firstName, string lastName, string displayName,
+            string username, UserRole userRole, string hearingRole, string contactEmail, Guid? id = null) : this()
+        {
+            if(id != null && id != Guid.Empty)
+            {
+                Id = (Guid)id;
+            }
+            DisplayName = displayName;
+            Username = username;
+            UserRole = userRole;
+            HearingRole = hearingRole;
+            Name = name;
+            FirstName = firstName;
+            LastName = lastName;
+            ContactEmail = contactEmail;
         }
 
         /// <summary>

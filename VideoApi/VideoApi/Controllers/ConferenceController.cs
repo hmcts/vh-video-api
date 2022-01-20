@@ -251,6 +251,28 @@ namespace VideoApi.Controllers
         }
 
         /// <summary>
+        /// Get today's conferences by HearingVenueName for staff members
+        /// </summary>
+        /// <returns>Conference details</returns>
+        [HttpGet("today/staff-member")]
+        [OpenApiOperation("GetConferencesTodayForStaffMemberByHearingVenueName")]
+        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName(
+            [FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
+        {
+            _logger.LogDebug("GetConferencesTodayForAdmin");
+
+            var query = new GetConferencesTodayForStaffMemberByHearingVenueNameQuery
+            {
+                HearingVenueNames = request.HearingVenueNames
+            };
+
+            var conferences = await _queryHandler.Handle<GetConferencesTodayForStaffMemberByHearingVenueNameQuery, List<Conference>>(query);
+
+            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel));
+        }
+
+        /// <summary>
         /// Get all conferences for a judge
         /// </summary>
         /// <param name="username">judge username</param>

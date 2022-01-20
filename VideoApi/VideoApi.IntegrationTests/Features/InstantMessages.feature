@@ -32,13 +32,13 @@ Feature: Instant Messages
     And the conference has messages
     Given I have a valid delete messages from a conference request
     When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
+    Then the response should have the status OK and success status True
     And the messages have been deleted
 
   Scenario: Delete instant messages for a non-existent conference
     Given I have a nonexistent delete messages from a conference request
     When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
+    Then the response should have the status OK and success status True
 
   Scenario: Delete instant messages for an invalid conference request
     Given I have an invalid delete messages from a conference request
@@ -80,14 +80,14 @@ Feature: Instant Messages
     And the conference has messages
     And I have an nonexistent delete messages from a conference request
     When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
+    Then the response should have the status OK and success status True
 
   Scenario: Remove instant messages for a conference successfully
     Given I have a conference
     And the conference has messages
     And I have an valid delete messages from a conference request
     When I send the request to the endpoint
-    Then the response should have the status NoContent and success status True
+    Then the response should have the status OK and success status True
 
   Scenario: Get instant messages for participants
     Given I have a conference
