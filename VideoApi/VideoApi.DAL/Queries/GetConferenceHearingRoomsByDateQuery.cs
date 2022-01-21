@@ -19,7 +19,7 @@ namespace VideoApi.DAL.Queries
         }
     }
     
-    public class GetConferenceHearingRoomsByDateQueryHandler : IQueryHandler<GetConferenceHearingRoomsByDateQuery, List<Conference>>
+    public class GetConferenceHearingRoomsByDateQueryHandler : IQueryHandler<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>
     {
         private readonly VideoApiDbContext _context;
 
@@ -28,13 +28,22 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
         
-        public Task<List<Conference>> Handle(GetConferenceHearingRoomsByDateQuery query)
+        public Task<List<HearingAudioRoom>> Handle(GetConferenceHearingRoomsByDateQuery query)
         {
-            return _context.Conferences
-                .Include("ConferenceStatuses")
-                .Where(x=>x.ConferenceStatuses.Any(d=>d.TimeStamp.Date == query.DateStamp.Date))
-                .Where(x=>x.ConferenceStatuses.Any(s=>s.ConferenceState == ConferenceState.InSession))
-                .AsNoTracking().ToListAsync();
+
+            var results = from confStatuses in _context.ConferenceStatuses
+                          join conf in _context.Conferences on confStatuses.ConferenceId equals conf.Id
+                          where conf.AudioRecordingRequired
+                          && confStatuses.ConferenceState == ConferenceState.InSession
+                          && confStatuses.TimeStamp.Date == query.DateStamp.Date
+                          select new HearingAudioRoom
+                          {
+                              HearingRefId = conf.HearingRefId,
+                              Label = string.Empty,
+                              FileNamePrefix = "_" + query.DateStamp.Date.ToString("yyyy-MM-dd")
+                          };
+
+            return results.ToListAsync();
         }
     }
 }

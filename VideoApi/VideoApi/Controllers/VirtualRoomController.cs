@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -102,10 +103,12 @@ namespace VideoApi.Controllers
             return Ok(response);
         }
 
+        /*
         /// <summary>
         /// Get conferences Hearing rooms
         /// </summary>
         /// <returns>Hearing rooms details</returns>
+        [AllowAnonymous]
         [HttpGet("dateStamp/interpreterRooms")]
         [OpenApiOperation("GetConferencesInterpreterRooms")]
         [ProducesResponseType(typeof(List<SharedParticipantRoomResponse>), (int)HttpStatusCode.OK)]
@@ -131,7 +134,8 @@ namespace VideoApi.Controllers
                 return NoContent();
             }
         }
-        
+        */
+
         private async Task<ConferenceParticipantExists> ValidateConferenceAndParticipant(Guid conferenceId,
             Guid participantId)
         {

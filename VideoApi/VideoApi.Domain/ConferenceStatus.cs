@@ -18,6 +18,7 @@ namespace VideoApi.Domain
             if (timeStamp != null) TimeStamp = (DateTime)timeStamp;
         }
 
+        public Guid ConferenceId { get; private set; }
         public ConferenceState ConferenceState { get; set; }
         public DateTime TimeStamp { get; set; }
     }

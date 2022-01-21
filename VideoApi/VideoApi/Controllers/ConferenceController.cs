@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -484,6 +485,7 @@ namespace VideoApi.Controllers
         /// Get conferences Hearing rooms
         /// </summary>
         /// <returns>Hearing rooms details</returns>
+        [AllowAnonymous]
         [HttpGet("dateStamp/hearingRooms")]
         [OpenApiOperation("GetConferencesHearingRooms")]
         [ProducesResponseType(typeof(List<ConferenceHearingRoomsResponse>), (int)HttpStatusCode.OK)]
@@ -496,14 +498,19 @@ namespace VideoApi.Controllers
             {
                 var date = DateTime.ParseExact(dateStamp, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                 var conferences =
-                    await _queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<Conference>>(
+                    await _queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>(
                         new GetConferenceHearingRoomsByDateQuery(date));
+
+                var interpreteRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
+                        new GetConferenceInterpreterRoomsByDateQuery(date));
+
+                conferences.AddRange(interpreteRooms);
 
                 var response = ConferenceHearingRoomsResponseMapper.Map(conferences, date);
 
                 return Ok(response);
             }
-            catch (FormatException e)
+            catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
                 return NoContent();
@@ -583,7 +590,59 @@ namespace VideoApi.Controllers
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
         }
-   
+
+        [AllowAnonymous]
+        [HttpGet("Wowza/CheckAudioFilesInStorage")]
+        [OpenApiOperation("CheckAudioFilesInStorage")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> AudioFileExists([FromQuery] AudioFilesInStorageRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.FileNamePrefix))
+            {
+                var msg = $"CheckAudioFilesInStorage - File Name prefix is required.";
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            var fileName = request.FileNamePrefix;
+            var count = request.FilesCount;
+
+            _logger.LogDebug("CheckAudioFilesInStorage - checking if audio file exists with prefix: " + fileName + " with count of " + count.ToString() );
+
+            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+
+            var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(fileName);
+
+            _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
+
+
+            if ((count > 0 && allBlobs.Count() != count) || (!allBlobs.Any()))
+            {
+                _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
+                var msg = $"CheckAudioFilesInStorage - File name prefix :" + fileName + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            var emptyBlobs = await azureStorageService.GetAllEmptyBlobsByFilePathPrefix(fileName);
+
+            if (emptyBlobs.Any())
+            {
+                _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
+                var msg = $"CheckAudioFilesInStorage - File name prefix :" + fileName + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
+
+                foreach (var item in emptyBlobs)
+                {
+                    msg += string.Format(" Empty audio file : {0} ", item );
+                }
+                
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            _logger.LogInformation($"CheckAudioFilesInStorage - files count matched for filename prefix : " +  fileName);
+
+            return Ok(true);
+        }
+
         public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,

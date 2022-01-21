@@ -62,6 +62,28 @@ namespace VideoApi.Services
             return blobFullNames;
         }
 
+        public Task<IEnumerable<string>> GetAllEmptyBlobsByFilePathPrefix(string filePathPrefix)
+        {
+            var allBlobsAsync = GetAllBlobsAsync(filePathPrefix);
+            return GetAllEmptyBlobs(allBlobsAsync);
+        }
+
+        private async Task<IEnumerable<string>> GetAllEmptyBlobs(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
+        {
+            var blobFullNames = new List<string>();
+            await foreach (var blob in allBlobs)
+            {
+                if (blob.Name.ToLower().EndsWith(fileExtension.ToLower()))
+                {
+                    var properties = await blob.GetPropertiesAsync();
+
+                    if (properties.Value.ContentLength <= 0) blobFullNames.Add(blob.Name);
+                }
+            }
+
+            return blobFullNames;
+        }
+
         private async Task<string> GenerateSharedAccessSignature(string filePath,
             string storageContainerName,
             string storageEndpoint,
@@ -86,7 +108,7 @@ namespace VideoApi.Services
             var token = await GenerateSasToken(builder, useUserDelegation, storageAccountName, storageAccountKey);
             return $"{storageEndpoint}{storageContainerName}/{filePath}?{token}";
         }
-
+               
         private async Task<bool> ExistsAsync(string filePath, string storageContainerName)
         {
             var containerClient = _serviceClient.GetBlobContainerClient(storageContainerName);

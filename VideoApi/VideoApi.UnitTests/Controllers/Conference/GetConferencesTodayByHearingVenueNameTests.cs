@@ -14,7 +14,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         [Test]
         public async Task Should_return_ok_result_for_given_conference_id()
         {
-            var result = await Controller.GetConferenceDetailsByIdAsync(TestConference1.Id);
+            var result = await Controller.GetConferenceDetailsByIdAsync(TestConference.Id);
 
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);

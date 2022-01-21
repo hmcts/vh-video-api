@@ -9,14 +9,14 @@ namespace VideoApi.Mappings
 {
     public static class ConferenceHearingRoomsResponseMapper
     {
-        public static IList<ConferenceHearingRoomsResponse> Map(IList<Conference> conferences, DateTime timeStamp)
+        public static IList<ConferenceHearingRoomsResponse> Map(IList<HearingAudioRoom> audioRecordedConferences, DateTime timeStamp)
         {
-            return conferences.SelectMany(x => x.ConferenceStatuses.Where(s=>s.TimeStamp.Date == timeStamp.Date).Where(s=>s.ConferenceState == Domain.Enums.ConferenceState.InSession), (conference, conferenceStatus) =>
+            return audioRecordedConferences.Select((audioConference) =>
                 new ConferenceHearingRoomsResponse
                 {
-                    HearingId = conference.HearingRefId.ToString(),
-                    TimeStamp = conferenceStatus.TimeStamp.ToString("O"),
-                    ConferenceState = ConferenceState.InSession
+                    HearingId = audioConference.HearingRefId.ToString(),
+                    Label = audioConference.Label,
+                    FileNamePrefix = audioConference.FileNamePrefix
                 }).ToList();
         }
     }
