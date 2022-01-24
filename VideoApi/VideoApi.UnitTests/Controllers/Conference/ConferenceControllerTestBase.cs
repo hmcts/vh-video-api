@@ -106,6 +106,13 @@ namespace VideoApi.UnitTests.Controllers.Conference
             TestConferences.Add(TestConference2);
             TestConferences.Add(TestConference3);
 
+            HearingAudioRoom hearingAudioRoom1 = new HearingAudioRoom() { HearingRefId = Guid.NewGuid(), FileNamePrefix = string.Empty, Label = string.Empty };
+            HearingAudioRoom hearingAudioRoom2 = new HearingAudioRoom() { HearingRefId = Guid.NewGuid(), FileNamePrefix = string.Empty, Label = string.Empty };
+
+            List<HearingAudioRoom> hearingAudioRooms = new List<HearingAudioRoom>();
+            hearingAudioRooms.Add(hearingAudioRoom1);
+            hearingAudioRooms.Add(hearingAudioRoom2);
+
             QueryHandlerMock
                 .Setup(x =>
                     x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
@@ -145,10 +152,16 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             QueryHandlerMock
                 .Setup(x =>
-                    x.Handle<GetConferenceHearingRoomsByDateQuery, List<VideoApi.Domain.Conference>>(
+                    x.Handle<GetConferenceHearingRoomsByDateQuery, List<VideoApi.Domain.HearingAudioRoom>>(
                         It.IsAny<GetConferenceHearingRoomsByDateQuery>()))
-                .ReturnsAsync(TestConferences);
-            
+                .ReturnsAsync(hearingAudioRooms);
+
+            QueryHandlerMock
+                .Setup(x =>
+                    x.Handle<GetConferenceInterpreterRoomsByDateQuery, List<VideoApi.Domain.HearingAudioRoom>>(
+                        It.IsAny<GetConferenceInterpreterRoomsByDateQuery>()))
+                .ReturnsAsync(hearingAudioRooms);
+
             Controller = Mocker.Create<ConferenceController>();
         }
         

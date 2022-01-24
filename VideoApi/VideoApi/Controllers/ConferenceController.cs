@@ -497,12 +497,14 @@ namespace VideoApi.Controllers
             try
             {
                 var date = DateTime.ParseExact(dateStamp, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                var interpreteRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
+                        new GetConferenceInterpreterRoomsByDateQuery(date));
+
                 var conferences =
                     await _queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>(
                         new GetConferenceHearingRoomsByDateQuery(date));
 
-                var interpreteRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
-                        new GetConferenceInterpreterRoomsByDateQuery(date));
 
                 conferences.AddRange(interpreteRooms);
 
@@ -604,30 +606,31 @@ namespace VideoApi.Controllers
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
 
-            var fileName = request.FileNamePrefix;
             var count = request.FilesCount;
-
-            _logger.LogDebug("CheckAudioFilesInStorage - checking if audio file exists with prefix: " + fileName + " with count of " + count.ToString() );
+            var fileName = request.FileNamePrefix;
 
             var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
 
+            _logger.LogDebug("CheckAudioFilesInStorage - checking if audio file exists with prefix: " + fileName);
+
             var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(fileName);
 
-            _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
-
-
-            if ((count > 0 && allBlobs.Count() != count) || (!allBlobs.Any()))
-            {
-                _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
-                var msg = $"CheckAudioFilesInStorage - File name prefix :" + fileName + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
-                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
-            }
+            _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName);
 
             var emptyBlobs = await azureStorageService.GetAllEmptyBlobsByFilePathPrefix(fileName);
 
+            
+            if (allBlobs.Count() < count || !allBlobs.Any())
+            {
+                _logger.LogError("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
+                var msg = $"CheckAudioFilesInStorage - File name prefix :" + fileName + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
+
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+            
             if (emptyBlobs.Any())
             {
-                _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
+                _logger.LogError("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
                 var msg = $"CheckAudioFilesInStorage - File name prefix :" + fileName + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
 
                 foreach (var item in emptyBlobs)

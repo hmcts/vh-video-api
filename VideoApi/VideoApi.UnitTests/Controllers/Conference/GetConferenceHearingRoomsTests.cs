@@ -20,7 +20,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             result.Value.Should().NotBeNull();
             var results = result.Value as IEnumerable<ConferenceHearingRoomsResponse>;
             results.Should().NotBeNull();
-            results.Count().Should().Be(6);
+            results.Count().Should().Be(4);
         }
     }
 }
