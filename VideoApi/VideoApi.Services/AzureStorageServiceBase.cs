@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using Microsoft.Extensions.Logging;
 using VideoApi.Common.Configuration;
+using VideoApi.Services.Exceptions;
 
 namespace VideoApi.Services
 {
@@ -16,11 +20,14 @@ namespace VideoApi.Services
 
         private readonly bool _useUserDelegation;
 
-        protected AzureStorageServiceBase(BlobServiceClient serviceClient, IBlobStorageConfiguration blobStorageConfiguration, bool useUserDelegation)
+        private IBlobClientExtension _blobClientExtension;
+
+        protected AzureStorageServiceBase(BlobServiceClient serviceClient, IBlobStorageConfiguration blobStorageConfiguration, IBlobClientExtension blobClientExtension, bool useUserDelegation)
         {
             _serviceClient = serviceClient;
             _blobStorageConfiguration = blobStorageConfiguration;
             _useUserDelegation = useUserDelegation;
+            _blobClientExtension = blobClientExtension;
         }
 
         public Task<bool> FileExistsAsync(string filePath) => ExistsAsync(filePath, _blobStorageConfiguration.StorageContainerName);
@@ -58,7 +65,6 @@ namespace VideoApi.Services
                     blobFullNames.Add(blob.Name);
                 }
             }
-
             return blobFullNames;
         }
 
@@ -71,11 +77,12 @@ namespace VideoApi.Services
         private async Task<IEnumerable<string>> GetAllEmptyBlobs(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
         {
             var blobFullNames = new List<string>();
+
             await foreach (var blob in allBlobs)
             {
                 if (blob.Name.ToLower().EndsWith(fileExtension.ToLower()))
                 {
-                    var properties = await blob.GetPropertiesAsync();
+                    var properties = await _blobClientExtension.GetPropertiesAsync(blob);
 
                     if (properties.Value.ContentLength <= 0) blobFullNames.Add(blob.Name);
                 }
@@ -83,6 +90,8 @@ namespace VideoApi.Services
 
             return blobFullNames;
         }
+
+        
 
         private async Task<string> GenerateSharedAccessSignature(string filePath,
             string storageContainerName,
@@ -127,6 +136,33 @@ namespace VideoApi.Services
                 : builder.ToSasQueryParameters(new StorageSharedKeyCredential(storageAccountName, storageAccountKey));
 
             return blobSasQueryParameters.ToString();
+        }
+
+        public async Task<bool> ReconcileFilesInStorage(string fileNamePrefix, int count)
+        {
+            var allBlobs = await GetAllBlobNamesByFilePathPrefix(fileNamePrefix);
+            var emptyBlobs = await GetAllEmptyBlobsByFilePathPrefix(fileNamePrefix);
+
+            if (allBlobs.Count() < count || !allBlobs.Any())
+            {
+                var msg = $"ReconcileFilesInStorage - File name prefix :" + fileNamePrefix + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            if (emptyBlobs.Any())
+            {
+                var msg = $"ReconcileFilesInStorage - File name prefix :" + fileNamePrefix + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
+
+                foreach (var item in emptyBlobs)
+                {
+                    msg += string.Format(" Empty audio file : {0} ", item);
+                }
+
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            return true;
+
         }
     }
 }

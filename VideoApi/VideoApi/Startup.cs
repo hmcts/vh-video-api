@@ -19,6 +19,7 @@ using VideoApi.Extensions;
 using VideoApi.Telemetry;
 using VideoApi.ValidationMiddleware;
 using VideoApi.Validations;
+using VideoApi.Services;
 
 namespace VideoApi
 {
@@ -81,6 +82,7 @@ namespace VideoApi
             services.Configure<QuickLinksConfiguration>(options => Configuration.Bind("QuickLinks", options));
             services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
             services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
+            services.AddSingleton<IBlobClientExtension, BlobClientExtension>();
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)

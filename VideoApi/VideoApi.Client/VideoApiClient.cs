@@ -332,11 +332,11 @@ namespace VideoApi.Client
         System.Threading.Tasks.Task RemoveHeartbeatsForConferencesAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> CheckAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount);
+        System.Threading.Tasks.Task<bool> ReconcileAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> CheckAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<bool> ReconcileAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Start or resume a video hearing</summary>
         /// <param name="conferenceId">conference id</param>
@@ -3237,17 +3237,17 @@ namespace VideoApi.Client
         }
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<bool> CheckAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount)
+        public System.Threading.Tasks.Task<bool> ReconcileAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount)
         {
-            return CheckAudioFilesInStorageAsync(fileNamePrefix, filesCount, System.Threading.CancellationToken.None);
+            return ReconcileAudioFilesInStorageAsync(fileNamePrefix, filesCount, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<bool> CheckAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<bool> ReconcileAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/Wowza/CheckAudioFilesInStorage?");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/Wowza/ReconcileAudioFilesInStorage?");
             if (fileNamePrefix != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("FileNamePrefix") + "=").Append(System.Uri.EscapeDataString(ConvertToString(fileNamePrefix, System.Globalization.CultureInfo.InvariantCulture))).Append("&");

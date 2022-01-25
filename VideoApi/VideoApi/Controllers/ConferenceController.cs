@@ -20,7 +20,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Extensions;
-using VideoApi.Factories;
+using VideoApi.Services.Factories;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -594,56 +594,31 @@ namespace VideoApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("Wowza/CheckAudioFilesInStorage")]
-        [OpenApiOperation("CheckAudioFilesInStorage")]
+        [HttpGet("Wowza/ReconcileAudioFilesInStorage")]
+        [OpenApiOperation("ReconcileAudioFilesInStorage")]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> AudioFileExists([FromQuery] AudioFilesInStorageRequest request)
+        public async Task<IActionResult> ReconcileAudioFilesInStorage([FromQuery] AudioFilesInStorageRequest request)
         {
             if (request == null || string.IsNullOrEmpty(request.FileNamePrefix))
             {
-                var msg = $"CheckAudioFilesInStorage - File Name prefix is required.";
+                var msg = $"ReconcileFilesInStorage - File Name prefix is required.";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
 
-            var count = request.FilesCount;
-            var fileName = request.FileNamePrefix;
-
-            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-
-            _logger.LogDebug("CheckAudioFilesInStorage - checking if audio file exists with prefix: " + fileName);
-
-            var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(fileName);
-
-            _logger.LogDebug("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName);
-
-            var emptyBlobs = await azureStorageService.GetAllEmptyBlobsByFilePathPrefix(fileName);
-
-            
-            if (allBlobs.Count() < count || !allBlobs.Any())
+            try
             {
-                _logger.LogError("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
-                var msg = $"CheckAudioFilesInStorage - File name prefix :" + fileName + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
+                var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
 
-                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+                var result = await azureStorageService.ReconcileFilesInStorage(request.FileNamePrefix, request.FilesCount);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                throw new AudioPlatformFileNotFoundException(e.Message, HttpStatusCode.InternalServerError);
             }
             
-            if (emptyBlobs.Any())
-            {
-                _logger.LogError("CheckAudioFilesInStorage - Got results with filename prefix: " + fileName + " and count of " + allBlobs.Count().ToString());
-                var msg = $"CheckAudioFilesInStorage - File name prefix :" + fileName + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
-
-                foreach (var item in emptyBlobs)
-                {
-                    msg += string.Format(" Empty audio file : {0} ", item );
-                }
-                
-                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
-            }
-
-            _logger.LogInformation($"CheckAudioFilesInStorage - files count matched for filename prefix : " +  fileName);
-
-            return Ok(true);
         }
 
         public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
