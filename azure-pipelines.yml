@@ -117,8 +117,10 @@ parameters:
       # Quick Links Configuration
       - name: QuickLinks:Issuer
         value: $(video_api_url)
-      - name: QuickLinks:JwtProviderSecret
-        value: $(JwtProviderSecret)
+      - name: QuickLinks:RsaPrivateKey
+        value: $(RsaPrivateKey)
+      - name: QuickLinks:ValidAudience
+        value: $(ValidAudience)
 
   - name: appSettings
     type: object
@@ -215,8 +217,10 @@ parameters:
       # Quick Links Configuration
       - name: QuickLinks:Issuer
         value: $(video_api_url)
-      - name: QuickLinks:JwtProviderSecret
-        value: $(JwtProviderSecret)
+      - name: QuickLinks:RsaPrivateKey
+        value: $(RsaPrivateKey)
+      - name: QuickLinks:ValidAudience
+        value: $(ValidAudience)
 
 variables:
   - group: vh-domains-and-urls
@@ -227,6 +231,7 @@ variables:
   - group: KinlyConfiguration_Test
   - group: vh-video-api
   - group: QuickLinks_Preview
+  - group: QuickLinks_Common
 
 trigger:
   branches:
