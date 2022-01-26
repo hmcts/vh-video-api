@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
-using Microsoft.Extensions.Logging;
 using VideoApi.Common.Configuration;
 using VideoApi.Services.Exceptions;
 
@@ -20,7 +19,7 @@ namespace VideoApi.Services
 
         private readonly bool _useUserDelegation;
 
-        private IBlobClientExtension _blobClientExtension;
+        private readonly IBlobClientExtension _blobClientExtension;
 
         protected AzureStorageServiceBase(BlobServiceClient serviceClient, IBlobStorageConfiguration blobStorageConfiguration, IBlobClientExtension blobClientExtension, bool useUserDelegation)
         {
