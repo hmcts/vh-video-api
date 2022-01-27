@@ -4,7 +4,7 @@ using VideoApi.Services.Contracts;
 
 namespace VideoApi.Services
 {
-    public class VhAzureStorageService : AzureStorageServiceBase
+    public class VhAzureStorageService : AzureStorageServiceBase, IAzureStorageService
     {
         public VhAzureStorageService(BlobServiceClient serviceClient, WowzaConfiguration wowzaConfig, bool useUserDelegation, IBlobClientExtension blobClientExtension)
         : base(serviceClient, wowzaConfig, blobClientExtension, useUserDelegation )

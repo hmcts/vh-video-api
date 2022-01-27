@@ -12,7 +12,7 @@ using VideoApi.Services.Exceptions;
 
 namespace VideoApi.Services
 {
-    public class AzureStorageServiceBase :  IAzureStorageService
+    public class AzureStorageServiceBase 
     {
         private readonly BlobServiceClient _serviceClient;
 
@@ -21,8 +21,6 @@ namespace VideoApi.Services
         private readonly bool _useUserDelegation;
 
         private readonly IBlobClientExtension _blobClientExtension;
-
-        public AzureStorageServiceType AzureStorageServiceType => throw new NotImplementedException();
 
         protected AzureStorageServiceBase(BlobServiceClient serviceClient, IBlobStorageConfiguration blobStorageConfiguration, IBlobClientExtension blobClientExtension, bool useUserDelegation)
         {
