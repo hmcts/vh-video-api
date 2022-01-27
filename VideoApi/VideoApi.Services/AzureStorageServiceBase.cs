@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -151,14 +152,14 @@ namespace VideoApi.Services
 
             if (emptyBlobs.Any())
             {
-                var msg = $"ReconcileFilesInStorage - File name prefix :" + fileNamePrefix + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString();
+                StringBuilder msg = new StringBuilder($"ReconcileFilesInStorage - File name prefix :" + fileNamePrefix + "  Expected: " + count + " Actual:" + allBlobs.Count().ToString());
 
                 foreach (var item in emptyBlobs)
                 {
-                    msg += string.Format(" Empty audio file : {0} ", item);
+                    msg.Append(string.Format(" Empty audio file : {0} ", item));
                 }
 
-                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+                throw new AudioPlatformFileNotFoundException(msg.ToString(), HttpStatusCode.NotFound);
             }
 
             return true;
