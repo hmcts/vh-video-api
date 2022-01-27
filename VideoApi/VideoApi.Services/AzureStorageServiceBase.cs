@@ -7,11 +7,12 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using VideoApi.Common.Configuration;
+using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 
 namespace VideoApi.Services
 {
-    public abstract class AzureStorageServiceBase
+    public class AzureStorageServiceBase :  IAzureStorageService
     {
         private readonly BlobServiceClient _serviceClient;
 
@@ -20,6 +21,8 @@ namespace VideoApi.Services
         private readonly bool _useUserDelegation;
 
         private readonly IBlobClientExtension _blobClientExtension;
+
+        public AzureStorageServiceType AzureStorageServiceType => throw new NotImplementedException();
 
         protected AzureStorageServiceBase(BlobServiceClient serviceClient, IBlobStorageConfiguration blobStorageConfiguration, IBlobClientExtension blobClientExtension, bool useUserDelegation)
         {
@@ -82,8 +85,8 @@ namespace VideoApi.Services
                 if (blob.Name.ToLower().EndsWith(fileExtension.ToLower()))
                 {
                     var properties = await _blobClientExtension.GetPropertiesAsync(blob);
-
-                    if (properties.Value.ContentLength <= 0) blobFullNames.Add(blob.Name);
+                    
+                    if (properties.ContentLength <= 0) blobFullNames.Add(blob.Name);
                 }
             }
 

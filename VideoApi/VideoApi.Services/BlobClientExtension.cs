@@ -7,9 +7,10 @@ namespace VideoApi.Services
 {
     public class BlobClientExtension : IBlobClientExtension
     {
-        public async Task<Response<BlobProperties>> GetPropertiesAsync(BlobClient blobClient)
+        public async Task<BlobProperties> GetPropertiesAsync(BlobClient blobClient)
         {
-            return await blobClient.GetPropertiesAsync();
+            var response = await blobClient.GetPropertiesAsync();
+            return response.Value;
         }
     }
 }

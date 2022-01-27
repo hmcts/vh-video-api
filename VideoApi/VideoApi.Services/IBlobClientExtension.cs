@@ -8,6 +8,6 @@ namespace VideoApi.Services
 {
     public interface IBlobClientExtension
     {
-        public  Task<Response<BlobProperties>> GetPropertiesAsync(BlobClient blobClient);
+        public  Task<BlobProperties> GetPropertiesAsync(BlobClient blobClient);
     }
 }
