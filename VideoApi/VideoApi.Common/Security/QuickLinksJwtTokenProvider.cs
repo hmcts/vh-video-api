@@ -21,7 +21,7 @@ namespace VideoApi.Common.Security
 
         public QuickLinksJwtDetails GenerateToken(string name, string userName, UserRole role)
         {
-            var key = Convert.FromBase64String(_quickLinksConfiguration.JwtProviderSecret);
+            var key = Convert.FromBase64String(_quickLinksConfiguration.RsaPrivateKey);
 
             var claims = new ClaimsIdentity(new[]
             {
@@ -48,7 +48,7 @@ namespace VideoApi.Common.Security
                 Expires = DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
                 Issuer = _quickLinksConfiguration.Issuer,
                 IssuedAt = DateTime.Now,
-                Audience = "vh-video-web",
+                Audience = _quickLinksConfiguration.ValidAudience,
                 SigningCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha512)
             };
 
