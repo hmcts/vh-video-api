@@ -485,7 +485,6 @@ namespace VideoApi.Controllers
         /// Get conferences Hearing rooms
         /// </summary>
         /// <returns>Hearing rooms details</returns>
-        [AllowAnonymous]
         [HttpGet("dateStamp/hearingRooms")]
         [OpenApiOperation("GetConferencesHearingRooms")]
         [ProducesResponseType(typeof(List<ConferenceHearingRoomsResponse>), (int)HttpStatusCode.OK)]
@@ -593,7 +592,6 @@ namespace VideoApi.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet("Wowza/ReconcileAudioFilesInStorage")]
         [OpenApiOperation("ReconcileAudioFilesInStorage")]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
