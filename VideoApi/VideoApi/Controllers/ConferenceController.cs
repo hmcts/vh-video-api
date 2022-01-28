@@ -485,7 +485,7 @@ namespace VideoApi.Controllers
         /// Get conferences Hearing rooms
         /// </summary>
         /// <returns>Hearing rooms details</returns>
-        [HttpGet("dateStamp/hearingRooms")]
+        [HttpGet("hearingRooms")]
         [OpenApiOperation("GetConferencesHearingRooms")]
         [ProducesResponseType(typeof(List<ConferenceHearingRoomsResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NoContent)]
@@ -497,7 +497,7 @@ namespace VideoApi.Controllers
             {
                 var date = DateTime.ParseExact(dateStamp, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                var interpreteRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
+                var interpreterRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
                         new GetConferenceInterpreterRoomsByDateQuery(date));
 
                 var conferences =
@@ -505,7 +505,7 @@ namespace VideoApi.Controllers
                         new GetConferenceHearingRoomsByDateQuery(date));
 
 
-                conferences.AddRange(interpreteRooms);
+                conferences.AddRange(interpreterRooms);
 
                 var response = ConferenceHearingRoomsResponseMapper.Map(conferences, date);
 
@@ -601,6 +601,12 @@ namespace VideoApi.Controllers
             if (request == null || string.IsNullOrEmpty(request.FileNamePrefix))
             {
                 var msg = $"ReconcileFilesInStorage - File Name prefix is required.";
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            if (request.FilesCount <= 0)
+            {
+                var msg = $"ReconcileFilesInStorage - File count cannot be negative or zero.";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
 

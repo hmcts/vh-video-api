@@ -30,19 +30,19 @@ namespace VideoApi.DAL.Queries
         
         public Task<List<HearingAudioRoom>> Handle(GetConferenceInterpreterRoomsByDateQuery query)
         {
-            var results = from conf in _context.Conferences
-                          join even in _context.Events on conf.Id equals even.ConferenceId
-                          join room in _context.Rooms on conf.Id equals room.ConferenceId
-                          join participant in _context.Participants on conf.Id equals participant.ConferenceId
-                          where participant.Id == even.ParticipantId
-                          && conf.AudioRecordingRequired
+            var results = from conference in _context.Conferences
+                          join @event in _context.Events on conference.Id equals @event.ConferenceId
+                          join room in _context.Rooms on conference.Id equals room.ConferenceId
+                          join participant in _context.Participants on conference.Id equals participant.ConferenceId
+                          where participant.Id == @event.ParticipantId
+                          && conference.AudioRecordingRequired
                           && participant.HearingRole == "Interpreter"
-                          && even.EventType == Domain.Enums.EventType.RoomParticipantTransfer
-                          && even.TransferredTo == Domain.Enums.RoomType.HearingRoom
-                          && even.ExternalTimestamp.Date == query.DateStamp.Date
+                          && @event.EventType == Domain.Enums.EventType.RoomParticipantTransfer
+                          && @event.TransferredTo == Domain.Enums.RoomType.HearingRoom
+                          && @event.ExternalTimestamp.Date == query.DateStamp.Date
                           && room.Label.Contains(nameof(KinlyRoomType.Interpreter))
                           select new HearingAudioRoom{ 
-                              HearingRefId = conf.HearingRefId, 
+                              HearingRefId = conference.HearingRefId, 
                               Label = room.Label + room.Id.ToString(), 
                               FileNamePrefix = "_interpreter_" + room.Id.ToString() + "_" + query.DateStamp.Date.ToString("yyyy-MM-dd") 
                           };

@@ -55,6 +55,24 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
+        public void Should_Throw_Exception_With_Request_File_Count_Is_Zero()
+        {
+            AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
+            AudioPlatformServiceMock.Reset();
+            AzureStorageServiceMock.Reset();
+
+            AzureStorageServiceMock.Setup(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+
+            AudioFilesInStorageRequest request = new AudioFilesInStorageRequest() {FileNamePrefix="Prefilx", FilesCount = 0 };
+            var msg = $"ReconcileFilesInStorage - File count cannot be negative or zero.";
+
+            Assert.That(async () => await Controller.ReconcileAudioFilesInStorage(request), Throws.TypeOf<AudioPlatformFileNotFoundException>().With.Message.EqualTo(msg));
+
+            AzureStorageServiceMock.Verify(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+
+        }
+
+        [Test]
         public void Should_Catch_Exception_When_Service_Throws_Exception()
         {
             var guid1 = Guid.NewGuid();

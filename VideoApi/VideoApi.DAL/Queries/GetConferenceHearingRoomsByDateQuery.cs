@@ -31,14 +31,14 @@ namespace VideoApi.DAL.Queries
         public Task<List<HearingAudioRoom>> Handle(GetConferenceHearingRoomsByDateQuery query)
         {
 
-            var results = from confStatuses in _context.ConferenceStatuses
-                          join conf in _context.Conferences on confStatuses.ConferenceId equals conf.Id
-                          where conf.AudioRecordingRequired
-                          && confStatuses.ConferenceState == ConferenceState.InSession
-                          && confStatuses.TimeStamp.Date == query.DateStamp.Date
+            var results = from confStatus in _context.ConferenceStatuses
+                          join conference in _context.Conferences on confStatus.ConferenceId equals conference.Id
+                          where conference.AudioRecordingRequired
+                          && confStatus.ConferenceState == ConferenceState.InSession
+                          && confStatus.TimeStamp.Date == query.DateStamp.Date
                           select new HearingAudioRoom
                           {
-                              HearingRefId = conf.HearingRefId,
+                              HearingRefId = conference.HearingRefId,
                               Label = string.Empty,
                               FileNamePrefix = "_" + query.DateStamp.Date.ToString("yyyy-MM-dd")
                           };
