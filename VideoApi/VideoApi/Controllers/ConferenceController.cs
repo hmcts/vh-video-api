@@ -489,25 +489,25 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetConferencesHearingRooms")]
         [ProducesResponseType(typeof(List<ConferenceHearingRoomsResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NoContent)]
-        public async Task<IActionResult> GetConferencesHearingRoomsAsync([FromQuery]string dateStamp)
+        public async Task<IActionResult> GetConferencesHearingRoomsAsync([FromQuery]string date)
         {
             _logger.LogDebug("GetConferencesHearingRooms");
 
             try
             {
-                var date = DateTime.ParseExact(dateStamp, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var requestedDate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 var interpreterRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
-                        new GetConferenceInterpreterRoomsByDateQuery(date));
+                        new GetConferenceInterpreterRoomsByDateQuery(requestedDate));
 
                 var conferences =
                     await _queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>(
-                        new GetConferenceHearingRoomsByDateQuery(date));
+                        new GetConferenceHearingRoomsByDateQuery(requestedDate));
 
 
                 conferences.AddRange(interpreterRooms);
 
-                var response = ConferenceHearingRoomsResponseMapper.Map(conferences, date);
+                var response = ConferenceHearingRoomsResponseMapper.Map(conferences, requestedDate);
 
                 return Ok(response);
             }
