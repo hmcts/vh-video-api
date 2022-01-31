@@ -1,5 +1,3 @@
-using VideoApi.Contract.Enums;
-
 namespace VideoApi.Contract.Responses
 {
     public class ConferenceHearingRoomsResponse
