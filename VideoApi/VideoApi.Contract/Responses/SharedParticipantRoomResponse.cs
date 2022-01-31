@@ -23,6 +23,11 @@ namespace VideoApi.Contract.Responses
         /// The type of VMR
         /// </summary>
         public VirtualCourtRoomType RoomType { get; set; }
+        
+        /// <summary>
+        /// Hearing Id
+        /// </summary>
+        public string HearingId { get; set; }
     }
     
     public class WitnessRoomResponse

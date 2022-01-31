@@ -9,8 +9,8 @@ namespace VideoApi.Services
 {
     public class CvpAzureStorageService : AzureStorageServiceBase, IAzureStorageService
     {
-        public CvpAzureStorageService(BlobServiceClient serviceClient, CvpConfiguration cvpConfig, bool useUserDelegation)
-        : base(serviceClient, cvpConfig, useUserDelegation)
+        public CvpAzureStorageService(BlobServiceClient serviceClient, CvpConfiguration cvpConfig, bool useUserDelegation, IBlobClientExtension blobClientExtension)
+        : base(serviceClient, cvpConfig, blobClientExtension, useUserDelegation)
         {
         }
 

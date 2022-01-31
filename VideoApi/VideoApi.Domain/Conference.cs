@@ -36,13 +36,13 @@ namespace VideoApi.Domain
         public Guid HearingRefId { get; private set; }
         public string CaseType { get; private set; }
         public DateTime ScheduledDateTime { get; private set; }
-        public DateTime? ActualStartTime { get; private set; }
-        public DateTime? ClosedDateTime { get; private set; }
+        public DateTime? ActualStartTime { get; set; }
+        public DateTime? ClosedDateTime { get; set; }
         public string CaseNumber { get; private set; }
         public string CaseName { get; private set; }
         public MeetingRoom MeetingRoom { get; private set; }
         public int ScheduledDuration { get; set; }
-        public ConferenceState State { get; private set; }
+        public ConferenceState State { get; set; }
         public virtual IList<ParticipantBase> Participants { get; }
         public virtual IList<Endpoint> Endpoints { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }

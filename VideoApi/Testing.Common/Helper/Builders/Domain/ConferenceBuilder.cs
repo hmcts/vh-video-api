@@ -147,9 +147,20 @@ namespace Testing.Common.Helper.Builders.Domain
             return _conference;
         }
 
-        public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState)
+        public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState, DateTime? timeStamp = null)
         {
-            _conference.UpdateConferenceStatus(conferenceState);
+            if (conferenceState == ConferenceState.InSession && !_conference.ActualStartTime.HasValue)
+            {
+                _conference.ActualStartTime = DateTime.UtcNow;
+            }
+
+            if (conferenceState == ConferenceState.Closed)
+            {
+                _conference.ClosedDateTime = DateTime.UtcNow;
+            }
+            timeStamp ??= DateTime.UtcNow;
+            _conference.State = conferenceState;
+            _conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState, timeStamp));
             return this;
         }
 
@@ -183,13 +194,17 @@ namespace Testing.Common.Helper.Builders.Domain
                 new ParticipantRoom(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
 
             var nonJudges = _conference.Participants.Where(x => x is Participant && !((Participant)x).IsJudge()).ToList();
+
             if (_conference.Participants.Count(x => x.LinkedParticipants.Any()) >= 2)
             {
                 nonJudges = _conference.Participants.Where(x => x.LinkedParticipants.Any()).ToList();
             }
+
             room.AddParticipant(new RoomParticipant(nonJudges[0].Id));
             room.AddParticipant(new RoomParticipant(nonJudges[1].Id));
+
             room.SetProtectedProperty(nameof(room.Id), new Random().Next());
+
             foreach (var roomParticipant in room.RoomParticipants)
             {
                 roomParticipant.Room = room;
@@ -198,9 +213,13 @@ namespace Testing.Common.Helper.Builders.Domain
                 participant.RoomParticipants.Add(roomParticipant);
                 roomParticipant.Participant = participant;
             }
+
             _conference.SetProtectedField("_rooms", new List<Room> {room});
+
             return this;
         }
+
+       
 
         public ConferenceBuilder WithLinkedParticipant(UserRole userRole, string caseTypeGroup,
             string username = null, string firstName = null, RoomType? roomType = null,
@@ -225,6 +244,59 @@ namespace Testing.Common.Helper.Builders.Domain
             var participant2 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username2,
                         userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                .And(x => x.TestCallResultId = null)
+                .And(x => x.CurrentConsultationRoomId = null)
+                .Build();
+
+            var linkedParticipants1 = new List<LinkedParticipant>();
+            var participantId = participant1.Id;
+            var linkedId = participant2.Id;
+            linkedParticipants1.Add(new LinkedParticipant(participantId, linkedId, LinkedParticipantType.Interpreter));
+            participant1.LinkedParticipants = linkedParticipants1;
+
+            var linkedParticipants2 = new List<LinkedParticipant>();
+            participantId = participant2.Id;
+            linkedId = participant1.Id;
+            linkedParticipants2.Add(new LinkedParticipant(participantId, linkedId, LinkedParticipantType.Interpreter));
+            participant2.LinkedParticipants = linkedParticipants2;
+
+
+            participant1.UpdateParticipantStatus(participantState == ParticipantState.None
+                ? ParticipantState.Available
+                : participantState);
+            participant2.UpdateParticipantStatus(participantState == ParticipantState.None
+                ? ParticipantState.Available
+                : participantState);
+            _conference.AddParticipant(participant1);
+            _conference.AddParticipant(participant2);
+
+            return this;
+        }
+
+
+        public ConferenceBuilder WithInterpreterLinkedParticipant(UserRole userRole, string caseTypeGroup,
+            string username = null, string firstName = null, RoomType? roomType = null,
+            ParticipantState participantState = ParticipantState.None)
+        {
+            var username1 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
+            var username2 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
+
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                firstName = Name.First();
+            }
+
+            var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
+            var participant1 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
+                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                .And(x => x.TestCallResultId = null)
+                .And(x => x.CurrentConsultationRoomId = null)
+                .Build();
+
+            var participant2 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
+                    new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username2,
+                        UserRole.Individual, "Interpreter", "Claimant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();

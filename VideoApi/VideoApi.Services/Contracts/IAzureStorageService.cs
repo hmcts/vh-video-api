@@ -17,5 +17,8 @@ namespace VideoApi.Services.Contracts
 
         Task<IEnumerable<string>> GetAllBlobNamesByFilePathPrefix(string filePathPrefix);
 
+        Task<IEnumerable<string>> GetAllEmptyBlobsByFilePathPrefix(string filePathPrefix);
+
+        Task<bool> ReconcileFilesInStorage(string fileNamePrefix, int count);
     }
 }

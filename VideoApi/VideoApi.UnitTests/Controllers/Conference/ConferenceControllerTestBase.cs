@@ -17,7 +17,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Factories;
+using VideoApi.Services.Factories;
 using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
 
@@ -34,6 +34,9 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IOptions<KinlyConfiguration>> KinlyConfiguration;
         protected MeetingRoom MeetingRoom;
         protected VideoApi.Domain.Conference TestConference;
+        protected VideoApi.Domain.Conference TestConference2;
+        protected VideoApi.Domain.Conference TestConference3;
+        protected List<VideoApi.Domain.Conference> TestConferences;
         protected Mock<IAudioPlatformService> AudioPlatformServiceMock;
         protected Mock<IAzureStorageServiceFactory> AzureStorageServiceFactoryMock;
         protected Mock<IAzureStorageService> AzureStorageServiceMock;
@@ -67,9 +70,48 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
                 .WithEndpoints(TestEndpoints)
                 .Build();
+            
+            TestConference2 = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
+                .WithParticipant(UserRole.Representative, "Respondent")
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithEndpoints(TestEndpoints)
+                .Build();
+            
+            TestConference3 = new ConferenceBuilder()
+                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(2))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
+                .WithEndpoints(TestEndpoints)
+                .Build();
+            TestConferences = new List<VideoApi.Domain.Conference>();
+            TestConferences.Add(TestConference);
+            TestConferences.Add(TestConference2);
+            TestConferences.Add(TestConference3);
 
+            HearingAudioRoom hearingAudioRoom1 = new HearingAudioRoom() { HearingRefId = Guid.NewGuid(), FileNamePrefix = string.Empty, Label = string.Empty };
+            HearingAudioRoom hearingAudioRoom2 = new HearingAudioRoom() { HearingRefId = Guid.NewGuid(), FileNamePrefix = string.Empty, Label = string.Empty };
+
+            List<HearingAudioRoom> hearingAudioRooms = new List<HearingAudioRoom>();
+            hearingAudioRooms.Add(hearingAudioRoom1);
+            hearingAudioRooms.Add(hearingAudioRoom2);
 
             QueryHandlerMock
                 .Setup(x =>
@@ -108,6 +150,18 @@ namespace VideoApi.UnitTests.Controllers.Conference
             MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode",
                 "12345678");
             
+            QueryHandlerMock
+                .Setup(x =>
+                    x.Handle<GetConferenceHearingRoomsByDateQuery, List<VideoApi.Domain.HearingAudioRoom>>(
+                        It.IsAny<GetConferenceHearingRoomsByDateQuery>()))
+                .ReturnsAsync(hearingAudioRooms);
+
+            QueryHandlerMock
+                .Setup(x =>
+                    x.Handle<GetConferenceInterpreterRoomsByDateQuery, List<VideoApi.Domain.HearingAudioRoom>>(
+                        It.IsAny<GetConferenceInterpreterRoomsByDateQuery>()))
+                .ReturnsAsync(hearingAudioRooms);
+
             Controller = Mocker.Create<ConferenceController>();
         }
         

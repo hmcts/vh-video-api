@@ -16,7 +16,7 @@ using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
-using VideoApi.Factories;
+using VideoApi.Services.Factories;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Responses;
 
