@@ -27,6 +27,7 @@ namespace VideoApi.UnitTests.Mappings
             var response = ParticipantToSummaryResponseMapper.MapParticipantToSummary(participant);
             response.Should().BeEquivalentTo(participant, options => options
                 .Excluding(x => x.ParticipantRefId)
+                .Excluding(x => x.ConferenceId)
                 .Excluding(x => x.DisplayName)
                 .Excluding(x => x.Name)
                 .Excluding(x => x.UserRole)

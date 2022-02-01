@@ -99,6 +99,7 @@ namespace VideoApi.Controllers
             var response = await GetVmr(validation.Conference,validation.Participant, VirtualCourtRoomType.JudicialShared);
             return Ok(response);
         }
+                
 
         private async Task<ConferenceParticipantExists> ValidateConferenceAndParticipant(Guid conferenceId,
             Guid participantId)

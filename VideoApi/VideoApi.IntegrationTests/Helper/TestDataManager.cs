@@ -48,6 +48,31 @@ namespace VideoApi.IntegrationTests.Helper
             return await SeedConference(conference);
         }
 
+        public async Task<Conference> SeedConference(bool AudioRecording)
+        {
+            var conference = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Individual, "Applicant")
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Individual, "Interpreter")
+                .WithParticipant(UserRole.Representative, "Respondent")
+                .WithParticipant(UserRole.Judge, "Judge")
+                .WithParticipant(UserRole.JudicialOfficeHolder, "PanelMember")
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername)
+                .WithAudioRecordingRequired(AudioRecording)
+                .Build();
+            var conferenceType = typeof(Conference);
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(conference, conference.ScheduledDateTime.AddMinutes(1));
+
+            foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))
+            {
+                individual.UpdateTestCallResult(true, TestScore.Okay);
+            }
+
+            return await SeedConference(conference);
+        }
+
         public async Task<Conference> SeedConference(Conference conference)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -56,6 +81,19 @@ namespace VideoApi.IntegrationTests.Helper
 
             return conference;
         }
+
+        public async Task<Conference> SeedConferenceWithLinkedParticipant()
+        {
+            var TestConference = new ConferenceBuilder()
+               .WithParticipant(UserRole.Judge, null)
+               .WithInterpreterLinkedParticipant(UserRole.Individual, "Applicant")
+               .WithAudioRecordingRequired(true)
+               .Build();
+
+            return await SeedConference(TestConference);
+        }
+
+        
 
         public async Task<List<Alert>> SeedAlerts(IEnumerable<Alert> alerts)
         {
@@ -75,6 +113,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
                 .Include("Participants.ParticipantStatuses")
                 .Include(x => x.ConferenceStatuses)
+                .Include(x => x.Rooms)
                 .SingleAsync(x => x.Id == conferenceId);
 
             db.Remove(conference);
@@ -103,13 +142,6 @@ namespace VideoApi.IntegrationTests.Helper
             }
         }
 
-        public async Task RemoveEvents()
-        {
-            await using var db = new VideoApiDbContext(_dbContextOptions);
-            var eventsToDelete = db.Events.Where(x => x.Reason.StartsWith("Automated"));
-            db.Events.RemoveRange(eventsToDelete);
-            await db.SaveChangesAsync();
-        }
         
         public async Task SeedHeartbeats(IEnumerable<Heartbeat> heartbeats)
         {
@@ -163,6 +195,17 @@ namespace VideoApi.IntegrationTests.Helper
             await db.SaveChangesAsync();
         }
 
+        
+        public async Task<List<Room>> SeedRooms(IEnumerable<Room> _rooms)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            List<Room> _seedRooms = _rooms.ToList();
+            await db.Rooms.AddRangeAsync(_seedRooms);
+            await db.SaveChangesAsync();
+
+            return _seedRooms;
+        }
+
         public async Task<ConsultationRoom> SeedRoom(ConsultationRoom consultationRoom)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -172,15 +215,42 @@ namespace VideoApi.IntegrationTests.Helper
             return consultationRoom;
         }
 
-        public async Task<List<Room>> SeedRooms(IEnumerable<Room> rooms)
+        public async Task<Room> SeedRoom(Room room)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
-            var seedRooms = rooms.ToList();
-            await db.Rooms.AddRangeAsync(seedRooms);
+            await db.Rooms.AddRangeAsync(room);
             await db.SaveChangesAsync();
 
-            return seedRooms;
+            return room;
         }
+
+        public async Task<List<Event>> SeedEvents(IEnumerable<Event> events)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var seedEvents = events.ToList();
+            await db.Events.AddRangeAsync(seedEvents);
+            await db.SaveChangesAsync();
+
+            return seedEvents;
+        }
+
+        public async Task RemoveEvents(Guid conferenceId, EventType eventType)
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var eventsToDelete = db.Events.Where(x => x.ConferenceId == conferenceId && x.EventType == eventType);
+
+            db.Events.RemoveRange(eventsToDelete);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task RemoveEvents()
+        {
+            await using var db = new VideoApiDbContext(_dbContextOptions);
+            var eventsToDelete = db.Events.Where(x => x.Reason.StartsWith("Automated"));
+            db.Events.RemoveRange(eventsToDelete);
+            await db.SaveChangesAsync();
+        }
+
 
         public async Task SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {

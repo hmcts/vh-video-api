@@ -6,8 +6,8 @@ namespace VideoApi.Services
 {
     public class VhAzureStorageService : AzureStorageServiceBase, IAzureStorageService
     {
-        public VhAzureStorageService(BlobServiceClient serviceClient, WowzaConfiguration wowzaConfig, bool useUserDelegation)
-        : base(serviceClient, wowzaConfig, useUserDelegation)
+        public VhAzureStorageService(BlobServiceClient serviceClient, WowzaConfiguration wowzaConfig, bool useUserDelegation, IBlobClientExtension blobClientExtension)
+        : base(serviceClient, wowzaConfig, blobClientExtension, useUserDelegation )
         {
         }
 

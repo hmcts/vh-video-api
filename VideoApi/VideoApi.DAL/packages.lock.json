@@ -114,6 +114,36 @@
         "resolved": "8.7.0.17535",
         "contentHash": "c9f6HjLChuPcQpo6qUr/Bxmi6Q2ogOVINg2e9tjCeKT/hiL9Cxdw4XsNttiqAhY5AbmHJIs4rn/muXR4OOnAJg=="
       },
+      "Azure.Core": {
+        "type": "Transitive",
+        "resolved": "1.2.1",
+        "contentHash": "U0zPuK0/ssiz0gvli1/sslqPKANZpCa7muDM3K4Vj6Pf6YKYNnpByQsnqFQTYafzr6cQ41mr1nM07I8jOm5UkA==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "1.0.0",
+          "System.Buffers": "4.5.0",
+          "System.Diagnostics.DiagnosticSource": "4.6.0",
+          "System.Memory": "4.5.3",
+          "System.Numerics.Vectors": "4.5.0",
+          "System.Threading.Tasks.Extensions": "4.5.2"
+        }
+      },
+      "Azure.Storage.Blobs": {
+        "type": "Transitive",
+        "resolved": "12.4.2",
+        "contentHash": "fhUwOl4qXy23StKvBHDHV5ALM34SczEETRgJWDJHwPW3sZNIYAi3GTBXlWAYPm4SNKR1JgpZSYTbMHrNYCr1DQ==",
+        "dependencies": {
+          "Azure.Core": "1.2.1",
+          "Azure.Storage.Common": "12.4.1"
+        }
+      },
+      "Azure.Storage.Common": {
+        "type": "Transitive",
+        "resolved": "12.4.1",
+        "contentHash": "Q1/w9P9wJCKo+q2LF4pgZxNwgmqmArkxHjPW+Q1pugdc894T6HU4+3hmrFda1otS9CbAPhBLG98WOZ37jMPmFg==",
+        "dependencies": {
+          "Azure.Core": "1.2.1"
+        }
+      },
       "Castle.Core": {
         "type": "Transitive",
         "resolved": "4.4.0",
@@ -276,10 +306,10 @@
       },
       "Microsoft.AspNetCore.Http.Abstractions": {
         "type": "Transitive",
-        "resolved": "2.1.1",
-        "contentHash": "kQUEVOU4loc8CPSb2WoHFTESqwIa8Ik7ysCBfTwzHAd0moWovc9JQLmhDIHlYLjHbyexqZAlkq/FPRUZqokebw==",
+        "resolved": "2.2.0",
+        "contentHash": "Nxs7Z1q3f1STfLYKJSVXCs1iBl+Ya6E8o4Oy1bCxJ/rNI44E/0f6tbsrVqAWfB7jlnJfyaAtIalBVxPKUPQb4Q==",
         "dependencies": {
-          "Microsoft.AspNetCore.Http.Features": "2.1.1",
+          "Microsoft.AspNetCore.Http.Features": "2.2.0",
           "System.Text.Encodings.Web": "4.5.0"
         }
       },
@@ -296,10 +326,27 @@
       },
       "Microsoft.AspNetCore.Http.Features": {
         "type": "Transitive",
-        "resolved": "2.1.1",
-        "contentHash": "VklZ7hWgSvHBcDtwYYkdMdI/adlf7ebxTZ9kdzAhX+gUs5jSHE9mZlTamdgf9miSsxc1QjNazHXTDJdVPZKKTw==",
+        "resolved": "2.2.0",
+        "contentHash": "ziFz5zH8f33En4dX81LW84I6XrYXKf9jg6aM39cM+LffN9KJahViKZ61dGMSO2gd3e+qe5yBRwsesvyqlZaSMg==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "2.1.1"
+          "Microsoft.Extensions.Primitives": "2.2.0"
+        }
+      },
+      "Microsoft.AspNetCore.Mvc.Abstractions": {
+        "type": "Transitive",
+        "resolved": "2.2.0",
+        "contentHash": "ET6uZpfVbGR1NjCuLaLy197cQ3qZUjzl7EG5SL4GfJH/c9KRE89MMBrQegqWsh0w1iRUB/zQaK0anAjxa/pz4g==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Routing.Abstractions": "2.2.0",
+          "Microsoft.Net.Http.Headers": "2.2.0"
+        }
+      },
+      "Microsoft.AspNetCore.Routing.Abstractions": {
+        "type": "Transitive",
+        "resolved": "2.2.0",
+        "contentHash": "lRRaPN7jDlUCVCp9i0W+PB0trFaKB0bgMJD7hEJS9Uo4R9MXaMC8X2tJhPLmeVE3SGDdYI4QNKdVmhNvMJGgPQ==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Abstractions": "2.2.0"
         }
       },
       "Microsoft.AspNetCore.WebUtilities": {
@@ -594,10 +641,10 @@
       },
       "Microsoft.Net.Http.Headers": {
         "type": "Transitive",
-        "resolved": "2.1.1",
-        "contentHash": "lPNIphl8b2EuhOE9dMH6EZDmu7pS882O+HMi5BJNsigxHaWlBrYxZHFZgE18cyaPp6SSZcTkKkuzfjV/RRQKlA==",
+        "resolved": "2.2.0",
+        "contentHash": "iZNkjYqlo8sIOI0bQfpsSoMTmB/kyvmV2h225ihyZT33aTp48ZpF6qYnXxzSXmHt8DpBAwBTX+1s1UFLbYfZKg==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "2.1.1",
+          "Microsoft.Extensions.Primitives": "2.2.0",
           "System.Buffers": "4.5.0"
         }
       },
@@ -688,6 +735,11 @@
           "System.Xml.ReaderWriter": "4.3.0",
           "System.Xml.XDocument": "4.3.0"
         }
+      },
+      "Polly": {
+        "type": "Transitive",
+        "resolved": "7.2.0",
+        "contentHash": "fbtSRyqVSd5AS7O4Pm2Mnw7zKKJk7Z3rOfNnKSTfPkTxM8Z1JJFZzzjqLAOTG6AyUkormSWMO2AhdlygF/384Q=="
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
@@ -1281,6 +1333,11 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
+      "System.Numerics.Vectors": {
+        "type": "Transitive",
+        "resolved": "4.5.0",
+        "contentHash": "QQTlPTl06J/iiDbJCiepZ4H//BVraReU4O4EoRw1U02H5TLUIT7xn3GnDp9AXPSlJUDyFs4uWjWafNX6WrAojQ=="
+      },
       "System.ObjectModel": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1774,13 +1831,8 @@
       },
       "System.Threading.Tasks.Extensions": {
         "type": "Transitive",
-        "resolved": "4.3.0",
-        "contentHash": "npvJkVKl5rKXrtl1Kkm6OhOUaYGEiF9wFbppFRWSMoApKzt2PiPHT2Bb8a5sAWxprvdOAtvaARS9QYMznEUtug==",
-        "dependencies": {
-          "System.Collections": "4.3.0",
-          "System.Runtime": "4.3.0",
-          "System.Threading.Tasks": "4.3.0"
-        }
+        "resolved": "4.5.2",
+        "contentHash": "BG/TNxDFv0svAzx8OiMXDlsHfGw623BZ8tCXw4YLhDFDvDhNUEV58jKYMGRnkbJNm7c3JNNJDiN7JBMzxRBR2w=="
       },
       "System.Threading.Thread": {
         "type": "Transitive",
@@ -1901,11 +1953,37 @@
           "VideoApi.Domain": "1.0.0"
         }
       },
+      "videoapi.contract": {
+        "type": "Project",
+        "dependencies": {
+          "System.ComponentModel.Annotations": "4.7.0"
+        }
+      },
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {
           "Enums.NET": "4.0.0",
           "System.ComponentModel.Annotations": "4.7.0"
+        }
+      },
+      "videoapi.services": {
+        "type": "Project",
+        "dependencies": {
+          "Azure.Storage.Blobs": "12.4.2",
+          "Microsoft.AspNetCore.Mvc.Abstractions": "2.2.0",
+          "Microsoft.Extensions.Configuration": "5.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
+          "Polly": "7.2.0",
+          "VideoApi.Common": "1.0.0",
+          "VideoApi.Contract": "1.0.0",
+          "VideoApi.Domain": "1.0.0",
+          "VideoApi.Services.Generator": "1.0.0"
+        }
+      },
+      "videoapi.services.generator": {
+        "type": "Project",
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.3"
         }
       }
     }

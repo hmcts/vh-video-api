@@ -9,6 +9,8 @@ namespace VideoApi.Domain
 {
     public abstract class ParticipantBase : Entity<Guid>
     {
+
+        public Guid ConferenceId { get; private set; }
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +20,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Extensions;
-using VideoApi.Factories;
+using VideoApi.Services.Factories;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -478,6 +480,43 @@ namespace VideoApi.Controllers
 
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Get conferences Hearing rooms
+        /// </summary>
+        /// <returns>Hearing rooms details</returns>
+        [HttpGet("hearingRooms")]
+        [OpenApiOperation("GetConferencesHearingRooms")]
+        [ProducesResponseType(typeof(List<ConferenceHearingRoomsResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetConferencesHearingRoomsAsync([FromQuery]string date)
+        {
+            _logger.LogDebug("GetConferencesHearingRooms");
+
+            try
+            {
+                var requestedDate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                var interpreterRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
+                        new GetConferenceInterpreterRoomsByDateQuery(requestedDate));
+
+                var conferences =
+                    await _queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>(
+                        new GetConferenceHearingRoomsByDateQuery(requestedDate));
+
+
+                conferences.AddRange(interpreterRooms);
+
+                var response = ConferenceHearingRoomsResponseMapper.Map(conferences, requestedDate);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return NoContent();
+            }
+        }
 
         /// <summary>
         /// Anonymises the Conference and Participant data.
@@ -552,7 +591,40 @@ namespace VideoApi.Controllers
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
         }
-   
+
+        [HttpGet("Wowza/ReconcileAudioFilesInStorage")]
+        [OpenApiOperation("ReconcileAudioFilesInStorage")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> ReconcileAudioFilesInStorage([FromQuery] AudioFilesInStorageRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.FileNamePrefix))
+            {
+                var msg = $"ReconcileFilesInStorage - File Name prefix is required.";
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            if (request.FilesCount <= 0)
+            {
+                var msg = $"ReconcileFilesInStorage - File count cannot be negative or zero.";
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+
+            try
+            {
+                var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+
+                var result = await azureStorageService.ReconcileFilesInStorage(request.FileNamePrefix, request.FilesCount);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                throw new AudioPlatformFileNotFoundException(e.Message, HttpStatusCode.InternalServerError);
+            }
+            
+        }
+
         public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,

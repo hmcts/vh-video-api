@@ -22,10 +22,14 @@ namespace VideoApi.UnitTests.Services
             var blobContainerClient = new Mock<BlobContainerClient>();
             var blobClient = new Mock<BlobClient>();
             var blobServiceClient = new Mock<BlobServiceClient>();
+            var blobClientExtensionMock = new Mock<IBlobClientExtension>();
+
             blobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>())).Returns(blobContainerClient.Object);
             blobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClient.Object);
             blobClient.Setup(x => x.ExistsAsync(CancellationToken.None)).ReturnsAsync(Response.FromValue<bool>(true, null));
-            var service = new CvpAzureStorageService(blobServiceClient.Object, new CvpConfiguration(), false);
+
+
+            var service = new CvpAzureStorageService(blobServiceClient.Object, new CvpConfiguration(), false, blobClientExtensionMock.Object);
 
             var result = await service.FileExistsAsync(It.IsAny<string>());
 
@@ -41,7 +45,9 @@ namespace VideoApi.UnitTests.Services
                 StorageAccountName = "accountName", StorageAccountKey = "YWNjb3VudEtleQ=="
             };
             var blobServiceClient = new Mock<BlobServiceClient>();
-            var service = new CvpAzureStorageService(blobServiceClient.Object, config, false);
+            var blobClientExtensionMock = new Mock<IBlobClientExtension>();
+
+            var service = new CvpAzureStorageService(blobServiceClient.Object, config, false, blobClientExtensionMock.Object);
 
             var result = await service.CreateSharedAccessSignature("myFilePath", It.IsAny<TimeSpan>());
 
@@ -62,11 +68,13 @@ namespace VideoApi.UnitTests.Services
             };
             
             var blobServiceClient = new Mock<BlobServiceClient>();
+            var blobClientExtensionMock = new Mock<IBlobClientExtension>();
+
             blobServiceClient
                 .Setup(x => x.GetUserDelegationKeyAsync(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Response.FromValue(BlobsModelFactory.UserDelegationKey("","","","","", DateTimeOffset.Now, DateTimeOffset.Now), null));
             
-            var service = new CvpAzureStorageService(blobServiceClient.Object, config, true);
+            var service = new CvpAzureStorageService(blobServiceClient.Object, config, true, blobClientExtensionMock.Object);
 
             var result = await service.CreateSharedAccessSignature("myFilePath", TimeSpan.FromDays(7));
 
@@ -90,6 +98,8 @@ namespace VideoApi.UnitTests.Services
             var blobServiceClient = new Mock<BlobServiceClient>();
             var blobContainerClientMock = new Mock<BlobContainerClient>();
             var blobClientMock = new Mock<BlobClient>();
+            var blobClientExtensionMock = new Mock<IBlobClientExtension>();
+
             blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
             var pageable = new Mock<AsyncPageable<BlobItem>>();
             
@@ -98,7 +108,7 @@ namespace VideoApi.UnitTests.Services
             pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
             blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
             
-            var service = new CvpAzureStorageService(blobServiceClient.Object, config, true);
+            var service = new CvpAzureStorageService(blobServiceClient.Object, config, true, blobClientExtensionMock.Object);
 
             await foreach (var item in service.GetAllBlobsAsync(filePathPrefix))
             {
@@ -119,6 +129,8 @@ namespace VideoApi.UnitTests.Services
             var blobServiceClient = new Mock<BlobServiceClient>();
             var blobContainerClientMock = new Mock<BlobContainerClient>();
             var blobClientMock = new Mock<BlobClient>();
+            var blobClientExtensionMock = new Mock<IBlobClientExtension>();
+
             blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
             blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
             var pageable = new Mock<AsyncPageable<BlobItem>>();
@@ -128,7 +140,7 @@ namespace VideoApi.UnitTests.Services
             pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
             blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
 
-            var service = new CvpAzureStorageService(blobServiceClient.Object, config, true);
+            var service = new CvpAzureStorageService(blobServiceClient.Object, config, true,blobClientExtensionMock.Object);
 
             var list = await service.GetAllBlobNamesByFilePathPrefix(filePathPrefix);
             list.Should().NotBeNull();

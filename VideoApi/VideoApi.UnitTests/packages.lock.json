@@ -2873,7 +2873,8 @@
           "Microsoft.Extensions.Configuration.UserSecrets": "5.0.0",
           "Newtonsoft.Json": "12.0.3",
           "VideoApi.Common": "1.0.0",
-          "VideoApi.Domain": "1.0.0"
+          "VideoApi.Domain": "1.0.0",
+          "VideoApi.Services": "1.0.0"
         }
       },
       "videoapi.domain": {

@@ -23,7 +23,7 @@ using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
-using VideoApi.Factories;
+using VideoApi.Services.Factories;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
@@ -133,6 +133,8 @@ namespace VideoApi
             services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
             services.AddScoped<IQuickLinksJwtTokenProvider, QuickLinksJwtTokenProvider>();
 
+            var blobClientExtension = new BlobClientExtension();
+
             if (environment.IsDevelopment())
             {
                 var vhBlobServiceClient = new BlobServiceClient(new Uri(wowzaConfiguration.StorageEndpoint),
@@ -141,8 +143,10 @@ namespace VideoApi
                 var cvpBlobServiceClient = new BlobServiceClient(new Uri(cvpConfiguration.StorageEndpoint),
                     new StorageSharedKeyCredential(cvpConfiguration.StorageAccountName, cvpConfiguration.StorageAccountKey));
 
-                services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, wowzaConfiguration, false));
-                services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, cvpConfiguration, false));
+
+
+                services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, wowzaConfiguration, false, blobClientExtension));
+                services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, cvpConfiguration, false, blobClientExtension));
 
             }
             else
@@ -155,8 +159,8 @@ namespace VideoApi
                     new ChainedTokenCredential(new ManagedIdentityCredential(cvpConfiguration.ManagedIdentityClientId),
                         new DefaultAzureCredential()));
 
-                services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, wowzaConfiguration, true));
-                services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, cvpConfiguration, true));
+                services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, wowzaConfiguration, true, blobClientExtension));
+                services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, cvpConfiguration, true, blobClientExtension));
             }
 
             services.AddSingleton<IAzureStorageServiceFactory, AzureStorageServiceFactory>();

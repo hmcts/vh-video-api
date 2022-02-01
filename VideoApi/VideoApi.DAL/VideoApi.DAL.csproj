@@ -33,5 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\VideoApi.Common\VideoApi.Common.csproj" />
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
+    <ProjectReference Include="..\VideoApi.Services\VideoApi.Services.csproj" />
   </ItemGroup>
 </Project>

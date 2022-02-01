@@ -19,6 +19,7 @@ namespace VideoApi.UnitTests.Mappings
 
             response.Should().BeEquivalentTo(participant, options => options
                 .Excluding(x => x.ParticipantRefId)
+                .Excluding(x => x.ConferenceId)
                 .Excluding(x => x.TestCallResultId)
                 .Excluding(x => x.TestCallResult)
                 .Excluding(x => x.CurrentConsultationRoomId)
@@ -42,6 +43,7 @@ namespace VideoApi.UnitTests.Mappings
             
             response.Should().BeEquivalentTo(participant, options => options
                 .Excluding(x => x.ParticipantRefId)
+                .Excluding(x => x.ConferenceId)
                 .Excluding(x => x.TestCallResultId)
                 .Excluding(x => x.TestCallResult)
                 .Excluding(x => x.CurrentConsultationRoomId)

@@ -12,6 +12,13 @@ namespace VideoApi.Domain
             TimeStamp = DateTime.UtcNow;
         }
 
+        public ConferenceStatus(ConferenceState conferenceState, DateTime? timeStamp)
+        {
+            ConferenceState = conferenceState;
+            if (timeStamp != null) TimeStamp = (DateTime)timeStamp;
+        }
+
+        public Guid ConferenceId { get; private set; }
         public ConferenceState ConferenceState { get; set; }
         public DateTime TimeStamp { get; set; }
     }

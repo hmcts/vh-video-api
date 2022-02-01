@@ -12,6 +12,8 @@ namespace VideoApi.DAL
 
         public DbSet<Conference> Conferences { get; set; }
 
+        public DbSet<ConferenceStatus> ConferenceStatuses { get; set; }
+
         public DbSet<Heartbeat> Heartbeats { get; set; }
 
         public DbSet<InstantMessage> InstantMessages { get; set; }
