@@ -27,7 +27,7 @@ parameters:
   - name: RunSonarCloudTests
     displayName: Run Sonar Cloud Analysis
     type: boolean
-    default: true
+    default: false
 
   - name: RunMutationTests
     displayName: Run Mutation Tests
