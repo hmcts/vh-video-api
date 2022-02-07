@@ -17,7 +17,7 @@ parameters:
   - name: RunUnitTests
     displayName: Run Unit Tests
     type: boolean
-    default: true
+    default: false
 
   - name: RunIntegTests
     displayName: Run Integration Tests
