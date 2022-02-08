@@ -27,7 +27,7 @@ parameters:
   - name: RunSonarCloudTests
     displayName: Run Sonar Cloud Analysis
     type: boolean
-    default: false
+    default: true
 
   - name: RunMutationTests
     displayName: Run Mutation Tests
@@ -250,7 +250,7 @@ resources:
     - repository: templates
       type: github
       name: hmcts/azure-devops-templates
-      ref: refs/heads/optional-dotnet-test-ci-run
+      ref: refs/heads/master
       endpoint: hmcts
   containers:
     - container: dotnetsdk
