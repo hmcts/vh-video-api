@@ -226,7 +226,7 @@ variables:
   - group: vh-domains-and-urls
   - group: vh-apps-settings-generic
   - group: vh-wowza-dev
-  - group: cvp-wowza-sbox
+  - group: cvp-wowza-stg
   - group: vh-preview
   - group: KinlyConfiguration_Test
   - group: vh-video-api
