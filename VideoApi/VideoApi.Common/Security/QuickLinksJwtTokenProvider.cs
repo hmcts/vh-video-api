@@ -50,6 +50,9 @@ namespace VideoApi.Common.Security
                 IssuedAt = DateTime.Now,
                 Audience = _quickLinksConfiguration.ValidAudience,
                 SigningCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha512)
+                {
+                    CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
+                }
             };
 
             var handler = new JwtSecurityTokenHandler();
