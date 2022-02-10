@@ -131,7 +131,10 @@ namespace VideoApi.Controllers
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedById);
-            if (isVhoRequest || requestedBy?.UserRole == UserRole.Judge || requestedBy?.UserRole == UserRole.JudicialOfficeHolder)
+            if (isVhoRequest 
+                || requestedBy?.UserRole == UserRole.Judge
+                || requestedBy?.UserRole == UserRole.StaffMember
+                || requestedBy?.UserRole == UserRole.JudicialOfficeHolder)
             {
                 await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
                 return Ok();

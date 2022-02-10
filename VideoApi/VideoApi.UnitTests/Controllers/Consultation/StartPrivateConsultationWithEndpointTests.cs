@@ -206,13 +206,33 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             result.Should().BeOfType<OkResult>();
         }
 
-
         [Test]
         public async Task should_return_ok_when_judge_invites()
         {
             // Arrange
             var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
             var requestedByJudge = TestConference.GetParticipants().First(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge);
+            var request = new EndpointConsultationRequest()
+            {
+                ConferenceId = TestConference.Id,
+                EndpointId = endpointWithoutDefenceAdvocate.Id,
+                RequestedById = requestedByJudge.Id,
+                RoomLabel = "NewRoom_NotInDb"
+            };
+
+            // Act
+            var result = await Controller.StartConsultationWithEndpointAsync(request);
+
+            // Assert
+            result.Should().BeOfType<OkResult>();
+        }
+
+        [Test]
+        public async Task should_return_ok_when_staff_member_invites()
+        {
+            // Arrange
+            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var requestedByJudge = TestConference.GetParticipants().First(x => x.UserRole == VideoApi.Domain.Enums.UserRole.StaffMember);
             var request = new EndpointConsultationRequest()
             {
                 ConferenceId = TestConference.Id,
