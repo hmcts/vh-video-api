@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using RandomStringCreator;
@@ -26,25 +27,17 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AnonymiseParticipantWithUsernameCommand command)
         {
-            // var allParticipants = _context.Participants.ToList();
-            var participantsToAnonymise = _context.Participants
+            var participantsToAnonymise = await _context.Participants
                 .Where(p => p.Username == command.Username)
-                .ToList();
-            // var participantsToAnonymise = _context.Participants
-            //     .Where(p => p.Username.Contains(command.Username))
-            //     .ToList();
-            // var participantsToAnonymise = allParticipants
-            //     .Where(p => p.Username == command.Username)
-            //     .ToList();
-               
-            var processedParticipants = new List<ParticipantBase>();
+                .ToListAsync();
+            var processedParticipants = new List<Participant>();
 
             foreach (var participant in participantsToAnonymise)
             {
                 var processedParticipant = AnonymiseParticipant(participant);
                 processedParticipants.Add(processedParticipant);
             }
-            
+
             await _context.SaveChangesAsync();
         }
 
