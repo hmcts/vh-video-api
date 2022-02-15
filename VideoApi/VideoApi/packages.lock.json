@@ -1317,6 +1317,11 @@
         "resolved": "7.2.0",
         "contentHash": "fbtSRyqVSd5AS7O4Pm2Mnw7zKKJk7Z3rOfNnKSTfPkTxM8Z1JJFZzzjqLAOTG6AyUkormSWMO2AhdlygF/384Q=="
       },
+      "RandomStringCreator": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "GGpyCGm7W27MlBXp+HNeslnOsNi80Z2isoCt/yY7aKoyjS2Vl6AQ6kq2UK6NgeVpEQZeXaOIEf2pNbiXeARYdg=="
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
         "resolved": "4.3.2",
@@ -2804,6 +2809,7 @@
           "Microsoft.Extensions.Configuration.Json": "5.0.0",
           "Microsoft.Extensions.Configuration.UserSecrets": "5.0.0",
           "Newtonsoft.Json": "12.0.3",
+          "RandomStringCreator": "2.0.0",
           "VideoApi.Common": "1.0.0",
           "VideoApi.Domain": "1.0.0",
           "VideoApi.Services": "1.0.0"
