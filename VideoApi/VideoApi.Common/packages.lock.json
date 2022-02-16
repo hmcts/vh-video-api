@@ -546,6 +546,11 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
+      "RandomStringCreator": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "GGpyCGm7W27MlBXp+HNeslnOsNi80Z2isoCt/yY7aKoyjS2Vl6AQ6kq2UK6NgeVpEQZeXaOIEf2pNbiXeARYdg=="
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
         "resolved": "4.3.2",
@@ -1686,6 +1691,7 @@
         "type": "Project",
         "dependencies": {
           "Enums.NET": "4.0.0",
+          "RandomStringCreator": "2.0.0",
           "System.ComponentModel.Annotations": "4.7.0"
         }
       }

@@ -15,7 +15,6 @@ namespace VideoApi.DAL.Commands
     public class
         AnonymiseParticipantWithUsernameCommandHandler : ICommandHandler<AnonymiseParticipantWithUsernameCommand>
     {
-        public const string AnonymisedUsernameSuffix = "@email.net";
         private readonly VideoApiDbContext _context;
 
         public AnonymiseParticipantWithUsernameCommandHandler(VideoApiDbContext context)
@@ -32,7 +31,7 @@ namespace VideoApi.DAL.Commands
             var processedParticipants = (
                     from participant
                         in participantsToAnonymise
-                    where !participant.Username.Contains(AnonymisedUsernameSuffix)
+                    where !participant.Username.Contains(Constants.AnonymisedUsernameSuffix)
                     select AnonymiseParticipant(participant))
                 .ToList();
 
@@ -43,7 +42,7 @@ namespace VideoApi.DAL.Commands
 
         private Participant AnonymiseParticipant(Participant participant)
         {
-            var randomString = new StringCreator().Get(9).ToLower();
+            var randomString = new StringCreator().Get(9).ToLowerInvariant();
 
             participant.Name = randomString;
             participant.DisplayName = $"{randomString} {randomString}";
@@ -51,7 +50,7 @@ namespace VideoApi.DAL.Commands
             participant.LastName = randomString;
             participant.ContactEmail = randomString;
             participant.ContactTelephone = randomString;
-            participant.Username = $"{randomString}{AnonymisedUsernameSuffix}";
+            participant.Username = $"{randomString}{Constants.AnonymisedUsernameSuffix}";
 
             if (!string.IsNullOrWhiteSpace(participant.Representee)) participant.Representee = randomString;
 

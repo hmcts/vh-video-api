@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RandomStringCreator;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -229,6 +230,11 @@ namespace VideoApi.Domain
                 ((Participant)primaryParticipant).AddLink(secondaryParticipant.Id, linkedParticipantType);
                 ((Participant)secondaryParticipant).AddLink(primaryParticipant.Id, linkedParticipantType);
             }
+        }
+
+        public void AnonymiseCaseName()
+        {
+            CaseName = new StringCreator().Get(9).ToLowerInvariant();
         }
     }
 }
