@@ -34,22 +34,23 @@ namespace VideoApi.DAL.Commands
 
             var quickLinkParticipants = (
                 from conference in conferences
-                join participant in _context.Participants on  conference.Id equals participant.ConferenceId
+                join participant in _context.Participants on conference.Id equals participant.ConferenceId
                 where (participant.UserRole == UserRole.QuickLinkObserver ||
-                      participant.UserRole == UserRole.QuickLinkParticipant) && 
+                       participant.UserRole == UserRole.QuickLinkParticipant) &&
                       !participant.Username.Contains(Constants.AnonymisedUsernameSuffix)
                 select participant).ToList();
-            
-            quickLinkParticipants.ForEach(p => AnonymiseParticipant(p));
-            
-            _context.Participants.UpdateRange(quickLinkParticipants);
-            
+
+            var anonymisedParticipants = quickLinkParticipants.Select(participant => AnonymiseParticipant(participant)).ToList();
+
+            _context.Participants.UpdateRange(anonymisedParticipants);
+
             await _context.SaveChangesAsync();
         }
+
         private Participant AnonymiseParticipant(Participant participant)
         {
             var randomString = new StringCreator().Get(9).ToLowerInvariant();
-            
+
             participant.Username = $"{randomString}{Constants.AnonymisedUsernameSuffix}";
             participant.Name = $"{randomString} {randomString}";
             participant.DisplayName = randomString;
