@@ -434,5 +434,29 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
         }
+
+        /// <summary>
+        /// Anonymise a participant with specified username
+        /// </summary>
+        /// <param name="username">username of person</param>
+        /// <returns></returns>
+        [HttpPatch("username/{username}/anonymise-participant", Name = "AnonymiseParticipantWithUsername")]
+        [OpenApiOperation("AnonymiseParticipantWithUsername")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> AnonymiseParticipantWithUsername(string username)
+        {
+            try
+            {
+                await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand { Username = username });
+            }
+            catch (ParticipantNotFoundException ex)
+            {
+                _logger.LogError(ex, "Failed to anonymise participant because {username} does not exist", username);
+                return NotFound();
+            }
+            return Ok();            
+        }
+        
     }
 }

@@ -10,6 +10,10 @@ namespace VideoApi.DAL.Exceptions
         {
         }
         
+        public ParticipantNotFoundException(string username) : base($"Participant {username} does not exist")
+        {
+        }
+        
         protected ParticipantNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info,context)
         {

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -144,6 +145,13 @@ namespace VideoApi.UnitTests.DAL.Commands
                 await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
 
             processedParticipant.Representee.Should().Be(representee);
+        }
+        
+        [Test]
+        public void Throws_Participant_Not_Found_Exception()
+        {
+            Assert.ThrowsAsync<ParticipantNotFoundException>(() =>
+                _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand {Username = "fakename@email.net"}));
         }
     }
 }

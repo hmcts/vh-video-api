@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RandomStringCreator;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -27,6 +28,11 @@ namespace VideoApi.DAL.Commands
             var participantsToAnonymise = await _context.Participants
                 .Where(p => p.Username == command.Username)
                 .ToListAsync();
+
+            if (participantsToAnonymise.Count < 1)
+            {
+                throw new ParticipantNotFoundException(command.Username);
+            }
             
             var processedParticipants = (
                     from participant
