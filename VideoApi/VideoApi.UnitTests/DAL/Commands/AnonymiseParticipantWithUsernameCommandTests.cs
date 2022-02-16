@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using FizzWare.NBuilder;
+﻿using System.Collections.Generic;
+using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -14,10 +13,11 @@ namespace VideoApi.UnitTests.DAL.Commands
 {
     public class AnonymiseParticipantWithUsernameCommandTests
     {
-        private VideoApiDbContext _context;
         private AnonymiseParticipantWithUsernameCommandHandler _commandhandler;
-        private string usernameToAnonymise = "usernameToAnonymise";
-        private Participant _participantToAnonymise, _anonymisedParticipant, _participantInFutureHearing;
+        private VideoApiDbContext _context;
+        private List<Participant> _participants = new List<Participant>();
+        private Participant _participantToAnonymise, _anonymisedParticipant;
+        private readonly string usernameToAnonymise = "usernameToAnonymise";
 
         [OneTimeSetUp]
         public void InitialSetUp()
@@ -37,18 +37,16 @@ namespace VideoApi.UnitTests.DAL.Commands
         [SetUp]
         public async Task SetUp()
         {
-            _participantToAnonymise = new Participant(Faker.Name.First(), Faker.Name.First(), Faker.Name.First(),
-                Faker.Name.First(),
-                usernameToAnonymise, UserRole.Individual, Faker.Name.First(), Faker.Name.First());
-            _anonymisedParticipant = new Participant(Faker.Name.First(), Faker.Name.First(), Faker.Name.First(),
-                Faker.Name.First(),
-                Faker.Name.First(), UserRole.Individual, Faker.Name.First(), Faker.Name.First());
-            _participantInFutureHearing = new Participant(Faker.Name.First(), Faker.Name.First(), Faker.Name.First(),
-                Faker.Name.First(),
-                Faker.Name.First(), UserRole.Individual, Faker.Name.First(), Faker.Name.First());
+            _participantToAnonymise = new Participant(Name.First(), Name.First(), Name.First(),
+                Name.First(),
+                usernameToAnonymise, UserRole.Individual, Name.First(), Name.First());
+            _anonymisedParticipant = new Participant(Name.First(), Name.First(), Name.First(),
+                Name.First(),
+                Name.First(), UserRole.Individual, Name.First(), Name.First());
+            _participants = new List<Participant>
+                { _participantToAnonymise, _anonymisedParticipant };
 
-            await _context.Participants.AddRangeAsync(_participantToAnonymise, _anonymisedParticipant,
-                _participantInFutureHearing);
+            await _context.Participants.AddRangeAsync(_participants);
 
             await _context.SaveChangesAsync();
         }
@@ -56,26 +54,16 @@ namespace VideoApi.UnitTests.DAL.Commands
         [TearDown]
         public async Task TearDown()
         {
-            _context.Participants.RemoveRange(_participantToAnonymise, _anonymisedParticipant,
-                _participantInFutureHearing);
+            _context.Participants.RemoveRange(_participants);
 
             await _context.SaveChangesAsync();
         }
 
         [Test]
-        public async Task AnonymiseParticipantWithUsernameCommand_Anonymises_Specified_Username()
+        public async Task Anonymises_Specified_Username()
         {
-            var participantCopyBeforeAnonymisation = new Participant 
-                { 
-                    Name = _participantToAnonymise.Name, 
-                    DisplayName = _participantToAnonymise.DisplayName,
-                    Username = _participantToAnonymise.Username,
-                    FirstName = _participantToAnonymise.FirstName,
-                    LastName = _participantToAnonymise.LastName,
-                    ContactEmail = _participantToAnonymise.ContactEmail,
-                    ContactTelephone = _participantToAnonymise.ContactTelephone,
-                };
-            
+            var participantCopyBeforeAnonymisation = CreateParticipantCopyForAssertion(_participantToAnonymise);
+
             await _commandhandler.Handle(new AnonymiseParticipantWithUsernameCommand
                 { Username = usernameToAnonymise });
 
@@ -90,6 +78,112 @@ namespace VideoApi.UnitTests.DAL.Commands
             processedParticipant.ContactTelephone.Should().NotBe(participantCopyBeforeAnonymisation.ContactTelephone);
             processedParticipant.Username.Should()
                 .Contain(AnonymiseParticipantWithUsernameCommandHandler.AnonymisedUsernameSuffix);
+        }
+
+        [Test]
+        public async Task Anonymises_All_Matching_Entries_With_Specified_Username()
+        {
+            var duplicateParticipantWithSameUsername = CreateParticipantWithUsername(usernameToAnonymise);
+            _participants.Add(duplicateParticipantWithSameUsername);
+
+            await _context.Participants.AddAsync(duplicateParticipantWithSameUsername);
+            await _context.SaveChangesAsync();
+
+            await _commandhandler.Handle(new AnonymiseParticipantWithUsernameCommand
+                { Username = usernameToAnonymise });
+
+            var countOfParticipantsWithAnonymisedSuffix = await _context.Participants.CountAsync(p =>
+                p.Username.Contains(AnonymiseParticipantWithUsernameCommandHandler.AnonymisedUsernameSuffix));
+            countOfParticipantsWithAnonymisedSuffix.Should().Be(2);
+        }
+
+        [Test]
+        public async Task Does_Not_Anonymise_Anonymised_Participant()
+        {
+            var anonymisedParticipant =
+                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _anonymisedParticipant.Id);
+            anonymisedParticipant.Username =
+                $"{usernameToAnonymise}{AnonymiseParticipantWithUsernameCommandHandler.AnonymisedUsernameSuffix}";
+            await _context.SaveChangesAsync();
+
+            var anonymisedParticipantBeforeAnonymisation = CreateParticipantCopyForAssertion(_anonymisedParticipant);
+
+            await _commandhandler.Handle(new AnonymiseParticipantWithUsernameCommand
+                { Username = usernameToAnonymise });
+
+            var processedParticipant =
+                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _anonymisedParticipant.Id);
+
+            processedParticipant.Name.Should().Be(anonymisedParticipantBeforeAnonymisation.Name);
+            processedParticipant.DisplayName.Should().Be(anonymisedParticipantBeforeAnonymisation.DisplayName);
+            processedParticipant.FirstName.Should().Be(anonymisedParticipantBeforeAnonymisation.FirstName);
+            processedParticipant.LastName.Should().Be(anonymisedParticipantBeforeAnonymisation.LastName);
+            processedParticipant.ContactEmail.Should().Be(anonymisedParticipantBeforeAnonymisation.ContactEmail);
+            processedParticipant.ContactTelephone.Should()
+                .Be(anonymisedParticipantBeforeAnonymisation.ContactTelephone);
+            processedParticipant.Username.Should().Be(anonymisedParticipantBeforeAnonymisation.Username);
+        }
+
+        [Test]
+        public async Task Anonymises_Representee()
+        {
+            _participantToAnonymise.Representee = Name.First();
+            _context.Participants.Update(_participantToAnonymise);
+            await _context.SaveChangesAsync();
+
+            var participantCopyBeforeAnonymisation = CreateParticipantCopyForAssertion(_participantToAnonymise);
+
+            await _commandhandler.Handle(new AnonymiseParticipantWithUsernameCommand
+                { Username = usernameToAnonymise });
+
+            var processedParticipant =
+                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
+
+            processedParticipant.Representee.Should().NotBe(participantCopyBeforeAnonymisation.Representee);
+            processedParticipant.Name.Should().Equals(processedParticipant.Representee);
+        }
+
+        [Test]
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase(null)]
+        public async Task Does_Not_Anonymises_Representee(string representee)
+        {
+            _participantToAnonymise.Representee = representee;
+            _context.Participants.Update(_participantToAnonymise);
+            await _context.SaveChangesAsync();
+
+            await _commandhandler.Handle(new AnonymiseParticipantWithUsernameCommand
+                { Username = usernameToAnonymise });
+
+            var processedParticipant =
+                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
+
+            processedParticipant.Representee.Should().Be(representee);
+        }
+
+        private Participant CreateParticipantWithUsername(string username)
+        {
+            return new Participant(Name.First(),
+                Name.First(),
+                Name.First(),
+                Name.First(),
+                username, UserRole.Individual, Name.First(), Name.First());
+        }
+
+        private Participant CreateParticipantCopyForAssertion(Participant participant)
+        {
+            return new Participant
+            {
+                Name = participant.Name,
+                DisplayName = participant.DisplayName,
+                Username = participant.Username,
+                FirstName = participant.FirstName,
+                LastName = participant.LastName,
+                ContactEmail = participant.ContactEmail,
+                ContactTelephone = participant.ContactTelephone,
+                Representee = participant.Representee
+            };
         }
     }
 }
