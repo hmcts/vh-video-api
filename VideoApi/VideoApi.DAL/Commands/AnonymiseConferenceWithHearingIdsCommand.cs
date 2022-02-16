@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RandomStringCreator;
 using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi.DAL.Commands
@@ -34,9 +33,7 @@ namespace VideoApi.DAL.Commands
                              .Any(x => x.Username
                                  .Contains(Constants.AnonymisedUsernameSuffix)))
                     )
-            {
                 conference.AnonymiseCaseName();
-            }
 
             await _context.SaveChangesAsync();
         }

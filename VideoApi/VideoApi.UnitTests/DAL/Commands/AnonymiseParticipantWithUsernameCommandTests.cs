@@ -6,69 +6,50 @@ using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.DAL.Commands
 {
-    public class AnonymiseParticipantWithUsernameCommandTests
+    public class AnonymiseParticipantWithUsernameCommandTests : EfCoreSetup
     {
+        private readonly string usernameToAnonymise = "usernameToAnonymise";
         private AnonymiseParticipantWithUsernameCommandHandler _commandHandler;
-        private VideoApiDbContext _context;
         private List<Participant> _participants = new List<Participant>();
         private Participant _participantToAnonymise, _anonymisedParticipant;
-        private readonly string usernameToAnonymise = "usernameToAnonymise";
-
-        [OneTimeSetUp]
-        public void InitialSetUp()
-        {
-            _context = new VideoApiDbContext(new DbContextOptionsBuilder<VideoApiDbContext>()
-                .UseInMemoryDatabase("Test")
-                .Options);
-            _commandHandler = new AnonymiseParticipantWithUsernameCommandHandler(_context);
-        }
-
-        [OneTimeTearDown]
-        public void FinalCleanUp()
-        {
-            _context.Database.EnsureDeleted();
-        }
 
         [SetUp]
         public async Task SetUp()
         {
-            _participantToAnonymise = new Participant(Name.First(), Name.First(), Name.First(),
-                Name.First(),
-                usernameToAnonymise, UserRole.Individual, Name.First(), Name.First());
-            _anonymisedParticipant = new Participant(Name.First(), Name.First(), Name.First(),
-                Name.First(),
-                Name.First(), UserRole.Individual, Name.First(), Name.First());
+            _commandHandler = new AnonymiseParticipantWithUsernameCommandHandler(videoApiDbContext);
+            _participantToAnonymise = DomainModelFactoryForTests.CreateParticipantWithUsername(usernameToAnonymise);
+            _anonymisedParticipant = DomainModelFactoryForTests.CreateParticipant();
             _participants = new List<Participant>
                 { _participantToAnonymise, _anonymisedParticipant };
 
-            await _context.Participants.AddRangeAsync(_participants);
+            await videoApiDbContext.Participants.AddRangeAsync(_participants);
 
-            await _context.SaveChangesAsync();
+            await videoApiDbContext.SaveChangesAsync();
         }
 
         [TearDown]
         public async Task TearDown()
         {
-            _context.Participants.RemoveRange(_participants);
+            videoApiDbContext.Participants.RemoveRange(_participants);
 
-            await _context.SaveChangesAsync();
+            await videoApiDbContext.SaveChangesAsync();
         }
 
         [Test]
         public async Task Anonymises_Specified_Username()
         {
-            var participantCopyBeforeAnonymisation = CreateParticipantCopyForAssertion(_participantToAnonymise);
+            var participantCopyBeforeAnonymisation =
+                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_participantToAnonymise);
 
             await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
                 { Username = usernameToAnonymise });
 
             var processedParticipant =
-                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
+                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
 
             processedParticipant.Name.Should().NotBe(participantCopyBeforeAnonymisation.Name);
             processedParticipant.DisplayName.Should().NotBe(participantCopyBeforeAnonymisation.DisplayName);
@@ -83,16 +64,17 @@ namespace VideoApi.UnitTests.DAL.Commands
         [Test]
         public async Task Anonymises_All_Matching_Entries_With_Specified_Username()
         {
-            var duplicateParticipantWithSameUsername = CreateParticipantWithUsername(usernameToAnonymise);
+            var duplicateParticipantWithSameUsername =
+                DomainModelFactoryForTests.CreateParticipantWithUsername(usernameToAnonymise);
             _participants.Add(duplicateParticipantWithSameUsername);
 
-            await _context.Participants.AddAsync(duplicateParticipantWithSameUsername);
-            await _context.SaveChangesAsync();
+            await videoApiDbContext.Participants.AddAsync(duplicateParticipantWithSameUsername);
+            await videoApiDbContext.SaveChangesAsync();
 
             await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
                 { Username = usernameToAnonymise });
 
-            var countOfParticipantsWithAnonymisedSuffix = await _context.Participants.CountAsync(p =>
+            var countOfParticipantsWithAnonymisedSuffix = await videoApiDbContext.Participants.CountAsync(p =>
                 p.Username.Contains(Constants.AnonymisedUsernameSuffix));
             countOfParticipantsWithAnonymisedSuffix.Should().Be(2);
         }
@@ -101,18 +83,19 @@ namespace VideoApi.UnitTests.DAL.Commands
         public async Task Does_Not_Anonymise_Anonymised_Participant()
         {
             var anonymisedParticipant =
-                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _anonymisedParticipant.Id);
+                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _anonymisedParticipant.Id);
             anonymisedParticipant.Username =
                 $"{usernameToAnonymise}{Constants.AnonymisedUsernameSuffix}";
-            await _context.SaveChangesAsync();
+            await videoApiDbContext.SaveChangesAsync();
 
-            var anonymisedParticipantBeforeAnonymisation = CreateParticipantCopyForAssertion(_anonymisedParticipant);
+            var anonymisedParticipantBeforeAnonymisation =
+                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_anonymisedParticipant);
 
             await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
                 { Username = usernameToAnonymise });
 
             var processedParticipant =
-                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _anonymisedParticipant.Id);
+                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _anonymisedParticipant.Id);
 
             processedParticipant.Name.Should().Be(anonymisedParticipantBeforeAnonymisation.Name);
             processedParticipant.DisplayName.Should().Be(anonymisedParticipantBeforeAnonymisation.DisplayName);
@@ -128,16 +111,17 @@ namespace VideoApi.UnitTests.DAL.Commands
         public async Task Anonymises_Representee()
         {
             _participantToAnonymise.Representee = Name.First();
-            _context.Participants.Update(_participantToAnonymise);
-            await _context.SaveChangesAsync();
+            videoApiDbContext.Participants.Update(_participantToAnonymise);
+            await videoApiDbContext.SaveChangesAsync();
 
-            var participantCopyBeforeAnonymisation = CreateParticipantCopyForAssertion(_participantToAnonymise);
+            var participantCopyBeforeAnonymisation =
+                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_participantToAnonymise);
 
             await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
                 { Username = usernameToAnonymise });
 
             var processedParticipant =
-                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
+                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
 
             processedParticipant.Representee.Should().NotBe(participantCopyBeforeAnonymisation.Representee);
             processedParticipant.Name.Should().Equals(processedParticipant.Representee);
@@ -150,40 +134,16 @@ namespace VideoApi.UnitTests.DAL.Commands
         public async Task Does_Not_Anonymises_Representee(string representee)
         {
             _participantToAnonymise.Representee = representee;
-            _context.Participants.Update(_participantToAnonymise);
-            await _context.SaveChangesAsync();
+            videoApiDbContext.Participants.Update(_participantToAnonymise);
+            await videoApiDbContext.SaveChangesAsync();
 
             await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
                 { Username = usernameToAnonymise });
 
             var processedParticipant =
-                await _context.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
+                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
 
             processedParticipant.Representee.Should().Be(representee);
-        }
-
-        private Participant CreateParticipantWithUsername(string username)
-        {
-            return new Participant(Name.First(),
-                Name.First(),
-                Name.First(),
-                Name.First(),
-                username, UserRole.Individual, Name.First(), Name.First());
-        }
-
-        private Participant CreateParticipantCopyForAssertion(Participant participant)
-        {
-            return new Participant
-            {
-                Name = participant.Name,
-                DisplayName = participant.DisplayName,
-                Username = participant.Username,
-                FirstName = participant.FirstName,
-                LastName = participant.LastName,
-                ContactEmail = participant.ContactEmail,
-                ContactTelephone = participant.ContactTelephone,
-                Representee = participant.Representee
-            };
         }
     }
 }

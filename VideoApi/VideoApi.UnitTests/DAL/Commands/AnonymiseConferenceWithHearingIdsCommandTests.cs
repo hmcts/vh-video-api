@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -12,48 +11,34 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.DAL.Commands
 {
-    public class AnonymiseConferenceWithHearingIdsCommandTests
+    public class AnonymiseConferenceWithHearingIdsCommandTests : EfCoreSetup
     {
         private AnonymiseConferenceWithHearingIdsCommandHandler _commandHandler;
-        private VideoApiDbContext _context;
+        private Conference _conference1, _conference2;
         private List<Conference> _conferences;
         private List<Participant> _participants;
-        private Conference _conference1, _conference2;
-
-        [OneTimeSetUp]
-        public void InitialSetUp()
-        {
-            _context = new VideoApiDbContext(new DbContextOptionsBuilder<VideoApiDbContext>()
-                .UseInMemoryDatabase("Test")
-                .Options);
-            _commandHandler = new AnonymiseConferenceWithHearingIdsCommandHandler(_context);
-        }
-
-        [OneTimeTearDown]
-        public void FinalCleanUp()
-        {
-            _context.Database.EnsureDeleted();
-        }
 
         [SetUp]
         public async Task SetUp()
         {
-            _conference1 = CreateConference();
-            _conference2 = CreateConference();
+            _commandHandler = new AnonymiseConferenceWithHearingIdsCommandHandler(videoApiDbContext);
+
+            _conference1 = DomainModelFactoryForTests.CreateConference();
+            _conference2 = DomainModelFactoryForTests.CreateConference();
             _conferences = new List<Conference> { _conference1, _conference2 };
             _participants = new List<Participant>();
 
-            await _context.Participants.AddRangeAsync(_participants);
-            await _context.Conferences.AddRangeAsync(_conference1, _conference2);
+            await videoApiDbContext.Participants.AddRangeAsync(_participants);
+            await videoApiDbContext.Conferences.AddRangeAsync(_conference1, _conference2);
 
-            await _context.SaveChangesAsync();
+            await videoApiDbContext.SaveChangesAsync();
         }
 
         [TearDown]
         public void TearDown()
         {
-            _context.Participants.RemoveRange(_participants);
-            _context.Conferences.RemoveRange(_conferences);
+            videoApiDbContext.Participants.RemoveRange(_participants);
+            videoApiDbContext.Conferences.RemoveRange(_conferences);
         }
 
         [Test]
@@ -61,54 +46,50 @@ namespace VideoApi.UnitTests.DAL.Commands
         {
             var caseNameBeforeAnonymisationForConference1 = _conference1.CaseName;
             var caseNameBeforeAnonymisationForConference2 = _conference2.CaseName;
-            
+
             await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
             {
-                HearingIds = new List<Guid>()
+                HearingIds = new List<Guid>
                 {
                     _conference1.HearingRefId,
                     _conference2.HearingRefId
                 }
             });
 
-            var processedConferences = _context.Conferences.Where(c => c.Id == _conference1.Id || c.Id == _conference2.Id).ToList();
+            var processedConferences = videoApiDbContext.Conferences
+                .Where(c => c.Id == _conference1.Id || c.Id == _conference2.Id).ToList();
 
             foreach (var conference in processedConferences)
-            {
                 conference.CaseName.Should().NotContain(caseNameBeforeAnonymisationForConference1).And
                     .NotContain(caseNameBeforeAnonymisationForConference2);
-            }
         }
 
         [Test]
         public async Task Does_Not_Anonymise_When_Conference_Associated_With_An_Anonymised_Participant()
         {
-            var participant= new Participant { Username = $"someUser{Constants.AnonymisedUsernameSuffix}" };
+            var participant = new Participant { Username = $"someUser{Constants.AnonymisedUsernameSuffix}" };
             _participants.Add(participant);
-            _context.Participants.Add(participant);
+            videoApiDbContext.Participants.Add(participant);
             _conference1.AddParticipant(participant);
 
-            _context.Update(_conference1);
-            
-            await _context.SaveChangesAsync();
-            
+            videoApiDbContext.Update(_conference1);
+
+            await videoApiDbContext.SaveChangesAsync();
+
             var caseNameBeforeAnonymisationForConference1 = _conference1.CaseName;
-            
+
             await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
             {
-                HearingIds = new List<Guid>()
+                HearingIds = new List<Guid>
                 {
                     _conference1.HearingRefId
                 }
             });
 
-            var processedConference = await _context.Conferences.FirstOrDefaultAsync(c => c.Id == _conference1.Id);
+            var processedConference =
+                await videoApiDbContext.Conferences.FirstOrDefaultAsync(c => c.Id == _conference1.Id);
 
             processedConference.CaseName.Should().Be(caseNameBeforeAnonymisationForConference1);
         }
-        
-        private Conference CreateConference() => new Conference(Guid.NewGuid(), Name.First(), DateTime.UtcNow,
-            Name.First(),
-            Name.First(), 6, Lorem.GetFirstWord(), false, Name.First());
     }
 }
