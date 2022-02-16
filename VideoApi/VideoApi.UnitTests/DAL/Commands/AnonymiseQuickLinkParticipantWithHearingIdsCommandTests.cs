@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
@@ -108,6 +109,14 @@ namespace VideoApi.UnitTests.DAL.Commands
             quickLinkParticipantBeforeAnonymisation.Username.Should().Be(quickLinkParticipantFromContext.Username);
             quickLinkParticipantBeforeAnonymisation.Name.Should().Be(quickLinkParticipantFromContext.Name);
             AssertParticipantFields(processedQuickLinkObserver, quickLinkObserverBeforeAnonymisation);
+        }
+
+        [Test]
+        public void Throws_Participant_Not_Found_Exception()
+        {
+            Assert.ThrowsAsync<ConferenceNotFoundException>(() =>
+                _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
+                    { HearingIds = new List<Guid> { Guid.NewGuid() } }));
         }
 
         private void AssertParticipantFields(Participant processedParticipant,
