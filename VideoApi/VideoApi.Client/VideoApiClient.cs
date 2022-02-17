@@ -752,15 +752,13 @@ namespace VideoApi.Client
         System.Threading.Tasks.Task AnonymiseParticipantWithUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Anonymise a participant with associated expired conference</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(string username, System.Collections.Generic.IEnumerable<System.Guid> hearingIds);
+        System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Anonymise a participant with associated expired conference</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(string username, System.Collections.Generic.IEnumerable<System.Guid> hearingIds, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> ValidateQuickLinkAsync(System.Guid hearingId);
@@ -6538,28 +6536,22 @@ namespace VideoApi.Client
         }
     
         /// <summary>Anonymise a participant with associated expired conference</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(string username, System.Collections.Generic.IEnumerable<System.Guid> hearingIds)
+        public System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request)
         {
-            return AnonymiseQuickLinkParticipantWithHearingIdsAsync(username, hearingIds, System.Threading.CancellationToken.None);
+            return AnonymiseQuickLinkParticipantWithHearingIdsAsync(request, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Anonymise a participant with associated expired conference</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(string username, System.Collections.Generic.IEnumerable<System.Guid> hearingIds, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
         {
-            if (username == null)
-                throw new System.ArgumentNullException("username");
-    
-            if (hearingIds == null)
-                throw new System.ArgumentNullException("hearingIds");
+            if (request == null)
+                throw new System.ArgumentNullException("request");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/username/{username}/anonymise-quick-link-participant");
-            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearing-ids/anonymise-quick-link-participant");
     
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6567,7 +6559,7 @@ namespace VideoApi.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(hearingIds, _settings.Value));
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PATCH");

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 
@@ -17,28 +18,30 @@ namespace VideoApi.UnitTests.Controllers.Participant
         [Test]
         public async Task Returns_Ok_For_Successful_Request()
         {
-            var hearingIds = new List<Guid> {Guid.NewGuid()};
+            var request = new AnonymiseQuickLinkParticipantWithHearingIdsRequest
+                { HearingIds = new List<Guid> { Guid.NewGuid() } };
 
-            var response = await Controller.AnonymiseQuickLinkParticipantWithHearingIds(hearingIds) as OkResult;
+            var response = await Controller.AnonymiseQuickLinkParticipantWithHearingIds(request) as OkResult;
 
             response.StatusCode.Should().Be((int) HttpStatusCode.OK);
             MockCommandHandler.Verify(
                 commandHandler => commandHandler.Handle(
-                    It.Is<AnonymiseQuickLinkParticipantWithHearingIdsCommand>(command => command.HearingIds == hearingIds)),
+                    It.Is<AnonymiseQuickLinkParticipantWithHearingIdsCommand>(command => command.HearingIds == request.HearingIds)),
                 Times.Once);
         }
         
         [Test]
         public async Task Returns_Not_Found_For_Invalid_HearingIds()
         {
-            var hearingIds = new List<Guid> {Guid.NewGuid()};
-            var exception = new ConferenceNotFoundException(hearingIds);
+            var request = new AnonymiseQuickLinkParticipantWithHearingIdsRequest
+                { HearingIds = new List<Guid> { Guid.NewGuid() } };
+            var exception = new ConferenceNotFoundException(request.HearingIds);
 
             MockCommandHandler
                 .Setup(commandHandler => commandHandler.Handle(It.IsAny<AnonymiseQuickLinkParticipantWithHearingIdsCommand>()))
                 .ThrowsAsync(exception);
             
-            var response = await Controller.AnonymiseQuickLinkParticipantWithHearingIds(hearingIds) as NotFoundResult;
+            var response = await Controller.AnonymiseQuickLinkParticipantWithHearingIds(request) as NotFoundResult;
             
             response.StatusCode.Should().Be((int) HttpStatusCode.NotFound);
             

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -476,22 +477,22 @@ namespace VideoApi.Controllers
         /// </summary>
         /// <param name="hearingIds">hearing ids of expired conferences</param>
         /// <returns></returns>
-        [HttpPatch("username/{username}/anonymise-quick-link-participant",
+        [HttpPatch("hearing-ids/anonymise-quick-link-participant",
             Name = "AnonymiseQuickLinkParticipantWithHearingIds")]
         [OpenApiOperation("AnonymiseQuickLinkParticipantWithHearingIds")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> AnonymiseQuickLinkParticipantWithHearingIds(List<Guid> hearingIds)
+        public async Task<IActionResult> AnonymiseQuickLinkParticipantWithHearingIds(AnonymiseQuickLinkParticipantWithHearingIdsRequest request)
         {
             try
             {
                 await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
-                    { HearingIds = hearingIds });
+                    { HearingIds = request.HearingIds });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "No conferences found with the specified list of hearing ids {hearingids}",
-                    hearingIds);
+                    request.HearingIds);
                 return NotFound();
             }
 
