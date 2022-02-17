@@ -624,6 +624,29 @@ namespace VideoApi.Controllers
             
         }
 
+        /// <summary>
+        /// Anonymise conference with matching hearing ids
+        /// </summary>
+        /// <param name="hearingIds">hearing ids of expired conferences</param>
+        /// <returns></returns>
+        [HttpPatch]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(List<Guid> hearingIds)
+        {
+            try
+            {
+                await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand { HearingIds = hearingIds });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "No conferences found with the specified list of hearing ids {hearingids}",
+                    hearingIds);
+                return NotFound();
+            }
+            return Ok();
+        }
+
         public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -90,6 +91,14 @@ namespace VideoApi.UnitTests.DAL.Commands
                 await videoApiDbContext.Conferences.FirstOrDefaultAsync(c => c.Id == _conference1.Id);
 
             processedConference.CaseName.Should().Be(caseNameBeforeAnonymisationForConference1);
+        }
+        
+        [Test]
+        public void Throws_Participant_Not_Found_Exception()
+        {
+            Assert.ThrowsAsync<ConferenceNotFoundException>(() =>
+                _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
+                    { HearingIds = new List<Guid> { Guid.NewGuid() } }));
         }
     }
 }
