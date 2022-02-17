@@ -236,5 +236,23 @@ namespace VideoApi.Domain
         {
             CaseName = new StringCreator().Get(9).ToLowerInvariant();
         }
+
+        public void AnonymiseQuickLinkParticipants(Guid conferenceIds)
+        {
+            var participants = Participants
+                .Where(p => p.ConferenceId == conferenceIds &&
+                            p is QuickLinkParticipant)
+                .ToList();
+
+            foreach (var participant in participants)
+            {
+                if (participant.Username.Contains(Constants.AnonymisedUsernameSuffix)) continue;
+                var randomString = new StringCreator().Get(9).ToLowerInvariant();
+
+                participant.Username = $"{randomString}{Constants.AnonymisedUsernameSuffix}";
+                participant.Name = $"{randomString} {randomString}";
+                participant.DisplayName = randomString;
+            }
+        }
     }
 }

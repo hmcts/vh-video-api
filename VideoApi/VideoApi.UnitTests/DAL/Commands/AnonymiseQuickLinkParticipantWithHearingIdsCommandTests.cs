@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
@@ -16,25 +15,26 @@ namespace VideoApi.UnitTests.DAL.Commands
     {
         private AnonymiseQuickLinkParticipantWithHearingIdsCommandHandler _commandHandler;
         private Conference _conference;
+        private Guid _conferenceIdForTest;
         private List<Conference> _conferences;
         private List<Participant> _participants;
-        private Participant _quickLinkObserver, _quickLinkParticipant;
+        private ParticipantBase _quickLinkObserver, _quickLinkParticipant, _individualParticipant;
 
         [SetUp]
         public async Task SetUp()
         {
             _commandHandler = new AnonymiseQuickLinkParticipantWithHearingIdsCommandHandler(videoApiDbContext);
 
-            _quickLinkObserver = DomainModelFactoryForTests.CreateParticipant();
-            _quickLinkParticipant = DomainModelFactoryForTests.CreateParticipant();
+            _individualParticipant = DomainModelFactoryForTests.CreateParticipant();
+            _quickLinkObserver = DomainModelFactoryForTests.CreateQuickLinkParticipant(UserRole.QuickLinkObserver);
+            _quickLinkParticipant =
+                DomainModelFactoryForTests.CreateQuickLinkParticipant(UserRole.QuickLinkParticipant);
             _conference = DomainModelFactoryForTests.CreateConference();
+            _conferenceIdForTest = _conference.Id;
 
+            _conference.AddParticipant(_individualParticipant);
             _conference.AddParticipant(_quickLinkObserver);
             _conference.AddParticipant(_quickLinkParticipant);
-
-            _participants = new List<Participant> { _quickLinkObserver, _quickLinkParticipant };
-
-            await videoApiDbContext.Participants.AddRangeAsync(_quickLinkObserver, _quickLinkParticipant);
 
             _conferences = new List<Conference> { _conference };
 
@@ -47,7 +47,6 @@ namespace VideoApi.UnitTests.DAL.Commands
         public async Task TearDown()
         {
             videoApiDbContext.Conferences.RemoveRange(_conferences);
-            videoApiDbContext.Participants.RemoveRange(_participants);
 
             await videoApiDbContext.SaveChangesAsync();
         }
@@ -55,26 +54,32 @@ namespace VideoApi.UnitTests.DAL.Commands
         [Test]
         public async Task Anonymises_Quick_Link_Participants_For_Specified_Hearing_Ids()
         {
-            _quickLinkObserver.UserRole = UserRole.QuickLinkObserver;
-            _quickLinkParticipant.UserRole = UserRole.QuickLinkParticipant;
-
-            videoApiDbContext.Participants.UpdateRange(_quickLinkObserver, _quickLinkParticipant);
-            await videoApiDbContext.SaveChangesAsync();
-
+            var individualParticipantBeforeAnonymisation =
+                DomainModelFactoryForTests.CreateParticipantCopyForAssertion((Participant) _individualParticipant);
             var quickLinkObserverBeforeAnonymisation =
-                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_quickLinkObserver);
+                DomainModelFactoryForTests.CreateQuickLinkParticipantCopyForAssertion(_quickLinkObserver);
             var quickLinkParticipantBeforeAnonymisation =
-                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_quickLinkParticipant);
+                DomainModelFactoryForTests.CreateQuickLinkParticipantCopyForAssertion(_quickLinkParticipant);
 
             await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
             {
                 HearingIds = new List<Guid> { _conference.HearingRefId }
             });
 
-            var processedQuickLinkObserver =
-                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _quickLinkObserver.Id);
+            var getUpdatedParticipantsAfterAnonymisationProcess =
+                videoApiDbContext.Conferences.First(c => c.Id == _conferenceIdForTest).GetParticipants();
+
+            var processedIndividualParticipant =
+                getUpdatedParticipantsAfterAnonymisationProcess.SingleOrDefault(p => p.Id == _individualParticipant.Id);
             var processedQuickLinkParticipant =
-                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _quickLinkParticipant.Id);
+                getUpdatedParticipantsAfterAnonymisationProcess.SingleOrDefault(p => p.Id == _quickLinkParticipant.Id);
+            var processedQuickLinkObserver =
+                getUpdatedParticipantsAfterAnonymisationProcess.SingleOrDefault(p => p.Id == _quickLinkObserver.Id);
+
+            individualParticipantBeforeAnonymisation.DisplayName.Should()
+                .Be(processedIndividualParticipant.DisplayName);
+            individualParticipantBeforeAnonymisation.Username.Should().Be(processedIndividualParticipant.Username);
+            individualParticipantBeforeAnonymisation.Name.Should().Be(processedIndividualParticipant.Name);
             AssertParticipantFields(processedQuickLinkObserver, quickLinkObserverBeforeAnonymisation);
             AssertParticipantFields(processedQuickLinkParticipant, quickLinkParticipantBeforeAnonymisation);
         }
@@ -82,27 +87,29 @@ namespace VideoApi.UnitTests.DAL.Commands
         [Test]
         public async Task Does_Not_Anonymise_Anonymised_Quick_Link_Participants()
         {
-            _quickLinkObserver.UserRole = UserRole.QuickLinkObserver;
-            _quickLinkParticipant.UserRole = UserRole.QuickLinkParticipant;
-            _quickLinkParticipant.Username += Constants.AnonymisedUsernameSuffix;
+            var quickLinkParticipant =
+                videoApiDbContext.Conferences.First(c => c.Id == _conferenceIdForTest).GetParticipants()
+                    .FirstOrDefault(p => p.Id == _quickLinkParticipant.Id);
 
-            videoApiDbContext.Participants.Update(_quickLinkParticipant);
+            quickLinkParticipant.Username += Constants.AnonymisedUsernameSuffix;
+
+            videoApiDbContext.Conferences.Update(_conference);
             await videoApiDbContext.SaveChangesAsync();
 
             var quickLinkObserverBeforeAnonymisation =
-                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_quickLinkObserver);
+                DomainModelFactoryForTests.CreateQuickLinkParticipantCopyForAssertion(_quickLinkObserver);
             var quickLinkParticipantBeforeAnonymisation =
-                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_quickLinkParticipant);
+                DomainModelFactoryForTests.CreateQuickLinkParticipantCopyForAssertion(_quickLinkParticipant);
 
             await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
             {
                 HearingIds = new List<Guid> { _conference.HearingRefId }
             });
 
-            var quickLinkParticipantFromContext =
-                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _quickLinkParticipant.Id);
-            var processedQuickLinkObserver =
-                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _quickLinkObserver.Id);
+            var quickLinkParticipantFromContext = videoApiDbContext.Conferences.First().GetParticipants()
+                .SingleOrDefault(p => p.Id == _quickLinkParticipant.Id);
+            var processedQuickLinkObserver = videoApiDbContext.Conferences.First().GetParticipants()
+                .SingleOrDefault(p => p.Id == _quickLinkObserver.Id);
 
             quickLinkParticipantBeforeAnonymisation.DisplayName.Should()
                 .Be(quickLinkParticipantFromContext.DisplayName);
@@ -119,8 +126,8 @@ namespace VideoApi.UnitTests.DAL.Commands
                     { HearingIds = new List<Guid> { Guid.NewGuid() } }));
         }
 
-        private void AssertParticipantFields(Participant processedParticipant,
-            Participant participantBeforeAnonymisation)
+        private void AssertParticipantFields(ParticipantBase processedParticipant,
+            ParticipantBase participantBeforeAnonymisation)
         {
             processedParticipant.DisplayName.Should().NotContain(participantBeforeAnonymisation.DisplayName);
             processedParticipant.Username.Should().NotContain(participantBeforeAnonymisation.Username);

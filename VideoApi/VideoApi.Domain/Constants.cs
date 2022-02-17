@@ -1,4 +1,4 @@
-﻿namespace VideoApi.DAL
+﻿namespace VideoApi.Domain
 {
     public static class Constants
     {

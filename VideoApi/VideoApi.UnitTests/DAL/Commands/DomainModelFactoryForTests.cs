@@ -47,5 +47,14 @@ namespace VideoApi.UnitTests.DAL.Commands
                 Representee = participant.Representee
             };
         }
+        
+        public static QuickLinkParticipant CreateQuickLinkParticipantCopyForAssertion(ParticipantBase participant)
+        {
+            var copyOfParticipant = new QuickLinkParticipant(participant.Name, participant.UserRole);
+            copyOfParticipant.DisplayName = participant.DisplayName;
+            copyOfParticipant.Username = participant.Username;
+
+            return copyOfParticipant;
+        }
     }
 }
