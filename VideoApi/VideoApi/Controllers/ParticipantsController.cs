@@ -475,9 +475,9 @@ namespace VideoApi.Controllers
         /// <summary>
         /// Anonymise a participant with associated expired conference
         /// </summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
+        /// <param name="request">hearing ids of expired conferences</param>
         /// <returns></returns>
-        [HttpPatch("hearing-ids/anonymise-quick-link-participant",
+        [HttpPatch("anonymise-quick-link-participant-with-hearing-ids",
             Name = "AnonymiseQuickLinkParticipantWithHearingIds")]
         [OpenApiOperation("AnonymiseQuickLinkParticipantWithHearingIds")]
         [ProducesResponseType((int) HttpStatusCode.OK)]

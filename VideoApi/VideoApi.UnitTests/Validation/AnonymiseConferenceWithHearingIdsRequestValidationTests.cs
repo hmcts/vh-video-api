@@ -9,33 +9,35 @@ using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
 {
-    public class AnonymiseQuickLinkParticipantWithHearingIdsRequestTests
+    public class AnonymiseConferenceWithHearingIdsRequestValidationTests
     {
-        private AnonymiseQuickLinkParticipantWithHearingIdsRequestValidation _validator;
-
+        private AnonymiseConferenceWithHearingIdsRequestValidation _validator;
+        
+        
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _validator = new AnonymiseQuickLinkParticipantWithHearingIdsRequestValidation();
+            _validator = new AnonymiseConferenceWithHearingIdsRequestValidation();
         }
-
+        
+        
         [Test]
         public async Task Fails_Validation_For_Empty_List_Of_Hearingds()
         {
-            var request = new AnonymiseQuickLinkParticipantWithHearingIdsRequest();
+            var request = new AnonymiseConferenceWithHearingIdsRequest();
 
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
             result.Errors.Any(x =>
-                x.ErrorMessage == AnonymiseQuickLinkParticipantWithHearingIdsRequestValidation
+                x.ErrorMessage == AnonymiseConferenceWithHearingIdsRequestValidation
                     .NoHearingIdsErrorMessage);
         }
 
         [Test]
         public async Task Passes_Validation_When_HearingIds_Is_Not_Empty()
         {
-            var request = new AnonymiseQuickLinkParticipantWithHearingIdsRequest{HearingIds = new List<Guid>{Guid.NewGuid()}};
+            var request = new AnonymiseConferenceWithHearingIdsRequest{HearingIds = new List<Guid>{Guid.NewGuid()}};
 
             var result = await _validator.ValidateAsync(request);
 

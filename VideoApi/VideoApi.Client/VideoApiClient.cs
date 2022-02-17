@@ -147,17 +147,6 @@ namespace VideoApi.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateConferenceAsync(UpdateConferenceRequest request, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Anonymise conference with matching hearing ids</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingIds);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Anonymise conference with matching hearing ids</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingIds, System.Threading.CancellationToken cancellationToken);
-    
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
@@ -341,6 +330,17 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveHeartbeatsForConferencesAsync(System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Anonymise conference with matching hearing ids</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Anonymise conference with matching hearing ids</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> ReconcileAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount);
@@ -752,11 +752,13 @@ namespace VideoApi.Client
         System.Threading.Tasks.Task AnonymiseParticipantWithUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Anonymise a participant with associated expired conference</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Anonymise a participant with associated expired conference</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
     
@@ -1886,92 +1888,6 @@ namespace VideoApi.Client
                         }
                         else
                         if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-    
-        /// <summary>Anonymise conference with matching hearing ids</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingIds)
-        {
-            return Conference_AnonymiseConferenceWithHearingIdsAsync(hearingIds, System.Threading.CancellationToken.None);
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Anonymise conference with matching hearing ids</summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingIds, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingIds == null)
-                throw new System.ArgumentNullException("hearingIds");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences");
-    
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(hearingIds, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-    
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-    
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 404)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -3332,6 +3248,92 @@ namespace VideoApi.Client
                         if (status_ == 204)
                         {
                             return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+    
+        /// <summary>Anonymise conference with matching hearing ids</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request)
+        {
+            return Conference_AnonymiseConferenceWithHearingIdsAsync(request, System.Threading.CancellationToken.None);
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Anonymise conference with matching hearing ids</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new System.ArgumentNullException("request");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/anonymise-conference-with-hearing-ids");
+    
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+    
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+    
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -6536,6 +6538,7 @@ namespace VideoApi.Client
         }
     
         /// <summary>Anonymise a participant with associated expired conference</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request)
         {
@@ -6544,6 +6547,7 @@ namespace VideoApi.Client
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Anonymise a participant with associated expired conference</summary>
+        /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
         {
@@ -6551,7 +6555,7 @@ namespace VideoApi.Client
                 throw new System.ArgumentNullException("request");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearing-ids/anonymise-quick-link-participant");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/anonymise-quick-link-participant-with-hearing-ids");
     
             var client_ = _httpClient;
             var disposeClient_ = false;

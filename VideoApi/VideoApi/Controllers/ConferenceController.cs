@@ -548,6 +548,29 @@ namespace VideoApi.Controllers
             _logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
         }
+        
+        /// <summary>
+        /// Anonymise conference with matching hearing ids
+        /// </summary>
+        /// <param name="request">hearing ids of expired conferences</param>
+        /// <returns></returns>
+        [HttpPatch("anonymise-conference-with-hearing-ids")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(AnonymiseConferenceWithHearingIdsRequest request)
+        {
+            try
+            {
+                await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand { HearingIds = request.HearingIds });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "No conferences found with the specified list of hearing ids {hearingids}",
+                    request.HearingIds);
+                return NotFound();
+            }
+            return Ok();
+        }
 
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
@@ -622,29 +645,6 @@ namespace VideoApi.Controllers
                 throw new AudioPlatformFileNotFoundException(e.Message, HttpStatusCode.InternalServerError);
             }
             
-        }
-
-        /// <summary>
-        /// Anonymise conference with matching hearing ids
-        /// </summary>
-        /// <param name="hearingIds">hearing ids of expired conferences</param>
-        /// <returns></returns>
-        [HttpPatch]
-        [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(List<Guid> hearingIds)
-        {
-            try
-            {
-                await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand { HearingIds = hearingIds });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "No conferences found with the specified list of hearing ids {hearingids}",
-                    hearingIds);
-                return NotFound();
-            }
-            return Ok();
         }
 
         public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,

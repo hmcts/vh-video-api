@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 
@@ -17,28 +18,28 @@ namespace VideoApi.UnitTests.Controllers.Conference
         [Test]
         public async Task Returns_Ok_For_Successful_Request()
         {
-            var hearingIds = new List<Guid> {Guid.NewGuid()};
+            var request = new AnonymiseConferenceWithHearingIdsRequest{ HearingIds = new List<Guid> {Guid.NewGuid()}} ;
 
-            var response = await Controller.AnonymiseConferenceWithHearingIds(hearingIds) as OkResult;
+            var response = await Controller.AnonymiseConferenceWithHearingIds(request) as OkResult;
 
             response.StatusCode.Should().Be((int) HttpStatusCode.OK);
             CommandHandlerMock.Verify(
                 commandHandler => commandHandler.Handle(
-                    It.Is<AnonymiseConferenceWithHearingIdsCommand>(command => command.HearingIds == hearingIds)),
+                    It.Is<AnonymiseConferenceWithHearingIdsCommand>(command => command.HearingIds == request.HearingIds)),
                 Times.Once);
         }
         
         [Test]
         public async Task Returns_Not_Found_For_Invalid_HearingIds()
         {
-            var hearingIds = new List<Guid> {Guid.NewGuid()};
-            var exception = new ConferenceNotFoundException(hearingIds);
+            var request = new AnonymiseConferenceWithHearingIdsRequest{ HearingIds = new List<Guid> {Guid.NewGuid()}} ;
+            var exception = new ConferenceNotFoundException(request.HearingIds);
 
             CommandHandlerMock
                 .Setup(commandHandler => commandHandler.Handle(It.IsAny<AnonymiseConferenceWithHearingIdsCommand>()))
                 .ThrowsAsync(exception);
             
-            var response = await Controller.AnonymiseConferenceWithHearingIds(hearingIds) as NotFoundResult;
+            var response = await Controller.AnonymiseConferenceWithHearingIds(request) as NotFoundResult;
             
             response.StatusCode.Should().Be((int) HttpStatusCode.NotFound);
             
