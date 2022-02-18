@@ -48,7 +48,7 @@ namespace VideoApi.DAL.Commands
 
         private Participant AnonymiseParticipant(Participant participant)
         {
-            var randomString = new StringCreator().Get(9).ToLowerInvariant();
+            var randomString = new StringCreator().Get(9).ToUpperInvariant();
 
             participant.Name = randomString;
             participant.DisplayName = $"{randomString} {randomString}";

@@ -234,7 +234,7 @@ namespace VideoApi.Domain
 
         public void AnonymiseCaseName()
         {
-            CaseName = new StringCreator().Get(9).ToLowerInvariant();
+            CaseName = new StringCreator().Get(9).ToUpperInvariant();
         }
 
         public void AnonymiseQuickLinkParticipants()
@@ -247,7 +247,7 @@ namespace VideoApi.Domain
             foreach (var participant in participants)
             {
                 if (participant.Username.Contains(Constants.AnonymisedUsernameSuffix)) continue;
-                var randomString = new StringCreator().Get(9).ToLowerInvariant();
+                var randomString = new StringCreator().Get(9).ToUpperInvariant();
 
                 participant.Username = $"{randomString}{Constants.AnonymisedUsernameSuffix}";
                 participant.Name = $"{randomString} {randomString}";
