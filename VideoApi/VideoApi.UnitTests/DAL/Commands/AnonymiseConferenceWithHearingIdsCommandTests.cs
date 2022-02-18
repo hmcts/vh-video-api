@@ -93,12 +93,5 @@ namespace VideoApi.UnitTests.DAL.Commands
             processedConference.CaseName.Should().Be(caseNameBeforeAnonymisationForConference1);
         }
         
-        [Test]
-        public void Throws_Participant_Not_Found_Exception()
-        {
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() =>
-                _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
-                    { HearingIds = new List<Guid> { Guid.NewGuid() } }));
-        }
     }
 }

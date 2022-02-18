@@ -118,14 +118,6 @@ namespace VideoApi.UnitTests.DAL.Commands
             AssertParticipantFields(processedQuickLinkObserver, quickLinkObserverBeforeAnonymisation);
         }
 
-        [Test]
-        public void Throws_Participant_Not_Found_Exception()
-        {
-            Assert.ThrowsAsync<ConferenceNotFoundException>(() =>
-                _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
-                    { HearingIds = new List<Guid> { Guid.NewGuid() } }));
-        }
-
         private void AssertParticipantFields(ParticipantBase processedParticipant,
             ParticipantBase participantBeforeAnonymisation)
         {

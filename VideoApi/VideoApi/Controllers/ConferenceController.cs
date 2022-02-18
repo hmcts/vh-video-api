@@ -548,7 +548,7 @@ namespace VideoApi.Controllers
             _logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
         }
-        
+
         /// <summary>
         /// Anonymise conference with matching hearing ids
         /// </summary>
@@ -556,19 +556,11 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPatch("anonymise-conference-with-hearing-ids")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(AnonymiseConferenceWithHearingIdsRequest request)
+        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(
+            AnonymiseConferenceWithHearingIdsRequest request)
         {
-            try
-            {
-                await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand { HearingIds = request.HearingIds });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "No conferences found with the specified list of hearing ids {hearingids}",
-                    request.HearingIds);
-                return NotFound();
-            }
+            await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
+                { HearingIds = request.HearingIds });
             return Ok();
         }
 

@@ -146,12 +146,5 @@ namespace VideoApi.UnitTests.DAL.Commands
 
             processedParticipant.Representee.Should().Be(representee);
         }
-        
-        [Test]
-        public void Throws_Participant_Not_Found_Exception()
-        {
-            Assert.ThrowsAsync<ParticipantNotFoundException>(() =>
-                _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand {Username = "fakename@email.net"}));
-        }
     }
 }

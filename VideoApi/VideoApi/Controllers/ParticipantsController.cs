@@ -455,19 +455,9 @@ namespace VideoApi.Controllers
         [HttpPatch("username/{username}/anonymise-participant", Name = "AnonymiseParticipantWithUsername")]
         [OpenApiOperation("AnonymiseParticipantWithUsername")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> AnonymiseParticipantWithUsername(string username)
         {
-            try
-            {
-                await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand { Username = username });
-            }
-            catch (ParticipantNotFoundException ex)
-            {
-                _logger.LogError(ex, "Failed to anonymise participant because {username} does not exist", username);
-                return NotFound();
-            }
-
+            await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand { Username = username });
             return Ok();
         }
 
@@ -480,21 +470,11 @@ namespace VideoApi.Controllers
             Name = "AnonymiseQuickLinkParticipantWithHearingIds")]
         [OpenApiOperation("AnonymiseQuickLinkParticipantWithHearingIds")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> AnonymiseQuickLinkParticipantWithHearingIds(AnonymiseQuickLinkParticipantWithHearingIdsRequest request)
+        public async Task<IActionResult> AnonymiseQuickLinkParticipantWithHearingIds(
+            AnonymiseQuickLinkParticipantWithHearingIdsRequest request)
         {
-            try
-            {
-                await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
-                    { HearingIds = request.HearingIds });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "No conferences found with the specified list of hearing ids {hearingids}",
-                    request.HearingIds);
-                return NotFound();
-            }
-
+            await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
+                { HearingIds = request.HearingIds });
             return Ok();
         }
     }

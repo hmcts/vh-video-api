@@ -32,7 +32,7 @@ namespace VideoApi.DAL.Commands
                 .Distinct()
                 .ToList();
 
-            if (conferences.Count < 1) throw new ConferenceNotFoundException(command.HearingIds);
+            if (!conferences.Any()) return;
 
             foreach (var conference in conferences.Where(conference =>
                          !conference.Participants

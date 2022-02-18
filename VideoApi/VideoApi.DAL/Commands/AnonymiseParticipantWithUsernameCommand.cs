@@ -29,10 +29,7 @@ namespace VideoApi.DAL.Commands
                 .Where(p => p.Username == command.Username)
                 .ToListAsync();
 
-            if (participantsToAnonymise.Count < 1)
-            {
-                throw new ParticipantNotFoundException(command.Username);
-            }
+            if (!participantsToAnonymise.Any()) return;
             
             var processedParticipants = (
                     from participant
