@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
@@ -116,6 +115,26 @@ namespace VideoApi.UnitTests.DAL.Commands
             quickLinkParticipantBeforeAnonymisation.Username.Should().Be(quickLinkParticipantFromContext.Username);
             quickLinkParticipantBeforeAnonymisation.Name.Should().Be(quickLinkParticipantFromContext.Name);
             AssertParticipantFields(processedQuickLinkObserver, quickLinkObserverBeforeAnonymisation);
+        }
+
+        [Test]
+        public async Task Does_Not_Throw_Exception_When_No_Conferences_Are_Found()
+        {
+            var quickLinkParticipantBeforeAnonymisation =
+                DomainModelFactoryForTests.CreateQuickLinkParticipantCopyForAssertion(_quickLinkParticipant);
+
+            await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
+            {
+                HearingIds = new List<Guid>()
+            });
+
+            var quickLinkParticipantFromContext = videoApiDbContext.Conferences.First().GetParticipants()
+                .SingleOrDefault(p => p.Id == _quickLinkParticipant.Id);
+
+            quickLinkParticipantBeforeAnonymisation.DisplayName.Should()
+                .Be(quickLinkParticipantFromContext.DisplayName);
+            quickLinkParticipantBeforeAnonymisation.Username.Should().Be(quickLinkParticipantFromContext.Username);
+            quickLinkParticipantBeforeAnonymisation.Name.Should().Be(quickLinkParticipantFromContext.Name);
         }
 
         private void AssertParticipantFields(ParticipantBase processedParticipant,

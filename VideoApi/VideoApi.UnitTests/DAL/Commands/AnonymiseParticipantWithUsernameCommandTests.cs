@@ -3,9 +3,7 @@ using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using VideoApi.DAL;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -145,6 +143,25 @@ namespace VideoApi.UnitTests.DAL.Commands
                 await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
 
             processedParticipant.Representee.Should().Be(representee);
+        }
+
+        [Test]
+        public async Task Does_Not_Throw_Exception_When_No_Participants_Are_Found()
+        {
+            await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
+                { Username = "usernotincontext" });
+
+
+            var processedParticipant =
+                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
+
+            processedParticipant.Name.Should().Be(_participantToAnonymise.Name);
+            processedParticipant.DisplayName.Should().Be(_participantToAnonymise.DisplayName);
+            processedParticipant.FirstName.Should().Be(_participantToAnonymise.FirstName);
+            processedParticipant.LastName.Should().Be(_participantToAnonymise.LastName);
+            processedParticipant.ContactEmail.Should().Be(_participantToAnonymise.ContactEmail);
+            processedParticipant.ContactTelephone.Should().Be(_participantToAnonymise.ContactTelephone);
+            processedParticipant.Username.Should().Be(_participantToAnonymise.Username);
         }
     }
 }

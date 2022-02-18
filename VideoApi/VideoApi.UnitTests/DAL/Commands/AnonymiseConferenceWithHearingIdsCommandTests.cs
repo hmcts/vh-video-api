@@ -4,9 +4,7 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using VideoApi.DAL;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -92,6 +90,22 @@ namespace VideoApi.UnitTests.DAL.Commands
 
             processedConference.CaseName.Should().Be(caseNameBeforeAnonymisationForConference1);
         }
-        
+
+
+        [Test]
+        public async Task Does_Not_Throw_Exception_When_No_Conferences_Are_Found()
+        {
+            var caseNameBeforeAnonymisationForConference1 = _conference1.CaseName;
+
+            await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
+            {
+                HearingIds = new List<Guid>()
+            });
+
+            var processedConference = videoApiDbContext.Conferences
+                .First(c => c.Id == _conference1.Id);
+
+            processedConference.CaseName.Should().Be(caseNameBeforeAnonymisationForConference1);
+        }
     }
 }
