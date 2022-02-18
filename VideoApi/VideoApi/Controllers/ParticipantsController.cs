@@ -65,19 +65,20 @@ namespace VideoApi.Controllers
                         Representee = x.Representee
                     })
                 .ToList();
-            
+
             var linkedParticipants = request.Participants
                 .SelectMany(x => x.LinkedParticipants)
                 .Select(x => new LinkedParticipantDto()
                 {
-                    ParticipantRefId = x.ParticipantRefId, 
-                    LinkedRefId = x.LinkedRefId, 
+                    ParticipantRefId = x.ParticipantRefId,
+                    LinkedRefId = x.LinkedRefId,
                     Type = x.Type.MapToDomainEnum()
                 }).ToList();
 
             try
             {
-                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId, participants.Select(x => x as ParticipantBase).ToList(), linkedParticipants);
+                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId,
+                    participants.Select(x => x as ParticipantBase).ToList(), linkedParticipants);
 
                 await _commandHandler.Handle(addParticipantCommand);
 
@@ -99,17 +100,18 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPatch("{conferenceId}/UpdateConferenceParticipants", Name = "UpdateConferenceParticipants")]
         [OpenApiOperation("UpdateConferenceParticipants")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateConferenceParticipantsAsync(Guid conferenceId, UpdateConferenceParticipantsRequest request)
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateConferenceParticipantsAsync(Guid conferenceId,
+            UpdateConferenceParticipantsRequest request)
         {
             _logger.LogDebug("UpdateConferenceParticipants");
             try
             {
                 var existingParticipants = request.ExistingParticipants.Select(x =>
                         new Participant(x.ParticipantRefId, x.ContactEmail, x.ContactTelephone, x.DisplayName,
-                        x.FirstName, x.LastName, x.Fullname, x.Username)
+                            x.FirstName, x.LastName, x.Fullname, x.Username)
                         {
                             Representee = x.Representee
                         })
@@ -132,7 +134,9 @@ namespace VideoApi.Controllers
                         Type = x.Type.MapToDomainEnum()
                     }).ToList();
 
-                var updateHearingParticipantsCommand = new UpdateConferenceParticipantsCommand(conferenceId, existingParticipants.Select(x => x as ParticipantBase).ToList(), newParticipants.Select(x => x as ParticipantBase).ToList(),
+                var updateHearingParticipantsCommand = new UpdateConferenceParticipantsCommand(conferenceId,
+                    existingParticipants.Select(x => x as ParticipantBase).ToList(),
+                    newParticipants.Select(x => x as ParticipantBase).ToList(),
                     request.RemovedParticipants, linkedParticipants);
 
                 await _commandHandler.Handle(updateHearingParticipantsCommand);
@@ -160,21 +164,22 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPatch("{conferenceId}/participants/{participantId}", Name = "UpdateParticipantDetails")]
         [OpenApiOperation("UpdateParticipantDetails")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId,
+            UpdateParticipantRequest request)
         {
             _logger.LogDebug("UpdateParticipantDetails");
             try
             {
                 var linkedParticipants = request.LinkedParticipants.Select(x => new LinkedParticipantDto()
-                    {
-                        ParticipantRefId = x.ParticipantRefId, 
-                        LinkedRefId = x.LinkedRefId, 
-                        Type = x.Type.MapToDomainEnum()
-                    }).ToList();
-                
+                {
+                    ParticipantRefId = x.ParticipantRefId,
+                    LinkedRefId = x.LinkedRefId,
+                    Type = x.Type.MapToDomainEnum()
+                }).ToList();
+
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
                     request.Fullname, request.FirstName, request.LastName, request.DisplayName, request.Representee,
                     request.ContactEmail, request.ContactTelephone, linkedParticipants);
@@ -182,6 +187,7 @@ namespace VideoApi.Controllers
                 {
                     updateParticipantDetailsCommand.Username = request.Username;
                 }
+
                 await _commandHandler.Handle(updateParticipantDetailsCommand);
 
                 return NoContent();
@@ -229,7 +235,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var participants = new List<ParticipantBase> {participant};
+            var participants = new List<ParticipantBase> { participant };
             var command = new RemoveParticipantsFromConferenceCommand(conferenceId, participants);
             await _commandHandler.Handle(command);
             return NoContent();
@@ -248,23 +254,24 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetTestCallResultForParticipantAsync(Guid conferenceId, Guid participantId)
         {
             _logger.LogDebug("GetTestCallResultForParticipant");
-            
+
             var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
-            
+
             if (testCallResult == null)
             {
                 _logger.LogWarning("Unable to find test call result");
                 return NotFound();
             }
 
-            var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed, testCallResult.Score);
-            
+            var command = new UpdateSelfTestCallResultCommand(conferenceId, participantId, testCallResult.Passed,
+                testCallResult.Score);
+
             await _commandHandler.Handle(command);
-            
+
             _logger.LogDebug("Saving test call result");
-            
+
             var response = TaskCallResultResponseMapper.MapTaskToResponse(testCallResult);
-            
+
             return Ok(response);
         }
 
@@ -275,8 +282,8 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpGet("independentselftestresult")]
         [OpenApiOperation("GetIndependentTestCallResult")]
-        [ProducesResponseType(typeof(TestCallScoreResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(TestCallScoreResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetIndependentTestCallResultAsync(Guid participantId)
         {
             _logger.LogDebug("GetIndependentTestCallResult");
@@ -286,6 +293,7 @@ namespace VideoApi.Controllers
                 _logger.LogWarning("Unable to find test call result");
                 return NotFound();
             }
+
             var response = TaskCallResultResponseMapper.MapTaskToResponse(testCallResult);
             return Ok(response);
         }
@@ -305,11 +313,12 @@ namespace VideoApi.Controllers
             _logger.LogDebug("GetHeartbeatDataForParticipantAsync");
 
             var query = new GetHeartbeatsFromTimePointQuery(conferenceId, participantId, TimeSpan.FromMinutes(15));
-            
+
             var heartbeats = await _queryHandler.Handle<GetHeartbeatsFromTimePointQuery, IList<Heartbeat>>(query);
-            
-            var responses = HeartbeatToParticipantHeartbeatResponseMapper.MapHeartbeatToParticipantHeartbeatResponse(heartbeats);
-            
+
+            var responses =
+                HeartbeatToParticipantHeartbeatResponseMapper.MapHeartbeatToParticipantHeartbeatResponse(heartbeats);
+
             return Ok(responses);
         }
 
@@ -325,7 +334,8 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SaveHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId, AddHeartbeatRequest request)
+        public async Task<IActionResult> SaveHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId,
+            AddHeartbeatRequest request)
         {
             _logger.LogDebug("SaveHeartbeatDataForParticipantAsync");
 
@@ -356,7 +366,7 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpGet("participants/Judge/firstname")]
         [OpenApiOperation("GetDistinctJudgeNames")]
-        [ProducesResponseType(typeof(JudgeNameListResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JudgeNameListResponse), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetDistinctJudgeNamesAsync()
         {
             _logger.LogDebug("GetDistinctJudgeNames");
@@ -372,8 +382,8 @@ namespace VideoApi.Controllers
         /// <returns>The list of participants</returns>
         [HttpGet("{conferenceId}/participants")]
         [OpenApiOperation("GetParticipantsByConferenceId")]
-        [ProducesResponseType(typeof(List<ParticipantSummaryResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(List<ParticipantSummaryResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetParticipantsByConferenceId(Guid conferenceId)
         {
             _logger.LogDebug("GetParticipantsByConferenceId");
@@ -395,7 +405,7 @@ namespace VideoApi.Controllers
             }).ToList();
             return Ok(participants);
         }
-        
+
         /// <summary>
         /// Add staff member to a conference
         /// </summary>
@@ -404,19 +414,21 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPut("{conferenceId}/staffMember")]
         [OpenApiOperation("AddStaffMemberToConference")]
-        [ProducesResponseType(typeof(AddStaffMemberResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(AddStaffMemberResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddStaffMemberToConferenceAsync(Guid conferenceId,
             AddStaffMemberRequest request)
         {
             _logger.LogDebug("AddStaffMemberToConference");
             var participant = new Participant(request.Name.Trim(), request.FirstName.Trim(), request.LastName.Trim(),
-                request.DisplayName.Trim(), request.Username.ToLowerInvariant().Trim(), request.UserRole.MapToDomainEnum(),
+                request.DisplayName.Trim(), request.Username.ToLowerInvariant().Trim(),
+                request.UserRole.MapToDomainEnum(),
                 request.HearingRole, request.ContactEmail);
             try
             {
-                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId,new List<ParticipantBase>(){participant},new List<LinkedParticipantDto>());
+                var addParticipantCommand = new AddParticipantsToConferenceCommand(conferenceId,
+                    new List<ParticipantBase>() { participant }, new List<LinkedParticipantDto>());
 
                 await _commandHandler.Handle(addParticipantCommand);
 
@@ -425,7 +437,7 @@ namespace VideoApi.Controllers
                     ConferenceId = conferenceId,
                     ParticipantDetails = ParticipantToDetailsResponseMapper.MapParticipantToResponse(participant)
                 };
-                
+
                 return Ok(response);
             }
             catch (ConferenceNotFoundException ex)
@@ -433,6 +445,37 @@ namespace VideoApi.Controllers
                 _logger.LogError(ex, "Unable to find conference");
                 return NotFound();
             }
+        }
+
+        /// <summary>
+        /// Anonymise a participant with specified username
+        /// </summary>
+        /// <param name="username">username of participant</param>
+        /// <returns></returns>
+        [HttpPatch("username/{username}/anonymise-participant", Name = "AnonymiseParticipantWithUsername")]
+        [OpenApiOperation("AnonymiseParticipantWithUsername")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        public async Task<IActionResult> AnonymiseParticipantWithUsername(string username)
+        {
+            await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand { Username = username });
+            return Ok();
+        }
+
+        /// <summary>
+        /// Anonymise a participant with associated expired conference
+        /// </summary>
+        /// <param name="request">hearing ids of expired conferences</param>
+        /// <returns></returns>
+        [HttpPatch("anonymise-quick-link-participant-with-hearing-ids",
+            Name = "AnonymiseQuickLinkParticipantWithHearingIds")]
+        [OpenApiOperation("AnonymiseQuickLinkParticipantWithHearingIds")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        public async Task<IActionResult> AnonymiseQuickLinkParticipantWithHearingIds(
+            AnonymiseQuickLinkParticipantWithHearingIdsRequest request)
+        {
+            await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
+                { HearingIds = request.HearingIds });
+            return Ok();
         }
     }
 }

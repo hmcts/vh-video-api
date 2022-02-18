@@ -549,6 +549,22 @@ namespace VideoApi.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Anonymise conference with matching hearing ids
+        /// </summary>
+        /// <param name="request">hearing ids of expired conferences</param>
+        /// <returns></returns>
+        [HttpPatch("anonymise-conference-with-hearing-ids")]
+        [OpenApiOperation("AnonymiseConferenceWithHearingIds")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(
+            AnonymiseConferenceWithHearingIdsRequest request)
+        {
+            await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
+                { HearingIds = request.HearingIds });
+            return Ok();
+        }
+
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
             var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);

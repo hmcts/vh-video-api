@@ -1598,6 +1598,11 @@
           "Selenium.WebDriver": "3.141.0"
         }
       },
+      "RandomStringCreator": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "GGpyCGm7W27MlBXp+HNeslnOsNi80Z2isoCt/yY7aKoyjS2Vl6AQ6kq2UK6NgeVpEQZeXaOIEf2pNbiXeARYdg=="
+      },
       "RestSharp": {
         "type": "Transitive",
         "resolved": "106.11.7",
@@ -3164,6 +3169,7 @@
           "Microsoft.Extensions.Configuration.Json": "5.0.0",
           "Microsoft.Extensions.Configuration.UserSecrets": "5.0.0",
           "Newtonsoft.Json": "12.0.3",
+          "RandomStringCreator": "2.0.0",
           "VideoApi.Common": "1.0.0",
           "VideoApi.Domain": "1.0.0",
           "VideoApi.Services": "1.0.0"
@@ -3173,6 +3179,7 @@
         "type": "Project",
         "dependencies": {
           "Enums.NET": "4.0.0",
+          "RandomStringCreator": "2.0.0",
           "System.ComponentModel.Annotations": "4.7.0"
         }
       },

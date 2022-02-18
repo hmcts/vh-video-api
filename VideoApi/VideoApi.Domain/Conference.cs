@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RandomStringCreator;
 using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -228,6 +229,29 @@ namespace VideoApi.Domain
 
                 ((Participant)primaryParticipant).AddLink(secondaryParticipant.Id, linkedParticipantType);
                 ((Participant)secondaryParticipant).AddLink(primaryParticipant.Id, linkedParticipantType);
+            }
+        }
+
+        public void AnonymiseCaseName()
+        {
+            CaseName = new StringCreator().Get(9).ToUpperInvariant();
+        }
+
+        public void AnonymiseQuickLinkParticipants()
+        {
+            var participants = Participants
+                .Where(p => p.ConferenceId == Id &&
+                            p is QuickLinkParticipant)
+                .ToList();
+
+            foreach (var participant in participants)
+            {
+                if (participant.Username.Contains(Constants.AnonymisedUsernameSuffix)) continue;
+                var randomString = new StringCreator().Get(9).ToUpperInvariant();
+
+                participant.Username = $"{randomString}{Constants.AnonymisedUsernameSuffix}";
+                participant.Name = $"{randomString} {randomString}";
+                participant.DisplayName = randomString;
             }
         }
     }

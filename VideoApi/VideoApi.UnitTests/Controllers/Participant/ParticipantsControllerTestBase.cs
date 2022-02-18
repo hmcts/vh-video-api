@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         protected Mock<IQueryHandler> MockQueryHandler;
         protected Mock<ICommandHandler> MockCommandHandler;
         protected Mock<IVideoPlatformService> MockVideoPlatformService;
-        private Mock<ILogger<ParticipantsController>> _mockLogger;
+        protected Mock<ILogger<ParticipantsController>> _mockLogger;
         protected VideoApi.Domain.Conference TestConference;
 
         [SetUp]
