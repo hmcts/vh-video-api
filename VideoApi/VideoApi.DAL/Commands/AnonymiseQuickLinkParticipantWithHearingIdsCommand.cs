@@ -42,7 +42,7 @@ namespace VideoApi.DAL.Commands
 
             foreach (var conference in conferences)
             {
-                conference.AnonymiseQuickLinkParticipants(conference.Id);
+                conference.AnonymiseQuickLinkParticipants();
             }
 
             await _context.SaveChangesAsync();

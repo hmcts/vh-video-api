@@ -237,10 +237,10 @@ namespace VideoApi.Domain
             CaseName = new StringCreator().Get(9).ToLowerInvariant();
         }
 
-        public void AnonymiseQuickLinkParticipants(Guid conferenceIds)
+        public void AnonymiseQuickLinkParticipants()
         {
             var participants = Participants
-                .Where(p => p.ConferenceId == conferenceIds &&
+                .Where(p => p.ConferenceId == Id &&
                             p is QuickLinkParticipant)
                 .ToList();
 
