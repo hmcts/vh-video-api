@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -11,7 +10,7 @@ namespace VideoApi.DAL.Commands
 {
     public class AnonymiseConferenceWithHearingIdsCommand : ICommand
     {
-        public List<Guid> HearingIds;
+        public List<Guid> HearingIds { get; set; }
     }
 
     public class

@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using RandomStringCreator;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
-using VideoApi.Domain;
-using VideoApi.Domain.Enums;
-using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
     public class AnonymiseQuickLinkParticipantWithHearingIdsCommand : ICommand
     {
-        public List<Guid> HearingIds;
+        public List<Guid> HearingIds { get; set; }
     }
 
     public class
@@ -37,10 +33,7 @@ namespace VideoApi.DAL.Commands
 
             if (!conferences.Any()) return;
 
-            foreach (var conference in conferences)
-            {
-                conference.AnonymiseQuickLinkParticipants();
-            }
+            foreach (var conference in conferences) conference.AnonymiseQuickLinkParticipants();
 
             await _context.SaveChangesAsync();
         }

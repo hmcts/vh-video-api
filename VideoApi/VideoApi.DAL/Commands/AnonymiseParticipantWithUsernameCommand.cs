@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using RandomStringCreator;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
 
@@ -30,7 +29,7 @@ namespace VideoApi.DAL.Commands
                 .ToListAsync();
 
             if (!participantsToAnonymise.Any()) return;
-            
+
             var processedParticipants = (
                     from participant
                         in participantsToAnonymise
