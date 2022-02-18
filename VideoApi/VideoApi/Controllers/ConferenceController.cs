@@ -555,6 +555,7 @@ namespace VideoApi.Controllers
         /// <param name="request">hearing ids of expired conferences</param>
         /// <returns></returns>
         [HttpPatch("anonymise-conference-with-hearing-ids")]
+        [OpenApiOperation("AnonymiseConferenceWithHearingIds")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         public async Task<IActionResult> AnonymiseConferenceWithHearingIds(
             AnonymiseConferenceWithHearingIdsRequest request)
