@@ -16,7 +16,6 @@ namespace VideoApi.UnitTests.DAL.Commands
         private Conference _conference;
         private Guid _conferenceIdForTest;
         private List<Conference> _conferences;
-        private List<Participant> _participants;
         private ParticipantBase _quickLinkObserver, _quickLinkParticipant, _individualParticipant;
 
         [SetUp]
