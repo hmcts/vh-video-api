@@ -334,13 +334,13 @@ namespace VideoApi.Client
         /// <summary>Anonymise conference with matching hearing ids</summary>
         /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request);
+        System.Threading.Tasks.Task AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Anonymise conference with matching hearing ids</summary>
         /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
     
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> ReconcileAudioFilesInStorageAsync(string fileNamePrefix, int? filesCount);
@@ -3272,16 +3272,16 @@ namespace VideoApi.Client
         /// <summary>Anonymise conference with matching hearing ids</summary>
         /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request)
+        public System.Threading.Tasks.Task AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request)
         {
-            return Conference_AnonymiseConferenceWithHearingIdsAsync(request, System.Threading.CancellationToken.None);
+            return AnonymiseConferenceWithHearingIdsAsync(request, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Anonymise conference with matching hearing ids</summary>
         /// <param name="request">hearing ids of expired conferences</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task Conference_AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
