@@ -15,7 +15,11 @@ namespace VideoApi.Extensions
             HearingVenueNames.Glasgow,
             HearingVenueNames.HamiltonBrandonGate,
             HearingVenueNames.Inverness,
-            HearingVenueNames.StirlingWallaceHouse
+            HearingVenueNames.StirlingWallaceHouse,
+            HearingVenueNames.EdinburghEmploymentAppealTribunal,
+            HearingVenueNames.InvernessJusticeCentre,
+            HearingVenueNames.EdinburghSocialSecurityAndChildSupportTribunal,
+            HearingVenueNames.EdinburghUpperTribunal,
         };
 
         public static bool IsHearingVenueInScotland(this Conference conference)
