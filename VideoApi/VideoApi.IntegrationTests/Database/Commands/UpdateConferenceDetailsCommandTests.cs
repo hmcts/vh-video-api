@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -54,6 +55,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             seededConference.AudioRecordingRequired.Should().BeFalse();
             conference.AudioRecordingRequired.Should().BeTrue();
+            seededConference.CreatedDateTime.Should().Be(conference.CreatedDateTime);
+            conference.UpdatedAt.Should().BeAfter(conference.CreatedDateTime.Value);
         }
 
         [TearDown]

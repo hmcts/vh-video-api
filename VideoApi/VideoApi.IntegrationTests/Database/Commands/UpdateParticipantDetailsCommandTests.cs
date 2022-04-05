@@ -79,6 +79,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 updatedParticipantCasted.ContactEmail.Should().Be("new@hmcts.net");
                 updatedParticipantCasted.ContactTelephone.Should().Be("0123456789");
             }
+
+            updatedParticipant.UpdatedAt.Should().BeAfter(updatedParticipant.CreatedAt.Value);
         }
         
         [Test]

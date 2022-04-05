@@ -32,6 +32,7 @@ namespace VideoApi.Domain
             AudioRecordingRequired = audioRecordingRequired;
             IngestUrl = ingestUrl;
             CreatedDateTime = DateTime.UtcNow;
+            UpdatedAt = CreatedDateTime;
         }
 
         public Guid HearingRefId { get; private set; }

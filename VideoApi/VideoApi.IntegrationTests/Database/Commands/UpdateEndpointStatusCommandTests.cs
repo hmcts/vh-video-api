@@ -83,6 +83,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.Id == endpointId);
             updatedEndpoint.State.Should().Be(status);
             updatedEndpoint.GetCurrentRoom().Should().Be(room.ToString());
+            updatedEndpoint.UpdatedAt.Should().BeAfter(updatedEndpoint.CreatedAt.Value);
         }
     } 
     public class UpdateEndpointStatusCommandTests : DatabaseTestsBase

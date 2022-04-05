@@ -72,6 +72,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             ep.Id.Should().NotBeEmpty();
             ep.DefenceAdvocate.Should().Be(defenceAdvocate);
             ep.State.Should().Be(EndpointState.NotYetJoined);
+            ep.CreatedAt.Should().NotBeNull();
+            ep.UpdatedAt.Should().NotBeNull();
+            ep.CreatedAt.Should().Be(ep.UpdatedAt);
         }
     }
 }

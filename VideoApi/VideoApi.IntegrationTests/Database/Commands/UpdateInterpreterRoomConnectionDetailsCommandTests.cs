@@ -55,6 +55,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedRoom.IngestUrl.Should().Be(ingestUrl);
             updatedRoom.PexipNode.Should().Be(node);
             updatedRoom.ParticipantUri.Should().Be(uri);
+            room.CreatedAt.Should().Be(updatedRoom.CreatedAt.Value);
+            updatedRoom.UpdatedAt.Should().BeAfter(updatedRoom.CreatedAt.Value);
         }
 
         [TearDown]

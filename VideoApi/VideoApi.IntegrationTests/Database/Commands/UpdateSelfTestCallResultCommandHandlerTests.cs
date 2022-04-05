@@ -78,6 +78,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var resultParticipant = resultConference.GetParticipants().Single(x => x.Id == participantId);
             resultParticipant.TestCallResult.Passed.Should().BeTrue();
             resultParticipant.TestCallResult.Score.Should().Be(TestScore.Good);
+
+            resultParticipant.TestCallResult.UpdatedAt.Should().Be(resultParticipant.TestCallResult.CreatedAt.Value);
         }
     }
 }
