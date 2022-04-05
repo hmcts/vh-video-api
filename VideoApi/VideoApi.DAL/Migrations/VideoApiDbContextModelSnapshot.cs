@@ -573,16 +573,13 @@ namespace VideoApi.DAL.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("Passed")
                         .HasColumnType("bit");
 
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime?>("Timespan")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");

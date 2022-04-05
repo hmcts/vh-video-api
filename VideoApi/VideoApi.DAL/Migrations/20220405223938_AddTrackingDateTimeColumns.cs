@@ -8,12 +8,7 @@ namespace VideoApi.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<DateTime>(
-                name: "CreatedAt",
-                table: "TestCallResult",
-                nullable: true);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "UpdatedAt",
+                name: "Timespan",
                 table: "TestCallResult",
                 nullable: true);
 
@@ -102,11 +97,7 @@ namespace VideoApi.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CreatedAt",
-                table: "TestCallResult");
-
-            migrationBuilder.DropColumn(
-                name: "UpdatedAt",
+                name: "Timespan",
                 table: "TestCallResult");
 
             migrationBuilder.DropColumn(

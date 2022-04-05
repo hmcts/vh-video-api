@@ -71,7 +71,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.GetParticipantRoom().Should().NotBeNull();
             updatedParticipant.GetParticipantRoom().Id.Should().Be(interpreterRoom.Id);
             interpreterRoom.CreatedAt.Should().Be(updatedRoom.CreatedAt.Value);
-            updatedRoom.UpdatedAt.Should().BeAfter(updatedRoom.CreatedAt.Value);
+            updatedRoom.UpdatedAt.Should().Be(updatedRoom.CreatedAt.Value);
         }
         
         [Test]
