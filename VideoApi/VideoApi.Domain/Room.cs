@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Domain
 {
-    public abstract class Room : Entity<long>
+    public abstract class Room : TrackableEntity<long>
     { 
         public Guid ConferenceId { get; private set; }
         public string Label { get; protected set; }

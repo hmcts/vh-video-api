@@ -104,6 +104,25 @@
           "System.Text.Encoding.CodePages": "4.7.0"
         }
       },
+      "Microsoft.EntityFrameworkCore.Design": {
+        "type": "Direct",
+        "requested": "[3.1.9, )",
+        "resolved": "3.1.9",
+        "contentHash": "2zgP7BWcw5nqGQiT4bEtiI6ras+4pvKg5D+tA3AYvjEifzzaWvmRTb3B9nRHpIYJAhPtmWNBVnVXLbu3fS1OYA==",
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Microsoft.EntityFrameworkCore.Relational": "3.1.9"
+        }
+      },
+      "Microsoft.EntityFrameworkCore.Tools": {
+        "type": "Direct",
+        "requested": "[3.1.9, )",
+        "resolved": "3.1.9",
+        "contentHash": "mSgwjp0h5iqW5V49SVijR5O+kNpI1nitcbN12n9FYx/Ga6oCEFwXR/llBDesD6ASHw3Mx16vodJYJ7CEBx5rig==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Design": "3.1.9"
+        }
+      },
       "Microsoft.Extensions.DependencyModel": {
         "type": "Direct",
         "requested": "[3.1.6, )",

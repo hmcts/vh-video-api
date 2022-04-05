@@ -1,9 +1,8 @@
 using System;
-using VideoApi.Domain.Ddd;
 
 namespace VideoApi.Domain
 {
-    public class RoomParticipant : Entity<long>
+    public class RoomParticipant : TrackableEntity<long>
     {
         public RoomParticipant(Guid participantId)
         {

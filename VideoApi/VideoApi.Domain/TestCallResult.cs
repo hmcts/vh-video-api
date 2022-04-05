@@ -1,9 +1,8 @@
-using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Domain
 {
-    public class TestCallResult : Entity<long>
+    public class TestCallResult : TrackableEntity<long>
     {
         public TestScore Score { get; private set; }
         public bool Passed { get; private set; }

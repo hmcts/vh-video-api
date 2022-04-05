@@ -52,6 +52,7 @@ namespace VideoApi.Domain
         public bool AudioRecordingRequired { get; set; }
         public string IngestUrl { get; set; }
         public DateTime? CreatedDateTime { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
 
         private readonly List<Room> _rooms;
         public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
