@@ -39,6 +39,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.Endpoints)
                 .Excluding(x => x.CreatedDateTime)
                 .Excluding(x => x.Rooms)
+                .Excluding(x => x.UpdatedAt)
              );
 
             response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);
@@ -57,6 +58,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.State)
                 .Excluding(x => x.LinkedParticipants)
                 .Excluding(x => x.RoomParticipants)
+                .Excluding(x => x.UpdatedAt)
+                .Excluding(x => x.CreatedAt)
             );
 
             var civilianRoom = response.CivilianRooms.First();

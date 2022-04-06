@@ -79,7 +79,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             resultParticipant.TestCallResult.Passed.Should().BeTrue();
             resultParticipant.TestCallResult.Score.Should().Be(TestScore.Good);
 
-            resultParticipant.TestCallResult.Timespan.Should().BeBefore(DateTime.UtcNow);
+            resultParticipant.TestCallResult.Timestamp.Should().BeBefore(DateTime.UtcNow);
         }
     }
 }

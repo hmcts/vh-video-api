@@ -8,13 +8,13 @@ namespace VideoApi.Domain
     {
         public TestScore Score { get; private set; }
         public bool Passed { get; private set; }
-        public DateTime? Timespan { get; private set; }
+        public DateTime? Timestamp { get; private set; }
         
         public TestCallResult(bool passed, TestScore score)
         {
             Passed = passed;
             Score = score;
-            Timespan = DateTime.UtcNow;
+            Timestamp = DateTime.UtcNow;
         }
     }
 }
