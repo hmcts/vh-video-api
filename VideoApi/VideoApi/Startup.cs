@@ -114,7 +114,6 @@ namespace VideoApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.RunLatestMigrations();
 
             app.UseOpenApi();
             app.UseSwaggerUi3(c =>
