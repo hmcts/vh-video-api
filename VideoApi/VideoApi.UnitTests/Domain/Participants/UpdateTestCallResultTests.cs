@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Domain.Participants
 
             var testCallResult = new TestCallResult(true, TestScore.Good);
             participant.UpdateTestCallResult(true, TestScore.Good);
-            participant.TestCallResult.Should().BeEquivalentTo(testCallResult);
+            participant.TestCallResult.Should().BeEquivalentTo(testCallResult, option => option.Excluding(x => x.Timestamp));
         }
     }
 }

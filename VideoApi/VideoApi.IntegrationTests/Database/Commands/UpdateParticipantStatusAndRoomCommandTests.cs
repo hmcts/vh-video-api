@@ -75,6 +75,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             afterState.ParticipantState.Should().Be(state);
             updatedParticipant.CurrentRoom.Should().BeNull();
             updatedParticipant.CurrentConsultationRoom.Label.Should().Be(staticRoomlabel);
+            updatedParticipant.UpdatedAt.Should().BeAfter(updatedParticipant.CreatedAt.Value);
+            updatedParticipant.CurrentConsultationRoom.UpdatedAt.Should().Be(updatedParticipant.CurrentConsultationRoom.CreatedAt.Value);
         }
 
 

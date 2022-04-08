@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
-    public abstract class ParticipantBase : Entity<Guid>
+    public abstract class ParticipantBase : TrackableEntity<Guid>
     {
 
         public Guid ConferenceId { get; private set; }

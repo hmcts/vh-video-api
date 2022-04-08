@@ -70,6 +70,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedParticipant = updatedConference.Participants.First(x => x.Id == participant.Id);
             updatedParticipant.GetParticipantRoom().Should().NotBeNull();
             updatedParticipant.GetParticipantRoom().Id.Should().Be(interpreterRoom.Id);
+            interpreterRoom.CreatedAt.Should().Be(updatedRoom.CreatedAt.Value);
+            updatedRoom.UpdatedAt.Should().Be(updatedRoom.CreatedAt.Value);
         }
         
         [Test]

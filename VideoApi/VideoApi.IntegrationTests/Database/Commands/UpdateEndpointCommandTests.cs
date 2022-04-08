@@ -81,6 +81,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
             updatedEndpoint.DisplayName.Should().Be(newDisplayName);
             updatedEndpoint.DefenceAdvocate.Should().Be(ep.DefenceAdvocate);
+            
+            ep.CreatedAt.Should().Be(updatedEndpoint.CreatedAt);
+            updatedEndpoint.UpdatedAt.Should().BeAfter(updatedEndpoint.CreatedAt.Value);
         }
 
         [Test]

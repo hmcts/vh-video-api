@@ -54,6 +54,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             seededConference.AudioRecordingRequired.Should().BeFalse();
             conference.AudioRecordingRequired.Should().BeTrue();
+            seededConference.CreatedDateTime.Should().Be(conference.CreatedDateTime);
+            conference.UpdatedAt.Should().BeAfter(conference.CreatedDateTime.Value);
         }
 
         [TearDown]

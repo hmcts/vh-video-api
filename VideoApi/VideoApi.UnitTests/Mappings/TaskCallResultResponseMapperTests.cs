@@ -21,9 +21,9 @@ namespace VideoApi.UnitTests.Mappings
             var responseOkay = TaskCallResultResponseMapper.MapTaskToResponse(testCallResultOkay);
             var responseBad = TaskCallResultResponseMapper.MapTaskToResponse(testCallResultBad);
 
-            responseGood.Should().BeEquivalentTo(testCallResultGood, options => options.Excluding(x => x.Id));
-            responseOkay.Should().BeEquivalentTo(testCallResultOkay, options => options.Excluding(x => x.Id));
-            responseBad.Should().BeEquivalentTo(testCallResultBad, options => options.Excluding(x => x.Id));
+            responseGood.Should().BeEquivalentTo(testCallResultGood, options => options.Excluding(x => x.Id).Excluding(x => x.Timestamp));
+            responseOkay.Should().BeEquivalentTo(testCallResultOkay, options => options.Excluding(x => x.Id).Excluding(x => x.Timestamp));
+            responseBad.Should().BeEquivalentTo(testCallResultBad, options => options.Excluding(x => x.Id).Excluding(x => x.Timestamp));
         }
     }
 }

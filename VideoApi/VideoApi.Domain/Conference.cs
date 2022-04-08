@@ -32,6 +32,7 @@ namespace VideoApi.Domain
             AudioRecordingRequired = audioRecordingRequired;
             IngestUrl = ingestUrl;
             CreatedDateTime = DateTime.UtcNow;
+            UpdatedAt = CreatedDateTime;
         }
 
         public Guid HearingRefId { get; private set; }
@@ -52,6 +53,7 @@ namespace VideoApi.Domain
         public bool AudioRecordingRequired { get; set; }
         public string IngestUrl { get; set; }
         public DateTime? CreatedDateTime { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
 
         private readonly List<Room> _rooms;
         public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
