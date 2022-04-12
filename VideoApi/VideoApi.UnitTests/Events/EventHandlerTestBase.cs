@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Events
                 .Build();
 
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByIdForEventQuery, Conference>(It.IsAny<GetConferenceByIdForEventQuery>()))
                 .ReturnsAsync(TestConference);
         }
     }
