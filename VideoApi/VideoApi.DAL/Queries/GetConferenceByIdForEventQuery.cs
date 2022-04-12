@@ -28,7 +28,7 @@ namespace VideoApi.DAL.Queries
         public Task<Conference> Handle(GetConferenceByIdForEventQuery query)
         {
             return _context.Conferences
-                .Include(x => x.Participants)
+                .Include(x => x.Participants).ThenInclude(x => x.CurrentConsultationRoom)
                 .Include(x => x.Endpoints)
                 .Include(x => x.Rooms)
                 .AsNoTracking()
