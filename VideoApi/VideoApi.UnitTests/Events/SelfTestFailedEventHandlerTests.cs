@@ -73,7 +73,7 @@ namespace VideoApi.UnitTests.Events
         public void Should_throw_exception_when_conference_does_not_exist()
         {
             QueryHandlerMock
-                .Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .Setup(x => x.Handle<GetConferenceByIdForEventQuery, Conference>(It.IsAny<GetConferenceByIdForEventQuery>()))
                 .ReturnsAsync((Conference) null);
 
             var conference = TestConference;
