@@ -1,10 +1,9 @@
 using System;
-using VideoApi.Domain.Ddd;
 using VideoApi.Domain.Enums;
 
 namespace VideoApi.Domain
 {
-    public sealed class LinkedParticipant : Entity<Guid>
+    public sealed class LinkedParticipant : TrackableEntity<Guid>
     {
         public Guid ParticipantId { get; private set; }
         public ParticipantBase Participant { get; private set; }

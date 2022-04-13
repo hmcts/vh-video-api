@@ -1,9 +1,8 @@
-﻿using System;
-using VideoApi.Domain.Ddd;
+using System;
 
 namespace VideoApi.Domain
 {
-    public class RoomEndpoint : Entity<long>
+    public class RoomEndpoint : TrackableEntity<long>
     {
         public RoomEndpoint(Guid endpointId)
         {

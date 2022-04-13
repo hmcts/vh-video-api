@@ -32,7 +32,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new CreateConsultationRoomCommand(_newConferenceId, "Room1", VirtualCourtRoomType.JudgeJOH, false);
 
             await _handler.Handle(command);
-
+            
             command.NewRoomId.Should().BeGreaterThan(0);
             command.ConferenceId.Should().Be(_newConferenceId);
             command.Type.Should().Be(VirtualCourtRoomType.JudgeJOH);

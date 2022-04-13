@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.Domain;
 
@@ -18,7 +20,7 @@ namespace VideoApi.DAL
 
         public DbSet<InstantMessage> InstantMessages { get; set; }
 
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<Domain.Task> Tasks { get; set; }
 
         public DbSet<Participant> Participants { get; set; }
 
@@ -57,22 +59,31 @@ namespace VideoApi.DAL
             modelBuilder.Entity<InstantMessage>()
                 .HasIndex(m => m.TimeStamp);
         }
-        
         public override int SaveChanges()
         {
+            SetUpdatedDateValue();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            SetUpdatedDateValue();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void SetUpdatedDateValue()
+        {
             foreach (var entry in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added ||
-                            e.State == EntityState.Modified))
+                .Where(e => e.State == EntityState.Modified))
             {
                 var updatedDateProperty =
-                    entry.Properties.AsQueryable().FirstOrDefault(x => x.Metadata.Name == "UpdatedDate");
+                    entry.Properties.AsQueryable().FirstOrDefault(x => x.Metadata.Name == "UpdatedAt");
                 if (updatedDateProperty != null)
                 {
                     updatedDateProperty.CurrentValue = DateTime.UtcNow;
                 }
             }
-
-            return base.SaveChanges();
         }
+
     }
 }

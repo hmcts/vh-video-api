@@ -5,7 +5,7 @@ using VideoApi.Domain.Validations;
 
 namespace VideoApi.Domain
 {
-    public class Endpoint : Entity<Guid>
+    public class Endpoint : TrackableEntity<Guid>
     {
         public string DisplayName { get; private set; }
         public string SipAddress { get; }
