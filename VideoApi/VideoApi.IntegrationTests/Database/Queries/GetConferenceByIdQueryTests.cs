@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -27,6 +28,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async Task Should_get_conference_details_by_id()
         {
             var seededConference = await TestDataManager.SeedConference();
+            var consultationRoom = await TestDataManager.SeedRoom(new ConsultationRoom(seededConference.Id, VirtualCourtRoomType.Participant, false));
+            var consultationRoomParticipant = seededConference.Participants[0];
+            await TestDataManager.SeedRoomWithRoomParticipant(consultationRoom.Id, new RoomParticipant(consultationRoomParticipant.Id));
+
+            var participantRoom = await TestDataManager.SeedRoom(new ParticipantRoom(seededConference.Id, "JohSharedRoom1", VirtualCourtRoomType.JudicialShared));
+            var participantRoomParticipant = seededConference.Participants.FirstOrDefault(x => x.UserRole == UserRole.JudicialOfficeHolder);
+            await TestDataManager.SeedRoomWithRoomParticipant(participantRoom.Id, new RoomParticipant(participantRoomParticipant.Id));
+
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             var conference = await _handler.Handle(new GetConferenceByIdQuery(_newConferenceId));
@@ -59,6 +68,16 @@ namespace VideoApi.IntegrationTests.Database.Queries
                     {
                         participantCasted.Representee.Should().NotBeNullOrEmpty();
                     }
+                }
+                participant.GetCurrentRoom().Should().NotBeNullOrEmpty();
+                if (consultationRoomParticipant.Id == participant.Id)
+                {
+                    participant.GetParticipantRoom().Should().BeNull();
+                }
+
+                if (participantRoomParticipant.Id == participant.Id)
+                {
+                    participant.GetParticipantRoom().Should().NotBeNull();
                 }
             }
 

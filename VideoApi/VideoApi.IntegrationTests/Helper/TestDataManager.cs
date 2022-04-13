@@ -111,9 +111,10 @@ namespace VideoApi.IntegrationTests.Helper
             var conference = await db.Conferences
                 .Include(x => x.Endpoints)
                 .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
+                .Include(x => x.Participants)
                 .Include("Participants.ParticipantStatuses")
                 .Include(x => x.ConferenceStatuses)
-                .Include(x => x.Rooms)
+                .Include(x => x.Rooms).ThenInclude(x => x.RoomParticipants)
                 .SingleAsync(x => x.Id == conferenceId);
 
             db.Remove(conference);

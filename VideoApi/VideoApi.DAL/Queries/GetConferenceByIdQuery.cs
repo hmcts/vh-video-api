@@ -61,7 +61,7 @@ namespace VideoApi.DAL.Queries
 
             foreach (var endpoint in conference.Endpoints)
             {
-                endpoint.CurrentConsultationRoom = rooms.SingleOrDefault(r => r.RoomEndpoints.Any(x => x.EndpointId == endpoint.Id)) as ConsultationRoom;
+                endpoint.CurrentConsultationRoom = rooms.SingleOrDefault(r => r.Id == endpoint.CurrentConsultationRoomId) as ConsultationRoom;
             }
 
             return conference;
