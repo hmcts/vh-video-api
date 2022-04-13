@@ -79,7 +79,7 @@ extends:
     ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
       deploymentBranch: resources.pipeline.CI.sourceBranch
     releaseParameters:
-      runACTests: false
+      runACTests: true
       runZapTests: ${{ parameters.RunZap }}
       subscription: $(env_Subscription)
       secrets_KeyVault: $(env_Secret_KeyVault)
