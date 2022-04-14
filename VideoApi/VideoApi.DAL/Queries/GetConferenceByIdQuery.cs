@@ -54,6 +54,7 @@ namespace VideoApi.DAL.Queries
                 {
                     foreach (var roomParticipant in room.RoomParticipants.Where(x => x.ParticipantId == participant.Id))
                     {
+                        roomParticipant.Room = room;
                         participant.RoomParticipants.Add(roomParticipant);
                     }
                 }
