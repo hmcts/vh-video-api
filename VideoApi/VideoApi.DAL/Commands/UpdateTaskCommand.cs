@@ -31,8 +31,8 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(UpdateTaskCommand command)
         {
-            var task = _context.Tasks
-                .SingleOrDefault(x => x.Id == command.TaskId && x.ConferenceId == command.ConferenceId);
+            var task = await _context.Tasks
+                .SingleOrDefaultAsync(x => x.Id == command.TaskId && x.ConferenceId == command.ConferenceId);
 
             if (task == null)
             {
