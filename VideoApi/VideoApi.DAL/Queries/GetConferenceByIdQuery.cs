@@ -44,6 +44,7 @@ namespace VideoApi.DAL.Queries
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking().Where(x => x.ConferenceId == query.ConferenceId).ToListAsync();
 
+            // Rooms is set as readonly list so cannot add rooms directly to it.
             conference.AddRooms(rooms);
 
             foreach (var participant in conference.Participants)
