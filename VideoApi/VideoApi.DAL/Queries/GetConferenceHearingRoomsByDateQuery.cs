@@ -28,7 +28,7 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
         
-        public Task<List<HearingAudioRoom>> Handle(GetConferenceHearingRoomsByDateQuery query)
+        public async Task<List<HearingAudioRoom>> Handle(GetConferenceHearingRoomsByDateQuery query)
         {
 
             var results = from conferenceStatus in _context.ConferenceStatuses
@@ -43,7 +43,7 @@ namespace VideoApi.DAL.Queries
                               FileNamePrefix = "_" + query.DateStamp.Date.ToString("yyyy-MM-dd")
                           };
 
-            return results.ToListAsync();
+            return await results.ToListAsync();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
         
-        public Task<List<HearingAudioRoom>> Handle(GetConferenceInterpreterRoomsByDateQuery query)
+        public async Task<List<HearingAudioRoom>> Handle(GetConferenceInterpreterRoomsByDateQuery query)
         {
             var results = from conference in _context.Conferences
                           join @event in _context.Events on conference.Id equals @event.ConferenceId
@@ -47,7 +47,7 @@ namespace VideoApi.DAL.Queries
                               FileNamePrefix = "_interpreter_" + room.Id.ToString() + "_" + query.DateStamp.Date.ToString("yyyy-MM-dd") 
                           };
 
-            return results.ToListAsync();
+            return await results.ToListAsync();
         }
     }
 }
