@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +25,11 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AnonymiseConferenceWithHearingIdsCommand command)
         {
-            var conferences = _context.Conferences
+            var conferences = await _context.Conferences
                 .Include(c => c.Participants)
                 .Where(c => command.HearingIds.Contains(c.HearingRefId))
                 .Distinct()
-                .ToList();
+                .ToListAsync();
 
             if (!conferences.Any()) return;
 

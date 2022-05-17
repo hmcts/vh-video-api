@@ -29,9 +29,9 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
 
-        public Task<ConsultationRoom> Handle(GetConsultationRoomByIdQuery query)
+        public async Task<ConsultationRoom> Handle(GetConsultationRoomByIdQuery query)
         {
-            return _context.Rooms.OfType<ConsultationRoom>()
+            return await _context.Rooms.OfType<ConsultationRoom>()
                 .Include(x => x.RoomParticipants).ThenInclude(x => x.Participant)
                 .Include(x => x.RoomEndpoints)
                 .AsNoTracking()
