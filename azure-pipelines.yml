@@ -65,6 +65,10 @@ parameters:
       # Wowza Configuration
       - name: WowzaConfiguration:RestApiEndpoints
         value: $(wowza_restApiEndpoints)
+      - name: WowzaConfiguration:RestApiEndpoints:0
+        value: $(wowza_restApiEndpoints_0)
+      - name: WowzaConfiguration:RestApiEndpoints:1
+        value: $(wowza_restApiEndpoints_1)
       - name: WowzaConfiguration:StreamingEndpoint
         value: $(wowza_streamingEndpoint)
       - name: WowzaConfiguration:ServerName
