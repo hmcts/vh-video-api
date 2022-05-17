@@ -27,13 +27,13 @@ namespace VideoApi.DAL.Queries
             _context = context;
         }
 
-        public Task<List<Conference>> Handle(GetConferencesForTodayByIndividualQuery query)
+        public async Task<List<Conference>> Handle(GetConferencesForTodayByIndividualQuery query)
         {
             query.Username = query.Username.ToLower().Trim();
             var today = DateTime.Today;
             var tomorrow = DateTime.Today.AddDays(1);
 
-            return _context.Conferences
+            return await _context.Conferences
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
                 .Where(x => x.Participants.Any(p => p.Username == query.Username))
