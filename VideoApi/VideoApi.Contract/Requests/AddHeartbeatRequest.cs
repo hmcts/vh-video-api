@@ -14,7 +14,6 @@ namespace VideoApi.Contract.Requests
         public string BrowserVersion { get; set; }  
         public string OperatingSystem { get; set; }
         public string OperatingSystemVersion { get; set; }
-
         public int OutgoingAudioPacketsLost { get; set; }
         public string OutgoingAudioBitrate { get; set; }
         public string OutgoingAudioCodec { get; set; }

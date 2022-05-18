@@ -20,7 +20,6 @@ namespace VideoApi.Domain
         public string OperatingSystem { get; }
         public string OperatingSystemVersion { get; }
         public DateTime Timestamp { get; set; }
-
         public int OutgoingAudioPacketsLost { get; set; }
         public string OutgoingAudioBitrate { get; set; }
         public string OutgoingAudioCodec { get; set; }
@@ -66,7 +65,6 @@ namespace VideoApi.Domain
             BrowserVersion = browserVersion;
             OperatingSystem = operatingSystem;
             OperatingSystemVersion = operatingSystemVersion;
-
             OutgoingAudioPacketsLost = outgoingAudioPacketsLost;
             OutgoingAudioBitrate = outgoingAudioBitrate;
             OutgoingAudioCodec = outgoingAudioCodec;

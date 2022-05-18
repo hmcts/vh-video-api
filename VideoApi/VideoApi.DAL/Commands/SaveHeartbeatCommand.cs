@@ -68,7 +68,6 @@ namespace VideoApi.DAL.Commands
         public string BrowserVersion { get; set; }
         public string OperatingSystem { get; }
         public string OperatingSystemVersion { get; }
-
         public int OutgoingAudioPacketsLost { get; set; }
         public string OutgoingAudioBitrate { get; set; }
         public string OutgoingAudioCodec { get; set; }
