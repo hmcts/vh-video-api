@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +32,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = seededConference.GetParticipants().First().Id;
 
             var command = new SaveHeartbeatCommand(_newConferenceId, participantId, 1, 1, 1, 1, 1, 1, 1, 1,
-                DateTime.UtcNow, "chrome", "1", "Mac OS X", "10.15.7");
+                DateTime.UtcNow, "chrome", "1", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0);
             await _handler.Handle(command);
 
             Heartbeat savedHeartbeat;
@@ -58,6 +58,26 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedHeartbeat.Timestamp.Should().NotBe(new DateTime());
             savedHeartbeat.Timestamp.Should().BeAfter(DateTime.MinValue);
             savedHeartbeat.Timestamp.Should().BeBefore(DateTime.MaxValue);
+
+            savedHeartbeat.OutgoingAudioPacketsLost.Should().Be(0);
+            savedHeartbeat.OutgoingAudioBitrate.Should().Be("25kbps");
+            savedHeartbeat.OutgoingAudioCodec.Should().Be("opus");
+            savedHeartbeat.OutgoingAudioPacketSent.Should().Be(1);
+            savedHeartbeat.OutgoingVideoPacketSent.Should().Be(1);
+            savedHeartbeat.OutgoingVideoPacketsLost.Should().Be(0);
+            savedHeartbeat.OutgoingVideoFramerate.Should().Be(25);
+            savedHeartbeat.OutgoingVideoBitrate.Should().Be("2kbps");
+            savedHeartbeat.OutgoingVideoCodec.Should().Be("H264");
+            savedHeartbeat.OutgoingVideoResolution.Should().Be("640x480");
+            savedHeartbeat.IncomingAudioBitrate.Should().Be("18kbps");
+            savedHeartbeat.IncomingAudioCodec.Should().Be("opus");
+            savedHeartbeat.IncomingAudioPacketReceived.Should().Be(1);
+            savedHeartbeat.IncomingAudioPacketsLost.Should().Be(0);
+            savedHeartbeat.IncomingVideoBitrate.Should().Be("106kbps");
+            savedHeartbeat.IncomingVideoCodec.Should().Be("VP8");
+            savedHeartbeat.IncomingVideoResolution.Should().Be("1280x720");
+            savedHeartbeat.IncomingVideoPacketReceived.Should().Be(1);
+            savedHeartbeat.IncomingVideoPacketsLost.Should().Be(0);
         }
 
         [TearDown]

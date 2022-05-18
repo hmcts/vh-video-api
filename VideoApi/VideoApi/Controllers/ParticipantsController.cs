@@ -352,7 +352,13 @@ namespace VideoApi.Controllers
                 request.IncomingAudioPercentageLostRecent, request.OutgoingVideoPercentageLost,
                 request.OutgoingVideoPercentageLostRecent, request.IncomingVideoPercentageLost,
                 request.IncomingVideoPercentageLostRecent, DateTime.UtcNow, request.BrowserName, request.BrowserVersion,
-                request.OperatingSystem, request.OperatingSystemVersion
+                request.OperatingSystem, request.OperatingSystemVersion, request.OutgoingAudioPacketsLost,
+                request.OutgoingAudioBitrate, request.OutgoingAudioCodec, request.OutgoingAudioPacketSent,
+                request.OutgoingVideoPacketSent, request.OutgoingVideoPacketsLost, request.OutgoingVideoFramerate,
+                request.OutgoingVideoBitrate, request.OutgoingVideoCodec, request.OutgoingVideoResolution,
+                request.IncomingAudioBitrate, request.IncomingAudioCodec, request.IncomingAudioPacketReceived,
+                request.IncomingAudioPacketsLost, request.IncomingVideoBitrate, request.IncomingVideoCodec,
+                request.IncomingVideoResolution, request.IncomingVideoPacketReceived, request.IncomingVideoPacketsLost
             );
 
             await _commandHandler.Handle(command);
