@@ -31,8 +31,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participantId = seededConference.GetParticipants().First().Id;
 
-            var command = new SaveHeartbeatCommand(_newConferenceId, participantId, 1, 1, 1, 1, 1, 1, 1, 1,
-                DateTime.UtcNow, "chrome", "1", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0);
+            var command = new SaveHeartbeatCommand(new Heartbeat(_newConferenceId, participantId, 1, 1, 1, 1, 1, 1, 1, 1,
+                DateTime.UtcNow, "chrome", "1", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0));
             await _handler.Handle(command);
 
             Heartbeat savedHeartbeat;

@@ -50,11 +50,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 await TestDataManager.SeedConference(c);
             }
 
-            var command = new SaveHeartbeatCommand(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.40M, 0.10M,
-                0.00M, 0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0);
+            var command = new SaveHeartbeatCommand(new Heartbeat(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.40M, 0.10M,
+                0.00M, 0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0));
             await _saveHeartbeatHandler.Handle(command);
-            command = new SaveHeartbeatCommand(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.50M, 1.50M,
-                0.00M, 0.00M, 0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0);
+            command = new SaveHeartbeatCommand(new Heartbeat(_conference1Id, conference1ParticipantId, 0.00M, 0.00M, 0.50M, 1.50M,
+                0.00M, 0.00M, 0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0));
             await _saveHeartbeatHandler.Handle(command);
 
             var removeCommand = new RemoveHeartbeatsForConferencesCommand();
@@ -90,14 +90,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 await TestDataManager.SeedConference(c);
             }
 
-            var command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.00M, 0.00M, 0.40M, 0.10M, 0.00M,
-                0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0);
+            var command = new SaveHeartbeatCommand(new Heartbeat(_conference1Id, participantId, 0.00M, 0.00M, 0.40M, 0.10M, 0.00M,
+                0.00M, 0.50M, 0.20M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0));
             await _saveHeartbeatHandler.Handle(command);
-            command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.00M, 0.00M, 0.50M, 1.50M, 0.00M, 0.00M,
-                0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0);
+            command = new SaveHeartbeatCommand(new Heartbeat(_conference1Id, participantId, 0.00M, 0.00M, 0.50M, 1.50M, 0.00M, 0.00M,
+                0.50M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0));
             await _saveHeartbeatHandler.Handle(command);
-            command = new SaveHeartbeatCommand(_conference1Id, participantId, 0.30M, 0.15M, 0.60M, 1.50M, 0.00M, 0.00M,
-                0.80M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0);
+            command = new SaveHeartbeatCommand(new Heartbeat(_conference1Id, participantId, 0.30M, 0.15M, 0.60M, 1.50M, 0.00M, 0.00M,
+                0.80M, 1.50M, DateTime.UtcNow, "Chrome", "84.0.4147.105", "Mac OS X", "10.15.7", 0, "25kbps", "opus", 1, 1, 0, 25, "2kbps", "H264", "640x480", "18kbps", "opus", 1, 0, "106kbps", "VP8", "1280x720", 1, 0));
             await _saveHeartbeatHandler.Handle(command);
 
             var removeCommand = new RemoveHeartbeatsForConferencesCommand();
