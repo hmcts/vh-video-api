@@ -11,7 +11,7 @@ namespace VideoApi.DAL.Commands
 
         public SaveHeartbeatCommand(Heartbeat heartbeat)
         {
-            this.Heartbeat = heartbeat;    
+            Heartbeat = heartbeat;    
         }
     }
 
