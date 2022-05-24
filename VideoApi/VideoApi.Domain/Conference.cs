@@ -256,5 +256,10 @@ namespace VideoApi.Domain
                 participant.DisplayName = randomString;
             }
         }
+
+        public void AddRooms(IList<Room> rooms)
+        {
+            _rooms.AddRange(rooms);
+        }
     }
 }

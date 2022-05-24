@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,16 +10,16 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetConferenceByIdQueryTests : DatabaseTestsBase
+    public class GetConferenceByIdForEventsQueryTests : DatabaseTestsBase
     {
-        private GetConferenceByIdQueryHandler _handler;
+        private GetConferenceByIdForEventQueryHandler _handler;
         private Guid _newConferenceId;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetConferenceByIdQueryHandler(context);
+            _handler = new GetConferenceByIdForEventQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
 
@@ -28,17 +27,12 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async Task Should_get_conference_details_by_id()
         {
             var seededConference = await TestDataManager.SeedConference();
-            var consultationRoom = await TestDataManager.SeedRoom(new ConsultationRoom(seededConference.Id, VirtualCourtRoomType.Participant, false));
-            var consultationRoomParticipant = seededConference.Participants[0];
-            await TestDataManager.SeedRoomWithRoomParticipant(consultationRoom.Id, new RoomParticipant(consultationRoomParticipant.Id));
-
-            var participantRoom = await TestDataManager.SeedRoom(new ParticipantRoom(seededConference.Id, "JohSharedRoom1", VirtualCourtRoomType.JudicialShared));
-            var participantRoomParticipant = seededConference.Participants.FirstOrDefault(x => x.UserRole == UserRole.JudicialOfficeHolder);
-            await TestDataManager.SeedRoomWithRoomParticipant(participantRoom.Id, new RoomParticipant(participantRoomParticipant.Id));
+            var room = await TestDataManager.SeedRoom(new ConsultationRoom(seededConference.Id, VirtualCourtRoomType.Participant, false));
+            await TestDataManager.SeedRoomWithRoomParticipant(room.Id, new RoomParticipant(seededConference.Participants[0].Id));
 
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var conference = await _handler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var conference = await _handler.Handle(new GetConferenceByIdForEventQuery(_newConferenceId));
 
             conference.Should().NotBeNull();
 
@@ -69,19 +63,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
                         participantCasted.Representee.Should().NotBeNullOrEmpty();
                     }
                 }
-                participant.GetCurrentRoom().Should().NotBeNullOrEmpty();
-                if (consultationRoomParticipant.Id == participant.Id)
-                {
-                    participant.GetParticipantRoom().Should().BeNull();
-                }
-
-                if (participantRoomParticipant.Id == participant.Id)
-                {
-                    participant.GetParticipantRoom().Should().NotBeNull();
-                }
             }
 
             conference.GetCurrentStatus().Should().BeEquivalentTo(seededConference.GetCurrentStatus());
+            conference.Rooms.Count.Should().Be(1);
+            conference.GetEndpoints().Count.Should().Be(0);
         }
 
         [TearDown]
