@@ -37,8 +37,8 @@ namespace VideoApi.Events.Handlers.Core
             _logger.LogDebug("Handling callback");
             var sw = Stopwatch.StartNew();
             SourceConference =
-                await QueryHandler.Handle<GetConferenceByIdQuery, Conference>(
-                    new GetConferenceByIdQuery(callbackEvent.ConferenceId));
+                await QueryHandler.Handle<GetConferenceByIdForEventQuery, Conference>(
+                    new GetConferenceByIdForEventQuery(callbackEvent.ConferenceId));
 
             if (SourceConference == null) throw new ConferenceNotFoundException(callbackEvent.ConferenceId);
 
