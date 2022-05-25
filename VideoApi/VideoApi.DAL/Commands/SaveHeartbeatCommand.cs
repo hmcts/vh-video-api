@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
@@ -7,43 +7,12 @@ namespace VideoApi.DAL.Commands
 {
     public class SaveHeartbeatCommand : ICommand
     {
-        public SaveHeartbeatCommand(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
-            decimal incomingAudioPercentageLost, decimal incomingAudioPercentageLostRecent, decimal outgoingVideoPercentageLost, 
-            decimal outgoingVideoPercentageLostRecent, decimal incomingVideoPercentageLost, decimal incomingVideoPercentageLostRecent,
-            DateTime timestamp, string browserName, string browserVersion, string operatingSystem, string operatingSystemVersion)
-        {
-            ConferenceId = conferenceId;
-            ParticipantId = participantId;
-            OutgoingAudioPercentageLost = outgoingAudioPercentageLost;
-            OutgoingAudioPercentageLostRecent = outgoingAudioPercentageLostRecent;
-            IncomingAudioPercentageLost = incomingAudioPercentageLost;
-            IncomingAudioPercentageLostRecent = incomingAudioPercentageLostRecent;
-            OutgoingVideoPercentageLost = outgoingVideoPercentageLost;
-            OutgoingVideoPercentageLostRecent = outgoingVideoPercentageLostRecent;
-            IncomingVideoPercentageLost = incomingVideoPercentageLost;
-            IncomingVideoPercentageLostRecent = incomingVideoPercentageLostRecent;
-            Timestamp = timestamp;
-            BrowserName = browserName;
-            BrowserVersion = browserVersion;
-            OperatingSystem = operatingSystem;
-            OperatingSystemVersion = operatingSystemVersion;
-        }
+        public Heartbeat Heartbeat { get;private set; }
 
-        public Guid ConferenceId { get; }
-        public Guid ParticipantId { get; }
-        public decimal OutgoingAudioPercentageLost { get; }
-        public decimal OutgoingAudioPercentageLostRecent { get; }
-        public decimal IncomingAudioPercentageLost { get; }
-        public decimal IncomingAudioPercentageLostRecent { get; }
-        public decimal OutgoingVideoPercentageLost { get; }
-        public decimal OutgoingVideoPercentageLostRecent { get; }
-        public decimal IncomingVideoPercentageLost { get; }
-        public decimal IncomingVideoPercentageLostRecent { get; }
-        public DateTime Timestamp { get; }
-        public string BrowserName { get; set; }
-        public string BrowserVersion { get; set; }
-        public string OperatingSystem { get; }
-        public string OperatingSystemVersion { get; }
+        public SaveHeartbeatCommand(Heartbeat heartbeat)
+        {
+            Heartbeat = heartbeat;    
+        }
     }
 
     public class SaveHeartbeatCommandHandler : ICommandHandler<SaveHeartbeatCommand>
@@ -57,17 +26,8 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(SaveHeartbeatCommand command)
         {
-            var @event = new Heartbeat(command.ConferenceId, command.ParticipantId, command.OutgoingAudioPercentageLost,
-                command.OutgoingAudioPercentageLostRecent, command.IncomingAudioPercentageLost,
-                command.IncomingAudioPercentageLostRecent, command.OutgoingVideoPercentageLost,
-                command.OutgoingVideoPercentageLostRecent, command.IncomingVideoPercentageLost,
-                command.IncomingVideoPercentageLostRecent, command.Timestamp, command.BrowserName,
-                command.BrowserVersion, command.OperatingSystem, command.OperatingSystemVersion)
-            {
-                ParticipantId = command.ParticipantId
-            };
 
-            await _context.Heartbeats.AddAsync(@event);
+            await _context.Heartbeats.AddAsync(command.Heartbeat);
 
             await _context.SaveChangesAsync();
         }

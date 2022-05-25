@@ -347,13 +347,19 @@ namespace VideoApi.Controllers
 
             var command = new SaveHeartbeatCommand
             (
-                conferenceId, participantId, request.OutgoingAudioPercentageLost,
+               new Heartbeat(conferenceId, participantId, request.OutgoingAudioPercentageLost,
                 request.OutgoingAudioPercentageLostRecent, request.IncomingAudioPercentageLost,
                 request.IncomingAudioPercentageLostRecent, request.OutgoingVideoPercentageLost,
                 request.OutgoingVideoPercentageLostRecent, request.IncomingVideoPercentageLost,
                 request.IncomingVideoPercentageLostRecent, DateTime.UtcNow, request.BrowserName, request.BrowserVersion,
-                request.OperatingSystem, request.OperatingSystemVersion
-            );
+                request.OperatingSystem, request.OperatingSystemVersion, request.OutgoingAudioPacketsLost,
+                request.OutgoingAudioBitrate, request.OutgoingAudioCodec, request.OutgoingAudioPacketSent,
+                request.OutgoingVideoPacketSent, request.OutgoingVideoPacketsLost, request.OutgoingVideoFramerate,
+                request.OutgoingVideoBitrate, request.OutgoingVideoCodec, request.OutgoingVideoResolution,
+                request.IncomingAudioBitrate, request.IncomingAudioCodec, request.IncomingAudioPacketReceived,
+                request.IncomingAudioPacketsLost, request.IncomingVideoBitrate, request.IncomingVideoCodec,
+                request.IncomingVideoResolution, request.IncomingVideoPacketReceived, request.IncomingVideoPacketsLost )
+            ) ;
 
             await _commandHandler.Handle(command);
 

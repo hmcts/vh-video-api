@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
@@ -34,15 +34,15 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var heartbeats = new List<Heartbeat>
             {
                 new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
+                    "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
                 new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
+                    "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
                 new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
+                    "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
                 new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
+                    "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
                 new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
+                    "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
             };
 
             await AddHeartbeatsToDb(heartbeats);
@@ -83,16 +83,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var heartbeats = new List<Heartbeat>
             {
-                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1,
-                    DateTime.UtcNow.AddMinutes(-30), "chrome", "1", "Mac OS X", "10.15.7"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
-                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome",
-                    "1", "Mac OS X", "10.15.7"),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow.AddMinutes(-30), "chrome", "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome","1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome","1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome","1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
+                new Heartbeat(_newConferenceId, _newParticipantId, 1, 1, 1, 1, 1, 1, 1, 1, DateTime.UtcNow, "chrome","1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
             };
 
             await AddHeartbeatsToDb(heartbeats);

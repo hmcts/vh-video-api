@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VideoApi.Domain;
 
@@ -26,6 +26,25 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.BrowserVersion);
             builder.Property(x => x.OperatingSystem);
             builder.Property(x => x.OperatingSystemVersion);
+            builder.Property(x => x.OutgoingAudioPacketsLost).HasColumnType("int");
+            builder.Property(x => x.OutgoingAudioBitrate);
+            builder.Property(x => x.OutgoingAudioCodec);
+            builder.Property(x => x.OutgoingAudioPacketSent).HasColumnType("int");
+            builder.Property(x => x.OutgoingVideoPacketSent).HasColumnType("int");
+            builder.Property(x => x.OutgoingVideoPacketsLost).HasColumnType("int");
+            builder.Property(x => x.OutgoingVideoFramerate).HasColumnType("int");
+            builder.Property(x => x.OutgoingVideoBitrate);
+            builder.Property(x => x.OutgoingVideoCodec);
+            builder.Property(x => x.OutgoingVideoResolution);
+            builder.Property(x => x.IncomingAudioBitrate);
+            builder.Property(x => x.IncomingAudioCodec);
+            builder.Property(x => x.IncomingAudioPacketReceived).HasColumnType("int");
+            builder.Property(x => x.IncomingAudioPacketsLost).HasColumnType("int");
+            builder.Property(x => x.IncomingVideoBitrate);
+            builder.Property(x => x.IncomingVideoCodec);
+            builder.Property(x => x.IncomingVideoResolution);
+            builder.Property(x => x.IncomingVideoPacketReceived).HasColumnType("int");
+            builder.Property(x => x.IncomingVideoPacketsLost).HasColumnType("int");
             builder.Property(x => x.Timestamp);
         }
     }
