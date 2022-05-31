@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,6 +32,7 @@ namespace VideoApi.Controllers
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<ConsultationController> _logger;
         private readonly IConsultationService _consultationService;
+        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1,1);
 
         public ConsultationController(
             IQueryHandler queryHandler,
@@ -248,6 +250,8 @@ namespace VideoApi.Controllers
         {
             try
             {
+                await Semaphore.WaitAsync();
+                
                 var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
                     request.RoomType.MapToDomainEnum());
                 await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
@@ -274,6 +278,10 @@ namespace VideoApi.Controllers
                     "Unable to create a consultation room for ConferenceId: {ConferenceId}",
                     request.ConferenceId);
                 return BadRequest("Consultation room creation failed");
+            }
+            finally
+            {
+                Semaphore.Release();
             }
         }
 

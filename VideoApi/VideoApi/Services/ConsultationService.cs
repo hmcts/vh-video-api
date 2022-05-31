@@ -22,7 +22,7 @@ namespace VideoApi.Services
         private readonly ILogger<ConsultationService> _logger;
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
-        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1,1);
+        //private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1,1);
 
         public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
@@ -52,7 +52,7 @@ namespace VideoApi.Services
 
             try
             {
-                await Semaphore.WaitAsync();  
+                //await Semaphore.WaitAsync();  
 
                 var getAvailableConsultationRoomsByRoomTypeQuery = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
                 var liveRooms = await GetLiveRooms(getAvailableConsultationRoomsByRoomTypeQuery);
@@ -77,7 +77,7 @@ namespace VideoApi.Services
             }
             finally
             {
-                Semaphore.Release();
+            //     Semaphore.Release();
             }
             
             return room;
