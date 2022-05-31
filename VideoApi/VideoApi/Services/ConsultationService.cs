@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands;
@@ -21,6 +22,7 @@ namespace VideoApi.Services
         private readonly ILogger<ConsultationService> _logger;
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
+        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1,1);
 
         public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
@@ -46,27 +48,38 @@ namespace VideoApi.Services
 
         public async Task<ConsultationRoom> GetAvailableConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType)
         {
-            var getAvailableConsultationRoomsByRoomTypeQuery = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
-            var liveRooms = await GetLiveRooms(getAvailableConsultationRoomsByRoomTypeQuery);
-            
-            var room = liveRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
-            if (room == null)
-            {
-                var consultationRoomParams = new CreateConsultationRoomParams
-                {
-                    Room_label_prefix = roomType.ToString()
-                };
-                var createConsultationRoomResponse =
-                    await CreateConsultationRoomAsync(conferenceId.ToString(),
-                        consultationRoomParams);
-                var createRoomCommand = new CreateConsultationRoomCommand(conferenceId,
-                    createConsultationRoomResponse.Room_label,
-                    roomType,
-                    false);
-                await _commandHandler.Handle(createRoomCommand);
-                room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.Room_label, roomType, false);
-            }
+            ConsultationRoom room;
 
+            try
+            {
+                await Semaphore.WaitAsync();  
+
+                var getAvailableConsultationRoomsByRoomTypeQuery = new GetAvailableConsultationRoomsByRoomTypeQuery(roomType, conferenceId);
+                var liveRooms = await GetLiveRooms(getAvailableConsultationRoomsByRoomTypeQuery);
+            
+                room = liveRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
+                if (room == null)
+                {
+                    var consultationRoomParams = new CreateConsultationRoomParams
+                    {
+                        Room_label_prefix = roomType.ToString()
+                    };
+                    var createConsultationRoomResponse =
+                        await CreateConsultationRoomAsync(conferenceId.ToString(),
+                            consultationRoomParams);
+                    var createRoomCommand = new CreateConsultationRoomCommand(conferenceId,
+                        createConsultationRoomResponse.Room_label,
+                        roomType,
+                        false);
+                    await _commandHandler.Handle(createRoomCommand);
+                    room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.Room_label, roomType, false);
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+            
             return room;
         }
 
