@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
@@ -14,6 +15,9 @@ namespace VideoApi.Contract.Requests
         public Guid Id { get; set; }
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }
+        
+        [StringLength(255, ErrorMessage = "Display name max length is 255 characters")]
+        [RegularExpression("^([-A-Za-z0-9 ',._])*$")]
         public string DisplayName { get; set; }
         public string Username { get; set; }
         public string FirstName { get; set; }
