@@ -17,7 +17,6 @@ java:
       usePodIdentity: true
       secrets:
         - applicationinsights--instrumentationkey
-        - applicationinsights--connection-string
         - CvpConfiguration--StorageAccountName
         - CvpConfiguration--StorageAccountKey
         - CvpConfiguration--StorageContainerName
@@ -27,8 +26,8 @@ java:
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
         - servicebusqueue--connectionstring
-        - wowzaconfiguration--streamPassword-<ENV>
-        - wowzaconfiguration--restPassword-<ENV>
+        - wowzaconfiguration--streamPassword
+        - wowzaconfiguration--restPassword
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
         - wowzaconfiguration--azure-storage-directory
