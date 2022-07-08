@@ -268,19 +268,83 @@ stages:
                   value: azuread--clientsecret
                   keyVaultName: vh-video-api-${{ variables.env }}
                   secret: true
-                - name: Testing:UsernameStem
-                  value: $(VideoApiUsernameStem)
-                - name: UseServiceBusFake
-                  value: true
                 - name: AzureAd:TenantId
                   value: azuread--tenantid
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
+
+                # Services Configuration
                 - name: Services:VideoApiResourceId
                   value: azuread--identifieruri
                   keyVaultName: vh-video-api-${{ variables.env }}
                   secret: true
-                
+                - name: Services:CallbackUri
+                  value: $(CallbackUri)
+
+                # Wowza Configuration
+                - name: WowzaConfiguration:RestApiEndpoints #TODO: Get some Key Vault
+                  value: $(wowza_restApiEndpoints)
+                - name: WowzaConfiguration:RestApiEndpoints:0
+                  value: $(wowza_restApiEndpoints_0)
+                - name: WowzaConfiguration:RestApiEndpoints:1
+                  value: $(wowza_restApiEndpoints_1)
+                - name: WowzaConfiguration:StreamingEndpoint #TODO: Get some Key Vault
+                  value: $(wowza_streamingEndpoint)
+                - name: WowzaConfiguration:ServerName #TODO: Get some Key Vault
+                  value: $(wowza_serverName)
+                - name: WowzaConfiguration:HostName #TODO: Get some Key Vault
+                  value: $(wowza_hostName)
+                - name: WowzaConfiguration:Username #TODO: Get some Key Vault
+                  value: $(wowza_userName)
+                - name: WowzaConfiguration:Password #TODO: Get some Key Vault
+                  value: $(wowza_password)
+                - name: WowzaConfiguration:StorageDirectory #TODO: Get some Key Vault
+                  value: $(wowza_storageDirectory)
+                - name: WowzaConfiguration:StorageAccountName #TODO: Get some Key Vault
+                  value: $(wowza_storageAccountName)
+                - name: WowzaConfiguration:StorageAccountKey #TODO: Get some Key Vault
+                  value: $(wowza_storageAccountKey)
+                - name: WowzaConfiguration:StorageContainerName #TODO: Get some Key Vault
+                  value: $(wowza_storageContainerName)
+                - name: WowzaConfiguration:StorageEndpoint #TODO: Get some Key Vault
+                  value: $(wowza_storageEndpoint)
+                - name: WowzaConfiguration:ManagedIdentityClientId #TODO: Get some Key Vault
+                  value: $(wowza_managedIdentityClientId)
+
+                # CVP Configuration
+                - name: CvpConfiguration:StorageAccountName #TODO: Get some Key Vault
+                  value: $(cvp_storageAccountName)
+                - name: CvpConfiguration:StorageAccountKey #TODO: Get some Key Vault
+                  value: $(cvp_storageAccountKey)
+                - name: CvpConfiguration:StorageContainerName #TODO: Get some Key Vault
+                  value: $(cvp_storageContainerName)
+                - name: CvpConfiguration:StorageEndpoint #TODO: Get some Key Vault
+                  value: $(cvp_storageEndpoint)
+                - name: CvpConfiguration:ManagedIdentityClientId #TODO: Get some Key Vault
+                  value: $(wowza_managedIdentityClientId)
+
+                # Kinly Configuration
+                - name: KinlyConfiguration:ConferencePhoneNumber
+                  value: $(ConferencePhoneNumber)
+                - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+                  value: $(ConferencePhoneNumberWelsh)
+                - name: KinlyConfiguration:KinlyApiUrl
+                  value: $(KinlyApiUrl)
+                - name: KinlyConfiguration:KinlySelfTestApiUrl
+                  value: $(KinlySelfTestApiUrl)
+                - name: KinlyConfiguration:ConferenceUsername
+                  value: $(ConferenceUsername)
+                - name: KinlyConfiguration:CallbackUri
+                  value: $(CallbackUri)
+
+                # Quick Links Configuration
+                - name: QuickLinks:Issuer
+                  value: $(video_api_url)
+                - name: QuickLinks:RsaPrivateKey
+                  value: $(RsaPrivateKey)
+                - name: QuickLinks:ValidAudience
+                  value: $(ValidAudience)
+                          
 #####################################################
 # Deploy Nuget Packages. #########################
   - stage: Push_Nuget

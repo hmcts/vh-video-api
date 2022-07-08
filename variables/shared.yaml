@@ -75,7 +75,7 @@ variables:
     value: vh-infra-core-${{ parameters.env }}
 
   - name: efContextName
-    value: VideoDbContext
+    value: VideoApiDbContext
   - name: efProjectName
     value: VideoApi.csproj
   - name: vhKeyVault
