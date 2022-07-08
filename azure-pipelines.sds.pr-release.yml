@@ -99,7 +99,7 @@ stages:
             parameters:
               chartName: ${{ variables.chartName }}
               chartPath: $(Build.SourcesDirectory)
-              chartBranch: $(Build.SourceBranch)
+              chartBranch: $(System.PullRequest.SourceBranch)
               githubToken: $(githubappinstall.token)
               githubUsername: $(gh_app_name)
               githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
