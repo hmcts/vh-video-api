@@ -16,10 +16,8 @@ java:
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
       usePodIdentity: true
       secrets:
-        - applicationinsights-instrumentationkey
-        - applicationinsights-connection-string
-        - customtoken--secret
-        - customtoken--thirdpartysecret
+        - applicationinsights--instrumentationkey
+        - applicationinsights--connection-string
         - CvpConfiguration--StorageAccountName
         - CvpConfiguration--StorageAccountKey
         - CvpConfiguration--StorageContainerName
@@ -29,7 +27,6 @@ java:
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
         - servicebusqueue--connectionstring
-        - services--vhvideowebclientid
         - wowzaconfiguration--streamPassword-<ENV>
         - wowzaconfiguration--restPassword-<ENV>
         - wowzaconfiguration--storageaccountkey
@@ -40,7 +37,6 @@ java:
         - wowzaconfiguration--storage-account-endpoint
         - wowzaconfiguration--storage-account-container
         - wowzaconfiguration--username
-        - vhvideoapi
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
