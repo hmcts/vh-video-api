@@ -146,7 +146,7 @@ stages:
 
 
 #####################################################
-# Approval Gate for Booking API Release. ############
+# Approval Gate for Video API Release. ############
 
   - stage: Approve_Helm_Release
     displayName: 'Approve Helm Release'

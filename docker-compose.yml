@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  bookingsapi:
-    image: ${DOCKER_REGISTRY-}bookingsapi:latest
+  videoapi:
+    image: ${DOCKER_REGISTRY-}videoapi:latest
     build:
       context: .
       dockerfile: VideoApi/VideoApi/Dockerfile
