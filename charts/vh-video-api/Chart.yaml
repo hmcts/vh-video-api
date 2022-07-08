@@ -6,3 +6,7 @@ version: 0.0.1
 description: Helm Chart for Video Hearing video-api
 maintainers:
   - name: VH Devops 
+dependencies:
+  - name: java
+    version: 3.7.9
+    repository: https://hmctspublic.azurecr.io/helm/v1/repo/

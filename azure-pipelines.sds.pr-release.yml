@@ -282,46 +282,68 @@ stages:
                   value: $(CallbackUri)
 
                 # Wowza Configuration
-                - name: WowzaConfiguration:RestApiEndpoints #TODO: Get some Key Vault
-                  value: $(wowza_restApiEndpoints)
-                - name: WowzaConfiguration:RestApiEndpoints:0
-                  value: $(wowza_restApiEndpoints_0)
-                - name: WowzaConfiguration:RestApiEndpoints:1
-                  value: $(wowza_restApiEndpoints_1)
-                - name: WowzaConfiguration:StreamingEndpoint #TODO: Get some Key Vault
-                  value: $(wowza_streamingEndpoint)
-                - name: WowzaConfiguration:ServerName #TODO: Get some Key Vault
-                  value: $(wowza_serverName)
-                - name: WowzaConfiguration:HostName #TODO: Get some Key Vault
-                  value: $(wowza_hostName)
-                - name: WowzaConfiguration:Username #TODO: Get some Key Vault
-                  value: $(wowza_userName)
-                - name: WowzaConfiguration:Password #TODO: Get some Key Vault
-                  value: $(wowza_password)
-                - name: WowzaConfiguration:StorageDirectory #TODO: Get some Key Vault
-                  value: $(wowza_storageDirectory)
-                - name: WowzaConfiguration:StorageAccountName #TODO: Get some Key Vault
-                  value: $(wowza_storageAccountName)
-                - name: WowzaConfiguration:StorageAccountKey #TODO: Get some Key Vault
-                  value: $(wowza_storageAccountKey)
-                - name: WowzaConfiguration:StorageContainerName #TODO: Get some Key Vault
-                  value: $(wowza_storageContainerName)
-                - name: WowzaConfiguration:StorageEndpoint #TODO: Get some Key Vault
-                  value: $(wowza_storageEndpoint)
-                - name: WowzaConfiguration:ManagedIdentityClientId #TODO: Get some Key Vault
-                  value: $(wowza_managedIdentityClientId)
+                - name: WowzaConfiguration:RestApiEndpoints
+                  value: wowzaconfiguration--endpoint
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:StreamingEndpoint
+                  value: wowzaconfiguration--endpoint
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:Username 
+                  value: wowzaconfiguration--username
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:Password 
+                  value: wowzaconfiguration--restPassword-${{ variables.env }}
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:StorageDirectory
+                  value: wowzaconfiguration--azure-storage-directory
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:StorageAccountName
+                  value: wowzaconfiguration--storage-account
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:StorageAccountKey
+                  value: wowzaconfiguration--storageaccountkey
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:StorageContainerName 
+                  value: wowzaconfiguration--storage-account-container
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:StorageEndpoint
+                  value: wowzaconfiguration--storage-account-endpoint
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: WowzaConfiguration:ManagedIdentityClientId
+                  value: wowzaconfiguration--managedidentityclientid
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
 
                 # CVP Configuration
-                - name: CvpConfiguration:StorageAccountName #TODO: Get some Key Vault
-                  value: $(cvp_storageAccountName)
-                - name: CvpConfiguration:StorageAccountKey #TODO: Get some Key Vault
-                  value: $(cvp_storageAccountKey)
-                - name: CvpConfiguration:StorageContainerName #TODO: Get some Key Vault
-                  value: $(cvp_storageContainerName)
-                - name: CvpConfiguration:StorageEndpoint #TODO: Get some Key Vault
-                  value: $(cvp_storageEndpoint)
-                - name: CvpConfiguration:ManagedIdentityClientId #TODO: Get some Key Vault
-                  value: $(wowza_managedIdentityClientId)
+                - name: CvpConfiguration:StorageAccountName
+                  value: CvpConfiguration--StorageAccountName
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: CvpConfiguration:StorageAccountKey
+                  value: CvpConfiguration--StorageAccountKey
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: CvpConfiguration:StorageContainerName
+                  value: CvpConfiguration--StorageContainerName
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: CvpConfiguration:StorageEndpoint
+                  value: CvpConfiguration--StorageEndpoint
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
+                - name: wowzaconfiguration:managedidentityclientid
+                  value: wowzaconfiguration--managedidentityclientid
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+                  secret: true
 
                 # Kinly Configuration
                 - name: KinlyConfiguration:ConferencePhoneNumber
