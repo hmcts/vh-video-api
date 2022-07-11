@@ -22,9 +22,6 @@ java:
         - CvpConfiguration--StorageContainerName
         - CvpConfiguration--StorageEndpoint
         - azuread--vhvideowebclientid
-        - kinlyconfiguration--apisecret
-        - kinlyconfiguration--callbacksecret
-        - kinlyconfiguration--selftestapisecret
         - servicebusqueue--connectionstring
         - wowzaconfiguration--streamPassword
         - wowzaconfiguration--restPassword
@@ -43,6 +40,17 @@ java:
       secrets:
         - azuread--clientsecret
         - azuread--clientid
+        - kinlyconfiguration--apisecret
+        - kinlyconfiguration--callbacksecret
+        - kinlyconfiguration--selftestapisecret
+        - kinlyconfiguration--telephoneconferencenumber
+        - kinlyconfiguration--telephoneconferencenumberwelsh
+        - kinlyconfiguration--kinlyapiurl
+        - kinlyconfiguration--kinlyselftestapiurl
+        - kinlyconfiguration--conferenceusername
+        - kinlyconfiguration--callbackuri
+        - kinlyconfiguration--pexipnode
+        - kinlyconfiguration--pexipselftestnode
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
