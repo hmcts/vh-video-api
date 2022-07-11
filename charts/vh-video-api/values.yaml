@@ -33,6 +33,8 @@ java:
         - wowzaconfiguration--storage-account-endpoint
         - wowzaconfiguration--storage-account-container
         - wowzaconfiguration--username
+        - name: wowzaconfiguration--endpoint
+          alias: WowzaConfiguration--RestApiEndpoints--0
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -57,12 +59,7 @@ java:
     APPINSIGHTS_SNAPSHOTFEATURE_VERSION: disabled
     APPLICATIONINSIGHTSAGENT_EXTENSION_VERSION: ~2
     AZUREAD__VHVIDEOAPIRESOURCEID: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    KINLYCONFIGURATION__TELEPHONECONFERENCENUMBER: +442033183131
     MSDEPLOY_RENAME_LOCKED_FILES: 1
-    SERVICES__CALLBACKURI: http://vh-video-web.{{ .Values.global.environment }}.hearings.hmcts.net/callback
-    SERVICES__KINLYAPIURL: http://hmcts-java.dev.kinlycloud.net/virtual-court/api/v1
-    SERVICES__KINLYSELFTESTAPIURL: http://test.self-test.hearings.hmcts.net
-    SERVICES__PEXIPSELFTESTNODE: sip.test.self-test.hearings.hmcts.net
     SERVICES__VIDEOAPIURL: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
     Logging__LogLevel__Default: debug
     Logging__LogLevel__System: debug
