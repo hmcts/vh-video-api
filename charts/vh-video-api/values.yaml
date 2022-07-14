@@ -35,7 +35,7 @@ java:
         - wowzaconfiguration--username
         - wowzaconfiguration--ServerName
         - connectionstrings--videoapi
-        - name: wowzaconfiguration--endpoint
+        - name: wowzaconfiguration--restendpoint--0
           alias: WowzaConfiguration--RestApiEndpoints--0
     vh-video-api:
       excludeEnvironmentSuffix: false
