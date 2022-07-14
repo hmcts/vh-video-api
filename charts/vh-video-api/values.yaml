@@ -33,6 +33,7 @@ java:
         - wowzaconfiguration--storage-account-endpoint
         - wowzaconfiguration--storage-account-container
         - wowzaconfiguration--username
+        - wowzaconfiguration--ServerName
         - connectionstrings--videoapi
         - name: wowzaconfiguration--endpoint
           alias: WowzaConfiguration--RestApiEndpoints--0
