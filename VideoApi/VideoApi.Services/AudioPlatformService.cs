@@ -30,7 +30,7 @@ namespace VideoApi.Services
             try
             {
                 var tasks = _wowzaClients
-                    .Select(x => x.GetApplicationAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName))
+                    .Select(x => x.GetApplicationAsync(_configuration.ApplicationName, _configuration.ServerName, _configuration.HostName))
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
@@ -53,7 +53,7 @@ namespace VideoApi.Services
         {
             try
             {
-               await CreateAndUpdateApplicationAsync(hearingId.ToString());
+               //await CreateAndUpdateApplicationAsync(hearingId.ToString());
 
                return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(hearingId.ToString())};
             }
@@ -95,7 +95,7 @@ namespace VideoApi.Services
             try
             {
                 var tasks = _wowzaClients
-                    .Select(x => x.MonitoringStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName))
+                    .Select(x => x.MonitoringStreamRecorderAsync(_configuration.ApplicationName, _configuration.ServerName, _configuration.HostName))
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
@@ -117,7 +117,7 @@ namespace VideoApi.Services
             try
             {
                 var tasks = _wowzaClients
-                    .Select(x => x.GetStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName))
+                    .Select(x => x.GetStreamRecorderAsync(_configuration.ApplicationName, _configuration.ServerName, _configuration.HostName))
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
@@ -176,13 +176,24 @@ namespace VideoApi.Services
 
         private async Task CreateAndUpdateApplicationAsync(string applicationName)
         {
+            
             foreach (var client in _wowzaClients)
             {
-                await client.CreateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.StorageDirectory);
-                _logger.LogInformation("Created a Wowza application for: {applicationName}", applicationName);
+                try
+                {
 
-                await client.UpdateApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName, _configuration.AzureStorageDirectory);
-                _logger.LogInformation("Updating Wowza application for: {applicationName}", applicationName);
+                    await client.CreateApplicationAsync(_configuration.ApplicationName, _configuration.ServerName,
+                        _configuration.HostName, _configuration.StorageDirectory);
+                    _logger.LogInformation("Created a Wowza application for: {applicationName}", applicationName);
+
+                    await client.UpdateApplicationAsync(_configuration.ApplicationName, _configuration.ServerName,
+                        _configuration.HostName, _configuration.AzureStorageDirectory);
+                    _logger.LogInformation("Updating Wowza application for: {applicationName}", applicationName);
+                }
+                catch (Exception e)
+                {
+                    continue;
+                }
             }
             
         }
@@ -195,7 +206,7 @@ namespace VideoApi.Services
             }
         }
 
-        private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{applicationName}/{applicationName}";
+        private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{_configuration.ApplicationName}/{_configuration.ApplicationName}";
 
         private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
         {

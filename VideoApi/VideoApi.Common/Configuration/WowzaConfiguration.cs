@@ -17,5 +17,6 @@ namespace VideoApi.Common.Configuration
         public string StorageContainerName { get; set; }
         public string StorageEndpoint { get; set; }
         public string ManagedIdentityClientId { get; set; }
+        public string ApplicationName { get; set; }
     }
 }

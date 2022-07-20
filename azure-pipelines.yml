@@ -91,6 +91,8 @@ parameters:
         value: $(wowza_storageEndpoint)
       - name: WowzaConfiguration:ManagedIdentityClientId
         value: $(wowza_managedIdentityClientId)
+      - name: WowzaConfiguration:ApplicationName
+        value: vh-wowza-app
 
       # CVP Configuration
       - name: CvpConfiguration:StorageAccountName

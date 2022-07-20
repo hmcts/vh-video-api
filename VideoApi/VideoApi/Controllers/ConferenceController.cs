@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -83,13 +84,13 @@ namespace VideoApi.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
+            //is just retrieving static ingest URL
             var createAudioRecordingResponse = await CreateAudioApplicationWithRetryAsync(request);
-
             if (!createAudioRecordingResponse.Success)
             {
                 return StatusCode((int) createAudioRecordingResponse.StatusCode, createAudioRecordingResponse.Message);
             }
-
+            
             var conferenceId = await CreateConferenceWithRetiesAsync(request, createAudioRecordingResponse.IngestUrl);
             _logger.LogDebug("Conference Created");
 
@@ -436,7 +437,7 @@ namespace VideoApi.Controllers
 
                 await _commandHandler.Handle(command);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
-                await DeleteAudioRecordingApplication(conferenceId);
+                //await DeleteAudioRecordingApplication(conferenceId);
 
                 return NoContent();
             }
