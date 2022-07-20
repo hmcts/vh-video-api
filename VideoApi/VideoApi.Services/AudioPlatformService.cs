@@ -55,13 +55,13 @@ namespace VideoApi.Services
             {
                //await CreateAndUpdateApplicationAsync(hearingId.ToString());
 
-               return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(hearingId.ToString())};
+               return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(ApplicationName)};
             }
             catch (AudioPlatformException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(hearingId.ToString())};
+                    return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(ApplicationName)};
                 }
                 var errorMessageTemplate = "Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 var errorMessage = $"Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
@@ -138,7 +138,7 @@ namespace VideoApi.Services
         {
             try
             {
-                var tasks = _wowzaClients.Select(x => x.StopStreamRecorderAsync(hearingId.ToString(), _configuration.ServerName, _configuration.HostName));
+                var tasks = _wowzaClients.Select(x => x.StopStreamRecorderAsync(ApplicationName, _configuration.ServerName, _configuration.HostName));
                 await Task.WhenAll(tasks);
 
                 _logger.LogInformation("Stopped Wowza stream recorder for application: {hearingId}", hearingId);
