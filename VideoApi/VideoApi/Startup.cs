@@ -56,7 +56,7 @@ namespace VideoApi
 
             services.AddJsonOptions();
             RegisterSettings(services);
-            bool useStub = false;//!bool.TryParse(Configuration["UseStub"], out useStub) || useStub;
+            bool useStub = !bool.TryParse(Configuration["UseStub"], out useStub) || useStub;
 
             services.AddCustomTypes(Environment, useStub);
             RegisterAuth(services);
