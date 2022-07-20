@@ -17,7 +17,7 @@ namespace VideoApi.Services
         private readonly IEnumerable<IWowzaHttpClient> _wowzaClients;
         private readonly WowzaConfiguration _configuration;
         private readonly ILogger<AudioPlatformService> _logger;
-
+        private const string ApplicationName = "vh-recording-app";
         public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
             _wowzaClients = wowzaClients;
@@ -30,7 +30,7 @@ namespace VideoApi.Services
             try
             {
                 var tasks = _wowzaClients
-                    .Select(x => x.GetApplicationAsync(_configuration.ApplicationName, _configuration.ServerName, _configuration.HostName))
+                    .Select(x => x.GetApplicationAsync(ApplicationName, _configuration.ServerName, _configuration.HostName))
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
@@ -95,7 +95,7 @@ namespace VideoApi.Services
             try
             {
                 var tasks = _wowzaClients
-                    .Select(x => x.MonitoringStreamRecorderAsync(_configuration.ApplicationName, _configuration.ServerName, _configuration.HostName))
+                    .Select(x => x.MonitoringStreamRecorderAsync(ApplicationName, _configuration.ServerName, _configuration.HostName))
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
@@ -117,7 +117,7 @@ namespace VideoApi.Services
             try
             {
                 var tasks = _wowzaClients
-                    .Select(x => x.GetStreamRecorderAsync(_configuration.ApplicationName, _configuration.ServerName, _configuration.HostName))
+                    .Select(x => x.GetStreamRecorderAsync(ApplicationName, _configuration.ServerName, _configuration.HostName))
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
@@ -182,11 +182,11 @@ namespace VideoApi.Services
                 try
                 {
 
-                    await client.CreateApplicationAsync(_configuration.ApplicationName, _configuration.ServerName,
+                    await client.CreateApplicationAsync(ApplicationName, _configuration.ServerName,
                         _configuration.HostName, _configuration.StorageDirectory);
                     _logger.LogInformation("Created a Wowza application for: {applicationName}", applicationName);
 
-                    await client.UpdateApplicationAsync(_configuration.ApplicationName, _configuration.ServerName,
+                    await client.UpdateApplicationAsync(ApplicationName, _configuration.ServerName,
                         _configuration.HostName, _configuration.AzureStorageDirectory);
                     _logger.LogInformation("Updating Wowza application for: {applicationName}", applicationName);
                 }
@@ -206,7 +206,7 @@ namespace VideoApi.Services
             }
         }
 
-        private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{_configuration.ApplicationName}/{_configuration.ApplicationName}";
+        private string GetAudioIngestUrl(string applicationName) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{ApplicationName}";
 
         private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
         {
