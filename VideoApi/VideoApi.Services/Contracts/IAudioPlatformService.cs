@@ -8,12 +8,13 @@ namespace VideoApi.Services.Contracts
 {
     public interface IAudioPlatformService
     {
-        Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId);        
+        Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync();        
         Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId);        
         Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(Guid hearingId);        
         Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId);
         Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId);
         Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync();
+        public string GetAudioIngestUrl(string hearingId);
     }
 }

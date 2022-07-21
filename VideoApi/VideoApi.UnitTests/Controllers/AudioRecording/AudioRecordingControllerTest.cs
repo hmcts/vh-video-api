@@ -68,7 +68,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         public async Task GetAudioApplicationAsync_Returns_NotFound()
         {
             _audioPlatformService
-                .Setup(x => x.GetAudioApplicationInfoAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAudioApplicationInfoAsync())
                 .ReturnsAsync((WowzaGetApplicationResponse) null);
             
             var result = await _controller.GetAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
@@ -95,7 +95,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             };
             
             _audioPlatformService
-                .Setup(x => x.GetAudioApplicationInfoAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAudioApplicationInfoAsync())
                 .ReturnsAsync(wowzaResponse);
             
             var result = await _controller.GetAudioApplicationAsync(It.IsAny<Guid>()) as OkObjectResult;

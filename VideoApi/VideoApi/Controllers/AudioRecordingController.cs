@@ -55,7 +55,7 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("GetAudioApplication");
 
-            var response = await _audioPlatformService.GetAudioApplicationInfoAsync(hearingId);
+            var response = await _audioPlatformService.GetAudioApplicationInfoAsync();
 
             if (response == null) return NotFound();
 

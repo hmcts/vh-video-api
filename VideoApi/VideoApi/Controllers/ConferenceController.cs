@@ -83,15 +83,9 @@ namespace VideoApi.Controllers
                 participant.LastName = participant.LastName.Trim();
                 participant.DisplayName = participant.DisplayName.Trim();
             }
-
-            //is just retrieving static ingest URL
-            var createAudioRecordingResponse = await CreateAudioApplicationWithRetryAsync(request);
-            if (!createAudioRecordingResponse.Success)
-            {
-                return StatusCode((int) createAudioRecordingResponse.StatusCode, createAudioRecordingResponse.Message);
-            }
-            
-            var conferenceId = await CreateConferenceWithRetiesAsync(request, createAudioRecordingResponse.IngestUrl);
+            var audioIngestUrl = _audioPlatformService.GetAudioIngestUrl(request.HearingRefId.ToString());
+      
+            var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
             _logger.LogDebug("Conference Created");
 
             var conferenceEndpoints =
@@ -99,8 +93,7 @@ namespace VideoApi.Controllers
                     new GetEndpointsForConferenceQuery(conferenceId));
             var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
-            var kinlyBookedSuccess = await BookKinlyMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,
-                createAudioRecordingResponse.IngestUrl, endpointDtos);
+            var kinlyBookedSuccess = await BookKinlyMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired, audioIngestUrl, endpointDtos);
             
             if (!kinlyBookedSuccess)
             {
@@ -739,21 +732,6 @@ namespace VideoApi.Controllers
                 retryAttempt => _logger.LogWarning("Failed to CreateConferenceAsync. Retrying attempt {RetryAttempt}", retryAttempt),
                 callResult => callResult == Guid.Empty,
                 async () => await CreateConferenceAsync(request, ingestUrl));
-
-            return result;
-        }
-        
-
-        private async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithRetryAsync(BookNewConferenceRequest request)
-        {
-            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, AudioPlatformServiceResponse>
-            (
-                3,
-                _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning("Failed to CreateAudioApplicationAsync. Retrying attempt {RetryAttempt}", retryAttempt),
-                callResult => callResult == null || !callResult.Success,
-                () => _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId)
-            );
 
             return result;
         }

@@ -20,13 +20,8 @@ namespace VideoApi.Services
             _audioRecordingTestIdConfiguration = new AudioRecordingTestIdConfiguration();
         }
 
-        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId)
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync()
         {
-            if(hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))
-            {
-                return await Task.FromResult<WowzaGetApplicationResponse>(null);
-            }
-
             return await Task.FromResult(new WowzaGetApplicationResponse
             {
                 Name = "MyApplicationName"
@@ -137,6 +132,11 @@ namespace VideoApi.Services
                     ServerVersion = "1.0.0.2"
                 }
             });
+        }
+
+        public string GetAudioIngestUrl(string hearingId)
+        {
+            return $"https://localhost.streaming.mediaServices.windows.net/{hearingId}";
         }
     }
 }
