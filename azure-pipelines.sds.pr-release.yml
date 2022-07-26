@@ -78,7 +78,6 @@ stages:
   - stage: Dock
     displayName: Build Video API
     variables: 
-      - group: aks-cluster-info
       - template: variables/dev.yaml
       - template: variables/shared.yaml
         parameters:

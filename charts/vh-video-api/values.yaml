@@ -60,7 +60,6 @@ java:
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
     APPINSIGHTS_SNAPSHOTFEATURE_VERSION: disabled
     APPLICATIONINSIGHTSAGENT_EXTENSION_VERSION: ~2
-    AZUREAD__VHVIDEOAPIRESOURCEID: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
     MSDEPLOY_RENAME_LOCKED_FILES: 1
     SERVICES__VIDEOAPIURL: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
     Logging__LogLevel__Default: debug
