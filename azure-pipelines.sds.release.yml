@@ -18,6 +18,7 @@ parameters:
   type: object
   default:
   - Dev
+  - Test
   - Demo
   - Staging
   - Prod
