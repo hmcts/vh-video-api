@@ -35,8 +35,8 @@ java:
         - wowzaconfiguration--username
         - wowzaconfiguration--ServerName
         - connectionstrings--videoapi
-        - name: wowzaconfiguration--restendpoint--0
-          alias: WowzaConfiguration--RestApiEndpoints--0
+        - wowzaconfiguration--restendpoint--0
+        - wowzaconfiguration--restendpoint--1
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -52,7 +52,6 @@ java:
         - kinlyconfiguration--kinlyapiurl
         - kinlyconfiguration--kinlyselftestapiurl
         - kinlyconfiguration--conferenceusername
-        - kinlyconfiguration--callbackuri
         - kinlyconfiguration--pexipnode
         - kinlyconfiguration--pexipselftestnode
   environment:
@@ -65,3 +64,4 @@ java:
     Logging__LogLevel__Default: debug
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
+    kinlyconfiguration--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
