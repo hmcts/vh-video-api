@@ -35,8 +35,10 @@ java:
         - wowzaconfiguration--username
         - wowzaconfiguration--ServerName
         - connectionstrings--videoapi
-        - wowzaconfiguration--restendpoint--0
-        - wowzaconfiguration--restendpoint--1
+        - name: wowzaconfiguration--restendpoint--0
+          alias: WowzaConfiguration--RestApiEndpoints--0
+        - name: wowzaconfiguration--restendpoint--1
+          alias: WowzaConfiguration--RestApiEndpoints--1
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
