@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
+using Z.EntityFramework.Plus;
 
 namespace VideoApi.DAL.Commands
 {
@@ -20,11 +20,15 @@ namespace VideoApi.DAL.Commands
         }
         public async Task Handle(RemoveHeartbeatsForConferencesCommand command)
         {
-            var expiredConferences = await _context.Conferences.Where(c => c.ScheduledDateTime <= DateTime.UtcNow.AddDays(-14))
-                .Select(c => c.Id).ToListAsync();
-            var expiredHeartbeats = await _context.Heartbeats.Where(x => expiredConferences.Contains(x.ConferenceId)).ToListAsync();
-            _context.RemoveRange(expiredHeartbeats);
-            await _context.SaveChangesAsync();
+            var expiredConferenceIdsQuery =  
+                _context.Conferences
+                    .Where(c => c.ScheduledDateTime <= DateTime.UtcNow.AddDays(-14))
+                    .Select(c => c.Id)
+                    .AsQueryable();
+            
+            await _context.Heartbeats
+                .Where(e => expiredConferenceIdsQuery.Contains(e.ConferenceId))
+                .DeleteAsync();
         }
     }
 }
