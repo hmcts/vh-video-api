@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -299,6 +300,7 @@ namespace VideoApi.Controllers
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
+            
             if (participant == null)
             {
                 _logger.LogWarning("Unable to find participant request by id");
@@ -312,6 +314,21 @@ namespace VideoApi.Controllers
 
             await _consultationService.LeaveConsultationAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());
             return Ok();
+        }
+
+        [HttpGet]
+        [OpenApiOperation("GetActiveJohConsultationRoom")]
+        public async Task<IActionResult> GetActiveJohConsultationRoom(string conferenceId)
+        {
+            Guid.TryParse(conferenceId, out var parsedConferenceId ConferenceId);
+            var rooms = await  _queryHandler.Handle<GetActiveJudgeJohConsultationRoomByConferenceIdQuery,List<Room>>(new GetActiveJudgeJohConsultationRoomByConferenceIdQuery{ ConferenceId = conferenceId});
+            var roomResponses = new List<RoomResponse>();
+
+            foreach (var room in rooms)
+            {
+                roomResponses.Add(RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room));
+            }
+            return Ok(roomResponses);
         }
     }
 }
