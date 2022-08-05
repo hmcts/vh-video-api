@@ -24,7 +24,8 @@ java:
         - azuread--vhvideowebclientid
         - servicebusqueue--connectionstring
         - wowzaconfiguration--streamPassword
-        - wowzaconfiguration--restPassword
+        - name: wowzaconfiguration--restPassword
+          alias: wowzaconfiguration--Password
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
         - wowzaconfiguration--azure-storage-directory
