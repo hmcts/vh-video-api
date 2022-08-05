@@ -52,8 +52,8 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [OpenApiOperation("RespondToConsultationRequestAsync")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RespondToConsultationRequestAsync(ConsultationRequestResponse request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
@@ -70,11 +70,12 @@ namespace VideoApi.Controllers
                 _logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
                 return NotFound();
             }
-            
+
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
             if (requestedFor == null)
             {
-                _logger.LogWarning("Unable to find participant request for with id {RequestedFor}", request.RequestedFor);
+                _logger.LogWarning("Unable to find participant request for with id {RequestedFor}",
+                    request.RequestedFor);
                 return NotFound();
             }
 
@@ -97,7 +98,8 @@ namespace VideoApi.Controllers
                 ParticipantId = request.RequestedBy
             };
             await _commandHandler.Handle(command);
-            await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, requestedFor.Id, request.RoomLabel);
+            await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, requestedFor.Id,
+                request.RoomLabel);
 
             return NoContent();
         }
@@ -109,9 +111,9 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPost("endpoint")]
         [OpenApiOperation("JoinEndpointToConsultation")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
             var isVhoRequest = request.RequestedById == Guid.Empty;
@@ -132,15 +134,16 @@ namespace VideoApi.Controllers
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedById);
-            if (isVhoRequest 
+            if (isVhoRequest
                 || requestedBy?.UserRole == UserRole.Judge
                 || requestedBy?.UserRole == UserRole.StaffMember
                 || requestedBy?.UserRole == UserRole.JudicialOfficeHolder)
             {
-                await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
+                await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id,
+                    request.RoomLabel);
                 return Ok();
             }
-            
+
             if (requestedBy == null)
             {
                 _logger.LogWarning("Unable to find defence advocate");
@@ -154,7 +157,8 @@ namespace VideoApi.Controllers
                 return Unauthorized(message);
             }
 
-            if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
+            if (!endpoint.DefenceAdvocate.Trim()
+                    .Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 const string message = "Defence advocate is not allowed to speak to requested endpoint";
                 _logger.LogWarning(message);
@@ -171,20 +175,22 @@ namespace VideoApi.Controllers
 
             if (room.RoomEndpoints.Any())
             {
-                _logger.LogWarning("Unable to join endpoint {endpointId} to {RoomLabel}", endpoint.Id, request.RoomLabel);
+                _logger.LogWarning("Unable to join endpoint {endpointId} to {RoomLabel}", endpoint.Id,
+                    request.RoomLabel);
                 return BadRequest("Room already has an active endpoint");
             }
 
-            await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
+            await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id,
+                request.RoomLabel);
             return Ok();
         }
 
         [HttpPost("lockroom")]
         [OpenApiOperation("LockRoom")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LockRoomRequestAsync(LockRoomRequest request)
         {
             try
@@ -195,23 +201,25 @@ namespace VideoApi.Controllers
             }
             catch (RoomNotFoundException ex)
             {
-                _logger.LogError(ex, "Room doest not exist in conference {conferenceId} with label {label}", request.ConferenceId, request.RoomLabel);
+                _logger.LogError(ex, "Room doest not exist in conference {conferenceId} with label {label}",
+                    request.ConferenceId, request.RoomLabel);
                 return NotFound("Room does not exist");
             }
         }
 
         [HttpPost("createconsultation")]
         [OpenApiOperation("CreatePrivateConsultation")]
-        [ProducesResponseType(typeof(RoomResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(RoomResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartNewConsultationRequestAsync(StartConsultationRequest request)
         {
             try
             {
                 var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
-                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy,
+                    room.Label);
 
                 var response = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room);
                 return Ok(response);
@@ -241,17 +249,18 @@ namespace VideoApi.Controllers
 
         [HttpPost("start")]
         [OpenApiOperation("StartPrivateConsultation")]
-        [ProducesResponseType((int)HttpStatusCode.Accepted)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.Accepted)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
             try
             {
                 var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
                     request.RoomType.MapToDomainEnum());
-                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy,
+                    room.Label);
 
                 return Accepted();
             }
@@ -285,9 +294,9 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPost("leave")]
         [OpenApiOperation("LeaveConsultation")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
@@ -300,7 +309,7 @@ namespace VideoApi.Controllers
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
-            
+
             if (participant == null)
             {
                 _logger.LogWarning("Unable to find participant request by id");
@@ -312,23 +321,35 @@ namespace VideoApi.Controllers
                 return BadRequest("Participant is not in a consultation");
             }
 
-            await _consultationService.LeaveConsultationAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());
+            await _consultationService.LeaveConsultationAsync(conference.Id, participant.Id,
+                participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());
             return Ok();
         }
 
         [HttpGet]
         [OpenApiOperation("GetActiveJohConsultationRoom")]
+        [ProducesResponseType(typeof(RoomResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActiveJohConsultationRoom(string conferenceId)
         {
-            Guid.TryParse(conferenceId, out var parsedConferenceId ConferenceId);
-            var rooms = await  _queryHandler.Handle<GetActiveJudgeJohConsultationRoomByConferenceIdQuery,List<Room>>(new GetActiveJudgeJohConsultationRoomByConferenceIdQuery{ ConferenceId = conferenceId});
+            if (!Guid.TryParse(conferenceId, out var parsedConferenceId)) return BadRequest();
+            
+            var rooms =
+                await _queryHandler.Handle<GetActiveJudgeJohConsultationRoomByConferenceIdQuery, List<Room>>(
+                    new GetActiveJudgeJohConsultationRoomByConferenceIdQuery {ConferenceId = parsedConferenceId});
+
+            if (rooms.Count < 1) return NotFound();
+
             var roomResponses = new List<RoomResponse>();
 
             foreach (var room in rooms)
             {
                 roomResponses.Add(RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room));
             }
+
             return Ok(roomResponses);
+
         }
     }
 }
