@@ -18,6 +18,7 @@ parameters:
   type: object
   default:
   - Dev
+  - Test
   - Demo
   - Staging
   - Prod
@@ -100,6 +101,8 @@ stages:
           - template: variables/staging.yaml
         - ${{ if eq(env, 'Demo') }}:
           - template: variables/qa.yaml
+        - ${{ if eq(env, 'Test') }}:
+          - template: variables/test.yaml
         - ${{ if eq(env, 'Prod') }}:
           - template: variables/production.yaml
           
