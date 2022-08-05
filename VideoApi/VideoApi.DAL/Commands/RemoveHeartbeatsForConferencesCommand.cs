@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,6 @@ namespace VideoApi.DAL.Commands
         public RemoveHeartbeatsForConferencesCommand() { }
     }
 
-    [ExcludeFromCodeCoverage]
     public class RemoveHeartbeatsForConferencesCommandHandler : ICommandHandler<RemoveHeartbeatsForConferencesCommand>
     {
         private readonly VideoApiDbContext _context;
@@ -23,14 +21,19 @@ namespace VideoApi.DAL.Commands
         }
         public async Task Handle(RemoveHeartbeatsForConferencesCommand command)
         {
-            var expiredConferenceIdsQuery = 
-                _context.Conferences
-                    .Where(c => c.ScheduledDateTime <= DateTime.UtcNow.AddDays(-14))
-                    .Select(c => c.Id);
+            _context.Database.SetCommandTimeout(3600); //1 hour
             
-            await _context.Heartbeats
-                .Where(e => expiredConferenceIdsQuery.Contains(e.ConferenceId))
-                .DeleteAsync();
+            var expiredConferenceIds = await _context.Conferences
+                .Where(c => c.ScheduledDateTime <= DateTime.UtcNow.AddDays(-14))
+                .Select(c => c.Id)
+                .ToListAsync();
+            
+            var heartBeatsToDeleteQuery = _context.Heartbeats
+                .Where(hb => expiredConferenceIds
+                .Contains(hb.ConferenceId))
+                .AsQueryable();
+            
+            await heartBeatsToDeleteQuery.DeleteAsync();
         }
     }
 }
