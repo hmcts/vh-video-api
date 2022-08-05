@@ -24,11 +24,13 @@ java:
         - azuread--vhvideowebclientid
         - servicebusqueue--connectionstring
         - wowzaconfiguration--streamPassword
-        - wowzaconfiguration--restPassword
+        - name: wowzaconfiguration--restPassword
+          alias: wowzaconfiguration--Password
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
         - wowzaconfiguration--azure-storage-directory
-        - wowzaconfiguration--endpoint
+        - name: wowzaconfiguration--endpoint
+          alias: wowzaconfiguration--endpoint
         - wowzaconfiguration--storage-account
         - wowzaconfiguration--storage-account-endpoint
         - wowzaconfiguration--storage-account-container
@@ -37,6 +39,8 @@ java:
         - connectionstrings--videoapi
         - name: wowzaconfiguration--restendpoint--0
           alias: WowzaConfiguration--RestApiEndpoints--0
+        - name: wowzaconfiguration--restendpoint--1
+          alias: WowzaConfiguration--RestApiEndpoints--1
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -52,7 +56,6 @@ java:
         - kinlyconfiguration--kinlyapiurl
         - kinlyconfiguration--kinlyselftestapiurl
         - kinlyconfiguration--conferenceusername
-        - kinlyconfiguration--callbackuri
         - kinlyconfiguration--pexipnode
         - kinlyconfiguration--pexipselftestnode
   environment:
@@ -65,3 +68,4 @@ java:
     Logging__LogLevel__Default: debug
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
+    kinlyconfiguration--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
