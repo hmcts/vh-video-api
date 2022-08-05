@@ -28,7 +28,7 @@ java:
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
         - wowzaconfiguration--azure-storage-directory
-        - name: wowzaconfiguration--public-endpoint
+        - name: wowzaconfiguration--endpoint
           alias: wowzaconfiguration--endpoint
         - wowzaconfiguration--storage-account
         - wowzaconfiguration--storage-account-endpoint
@@ -36,9 +36,9 @@ java:
         - wowzaconfiguration--username
         - wowzaconfiguration--ServerName
         - connectionstrings--videoapi
-        - name: wowzaconfiguration--public-restendpoint--0
+        - name: wowzaconfiguration--restendpoint--0
           alias: WowzaConfiguration--RestApiEndpoints--0
-        - name: wowzaconfiguration--public-restendpoint--1
+        - name: wowzaconfiguration--restendpoint--1
           alias: WowzaConfiguration--RestApiEndpoints--1
     vh-video-api:
       excludeEnvironmentSuffix: false
