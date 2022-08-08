@@ -25,6 +25,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.14.3" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">
