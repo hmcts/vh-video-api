@@ -10,6 +10,7 @@
         <License>https://github.com/hmcts/vh-video-api/blob/master/LICENSE</License>
         <RepositoryUrl>https://github.com/hmcts/vh-video-api</RepositoryUrl>
         <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+        <PackageVersion>1.40.0</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
