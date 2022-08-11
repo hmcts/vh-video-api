@@ -21,21 +21,31 @@ java:
         - CvpConfiguration--StorageAccountKey
         - CvpConfiguration--StorageContainerName
         - CvpConfiguration--StorageEndpoint
+        - name: wowzaconfiguration--managedidentityclientid
+          alias: CvpConfiguration--ManagedIdentityClientId
         - azuread--vhvideowebclientid
         - servicebusqueue--connectionstring
-        - wowzaconfiguration--streamPassword
         - name: wowzaconfiguration--restPassword
           alias: wowzaconfiguration--Password
         - wowzaconfiguration--storageaccountkey
         - wowzaconfiguration--managedidentityclientid
-        - wowzaconfiguration--azure-storage-directory
+        - name: wowzaconfiguration--wowza-storage-directory
+          alias: wowzaconfiguration--StorageDirectory
+        - name: wowzaconfiguration--azure-storage-directory
+          alias: wowzaconfiguration--AzureStorageDirectory
         - name: wowzaconfiguration--endpoint
-          alias: wowzaconfiguration--endpoint
-        - wowzaconfiguration--storage-account
-        - wowzaconfiguration--storage-account-endpoint
-        - wowzaconfiguration--storage-account-container
+          alias: wowzaconfiguration--RestApiEndpoint
+        - name: wowzaconfiguration--endpoint-streaming
+          alias: wowzaconfiguration--StreamingEndpoint
+        - name: wowzaconfiguration--storage-account
+          alias: wowzaconfiguration--StorageAccountName
+        - name: wowzaconfiguration--storage-account-endpoint
+          alias: wowzaconfiguration--StorageEndpoint
+        - name: wowzaconfiguration--storage-account-container
+          alias: wowzaconfiguration--StorageContainerName
         - wowzaconfiguration--username
         - wowzaconfiguration--ServerName
+        - wowzaconfiguration--HostName
         - connectionstrings--videoapi
         - name: wowzaconfiguration--restendpoint--0
           alias: WowzaConfiguration--RestApiEndpoints--0
@@ -58,6 +68,11 @@ java:
         - kinlyconfiguration--conferenceusername
         - kinlyconfiguration--pexipnode
         - kinlyconfiguration--pexipselftestnode
+        - kinlyconfiguration--selftestapisecret
+        - KinlyConfiguration--CallbackUri
+        - QuickLinks--Issuer
+        - QuickLinks--RsaPrivateKey
+        - QuickLinks--ValidAudience
   environment:
     ASPNETCORE_URLS: http://+:8080
     APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
@@ -68,4 +83,6 @@ java:
     Logging__LogLevel__Default: debug
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
+    services--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
     kinlyconfiguration--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
+    
