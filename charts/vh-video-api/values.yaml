@@ -58,6 +58,8 @@ java:
       secrets:
         - azuread--clientsecret
         - azuread--clientid
+        - name: azuread--identifieruri
+          alias: AzureAd--VideoApiResourceId
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
@@ -85,5 +87,4 @@ java:
     Logging__LogLevel__Microsoft: debug
     services--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
     kinlyconfiguration--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
-    AzureAd__Authority: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
     
