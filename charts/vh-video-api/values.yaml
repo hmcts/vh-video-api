@@ -16,6 +16,7 @@ java:
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
       usePodIdentity: true
       secrets:
+        - azuread--tenantid
         - applicationinsights--instrumentationkey
         - CvpConfiguration--StorageAccountName
         - CvpConfiguration--StorageAccountKey
