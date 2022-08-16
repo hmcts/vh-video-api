@@ -74,14 +74,10 @@ java:
         - QuickLinks--RsaPrivateKey
         - QuickLinks--ValidAudience
   environment:
-    APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
-    APPINSIGHTS_SNAPSHOTFEATURE_VERSION: disabled
-    APPLICATIONINSIGHTSAGENT_EXTENSION_VERSION: ~2
     ASPNETCORE_URLS: http://+:8080
     KINLYCONFIGURATION__CALLBACKURI: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
     Logging__LogLevel__Default: debug
     Logging__LogLevel__Microsoft: debug
     Logging__LogLevel__System: debug
-    MSDEPLOY_RENAME_LOCKED_FILES: 1
     SERVICES__CALLBACKURI: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
     UseStub: false
