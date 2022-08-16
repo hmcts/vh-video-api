@@ -3,4 +3,6 @@ java:
   image: '${IMAGE_NAME}'
   ingressHost: ${SERVICE_FQDN}
   releaseNameOverride: ${RELEASE_NAME}
-
+  environment:
+    KINLYCONFIGURATION__CALLBACKURI: https://${RELEASE_NAME}.dev.platform.hmcts.net/callback
+    SERVICES__CALLBACKURI: https://${RELEASE_NAME}.dev.platform.hmcts.net/callback

@@ -24,8 +24,6 @@ java:
         - CvpConfiguration--StorageEndpoint
         - name: wowzaconfiguration--managedidentityclientid
           alias: CvpConfiguration--ManagedIdentityClientId
-        - azuread--vhvideowebclientid
-        - servicebusqueue--connectionstring
         - name: wowzaconfiguration--restPassword
           alias: wowzaconfiguration--Password
         - wowzaconfiguration--storageaccountkey
@@ -60,7 +58,7 @@ java:
         - azuread--clientsecret
         - azuread--clientid
         - name: azuread--identifieruri
-          alias: AzureAd--VideoApiResourceId
+          alias: services--videoapiresourceid
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
@@ -72,20 +70,14 @@ java:
         - kinlyconfiguration--pexipnode
         - kinlyconfiguration--pexipselftestnode
         - kinlyconfiguration--selftestapisecret
-        - KinlyConfiguration--CallbackUri
         - QuickLinks--Issuer
         - QuickLinks--RsaPrivateKey
         - QuickLinks--ValidAudience
   environment:
     ASPNETCORE_URLS: http://+:8080
-    APPINSIGHTS_PROFILERFEATURE_VERSION: disabled
-    APPINSIGHTS_SNAPSHOTFEATURE_VERSION: disabled
-    APPLICATIONINSIGHTSAGENT_EXTENSION_VERSION: ~2
-    MSDEPLOY_RENAME_LOCKED_FILES: 1
-    SERVICES__VIDEOAPIURL: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    KINLYCONFIGURATION__CALLBACKURI: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
     Logging__LogLevel__Default: debug
-    Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
-    services--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
-    kinlyconfiguration--callbackuri: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
-    
+    Logging__LogLevel__System: debug
+    SERVICES__CALLBACKURI: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
+    UseStub: false
