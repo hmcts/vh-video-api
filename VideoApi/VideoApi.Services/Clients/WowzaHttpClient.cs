@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace VideoApi.Services.Clients
             _httpClient = httpClient;
         }
 
+        public bool IsLoadBalancer { get; set; }
         public async Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory)
         {
             var request = new CreateApplicationRequest
@@ -229,16 +231,16 @@ namespace VideoApi.Services.Clients
             await HandleUnsuccessfulResponse(response);
         }
 
-        public async Task<WowzaGetDiagnosticsResponse> GetDiagnosticsAsync(string server)
+        public async Task<HttpResponseMessage> GetDiagnosticsAsync(string server)
         {
             var response = await _httpClient.GetAsync
             (
                 $"v2/servers/{server}/status"
             );
-
+            
             await HandleUnsuccessfulResponse(response);
-
-            return JsonConvert.DeserializeObject<WowzaGetDiagnosticsResponse>(await response.Content.ReadAsStringAsync());
+            
+            return response;
         }
 
         private static async Task HandleUnsuccessfulResponse(HttpResponseMessage response)
