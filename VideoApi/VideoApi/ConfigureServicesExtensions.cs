@@ -99,24 +99,10 @@ namespace VideoApi
                     .AddTypedClient(httpClient => BuildKinlyClient(kinlyConfiguration.KinlyApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
 
+                AddWowzaHttpClient(services, wowzaConfiguration.LoadBalancer, wowzaConfiguration, true);
                 foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)
                 {
-                    var handler = new HttpClientHandler
-                    {
-                        Credentials = new CredentialCache
-                        {
-                            {
-                                new Uri(restApiEndpoint), "Digest", new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
-                            }
-                        }
-                    };
-
-                    var client = new WowzaHttpClient(new HttpClient(handler)
-                    {
-                        BaseAddress = new Uri(restApiEndpoint), DefaultRequestHeaders = {{"Accept", "application/json"}, {"ContentType", "application/json"}}
-                    });
-
-                    services.AddSingleton<IWowzaHttpClient>(client);
+                    AddWowzaHttpClient(services, restApiEndpoint, wowzaConfiguration, false);
                 }
 
                 services
@@ -166,6 +152,28 @@ namespace VideoApi
             services.AddSingleton<IAzureStorageServiceFactory, AzureStorageServiceFactory>();
             
             return services;
+        }
+
+        private static void AddWowzaHttpClient(IServiceCollection services, string restApiEndpoint, WowzaConfiguration wowzaConfiguration, bool isLoadBalancer)
+        {
+            var handler = new HttpClientHandler
+            {
+                Credentials = new CredentialCache
+                {
+                    {
+                        new Uri(restApiEndpoint), "Digest",
+                        new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
+                    }
+                }
+            };
+
+            var client = new WowzaHttpClient(new HttpClient(handler)
+            {
+                BaseAddress = new Uri(restApiEndpoint),
+                DefaultRequestHeaders = {{"Accept", "application/json"}, {"ContentType", "application/json"}},
+            });
+            client.IsLoadBalancer = isLoadBalancer;
+            services.AddSingleton<IWowzaHttpClient>(client);
         }
 
         private static IKinlyApiClient BuildKinlyClient(string url, HttpClient httpClient)
