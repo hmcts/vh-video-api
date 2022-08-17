@@ -95,7 +95,7 @@ namespace VideoApi.Controllers
             catch (Exception ex)
             {
                 response.WowzaHealth.Successful = false;
-                response.WowzaHealth.ErrorMessage = ex.Message;
+                response.WowzaHealth.ErrorMessage = ex.Message + Environment.NewLine + ex.InnerException ;
                 response.WowzaHealth.Data = ex.Data;
             }
 
