@@ -152,6 +152,8 @@ parameters:
         secret: true
 
       # Wowza Configuration
+      - name: WowzaConfiguration:LoadBalancer
+        value: $(wowza_restApiEndpoints)
       - name: WowzaConfiguration:RestApiEndpoints
         value: $(wowza_restApiEndpoints)
       - name: WowzaConfiguration:StreamingEndpoint
