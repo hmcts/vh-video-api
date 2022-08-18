@@ -124,9 +124,19 @@ namespace VideoApi.Services
             return await DeleteAudioApplicationAsync(hearingId);
         }
 
-        public async Task<bool> GetDiagnosticsAsync()
+        public async Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync()
         {
-            return await Task.FromResult(true);
+            return await Task.FromResult(new []
+            {
+                new WowzaGetDiagnosticsResponse
+                {
+                    ServerVersion = "1.0.0.1"
+                },
+                new WowzaGetDiagnosticsResponse
+                {
+                    ServerVersion = "1.0.0.2"
+                }
+            });
         }
     }
 }

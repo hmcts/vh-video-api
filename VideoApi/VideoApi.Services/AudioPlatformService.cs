@@ -14,15 +14,13 @@ namespace VideoApi.Services
 {
     public class AudioPlatformService : IAudioPlatformService
     {
-        private readonly IWowzaHttpClient[] _wowzaClients;
+        private readonly IEnumerable<IWowzaHttpClient> _wowzaClients;
         private readonly WowzaConfiguration _configuration;
         private readonly ILogger<AudioPlatformService> _logger;
-        private readonly IWowzaHttpClient _loadBalancerClient;
 
         public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
-            _wowzaClients = wowzaClients.ToArray();
-            _loadBalancerClient = _wowzaClients.First(e => e.IsLoadBalancer);
+            _wowzaClients = wowzaClients;
             _configuration = configuration;
             _logger = logger;
         }
@@ -156,18 +154,23 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<bool> GetDiagnosticsAsync()
+        public async Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync()
         {
             try
             {
-                var response = await _loadBalancerClient.GetDiagnosticsAsync(_configuration.ServerName);
-                return response.IsSuccessStatusCode;
+                var tasks = _wowzaClients
+                    .Select(x => x.GetDiagnosticsAsync(_configuration.ServerName))
+                    .ToList();
+
+                var response = await Task.WhenAll(tasks);
+                
+                return response;
             }
             catch (AudioPlatformException ex)
             {
                 var errorMessageTemplate = "Failed to get the Wowza server version for application: {_configuration.ServerName}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 LogError(ex, errorMessageTemplate, _configuration.ServerName, ex.StatusCode, ex.Message);
-                return false;
+                return null;
             }
         }
 

@@ -5,7 +5,6 @@ namespace VideoApi.Common.Configuration
     public class WowzaConfiguration : IBlobStorageConfiguration
     {
         public IEnumerable<string> RestApiEndpoints { get; set; }
-        public string LoadBalancer { get; set; }
         public string StreamingEndpoint { get; set; }
         public string ServerName { get; set; }
         public string HostName { get; set; }

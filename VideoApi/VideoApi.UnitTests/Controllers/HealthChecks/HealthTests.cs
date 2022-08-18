@@ -12,6 +12,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Kinly;
+using VideoApi.Services.Responses;
 using HealthCheckResponse = VideoApi.Contract.Responses.HealthCheckResponse;
 using Task = System.Threading.Tasks.Task;
 
@@ -48,8 +49,11 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
                 .Setup(x => x.GetPlatformHealthAsync())
                 .ReturnsAsync(new VideoApi.Services.Kinly.HealthCheckResponse{Health_status = PlatformHealth.HEALTHY});
             
-            var wowzaResponse = true ;
-            
+            var wowzaResponse = new []
+            {
+                new WowzaGetDiagnosticsResponse {ServerVersion = "1.0.0.1"},
+                new WowzaGetDiagnosticsResponse {ServerVersion = "1.0.0.2"}
+            };
             _mockAudioPlatformService.Setup(x => x.GetDiagnosticsAsync())
                 .ReturnsAsync(wowzaResponse);
 

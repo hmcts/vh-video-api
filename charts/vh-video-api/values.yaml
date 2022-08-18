@@ -33,7 +33,7 @@ java:
         - name: wowzaconfiguration--azure-storage-directory
           alias: wowzaconfiguration--AzureStorageDirectory
         - name: wowzaconfiguration--endpoint
-          alias: wowzaconfiguration--LoadBalancer
+          alias: wowzaconfiguration--RestApiEndpoint
         - name: wowzaconfiguration--endpoint-streaming
           alias: wowzaconfiguration--StreamingEndpoint
         - name: wowzaconfiguration--storage-account

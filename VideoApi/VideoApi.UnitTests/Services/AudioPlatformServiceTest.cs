@@ -1,6 +1,6 @@
 using System;
+using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Services
     public class AudioPlatformServiceTest
     {
         private readonly Mock<IWowzaHttpClient> _wowzaClient1;
-        private readonly Mock<IWowzaHttpClient> _wowzaClientLoadBalancer;
+        private readonly Mock<IWowzaHttpClient> _wowzaClient2;
         private readonly WowzaConfiguration _wowzaConfiguration;
 
         private readonly AudioPlatformService _audioPlatformService;
@@ -26,12 +26,11 @@ namespace VideoApi.UnitTests.Services
         public AudioPlatformServiceTest()
         {
             _wowzaClient1 = new Mock<IWowzaHttpClient>();
-            _wowzaClientLoadBalancer = new Mock<IWowzaHttpClient>();
-            _wowzaClientLoadBalancer.SetupProperty(e => e.IsLoadBalancer, true);
+            _wowzaClient2 = new Mock<IWowzaHttpClient>();
             _wowzaConfiguration = new WowzaConfiguration {StreamingEndpoint = "http://streamIt.com/"};
             var logger = new Mock<ILogger<AudioPlatformService>>();
             
-            _audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object, _wowzaClientLoadBalancer.Object}, _wowzaConfiguration, logger.Object);
+            _audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object, _wowzaClient2.Object}, _wowzaConfiguration, logger.Object);
         }
 
         [Test]
@@ -65,7 +64,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.NotFound));
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.GetApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new WowzaGetApplicationResponse());
 
@@ -108,7 +107,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.CreateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.UpdateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
@@ -142,7 +141,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.UpdateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.UpdateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
@@ -161,9 +160,9 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.CreateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
             _wowzaClient1
                .Setup(x => x.UpdateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.CreateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.UpdateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
             var result = await _audioPlatformService.CreateAudioApplicationAsync(It.IsAny<Guid>());
@@ -180,7 +179,7 @@ namespace VideoApi.UnitTests.Services
                         It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("Already exists", HttpStatusCode.Conflict));
             
-            _wowzaClientLoadBalancer.Setup(x =>
+            _wowzaClient2.Setup(x =>
                     x.CreateApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                         It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("Already exists", HttpStatusCode.Conflict));
@@ -212,7 +211,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.DeleteApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.DeleteApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
 
@@ -230,7 +229,7 @@ namespace VideoApi.UnitTests.Services
             _wowzaClient1
                 .Setup(x => x.DeleteApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.DeleteApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
             var result = await _audioPlatformService.DeleteAudioApplicationAsync(It.IsAny<Guid>());
@@ -310,7 +309,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new WowzaGetStreamRecorderResponse());
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new WowzaGetStreamRecorderResponse());
 
@@ -326,7 +325,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new WowzaGetStreamRecorderResponse());
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
 
@@ -357,7 +356,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.StopStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.StopStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
@@ -375,7 +374,7 @@ namespace VideoApi.UnitTests.Services
             _wowzaClient1
                 .Setup(x => x.StopStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
-            _wowzaClientLoadBalancer
+            _wowzaClient2
                 .Setup(x => x.StopStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
             var result = await _audioPlatformService.DeleteAudioStreamAsync(It.IsAny<Guid>());
@@ -385,27 +384,52 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task GetApplicationDiagnosticsAsync_Returns_False_When_AudioPlatformException_Thrown()
+        public async Task GetApplicationDiagnosticsAsync_Returns_Null_When_AudioPlatformException_Thrown()
         {
-            _wowzaClientLoadBalancer
+            _wowzaClient1
+                .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
+                .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
+
+            _wowzaClient2
                 .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
                 .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
 
             var result = await _audioPlatformService.GetDiagnosticsAsync();
 
-            result.Should().BeFalse();
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public async Task GetApplicationDiagnosticsAsync_Returns_Null_Even_When_One_Node_Success_When_AudioPlatformException_Thrown()
+        {
+            _wowzaClient1
+                .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
+                .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
+
+            _wowzaClient2
+                .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WowzaGetDiagnosticsResponse());
+
+            var result = await _audioPlatformService.GetDiagnosticsAsync();
+
+            result.Should().BeNull();
         }
 
         [Test]
         public async Task GetApplicationDiagnosticsAsync_Returns_Response()
         {
-            _wowzaClientLoadBalancer
+            _wowzaClient1
                 .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-            
-            var result = await _audioPlatformService.GetDiagnosticsAsync();
+                .ReturnsAsync(new WowzaGetDiagnosticsResponse());
 
-            result.Should().BeTrue();
+            _wowzaClient2
+                .Setup(x => x.GetDiagnosticsAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WowzaGetDiagnosticsResponse());
+
+            var result = (await _audioPlatformService.GetDiagnosticsAsync()).ToList();
+
+            result.Should().NotBeNull();
+            result.Should().HaveCount(2);
         }
     }
 }
