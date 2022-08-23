@@ -69,6 +69,7 @@ stages:
 
           - template: templates/sonarCloud/runAnalysis.yml@azTemplates
 
+
 #####################################################
 # Pre Steps. ########################################
 # Build Docker Image & Generate EF Script. ##########
