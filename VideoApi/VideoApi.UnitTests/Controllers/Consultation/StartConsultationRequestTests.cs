@@ -117,6 +117,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var result = await Controller.StartNewConsultationRequestAsync(request);
 
             result.Should().BeOfType<OkObjectResult>();
+            AssertRoomIsCreatedLocked(request);
         }
 
         [Test]
@@ -165,6 +166,12 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var result = await Controller.StartNewConsultationRequestAsync(request);
 
             result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        private void AssertRoomIsCreatedLocked(StartConsultationRequest request)
+        {
+            ConsultationServiceMock.Verify(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
+                It.IsAny<VideoApi.Domain.Enums.VirtualCourtRoomType>(), true), Times.Once);
         }
     }
 }

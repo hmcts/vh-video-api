@@ -31,7 +31,7 @@ namespace VideoApi.Services
             _queryHandler = queryHandler;
         }
 
-        public async Task<ConsultationRoom> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false)
+        public async Task<ConsultationRoom> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = true)
         {
             var consultationRoomParams = new CreateConsultationRoomParams
             {
