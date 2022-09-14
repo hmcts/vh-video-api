@@ -75,9 +75,9 @@ java:
         - QuickLinks--ValidAudience
   environment:
     ASPNETCORE_URLS: http://+:8080
-    KINLYCONFIGURATION__CALLBACKURI: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
+    KINLYCONFIGURATION__CALLBACKURI: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
     Logging__LogLevel__Default: debug
     Logging__LogLevel__Microsoft: debug
     Logging__LogLevel__System: debug
-    SERVICES__CALLBACKURI: http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
+    SERVICES__CALLBACKURI: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/callback
     UseStub: false
