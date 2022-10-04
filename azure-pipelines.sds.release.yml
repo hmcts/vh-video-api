@@ -19,7 +19,6 @@ parameters:
   default:
   - Dev
   - Test
-  - Demo
   - Staging
   - Prod
 
@@ -67,21 +66,22 @@ stages:
 #####################################################
 # Approval Gate for EF. #############################
 
-  - stage: Approve_Entity_Framework
-    displayName: 'Approve EF Release'
-    pool:
-      vmImage: 'ubuntu-latest'
-    jobs:
-      - job: waitForValidation
-        displayName: 'Approve Entity Framework'
-        pool: server
-        timeoutInMinutes: 4320 # job times out in 3 days
-        steps:
-        - task: ManualValidation@0
-          timeoutInMinutes: 1440 # task times out in 1 day
-          inputs:
-            instructions: 'Please Approve to Run Entity Framework Release...'
-            onTimeout: 'reject'
+  - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+    - stage: Approve_Entity_Framework
+      displayName: 'Approve EF Release'
+      pool:
+        vmImage: 'ubuntu-latest'
+      jobs:
+        - job: waitForValidation
+          displayName: 'Approve Entity Framework'
+          pool: server
+          timeoutInMinutes: 4320 # job times out in 3 days
+          steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 1440 # task times out in 1 day
+            inputs:
+              instructions: 'Please Approve to Run Entity Framework Release...'
+              onTimeout: 'reject'
 
 #####################################################
 # Run Entity Framework Staging. #####################
