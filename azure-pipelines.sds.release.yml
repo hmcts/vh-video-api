@@ -152,12 +152,7 @@ stages:
   - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
     - stage: Approve_Helm_Release
       displayName: 'Approve Helm Release'
-      ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-        dependsOn:
-          - Run_Entity_Framework_Dev
-          - Run_Entity_Framework_Staging
-      ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
-        dependsOn: Run_Entity_Framework_Prod
+      dependsOn: Run_Entity_Framework_Prod
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
