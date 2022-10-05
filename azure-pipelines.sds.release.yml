@@ -221,7 +221,6 @@ stages:
 #####################################################
 # Deploy Nuget Packages. #########################
   - stage: Push_Nuget
-    dependsOn: Approve_Helm_Release
     displayName: Deploy Nuget Packages
     ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       dependsOn:
