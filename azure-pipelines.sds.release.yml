@@ -90,8 +90,6 @@ stages:
     - stage: Run_Entity_Framework_${{ env }}
       ${{ if eq(env, 'Prod') }}:
         condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'))
-      ${{ else }}:
-        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
       ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         dependsOn: Approve_Entity_Framework
       ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
