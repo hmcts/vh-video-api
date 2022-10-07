@@ -62,8 +62,8 @@ java:
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
-        - kinlyconfiguration--telephoneconferencenumber
-        - kinlyconfiguration--telephoneconferencenumberwelsh
+        - kinlyconfiguration--conferencenumber
+        - kinlyconfiguration--conferencenumberwelsh
         - kinlyconfiguration--kinlyapiurl
         - kinlyconfiguration--kinlyselftestapiurl
         - kinlyconfiguration--conferenceusername
