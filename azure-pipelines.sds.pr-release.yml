@@ -157,7 +157,7 @@ stages:
 # Run Entity Framework Dev. #########################
   - stage: Run_Entity_Framework_Dev
     dependsOn: Dock
-    condtion: eq(lower(dependencies.Dock.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true')
+    condition: eq(lower(dependencies.Dock.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true')
     displayName: Run Entity Framework Dev
     variables:
       - template: variables/dev.yaml
