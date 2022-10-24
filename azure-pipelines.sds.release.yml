@@ -45,13 +45,6 @@ stages:
             workingPath: $(System.DefaultWorkingDirectory)/VideoApi/VideoApi
             projectName: ${{ variables.efProjectName }}
 
-        - task: PublishPipelineArtifact@1
-          displayName: Publish Artifacts
-          inputs:
-            targetPath: $(Build.StagingDirectory)
-            publishLocation: Pipeline
-            artifact: ${{ variables.efContextName }}-$(Build.BuildId)
-
       - job: package_nuget
         displayName: "Package Nuget Packages"
         steps:
@@ -61,8 +54,6 @@ stages:
               vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
               gitVersionConfigPath: ${{ variables.git_version_config_path }}
       
-
-
 #####################################################
 # Approval Gate for EF. #############################
 
@@ -85,13 +76,12 @@ stages:
 
 #####################################################
 # Run Entity Framework Staging. #####################
-
   - ${{ each env in parameters.environment }}:
     - stage: Run_Entity_Framework_${{ env }}
       ${{ if eq(env, 'Prod') }}:
-        condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'))
+        condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
       ${{ else }}:
-        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
       ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         dependsOn: Approve_Entity_Framework
       ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
