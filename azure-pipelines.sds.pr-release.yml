@@ -157,6 +157,7 @@ stages:
 # Run Entity Framework Dev. #########################
   - stage: Run_Entity_Framework_Dev
     dependsOn: Dock
+    condition: eq(lower(dependencies.Dock.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true')
     displayName: Run Entity Framework Dev
     variables:
       - template: variables/dev.yaml
@@ -188,6 +189,7 @@ stages:
 # Deploy Helm Chart to Dev. ######################### 
   - stage: Install
     dependsOn: Run_Entity_Framework_Dev
+    condition: in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     displayName: Deploy Helm Chart Dev AKS
     variables:
       - template: variables/dev.yaml
@@ -369,6 +371,7 @@ stages:
 # Deploy Nuget Packages. #########################
   - stage: Push_Nuget
     dependsOn: Install
+    condition: in(dependencies.Install.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     displayName: Deploy NuGet Packages
     variables:
       - template: variables/dev.yaml

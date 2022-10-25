@@ -45,13 +45,6 @@ stages:
             workingPath: $(System.DefaultWorkingDirectory)/VideoApi/VideoApi
             projectName: ${{ variables.efProjectName }}
 
-        - task: PublishPipelineArtifact@1
-          displayName: Publish Artifacts
-          inputs:
-            targetPath: $(Build.StagingDirectory)
-            publishLocation: Pipeline
-            artifact: ${{ variables.efContextName }}-$(Build.BuildId)
-
       - job: package_nuget
         displayName: "Package Nuget Packages"
         steps:
@@ -61,8 +54,6 @@ stages:
               vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
               gitVersionConfigPath: ${{ variables.git_version_config_path }}
       
-
-
 #####################################################
 # Approval Gate for EF. #############################
 
@@ -85,13 +76,12 @@ stages:
 
 #####################################################
 # Run Entity Framework Staging. #####################
-
   - ${{ each env in parameters.environment }}:
     - stage: Run_Entity_Framework_${{ env }}
       ${{ if eq(env, 'Prod') }}:
-        condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'))
+        condition: and( succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
       ${{ else }}:
-        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
       ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         dependsOn: Approve_Entity_Framework
       ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
@@ -155,6 +145,7 @@ stages:
     - stage: Approve_Helm_Release
       displayName: 'Approve Helm Release'
       dependsOn: Run_Entity_Framework_Prod
+      condition: in(dependencies.Run_Entity_Framework_Prod.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
       pool:
         vmImage: 'ubuntu-latest'
       jobs:
@@ -175,12 +166,14 @@ stages:
   - stage: Docker_Build_Push
     displayName: Docker Build & Push Image
     ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Test.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
       dependsOn:
         - Run_Entity_Framework_Dev
         - Run_Entity_Framework_Staging
         - Run_Entity_Framework_Test
     ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
       dependsOn: Approve_Helm_Release
+      condition: in(dependencies.Approve_Helm_Release.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     variables:
       - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         - template: variables/production.yaml
@@ -223,11 +216,13 @@ stages:
   - stage: Push_Nuget
     displayName: Deploy Nuget Packages
     ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Test.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
       dependsOn:
         - Run_Entity_Framework_Dev
         - Run_Entity_Framework_Staging
         - Run_Entity_Framework_Test
     ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+      condition: in(dependencies.Approve_Helm_Release.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
       dependsOn: Approve_Helm_Release
     variables:
       - template: variables/dev.yaml
@@ -247,6 +242,7 @@ stages:
   - stage: Helm
     displayName: Push Helm Charts
     dependsOn: Docker_Build_Push
+    condition: in(dependencies.Docker_Build_Push.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     variables:
       - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         - template: variables/production.yaml
