@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -565,39 +564,6 @@ namespace VideoApi.Controllers
             if (meetingRoom != null)
             {
                 await _videoPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
-            }
-        }
-
-        private async Task DeleteAudioRecordingApplication(Guid conferenceId)
-        {
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference != null && queriedConference.AudioRecordingRequired)
-            {
-                try
-                {
-                    await EnsureAudioFileExists(queriedConference);
-                    await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
-                }
-                catch (AudioPlatformFileNotFoundException ex)
-                {
-                    _logger.LogError(ex, ex.Message);
-                }
-
-            }
-        }
-
-        private async Task EnsureAudioFileExists(Conference conference)
-        {
-            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-            var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
-
-            if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
-            {
-                var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
-                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
         }
 

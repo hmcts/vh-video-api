@@ -17,12 +17,12 @@ namespace VideoApi.Services
         private readonly IEnumerable<IWowzaHttpClient> _wowzaClients;
         private readonly WowzaConfiguration _configuration;
         private readonly ILogger<AudioPlatformService> _logger;
-        private const string ApplicationName = "vh-recording-app";
         public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
             _wowzaClients = wowzaClients;
             _configuration = configuration;
             _logger = logger;
+            ApplicationName = configuration.ApplicationName;
         }
 
         public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync()
@@ -141,6 +141,7 @@ namespace VideoApi.Services
         }
 
         public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{hearingId}";
+        public string ApplicationName { get; }
 
         private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
         {
@@ -157,28 +158,6 @@ namespace VideoApi.Services
             }
 
             return default;
-        }
-
-        #region No longer in use
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId)
-        {
-            try
-            {
-               await CreateAndUpdateApplicationAsync(hearingId.ToString());
-
-               return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(hearingId.ToString())};
-            }
-            catch (AudioPlatformException ex)
-            {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
-                {
-                    return new AudioPlatformServiceResponse(true) {IngestUrl = GetAudioIngestUrl(hearingId.ToString())};
-                }
-                var errorMessageTemplate = "Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-                var errorMessage = $"Failed to create the Wowza application for: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
-                return new AudioPlatformServiceResponse(false) { Message = errorMessage, StatusCode = ex.StatusCode };
-            }
         }
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId)
@@ -200,31 +179,5 @@ namespace VideoApi.Services
                 return new AudioPlatformServiceResponse(false){ Message = errorMessage, StatusCode = ex.StatusCode };
             }
         }
-        private async Task CreateAndUpdateApplicationAsync(string applicationName)
-        {
-            
-            foreach (var client in _wowzaClients)
-            {
-                try
-                {
-
-                    await client.CreateApplicationAsync(ApplicationName, _configuration.ServerName,
-                        _configuration.HostName, _configuration.StorageDirectory);
-                    _logger.LogInformation("Created a Wowza application for: {applicationName}", applicationName);
-
-                    await client.UpdateApplicationAsync(ApplicationName, _configuration.ServerName,
-                        _configuration.HostName, _configuration.AzureStorageDirectory);
-                    _logger.LogInformation("Updating Wowza application for: {applicationName}", applicationName);
-                }
-                catch (Exception e)
-                {
-                    continue;
-                }
-            }
-            
-        }
-        
-
-        #endregion
     }
 }
