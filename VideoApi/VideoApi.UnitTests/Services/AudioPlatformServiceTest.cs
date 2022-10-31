@@ -81,7 +81,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetApplicationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new WowzaGetApplicationResponse());
 
-            var result = await _audioPlatformService.GetAudioApplicationInfoAsync(It.IsAny<Guid>());
+            var result = await _audioPlatformService.GetAudioApplicationInfoAsync();
 
             result.Should().NotBeNull();
         }
