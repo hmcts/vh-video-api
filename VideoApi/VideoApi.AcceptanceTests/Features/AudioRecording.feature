@@ -40,12 +40,6 @@ Scenario: Get Audio Stream Monitoring - Ok
 	And the audio stream monitoring details are retrieved
 
 @VIH-5868
-Scenario: Get Audio Stream Monitoring - Not Found
-	Given I have a valid get audio stream monitoring request that has no audio stream
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
-
-@VIH-5868
 Scenario: Get Audio Recording Link - Ok
 	Given I have a conference
 	And the conference has an audio recording
