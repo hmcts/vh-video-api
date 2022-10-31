@@ -21,27 +21,13 @@ namespace VideoApi.Services
             ApplicationName = "vh-recording-app";
         }
 
-        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync()
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid? hearingId = null)
         {
             return await Task.FromResult(new WowzaGetApplicationResponse
             {
                 Name = "MyApplicationName"
             });
         }
-
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId)
-        {
-            if (hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
-            {
-                return await Task.FromResult(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            }
-            return await Task.FromResult(new AudioPlatformServiceResponse(true));
-        }
-
         public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId)
         {
             if (hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))

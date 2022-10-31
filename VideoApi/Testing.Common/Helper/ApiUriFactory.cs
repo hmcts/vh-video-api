@@ -12,8 +12,8 @@ namespace Testing.Common.Helper
         public static class AudioRecordingEndpoints
         {
             private const string ApiRoot = "conferences";
-            public static string GetAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
-            public static string CreateAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
+            public static string GetAudioApplicationWithHearingId(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
+            public static string GetAudioApplication() => $"{ApiRoot}/audioapplications";
             public static string DeleteAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
             public static string GetAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
             public static string GetAudioMonitoringStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}/monitoring";

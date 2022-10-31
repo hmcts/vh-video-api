@@ -13,13 +13,6 @@ Feature: Audio Recording
     And the audio application details are retrieved
 
   @VIH-5868
-  Scenario: Create Audio Application - Created
-    Given I have a conference
-    And I have a valid create audio application request
-    When I send the request to the endpoint
-    Then the response should have the status Ok and success status True
-
-  @VIH-5868
   Scenario: Delete Audio Application - OK
     Given I have a conference
     And the conference has an audio application

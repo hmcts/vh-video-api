@@ -28,17 +28,18 @@ namespace VideoApi.Services
             ApplicationName = configuration.ApplicationName;
         }
 
-        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync()
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid? hearingId = null)
         {
+            var applicationName = hearingId == null ? ApplicationName : hearingId.ToString();
             try
             {
                 var tasks = _wowzaClients
-                    .Select(x => x.GetApplicationAsync(ApplicationName, _configuration.ServerName, _configuration.HostName))
+                    .Select(x => x.GetApplicationAsync(applicationName, _configuration.ServerName, _configuration.HostName))
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
 
-                _logger.LogInformation("Got Wowza application info: {AppName}", ApplicationName);
+                _logger.LogInformation("Got Wowza application info: {AppName}", applicationName);
 
                 return response;
             }
@@ -46,7 +47,7 @@ namespace VideoApi.Services
             {
                 var errorMessageTemplate = "Failed to get info for Wowza application: {ApplicationName}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
 
-                LogError(ex, errorMessageTemplate, ApplicationName, ex.StatusCode, ex.Message);
+                LogError(ex, errorMessageTemplate, applicationName, ex.StatusCode, ex.Message);
 
                 return null;
             }

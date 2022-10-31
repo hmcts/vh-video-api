@@ -41,7 +41,41 @@ namespace VideoApi.Controllers
             _logger = logger;
             _queryHandler = queryHandler;
         }
+        
+        /// <summary>
+        /// Gets the audio application info
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("audioapplications/{hearingId}")]
+        [OpenApiOperation("GetAudioApplicationWithHearingId")]
+        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
+        {
+            _logger.LogDebug("GetAudioApplicationWithHearingId");
 
+            var response = await _audioPlatformService.GetAudioApplicationInfoAsync(hearingId);
+
+            if (response == null) return NotFound();
+
+            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(response));
+        }
+                
+        /// <summary>
+        /// Gets the audio application info for the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
+        /// <returns></returns>
+        [HttpGet("audioapplications")]
+        [OpenApiOperation("GetAudioApplication")]
+        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAudioApplicationAsync()
+        {
+            _logger.LogDebug("GetAudioApplication");
+            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(await _audioPlatformService.GetAudioApplicationInfoAsync()));
+        }
+  
         /// <summary>
         /// Deletes the audio application for the conference by hearingId
         /// </summary>

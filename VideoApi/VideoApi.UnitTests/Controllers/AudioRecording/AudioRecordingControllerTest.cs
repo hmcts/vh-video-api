@@ -66,6 +66,78 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                         It.IsAny<GetConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(_testConference);
         }
+        [Test]
+        public async Task GetAudioApplicationAsync_Returns_NotFound()
+        {
+            _audioPlatformService
+                .Setup(x => x.GetAudioApplicationInfoAsync(It.IsAny<Guid?>()))
+                .ReturnsAsync((WowzaGetApplicationResponse) null);
+            
+            var result = await _controller.GetAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        }
+        
+        [Test]
+        public async Task GetAudioApplicationAsyncWithHearingId_Returns_AudioApplicationInfoResponse()
+        {
+            var hearingId = Guid.NewGuid();
+            var wowzaResponse = new WowzaGetApplicationResponse
+            {
+                Description = "Description",
+                Name = "Name",
+                ServerName = "ServerName",
+                StreamConfig = new Streamconfig
+                {
+                    KeyDir = "KeyDir",
+                    ServerName = "ServerName",
+                    StorageDir = "StorageDir",
+                    StreamType = "StreamType",
+                    StorageDirExists = true
+                }
+            };
+            
+            _audioPlatformService
+                .Setup(x => x.GetAudioApplicationInfoAsync(hearingId))
+                .ReturnsAsync(wowzaResponse);
+            
+            var result = await _controller.GetAudioApplicationAsync(hearingId) as OkObjectResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            var response = result.Value as AudioApplicationInfoResponse;
+            response.Should().NotBeNull();
+            response.Should().BeEquivalentTo(wowzaResponse, options => options.ExcludingMissingMembers());
+        }       
+        
+        [Test]
+        public async Task GetAudioApplicationAsync_Returns_AudioApplicationInfoResponse()
+        {
+            var wowzaResponse = new WowzaGetApplicationResponse
+            {
+                Description = "Description",
+                Name = "Name",
+                ServerName = "ServerName",
+                StreamConfig = new Streamconfig
+                {
+                    KeyDir = "KeyDir",
+                    ServerName = "ServerName",
+                    StorageDir = "StorageDir",
+                    StreamType = "StreamType",
+                    StorageDirExists = true
+                }
+            };
+            
+            _audioPlatformService
+                .Setup(x => x.GetAudioApplicationInfoAsync(null))
+                .ReturnsAsync(wowzaResponse);
+            
+            var result = await _controller.GetAudioApplicationAsync() as OkObjectResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            var response = result.Value as AudioApplicationInfoResponse;
+            response.Should().NotBeNull();
+            response.Should().BeEquivalentTo(wowzaResponse, options => options.ExcludingMissingMembers());
+        }
         
         [Test]
         public async Task DeleteAudioApplicationAsync_Returns_Conflict()
