@@ -48,7 +48,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        [Ignore("for POC")]
         public async Task Should_close_conference_and_delete_audio_recording_application_if_audio_required_set_to_true_for_given_conference()
         {
             TestConference.AudioRecordingRequired = true;
@@ -70,7 +69,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        [Ignore("for POC")]
         public async Task Should_close_conference_and_delete_audio_recording_application_if_audio_files_exist_and_actual_start_date_is_null()
         {
             TestConference.AudioRecordingRequired = true;
@@ -92,7 +90,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        [Ignore("for POC")]
         public async Task Should_close_conference_and_not_call_delete_audio_recording_application_if_audio_recording_file_not_found()
         {
             TestConference.AudioRecordingRequired = true;
@@ -115,5 +112,30 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
         }
+        
+        [Test]
+        public async Task Should_close_conference_and_not_call_delete_audio_recording_application_if_audio_recording_is_on_single_instance()
+        {
+            var appName = "vh-recording-app";
+            TestConference.AudioRecordingRequired = true;
+            TestConference.IngestUrl = $"rtmps://vh-wowza-dev.hearings.reform.hmcts.net:443/{appName}/0dc59e0c-a5f8-4b05-868f-00e96c23ca79";
+            TestConference.UpdateConferenceStatus(VideoApi.Domain.Enums.ConferenceState.InSession);
+
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
+            AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
+            AudioPlatformServiceMock.Reset();
+            AzureStorageServiceMock.Reset();
+
+            AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(new List<string>());
+            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(appName);
+
+            await Controller.CloseConferenceAsync(Guid.NewGuid());
+
+            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
+            AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
+        }
+        
     }
 }

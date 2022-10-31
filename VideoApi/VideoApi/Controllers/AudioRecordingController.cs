@@ -43,8 +43,9 @@ namespace VideoApi.Controllers
         }
         
         /// <summary>
-        /// Gets the audio application info
+        /// Gets the audio application info for the conference by hearingId
         /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <returns></returns>
         [HttpGet("audioapplications/{hearingId}")]
         [OpenApiOperation("GetAudioApplicationWithHearingId")]
@@ -62,9 +63,8 @@ namespace VideoApi.Controllers
         }
                 
         /// <summary>
-        /// Gets the audio application info for the conference by hearingId
+        /// Gets the audio application info
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <returns></returns>
         [HttpGet("audioapplications")]
         [OpenApiOperation("GetAudioApplication")]

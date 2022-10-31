@@ -429,7 +429,7 @@ namespace VideoApi.Controllers
 
                 await _commandHandler.Handle(command);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
-                //await DeleteAudioRecordingApplication(conferenceId);
+                await DeleteAudioRecordingApplication(conferenceId);
 
                 return NoContent();
             }
@@ -719,7 +719,39 @@ namespace VideoApi.Controllers
             var conferenceForHostResponse = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
             return conferenceForHostResponse;
         }
+     private async Task DeleteAudioRecordingApplication(Guid conferenceId)
+        {
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            
+            if (queriedConference is {AudioRecordingRequired: true} &&
+                !queriedConference.IngestUrl.Contains(_audioPlatformService.ApplicationName)) //should not delete application, if on single instance version
+            {
+                try
+                {
+                    await EnsureAudioFileExists(queriedConference);
+                    await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
+                }
+                catch (AudioPlatformFileNotFoundException ex)
+                {
+                    _logger.LogError(ex, ex.Message);
+                }
 
+            }
+        }
+
+        private async Task EnsureAudioFileExists(Conference conference)
+        {
+            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+            var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
+
+            if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
+            {
+                var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+        }
         private async Task<IEnumerable<ParticipantInHearingResponse>> GetHostsInHearingsToday(bool judgesOnly = false)
         {
             var conferences =
