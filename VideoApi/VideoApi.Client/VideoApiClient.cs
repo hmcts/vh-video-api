@@ -22,12 +22,14 @@ namespace VideoApi.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.10.8.0 (NJsonSchema v10.3.11.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial interface IVideoApiClient
     {
-        /// <summary>Gets the audio application info</summary>
+        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Gets the audio application info</summary>
+        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
     
@@ -42,12 +44,12 @@ namespace VideoApi.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <summary>Gets the audio application info</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <summary>Gets the audio application info</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync(System.Threading.CancellationToken cancellationToken);
     
@@ -906,7 +908,8 @@ namespace VideoApi.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
-        /// <summary>Gets the audio application info</summary>
+        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId)
         {
@@ -914,7 +917,8 @@ namespace VideoApi.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Gets the audio application info</summary>
+        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
         {
@@ -1078,7 +1082,7 @@ namespace VideoApi.Client
             }
         }
     
-        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <summary>Gets the audio application info</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync()
         {
@@ -1086,7 +1090,7 @@ namespace VideoApi.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Gets the audio application info for the conference by hearingId</summary>
+        /// <summary>Gets the audio application info</summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync(System.Threading.CancellationToken cancellationToken)
         {

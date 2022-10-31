@@ -13,7 +13,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class CloseConferenceTests : ConferenceControllerTestBase
     {
-
         [Test]
         public async Task Should_close_conference_for_given_valid_conference_id()
         {
@@ -103,7 +102,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AzureStorageServiceMock.Reset();
 
             AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(new List<string>());
-
+            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(AppName);
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
@@ -116,9 +115,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
         [Test]
         public async Task Should_close_conference_and_not_call_delete_audio_recording_application_if_audio_recording_is_on_single_instance()
         {
-            var appName = "vh-recording-app";
             TestConference.AudioRecordingRequired = true;
-            TestConference.IngestUrl = $"rtmps://vh-wowza-dev.hearings.reform.hmcts.net:443/{appName}/0dc59e0c-a5f8-4b05-868f-00e96c23ca79";
+            TestConference.IngestUrl = $"rtmps://vh-wowza-dev.hearings.reform.hmcts.net:443/{AppName}/0dc59e0c-a5f8-4b05-868f-00e96c23ca79";
             TestConference.UpdateConferenceStatus(VideoApi.Domain.Enums.ConferenceState.InSession);
 
             QueryHandlerMock
@@ -128,8 +126,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock.Reset();
             AzureStorageServiceMock.Reset();
 
+            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(AppName);
             AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(new List<string>());
-            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(appName);
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
