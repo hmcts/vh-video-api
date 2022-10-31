@@ -32,12 +32,6 @@ Scenario: Delete Audio Application without audio recording file - Not Found
 	Then the response should have the status NotFound and success status False
 
 @VIH-5868
-Scenario: Get Audio Stream - Not Found
-	Given I have a valid get audio stream request that has no stream
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
-
-@VIH-5868
 Scenario: Get Audio Stream Monitoring - Ok
   Given I have a conference with an audio recording
 	And I have a valid get audio stream monitoring request

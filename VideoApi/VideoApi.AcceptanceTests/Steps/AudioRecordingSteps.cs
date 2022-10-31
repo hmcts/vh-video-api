@@ -26,7 +26,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get audio application request")]
         public void GivenIHaveAValidGetAudioApplicationRequest()
         {
-            _context.Request = _context.Get(GetAudioApplicationWithHearingId(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Get(GetAudioApplication());
         }
 
         [Given(@"I have a nonexistent get audio application request")]
