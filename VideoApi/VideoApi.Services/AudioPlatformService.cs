@@ -14,12 +14,15 @@ namespace VideoApi.Services
 {
     public class AudioPlatformService : IAudioPlatformService
     {
-        private readonly IEnumerable<IWowzaHttpClient> _wowzaClients;
+        private readonly IWowzaHttpClient[] _wowzaClients;
         private readonly WowzaConfiguration _configuration;
         private readonly ILogger<AudioPlatformService> _logger;
+        private readonly IWowzaHttpClient _loadBalancerClient;
+
         public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
-            _wowzaClients = wowzaClients;
+            _wowzaClients = wowzaClients.ToArray();
+            _loadBalancerClient = _wowzaClients.First(e => e.IsLoadBalancer);
             _configuration = configuration;
             _logger = logger;
             ApplicationName = configuration.ApplicationName;
@@ -113,23 +116,18 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<IEnumerable<WowzaGetDiagnosticsResponse>> GetDiagnosticsAsync()
+        public async Task<bool> GetDiagnosticsAsync()
         {
             try
             {
-                var tasks = _wowzaClients
-                    .Select(x => x.GetDiagnosticsAsync(_configuration.ServerName))
-                    .ToList();
-
-                var response = await Task.WhenAll(tasks);
-                
-                return response;
+                var response = await _loadBalancerClient.GetDiagnosticsAsync(_configuration.ServerName);
+                return response.IsSuccessStatusCode;
             }
             catch (AudioPlatformException ex)
             {
                 var errorMessageTemplate = "Failed to get the Wowza server version for application: {_configuration.ServerName}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
                 LogError(ex, errorMessageTemplate, _configuration.ServerName, ex.StatusCode, ex.Message);
-                return null;
+                return false;
             }
         }
         private void LogError(AudioPlatformException ex, string errorMessageTemplate, params object[] args)

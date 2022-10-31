@@ -190,7 +190,7 @@ extends:
           secret: true
 
         # Wowza Configuration
-        - name: WowzaConfiguration:RestApiEndpoints
+        - name: WowzaConfiguration:LoadBalancer
           value: $(wowza_restApiEndpoints)
         - name: WowzaConfiguration:RestApiEndpoints:0
           value: $(wowza_restApiEndpoints_0)

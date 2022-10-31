@@ -16,6 +16,6 @@ namespace VideoApi.Services.Contracts
 
         Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom);
 
-        Task<ConsultationRoom> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = false);
+        Task<ConsultationRoom> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = true);
     }
 }
