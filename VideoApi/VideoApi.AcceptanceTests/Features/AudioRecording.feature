@@ -12,12 +12,6 @@ Scenario: Get Audio Application - OK
 	And the audio application details are retrieved
 
 @VIH-5868
-Scenario: Get Audio Application - Not Found
-  Given I have a nonexistent get audio application request
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
-
-@VIH-5868
 Scenario: Delete Audio Application with audio recording file - No Content
 	Given I have a conference with an audio application and audio recording file
 	And I have a valid delete audio application request

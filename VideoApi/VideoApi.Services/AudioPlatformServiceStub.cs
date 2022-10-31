@@ -55,7 +55,7 @@ namespace VideoApi.Services
         
         public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId)
         {
-            if (hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))
+            if (!hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
             {
                 return await Task.FromResult<WowzaGetStreamRecorderResponse>(null);
             }
