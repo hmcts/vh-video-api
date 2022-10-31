@@ -20,14 +20,13 @@ namespace VideoApi.UnitTests.Services
         private readonly Mock<IWowzaHttpClient> _wowzaClient1;
         private readonly Mock<IWowzaHttpClient> _wowzaClient2;
         private readonly WowzaConfiguration _wowzaConfiguration;
-
         private readonly AudioPlatformService _audioPlatformService;
 
         public AudioPlatformServiceTest()
         {
             _wowzaClient1 = new Mock<IWowzaHttpClient>();
             _wowzaClient2 = new Mock<IWowzaHttpClient>();
-            _wowzaConfiguration = new WowzaConfiguration {StreamingEndpoint = "http://streamIt.com/"};
+            _wowzaConfiguration = new WowzaConfiguration {StreamingEndpoint = "http://streamIt.com/", ApplicationName = "vh-recording-app"};
             var logger = new Mock<ILogger<AudioPlatformService>>();
             
             _audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object, _wowzaClient2.Object}, _wowzaConfiguration, logger.Object);
@@ -44,7 +43,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().BeNull();
         }
-        
+
         [Test]
         public async Task GetAudioApplicationInfoAsync_Returns_Null_When_AudioPlatformException_Thrown_which_is_NotFound()
         {
@@ -326,6 +325,17 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().NotBeNull();
             result.Should().HaveCount(2);
+        }
+        
+        
+        [Test]
+        public void GetAudioIngestUrl_returns_expected_url()
+        {
+            var hearingId = Guid.NewGuid().ToString();
+            var url = _audioPlatformService.GetAudioIngestUrl(hearingId);
+            url.Should().Contain(hearingId);
+            url.Should().Contain(_wowzaConfiguration.ApplicationName);
+            url.Should().Contain(_wowzaConfiguration.StreamingEndpoint);
         }
     }
 }

@@ -34,11 +34,14 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         private AudioRecordingController _controller;
         private Mock<BlobClient> _blobClientMock;
 
+        private const string ApplicationName = "vh-recording-app";
+        
         [SetUp]
         public void Setup()
         {
             _queryHandler = new Mock<IQueryHandler>();
             _audioPlatformService = new Mock<IAudioPlatformService>();
+            _audioPlatformService.Setup(x => x.ApplicationName).Returns(ApplicationName);
             _storageServiceFactory = new Mock<IAzureStorageServiceFactory>();
             _storageService = new Mock<IAzureStorageService>();
 
@@ -47,14 +50,14 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                _storageServiceFactory.Object,  _audioPlatformService.Object,
                 new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object
             );
-            
-            
+
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
+                .WithAudioRecordingRequired(true)
                 .Build();
 
             _queryHandler
@@ -107,8 +110,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         public async Task Should_not_delete_audio_application_if_audio_file_not_exists_and_audio_required_returns_notFound()
         {
             var conferenceType = typeof(VideoApi.Domain.Conference);
-            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))
-                ?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            
             _testConference.AudioRecordingRequired = true;
             _queryHandler
                 .Setup(x =>
@@ -120,6 +123,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var blobFiles = new List<string>();
             _storageService.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(blobFiles);
             _audioPlatformService.Reset();
+            _audioPlatformService.Setup(x => x.ApplicationName).Returns(ApplicationName);
             var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
