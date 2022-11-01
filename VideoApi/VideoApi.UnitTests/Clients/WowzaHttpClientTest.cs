@@ -190,7 +190,7 @@ namespace VideoApi.UnitTests.Clients
             (
                 () => wowzaHttpClient.MonitoringStreamRecorderAsync
                 (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
             exception.Message.Should().Be("Exception thrown");
@@ -207,7 +207,7 @@ namespace VideoApi.UnitTests.Clients
 
             var result = await wowzaHttpClient.MonitoringStreamRecorderAsync
             (
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
             );
 
             result.Should().NotBeNull();
@@ -262,7 +262,7 @@ namespace VideoApi.UnitTests.Clients
             (
                 () => wowzaHttpClient.GetStreamRecorderAsync
                 (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
             exception.Message.Should().Be("Exception thrown");
@@ -279,7 +279,7 @@ namespace VideoApi.UnitTests.Clients
 
             var result = await wowzaHttpClient.GetStreamRecorderAsync
             (
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
             );
 
             result.Should().NotBeNull();
@@ -298,7 +298,7 @@ namespace VideoApi.UnitTests.Clients
             (
                 () => wowzaHttpClient.StopStreamRecorderAsync
                 (
-                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
                 )
             );
             exception.Message.Should().Be("Exception thrown");
@@ -315,7 +315,7 @@ namespace VideoApi.UnitTests.Clients
 
             var result = wowzaHttpClient.StopStreamRecorderAsync
             (
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()
             );
 
             result.IsCompleted.Should().BeTrue();

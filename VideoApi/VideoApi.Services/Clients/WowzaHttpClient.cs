@@ -181,12 +181,12 @@ namespace VideoApi.Services.Clients
             await HandleUnsuccessfulResponse(response);
         }
 
-        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host)
+        public async Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host, string hearingId)
         {
             var response = await _httpClient.GetAsync
             (
                 $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/incomingstreams/{applicationName}/monitoring/current"
+                $"{applicationName}/instances/_definst_/incomingstreams/{hearingId}/monitoring/current"
             );
 
             await HandleUnsuccessfulResponse(response);
@@ -206,12 +206,12 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetApplicationResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host)
+        public async Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host, string hearingId)
         {
             var response = await _httpClient.GetAsync
             (
                 $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}"
+                $"{applicationName}/instances/_definst_/streamrecorders/{hearingId}"
             );
 
             await HandleUnsuccessfulResponse(response);
@@ -219,12 +219,12 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task StopStreamRecorderAsync(string applicationName, string server, string host)
+        public async Task StopStreamRecorderAsync(string applicationName, string server, string host, string hearingId)
         {
             var response = await _httpClient.PutAsync
             (
                 $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders/{applicationName}/actions/stopRecording",
+                $"{applicationName}/instances/_definst_/streamrecorders/{hearingId}/actions/stopRecording",
                 new StringContent("")
             );
 
