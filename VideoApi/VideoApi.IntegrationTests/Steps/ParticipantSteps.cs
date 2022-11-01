@@ -240,6 +240,24 @@ namespace VideoApi.IntegrationTests.Steps
             await _context.TestDataManager.SeedHeartbeats(heartbeats);
         }
 
+        [Given(@"I have a participant with heartbeat data to remove")]
+        public async Task GivenIHaveHeartbeatsToRemove()
+        {
+            var participantId = _context.Test.Conference.GetParticipants()[0].Id;
+            var heartbeats = new List<Heartbeat>
+            {
+                new Heartbeat(_context.Test.Conference.Id, participantId,
+                    1, 2, 3, 4, 5, 6, 7, 8, DateTime.UtcNow.AddDays(-14), "chrome", "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
+                new Heartbeat(_context.Test.Conference.Id, participantId,
+                    8, 7, 6, 5, 4, 3, 2, 1, DateTime.UtcNow.AddDays(-14), "chrome", "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 ),
+                new Heartbeat(_context.Test.Conference.Id, participantId,
+                    5456, 4495, 5642, 9795, 5653, 8723, 4242, 3343, DateTime.UtcNow.AddDays(-14), "chrome", "1",
+                    "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 )
+            };
+
+            await _context.TestDataManager.SeedHeartbeats(heartbeats);
+        }
+
         [Given(@"I have a valid get heartbeats request")]
         public void GetHeartbeatsRequest()
         {

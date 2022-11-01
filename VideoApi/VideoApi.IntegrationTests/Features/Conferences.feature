@@ -149,7 +149,7 @@ Scenario: Anonymise Conference and Participant data for hearing older than 3 mon
 
 Scenario: Remove heartbeats for conferences older than 14 days
   Given I have a conference over -14 days old
-  And I have a participant with heartbeat data
+  And I have a participant with heartbeat data to remove
   And I have a request to remove heartbeats for conferences
   When I send the request to the endpoint
   Then the response should have the status NoContent and success status True

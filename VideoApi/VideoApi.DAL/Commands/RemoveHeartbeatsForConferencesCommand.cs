@@ -23,16 +23,10 @@ namespace VideoApi.DAL.Commands
         {
             _context.Database.SetCommandTimeout(3600); //1 hour
             
-            var expiredConferenceIds = await _context.Conferences
-                .Where(c => c.ScheduledDateTime <= DateTime.UtcNow.AddDays(-14))
-                .Select(c => c.Id)
-                .ToListAsync();
-            
             var heartBeatsToDeleteQuery = _context.Heartbeats
-                .Where(hb => expiredConferenceIds
-                .Contains(hb.ConferenceId))
+                .Where(hb => hb.Timestamp <= DateTime.UtcNow.AddDays(-14))
                 .AsQueryable();
-            
+
             await heartBeatsToDeleteQuery.DeleteAsync();
         }
     }
