@@ -82,15 +82,9 @@ namespace VideoApi.Controllers
                 participant.LastName = participant.LastName.Trim();
                 participant.DisplayName = participant.DisplayName.Trim();
             }
-
-            var createAudioRecordingResponse = await CreateAudioApplicationWithRetryAsync(request);
-
-            if (!createAudioRecordingResponse.Success)
-            {
-                return StatusCode((int) createAudioRecordingResponse.StatusCode, createAudioRecordingResponse.Message);
-            }
-
-            var conferenceId = await CreateConferenceWithRetiesAsync(request, createAudioRecordingResponse.IngestUrl);
+            var audioIngestUrl = _audioPlatformService.GetAudioIngestUrl(request.HearingRefId.ToString());
+      
+            var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
             _logger.LogDebug("Conference Created");
 
             var conferenceEndpoints =
@@ -98,8 +92,7 @@ namespace VideoApi.Controllers
                     new GetEndpointsForConferenceQuery(conferenceId));
             var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
-            var kinlyBookedSuccess = await BookKinlyMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,
-                createAudioRecordingResponse.IngestUrl, endpointDtos);
+            var kinlyBookedSuccess = await BookKinlyMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired, audioIngestUrl, endpointDtos);
             
             if (!kinlyBookedSuccess)
             {
@@ -574,39 +567,6 @@ namespace VideoApi.Controllers
             }
         }
 
-        private async Task DeleteAudioRecordingApplication(Guid conferenceId)
-        {
-            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-
-            if (queriedConference != null && queriedConference.AudioRecordingRequired)
-            {
-                try
-                {
-                    await EnsureAudioFileExists(queriedConference);
-                    await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
-                }
-                catch (AudioPlatformFileNotFoundException ex)
-                {
-                    _logger.LogError(ex, ex.Message);
-                }
-
-            }
-        }
-
-        private async Task EnsureAudioFileExists(Conference conference)
-        {
-            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-            var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
-
-            if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
-            {
-                var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
-                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
-            }
-        }
-
         [HttpGet("Wowza/ReconcileAudioFilesInStorage")]
         [OpenApiOperation("ReconcileAudioFilesInStorage")]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
@@ -741,21 +701,6 @@ namespace VideoApi.Controllers
 
             return result;
         }
-        
-
-        private async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithRetryAsync(BookNewConferenceRequest request)
-        {
-            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, AudioPlatformServiceResponse>
-            (
-                3,
-                _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning("Failed to CreateAudioApplicationAsync. Retrying attempt {RetryAttempt}", retryAttempt),
-                callResult => callResult == null || !callResult.Success,
-                () => _audioPlatformService.CreateAudioApplicationAsync(request.HearingRefId)
-            );
-
-            return result;
-        }
 
         private async Task<IEnumerable<ConferenceForHostResponse>> GetHostConferencesForToday(string username)
         {
@@ -774,7 +719,39 @@ namespace VideoApi.Controllers
             var conferenceForHostResponse = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
             return conferenceForHostResponse;
         }
+     private async Task DeleteAudioRecordingApplication(Guid conferenceId)
+        {
+            var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
+            var queriedConference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            
+            if (queriedConference is {AudioRecordingRequired: true} &&
+                !queriedConference.IngestUrl.Contains(_audioPlatformService.ApplicationName)) //should not delete application, if on single instance version
+            {
+                try
+                {
+                    await EnsureAudioFileExists(queriedConference);
+                    await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
+                }
+                catch (AudioPlatformFileNotFoundException ex)
+                {
+                    _logger.LogError(ex, ex.Message);
+                }
 
+            }
+        }
+
+        private async Task EnsureAudioFileExists(Conference conference)
+        {
+            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+            var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
+
+            if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
+            {
+                var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
+                throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+            }
+        }
         private async Task<IEnumerable<ParticipantInHearingResponse>> GetHostsInHearingsToday(bool judgesOnly = false)
         {
             var conferences =

@@ -34,11 +34,14 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         private AudioRecordingController _controller;
         private Mock<BlobClient> _blobClientMock;
 
+        private const string ApplicationName = "vh-recording-app";
+        
         [SetUp]
         public void Setup()
         {
             _queryHandler = new Mock<IQueryHandler>();
             _audioPlatformService = new Mock<IAudioPlatformService>();
+            _audioPlatformService.Setup(x => x.ApplicationName).Returns(ApplicationName);
             _storageServiceFactory = new Mock<IAzureStorageServiceFactory>();
             _storageService = new Mock<IAzureStorageService>();
 
@@ -47,14 +50,14 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                _storageServiceFactory.Object,  _audioPlatformService.Object,
                 new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object
             );
-            
-            
+
             _testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
+                .WithAudioRecordingRequired(true)
                 .Build();
 
             _queryHandler
@@ -63,18 +66,48 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                         It.IsAny<GetConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(_testConference);
         }
-
         [Test]
         public async Task GetAudioApplicationAsync_Returns_NotFound()
         {
             _audioPlatformService
-                .Setup(x => x.GetAudioApplicationInfoAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAudioApplicationInfoAsync(It.IsAny<Guid?>()))
                 .ReturnsAsync((WowzaGetApplicationResponse) null);
             
             var result = await _controller.GetAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
+        
+        [Test]
+        public async Task GetAudioApplicationAsyncWithHearingId_Returns_AudioApplicationInfoResponse()
+        {
+            var hearingId = Guid.NewGuid();
+            var wowzaResponse = new WowzaGetApplicationResponse
+            {
+                Description = "Description",
+                Name = "Name",
+                ServerName = "ServerName",
+                StreamConfig = new Streamconfig
+                {
+                    KeyDir = "KeyDir",
+                    ServerName = "ServerName",
+                    StorageDir = "StorageDir",
+                    StreamType = "StreamType",
+                    StorageDirExists = true
+                }
+            };
+            
+            _audioPlatformService
+                .Setup(x => x.GetAudioApplicationInfoAsync(hearingId))
+                .ReturnsAsync(wowzaResponse);
+            
+            var result = await _controller.GetAudioApplicationAsync(hearingId) as OkObjectResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            var response = result.Value as AudioApplicationInfoResponse;
+            response.Should().NotBeNull();
+            response.Should().BeEquivalentTo(wowzaResponse, options => options.ExcludingMissingMembers());
+        }       
         
         [Test]
         public async Task GetAudioApplicationAsync_Returns_AudioApplicationInfoResponse()
@@ -95,61 +128,15 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             };
             
             _audioPlatformService
-                .Setup(x => x.GetAudioApplicationInfoAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAudioApplicationInfoAsync(null))
                 .ReturnsAsync(wowzaResponse);
             
-            var result = await _controller.GetAudioApplicationAsync(It.IsAny<Guid>()) as OkObjectResult;
+            var result = await _controller.GetAudioApplicationAsync() as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var response = result.Value as AudioApplicationInfoResponse;
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(wowzaResponse, options => options.ExcludingMissingMembers());
-        }
-        
-        [Test]
-        public async Task CreateAudioApplicationAsync_Returns_NotFound()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioApplicationAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.NotFound,
-                    Message = "Not Found"
-                });
-            
-            var result = await _controller.CreateAudioApplicationAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
-            result.Value.Should().Be("Not Found");
-        }
-        
-        [Test]
-        public async Task CreateAudioApplicationAsync_Returns_Conflict()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioApplicationAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            
-            var result = await _controller.CreateAudioApplicationAsync(It.IsAny<Guid>()) as ObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status409Conflict);
-            result.Value.Should().Be("Conflict");
-        }
-        
-        [Test]
-        public async Task CreateAudioApplicationAsync_Returns_Ok()
-        {
-            _audioPlatformService
-                .Setup(x => x.CreateAudioApplicationAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new AudioPlatformServiceResponse(true));
-            
-            var result = await _controller.CreateAudioApplicationAsync(It.IsAny<Guid>()) as OkResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
         }
         
         [Test]
@@ -195,8 +182,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         public async Task Should_not_delete_audio_application_if_audio_file_not_exists_and_audio_required_returns_notFound()
         {
             var conferenceType = typeof(VideoApi.Domain.Conference);
-            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))
-                ?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            conferenceType.GetProperty(nameof(_testConference.ActualStartTime))?.SetValue(_testConference, DateTime.UtcNow.AddHours(-1));
+            
             _testConference.AudioRecordingRequired = true;
             _queryHandler
                 .Setup(x =>
@@ -208,6 +195,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             var blobFiles = new List<string>();
             _storageService.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(blobFiles);
             _audioPlatformService.Reset();
+            _audioPlatformService.Setup(x => x.ApplicationName).Returns(ApplicationName);
             var result = await _controller.DeleteAudioApplicationAsync(It.IsAny<Guid>()) as NotFoundResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);

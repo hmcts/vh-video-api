@@ -23,22 +23,16 @@ namespace VideoApi.AcceptanceTests.Steps
             _conferenceSteps = conferenceSteps;
         }
 
-        [Given(@"I have a valid create audio application request")]
-        public void GivenIHaveACreateAudioApplicationRequest()
-        {
-            _context.Request = _context.Post(CreateAudioApplication(_context.Test.ConferenceResponse.HearingId));
-        }
-
         [Given(@"I have a valid get audio application request")]
         public void GivenIHaveAValidGetAudioApplicationRequest()
         {
-            _context.Request = _context.Get(GetAudioApplication(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = _context.Get(GetAudioApplication());
         }
 
         [Given(@"I have a nonexistent get audio application request")]
         public void GivenIHaveANonexistentGetAudioApplicationRequest()
         {
-            _context.Request = _context.Get(GetAudioApplication(Guid.NewGuid()));
+            _context.Request = _context.Get(GetAudioApplicationWithHearingId(Guid.NewGuid()));
         }
 
         [Given(@"I have a valid delete audio application request that has no application")]
@@ -62,7 +56,6 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"the conference has an audio application")]
         public void GivenTheConferenceHasAnAudioApplication()
         {
-            GivenIHaveACreateAudioApplicationRequest();
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }

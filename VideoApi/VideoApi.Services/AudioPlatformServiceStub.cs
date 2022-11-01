@@ -18,68 +18,16 @@ namespace VideoApi.Services
         public AudioPlatformServiceStub()
         {
             _audioRecordingTestIdConfiguration = new AudioRecordingTestIdConfiguration();
+            ApplicationName = "vh-recording-app";
         }
 
-        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid hearingId)
+        public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid? hearingId = null)
         {
-            if(hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))
-            {
-                return await Task.FromResult<WowzaGetApplicationResponse>(null);
-            }
-
             return await Task.FromResult(new WowzaGetApplicationResponse
             {
                 Name = "MyApplicationName"
             });
         }
-
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationAsync(Guid hearingId)
-        {
-            if (hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
-            {
-                return await Task.FromResult(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            }
-            return await Task.FromResult(new AudioPlatformServiceResponse(true));
-        }
-
-        public async Task<AudioPlatformServiceResponse> CreateAudioStreamAsync(Guid hearingId)
-        {
-            if (hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
-            {
-                return await Task.FromResult(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            }
-            return await Task.FromResult(new AudioPlatformServiceResponse(true)
-            {
-                IngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{Guid.NewGuid()}"
-            });
-        }
-
-        public async Task<AudioPlatformServiceResponse> CreateAudioApplicationWithStreamAsync(Guid hearingId)
-        {
-            if (hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
-            {
-                return await Task.FromResult(new AudioPlatformServiceResponse(false)
-                {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = "Conflict"
-                });
-            }
-
-            var applicationName = Guid.NewGuid();
-            return await Task.FromResult(new AudioPlatformServiceResponse(true)
-            {
-                IngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{applicationName}/{applicationName}"
-            });
-        }
-
         public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId)
         {
             if (hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))
@@ -107,7 +55,7 @@ namespace VideoApi.Services
         
         public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId)
         {
-            if (hearingId.Equals(_audioRecordingTestIdConfiguration.NonExistent))
+            if (!hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
             {
                 return await Task.FromResult<WowzaGetStreamRecorderResponse>(null);
             }
@@ -128,5 +76,12 @@ namespace VideoApi.Services
         {
             return await Task.FromResult(true);
         }
+
+        public string GetAudioIngestUrl(string hearingId)
+        {
+            return $"https://localhost.streaming.mediaServices.windows.net/{hearingId}";
+        }
+
+        public string ApplicationName { get; }
     }
 }

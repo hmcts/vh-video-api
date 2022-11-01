@@ -41,19 +41,19 @@ namespace VideoApi.Controllers
             _logger = logger;
             _queryHandler = queryHandler;
         }
-
+        
         /// <summary>
         /// Gets the audio application info for the conference by hearingId
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <returns></returns>
         [HttpGet("audioapplications/{hearingId}")]
-        [OpenApiOperation("GetAudioApplication")]
+        [OpenApiOperation("GetAudioApplicationWithHearingId")]
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
         {
-            _logger.LogDebug("GetAudioApplication");
+            _logger.LogDebug("GetAudioApplicationWithHearingId");
 
             var response = await _audioPlatformService.GetAudioApplicationInfoAsync(hearingId);
 
@@ -61,33 +61,21 @@ namespace VideoApi.Controllers
 
             return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(response));
         }
-
+                
         /// <summary>
-        /// Creates the audio application for the conference by hearingId
+        /// Gets the audio application info
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to create the audio application info</param>
         /// <returns></returns>
-        [HttpPost("audioapplications/{hearingId}")]
-        [OpenApiOperation("CreateAudioApplication")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
+        [HttpGet("audioapplications")]
+        [OpenApiOperation("GetAudioApplication")]
+        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAudioApplicationAsync(Guid hearingId)
+        public async Task<IActionResult> GetAudioApplicationAsync()
         {
-            _logger.LogDebug("CreateAudioApplication");
-
-            var response = await _audioPlatformService.CreateAudioApplicationAsync(hearingId);
-
-            if (!response.Success || response.StatusCode == HttpStatusCode.Conflict)
-            {
-                return StatusCode((int)response.StatusCode, response.Message);
-            }
-
-            return Ok();
+            _logger.LogDebug("GetAudioApplication");
+            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(await _audioPlatformService.GetAudioApplicationInfoAsync()));
         }
-
+  
         /// <summary>
         /// Deletes the audio application for the conference by hearingId
         /// </summary>
@@ -103,7 +91,15 @@ namespace VideoApi.Controllers
 
             try
             {
-                await EnsureAudioFileExists(hearingId, _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh));
+                var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(new GetConferenceByHearingRefIdQuery(hearingId));
+                if (conference == null)
+                    throw new ConferenceNotFoundException(hearingId);
+
+                //Hearings recorded to single app instance to be skipped (only one shared application, so cant be deleted)
+                if (conference.IngestUrl.Contains(_audioPlatformService.ApplicationName))
+                    return NoContent();
+                
+                await EnsureAudioFileExists(conference, _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh));
             }
             catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
             {
@@ -117,9 +113,7 @@ namespace VideoApi.Controllers
             {
                 return StatusCode((int)response.StatusCode, response.Message);
             }
-
             return NoContent();
-
         }
 
         /// <summary>
@@ -298,22 +292,15 @@ namespace VideoApi.Controllers
             return responses;
         }
 
-        private async Task EnsureAudioFileExists(Guid hearingId, IAzureStorageService azureStorageService)
+        private async Task EnsureAudioFileExists(Conference conference, IAzureStorageService azureStorageService)
         {
-            var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(
-                new GetConferenceByHearingRefIdQuery(hearingId));
-            if (conference == null)
-            {
-                throw new ConferenceNotFoundException(hearingId);
-            }
-
             if (conference.AudioRecordingRequired)
             {
-                var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(hearingId.ToString());
+                var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
 
                 if (conference.ActualStartTime.HasValue && !allBlobs.Any())
                 {
-                    var msg = $"Audio recording file not found for hearing: {hearingId}";
+                    var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
                     throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
                 }
             }

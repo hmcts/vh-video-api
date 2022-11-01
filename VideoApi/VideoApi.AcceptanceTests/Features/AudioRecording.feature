@@ -12,19 +12,6 @@ Scenario: Get Audio Application - OK
 	And the audio application details are retrieved
 
 @VIH-5868
-Scenario: Get Audio Application - Not Found
-  Given I have a nonexistent get audio application request
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
-
-@VIH-5868
-Scenario: Create Audio Application - Handle Conflict
-  Given I have a conference
-  And I have a valid create audio application request
-	When I send the request to the endpoint
-	Then the response should have the status OK and success status true
-
-@VIH-5868
 Scenario: Delete Audio Application with audio recording file - No Content
 	Given I have a conference with an audio application and audio recording file
 	And I have a valid delete audio application request
@@ -45,24 +32,12 @@ Scenario: Delete Audio Application without audio recording file - Not Found
 	Then the response should have the status NotFound and success status False
 
 @VIH-5868
-Scenario: Get Audio Stream - Not Found
-	Given I have a valid get audio stream request that has no stream
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
-
-@VIH-5868
 Scenario: Get Audio Stream Monitoring - Ok
   Given I have a conference with an audio recording
 	And I have a valid get audio stream monitoring request
 	When I send the request to the endpoint
 	Then the response should have the status Ok and success status True
 	And the audio stream monitoring details are retrieved
-
-@VIH-5868
-Scenario: Get Audio Stream Monitoring - Not Found
-	Given I have a valid get audio stream monitoring request that has no audio stream
-	When I send the request to the endpoint
-	Then the response should have the status NotFound and success status False
 
 @VIH-5868
 Scenario: Get Audio Recording Link - Ok

@@ -113,7 +113,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         [Test]
         public async Task Should_book_kinly_conference_with_ingesturl_when_audio_recording_is_required()
         {
-            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
+            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) { IngestUrl = "http://myIngestUrl.com" };
             SetupCallToMockRetryService(audioPlatformServiceResponse);
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
 

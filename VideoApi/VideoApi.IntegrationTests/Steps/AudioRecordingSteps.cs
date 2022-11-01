@@ -30,7 +30,8 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"the conference has an audio application")]
         public async Task GivenTheConferenceHasAnAudioApplication()
         {
-            GivenIHaveAValidCreateAudioApplicationRequest();
+            _context.Uri = GetAudioApplication();
+            _context.HttpMethod = HttpMethod.Get;
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -78,31 +79,17 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a valid get audio application request")]
         public void GivenIHaveAValidGetAudioApplicationRequest()
         {
-            _context.Uri = GetAudioApplication(_context.Test.Conference.HearingRefId);
+            _context.Uri = GetAudioApplicationWithHearingId(_context.Test.Conference.HearingRefId);
             _context.HttpMethod = HttpMethod.Get;
         }
 
         [Given(@"I have a nonexistent get audio application request")]
         public void GivenIHaveANonexistentGetAudioApplicationRequest()
         {
-            _context.Uri = GetAudioApplication(Guid.NewGuid());
+            _context.Uri = GetAudioApplicationWithHearingId(Guid.NewGuid());
             _context.HttpMethod = HttpMethod.Get;
         }
-
-        [Given(@"I have a valid create audio application request")]
-        [When(@"I have a duplicate create audio application request")]
-        public void GivenIHaveAValidCreateAudioApplicationRequest()
-        {
-            _context.Uri = CreateAudioApplication(_context.Test.Conference.HearingRefId);
-            _context.HttpMethod = HttpMethod.Post;
-        }
-
-        [Given(@"I have a nonexistent create audio application request")]
-        public void GivenIHaveANonexistentCreateAudioApplicationRequest()
-        {
-            _context.Uri = CreateAudioApplication(Guid.NewGuid());
-            _context.HttpMethod = HttpMethod.Post;
-        }
+        
 
         [Given(@"I have a valid delete audio application request")]
         public void GivenIHaveAValidDeleteAudioApplicationRequest()

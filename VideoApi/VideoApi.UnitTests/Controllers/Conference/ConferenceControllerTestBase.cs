@@ -43,7 +43,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IPollyRetryService> PollyRetryServiceMock;
         protected List<Endpoint> TestEndpoints;
         protected AutoMock Mocker;
-
+        protected const string AppName = "vh-recording-app";
+        
         [SetUp]
         public void Setup()
         {
@@ -55,6 +56,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             ServicesConfiguration = Mocker.Mock<IOptions<ServicesConfiguration>>();
             KinlyConfiguration = Mocker.Mock<IOptions<KinlyConfiguration>>();
             AudioPlatformServiceMock = Mocker.Mock<IAudioPlatformService>();
+            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(AppName);
             AzureStorageServiceFactoryMock = Mocker.Mock<IAzureStorageServiceFactory>();
             AzureStorageServiceMock = Mocker.Mock<IAzureStorageService>();
             PollyRetryServiceMock = Mocker.Mock<IPollyRetryService>();
