@@ -247,6 +247,7 @@ stages:
 
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: AcceptanceTestsDev
+          pool: VH Self Hosted
           displayName: Acceptance Tests Dev
           steps:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
