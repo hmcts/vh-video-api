@@ -50,6 +50,8 @@ java:
           alias: WowzaConfiguration--RestApiEndpoints--0
         - name: wowzaconfiguration--restendpoint--1
           alias: WowzaConfiguration--RestApiEndpoints--1
+        - name: wowzaconfiguration--endpoint
+          alias: wowzaconfiguration--loadbalancer
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
