@@ -10,7 +10,7 @@ namespace VideoApi.Services.Contracts
         Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid? hearingId = null);   
         Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId);        
         Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(Guid hearingId);        
-        Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId);
+        Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder);
         public string GetAudioIngestUrl(string hearingId);
         public string ApplicationName { get; }
         Task<bool> GetDiagnosticsAsync();

@@ -206,25 +206,20 @@ namespace VideoApi.Services.Clients
             return JsonConvert.DeserializeObject<WowzaGetApplicationResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host, string hearingId)
+        public async Task<HttpResponseMessage> GetStreamRecorderAsync(string applicationName, string server, string host, string recorder)
         {
-            var response = await _httpClient.GetAsync
+            return await _httpClient.GetAsync
             (
-                $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders/{hearingId}"
+                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}/instances/_definst_/streamrecorders/{recorder}"
             );
-
-            await HandleUnsuccessfulResponse(response);
-
-            return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task StopStreamRecorderAsync(string applicationName, string server, string host, string hearingId)
+        public async Task StopStreamRecorderAsync(string applicationName, string server, string host, string recorder)
         {
             var response = await _httpClient.PutAsync
             (
                 $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders/{hearingId}/actions/stopRecording",
+                $"{applicationName}/instances/_definst_/streamrecorders/{recorder}/actions/stopRecording",
                 new StringContent("")
             );
 
