@@ -248,7 +248,7 @@ namespace VideoApi.Services.Clients
             }
         }
 
-        private class CreateApplicationRequest
+        private sealed class CreateApplicationRequest
         {
             public string AppType { get; set; }
             public string Name { get; set; }
@@ -259,7 +259,7 @@ namespace VideoApi.Services.Clients
             public SecurityConfigRequest SecurityConfig { get; set; }
         }
 
-        private class AddStreamRecorderRequest
+        private sealed class AddStreamRecorderRequest
         {
             public string RecorderName { get; set; }
             public bool StartOnKeyFrame { get; set; }
@@ -273,7 +273,7 @@ namespace VideoApi.Services.Clients
             public bool SplitOnTcDiscontinuity { get; set; }
         }
 
-        private class StreamConfigurationConfig
+        private sealed class StreamConfigurationConfig
         {
             public bool StorageDirExists { get; set; }
             public bool CreateStorageDir { get; set; }
@@ -281,7 +281,7 @@ namespace VideoApi.Services.Clients
             public string StorageDir { get; set; }
         }
 
-        private class SecurityConfigRequest
+        private sealed class SecurityConfigRequest
         {
             /// <summary>
             /// Comma separated string
@@ -291,13 +291,13 @@ namespace VideoApi.Services.Clients
             public bool PublishBlockDuplicateStreamNames { get; set; }
         }
 
-        private class ApplicationConfigAdvRequest
+        private sealed class ApplicationConfigAdvRequest
         {
             public AdvancedSetting[] AdvancedSettings { get; set; }
             public ModuleConfig[] Modules { get; set; }
         }
 
-        private class AdvancedSetting
+        private sealed class AdvancedSetting
         {
             public string SectionName { get; set; }
             public string Section { get; set; }
@@ -308,7 +308,7 @@ namespace VideoApi.Services.Clients
             public bool Enabled { get; set; }
         }
 
-        private class ModuleConfig
+        private sealed class ModuleConfig
         {
             public string Name { get; set; }
             public string Description { get; set; }
