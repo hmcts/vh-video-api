@@ -152,7 +152,6 @@ stages:
             parameters:
               coreProjectPath: $(projectPath)
               nugetProjectPath: $(projectPath)
-              netVersion: "6.x"
           
 #####################################################
 # Run Entity Framework Dev. #########################
