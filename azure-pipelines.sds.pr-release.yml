@@ -299,7 +299,7 @@ stages:
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
                 - name: WowzaConfiguration:Password 
-                  value: wowzaconfiguration--restPassword-${{ variables.env }}
+                  value: wowzaconfiguration--restPassword
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
                 - name: WowzaConfiguration:StorageDirectory
