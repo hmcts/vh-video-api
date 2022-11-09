@@ -132,7 +132,7 @@ namespace VideoApi.Controllers
                 ? _audioPlatformService.ApplicationName 
                 : hearingId.ToString();
             
-            var response   = await _audioPlatformService.GetAudioStreamInfoAsync(applicationName, hearingId.ToString());
+            var response = await _audioPlatformService.GetAudioStreamInfoAsync(applicationName, hearingId.ToString());
 
             if (response == null) return NotFound();
 

@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -214,12 +213,12 @@ namespace VideoApi.Services.Clients
             );
         }
 
-        public async Task StopStreamRecorderAsync(string applicationName, string server, string host, string recorder)
+        public async Task StopStreamRecorderAsync(string applicationName, string server, string host, string hearingId)
         {
             var response = await _httpClient.PutAsync
             (
                 $"v2/servers/{server}/vhosts/{host}/applications/" +
-                $"{applicationName}/instances/_definst_/streamrecorders/{recorder}/actions/stopRecording",
+                $"{applicationName}/instances/_definst_/streamrecorders/{hearingId}/actions/stopRecording",
                 new StringContent("")
             );
 

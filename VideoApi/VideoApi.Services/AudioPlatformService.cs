@@ -21,7 +21,7 @@ namespace VideoApi.Services
         private readonly ILogger<AudioPlatformService> _logger;
         private readonly IWowzaHttpClient _loadBalancerClient;
 
-        public AudioPlatformService(IWowzaHttpClient[] wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
+        public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
             _wowzaClients       = wowzaClients.Where(e => !e.IsLoadBalancer).ToArray();
             _loadBalancerClient = wowzaClients.First(e => e.IsLoadBalancer);
