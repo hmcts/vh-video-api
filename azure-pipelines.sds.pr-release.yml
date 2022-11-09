@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: vih-9191-add-dotnet-version
       endpoint: hmcts
       
 trigger: none
@@ -256,6 +256,7 @@ stages:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
             parameters:
               environment: ${{ variables.env }}
+              netVersion: '3.1.0'
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 - name: Services:VideoApiUrl
