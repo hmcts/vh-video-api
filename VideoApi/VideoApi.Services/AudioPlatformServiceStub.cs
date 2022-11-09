@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
@@ -52,10 +51,10 @@ namespace VideoApi.Services
             });
         }
 
-        
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
         {
-            if (!hearingId.Equals(_audioRecordingTestIdConfiguration.Existing))
+            var hearingID = new Guid(recorder);
+            if (!hearingID.Equals(_audioRecordingTestIdConfiguration.Existing))
             {
                 return await Task.FromResult<WowzaGetStreamRecorderResponse>(null);
             }
@@ -66,12 +65,6 @@ namespace VideoApi.Services
                 RecordingStartTime = DateTime.UtcNow.AddMinutes(-1).ToString("s")
             });
         }
-
-        public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId)
-        {
-            return await DeleteAudioApplicationAsync(hearingId);
-        }
-
         public async Task<bool> GetDiagnosticsAsync()
         {
             return await Task.FromResult(true);

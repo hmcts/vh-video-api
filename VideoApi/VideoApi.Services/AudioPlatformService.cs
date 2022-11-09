@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
 using VideoApi.Services.Contracts;
@@ -21,11 +23,11 @@ namespace VideoApi.Services
 
         public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
-            _wowzaClients = wowzaClients.ToArray();
-            _loadBalancerClient = _wowzaClients.First(e => e.IsLoadBalancer);
-            _configuration = configuration;
-            _logger = logger;
-            ApplicationName = configuration.ApplicationName;
+            _wowzaClients       = wowzaClients.Where(e => !e.IsLoadBalancer).ToArray();
+            _loadBalancerClient = wowzaClients.First(e => e.IsLoadBalancer);
+            _configuration      = configuration;
+            _logger             = logger;
+            ApplicationName     = configuration.ApplicationName;
         }
 
         public async Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid? hearingId = null)
@@ -38,7 +40,7 @@ namespace VideoApi.Services
                     .ToList();
 
                 var response = await WaitAnyFirstValidResult(tasks);
-
+ 
                 _logger.LogInformation("Got Wowza application info: {AppName}", applicationName);
 
                 return response;
@@ -75,24 +77,28 @@ namespace VideoApi.Services
             }
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(Guid hearingId)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
         {
+            var responses = new List<HttpResponseMessage>();
             try
             {
-                var tasks = _wowzaClients
-                    .Select(x => x.GetStreamRecorderAsync(ApplicationName, _configuration.ServerName, _configuration.HostName, hearingId.ToString()))
-                    .ToList();
-
-                var response = await WaitAnyFirstValidResult(tasks);
-
-                _logger.LogInformation("Got Wowza stream recorder for application: {hearingId}", hearingId);
-
-                return response;
+                foreach (var client in _wowzaClients)
+                    responses.Add(await client.GetStreamRecorderAsync(application, _configuration.ServerName, _configuration.HostName, recorder));
+                responses.Remove(null);
+                
+                if (responses.All(e => !e.IsSuccessStatusCode)) 
+                {
+                    var errorMessage = await responses.First().Content.ReadAsStringAsync();
+                    throw new AudioPlatformException(errorMessage, responses.First().StatusCode);
+                }
+                var successfulResponse = responses.First(e => e.IsSuccessStatusCode);
+                _logger.LogInformation("Got Wowza stream recorder for application: {recorder}", recorder);
+                return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await successfulResponse.Content.ReadAsStringAsync());
             }
             catch (AudioPlatformException ex)
             {
-                var errorMessageTemplate = "Failed to get the Wowza stream recorder for application: {hearingId}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";                
-                LogError(ex, errorMessageTemplate, hearingId, ex.StatusCode, ex.Message);
+                var errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";                
+                LogError(ex, errorMessageTemplate, recorder, ex.StatusCode, ex.Message);
                 return null;
             }
         }
