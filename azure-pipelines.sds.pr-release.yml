@@ -152,6 +152,8 @@ stages:
             parameters:
               coreProjectPath: $(projectPath)
               nugetProjectPath: $(projectPath)
+              nugetConfigPath: VideoApi
+              useNugetConfig: true
           
 #####################################################
 # Run Entity Framework Dev. #########################
