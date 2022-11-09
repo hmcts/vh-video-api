@@ -324,10 +324,10 @@ stages:
                   value: wowzaconfiguration--managedidentityclientid
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
-                - name: WowzaConfiguration:ApplicationName
-                  value: $(wowza_appName)
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
+                # - name: WowzaConfiguration:ApplicationName
+                #   value: $(wowza_appName)
+                #   keyVaultName: vh-infra-core-${{ variables.env }}
+                #   secret: true
                   
                 # CVP Configuration
                 - name: CvpConfiguration:StorageAccountName
