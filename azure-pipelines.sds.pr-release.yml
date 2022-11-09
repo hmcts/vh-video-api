@@ -19,7 +19,7 @@ variables:
     value: 'VideoApi'
   - group: vh-video-api
   - name: run_acceptance_tests
-    value: false
+    value: true
 
 stages:
 #####################################################
@@ -152,6 +152,7 @@ stages:
             parameters:
               coreProjectPath: $(projectPath)
               nugetProjectPath: $(projectPath)
+              netVersion: "6.x"
           
 #####################################################
 # Run Entity Framework Dev. #########################
