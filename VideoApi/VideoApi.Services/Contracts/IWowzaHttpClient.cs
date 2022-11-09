@@ -6,7 +6,7 @@ namespace VideoApi.Services.Contracts
 {
     public interface IWowzaHttpClient
     {
-        public bool IsLoadBalancer { get; }
+        public bool IsLoadBalancer { get; set; }
         Task DeleteApplicationAsync(string applicationName, string server, string host);
         Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host, string hearingId);
         Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host);
