@@ -346,10 +346,6 @@ stages:
                   value: CvpConfiguration--StorageEndpoint
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
-                - name: wowzaconfiguration:managedidentityclientid
-                  value: wowzaconfiguration--managedidentityclientid
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
 
                 # Kinly Configuration
                 - name: KinlyConfiguration:ConferencePhoneNumber
