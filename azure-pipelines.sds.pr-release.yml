@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: VIH-9999-remove-json-replace
+      ref: master
       endpoint: hmcts
       
 trigger: none
@@ -131,6 +131,7 @@ stages:
             contextName: ${{ variables.efContextName }}
             workingPath: $(System.DefaultWorkingDirectory)/VideoApi/VideoApi
             projectName: ${{ variables.efProjectName }}
+            migrationsPath: VideoApi/VideoApi.DAL/Migrations
 
       - job: package_nuget
         displayName: "Package NuGet Packages"
