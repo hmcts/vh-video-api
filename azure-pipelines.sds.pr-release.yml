@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: vih-9191-add-dotnet-version
+      ref: master
       endpoint: hmcts
       
 trigger: none
