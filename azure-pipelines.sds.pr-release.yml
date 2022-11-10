@@ -146,6 +146,7 @@ stages:
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: PublishAcceptanceTests
           displayName: Publish Acceptance Tests 
+          dependsOn: package_nuget
           variables:
             projectPath: VideoApi/VideoApi
           steps:
@@ -252,6 +253,7 @@ stages:
         - job: AcceptanceTestsDev
           pool: VH Self Hosted
           displayName: Acceptance Tests Dev
+          dependsOn: aks_push
           steps:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
             parameters:
@@ -260,7 +262,7 @@ stages:
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 - name: Services:VideoApiUrl
-                  value: "https://vh-video-api.dev.platform.hmcts.net"
+                  value: "https://vh-video-api-pr-$(System.PullRequest.PullRequestNumber).dev.platform.hmcts.net"
                 - name: ApplicationInsights:InstrumentationKey
                   value: applicationinsights--instrumentationkey
                   keyVaultName: vh-infra-core-${{ variables.env }}
