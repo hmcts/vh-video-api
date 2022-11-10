@@ -91,9 +91,7 @@ namespace VideoApi.Controllers
 
             try
             {
-                var conference = await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(new GetConferenceByHearingRefIdQuery(hearingId));
-                if (conference == null)
-                    throw new ConferenceNotFoundException(hearingId);
+                var conference = await GetConference(hearingId);
 
                 //Hearings recorded to single app instance to be skipped (only one shared application, so cant be deleted)
                 if (conference.IngestUrl.Contains(_audioPlatformService.ApplicationName))
@@ -128,8 +126,13 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioStreamInfo");
-
-            var response = await _audioPlatformService.GetAudioStreamInfoAsync(hearingId);
+            
+            var conference = await GetConference(hearingId);
+            var applicationName = conference.IngestUrl.Contains(_audioPlatformService.ApplicationName) 
+                ? _audioPlatformService.ApplicationName 
+                : hearingId.ToString();
+            
+            var response = await _audioPlatformService.GetAudioStreamInfoAsync(applicationName, hearingId.ToString());
 
             if (response == null) return NotFound();
 
@@ -304,6 +307,16 @@ namespace VideoApi.Controllers
                     throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
                 }
             }
+        }
+        
+        private async Task<Conference> GetConference(Guid hearingId)
+        {
+            var conference =
+                await _queryHandler
+                   .Handle<GetConferenceByHearingRefIdQuery, Conference>(new GetConferenceByHearingRefIdQuery(hearingId));
+            if (conference == null)
+                throw new ConferenceNotFoundException(hearingId);
+            return conference;
         }
     }
 }

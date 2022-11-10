@@ -10,7 +10,7 @@ namespace VideoApi.Services.Contracts
         Task DeleteApplicationAsync(string applicationName, string server, string host);
         Task<WowzaMonitorStreamResponse> MonitoringStreamRecorderAsync(string applicationName, string server, string host, string hearingId);
         Task<WowzaGetApplicationResponse> GetApplicationAsync(string applicationName, string server, string host);
-        Task<WowzaGetStreamRecorderResponse> GetStreamRecorderAsync(string applicationName, string server, string host, string hearingId); 
+        Task<HttpResponseMessage> GetStreamRecorderAsync(string applicationName, string server, string host, string recorder); 
         Task StopStreamRecorderAsync(string applicationName, string server, string host, string hearingId);
         Task<HttpResponseMessage> GetDiagnosticsAsync(string server);
     }
