@@ -19,7 +19,7 @@ variables:
     value: 'VideoApi'
   - group: vh-video-api
   - name: run_acceptance_tests
-    value: false
+    value: true
 
 stages:
 #####################################################
@@ -131,6 +131,7 @@ stages:
             contextName: ${{ variables.efContextName }}
             workingPath: $(System.DefaultWorkingDirectory)/VideoApi/VideoApi
             projectName: ${{ variables.efProjectName }}
+            migrationsPath: VideoApi/VideoApi.DAL/Migrations
 
       - job: package_nuget
         displayName: "Package NuGet Packages"
@@ -145,6 +146,7 @@ stages:
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: PublishAcceptanceTests
           displayName: Publish Acceptance Tests 
+          dependsOn: package_nuget
           variables:
             projectPath: VideoApi/VideoApi
           steps:
@@ -152,6 +154,8 @@ stages:
             parameters:
               coreProjectPath: $(projectPath)
               nugetProjectPath: $(projectPath)
+              nugetConfigPath: VideoApi
+              useNugetConfig: true
           
 #####################################################
 # Run Entity Framework Dev. #########################
@@ -247,15 +251,18 @@ stages:
 
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: AcceptanceTestsDev
+          pool: VH Self Hosted
           displayName: Acceptance Tests Dev
+          dependsOn: aks_push
           steps:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
             parameters:
               environment: ${{ variables.env }}
+              netVersion: '3.x'
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 - name: Services:VideoApiUrl
-                  value: "https://vh-video-api.dev.platform.hmcts.net"
+                  value: "https://vh-video-api-pr-$(System.PullRequest.PullRequestNumber).dev.platform.hmcts.net"
                 - name: ApplicationInsights:InstrumentationKey
                   value: applicationinsights--instrumentationkey
                   keyVaultName: vh-infra-core-${{ variables.env }}
@@ -295,7 +302,7 @@ stages:
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
                 - name: WowzaConfiguration:Password 
-                  value: wowzaconfiguration--restPassword-${{ variables.env }}
+                  value: wowzaconfiguration--restPassword
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
                 - name: WowzaConfiguration:StorageDirectory
@@ -322,10 +329,10 @@ stages:
                   value: wowzaconfiguration--managedidentityclientid
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
-                - name: WowzaConfiguration:ApplicationName
-                  value: $(wowza_appName)
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
+                # - name: WowzaConfiguration:ApplicationName
+                #   value: $(wowza_appName)
+                #   keyVaultName: vh-infra-core-${{ variables.env }}
+                #   secret: true
                   
                 # CVP Configuration
                 - name: CvpConfiguration:StorageAccountName
@@ -342,10 +349,6 @@ stages:
                   secret: true
                 - name: CvpConfiguration:StorageEndpoint
                   value: CvpConfiguration--StorageEndpoint
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: wowzaconfiguration:managedidentityclientid
-                  value: wowzaconfiguration--managedidentityclientid
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
 
