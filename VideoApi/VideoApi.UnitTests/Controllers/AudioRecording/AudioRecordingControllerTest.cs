@@ -232,7 +232,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         public async Task GetAudioStreamInfoAsync_Returns_NotFound()
         {
             _audioPlatformService
-                .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync((WowzaGetStreamRecorderResponse) null);
             
             var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as NotFoundResult;
@@ -263,7 +263,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             };
             
             _audioPlatformService
-                .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(wowzaResponse);
             
             var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as OkObjectResult;
