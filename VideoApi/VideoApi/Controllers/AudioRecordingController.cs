@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,7 +24,6 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [Route("conferences")]
     [ApiController]
-    [AllowAnonymous]
     public class AudioRecordingController : ControllerBase
     {
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
@@ -126,7 +124,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId, bool singleWowzaApp = false)
+        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId, bool singleWowzaApp = true)
         {
             _logger.LogDebug("GetAudioStreamInfo");
             
