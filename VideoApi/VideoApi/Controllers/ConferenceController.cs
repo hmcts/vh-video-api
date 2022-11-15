@@ -108,8 +108,7 @@ namespace VideoApi.Controllers
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference,
-                    _kinlyConfiguration.PexipSelfTestNode);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode, _audioPlatformService.ApplicationName);
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
@@ -185,8 +184,7 @@ namespace VideoApi.Controllers
             }
 
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference,
-                    _kinlyConfiguration.PexipSelfTestNode);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode, _audioPlatformService.ApplicationName);
             return Ok(response);
         }
 
@@ -366,9 +364,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference,
-                    _kinlyConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _kinlyConfiguration.PexipSelfTestNode, _audioPlatformService.ApplicationName);
 
             return Ok(response);
         }
