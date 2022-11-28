@@ -14,6 +14,7 @@ RUN dotnet publish "VideoApi.csproj" -c Release -o /app/publish
 
 # Create Final Image.
 FROM base AS final
+RUN apt-get update && apt-get install -y curl
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "VideoApi.dll"]
