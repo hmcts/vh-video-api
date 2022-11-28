@@ -259,7 +259,7 @@ stages:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
             parameters:
               environment: ${{ variables.env }}
-              netVersion: '3.x'
+              netVersion: '6.x'
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 - name: Services:VideoApiUrl
