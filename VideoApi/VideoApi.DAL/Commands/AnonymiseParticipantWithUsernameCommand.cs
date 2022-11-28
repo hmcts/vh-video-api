@@ -24,9 +24,10 @@ namespace VideoApi.DAL.Commands
 
         public async Task Handle(AnonymiseParticipantWithUsernameCommand command)
         {
-            var participantsToAnonymise = await _context.Participants
-                .Where(p => p.Username == command.Username)
-                .ToListAsync();
+            var participantsToAnonymise = _context.Participants
+                                                  .AsEnumerable()
+                                                  .Where(p => p.Username == command.Username)
+                                                  .ToList();
 
             if (!participantsToAnonymise.Any()) return;
 
