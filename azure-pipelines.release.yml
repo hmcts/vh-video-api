@@ -71,7 +71,8 @@ resources:
 
 extends:
   template: templates/vh-release.yml@templates
-  parameters:      
+  parameters:
+    netVersion: 6.x
     databaseContextName: VideoApiDbContext
     connectionStringSecretName: "VhVideoDatabaseConnectionString"
     ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
