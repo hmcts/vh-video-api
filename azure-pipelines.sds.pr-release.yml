@@ -157,6 +157,7 @@ stages:
               nugetProjectPath: $(projectPath)
               nugetConfigPath: VideoApi
               useNugetConfig: true
+              netVersion: '6.x'
           
 #####################################################
 # Run Entity Framework Dev. #########################
