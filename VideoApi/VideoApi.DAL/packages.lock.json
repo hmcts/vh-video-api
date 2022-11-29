@@ -108,9 +108,9 @@
       },
       "Newtonsoft.Json": {
         "type": "Direct",
-        "requested": "[12.0.3, )",
-        "resolved": "12.0.3",
-        "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
+        "requested": "[13.0.2, )",
+        "resolved": "13.0.2",
+        "contentHash": "R2pZ3B0UjeyHShm9vG+Tu0EBb2lC8b0dFzV9gVn50ofHXh9Smjk6kTn7A/FdAsC8B5cKib1OnGYOXxRBz5XQDg=="
       },
       "RandomStringCreator": {
         "type": "Direct",
@@ -2101,46 +2101,46 @@
       "videoapi.common": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.ApplicationInsights.AspNetCore": "[2.15.0, )",
-          "Microsoft.Extensions.Caching.Abstractions": "[6.0.0, )",
-          "Microsoft.IdentityModel.Clients.ActiveDirectory": "[5.2.8, )",
-          "Newtonsoft.Json": "[12.0.3, )",
-          "System.IdentityModel.Tokens.Jwt": "[5.6.0, )",
-          "VideoApi.Domain": "[1.0.0, )"
+          "Microsoft.ApplicationInsights.AspNetCore": "2.15.0",
+          "Microsoft.Extensions.Caching.Abstractions": "6.0.0",
+          "Microsoft.IdentityModel.Clients.ActiveDirectory": "5.2.8",
+          "Newtonsoft.Json": "13.0.2",
+          "System.IdentityModel.Tokens.Jwt": "6.21.0",
+          "VideoApi.Domain": "1.0.0"
         }
       },
       "videoapi.contract": {
         "type": "Project",
         "dependencies": {
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "System.ComponentModel.Annotations": "4.7.0"
         }
       },
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {
-          "Enums.NET": "[4.0.0, )",
-          "RandomStringCreator": "[2.0.0, )",
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "Enums.NET": "4.0.0",
+          "RandomStringCreator": "2.0.0",
+          "System.ComponentModel.Annotations": "4.7.0"
         }
       },
       "videoapi.services": {
         "type": "Project",
         "dependencies": {
-          "Azure.Storage.Blobs": "[12.4.2, )",
-          "Microsoft.AspNetCore.Mvc.Abstractions": "[2.2.0, )",
-          "Microsoft.Extensions.Configuration": "[6.0.1, )",
-          "Microsoft.Extensions.Logging.Abstractions": "[2.1.1, )",
-          "Polly": "[7.2.0, )",
-          "VideoApi.Common": "[1.0.0, )",
-          "VideoApi.Contract": "[1.0.0, )",
-          "VideoApi.Domain": "[1.0.0, )",
-          "VideoApi.Services.Generator": "[1.0.0, )"
+          "Azure.Storage.Blobs": "12.4.2",
+          "Microsoft.AspNetCore.Mvc.Abstractions": "2.2.0",
+          "Microsoft.Extensions.Configuration": "6.0.1",
+          "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
+          "Polly": "7.2.0",
+          "VideoApi.Common": "1.0.0",
+          "VideoApi.Contract": "1.0.0",
+          "VideoApi.Domain": "1.0.0",
+          "VideoApi.Services.Generator": "1.0.0"
         }
       },
       "videoapi.services.generator": {
         "type": "Project",
         "dependencies": {
-          "Newtonsoft.Json": "[12.0.3, )"
+          "Newtonsoft.Json": "13.0.2"
         }
       }
     }
