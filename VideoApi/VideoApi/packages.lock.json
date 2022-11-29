@@ -610,37 +610,6 @@
           "System.Text.Encodings.Web": "4.5.0"
         }
       },
-      "Microsoft.Azure.Amqp": {
-        "type": "Transitive",
-        "resolved": "2.4.6",
-        "contentHash": "5CI6BCm4C27+bvS5Z4UC0GmreAIw2EPgYN3eFVpGTUz57tiNzAS9g8UANOLAQKYz1BPd4HeCCTB9NLMyL4o5tA==",
-        "dependencies": {
-          "System.Net.WebSockets.Client": "4.0.2",
-          "System.Runtime.Serialization.Primitives": "4.1.1"
-        }
-      },
-      "Microsoft.Azure.ServiceBus": {
-        "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "kL+xqsI39R+SYnwWimKI8ODdSBJjUd+PGDbjGaALN2rTrVijBee/tvAHHiKR2g4uMQk1MCo1DcLVQmq3H+vsfA==",
-        "dependencies": {
-          "Microsoft.Azure.Amqp": "2.4.6",
-          "Microsoft.Azure.Services.AppAuthentication": "[1.0.3, 2.0.0)",
-          "Newtonsoft.Json": "10.0.3",
-          "System.Diagnostics.DiagnosticSource": "4.5.1",
-          "System.IdentityModel.Tokens.Jwt": "5.4.0"
-        }
-      },
-      "Microsoft.Azure.Services.AppAuthentication": {
-        "type": "Transitive",
-        "resolved": "1.0.3",
-        "contentHash": "ywpQaK1klu1IoX4VUf+TBmU4kR71aWNI6O5rEIJU8z28L2xhJhnIm7k2Nf1Zu/PygeuOtt5g0QPCk5+lLltbeQ==",
-        "dependencies": {
-          "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.14.2",
-          "NETStandard.Library": "1.6.1",
-          "System.Diagnostics.Process": "4.3.0"
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
         "resolved": "1.1.1",
@@ -1745,34 +1714,6 @@
           "System.Security.Principal.Windows": "4.7.0"
         }
       },
-      "System.Diagnostics.Process": {
-        "type": "Transitive",
-        "resolved": "4.3.0",
-        "contentHash": "J0wOX07+QASQblsfxmIMFc9Iq7KTXYL3zs2G/Xc704Ylv3NpuVdo6gij6V3PGiptTxqsK0K7CdXenRvKUnkA2g==",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.1.0",
-          "Microsoft.Win32.Primitives": "4.3.0",
-          "Microsoft.Win32.Registry": "4.3.0",
-          "System.Collections": "4.3.0",
-          "System.Diagnostics.Debug": "4.3.0",
-          "System.Globalization": "4.3.0",
-          "System.IO": "4.3.0",
-          "System.IO.FileSystem": "4.3.0",
-          "System.IO.FileSystem.Primitives": "4.3.0",
-          "System.Resources.ResourceManager": "4.3.0",
-          "System.Runtime": "4.3.0",
-          "System.Runtime.Extensions": "4.3.0",
-          "System.Runtime.Handles": "4.3.0",
-          "System.Runtime.InteropServices": "4.3.0",
-          "System.Text.Encoding": "4.3.0",
-          "System.Text.Encoding.Extensions": "4.3.0",
-          "System.Threading": "4.3.0",
-          "System.Threading.Tasks": "4.3.0",
-          "System.Threading.Thread": "4.3.0",
-          "System.Threading.ThreadPool": "4.3.0",
-          "runtime.native.System": "4.3.0"
-        }
-      },
       "System.Diagnostics.StackTrace": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -2112,53 +2053,6 @@
           "System.Net.Primitives": "4.3.0",
           "System.Runtime": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
-        }
-      },
-      "System.Net.WebHeaderCollection": {
-        "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "XX2TIAN+wBSAIV51BU2FvvXMdstUa8b0FBSZmDWjZdwUMmggQSifpTOZ5fNH20z9ZCg2fkV1L5SsZnpO2RQDRQ==",
-        "dependencies": {
-          "System.Collections": "4.0.11",
-          "System.Resources.ResourceManager": "4.0.1",
-          "System.Runtime": "4.1.0",
-          "System.Runtime.Extensions": "4.1.0"
-        }
-      },
-      "System.Net.WebSockets": {
-        "type": "Transitive",
-        "resolved": "4.0.0",
-        "contentHash": "2KJo8hir6Edi9jnMDAMhiJoI691xRBmKcbNpwjrvpIMOCTYOtBpSsSEGBxBDV7PKbasJNaFp1+PZz1D7xS41Hg==",
-        "dependencies": {
-          "Microsoft.Win32.Primitives": "4.0.1",
-          "System.Resources.ResourceManager": "4.0.1",
-          "System.Runtime": "4.1.0",
-          "System.Threading.Tasks": "4.0.11"
-        }
-      },
-      "System.Net.WebSockets.Client": {
-        "type": "Transitive",
-        "resolved": "4.0.2",
-        "contentHash": "NUCcDroX4lCQXgOrzlwIZ1u9YJ0krfyF0wk0ONnyLUmcQoEiYV2/OfUPRqUwQBbpH1BlGApkLgoQUwMqb5+c1g==",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.0.2",
-          "Microsoft.Win32.Primitives": "4.0.1",
-          "System.Collections": "4.0.11",
-          "System.Diagnostics.Debug": "4.0.11",
-          "System.Diagnostics.Tracing": "4.1.0",
-          "System.Globalization": "4.0.11",
-          "System.Net.Primitives": "4.0.11",
-          "System.Net.WebHeaderCollection": "4.0.1",
-          "System.Net.WebSockets": "4.0.0",
-          "System.Resources.ResourceManager": "4.0.1",
-          "System.Runtime": "4.1.0",
-          "System.Runtime.Extensions": "4.1.0",
-          "System.Runtime.Handles": "4.0.1",
-          "System.Runtime.InteropServices": "4.1.0",
-          "System.Security.Cryptography.X509Certificates": "4.1.0",
-          "System.Text.Encoding": "4.0.11",
-          "System.Threading": "4.0.11",
-          "System.Threading.Tasks": "4.0.11"
         }
       },
       "System.Numerics.Vectors": {
@@ -2664,15 +2558,6 @@
           "System.Runtime": "4.3.0"
         }
       },
-      "System.Threading.ThreadPool": {
-        "type": "Transitive",
-        "resolved": "4.3.0",
-        "contentHash": "k/+g4b7vjdd4aix83sTgC9VG6oXYKAktSfNIJUNGxPEj7ryEOfzHHhfnmsZvjxawwcD9HyWXKCXmPjX8U4zeSw==",
-        "dependencies": {
-          "System.Runtime": "4.3.0",
-          "System.Runtime.Handles": "4.3.0"
-        }
-      },
       "System.Threading.Timer": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -2899,7 +2784,6 @@
       "videoapi.events": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Azure.ServiceBus": "5.0.0",
           "VideoApi.Common": "1.0.0",
           "VideoApi.Contract": "1.0.0",
           "VideoApi.DAL": "1.0.0",
