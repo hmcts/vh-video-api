@@ -90,7 +90,8 @@ namespace VideoApi
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
             var serviceSettings = Configuration.GetSection("Services").Get<ServicesConfiguration>();
 
-            serviceCollection.AddAuthentication(options =>
+            serviceCollection
+               .AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -104,7 +105,7 @@ namespace VideoApi
                         ValidateLifetime = true,
                         ValidAudience = serviceSettings.VideoApiResourceId
                     };
-                    options.RequireHttpsMetadata = true;
+                    options.RequireHttpsMetadata = false;
                 });
 
             serviceCollection.AddAuthorization(AddPolicies);
