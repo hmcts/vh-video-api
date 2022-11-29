@@ -785,11 +785,6 @@
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
-      "Microsoft.IdentityModel.Abstractions": {
-        "type": "Transitive",
-        "resolved": "6.25.0",
-        "contentHash": "70MbUvri/xthpVpSEve7X6ysNtTe5MgLEgNyhnZ5z7WXVgFOkUfI7RNtqS6oenLoaaMpnRJrrZFt9Pps5NknBQ=="
-      },
       "Microsoft.IdentityModel.Clients.ActiveDirectory": {
         "type": "Transitive",
         "resolved": "5.2.8",
@@ -812,29 +807,24 @@
       },
       "Microsoft.IdentityModel.JsonWebTokens": {
         "type": "Transitive",
-        "resolved": "6.25.0",
-        "contentHash": "3Lhgxoc1YhIocnPh3fTE5IK3Ap7yG3WK4TFk01Y90danCYmV7gIW8E1d4b3BtaP9B85eIJ0bmtV4GPiSOF5i/A==",
+        "resolved": "6.8.0",
+        "contentHash": "+7JIww64PkMt7NWFxoe4Y/joeF7TAtA/fQ0b2GFGcagzB59sKkTt/sMZWR6aSZht5YC7SdHi3W6yM1yylRGJCQ==",
         "dependencies": {
-          "Microsoft.IdentityModel.Tokens": "6.25.0",
-          "System.Text.Encoding": "4.3.0",
-          "System.Text.Json": "4.7.2"
+          "Microsoft.IdentityModel.Tokens": "6.8.0"
         }
       },
       "Microsoft.IdentityModel.Logging": {
         "type": "Transitive",
-        "resolved": "6.25.0",
-        "contentHash": "65/a4Ln4hWKy3M+yMApYKkht/feQKr2DmnHPKROSLxBxFTvrm49K34yuD/VhGmg38U9lAhN5DOK/khq9W4B1ig==",
-        "dependencies": {
-          "Microsoft.IdentityModel.Abstractions": "6.25.0"
-        }
+        "resolved": "6.8.0",
+        "contentHash": "Rfh/p4MaN4gkmhPxwbu8IjrmoDncGfHHPh1sTnc0AcM/Oc39/fzC9doKNWvUAjzFb8LqA6lgZyblTrIsX/wDXg=="
       },
       "Microsoft.IdentityModel.Tokens": {
         "type": "Transitive",
-        "resolved": "6.25.0",
-        "contentHash": "GIDvDPu2ii11w4UyHPTBsReNraoh3253sQIOPQg7ZCW6kfDj5a/0OrTInYMliIdSNpDXQMYKMimRJG/3i1sAYQ==",
+        "resolved": "6.8.0",
+        "contentHash": "gTqzsGcmD13HgtNePPcuVHZ/NXWmyV+InJgalW/FhWpII1D7V1k0obIseGlWMeA4G+tZfeGMfXr0klnWbMR/mQ==",
         "dependencies": {
           "Microsoft.CSharp": "4.5.0",
-          "Microsoft.IdentityModel.Logging": "6.25.0",
+          "Microsoft.IdentityModel.Logging": "6.8.0",
           "System.Security.Cryptography.Cng": "4.5.0"
         }
       },
@@ -1381,11 +1371,11 @@
       },
       "System.IdentityModel.Tokens.Jwt": {
         "type": "Transitive",
-        "resolved": "6.25.0",
-        "contentHash": "MCET1ZS8HYEc7+FiNO+0a7OH30pH42lbLKfriuvmOYSRBYi0wkq7duOYvOXPCXHn5qmP+hg30N4afwVM/G/Viw==",
+        "resolved": "6.8.0",
+        "contentHash": "5tBCjAub2Bhd5qmcd0WhR5s354e4oLYa//kOWrkX+6/7ZbDDJjMTfwLSOiZ/MMpWdE4DWPLOfTLOq/juj9CKzA==",
         "dependencies": {
-          "Microsoft.IdentityModel.JsonWebTokens": "6.25.0",
-          "Microsoft.IdentityModel.Tokens": "6.25.0"
+          "Microsoft.IdentityModel.JsonWebTokens": "6.8.0",
+          "Microsoft.IdentityModel.Tokens": "6.8.0"
         }
       },
       "System.IO": {
@@ -2178,45 +2168,45 @@
       "testing.common": {
         "type": "Project",
         "dependencies": {
-          "Faker.NETCore": "[1.0.2, )",
-          "FluentAssertions": "[5.10.3, )",
-          "Microsoft.AspNetCore.Mvc.Core": "[2.2.5, )",
-          "Microsoft.EntityFrameworkCore": "[6.0.11, )",
-          "Microsoft.Extensions.Configuration": "[6.0.1, )",
-          "Microsoft.Extensions.Configuration.Binder": "[6.0.0, )",
-          "Microsoft.Extensions.Configuration.Json": "[6.0.0, )",
-          "Microsoft.Extensions.Configuration.UserSecrets": "[6.0.1, )",
-          "Moq": "[4.14.1, )",
-          "NBuilder": "[6.1.0, )",
-          "Newtonsoft.Json": "[13.0.2, )",
-          "VideoApi.Common": "[1.0.0, )",
-          "VideoApi.Contract": "[1.0.0, )",
-          "VideoApi.Domain": "[1.0.0, )"
+          "Faker.NETCore": "1.0.2",
+          "FluentAssertions": "5.10.3",
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Microsoft.EntityFrameworkCore": "6.0.11",
+          "Microsoft.Extensions.Configuration": "6.0.1",
+          "Microsoft.Extensions.Configuration.Binder": "6.0.0",
+          "Microsoft.Extensions.Configuration.Json": "6.0.0",
+          "Microsoft.Extensions.Configuration.UserSecrets": "6.0.1",
+          "Moq": "4.14.1",
+          "NBuilder": "6.1.0",
+          "Newtonsoft.Json": "13.0.2",
+          "VideoApi.Common": "1.0.0",
+          "VideoApi.Contract": "1.0.0",
+          "VideoApi.Domain": "1.0.0"
         }
       },
       "videoapi.common": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.ApplicationInsights.AspNetCore": "[2.21.0, )",
-          "Microsoft.Extensions.Caching.Abstractions": "[6.0.0, )",
-          "Microsoft.IdentityModel.Clients.ActiveDirectory": "[5.2.8, )",
-          "Newtonsoft.Json": "[13.0.2, )",
-          "System.IdentityModel.Tokens.Jwt": "[6.25.0, )",
-          "VideoApi.Domain": "[1.0.0, )"
+          "Microsoft.ApplicationInsights.AspNetCore": "2.21.0",
+          "Microsoft.Extensions.Caching.Abstractions": "6.0.0",
+          "Microsoft.IdentityModel.Clients.ActiveDirectory": "5.2.8",
+          "Newtonsoft.Json": "13.0.2",
+          "System.IdentityModel.Tokens.Jwt": "6.8.0",
+          "VideoApi.Domain": "1.0.0"
         }
       },
       "videoapi.contract": {
         "type": "Project",
         "dependencies": {
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "System.ComponentModel.Annotations": "4.7.0"
         }
       },
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {
-          "Enums.NET": "[4.0.0, )",
-          "RandomStringCreator": "[2.0.0, )",
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "Enums.NET": "4.0.0",
+          "RandomStringCreator": "2.0.0",
+          "System.ComponentModel.Annotations": "4.7.0"
         }
       }
     }
