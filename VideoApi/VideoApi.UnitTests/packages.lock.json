@@ -344,10 +344,10 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "3.1.9",
-        "contentHash": "6f61m1Rj5qne88CsfuyzRIE9dih7K0e3J3I3A4d9nyPcWhjz+0UUCYGocLHhYihVahxDIifK6Jn2m1LWD8/XEg==",
+        "resolved": "6.0.11",
+        "contentHash": "ivpWC8L84Y+l9VZOa0uJXPoUE+n3TiSRZpfKxMElRtLMYCeXmz5x3O7CuCJkZ65z1520RWuEZDmHefxiz5TqPg==",
         "dependencies": {
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "5.5.0"
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.10.0"
         }
       },
       "Microsoft.AspNetCore.Authorization": {
@@ -475,11 +475,11 @@
       },
       "Microsoft.AspNetCore.JsonPatch": {
         "type": "Transitive",
-        "resolved": "3.1.9",
-        "contentHash": "ugsTdK5wlmwZQ1Y4rvIoqci4uCQ7dgtAIG8cFlvB+3hXdDlECkE8xxoUrFgmZ4TGIuUwRpmWp5pvjX1n8gzJeg==",
+        "resolved": "6.0.11",
+        "contentHash": "xrgl+xfCAHGPTEtex/fF/t9jbr4ckBAwB5txVrO+Osn9SdrbypUem2ES946PCAEPWOgcLiAlH/pnsCw7Nv1NAw==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
-          "Newtonsoft.Json": "12.0.2"
+          "Newtonsoft.Json": "13.0.1"
         }
       },
       "Microsoft.AspNetCore.Mvc.Abstractions": {
@@ -515,11 +515,11 @@
       },
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
         "type": "Transitive",
-        "resolved": "3.1.9",
-        "contentHash": "uc2OLoGtc8YIJDsGD2NqdzhFcinqKjRITntscVrWWwqN/LZjUZ6VuXk+Qf7rKK53S5+nsaQvb6ofpnSPfhv/Cw==",
+        "resolved": "6.0.11",
+        "contentHash": "960KzgL+iaRhvEXdejEpeG9b7i5/ooUyi7uY237tYKKS57SjzGZ7He5TDAYl3dILW2SRa4BpSWoiB9Chu++JDQ==",
         "dependencies": {
-          "Microsoft.AspNetCore.JsonPatch": "3.1.9",
-          "Newtonsoft.Json": "12.0.2",
+          "Microsoft.AspNetCore.JsonPatch": "6.0.11",
+          "Newtonsoft.Json": "13.0.1",
           "Newtonsoft.Json.Bson": "1.0.2"
         }
       },
@@ -2895,8 +2895,8 @@
           "FluentValidation.AspNetCore": "9.3.0",
           "MicroElements.Swashbuckle.FluentValidation": "3.0.0-rc.4",
           "Microsoft.ApplicationInsights.AspNetCore": "2.15.0",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "3.1.9",
-          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "3.1.9",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.11",
+          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "6.0.11",
           "Microsoft.Data.SqlClient": "5.0.1",
           "Microsoft.Extensions.DependencyModel": "6.0.0",
           "Microsoft.Extensions.Logging.ApplicationInsights": "2.15.0",
