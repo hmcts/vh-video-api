@@ -1690,9 +1690,9 @@
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {
-          "Enums.NET": "4.0.0",
-          "RandomStringCreator": "2.0.0",
-          "System.ComponentModel.Annotations": "4.7.0"
+          "Enums.NET": "[4.0.0, )",
+          "RandomStringCreator": "[2.0.0, )",
+          "System.ComponentModel.Annotations": "[4.7.0, )"
         }
       }
     }
