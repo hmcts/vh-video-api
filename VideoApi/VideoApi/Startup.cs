@@ -51,7 +51,7 @@ namespace VideoApi
                         .AllowCredentials();
                 }));
 
-            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(options => options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddApplicationInsightsTelemetryProcessor<SuccessfulDependencyProcessor>();
 
             services.AddJsonOptions();
@@ -62,8 +62,8 @@ namespace VideoApi
             RegisterAuth(services);
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
 
-            services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+            services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware)));
+            services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter)))
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
 
@@ -97,7 +97,7 @@ namespace VideoApi
                 })
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
+                    options.Authority            = $"{securitySettings.Authority}{securitySettings.TenantId}";
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ClockSkew = TimeSpan.Zero,
