@@ -19,22 +19,22 @@
       },
       "Microsoft.EntityFrameworkCore.Design": {
         "type": "Direct",
-        "requested": "[3.1.9, )",
-        "resolved": "3.1.9",
-        "contentHash": "2zgP7BWcw5nqGQiT4bEtiI6ras+4pvKg5D+tA3AYvjEifzzaWvmRTb3B9nRHpIYJAhPtmWNBVnVXLbu3fS1OYA==",
+        "requested": "[6.0.11, )",
+        "resolved": "6.0.11",
+        "contentHash": "2H9vcmv9PIboVMisL0izD+xaUaWeZ/jqqRJeaD8MKIDaKwZsdHE790Sa4fAHjZjzVgoraELRI7CscjPMfLE2jA==",
         "dependencies": {
-          "Microsoft.CSharp": "4.7.0",
-          "Microsoft.EntityFrameworkCore.Relational": "3.1.9"
+          "Humanizer.Core": "2.8.26",
+          "Microsoft.EntityFrameworkCore.Relational": "6.0.11"
         }
       },
       "Microsoft.EntityFrameworkCore.Proxies": {
         "type": "Direct",
-        "requested": "[3.1.9, )",
-        "resolved": "3.1.9",
-        "contentHash": "Wd8skrhsqZQPNNBkNT2FxB/G5XqZvURShkWOZO9cFg3AVz2pFmaDZHt29I4JVu8mXyc+iLkrO9q9YLBK3yOQoA==",
+        "requested": "[6.0.11, )",
+        "resolved": "6.0.11",
+        "contentHash": "/1K+8covrRqUQg40RGV4GdU0unqe1n7g7dO8qc0rmW1Zw3eCABdn3wxcXdy/F8+M3bb7pykMRtlNyW1t0oZ/rw==",
         "dependencies": {
-          "Castle.Core": "4.4.0",
-          "Microsoft.EntityFrameworkCore": "3.1.9"
+          "Castle.Core": "4.4.1",
+          "Microsoft.EntityFrameworkCore": "6.0.11"
         }
       },
       "Microsoft.EntityFrameworkCore.SqlServer": {
@@ -49,11 +49,11 @@
       },
       "Microsoft.EntityFrameworkCore.Tools": {
         "type": "Direct",
-        "requested": "[3.1.9, )",
-        "resolved": "3.1.9",
-        "contentHash": "mSgwjp0h5iqW5V49SVijR5O+kNpI1nitcbN12n9FYx/Ga6oCEFwXR/llBDesD6ASHw3Mx16vodJYJ7CEBx5rig==",
+        "requested": "[6.0.11, )",
+        "resolved": "6.0.11",
+        "contentHash": "GDmG27PBUbWjUCxDHOtXRkHZZNGLGWX/2eFyQI1mzLyVuFHKWPTojZlzjztchCA50d6+2LcZiEStps5OoP90eA==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Design": "3.1.9"
+          "Microsoft.EntityFrameworkCore.Design": "6.0.11"
         }
       },
       "Microsoft.Extensions.Configuration.Json": {
@@ -138,8 +138,8 @@
       },
       "Castle.Core": {
         "type": "Transitive",
-        "resolved": "4.4.0",
-        "contentHash": "b5rRL5zeaau1y/5hIbI+6mGw3cwun16YjkHZnV9RRT5UyUIFsgLmNXJ0YnIN9p8Hw7K7AbG1q1UclQVU3DinAQ==",
+        "resolved": "4.4.1",
+        "contentHash": "zanbjWC0Y05gbx4eGXkzVycOQqVOFVeCjVsDSyuao9P4mtN1w3WxxTo193NGC7j3o2u3AJRswaoC6hEbnGACnQ==",
         "dependencies": {
           "NETStandard.Library": "1.6.1",
           "System.Collections.Specialized": "4.3.0",
@@ -157,6 +157,11 @@
         "type": "Transitive",
         "resolved": "4.0.0",
         "contentHash": "d47SgeuGxKpalKhYoHqFkDPmO9SoE3amSwVNDoUdy4d675/tX7bLyZFHdjfo3Tobth9Y80VnjfasQ/PD4LqUuA=="
+      },
+      "Humanizer.Core": {
+        "type": "Transitive",
+        "resolved": "2.8.26",
+        "contentHash": "OiKusGL20vby4uDEswj2IgkdchC1yQ6rwbIkZDVBPIR6al2b7n3pC91elBul9q33KaBgRKhbZH3+2Ur4fnWx2A=="
       },
       "Microsoft.ApplicationInsights": {
         "type": "Transitive",
