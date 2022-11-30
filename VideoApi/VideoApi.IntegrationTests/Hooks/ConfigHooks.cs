@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using AcceptanceTests.Common.Api;
-using AcceptanceTests.Common.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;

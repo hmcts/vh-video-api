@@ -33,12 +33,6 @@
           "Microsoft.TestPlatform.TestHost": "16.8.3"
         }
       },
-      "Newtonsoft.Json": {
-        "type": "Direct",
-        "requested": "[12.0.3, )",
-        "resolved": "12.0.3",
-        "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
-      },
       "NUnit3TestAdapter": {
         "type": "Direct",
         "requested": "[3.17.0, )",
@@ -947,6 +941,11 @@
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
+      },
+      "Newtonsoft.Json": {
+        "type": "Transitive",
+        "resolved": "12.0.3",
+        "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
       },
       "NuGet.Frameworks": {
         "type": "Transitive",
@@ -2203,44 +2202,42 @@
       "testing.common": {
         "type": "Project",
         "dependencies": {
-          "Faker.NETCore": "1.0.2",
-          "FluentAssertions": "5.10.3",
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Microsoft.Extensions.Configuration": "5.0.0",
-          "Microsoft.Extensions.Configuration.Binder": "3.1.9",
-          "Microsoft.Extensions.Configuration.Json": "5.0.0",
-          "Microsoft.Extensions.Configuration.UserSecrets": "5.0.0",
-          "Moq": "4.14.1",
-          "NBuilder": "6.1.0",
-          "Newtonsoft.Json": "12.0.3",
-          "VideoApi.Common": "1.0.0",
-          "VideoApi.Contract": "1.0.0",
-          "VideoApi.Domain": "1.0.0"
+          "Faker.NETCore": "[1.0.2, )",
+          "FluentAssertions": "[5.10.3, )",
+          "Microsoft.AspNetCore.Mvc.Core": "[2.2.5, )",
+          "Microsoft.Extensions.Configuration": "[5.0.0, )",
+          "Microsoft.Extensions.Configuration.Binder": "[3.1.9, )",
+          "Microsoft.Extensions.Configuration.Json": "[5.0.0, )",
+          "Microsoft.Extensions.Configuration.UserSecrets": "[5.0.0, )",
+          "Moq": "[4.14.1, )",
+          "NBuilder": "[6.1.0, )",
+          "VideoApi.Common": "[1.0.0, )",
+          "VideoApi.Contract": "[1.0.0, )",
+          "VideoApi.Domain": "[1.0.0, )"
         }
       },
       "videoapi.common": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.ApplicationInsights.AspNetCore": "2.15.0",
-          "Microsoft.Extensions.Caching.Abstractions": "3.1.9",
-          "Microsoft.IdentityModel.Clients.ActiveDirectory": "5.2.8",
-          "Newtonsoft.Json": "12.0.3",
-          "System.IdentityModel.Tokens.Jwt": "5.6.0",
-          "VideoApi.Domain": "1.0.0"
+          "Microsoft.ApplicationInsights.AspNetCore": "[2.15.0, )",
+          "Microsoft.Extensions.Caching.Abstractions": "[3.1.9, )",
+          "Microsoft.IdentityModel.Clients.ActiveDirectory": "[5.2.8, )",
+          "System.IdentityModel.Tokens.Jwt": "[5.6.0, )",
+          "VideoApi.Domain": "[1.0.0, )"
         }
       },
       "videoapi.contract": {
         "type": "Project",
         "dependencies": {
-          "System.ComponentModel.Annotations": "4.7.0"
+          "System.ComponentModel.Annotations": "[4.7.0, )"
         }
       },
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {
-          "Enums.NET": "4.0.0",
-          "RandomStringCreator": "2.0.0",
-          "System.ComponentModel.Annotations": "4.7.0"
+          "Enums.NET": "[4.0.0, )",
+          "RandomStringCreator": "[2.0.0, )",
+          "System.ComponentModel.Annotations": "[4.7.0, )"
         }
       }
     }
