@@ -13,6 +13,7 @@ using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Contract.Responses;
+using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 
 namespace VideoApi.AcceptanceTests.Hooks
 {
