@@ -59,6 +59,7 @@ stages:
           - template: stages\dotnet-tests\unit-tests.yml@azTemplates
             parameters:
               #vstsFeedId: 'Video Hearings/vh-packages'
+              dotNetCoreVersion: '6.x'
               nugetConfigPath: ${{ variables.app_path }} # Temp - Change To SDS Feed When Possible.
               unitTestProjectPath: "${{ variables.app_path }}/${{ variables.app_path }}.UnitTests"
               coverletCoverageExclusions:
@@ -156,7 +157,7 @@ stages:
               nugetProjectPath: $(projectPath)
               nugetConfigPath: VideoApi
               useNugetConfig: true
-          
+              netVersion: '6.x'
 #####################################################
 # Run Entity Framework Dev. #########################
   - stage: Run_Entity_Framework_Dev
@@ -258,7 +259,7 @@ stages:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
             parameters:
               environment: ${{ variables.env }}
-              netVersion: '3.x'
+              netVersion: '6.x'
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 - name: Services:VideoApiUrl
@@ -267,6 +268,8 @@ stages:
                   value: applicationinsights--instrumentationkey
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
+                - name: AzureAd:Authority
+                  value: "https://login.microsoftonline.com/"
                 - name: AzureAd:ClientId
                   value: azuread--clientid
                   keyVaultName: vh-video-api-${{ variables.env }}

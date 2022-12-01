@@ -1,4 +1,3 @@
-using System;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;

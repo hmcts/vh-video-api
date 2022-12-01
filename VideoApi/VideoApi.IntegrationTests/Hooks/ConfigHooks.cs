@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using AcceptanceTests.Common.Api;
-using AcceptanceTests.Common.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +17,7 @@ using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 
 namespace VideoApi.IntegrationTests.Hooks
 {
