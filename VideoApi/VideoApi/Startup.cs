@@ -90,6 +90,12 @@ namespace VideoApi
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
             var serviceSettings = Configuration.GetSection("Services").Get<ServicesConfiguration>();
 
+            if (String.IsNullOrEmpty(securitySettings.Authority))
+                throw new ArgumentException("authority missing");
+            
+            if (String.IsNullOrEmpty(securitySettings.TenantId))
+                throw new ArgumentException("TenantId missing");
+            
             serviceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -104,6 +110,7 @@ namespace VideoApi
                         ValidateLifetime = true,
                         ValidAudience = serviceSettings.VideoApiResourceId
                     };
+                    options.RequireHttpsMetadata = false;
                 });
 
             serviceCollection.AddAuthorization(AddPolicies);
