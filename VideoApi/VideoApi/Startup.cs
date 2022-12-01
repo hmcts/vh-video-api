@@ -113,7 +113,6 @@ namespace VideoApi
                         ValidateLifetime = true,
                         ValidAudience = serviceSettings.VideoApiResourceId
                     };
-                    options.RequireHttpsMetadata = false;
                 });
 
             serviceCollection.AddAuthorization(AddPolicies);
