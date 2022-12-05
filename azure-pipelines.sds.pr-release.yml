@@ -49,7 +49,7 @@ stages:
     - template: stages\dotnet-tests\unit-tests.yml@azTemplates
       parameters:
         #vstsFeedId: 'Video Hearings/vh-packages'
-        dotnetCoreVersion: '6.x'
+        dotnetCoreVersion: ${{ variables.dotnetVersion }}
         nugetConfigPath: ${{ variables.appName }} # Temp - Change To SDS Feed When Possible.
         unitTestProjectPath: "${{ variables.appName }}/${{ variables.appName }}.UnitTests"
         coverletCoverageExclusions:
@@ -86,6 +86,7 @@ stages:
           nugetProjectPath: "${{ variables.appName }}/${{ variables.nuget_package_name }}"
           vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
           gitVersionConfigPath: ${{ variables.git_version_config_path }}
+          dotNetVersion: ${{ variables.dotnetVersion }}
 
   - job: PublishAcceptanceTests
     dependsOn: package_nuget
@@ -95,7 +96,7 @@ stages:
     steps:
     - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
       parameters:
-        netVersion: 6.x
+        netVersion: ${{ variables.dotnetVersion }}
         coreProjectPath: $(projectPath)
         nugetProjectPath: $(projectPath)
         nugetConfigPath: ${{ variables.appName }}
