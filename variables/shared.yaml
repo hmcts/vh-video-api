@@ -86,6 +86,3 @@ variables:
     value: "vh-infra-core-${{ parameters.env }}-sql-username"
   - name: vhSqlPasswordSecret
     value: "vh-infra-core-${{ parameters.env }}-sql-password"
-
-  - name: dotnetVersion
-    value: 6.x
