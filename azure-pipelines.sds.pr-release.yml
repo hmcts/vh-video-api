@@ -102,7 +102,7 @@ stages:
         useNugetConfig: true
 
 #####################################################
-# Build Docker Image & Generate EF Script. ##########
+# Build Docker Image. ###############################
 - stage: Dock
   displayName: Docker Build & Push Image
   variables: 
