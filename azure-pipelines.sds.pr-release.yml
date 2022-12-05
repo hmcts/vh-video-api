@@ -13,382 +13,392 @@ trigger: none
 pr:
   - master
 
-variables:
-  - group: vh-github-app-credentials
-  - name: app_path
-    value: 'VideoApi'
-  - group: vh-video-api
-  - name: run_acceptance_tests
-    value: true
-
 stages:
-#####################################################
-# CI Build Checks. ##################################
-  - stage: CI_Build
-    displayName: CI Build
-    variables: 
-      - template: variables/shared.yaml
+####################################################
+# CI Build Checks. #################################
+- stage: CI_Build
+  displayName: CI Build
+  variables: 
+  - template: variables/shared.yaml
+  jobs:
+  - job: CI_Helm
+    displayName: "Helm CI"
+    steps:
+    - checkout: self
+
+    - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
+      parameters:
+        chartPath: ${{ variables.chartPath }}
+        chartValuesPath: ${{ variables.chartPath }}
+
+  - job: UnitTests
+    displayName: "Unit Tests"
+    steps:
+    - checkout: self
+
+    - template: templates/sonarCloud/prepare.yml@azTemplates
+      parameters:
+        ExtraProperties: |
+          sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
+          sonar.coverage.exclusions=**/Program.cs,**/Startup.cs,**/VideoApi/Extensions/**,**/VideoApiI/Swagger/**,**/VideoApi/ConfigureServicesExtensions.cs,**/Testing.Common/**/*,**/VideoApi.Common/**,**/VideoApi.DAL/Mappings/**,**/VideoApi.DAL/SeedData/**,**/VideoApi.DAL/VideoApiDbContext.cs,**/VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,**/VideoApi.DAL/Migrations/*,**/VideoApi.Domain/Ddd/*,**/VideoApi.Domain/Validations/*
+          sonar.cpd.exclusions=**/VideoApi.DAL/Migrations/**
+          sonar.issue.ignore.multicriteria=e1
+          sonar.issue.ignore.multicriteria.e1.ruleKey=csharpsquid:S107
+          sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.cs
+
+    - template: stages\dotnet-tests\unit-tests.yml@azTemplates
+      parameters:
+        #vstsFeedId: 'Video Hearings/vh-packages'
+        dotnetCoreVersion: '6.x'
+        nugetConfigPath: ${{ variables.appName }} # Temp - Change To SDS Feed When Possible.
+        unitTestProjectPath: "${{ variables.appName }}/${{ variables.appName }}.UnitTests"
+        coverletCoverageExclusions:
+          - '[VideoApi.*Tests?]*'
+          - '[VideoApi]Startup'
+          - '[VideoApi.Common]*'
+          - '[VideoApi.Common]*'
+
+    - template: templates/sonarCloud/runAnalysis.yml@azTemplates
+
+####################################################
+# Pre Release Tasks. ###############################
+- stage: Pre_Release_Tasks
+  displayName: Pre-Release Tasks
+  variables: 
+  - template: variables/shared.yaml
+  jobs:
+  - job: Generate_Entity_Framework_Script
+    displayName: "Generate Entity Framework Script"
+    steps:
+      - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
         parameters:
-          env: ''
-    jobs:
-      - job: CI_Helm
-        displayName: "Helm CI"
-        steps:
-          - checkout: self
+          outputPath: $(Build.StagingDirectory)
+          contextName: ${{ variables.efContextName }}
+          workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
+          migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
+          projectName: ${{ variables.efProjectName }}
 
-          - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
-            parameters:
-              chartPath: ${{ variables.chartPath }}
-              chartValuesPath: ${{ variables.chartPath }}
+  - job: package_nuget
+    displayName: "Package NuGet Packages"
+    steps:
+      - template: templates\dotnet\package-nuget-packages.yml@azTemplates
+        parameters:
+          nugetProjectPath: "${{ variables.appName }}/${{ variables.nuget_package_name }}"
+          vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+          gitVersionConfigPath: ${{ variables.git_version_config_path }}
 
-      - job: UnitTests
-        displayName: "Unit Tests"
-        steps:
-          - checkout: self
-
-          - template: templates/sonarCloud/prepare.yml@azTemplates
-            parameters:
-              ExtraProperties: |
-                sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
-                sonar.coverage.exclusions=**/Program.cs,**/Startup.cs,**/VideoApi/Extensions/**,**/VideoApiI/Swagger/**,**/VideoApi/ConfigureServicesExtensions.cs,**/Testing.Common/**/*,**/VideoApi.Common/**,**/VideoApi.DAL/Mappings/**,**/VideoApi.DAL/SeedData/**,**/VideoApi.DAL/VideoApiDbContext.cs,**/VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,**/VideoApi.DAL/Migrations/*,**/VideoApi.Domain/Ddd/*,**/VideoApi.Domain/Validations/*
-                sonar.cpd.exclusions=**/VideoApi.DAL/Migrations/**
-                sonar.issue.ignore.multicriteria=e1
-                sonar.issue.ignore.multicriteria.e1.ruleKey=csharpsquid:S107
-                sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.cs
-      
-          - template: stages\dotnet-tests\unit-tests.yml@azTemplates
-            parameters:
-              #vstsFeedId: 'Video Hearings/vh-packages'
-              nugetConfigPath: ${{ variables.app_path }} # Temp - Change To SDS Feed When Possible.
-              unitTestProjectPath: "${{ variables.app_path }}/${{ variables.app_path }}.UnitTests"
-              coverletCoverageExclusions:
-                - '[VideoApi.*Tests?]*'
-                - '[VideoApi]Startup'
-                - '[VideoApi.Common]*'
-                - '[VideoApi.Common]*'
-
-          - template: templates/sonarCloud/runAnalysis.yml@azTemplates
-
+  - job: PublishAcceptanceTests
+    dependsOn: package_nuget
+    displayName: Publish Acceptance Tests
+    variables:
+      projectPath: "${{ variables.appName }}/${{ variables.appName }}"
+    steps:
+    - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
+      parameters:
+        netVersion: 6.x
+        coreProjectPath: $(projectPath)
+        nugetProjectPath: $(projectPath)
+        nugetConfigPath: ${{ variables.appName }}
+        useNugetConfig: true
 
 #####################################################
-# Pre Steps. ########################################
 # Build Docker Image & Generate EF Script. ##########
-  - stage: Dock
-    displayName: Build Video API
-    variables: 
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-      - group: vh-github-app-credentials
-    jobs:
-      - job: Dock
-        displayName: "Build and Push Image ${{ variables.git_repo_name }}"
-        steps:
-          - checkout: self
+- stage: Dock
+  displayName: Docker Build & Push Image
+  variables: 
+  - group: aks-cluster-info
+  - template: variables/dev.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  - group: vh-github-app-credentials
+  jobs:
+  - job: Dock
+    displayName: "Build and Push Image ${{ variables.git_repo_name }}"
+    steps:
+    - checkout: self
 
-          - template: templates\Github\get-app-token.yaml@azTemplates
-            parameters:
-              privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
-              appId: $(gh_app_app_id)
+    - template: templates\Github\get-app-token.yaml@azTemplates
+      parameters:
+        privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
+        appId: $(gh_app_app_id)
 
-          - template: templates\Github\bump-chart-versions.yaml@azTemplates
-            parameters:
-              chartName: ${{ variables.chartName }}
-              chartPath: $(Build.SourcesDirectory)
-              chartBranch: $(System.PullRequest.SourceBranch)
-              githubToken: $(githubappinstall.token)
-              githubUsername: $(gh_app_name)
-              githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
-          
-          - bash: |
-              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
-            displayName: Add NuGet Feed Authentication
-            workingDirectory: VideoApi
+    - template: templates\Github\bump-chart-versions.yaml@azTemplates
+      parameters:
+        chartName: ${{ variables.chartName }}
+        chartPath: $(Build.SourcesDirectory)
+        chartBranch: $(System.PullRequest.SourceBranch)
+        githubToken: $(githubappinstall.token)
+        githubUsername: $(gh_app_name)
+        githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
+    
+    - bash: |
+        sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
+      displayName: Add NuGet Feed Authentication
+      workingDirectory: ${{ variables.appName }}
 
-          - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName:  ${{ variables.repositoryName }}
+    - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
+      parameters:
+        azureSubscription: ${{ variables.acrSubscription }}
+        acrName: ${{ variables.acrName }}
+        repositoryName:  ${{ variables.repositoryName }}
 
-          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName:  ${{ variables.repositoryName }}
-              imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
-              imageTags:
-                - '${{ variables.prTagName }}'
-
-      - job: Generate_Entity_Framework_Script
-        displayName: "Generate Entity Framework Script"
-        steps:
-
-        - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
-          parameters:
-            outputPath: $(Build.StagingDirectory)
-            contextName: ${{ variables.efContextName }}
-            workingPath: $(System.DefaultWorkingDirectory)/VideoApi/VideoApi
-            projectName: ${{ variables.efProjectName }}
-            migrationsPath: VideoApi/VideoApi.DAL/Migrations
-
-      - job: package_nuget
-        displayName: "Package NuGet Packages"
-        dependsOn: Dock
-        steps:
-          - template: templates\dotnet\package-nuget-packages.yml@azTemplates
-            parameters:
-              nugetProjectPath: "VideoApi/${{ variables.nuget_package_name }}"
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-              gitVersionConfigPath: ${{ variables.git_version_config_path }}
-
-      - ${{ if eq(variables.run_acceptance_tests, true) }}:
-        - job: PublishAcceptanceTests
-          displayName: Publish Acceptance Tests 
-          dependsOn: package_nuget
-          variables:
-            projectPath: VideoApi/VideoApi
-          steps:
-          - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
-            parameters:
-              coreProjectPath: $(projectPath)
-              nugetProjectPath: $(projectPath)
-              nugetConfigPath: VideoApi
-              useNugetConfig: true
+    - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+      parameters:
+        azureSubscription: ${{ variables.acrSubscription }}
+        acrName: ${{ variables.acrName }}
+        repositoryName:  ${{ variables.repositoryName }}
+        imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
+        imageTags:
+          - '${{ variables.prTagName }}'
           
 #####################################################
 # Run Entity Framework Dev. #########################
-  - stage: Run_Entity_Framework_Dev
-    dependsOn: Dock
-    condition: eq(lower(dependencies.Dock.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true')
+- stage: Run_Entity_Framework_Dev
+  displayName: Run Entity Framework Dev
+  dependsOn: Dock
+  condition:  and(eq(lower(dependencies.Pre_Release_Tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'), succeeded('Dock'))
+  variables:
+  - template: variables/dev.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  jobs:
+  - job: Run_Entity_Framework_Dev
+    pool:
+      vmImage: 'windows-latest' # This Job Must be Run on Windows
     displayName: Run Entity Framework Dev
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs:
-      - job: Run_Entity_Framework_Dev
-        pool:
-          vmImage: 'windows-latest' # This Job Must be Run on Windows
-        displayName: Run Entity Framework Dev
-        steps:
-          - download: current
-            displayName: Download Sql Artifact
+    steps:
+      - download: current
+        displayName: Download Sql Artifact
 
-          - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-            parameters:
-              sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-              sqlServerName: ${{ variables.vhSQLServerName }}
-              databaseName: ${{ variables.VideoApiDbName }}
-              azureSubscription: ${{ variables.subscriptionName }}
-              sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-              kvfirewallRequired: false
-              kvName: ${{ variables.vhKeyVault }}
-              kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-              kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+      - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+        parameters:
+          sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+          sqlServerName: ${{ variables.vhSQLServerName }}
+          databaseName: ${{ variables.videoApiDbName }}
+          azureSubscription: ${{ variables.subscriptionName }}
+          sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
+          kvfirewallRequired: false
+          kvName: ${{ variables.vhKeyVault }}
+          kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+          kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
 
 #####################################################
 # Deploy Helm Chart to Dev. ######################### 
-  - stage: Install
-    dependsOn: Run_Entity_Framework_Dev
-    condition: in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
-    displayName: Deploy Helm Chart Dev AKS
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-      - name: dnsRecordName
-        value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
-    jobs:
-      - job: helm_uninstall
-        displayName: Uninstall Helm from Dev
-        steps:
+- stage: Install
+  dependsOn: 
+  - Run_Entity_Framework_Dev
+  - Dock
+  condition: and(not(failed()), not(canceled()))
+  displayName: Deploy Helm Chart Dev AKS
+  variables:
+  - group: vh-github-app-credentials
+  - template: variables/dev.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  - name: dnsRecordName
+    value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+  jobs:
+  - job: helm_uninstall
+    displayName: Uninstall Helm from Dev
+    steps:
+    - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
+      parameters:
+        subscriptionName: "${{ variables.subscriptionName }}"
+        environment: ${{ variables.env }}
+      
+    - template: templates/Containerisation/helm/helm-uninstall.yaml@azTemplates
+      parameters:
+        namespace: 'vh'
+        releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
+        azureSubscription: "${{ variables.subscriptionName }}"
+        aksResourceGroupName: "$(aksCluster.resourceGroup)"
+        aksClusterName: "$(aksCluster.name)"
 
-          - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
-            parameters:
-              subscriptionName: "${{ variables.subscriptionName }}"
-              environment: ${{ variables.env }}
-            
-          - template: templates/Containerisation/helm/helm-uninstall.yaml@azTemplates
-            parameters:
-              namespace: 'vh'
-              releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
-              azureSubscription: "${{ variables.subscriptionName }}"
-              aksResourceGroupName: "$(aksCluster.resourceGroup)"
-              aksClusterName: "$(aksCluster.name)"
-      - job: aks_push
-        displayName: Deploy To Dev AKS
-        dependsOn: helm_uninstall
-        steps:
-
-          - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
-            parameters:
-              subscriptionName: "${{ variables.subscriptionName }}"
-              environment: ${{ variables.env }}
-          - template: templates/Containerisation/helm/helm-install.yaml@azTemplates
-            parameters:
-              privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
-              appId: $(gh_app_app_id)
-              envValuesTemplatePath: ${{ variables.envValuesTemplatePath }}
-              envValuesPath: ${{ variables.envValuesPath }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
-              prTagName: ${{ variables.prTagName }}
-              releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
-              dnsRecordName: ${{ variables.dnsRecordName }}
-              dnsZone: ${{ variables.dnsZone }}
-              env: ${{ variables.env }}
-              chartName: ${{ variables.chartName }}
-              chartPath: ${{ variables.chartPath }}
-              subscriptionName: "${{ variables.subscriptionName }}"
-              aksResourceGroupName: "$(aksCluster.resourceGroup)"
-              aksClusterName: "$(aksCluster.name)"
-              dnsSubscriptionName: "${{ variables.dnsZoneSubscription }}"
-              dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
-
-      - ${{ if eq(variables.run_acceptance_tests, true) }}:
-        - job: AcceptanceTestsDev
-          pool: VH Self Hosted
-          displayName: Acceptance Tests Dev
-          dependsOn: aks_push
-          steps:
-          - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
-            parameters:
-              environment: ${{ variables.env }}
-              netVersion: '3.x'
-              azureSubscription: ${{ variables.subscriptionName }}
-              acceptanceTestSettings:
-                - name: Services:VideoApiUrl
-                  value: "https://vh-video-api-pr-$(System.PullRequest.PullRequestNumber).dev.platform.hmcts.net"
-                - name: ApplicationInsights:InstrumentationKey
-                  value: applicationinsights--instrumentationkey
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: AzureAd:ClientId
-                  value: azuread--clientid
-                  keyVaultName: vh-video-api-${{ variables.env }}
-                  secret: true
-                - name: AzureAd:ClientSecret
-                  value: azuread--clientsecret
-                  keyVaultName: vh-video-api-${{ variables.env }}
-                  secret: true
-                - name: AzureAd:TenantId
-                  value: azuread--tenantid
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-
-                # Services Configuration
-                - name: Services:VideoApiResourceId
-                  value: azuread--identifieruri
-                  keyVaultName: vh-video-api-${{ variables.env }}
-                  secret: true
-                - name: Services:CallbackUri
-                  value: $(CallbackUri)
-
-                # Wowza Configuration
-                - name: WowzaConfiguration:RestApiEndpoints
-                  value: wowzaconfiguration--endpoint
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StreamingEndpoint
-                  value: wowzaconfiguration--endpoint
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:Username 
-                  value: wowzaconfiguration--username
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:Password 
-                  value: wowzaconfiguration--restPassword
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageDirectory
-                  value: wowzaconfiguration--azure-storage-directory
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageAccountName
-                  value: wowzaconfiguration--storage-account
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageAccountKey
-                  value: wowzaconfiguration--storageaccountkey
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageContainerName 
-                  value: wowzaconfiguration--storage-account-container
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageEndpoint
-                  value: wowzaconfiguration--storage-account-endpoint
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:ManagedIdentityClientId
-                  value: wowzaconfiguration--managedidentityclientid
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                # - name: WowzaConfiguration:ApplicationName
-                #   value: $(wowza_appName)
-                #   keyVaultName: vh-infra-core-${{ variables.env }}
-                #   secret: true
-                  
-                # CVP Configuration
-                - name: CvpConfiguration:StorageAccountName
-                  value: CvpConfiguration--StorageAccountName
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: CvpConfiguration:StorageAccountKey
-                  value: CvpConfiguration--StorageAccountKey
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: CvpConfiguration:StorageContainerName
-                  value: CvpConfiguration--StorageContainerName
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: CvpConfiguration:StorageEndpoint
-                  value: CvpConfiguration--StorageEndpoint
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-
-                # Kinly Configuration
-                - name: KinlyConfiguration:ConferencePhoneNumber
-                  value: $(ConferencePhoneNumber)
-                - name: KinlyConfiguration:ConferencePhoneNumberWelsh
-                  value: $(ConferencePhoneNumberWelsh)
-                - name: KinlyConfiguration:KinlyApiUrl
-                  value: $(KinlyApiUrl)
-                - name: KinlyConfiguration:KinlySelfTestApiUrl
-                  value: $(KinlySelfTestApiUrl)
-                - name: KinlyConfiguration:ConferenceUsername
-                  value: $(ConferenceUsername)
-                - name: KinlyConfiguration:CallbackUri
-                  value: $(CallbackUri)
-
-                # Quick Links Configuration
-                - name: QuickLinks:Issuer
-                  value: $(video_api_url)
-                - name: QuickLinks:RsaPrivateKey
-                  value: $(RsaPrivateKey)
-                - name: QuickLinks:ValidAudience
-                  value: $(ValidAudience)
-                          
-#####################################################
+  - job: aks_push
+    displayName: Deploy To Dev AKS
+    dependsOn: helm_uninstall
+    steps:
+    - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
+      parameters:
+        subscriptionName: "${{ variables.subscriptionName }}"
+        environment: ${{ variables.env }}
+    - template: templates/Containerisation/helm/helm-install.yaml@azTemplates
+      parameters:
+        privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
+        appId: $(gh_app_app_id)
+        envValuesTemplatePath: ${{ variables.envValuesTemplatePath }}
+        envValuesPath: ${{ variables.envValuesPath }}
+        acrName: ${{ variables.acrName }}
+        repositoryName: ${{ variables.repositoryName }}
+        prTagName: ${{ variables.prTagName }}
+        releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
+        dnsRecordName: ${{ variables.dnsRecordName }}
+        dnsZone: ${{ variables.dnsZone }}
+        env: ${{ variables.env }}
+        chartName: ${{ variables.chartName }}
+        chartPath: ${{ variables.chartPath }}
+        subscriptionName: "${{ variables.subscriptionName }}"
+        aksResourceGroupName: "$(aksCluster.resourceGroup)"
+        aksClusterName: "$(aksCluster.name)"
+        dnsSubscriptionName: "${{ variables.dnsZoneSubscription }}"
+        dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
+                
+##################################################
 # Deploy Nuget Packages. #########################
-  - stage: Push_Nuget
-    dependsOn: Install
-    condition: in(dependencies.Install.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
-    displayName: Deploy NuGet Packages
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs: 
-      - job: Publish_Nuget
-        displayName: Publish NuGet Packages
-        steps:
-          - template: templates\dotnet\push-nuget-packages.yml@azTemplates
-            parameters:
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+- stage: Push_Nuget
+  dependsOn:
+  - Run_Entity_Framework_Dev
+  - Dock
+  condition: and(not(failed()), not(canceled()))
+  displayName: Deploy NuGet Packages
+  variables:
+  - template: variables/dev.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  jobs: 
+  - job: Publish_Nuget
+    displayName: Publish NuGet Packages
+    steps:
+    - template: templates\dotnet\push-nuget-packages.yml@azTemplates
+      parameters:
+        vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+
+##################################################
+# Run Acceptance Tests. ##########################
+- stage: Acceptance_Tests_Dev
+  dependsOn: Install
+  condition: succeeded('Install')
+  displayName: Acceptance Tests Dev
+  variables:
+  - group: vh-video-api
+  - template: variables/dev.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  - name: dnsRecordName
+    value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+  jobs:
+  - job: AcceptanceTestsDev
+    pool: VH Self Hosted
+    displayName: Acceptance Tests Dev
+    steps:
+    - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
+      parameters:
+        environment: ${{ variables.env }}
+        azureSubscription: ${{ variables.subscriptionName }}
+        acceptanceTestSettings:
+          # App Insights
+          - name: ApplicationInsights:InstrumentationKey
+            value: applicationinsights--instrumentationkey
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          
+          # Azure AD 
+          - name: AzureAd:ClientId
+            value: azuread--clientid
+            keyVaultName: vh-video-api-${{ variables.env }}
+            secret: true
+          - name: AzureAd:ClientSecret
+            value: azuread--clientsecret
+            keyVaultName: vh-video-api-${{ variables.env }}
+            secret: true
+          - name: AzureAd:TenantId
+            value: azuread--tenantid
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+
+          # Services Configuration
+          - name: Services:VideoApiResourceId
+            value: azuread--identifieruri
+            keyVaultName: vh-video-api-${{ variables.env }}
+            secret: true
+          - name: Services:CallbackUri
+            value: $(CallbackUri)
+          - name: Services:VideoApiUrl
+            value: "https://vh-video-api-pr-$(System.PullRequest.PullRequestNumber).dev.platform.hmcts.net"
+
+          # Wowza Configuration
+          - name: WowzaConfiguration:RestApiEndpoints
+            value: wowzaconfiguration--endpoint
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StreamingEndpoint
+            value: wowzaconfiguration--endpoint
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:Username 
+            value: wowzaconfiguration--username
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:Password 
+            value: wowzaconfiguration--restPassword
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageDirectory
+            value: wowzaconfiguration--azure-storage-directory
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageAccountName
+            value: wowzaconfiguration--storage-account
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageAccountKey
+            value: wowzaconfiguration--storageaccountkey
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageContainerName 
+            value: wowzaconfiguration--storage-account-container
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageEndpoint
+            value: wowzaconfiguration--storage-account-endpoint
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:ManagedIdentityClientId
+            value: wowzaconfiguration--managedidentityclientid
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+            
+          # CVP Configuration
+          - name: CvpConfiguration:StorageAccountName
+            value: CvpConfiguration--StorageAccountName
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: CvpConfiguration:StorageAccountKey
+            value: CvpConfiguration--StorageAccountKey
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: CvpConfiguration:StorageContainerName
+            value: CvpConfiguration--StorageContainerName
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: CvpConfiguration:StorageEndpoint
+            value: CvpConfiguration--StorageEndpoint
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+
+          # Kinly Configuration
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
+          - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+            value: $(ConferencePhoneNumberWelsh)
+          - name: KinlyConfiguration:KinlyApiUrl
+            value: $(KinlyApiUrl)
+          - name: KinlyConfiguration:KinlySelfTestApiUrl
+            value: $(KinlySelfTestApiUrl)
+          - name: KinlyConfiguration:ConferenceUsername
+            value: $(ConferenceUsername)
+          - name: KinlyConfiguration:CallbackUri
+            value: $(CallbackUri)
+
+          # Quick Links Configuration
+          - name: QuickLinks:Issuer
+            value: $(video_api_url)
+          - name: QuickLinks:RsaPrivateKey
+            value: $(RsaPrivateKey)
+          - name: QuickLinks:ValidAudience
+            value: $(ValidAudience)
