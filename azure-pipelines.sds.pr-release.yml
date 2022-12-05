@@ -80,6 +80,7 @@ stages:
 
   - job: package_nuget
     displayName: "Package NuGet Packages"
+    pool: ubuntu-20.04
     steps:
       - template: templates\dotnet\package-nuget-packages.yml@azTemplates
         parameters:
