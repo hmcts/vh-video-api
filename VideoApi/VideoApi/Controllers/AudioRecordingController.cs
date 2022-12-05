@@ -118,19 +118,17 @@ namespace VideoApi.Controllers
         /// Gets the audio stream for the conference by hearingId
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
-        [HttpGet("audiostreams/{hearingId}")]
+        [HttpGet("audiostreams/{hearingId}/{singleWowzaApp?}")]
         [OpenApiOperation("GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId)
+        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId, bool singleWowzaApp = true)
         {
             _logger.LogDebug("GetAudioStreamInfo");
             
-            var conference = await GetConference(hearingId);
-            var applicationName = conference.IngestUrl.Contains(_audioPlatformService.ApplicationName) 
-                ? _audioPlatformService.ApplicationName 
-                : hearingId.ToString();
+            var applicationName = singleWowzaApp ? _audioPlatformService.ApplicationName : hearingId.ToString();
             
             var response = await _audioPlatformService.GetAudioStreamInfoAsync(applicationName, hearingId.ToString());
 

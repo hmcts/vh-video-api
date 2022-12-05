@@ -4,12 +4,10 @@ using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {

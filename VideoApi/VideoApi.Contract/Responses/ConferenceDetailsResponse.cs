@@ -87,5 +87,10 @@ namespace VideoApi.Contract.Responses
         /// Flags true when hearing venue is in Scotland
         /// </summary>
         public bool HearingVenueIsScottish { get; set; }
+        
+        /// <summary>
+        /// Url Audio Recording to be streamed to single app version of wowza
+        /// </summary>
+        public bool? WowzaSingleApp { get; set; }
     }
 }

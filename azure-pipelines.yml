@@ -143,6 +143,8 @@ parameters:
       - name: AzureAd:TenantId
         value: tenantid
         secret: true
+      - name: AzureAd:Authority
+        value: "https://login.microsoftonline.com/"
       - name: UseStub
         value: 'false'
 
@@ -273,6 +275,7 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
+    netVersion: 6.x
     coreProjectPath: VideoApi/VideoApi
     nugetProjectPath: VideoApi/VideoApi.Client
     PackageNuget: ${{ parameters.PackageNuget }}
@@ -283,6 +286,7 @@ extends:
     connectionStringSecretName: "VhVideoDatabaseConnectionString"
     Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
     testParameters:
+      netVersion: 6.x
       baseAgent: windows-latest
       coreProjectPath: VideoApi/VideoApi
       nugetConfigPath: VideoApi
