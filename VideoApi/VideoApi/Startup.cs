@@ -83,6 +83,8 @@ namespace VideoApi
             services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
             services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
             services.AddSingleton<IBlobClientExtension, BlobClientExtension>();
+            services.AddHostedService<LongRunningService>();
+            services.AddSingleton<BackgroundWorkerQueue>();
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)

@@ -24,6 +24,7 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
         private Mock<ICommandHandler> _commandHandler;
         private Mock<ILogger<InstantMessageController>> _logger;
         private InstantMessageController _instantMessageController;
+        private readonly BackgroundWorkerQueue _backgroundWorkerQueue = new BackgroundWorkerQueue();
 
         [SetUp]
         public void TestInitialize()
@@ -32,7 +33,7 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
             _commandHandler = new Mock<ICommandHandler>();
             _logger = new Mock<ILogger<InstantMessageController>>();
 
-            _instantMessageController = new InstantMessageController(_queryHandler.Object,_commandHandler.Object,_logger.Object);
+            _instantMessageController = new InstantMessageController(_queryHandler.Object,_commandHandler.Object,_logger.Object, _backgroundWorkerQueue);
         }
 
         [Test]

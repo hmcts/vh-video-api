@@ -44,12 +44,13 @@ namespace VideoApi.Controllers
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
         private readonly IPollyRetryService _pollyRetryService;
+        private readonly BackgroundWorkerQueue _backgroundWorkerQueue;
 
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<KinlyConfiguration> kinlyConfiguration, 
-            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService, 
-            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService)
+            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
+            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, BackgroundWorkerQueue backgroundWorkerQueue)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -59,6 +60,7 @@ namespace VideoApi.Controllers
             _audioPlatformService = audioPlatformService;
             _azureStorageServiceFactory = azureStorageServiceFactory;
             _pollyRetryService = pollyRetryService;
+            _backgroundWorkerQueue = backgroundWorkerQueue;
         }
 
         /// <summary>
@@ -536,7 +538,8 @@ namespace VideoApi.Controllers
             _logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
 
             var removeHeartbeatsCommand = new RemoveHeartbeatsForConferencesCommand();
-            await _commandHandler.Handle(removeHeartbeatsCommand);
+            _backgroundWorkerQueue.QueueBackgroundWorkItem(async token =>
+                await _commandHandler.Handle(removeHeartbeatsCommand));
 
             _logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
