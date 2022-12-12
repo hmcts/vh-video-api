@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -66,9 +67,11 @@ namespace VideoApi
             services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
-
+            services.AddTransient<VideoApiDbContext>();
             services.AddDbContextPool<VideoApiDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("VideoApi")));
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("VideoApi"));
+                });
         }
 
         private void RegisterSettings(IServiceCollection services)

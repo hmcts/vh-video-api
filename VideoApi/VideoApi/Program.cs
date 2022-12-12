@@ -1,7 +1,9 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VH.Core.Configuration;
+using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi
 {
@@ -13,7 +15,19 @@ namespace VideoApi
 
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            CreateScope(host);
+            
+            
+            host.Run();
+        }
+
+        private static void CreateScope(IHost host)
+        {
+            // var services = host.Services;
+            // var handler = services.GetService<ICommandHandler>();
+            
         }
 
         // ReSharper disable once MemberCanBePrivate.Global Needed for client generation on build with nswag
