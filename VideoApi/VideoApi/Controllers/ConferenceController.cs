@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -26,6 +27,7 @@ using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Mappers;
 using VideoApi.Validations;
+using ICommand = System.Windows.Input.ICommand;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Controllers
@@ -528,14 +530,18 @@ namespace VideoApi.Controllers
 
         [HttpDelete("expiredHearbeats")]
         [OpenApiOperation("RemoveHeartbeatsForConferences")]
+        [AllowAnonymous]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
         {
             _logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
 
             var removeHeartbeatsCommand = new RemoveHeartbeatsForConferencesCommand();
-            _backgroundWorkerQueue.QueueBackgroundWorkItem(async token =>
-                await _commandHandler.Handle(removeHeartbeatsCommand));
+            // _backgroundWorkerQueue.QueueBackgroundWorkItem(async token =>
+            //     await _commandHandler.Handle(removeHeartbeatsCommand));
+
+           _backgroundWorkerQueue.QueueBackgroundWorkItem(removeHeartbeatsCommand);
+
 
             _logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
