@@ -111,8 +111,7 @@ namespace VideoApi.Controllers
             try
             {
                 var command = new RemoveInstantMessagesForConferenceCommand(conferenceId);
-                _backgroundWorkerQueue.QueueBackgroundWorkItem(async token =>
-                    await _commandHandler.Handle(command));
+                await _backgroundWorkerQueue.QueueBackgroundWorkItem(command);
 
                 _logger.LogDebug("InstantMessage deleted");
                 return Ok();

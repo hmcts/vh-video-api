@@ -1,12 +1,9 @@
-using System;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
-using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi.UnitTests.Controllers.Conference
@@ -23,7 +20,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             var typedResult = (NoContentResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
-            BackgroundWorkerQueueMock.Verify(c => c.QueueBackgroundWorkItem(It.IsAny<Func<CancellationToken,Task>>()), Times.Once);
+            BackgroundWorkerQueueMock.Verify(c => c.QueueBackgroundWorkItem(It.IsAny<ICommand>()), Times.Once);
         }
     }
 }

@@ -537,11 +537,7 @@ namespace VideoApi.Controllers
             _logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
 
             var removeHeartbeatsCommand = new RemoveHeartbeatsForConferencesCommand();
-            // _backgroundWorkerQueue.QueueBackgroundWorkItem(async token =>
-            //     await _commandHandler.Handle(removeHeartbeatsCommand));
-
-           _backgroundWorkerQueue.QueueBackgroundWorkItem(removeHeartbeatsCommand);
-
+            await _backgroundWorkerQueue.QueueBackgroundWorkItem(removeHeartbeatsCommand);
 
             _logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
