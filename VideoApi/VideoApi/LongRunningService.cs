@@ -38,7 +38,7 @@ namespace VideoApi
                     var handler = scope.ServiceProvider.GetRequiredService(genericType);
                     var methodInfo = handler.GetType().GetMethod("Handle");
                     var task = (Task) methodInfo.Invoke(handler, new object[] { command });
-                    await task.ConfigureAwait(false);
+                    await task;
                 }
                 catch(Exception ex)
                 {
