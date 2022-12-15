@@ -27,7 +27,6 @@ using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Mappers;
 using VideoApi.Validations;
-using ICommand = System.Windows.Input.ICommand;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Controllers
