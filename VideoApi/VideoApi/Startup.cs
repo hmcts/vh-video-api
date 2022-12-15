@@ -67,7 +67,6 @@ namespace VideoApi
             services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter)))
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
-            services.AddTransient<VideoApiDbContext>();
             services.AddDbContextPool<VideoApiDbContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("VideoApi"));
