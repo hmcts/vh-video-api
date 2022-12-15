@@ -15,21 +15,8 @@ namespace VideoApi
 
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-
-            CreateScope(host);
-            
-            
-            host.Run();
+            CreateHostBuilder(args).Build().Run();
         }
-
-        private static void CreateScope(IHost host)
-        {
-            // var services = host.Services;
-            // var handler = services.GetService<ICommandHandler>();
-            
-        }
-        
         // ReSharper disable once MemberCanBePrivate.Global Needed for client generation on build with nswag
         public static IHostBuilder CreateHostBuilder(string[] args)
         {

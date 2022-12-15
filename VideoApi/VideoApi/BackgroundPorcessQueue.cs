@@ -6,7 +6,13 @@ using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi
 {
-    public class BackgroundWorkerQueue
+    public interface IBackgroundWorkerQueue
+    {
+        Task<ICommand> DequeueAsync(CancellationToken cancellationToken);
+        Task QueueBackgroundWorkItem(ICommand workItem);
+    }
+
+    public class BackgroundWorkerQueue : IBackgroundWorkerQueue
     {
         private readonly ConcurrentQueue<ICommand> _workItems = new ConcurrentQueue<ICommand>();
         private readonly SemaphoreSlim _signal = new SemaphoreSlim(0);

@@ -9,10 +9,10 @@ namespace VideoApi
 {
     public class LongRunningService : BackgroundService
     {
-        private readonly BackgroundWorkerQueue _queue;
+        private readonly IBackgroundWorkerQueue _queue;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public LongRunningService(BackgroundWorkerQueue queue,
+        public LongRunningService(IBackgroundWorkerQueue queue,
             IServiceScopeFactory serviceScopeFactory)
         {
             _queue = queue;

@@ -46,13 +46,13 @@ namespace VideoApi.Controllers
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
         private readonly IPollyRetryService _pollyRetryService;
-        private readonly BackgroundWorkerQueue _backgroundWorkerQueue;
+        private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
 
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<KinlyConfiguration> kinlyConfiguration, 
             ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
-            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, BackgroundWorkerQueue backgroundWorkerQueue)
+            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, IBackgroundWorkerQueue backgroundWorkerQueue)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;

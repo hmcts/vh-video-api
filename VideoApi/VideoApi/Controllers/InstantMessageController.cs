@@ -26,10 +26,10 @@ namespace VideoApi.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly ILogger<InstantMessageController> _logger;
-        private readonly BackgroundWorkerQueue _backgroundWorkerQueue;
+        private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
 
         public InstantMessageController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            ILogger<InstantMessageController> logger, BackgroundWorkerQueue backgroundWorkerQueue)
+            ILogger<InstantMessageController> logger, IBackgroundWorkerQueue backgroundWorkerQueue)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
