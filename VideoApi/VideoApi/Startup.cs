@@ -66,9 +66,10 @@ namespace VideoApi
             services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter)))
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
-
             services.AddDbContextPool<VideoApiDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("VideoApi")));
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("VideoApi"));
+                });
         }
 
         private void RegisterSettings(IServiceCollection services)
@@ -83,6 +84,8 @@ namespace VideoApi
             services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
             services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
             services.AddSingleton<IBlobClientExtension, BlobClientExtension>();
+            services.AddHostedService<LongRunningService>();
+            services.AddSingleton<IBackgroundWorkerQueue, BackgroundWorkerQueue>();
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)
