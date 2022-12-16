@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -44,12 +45,13 @@ namespace VideoApi.Controllers
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
         private readonly IPollyRetryService _pollyRetryService;
+        private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
 
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<KinlyConfiguration> kinlyConfiguration, 
-            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService, 
-            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService)
+            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
+            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, IBackgroundWorkerQueue backgroundWorkerQueue)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -59,6 +61,7 @@ namespace VideoApi.Controllers
             _audioPlatformService = audioPlatformService;
             _azureStorageServiceFactory = azureStorageServiceFactory;
             _pollyRetryService = pollyRetryService;
+            _backgroundWorkerQueue = backgroundWorkerQueue;
         }
 
         /// <summary>
@@ -526,13 +529,14 @@ namespace VideoApi.Controllers
 
         [HttpDelete("expiredHearbeats")]
         [OpenApiOperation("RemoveHeartbeatsForConferences")]
+        [AllowAnonymous]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
         {
             _logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
 
             var removeHeartbeatsCommand = new RemoveHeartbeatsForConferencesCommand();
-            await _commandHandler.Handle(removeHeartbeatsCommand);
+            await _backgroundWorkerQueue.QueueBackgroundWorkItem(removeHeartbeatsCommand);
 
             _logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
