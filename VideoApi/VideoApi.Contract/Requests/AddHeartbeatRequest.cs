@@ -33,5 +33,6 @@ namespace VideoApi.Contract.Requests
         public string OutgoingAudioCodec { get; set; }
         public string OutgoingAudioBitrate { get; set; }
         public int? OutgoingAudioPacketsLost { get; set; }
+        public string Device { get; set; }
     }
 }

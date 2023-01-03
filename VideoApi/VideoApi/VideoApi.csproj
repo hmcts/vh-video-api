@@ -83,4 +83,5 @@
         <Exec Command="$(NSwagExe_Net60) run /runtime:Net60 /variables:ProjectPath=&quot;$(MSBuildProjectFullPath)&quot;" />
         <RemoveDir Directories="$(OutDir)References" />
     </Target>
+  
 </Project>
