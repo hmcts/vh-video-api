@@ -224,6 +224,22 @@ namespace VideoApi.UnitTests.Services
         }
         
         [Test]
+        public async Task GetAudioStreamInfoAsync_non_audio_exception_thrown()
+        {
+            _wowzaClient1
+                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new HttpRequestException("Gateway time out", new WebException() ,HttpStatusCode.GatewayTimeout));
+
+            _wowzaClient2
+                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new Exception("Unhandled Exception"));
+
+            var action = async () => await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+
+            await action.Should().ThrowExactlyAsync<AudioPlatformException>();
+        }
+        
+        [Test]
         public async Task GetAudioStreamInfoAsync_only_one_client_provided()
         {
             _wowzaClient1.SetupProperty(e => e.IsLoadBalancer, false);

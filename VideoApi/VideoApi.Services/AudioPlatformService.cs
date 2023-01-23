@@ -79,7 +79,7 @@ namespace VideoApi.Services
 
         public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
         {
-            const string errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";    
+            const string errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
             var responses = new List<HttpResponseMessage>();
             try
             {
@@ -91,17 +91,16 @@ namespace VideoApi.Services
                     }
                     catch(Exception ex)
                     {
-                        if (ex is AudioPlatformException audioException)
-                            LogError(audioException, errorMessageTemplate, recorder, audioException.StatusCode, audioException.Message);
-                        else
-                            _logger.LogError(ex.Message, "Unhandled Exception", client);
+                        var status = HttpStatusCode.InternalServerError;
+                        responses.Add(new HttpResponseMessage(statusCode:status));
+                        _logger.LogError(ex, errorMessageTemplate, recorder, status, ex.Message);
                     }
                 }
                 responses.Remove(null);
-                
-                if (responses.All(e => !e.IsSuccessStatusCode)) 
+                if (responses.All(e => !e.IsSuccessStatusCode))
                 {
-                    var errorMessage = await responses.First().Content.ReadAsStringAsync();
+                    var errorMessage = await responses.FirstOrDefault()?.Content?.ReadAsStringAsync()!;
+                    errorMessage = String.IsNullOrEmpty(errorMessage) ? "Exception within audio platform service" : errorMessage;
                     throw new AudioPlatformException(errorMessage, responses.First().StatusCode);
                 }
                 var successfulResponse = responses.First(e => e.IsSuccessStatusCode);
@@ -109,7 +108,7 @@ namespace VideoApi.Services
                 return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await successfulResponse.Content.ReadAsStringAsync());
             }
             catch (AudioPlatformException ex)
-            {            
+            {   
                 LogError(ex, errorMessageTemplate, recorder, ex.StatusCode, ex.Message);
                 throw;
             }
@@ -139,9 +138,6 @@ namespace VideoApi.Services
         {
             try
             {
-                if (_loadBalancerClient == null)
-                    throw new ArgumentException(
-                        "Load balancer client not provided in config. Required for health check");
                 var response = await _loadBalancerClient.GetDiagnosticsAsync(_configuration.ServerName);
                 return response.IsSuccessStatusCode;
             }
