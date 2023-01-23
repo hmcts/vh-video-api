@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Services
         private readonly Mock<IWowzaHttpClient> _wowzaClient2;
         private readonly Mock<IWowzaHttpClient> _wowzaClientLoadBalancer;
         private readonly WowzaConfiguration _wowzaConfiguration;
-
+        private readonly Mock<ILogger<AudioPlatformService>> _logger;
         private readonly AudioPlatformService _audioPlatformService;
 
         public AudioPlatformServiceTest()
@@ -31,9 +31,9 @@ namespace VideoApi.UnitTests.Services
             _wowzaClientLoadBalancer = new Mock<IWowzaHttpClient>();
             _wowzaClientLoadBalancer.SetupProperty(e => e.IsLoadBalancer, true);
             _wowzaConfiguration = new WowzaConfiguration {StreamingEndpoint = "http://streamIt.com/", ApplicationName = "vh-recording-app"};
-            var logger = new Mock<ILogger<AudioPlatformService>>();
+            _logger = new Mock<ILogger<AudioPlatformService>>();
             
-            _audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object,_wowzaClient2.Object, _wowzaClientLoadBalancer.Object}, _wowzaConfiguration, logger.Object);
+            _audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object,_wowzaClient2.Object, _wowzaClientLoadBalancer.Object}, _wowzaConfiguration, _logger.Object);
         }
 
         [Test]
@@ -177,17 +177,6 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
         }
         
-        [Test]
-        public async Task GetAudioStreamInfoAsync_Returns_Null_When_AudioPlatformException_Thrown()
-        {
-            _wowzaClient2
-                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ThrowsAsync(new AudioPlatformException("SomeError", HttpStatusCode.InternalServerError));
-
-            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
-
-            result.Should().BeNull();
-        }
         
         [Test]
         public async Task GetAudioStreamInfoAsync_Returns_Response()
@@ -218,7 +207,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task GetAudioStreamInfoAsync_Returns_Null_Using_Two_Nodes_That_Both_return_error()
+        public async Task GetAudioStreamInfoAsync_Throws_Exception_when_using_Two_Nodes_That_Both_return_error()
         {
             _wowzaClient1
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
@@ -228,11 +217,27 @@ namespace VideoApi.UnitTests.Services
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NotFound) {Content = new StringContent("Recorder Not Found") });
 
-            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var action = async () => await _audioPlatformService
+                    .GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
 
-            result.Should().BeNull();
+            await action.Should().ThrowExactlyAsync<AudioPlatformException>();
         }
         
+        [Test]
+        public async Task GetAudioStreamInfoAsync_only_one_client_provided()
+        {
+            _wowzaClient1.SetupProperty(e => e.IsLoadBalancer, false);
+            var audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object}, _wowzaConfiguration, _logger.Object);
+           
+            _wowzaClient1
+                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+
+            var result = await audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+
+            result.Should().NotBeNull();
+        }
+
         [Test]
         public async Task GetAudioStreamInfoAsync_Returns_Response_Even_When_One_Node_Errors()
         {
