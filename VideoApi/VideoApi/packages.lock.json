@@ -117,24 +117,24 @@
       },
       "NSwag.AspNetCore": {
         "type": "Direct",
-        "requested": "[13.18.0, )",
-        "resolved": "13.18.0",
-        "contentHash": "QKT54Yqzeyiwqa0hGecSDx6pD1xB0zc5V7z9xc51XYv8rSUFwlidW0uQ4IgUvphOJdRtgcSc7Nl7KpoQXRNlKg==",
+        "requested": "[13.18.2, )",
+        "resolved": "13.18.2",
+        "contentHash": "ueewpltbJpZGWgR3BkLXQRX1g7ZtzNl7sT5DI90lNufJhLWnjC5nAfxRTP4J8nqO1vR79zLYzzA5ZwsusZaTpA==",
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "6.0.3",
           "Microsoft.Extensions.FileProviders.Embedded": "[6.0.0, 7.0.0)",
-          "NSwag.Annotations": "13.18.0",
-          "NSwag.Core": "13.18.0",
-          "NSwag.Core.Yaml": "13.18.0",
-          "NSwag.Generation": "13.18.0",
-          "NSwag.Generation.AspNetCore": "13.18.0"
+          "NSwag.Annotations": "13.18.2",
+          "NSwag.Core": "13.18.2",
+          "NSwag.Core.Yaml": "13.18.2",
+          "NSwag.Generation": "13.18.2",
+          "NSwag.Generation.AspNetCore": "13.18.2"
         }
       },
       "NSwag.MSBuild": {
         "type": "Direct",
-        "requested": "[13.10.8, )",
-        "resolved": "13.10.8",
-        "contentHash": "tzYrUCOIYPNwU8NqfOSJxdUkfcZGvzGQzAw8j22Trpi4glcX65veyaLoQMWtZaoMKhg240Hk2sk9eDurKMAi2w=="
+        "requested": "[13.18.2, )",
+        "resolved": "13.18.2",
+        "contentHash": "SRQ3mONkfbJWhZxA1yOFMJMXavUvnXwcoYU23qoVqSEY2G+y8jZuq9ErWm76JT0Kn5/Ml5UhG1FWmLhkqd4/+A=="
       },
       "Scrutor": {
         "type": "Direct",
@@ -995,13 +995,13 @@
       },
       "NSwag.Annotations": {
         "type": "Transitive",
-        "resolved": "13.18.0",
-        "contentHash": "FxUa3WlJrTodTNKFcMVA6KCOFbLYOmnVnBPEb8xFnkpSlETj2PO2WstUmZWKm/FCORgf49h5bCPWNKuY2TPrXw=="
+        "resolved": "13.18.2",
+        "contentHash": "2zDLZXEU1PVuvdMc1k+SIkLonp8vPRHAkto6qQfCeCPqhDaF82+FOWe3TLJIYBS8IC7aV/mT+eoqJLeZvXiN4A=="
       },
       "NSwag.Core": {
         "type": "Transitive",
-        "resolved": "13.18.0",
-        "contentHash": "sVbUS4JERb1ll4zaGEubGzbCAPL2CDNtLsw3D6Gk+23kMDfc37Sg1K+slJnQpCGC7TbhTuFK21t20X20alKAIA==",
+        "resolved": "13.18.2",
+        "contentHash": "QM6OnVtUkD62fi0lgFF65KbZ0Y8ToGD+Rb4W3Nz6ymCWWfVbMwkn8xUxIjWSLsOEYJCbLvBBeGt+oBNrJwxb+A==",
         "dependencies": {
           "NJsonSchema": "10.8.0",
           "Newtonsoft.Json": "10.0.1"
@@ -1009,32 +1009,32 @@
       },
       "NSwag.Core.Yaml": {
         "type": "Transitive",
-        "resolved": "13.18.0",
-        "contentHash": "fxeu96R5vB9Lfe8sC4ahpTIcpo7Ov8gKYhMbpfnfSCuRKopvvH2i7CX2k87BYoCv47qCF3R+GCyLHB/zfOD6og==",
+        "resolved": "13.18.2",
+        "contentHash": "y+h+4jrN3BC0B3v1Qg0Fr3jrGTB5nR5RAn5ZG5qBveiazeB9VDfR5cP9URN6wb3VypahHRzYryUB2KFZuiS22A==",
         "dependencies": {
           "NJsonSchema.Yaml": "10.8.0",
-          "NSwag.Core": "13.18.0",
+          "NSwag.Core": "13.18.2",
           "YamlDotNet": "11.2.1"
         }
       },
       "NSwag.Generation": {
         "type": "Transitive",
-        "resolved": "13.18.0",
-        "contentHash": "4Jdde+aJIBJc8PccIxcjz8dPztAiaz7Z860FJwvMcn26r+SK74hO9btXUvQnEyFItniZomSqtTCJX4B61Pmu2w==",
+        "resolved": "13.18.2",
+        "contentHash": "hmdi+kXwKTgxu2aYgaILDw2nKvco1/wEd1RXaVNIz4ck6yHTJ58ANVcUjN3ytmL//f+hKEKWZznTi4YQW7jtpQ==",
         "dependencies": {
           "NJsonSchema": "10.8.0",
-          "NSwag.Core": "13.18.0",
+          "NSwag.Core": "13.18.2",
           "Newtonsoft.Json": "10.0.1"
         }
       },
       "NSwag.Generation.AspNetCore": {
         "type": "Transitive",
-        "resolved": "13.18.0",
-        "contentHash": "QnP3fjS3Eszafj09ce70S8Y9JkyWc4OqpM2eD68oc7UctUD1eqnZ8Y6AJqb02comv3592KWVtD1EzeBhiVDTtw==",
+        "resolved": "13.18.2",
+        "contentHash": "D+yfRbXtv/wDan1oEkskGWejlCiUTdLlV93qynay1Xp1HmnC0XYspjLkfMGr9kqYX4CY9SrMUnDUsRNeyOoR/g==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, 8.0.0)",
           "Microsoft.Extensions.Options": "[6.0.0, 8.0.0)",
-          "NSwag.Generation": "13.18.0"
+          "NSwag.Generation": "13.18.2"
         }
       },
       "Polly": {
