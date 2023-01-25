@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +17,11 @@ namespace VideoApi.Services.Clients
         public WowzaHttpClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.Timeout = TimeSpan.FromSeconds(10);
         }
 
         public bool IsLoadBalancer { get; set; }
+        
         public async Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory)
         {
             var request = new CreateApplicationRequest
