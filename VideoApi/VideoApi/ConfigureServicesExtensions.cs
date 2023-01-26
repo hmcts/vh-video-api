@@ -170,7 +170,7 @@ namespace VideoApi
             var client = new WowzaHttpClient(new HttpClient(handler)
             {
                 BaseAddress = new Uri(restApiEndpoint),
-                DefaultRequestHeaders = {{"Accept", "application/json"}, {"ContentType", "application/json"}},
+                DefaultRequestHeaders = {{"Accept", "application/json"}, {"ContentType", "application/json"}}
             });
             client.IsLoadBalancer = isLoadBalancer;
             services.AddSingleton<IWowzaHttpClient>(client);
