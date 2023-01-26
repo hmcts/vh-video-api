@@ -17,7 +17,6 @@ parameters:
   type: object
   default:
   - Dev
-  - Test
   - Staging
   - Prod
 
@@ -92,8 +91,6 @@ stages:
           - template: variables/dev.yaml
         - ${{ if eq(env, 'Staging') }}:
           - template: variables/staging.yaml
-        - ${{ if eq(env, 'Test') }}:
-          - template: variables/test.yaml
         - ${{ if eq(env, 'Prod') }}:
           - template: variables/production.yaml
           
@@ -165,11 +162,10 @@ stages:
   - stage: Docker_Build_Push
     displayName: Docker Build & Push Image
     ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Test.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
+      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
       dependsOn:
         - Run_Entity_Framework_Dev
         - Run_Entity_Framework_Staging
-        - Run_Entity_Framework_Test
     ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
       dependsOn: Approve_Helm_Release
       condition: in(dependencies.Approve_Helm_Release.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
@@ -215,11 +211,10 @@ stages:
   - stage: Push_Nuget
     displayName: Deploy Nuget Packages
     ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Test.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
+      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
       dependsOn:
         - Run_Entity_Framework_Dev
         - Run_Entity_Framework_Staging
-        - Run_Entity_Framework_Test
     ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
       condition: in(dependencies.Approve_Helm_Release.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
       dependsOn: Approve_Helm_Release
