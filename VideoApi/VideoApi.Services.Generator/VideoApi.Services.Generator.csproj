@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NSwag.MSBuild" Version="13.13.2">
+        <PackageReference Include="NSwag.MSBuild" Version="13.18.2">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -14,7 +14,7 @@
 
     <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' AND '$(Configuration)'=='Debug'">
         <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
-        <Exec ConsoleToMSBuild="true" ContinueOnError="true" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:Configuration=$(Configuration)" />
+        <Exec ConsoleToMSBuild="true" ContinueOnError="true" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_60) run /runtime:Net60 /variables:Configuration=$(Configuration)" />
         <RemoveDir Directories="$(OutDir)References" />
     </Target>
 </Project>

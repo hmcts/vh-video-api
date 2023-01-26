@@ -21,6 +21,9 @@ parameters:
   - Staging
   - Prod
 
+pool: 
+  vmImage: ubuntu-22.04
+
 #####################################################
 # Generate Entity Framework Script. #################
 
@@ -60,8 +63,6 @@ stages:
   - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
     - stage: Approve_Entity_Framework
       displayName: 'Approve EF Release'
-      pool:
-        vmImage: 'ubuntu-latest'
       jobs:
         - job: waitForValidation
           displayName: 'Approve Entity Framework'
@@ -146,8 +147,6 @@ stages:
       displayName: 'Approve Helm Release'
       dependsOn: Run_Entity_Framework_Prod
       condition: in(dependencies.Run_Entity_Framework_Prod.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
-      pool:
-        vmImage: 'ubuntu-latest'
       jobs:
         - job: waitForValidation
           displayName: 'Approve Helm Release'

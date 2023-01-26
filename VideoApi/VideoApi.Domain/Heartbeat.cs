@@ -39,6 +39,7 @@ namespace VideoApi.Domain
         public string IncomingVideoResolution { get; set; }
         public int? IncomingVideoPacketReceived { get; set; }
         public int? IncomingVideoPacketsLost { get; set; }
+        public string Device { get; set; }
 
 
         public Heartbeat(Guid conferenceId, Guid participantId, decimal outgoingAudioPercentageLost, decimal outgoingAudioPercentageLostRecent,
@@ -48,7 +49,7 @@ namespace VideoApi.Domain
             string outgoingAudioBitrate, string outgoingAudioCodec, int? outgoingAudioPacketSent, int? outgoingVideoPacketSent, int? outgoingVideoPacketsLost, 
             int? outgoingVideoFramerate, string outgoingVideoBitrate, string outgoingVideoCodec, string outgoingVideoResolution, string incomingAudioBitrate,
             string incomingAudioCodec, int? incomingAudioPacketReceived, int? incomingAudioPacketsLost, string incomingVideoBitrate, string incomingVideoCodec,
-            string incomingVideoResolution, int? incomingVideoPacketReceived, int? incomingVideoPacketsLost)
+            string incomingVideoResolution, int? incomingVideoPacketReceived, int? incomingVideoPacketsLost, string device)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -64,6 +65,7 @@ namespace VideoApi.Domain
             BrowserName = browserName;
             BrowserVersion = browserVersion;
             OperatingSystem = operatingSystem;
+            Device = device;
             OperatingSystemVersion = operatingSystemVersion;
             OutgoingAudioPacketsLost = outgoingAudioPacketsLost;
             OutgoingAudioBitrate = outgoingAudioBitrate;

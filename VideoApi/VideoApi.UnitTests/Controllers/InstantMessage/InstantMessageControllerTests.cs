@@ -24,15 +24,17 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
         private Mock<ICommandHandler> _commandHandler;
         private Mock<ILogger<InstantMessageController>> _logger;
         private InstantMessageController _instantMessageController;
+        private Mock<IBackgroundWorkerQueue>  _backgroundWorkerQueue;
 
+        
         [SetUp]
         public void TestInitialize()
         {
             _queryHandler = new Mock<IQueryHandler>();
             _commandHandler = new Mock<ICommandHandler>();
+            _backgroundWorkerQueue = new Mock<IBackgroundWorkerQueue>();
             _logger = new Mock<ILogger<InstantMessageController>>();
-
-            _instantMessageController = new InstantMessageController(_queryHandler.Object,_commandHandler.Object,_logger.Object);
+            _instantMessageController = new InstantMessageController(_queryHandler.Object,_commandHandler.Object,_logger.Object, _backgroundWorkerQueue.Object);
         }
 
         [Test]
@@ -60,20 +62,20 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
 
             var typedResult = (OkResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
-            _commandHandler.Verify(c => c.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
+            _backgroundWorkerQueue.Verify(c => c.QueueBackgroundWorkItem(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
         }
         
         [Test]
         public async Task Should_return_badRequest()
         {
-            _commandHandler.Setup(x => x.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()))
-                .Throws(new Exception());
+            _backgroundWorkerQueue.Setup(x => x.QueueBackgroundWorkItem(It.IsAny<RemoveInstantMessagesForConferenceCommand>()))
+                .ThrowsAsync(new Exception());
             
             var result = await _instantMessageController.RemoveInstantMessagesForConferenceAsync(Guid.NewGuid());
 
             var typedResult = (BadRequestResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            _commandHandler.Verify(c => c.Handle(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
+            _backgroundWorkerQueue.Verify(c => c.QueueBackgroundWorkItem(It.IsAny<RemoveInstantMessagesForConferenceCommand>()), Times.Once);
         }
 
         [Test]
