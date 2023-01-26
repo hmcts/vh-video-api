@@ -66,9 +66,10 @@ namespace VideoApi
             services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter)))
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
-
             services.AddDbContextPool<VideoApiDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("VideoApi")));
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("VideoApi"));
+                });
         }
 
         private void RegisterSettings(IServiceCollection services)
@@ -83,22 +84,15 @@ namespace VideoApi
             services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
             services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
             services.AddSingleton<IBlobClientExtension, BlobClientExtension>();
+            services.AddHostedService<LongRunningService>();
+            services.AddSingleton<IBackgroundWorkerQueue, BackgroundWorkerQueue>();
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
             var serviceSettings = Configuration.GetSection("Services").Get<ServicesConfiguration>();
-
-            if (!Environment.IsDevelopment())
-            {
-                if (String.IsNullOrEmpty(securitySettings.Authority))
-                    throw new ArgumentException("authority missing");
             
-                if (String.IsNullOrEmpty(securitySettings.TenantId))
-                    throw new ArgumentException("TenantId missing");
-            }
-
             serviceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -123,7 +117,7 @@ namespace VideoApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
+            
             app.UseOpenApi();
             app.UseSwaggerUi3(c =>
             {

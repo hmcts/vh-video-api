@@ -24,7 +24,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var heartbeats = new List<Heartbeat>
             {
                 new Heartbeat(TestConference.Id, TestConference.Participants.First().Id, 1, 2, 3, 4, 5, 6, 7, 8,
-                    DateTime.MaxValue, "chrome", "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0 )
+                    DateTime.MaxValue, "chrome", "1", "Mac OS X", "10.15.7",0,"25kbps","opus",1,1,0,25,"2kbps","H264","640x480","18kbps","opus",1,0,"106kbps","VP8","1280x720",1,0,device:"iPhone" )
+                
             };
 
             MockQueryHandler

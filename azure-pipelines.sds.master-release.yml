@@ -21,6 +21,9 @@ parameters:
   - Test
   - Staging
 
+pool: 
+  vmImage: ubuntu-22.04
+
 #####################################################
 # Pre Run Tasks. ####################################
 stages:
