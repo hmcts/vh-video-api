@@ -82,38 +82,30 @@ namespace VideoApi.Services
             const string errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
             var unexpectedErrorMessage = "Exception within audio platform service";
             var responses = new List<HttpResponseMessage>();
-            try
+            foreach (var client in _wowzaClients)
             {
-                foreach (var client in _wowzaClients)
+                try
                 {
-                    try
+                    var response = await client.GetStreamRecorderAsync(application, _configuration.ServerName, _configuration.HostName, recorder);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        responses.Add(await client.GetStreamRecorderAsync(application, _configuration.ServerName, _configuration.HostName, recorder));
+                        _logger.LogInformation("Got Wowza stream recorder for application: {recorder}", recorder);
+                        return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
                     }
-                    catch(Exception ex)
-                    {
-                        responses.Add(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-                        unexpectedErrorMessage = ex.Message;
-                    }
+                    responses.Add(response);
                 }
-                responses.Remove(null);
-                if(!responses.Any())
+                catch(Exception ex)
+                {
                     responses.Add(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-                if (responses.All(e => !e.IsSuccessStatusCode))
-                {
-                    var errorMessage = await responses.FirstOrDefault()?.Content?.ReadAsStringAsync()!;
-                    errorMessage = String.IsNullOrEmpty(errorMessage) ? unexpectedErrorMessage : errorMessage;
-                    throw new AudioPlatformException(errorMessage, responses.First().StatusCode);
+                    unexpectedErrorMessage = ex.Message;
                 }
-                var successfulResponse = responses.First(e => e.IsSuccessStatusCode);
-                _logger.LogInformation("Got Wowza stream recorder for application: {recorder}", recorder);
-                return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await successfulResponse.Content.ReadAsStringAsync());
             }
-            catch (AudioPlatformException ex)
-            {   
-                LogError(ex, errorMessageTemplate, recorder, ex.StatusCode, ex.Message);
-                throw;
-            }
+            var errorMessage = await responses.FirstOrDefault()?.Content?.ReadAsStringAsync()!;
+            errorMessage = String.IsNullOrEmpty(errorMessage) ? unexpectedErrorMessage : errorMessage;
+            var exception = new AudioPlatformException(errorMessage, responses.First().StatusCode);
+            LogError(exception, errorMessageTemplate, recorder, exception.StatusCode, exception.Message);
+            throw exception;
         }
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId)
