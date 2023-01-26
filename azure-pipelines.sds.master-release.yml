@@ -272,11 +272,11 @@ stages:
 
         # Wowza Configuration
         - name: WowzaConfiguration:RestApiEndpoints
-          value: wowzaconfiguration--endpoint
+          value: wowzaconfiguration--endpoint-https
           keyVaultName: vh-infra-core-${{ variables.env }}
           secret: true
         - name: WowzaConfiguration:StreamingEndpoint
-          value: wowzaconfiguration--endpoint
+          value: wowzaconfiguration--endpoint-https
           keyVaultName: vh-infra-core-${{ variables.env }}
           secret: true
         - name: WowzaConfiguration:Username 
