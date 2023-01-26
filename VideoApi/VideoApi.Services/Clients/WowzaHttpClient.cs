@@ -17,7 +17,7 @@ namespace VideoApi.Services.Clients
         public WowzaHttpClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.Timeout = TimeSpan.FromSeconds(10);
+            _httpClient.Timeout = TimeSpan.FromSeconds(5);
         }
 
         public bool IsLoadBalancer { get; set; }
