@@ -259,11 +259,11 @@ namespace VideoApi.UnitTests.Services
         {
             _wowzaClient1
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+               .ThrowsAsync(new Exception("Unhandled Exception"));
 
             _wowzaClient2
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-               .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+               .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
 
             var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
 

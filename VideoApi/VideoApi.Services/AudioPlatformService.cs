@@ -80,7 +80,6 @@ namespace VideoApi.Services
         public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
         {
             const string errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
-            var unexpectedErrorMessage = "Exception within audio platform service";
             var responses = new List<HttpResponseMessage>();
             foreach (var client in _wowzaClients)
             {
@@ -97,12 +96,10 @@ namespace VideoApi.Services
                 }
                 catch(Exception ex)
                 {
-                    responses.Add(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-                    unexpectedErrorMessage = ex.Message;
+                    responses.Add(new HttpResponseMessage(HttpStatusCode.InternalServerError){Content = new StringContent(ex.Message)});
                 }
             }
-            var errorMessage = await responses.FirstOrDefault()?.Content?.ReadAsStringAsync()!;
-            errorMessage = String.IsNullOrEmpty(errorMessage) ? unexpectedErrorMessage : errorMessage;
+            var errorMessage = await responses.First().Content.ReadAsStringAsync();
             var exception = new AudioPlatformException(errorMessage, responses.First().StatusCode);
             LogError(exception, errorMessageTemplate, recorder, exception.StatusCode, exception.Message);
             throw exception;
