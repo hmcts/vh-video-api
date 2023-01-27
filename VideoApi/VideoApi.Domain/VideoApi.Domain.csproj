@@ -4,7 +4,7 @@
     <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Enums.NET" Version="4.0.0" />
+    <PackageReference Include="Enums.NET" Version="4.0.1" />
     <PackageReference Include="RandomStringCreator" Version="2.0.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.7.0.17535">
       <PrivateAssets>all</PrivateAssets>
