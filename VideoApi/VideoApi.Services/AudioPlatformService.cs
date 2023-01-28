@@ -79,7 +79,6 @@ namespace VideoApi.Services
 
         public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
         {
-            const string errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
             var responses = new List<HttpResponseMessage>();
             foreach (var client in _wowzaClients)
             {
@@ -99,15 +98,16 @@ namespace VideoApi.Services
                     responses.Add(new HttpResponseMessage(HttpStatusCode.InternalServerError){Content = new StringContent(ex.Message)});
                 }
             }
-            throw await GetAudioStreamExceptions(recorder, responses, errorMessageTemplate);
+            throw await GetAudioStreamExceptions(recorder, responses);
         }
 
-        private async Task<AggregateException> GetAudioStreamExceptions(string recorder, List<HttpResponseMessage> responses, string errorMessageTemplate)
+        private async Task<AggregateException> GetAudioStreamExceptions(string recorder, List<HttpResponseMessage> responses)
         {
+            const string errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
             var innerExceptions = new List<AudioPlatformException>();
             foreach (var response in responses)
             {
-                var errorMessage = await responses.FirstOrDefault()?.Content?.ReadAsStringAsync()!;
+                var errorMessage = await response.Content.ReadAsStringAsync();
                 errorMessage = String.IsNullOrEmpty(errorMessage) ? "Unexpected exception" : errorMessage;
                 var exception = new AudioPlatformException(errorMessage, response.StatusCode);
                 LogError(exception, errorMessageTemplate, recorder, exception.StatusCode, exception.Message);
