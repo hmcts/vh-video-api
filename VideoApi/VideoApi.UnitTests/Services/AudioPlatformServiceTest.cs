@@ -207,7 +207,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task GetAudioStreamInfoAsync_Throws_Exception_when_using_Two_Nodes_That_Both_return_error()
+        public async Task GetAudioStreamInfoAsync_Throws_Exception_when_using_Two_Nodes_That_Both_return_not_found()
         {
             _wowzaClient1
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
@@ -217,10 +217,9 @@ namespace VideoApi.UnitTests.Services
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NotFound) {Content = new StringContent("Recorder Not Found") });
 
-            var action = async () => await _audioPlatformService
-                    .GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var action = async () => await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
 
-            await action.Should().ThrowExactlyAsync<AudioPlatformException>();
+            await action.Should().ThrowExactlyAsync<AggregateException>();
         }
         
         [Test]
@@ -236,7 +235,7 @@ namespace VideoApi.UnitTests.Services
 
             var action = async () => await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
 
-            await action.Should().ThrowExactlyAsync<AudioPlatformException>();
+            await action.Should().ThrowExactlyAsync<AggregateException>();
         }
         
         [Test]
@@ -284,6 +283,21 @@ namespace VideoApi.UnitTests.Services
             var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
 
             result.Should().NotBeNull();
+        }
+        
+        [Test]
+        public async Task GetAudioStreamInfoAsync_Throws_exception_with_empty_response()
+        {
+
+            _wowzaClient1
+                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new Exception(message: ""));
+            
+            _wowzaClient1.SetupProperty(e => e.IsLoadBalancer, false);
+           
+            var audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object}, _wowzaConfiguration, _logger.Object);
+            var action = async () => await audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            await action.Should().ThrowExactlyAsync<AggregateException>();
         }
         
         [Test]

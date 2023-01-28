@@ -99,10 +99,21 @@ namespace VideoApi.Services
                     responses.Add(new HttpResponseMessage(HttpStatusCode.InternalServerError){Content = new StringContent(ex.Message)});
                 }
             }
-            var errorMessage = await responses.First().Content.ReadAsStringAsync();
-            var exception = new AudioPlatformException(errorMessage, responses.First().StatusCode);
-            LogError(exception, errorMessageTemplate, recorder, exception.StatusCode, exception.Message);
-            throw exception;
+            throw await GetAudioStreamExceptions(recorder, responses, errorMessageTemplate);
+        }
+
+        private async Task<AggregateException> GetAudioStreamExceptions(string recorder, List<HttpResponseMessage> responses, string errorMessageTemplate)
+        {
+            var innerExceptions = new List<AudioPlatformException>();
+            foreach (var response in responses)
+            {
+                var errorMessage = await responses.FirstOrDefault()?.Content?.ReadAsStringAsync()!;
+                errorMessage = String.IsNullOrEmpty(errorMessage) ? "Unexpected exception" : errorMessage;
+                var exception = new AudioPlatformException(errorMessage, response.StatusCode);
+                LogError(exception, errorMessageTemplate, recorder, exception.StatusCode, exception.Message);
+                innerExceptions.Add(exception); 
+            }
+            return new AggregateException(innerExceptions: innerExceptions);
         }
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId)
