@@ -108,8 +108,8 @@ namespace VideoApi.Services
             foreach (var response in responses)
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                errorMessage = String.IsNullOrEmpty(errorMessage) ? "Unexpected exception" : errorMessage;
-                var exception = new AudioPlatformException(errorMessage, response.StatusCode);
+                var exception = 
+                    new AudioPlatformException(String.IsNullOrEmpty(errorMessage) ? "Unexpected exception" : errorMessage, response.StatusCode);
                 LogError(exception, errorMessageTemplate, recorder, exception.StatusCode, exception.Message);
                 innerExceptions.Add(exception); 
             }
