@@ -29,6 +29,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -37,6 +38,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
@@ -44,6 +46,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -52,12 +55,14 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the audio application info
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -65,10 +70,12 @@ namespace VideoApi.Client
         /// Gets the audio application info
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
+        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
         /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
@@ -79,6 +86,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
+        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
         /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
@@ -92,6 +100,7 @@ namespace VideoApi.Client
         /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -101,10 +110,12 @@ namespace VideoApi.Client
         /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get the audio recording link for a given hearing.
+        /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
@@ -114,6 +125,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording link for a given hearing.
+        /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
@@ -122,6 +134,7 @@ namespace VideoApi.Client
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference);
@@ -129,12 +142,14 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date);
@@ -142,12 +157,14 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference);
@@ -155,6 +172,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference, System.Threading.CancellationToken cancellationToken);
@@ -1180,6 +1198,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId)
         {
             return GetAudioApplicationWithHearingIdAsync(hearingId, System.Threading.CancellationToken.None);
@@ -1191,6 +1210,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
@@ -1274,6 +1294,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId)
         {
             return DeleteAudioApplicationAsync(hearingId, System.Threading.CancellationToken.None);
@@ -1285,6 +1306,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
@@ -1361,6 +1383,7 @@ namespace VideoApi.Client
         /// Gets the audio application info
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync()
         {
             return GetAudioApplicationAsync(System.Threading.CancellationToken.None);
@@ -1371,6 +1394,7 @@ namespace VideoApi.Client
         /// Gets the audio application info
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1447,6 +1471,7 @@ namespace VideoApi.Client
 
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
+        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
         /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
@@ -1460,6 +1485,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
+        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
         /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
@@ -1553,6 +1579,7 @@ namespace VideoApi.Client
         /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId)
         {
             return GetAudioStreamMonitoringInfoAsync(hearingId, System.Threading.CancellationToken.None);
@@ -1565,6 +1592,7 @@ namespace VideoApi.Client
         /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
@@ -1645,6 +1673,7 @@ namespace VideoApi.Client
 
         /// <summary>
         /// Get the audio recording link for a given hearing.
+        /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
@@ -1657,6 +1686,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording link for a given hearing.
+        /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
@@ -1741,6 +1771,7 @@ namespace VideoApi.Client
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference)
@@ -1751,6 +1782,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference, System.Threading.CancellationToken cancellationToken)
@@ -1832,6 +1864,7 @@ namespace VideoApi.Client
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date)
@@ -1842,6 +1875,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date, System.Threading.CancellationToken cancellationToken)
@@ -1922,6 +1956,7 @@ namespace VideoApi.Client
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference)
@@ -1932,6 +1967,7 @@ namespace VideoApi.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference, System.Threading.CancellationToken cancellationToken)

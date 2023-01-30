@@ -44,10 +44,10 @@ namespace VideoApi.DAL.Commands
             var events = await _context.Events.Where(x => x.ConferenceId == conference.Id).ToListAsync();
             var tasks = await _context.Tasks.Where(x => x.ConferenceId == conference.Id).ToListAsync();
 
-            _context.Remove(conference);
             _context.RemoveRange(events);
             _context.RemoveRange(tasks);
-
+            _context.Remove(conference);
+            
             await _context.SaveChangesAsync();
         }
     }
