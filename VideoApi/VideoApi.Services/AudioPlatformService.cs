@@ -24,7 +24,7 @@ namespace VideoApi.Services
         public AudioPlatformService(IEnumerable<IWowzaHttpClient> wowzaClients, WowzaConfiguration configuration, ILogger<AudioPlatformService> logger)
         {
             _wowzaClients       = wowzaClients.Where(e => !e.IsLoadBalancer).ToArray();
-            _loadBalancerClient = wowzaClients.First(e => e.IsLoadBalancer);
+            _loadBalancerClient = wowzaClients.FirstOrDefault(e => e.IsLoadBalancer);
             _configuration      = configuration;
             _logger             = logger;
             ApplicationName     = configuration.ApplicationName;
@@ -80,27 +80,40 @@ namespace VideoApi.Services
         public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
         {
             var responses = new List<HttpResponseMessage>();
-            try
+            foreach (var client in _wowzaClients)
             {
-                foreach (var client in _wowzaClients)
-                    responses.Add(await client.GetStreamRecorderAsync(application, _configuration.ServerName, _configuration.HostName, recorder));
-                responses.Remove(null);
-                
-                if (responses.All(e => !e.IsSuccessStatusCode)) 
+                try
                 {
-                    var errorMessage = await responses.First().Content.ReadAsStringAsync();
-                    throw new AudioPlatformException(errorMessage, responses.First().StatusCode);
+                    var response = await client.GetStreamRecorderAsync(application, _configuration.ServerName, _configuration.HostName, recorder);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        _logger.LogInformation("Got Wowza stream recorder for application: {recorder}", recorder);
+                        return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
+                    }
+                    responses.Add(response);
                 }
-                var successfulResponse = responses.First(e => e.IsSuccessStatusCode);
-                _logger.LogInformation("Got Wowza stream recorder for application: {recorder}", recorder);
-                return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await successfulResponse.Content.ReadAsStringAsync());
+                catch(Exception ex)
+                {
+                    responses.Add(new HttpResponseMessage(HttpStatusCode.InternalServerError){Content = new StringContent(ex.Message)});
+                }
             }
-            catch (AudioPlatformException ex)
+            throw await GetAudioStreamExceptions(recorder, responses);
+        }
+
+        private async Task<AggregateException> GetAudioStreamExceptions(string recorder, List<HttpResponseMessage> responses)
+        {
+            const string errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";
+            var innerExceptions = new List<AudioPlatformException>();
+            foreach (var response in responses)
             {
-                var errorMessageTemplate = "Failed to get the Wowza stream recorder for: {recorder}, StatusCode: {ex.StatusCode}, Error: {ex.Message}";                
-                LogError(ex, errorMessageTemplate, recorder, ex.StatusCode, ex.Message);
-                return null;
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                var exception = 
+                    new AudioPlatformException(String.IsNullOrEmpty(errorMessage) ? "Unexpected exception" : errorMessage, response.StatusCode);
+                LogError(exception, errorMessageTemplate, recorder, exception.StatusCode, exception.Message);
+                innerExceptions.Add(exception); 
             }
+            return new AggregateException(innerExceptions: innerExceptions);
         }
 
         public async Task<AudioPlatformServiceResponse> DeleteAudioStreamAsync(Guid hearingId)
