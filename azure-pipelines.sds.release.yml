@@ -16,8 +16,7 @@ parameters:
 - name: environment
   type: object
   default:
-  - Dev
-  - Staging
+  - Demo
   - Prod
 
 pool: 
@@ -33,8 +32,6 @@ stages:
       - template: variables/shared.yaml
       - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         - template: variables/production.yaml
-      - ${{ else }}:
-        - template: variables/staging.yaml
     jobs:
       - job: Generate_Entity_Framework_Script
         displayName: "Generate Entity Framework Script"
@@ -75,10 +72,10 @@ stages:
               onTimeout: 'reject'
 
 #####################################################
-# Run Entity Framework Staging. #####################
+# Run Entity Framework. #####################
   - ${{ each env in parameters.environment }}:
     - stage: Run_Entity_Framework_${{ env }}
-      ${{ if eq(env, 'Prod') }}:
+      ${{ if or(eq(env, 'Prod'), eq(env, 'Demo')) }}:
         condition: and( succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
       ${{ else }}:
         condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
@@ -87,10 +84,8 @@ stages:
       ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
         dependsOn: pre_run_tasks
       variables:
-        - ${{ if eq(env, 'Dev') }}:
-          - template: variables/dev.yaml
-        - ${{ if eq(env, 'Staging') }}:
-          - template: variables/staging.yaml
+        - ${{ if eq(env, 'Demo') }}:
+          - template: variables/demo.yaml
         - ${{ if eq(env, 'Prod') }}:
           - template: variables/production.yaml
           
@@ -162,18 +157,15 @@ stages:
   - stage: Docker_Build_Push
     displayName: Docker Build & Push Image
     ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
+      condition: and(in(dependencies.Run_Entity_Framework_Demo.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
       dependsOn:
-        - Run_Entity_Framework_Dev
-        - Run_Entity_Framework_Staging
+        - Run_Entity_Framework_Demo
     ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
       dependsOn: Approve_Helm_Release
       condition: in(dependencies.Approve_Helm_Release.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     variables:
       - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         - template: variables/production.yaml
-      - ${{ else }}:
-        - template: variables/staging.yaml
 
       - template: variables/shared.yaml
     jobs:
@@ -200,8 +192,6 @@ stages:
               repositoryName:  ${{ variables.repositoryName }}
               imageName: "${{ variables.imageName }}"
               imageTags:
-                - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-                  - '${{ variables.stagingTagName }}'
                 - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
                   - 'latest'
                   - '${{ variables.releaseTagName }}'
@@ -211,15 +201,14 @@ stages:
   - stage: Push_Nuget
     displayName: Deploy Nuget Packages
     ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      condition: and(in(dependencies.Run_Entity_Framework_Dev.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'), in(dependencies.Run_Entity_Framework_Staging.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
+      condition: and(in(dependencies.Run_Entity_Framework_Demo.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
       dependsOn:
-        - Run_Entity_Framework_Dev
-        - Run_Entity_Framework_Staging
+        - Run_Entity_Framework_Demo
     ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
       condition: in(dependencies.Approve_Helm_Release.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
       dependsOn: Approve_Helm_Release
     variables:
-      - template: variables/dev.yaml
+      - template: variables/demo.yaml
       - template: variables/shared.yaml
         parameters:
           env: ${{ variables.env }}
@@ -240,8 +229,6 @@ stages:
     variables:
       - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         - template: variables/production.yaml
-      - ${{ else }}:
-        - template: variables/staging.yaml
         
       - template: variables/shared.yaml
       - group: vh-github-app-credentials
