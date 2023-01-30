@@ -75,7 +75,7 @@ stages:
 # Run Entity Framework. #####################
   - ${{ each env in parameters.environment }}:
     - stage: Run_Entity_Framework_${{ env }}
-      ${{ if eq(env, 'Prod') }}:
+      ${{ if or(eq(env, 'Prod'), eq(env, 'Demo')) }}:
         condition: and( succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
       ${{ else }}:
         condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), eq(lower(dependencies.pre_run_tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'))
