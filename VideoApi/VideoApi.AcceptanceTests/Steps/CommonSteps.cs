@@ -25,7 +25,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the response should have the status (.*) and success status (.*)")]
         public void ThenTheResponseShouldHaveTheStatusAndSuccessStatus(HttpStatusCode httpStatusCode, bool isSuccess)
         {
-            _context.Response.StatusCode.Should().Be(httpStatusCode);
+            _context.Response.StatusCode.Should().Be(httpStatusCode, $"Request should be valid but, {_context.Response.Content}");
             _context.Response.IsSuccessful.Should().Be(isSuccess);
         }
     }

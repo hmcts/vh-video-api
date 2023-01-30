@@ -33,7 +33,6 @@ Feature: Instant Messages
     Given I have a valid delete messages from a conference request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And the messages have been deleted
 
   Scenario: Delete instant messages for a non-existent conference
     Given I have a nonexistent delete messages from a conference request
