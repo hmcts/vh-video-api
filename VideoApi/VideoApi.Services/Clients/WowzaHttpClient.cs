@@ -1,5 +1,7 @@
+using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using VideoApi.Services.Contracts;
@@ -19,6 +21,7 @@ namespace VideoApi.Services.Clients
         }
 
         public bool IsLoadBalancer { get; set; }
+        
         public async Task CreateApplicationAsync(string applicationName, string server, string host, string storageDirectory)
         {
             var request = new CreateApplicationRequest
@@ -207,10 +210,9 @@ namespace VideoApi.Services.Clients
 
         public async Task<HttpResponseMessage> GetStreamRecorderAsync(string applicationName, string server, string host, string recorder)
         {
-            return await _httpClient.GetAsync
-            (
-                $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}/instances/_definst_/streamrecorders/{recorder}"
-            );
+            var requestUrl = $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}/instances/_definst_/streamrecorders/{recorder}";
+            using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 10));
+            return await _httpClient.GetAsync(requestUrl, cts.Token).ConfigureAwait(false);
         }
 
         public async Task StopStreamRecorderAsync(string applicationName, string server, string host, string hearingId)
