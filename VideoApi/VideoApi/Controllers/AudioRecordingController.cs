@@ -51,6 +51,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetAudioApplicationWithHearingId")]
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
         public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioApplicationWithHearingId");
@@ -70,6 +71,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetAudioApplication")]
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
         public async Task<IActionResult> GetAudioApplicationAsync()
         {
             _logger.LogDebug("GetAudioApplication");
@@ -85,6 +87,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("DeleteAudioApplication")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
         public async Task<IActionResult> DeleteAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("DeleteAudioApplication");
@@ -116,6 +119,7 @@ namespace VideoApi.Controllers
 
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
+        /// Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
         /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
@@ -146,6 +150,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetAudioStreamMonitoringInfo")]
         [ProducesResponseType(typeof(AudioStreamMonitoringInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
         public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioStreamMonitoringInfo");
@@ -159,6 +164,7 @@ namespace VideoApi.Controllers
 
         /// <summary>
         /// Get the audio recording link for a given hearing.
+        /// Note: Only used by the admin web. To be decommissioned
         /// </summary>
         /// <param name="hearingId">The hearing id.</param>
         /// <returns> AudioRecordingResponse with the link - AudioFileLink</returns>
@@ -193,6 +199,7 @@ namespace VideoApi.Controllers
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <param name="cloudRoom"></param>
         /// <param name="date"></param>
@@ -220,6 +227,7 @@ namespace VideoApi.Controllers
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <param name="cloudRoom"></param>
         /// <param name="date"></param>
@@ -246,6 +254,7 @@ namespace VideoApi.Controllers
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
+        /// Note: Only used by the admin web. Need to discuss if we still need this
         /// </summary>
         /// <param name="date"></param>
         /// <param name="caseReference"></param>

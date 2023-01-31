@@ -1,7 +1,9 @@
 using System;
 using System.Net;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Common;
@@ -62,7 +64,7 @@ namespace VideoApi.UnitTests.Middleware
             ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
             
             await ExceptionMiddleware.InvokeAsync(HttpContext);
-            Assert.AreEqual("application/json", HttpContext.Response.ContentType);
+            Assert.AreEqual("application/json; charset=utf-8", HttpContext.Response.ContentType);
             Assert.AreEqual((int) HttpStatusCode.InternalServerError, HttpContext.Response.StatusCode);
         }
     }
