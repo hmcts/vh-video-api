@@ -1,9 +1,7 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VH.Core.Configuration;
-using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi
 {
