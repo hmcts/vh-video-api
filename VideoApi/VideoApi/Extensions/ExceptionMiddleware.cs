@@ -38,7 +38,6 @@ namespace VideoApi.Extensions
 
         private static Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode, Exception exception)
         {
-            context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int) statusCode;
             var sb = new StringBuilder(exception.Message);
             var innerException = exception.InnerException;

@@ -12,9 +12,14 @@
         </PackageReference>
     </ItemGroup>
 
-    <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' AND '$(Configuration)'=='Debug'">
+    <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' And '$(Configuration)' == 'Debug' ">
         <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
-        <Exec ConsoleToMSBuild="true" ContinueOnError="true" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_60) run /runtime:Net60 /variables:Configuration=$(Configuration)" />
+        <Exec ConsoleToMSBuild="true" ContinueOnError="true" Command="$(NSwagExe_Net60) run /runtime:Net60 /variables:ProjectPath=&quot;$(MSBuildProjectFullPath)&quot;">
+            <Output TaskParameter="ExitCode" PropertyName="NSwagExitCode" />
+            <Output TaskParameter="ConsoleOutput" PropertyName="NSwagOutput" />
+        </Exec>
+        <Message Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' == '0'" Importance="low" />
+        <Error Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' != '0'" />
         <RemoveDir Directories="$(OutDir)References" />
     </Target>
 </Project>
