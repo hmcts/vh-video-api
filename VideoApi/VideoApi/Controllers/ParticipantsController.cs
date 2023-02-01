@@ -52,7 +52,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("AddParticipantsToConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId,
             AddParticipantsToConferenceRequest request)
         {
@@ -101,7 +101,7 @@ namespace VideoApi.Controllers
         [HttpPatch("{conferenceId}/UpdateConferenceParticipants", Name = "UpdateConferenceParticipants")]
         [OpenApiOperation("UpdateConferenceParticipants")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateConferenceParticipantsAsync(Guid conferenceId,
             UpdateConferenceParticipantsRequest request)
@@ -165,7 +165,7 @@ namespace VideoApi.Controllers
         [HttpPatch("{conferenceId}/participants/{participantId}", Name = "UpdateParticipantDetails")]
         [OpenApiOperation("UpdateParticipantDetails")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId,
             UpdateParticipantRequest request)
@@ -214,7 +214,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("RemoveParticipantFromConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveParticipantFromConferenceAsync(Guid conferenceId, Guid participantId)
         {
             _logger.LogDebug("RemoveParticipantFromConference");
@@ -333,7 +333,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("SaveHeartbeatDataForParticipant")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SaveHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId,
             AddHeartbeatRequest request)
         {
@@ -422,7 +422,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("AddStaffMemberToConference")]
         [ProducesResponseType(typeof(AddStaffMemberResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddStaffMemberToConferenceAsync(Guid conferenceId,
             AddStaffMemberRequest request)
         {

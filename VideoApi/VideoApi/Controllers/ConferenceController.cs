@@ -72,7 +72,7 @@ namespace VideoApi.Controllers
         [HttpPost]
         [OpenApiOperation("BookNewConference")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.Created)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
         {
             _logger.LogDebug("BookNewConference");
@@ -126,7 +126,7 @@ namespace VideoApi.Controllers
         [HttpPut]
         [OpenApiOperation("UpdateConference")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateConferenceAsync(UpdateConferenceRequest request)
         {
             _logger.LogDebug("UpdateConference");
@@ -170,7 +170,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetConferenceDetailsById")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsByIdAsync(Guid conferenceId)
         {
             _logger.LogDebug("GetConferenceDetailsById {ConferenceId}", conferenceId);
@@ -199,7 +199,7 @@ namespace VideoApi.Controllers
         [HttpDelete("{conferenceId}")]
         [OpenApiOperation("RemoveConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveConferenceAsync(Guid conferenceId)
         {
@@ -275,7 +275,7 @@ namespace VideoApi.Controllers
         [HttpGet("today/judge")]
         [OpenApiOperation("GetConferencesTodayForJudgeByUsername")]
         [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug("GetConferencesTodayForJudgeByUsername {Username}", username);
@@ -321,7 +321,7 @@ namespace VideoApi.Controllers
         [HttpGet("today/individual")]
         [OpenApiOperation("GetConferencesTodayForIndividualByUsername")]
         [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug("GetConferencesTodayForIndividualByUsername {Username}", username);
@@ -352,7 +352,7 @@ namespace VideoApi.Controllers
         [HttpGet("hearings/{hearingRefId}")]
         [OpenApiOperation("GetConferenceByHearingRefId")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId, [FromQuery]bool? includeClosed = false)
         {
             _logger.LogDebug("GetConferenceByHearingRefId {HearingRefId}", hearingRefId);
@@ -419,7 +419,7 @@ namespace VideoApi.Controllers
         [HttpPut("{conferenceId}/close")]
         [OpenApiOperation("CloseConference")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloseConferenceAsync(Guid conferenceId)
         {
             try
