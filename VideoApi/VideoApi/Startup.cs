@@ -105,7 +105,8 @@ namespace VideoApi
                     {
                         ClockSkew = TimeSpan.Zero,
                         ValidateLifetime = true,
-                        ValidAudience = serviceSettings.VideoApiResourceId
+                        ValidAudience = serviceSettings.VideoApiResourceId,
+                        ValidateIssuer = false
                     };
                 });
 
