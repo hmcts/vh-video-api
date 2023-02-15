@@ -84,8 +84,7 @@ namespace VideoApi.Controllers
 
                 await _commandHandler.Handle(addParticipantsToConferenceCommand);
 
-                var jwtDetails = _quickLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username,
-                    participant.UserRole);
+                var jwtDetails = _quickLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username, participant.UserRole);
 
                 var addQuickLinkParticipantTokenCommand = new AddQuickLinkParticipantTokenCommand(participant.Id, jwtDetails);
                 
@@ -114,10 +113,8 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetQuickLinkParticipantByUserName(string userName)
         {
 
-            var query = new GetQuickLinkParticipantByIdQuery(
-                Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain, string.Empty)));
-            var quickLinkParticipant =
-                await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
+            var query = new GetQuickLinkParticipantByIdQuery(Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain, string.Empty)));
+            var quickLinkParticipant = await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
 
             if (quickLinkParticipant == null)
             {
