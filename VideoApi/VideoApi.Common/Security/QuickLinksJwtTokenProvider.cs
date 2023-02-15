@@ -11,7 +11,6 @@ namespace VideoApi.Common.Security
 {
     public class QuickLinksJwtTokenProvider : IQuickLinksJwtTokenProvider
     {
-        private const string Issuer = "VideoApi";
         private readonly QuickLinksConfiguration _quickLinksConfiguration;
         public const int ExpiryTimeInMinutes = 60 * 8;
 
@@ -47,7 +46,7 @@ namespace VideoApi.Common.Security
                 Subject = claims,
                 NotBefore = DateTime.UtcNow.AddMinutes(-1),
                 Expires = DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
-                Issuer = Issuer,
+                Issuer = _quickLinksConfiguration.Issuer,
                 IssuedAt = DateTime.Now,
                 Audience = _quickLinksConfiguration.ValidAudience,
                 SigningCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha512)
