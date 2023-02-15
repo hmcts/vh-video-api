@@ -31,7 +31,6 @@ namespace VideoApi
             Environment = environment;
         }
 
-        private const string Issuer = "vh-video-api";
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment Environment { get; }
         public SettingsConfiguration SettingsConfiguration { get; private set; }
@@ -65,8 +64,7 @@ namespace VideoApi
 
             services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware)));
             services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter)))
-                .AddFluentValidation(fv 
-                    => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
             services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
             services.AddDbContextPool<VideoApiDbContext>(options =>
                 {
@@ -107,7 +105,7 @@ namespace VideoApi
                     {
                         ClockSkew = TimeSpan.Zero,
                         ValidateLifetime = true,
-                        ValidAudience = Issuer
+                        ValidAudience = serviceSettings.VideoApiResourceId
                     };
                 });
 
