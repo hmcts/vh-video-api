@@ -13,6 +13,7 @@ namespace VideoApi.Common.Security
     {
         private readonly QuickLinksConfiguration _quickLinksConfiguration;
         public const int ExpiryTimeInMinutes = 60 * 8;
+        //comment
 
         public QuickLinksJwtTokenProvider(IOptions<QuickLinksConfiguration> quickLinksConfiguration)
         {
