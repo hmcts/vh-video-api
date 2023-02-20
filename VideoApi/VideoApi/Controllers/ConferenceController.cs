@@ -516,6 +516,7 @@ namespace VideoApi.Controllers
         [HttpPatch("anonymiseconferences")]
         [OpenApiOperation("AnonymiseConferences")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [Obsolete("Please use AnonymiseConferenceWithHearingIds")]
         public async Task<IActionResult> AnonymiseConferencesAsync()
         {
             _logger.LogDebug("AnonymiseConferencesAndParticipantInformation");

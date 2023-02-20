@@ -55,6 +55,9 @@ namespace Testing.Common.Helper
             public static string GetJudgesInHearingsToday() => $"{ApiRoot}/today/judgesinhearings";
             public static string GetExpiredAudiorecordingConferences => $"{ApiRoot}/audiorecording/expired";
             public static string AnonymiseConferences => $"{ApiRoot}/anonymiseconferences";
+
+            public static string AnonymiseConferenceWithHearingIds =>
+                $"{ApiRoot}/anonymise-conference-with-hearing-ids";
             public static string RemoveHeartbeatsForconferences => $"{ApiRoot}/expiredHearbeats";
         }
 

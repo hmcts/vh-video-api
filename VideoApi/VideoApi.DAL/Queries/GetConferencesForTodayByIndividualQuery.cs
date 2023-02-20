@@ -32,11 +32,11 @@ namespace VideoApi.DAL.Queries
             query.Username = query.Username.ToLower().Trim();
             var today = DateTime.Today;
             var tomorrow = DateTime.Today.AddDays(1);
-
-            return await _context.Conferences
+            
+            return await _context.Conferences.Include(x => x.Participants)
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
-                .Where(x => x.Participants.Any(p => p.Username == query.Username))
+                .Where(x => x.Participants.Any(p => p.Username.Equals(query.Username, StringComparison.CurrentCultureIgnoreCase)))
                 .Where(x => x.MeetingRoom != null && x.MeetingRoom.AdminUri != null && x.MeetingRoom.JudgeUri != null
                             && x.MeetingRoom.ParticipantUri != null && x.MeetingRoom.PexipNode != null)
                 .OrderBy(x => x.ScheduledDateTime)

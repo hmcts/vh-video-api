@@ -8,7 +8,11 @@ namespace VideoApi.Domain
 {
     public abstract class ParticipantBase : TrackableEntity<Guid>
     {
-
+        protected ParticipantBase()
+        {
+            State = ParticipantState.NotSignedIn;
+        }
+        
         public Guid ConferenceId { get; private set; }
         public Guid ParticipantRefId { get; set; }
         public string Name { get; set; }

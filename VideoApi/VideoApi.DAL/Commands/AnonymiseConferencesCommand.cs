@@ -1,9 +1,11 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi.DAL.Commands
 {
+    [Obsolete("Please use AnonymiseConferenceWithHearingIdsCommand")]
     public class AnonymiseConferencesCommand : ICommand
     {
         public int RecordsUpdated { get; set; }
@@ -12,6 +14,7 @@ namespace VideoApi.DAL.Commands
         }
     }
 
+    [Obsolete("Please use AnonymiseConferenceWithHearingIdsCommand")]
     public class AnonymiseConferencesCommandHandler : ICommandHandler<AnonymiseConferencesCommand>
     {
         private readonly VideoApiDbContext _context;

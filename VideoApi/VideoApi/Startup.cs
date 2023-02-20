@@ -18,7 +18,6 @@ using VideoApi.DAL;
 using VideoApi.Extensions;
 using VideoApi.Telemetry;
 using VideoApi.ValidationMiddleware;
-using VideoApi.Validations;
 using VideoApi.Services;
 
 namespace VideoApi
@@ -47,11 +46,12 @@ namespace VideoApi
                     builder
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .SetIsOriginAllowed((host) => true)
+                        .SetIsOriginAllowed((_) => true)
                         .AllowCredentials();
                 }));
 
-            services.AddApplicationInsightsTelemetry(options => options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(options =>
+                options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddApplicationInsightsTelemetryProcessor<SuccessfulDependencyProcessor>();
 
             services.AddJsonOptions();
@@ -60,16 +60,25 @@ namespace VideoApi
 
             services.AddCustomTypes(Environment, useStub);
             RegisterAuth(services);
-            services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
 
-            services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware)));
-            services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter)))
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
-            services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
+            // services.AddScoped<IValidatorFactory, RequestModelValidatorFactory>();
+            // services.AddScoped<IRequestModelValidatorService, RequestModelValidatorService>();
+            services.AddFluentValidationAutoValidation();
+            services.AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<IRequestModelValidatorService>();
+
+            services.AddMvc(opt =>
+            {
+                opt.Filters.Add(typeof(LoggingMiddleware));
+                // opt.Filters.Add(typeof(RequestModelValidatorFilter));
+                opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(string), 500));
+            });
+
+
             services.AddDbContextPool<VideoApiDbContext>(options =>
-                {
-                    options.UseSqlServer(Configuration.GetConnectionString("VideoApi"));
-                });
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("VideoApi"));
+            });
         }
 
         private void RegisterSettings(IServiceCollection services)

@@ -39,7 +39,7 @@ namespace VideoApi.DAL.Queries
                 .Include(x => x.MeetingRoom)
                 .AsNoTracking()
                 .Where(x => x.ScheduledDateTime >= today && x.ScheduledDateTime < tomorrow)
-                .Where(x => x.Participants.Any(p => p.Username == query.Username))
+                .Where(x => x.Participants.Any(p => p.Username.Equals(query.Username, StringComparison.CurrentCultureIgnoreCase)))
                 .Where(x => x.MeetingRoom != null && x.MeetingRoom.AdminUri != null && x.MeetingRoom.JudgeUri != null 
                             && x.MeetingRoom.ParticipantUri != null && x.MeetingRoom.PexipNode != null)
                 .OrderBy(x => x.ScheduledDateTime)

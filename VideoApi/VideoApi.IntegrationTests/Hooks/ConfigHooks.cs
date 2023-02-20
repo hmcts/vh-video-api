@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using AcceptanceTests.Common.Api;
 using FluentAssertions;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
@@ -28,7 +30,7 @@ namespace VideoApi.IntegrationTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = ConfigurationManager.BuildConfig("9AECE566-336D-4D16-88FA-7A76C27321CD");
+            _configRoot = ConfigRootBuilder.Build();
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
         }
@@ -101,6 +103,10 @@ namespace VideoApi.IntegrationTests.Hooks
 
         private void RegisterDatabaseSettings(TestContext context)
         {
+            // var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
+            // dbContextOptionsBuilder.UseInMemoryDatabase("InMemoryDbForTesting");
+            // context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
+            
             context.Config.DbConnection = Options.Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.DbConnection);
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
@@ -113,7 +119,20 @@ namespace VideoApi.IntegrationTests.Hooks
         private static void RegisterServer(TestContext context)
         {
             var webHostBuilder = WebHost.CreateDefaultBuilder()
-                    .UseKestrel(c => c.AddServerHeader = false)
+                .ConfigureTestServices(services =>
+                {
+                    var descriptor = services.SingleOrDefault(
+                        d => d.ServiceType ==
+                             typeof(DbContextOptions<VideoApiDbContext>));
+                
+                    services.Remove(descriptor);
+                
+                    services.AddDbContext<VideoApiDbContext>(options =>
+                    {
+                        options.UseInMemoryDatabase("InMemoryDbForTesting");
+                    }, ServiceLifetime.Singleton);
+                })
+                .UseKestrel(c => c.AddServerHeader = false)
                     .UseEnvironment("Development")
                     .UseStartup<Startup>();
             context.Server = new TestServer(webHostBuilder);

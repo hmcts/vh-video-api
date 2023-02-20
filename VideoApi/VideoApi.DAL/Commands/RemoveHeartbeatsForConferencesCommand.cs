@@ -21,13 +21,18 @@ namespace VideoApi.DAL.Commands
         }
         public async Task Handle(RemoveHeartbeatsForConferencesCommand command)
         {
-            _context.Database.SetCommandTimeout(3600); //1 hour
-            
+            if (_context.Database.IsRelational())
+            {
+                _context.Database.SetCommandTimeout(3600); //1 hour
+            }
+
             var heartBeatsToDeleteQuery = _context.Heartbeats
                 .Where(hb => hb.Timestamp <= DateTime.UtcNow.AddDays(-14))
                 .AsQueryable();
+            _context.RemoveRange(_context.Heartbeats.Where(hb => hb.Timestamp <= DateTime.UtcNow.AddDays(-14)));
 
-            await heartBeatsToDeleteQuery.DeleteAsync();
+            await _context.SaveChangesAsync();
+            // await heartBeatsToDeleteQuery.DeleteAsync();
         }
     }
 }
