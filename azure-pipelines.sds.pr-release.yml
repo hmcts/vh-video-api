@@ -400,7 +400,7 @@ stages:
 
           # Quick Links Configuration
           - name: QuickLinks:Issuer
-            value: $(video_api_url)
+            value: $(Issuer)
           - name: QuickLinks:RsaPrivateKey
             value: $(RsaPrivateKey)
           - name: QuickLinks:ValidAudience
