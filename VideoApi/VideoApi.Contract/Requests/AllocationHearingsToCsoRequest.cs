@@ -6,6 +6,13 @@ namespace VideoApi.Contract.Requests
     public class AllocationHearingsToCsoRequest
     {
         public string AllocatedCsoUserName { get; set; }
-        public IList<string> Messages { get; set; } = new List<string>();
+        public IList<HearingDetail> Hearings { get; set; } = new List<HearingDetail>();
+    }
+
+    public class HearingDetail
+    {
+        public string Time { get; set; }
+        public string Judge { get; set; }
+        public string CaseName { get; set; }
     }
 }
