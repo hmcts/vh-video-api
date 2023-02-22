@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace VideoApi.Contract.Requests
@@ -9,7 +8,7 @@ namespace VideoApi.Contract.Requests
         public IList<HearingDetail> Hearings { get; set; } = new List<HearingDetail>();
     }
 
-    public class HearingDetail
+    public abstract class HearingDetail
     {
         public string Time { get; set; }
         public string Judge { get; set; }
