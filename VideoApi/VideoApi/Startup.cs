@@ -140,11 +140,11 @@ namespace VideoApi
             
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
-            
-            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
 
             app.UseMiddleware<LogResponseBodyMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
+            
+            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
         }
 
         private static void AddPolicies(AuthorizationOptions options)

@@ -318,11 +318,11 @@ stages:
 
           # Wowza Configuration
           - name: WowzaConfiguration:RestApiEndpoints
-            value: wowzaconfiguration--endpoint
+            value: wowzaconfiguration--endpoint-https
             keyVaultName: vh-infra-core-${{ variables.env }}
             secret: true
           - name: WowzaConfiguration:StreamingEndpoint
-            value: wowzaconfiguration--endpoint
+            value: wowzaconfiguration--endpoint-https
             keyVaultName: vh-infra-core-${{ variables.env }}
             secret: true
           - name: WowzaConfiguration:Username 
@@ -392,7 +392,7 @@ stages:
 
           # Quick Links Configuration
           - name: QuickLinks:Issuer
-            value: $(video_api_url)
+            value: $(Issuer)
           - name: QuickLinks:RsaPrivateKey
             value: $(RsaPrivateKey)
           - name: QuickLinks:ValidAudience
