@@ -72,7 +72,6 @@ stages:
   - stage: Run_Entity_Framework_${{ env }}
     displayName: ${{ env }} EF Release
     dependsOn: Pre_Run_Tasks
-    condition: and(eq(lower(dependencies.Pre_Run_Tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'), succeeded())
     variables:
     - template: variables/${{ lower(env) }}.yaml
     - template: variables/shared.yaml
@@ -123,8 +122,6 @@ stages:
   dependsOn:
     - Run_Entity_Framework_Dev
     - Run_Entity_Framework_Staging
-    - Pre_Run_Tasks
-  condition: and(not(failed()), not(canceled()))
   variables:
     - template: variables/staging.yaml
     - template: variables/shared.yaml
@@ -161,8 +158,6 @@ stages:
   dependsOn:
     - Run_Entity_Framework_Dev
     - Run_Entity_Framework_Staging
-    - Pre_Run_Tasks
-  condition: and(not(failed()), not(canceled()))
   variables:
   - template: variables/shared.yaml
     parameters:
@@ -180,7 +175,6 @@ stages:
 - stage: Helm
   displayName: Push Helm Charts
   dependsOn: Docker_Build_Push
-  condition: succeeded('Docker_Build_Push')
   variables:
   - template: variables/staging.yaml
   - template: variables/shared.yaml
@@ -209,10 +203,7 @@ stages:
 # Run Acceptance Tests on Staging. ######
 - stage: Run_Acceptance_Tests
   displayName: "Run Acceptance Tests"
-  dependsOn: 
-  - Helm
-  - Docker_Build_Push
-  condition: succeeded('Helm')
+  dependsOn: Helm
   variables:
   - name: fullImageName
     value: $[ stageDependencies.Docker_Build_Push.Docker_Build.outputs['pushImage.fullImageName'] ]

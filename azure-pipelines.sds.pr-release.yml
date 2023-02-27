@@ -160,7 +160,6 @@ stages:
 - stage: Run_Entity_Framework_Dev
   displayName: Run Entity Framework Dev
   dependsOn: Dock
-  condition:  and(eq(lower(dependencies.Pre_Release_Tasks.outputs['Generate_Entity_Framework_Script.git.hasChanged']), 'true'), succeeded('Dock'))
   variables:
   - template: variables/dev.yaml
   - template: variables/shared.yaml
@@ -190,10 +189,7 @@ stages:
 #####################################################
 # Deploy Helm Chart to Dev. ######################### 
 - stage: Install
-  dependsOn: 
-  - Run_Entity_Framework_Dev
-  - Dock
-  condition: and(not(failed()), not(canceled()))
+  dependsOn: Run_Entity_Framework_Dev
   displayName: Deploy Helm Chart Dev AKS
   variables:
   - group: vh-github-app-credentials
@@ -252,10 +248,7 @@ stages:
 ##################################################
 # Deploy Nuget Packages. #########################
 - stage: Push_Nuget
-  dependsOn:
-  - Run_Entity_Framework_Dev
-  - Dock
-  condition: and(not(failed()), not(canceled()))
+  dependsOn: Run_Entity_Framework_Dev
   displayName: Deploy NuGet Packages
   variables:
   - template: variables/dev.yaml
@@ -274,7 +267,6 @@ stages:
 # Run Acceptance Tests. ##########################
 - stage: Acceptance_Tests_Dev
   dependsOn: Install
-  condition: succeeded('Install')
   displayName: Acceptance Tests Dev
   variables:
   - group: vh-video-api
