@@ -12,7 +12,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Services.VirtualRoom

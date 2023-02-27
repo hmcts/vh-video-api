@@ -11,7 +11,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using HealthCheckResponse = VideoApi.Contract.Responses.HealthCheckResponse;
 using Task = System.Threading.Tasks.Task;
 
@@ -46,7 +46,7 @@ namespace VideoApi.UnitTests.Controllers.HealthChecks
             
             _mockVideoPlatformService
                 .Setup(x => x.GetPlatformHealthAsync())
-                .ReturnsAsync(new VideoApi.Services.Kinly.HealthCheckResponse{Health_status = PlatformHealth.HEALTHY});
+                .ReturnsAsync(new VideoApi.Services.Clients.HealthCheckResponse{Health_status = PlatformHealth.HEALTHY});
             
             var wowzaResponse = true ;
             

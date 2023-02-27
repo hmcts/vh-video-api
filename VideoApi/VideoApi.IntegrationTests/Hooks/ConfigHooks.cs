@@ -28,7 +28,7 @@ namespace VideoApi.IntegrationTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = ConfigurationManager.BuildConfig("9AECE566-336D-4D16-88FA-7A76C27321CD");
+            _configRoot = ConfigRootBuilder.Build();
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
         }

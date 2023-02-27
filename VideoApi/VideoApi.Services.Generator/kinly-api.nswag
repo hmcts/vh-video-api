@@ -51,7 +51,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "KinlyApiResponse",
-      "namespace": "VideoApi.Services.Kinly",
+      "namespace": "VideoApi.Services.Clients",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTime",
       "jsonConverters": null,

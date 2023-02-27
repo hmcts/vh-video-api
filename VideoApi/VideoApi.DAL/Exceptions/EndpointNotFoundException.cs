@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace VideoApi.DAL.Exceptions
 {
     [Serializable]
-    public class EndpointNotFoundException : Exception
+    public class EndpointNotFoundException : VideoDalException
     {
         public EndpointNotFoundException(Guid endpointId) : base($"Endpoint {endpointId} does not exist")
         {

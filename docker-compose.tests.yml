@@ -1,0 +1,52 @@
+version: '3.4'
+
+networks:
+  integration-tests:
+    driver: bridge
+
+services:
+
+  vh-video-api-tests:
+    image: vh-api-tests
+    build:
+      context: ./
+      dockerfile: tests/Dockerfile
+    entrypoint:
+      [
+        "/wait-for-it.sh",
+        "test-db:1433",
+        "-t",
+        "120",
+        "--",
+        "/run-tests.sh"
+      ]
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__VideoApi=Data Source=test-db;Database=VhVideoApi;User Id=SA;Password=R4ndomP@assword;Trust Server Certificate=True;Encrypt=False
+      - SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY}
+      - SONAR_TOKEN=${SONAR_TOKEN}
+      - SONAR_HOST=${SONAR_HOST}
+      - SONAR_PROJECT_VERSION=${SONAR_PROJECT_VERSION}
+      - SONAR_PROJECT_NAME=${SONAR_PROJECT_NAME}
+    volumes:
+      - ./TestResults:/TestResults:rw
+      - ./Coverage:/Coverage:rw
+      - ./:/app:rw
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      - test-db
+    networks:
+      - integration-tests
+
+  test-db:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: vh.videoapi.sql.testing
+    expose:
+      - 1433
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=R4ndomP@assword
+    networks:
+      - integration-tests

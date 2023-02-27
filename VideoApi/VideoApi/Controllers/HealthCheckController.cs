@@ -10,7 +10,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using HealthCheckResponse = VideoApi.Contract.Responses.HealthCheckResponse;
 
 namespace VideoApi.Controllers

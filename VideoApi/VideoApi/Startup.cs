@@ -1,6 +1,5 @@
 using System;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -16,9 +15,9 @@ using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 using VideoApi.Extensions;
+using VideoApi.Middleware.Logging;
+using VideoApi.Middleware.Validation;
 using VideoApi.Telemetry;
-using VideoApi.ValidationMiddleware;
-using VideoApi.Validations;
 using VideoApi.Services;
 
 namespace VideoApi
@@ -60,16 +59,24 @@ namespace VideoApi
 
             services.AddCustomTypes(Environment, useStub);
             RegisterAuth(services);
-            services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
+            
 
             services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware)));
-            services.AddMvc(opt => opt.Filters.Add(typeof(RequestModelValidatorFilter)))
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookNewConferenceRequestValidation>());
-            services.AddTransient<IValidatorFactory, RequestModelValidatorFactory>();
+            services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
+
+            services.AddMvc(opt =>
+            {
+                opt.Filters.Add(typeof(LoggingMiddleware));
+                opt.Filters.Add(typeof(RequestModelValidatorFilter));
+                opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(string), 500));
+            });
+            services.AddValidatorsFromAssemblyContaining<IRequestModelValidatorService>();
+            
             services.AddDbContextPool<VideoApiDbContext>(options =>
-                {
-                    options.UseSqlServer(Configuration.GetConnectionString("VideoApi"));
-                });
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("VideoApi"),
+                    builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null));
+            });
         }
 
         private void RegisterSettings(IServiceCollection services)
@@ -141,7 +148,6 @@ namespace VideoApi
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
 
-            app.UseMiddleware<LogResponseBodyMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
             
             app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });

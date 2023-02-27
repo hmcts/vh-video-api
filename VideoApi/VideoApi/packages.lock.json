@@ -167,13 +167,13 @@
       },
       "ZymLabs.NSwag.FluentValidation": {
         "type": "Direct",
-        "requested": "[0.4.0, )",
-        "resolved": "0.4.0",
-        "contentHash": "k57Y6NAlv1rqgHVbCV33gRfJWWX9JuI+zT4CdV/79P9kEecgtRI9tiLjL0DdMAT+PUWJSWG5VDBccSAQ3ZLuZw==",
+        "requested": "[0.6.2, )",
+        "resolved": "0.6.2",
+        "contentHash": "oo6Dx/D5pCMsCtSCuN9zpcykwLajW1qylUtpatpUBMdTuPca+9VLAJFOA9+AEsF7f4qPnyypQcN2e68sqXSYHA==",
         "dependencies": {
-          "FluentValidation": "9.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "3.1.5",
-          "NJsonSchema": "10.1.23"
+          "FluentValidation": "10.2.3",
+          "Microsoft.Extensions.Logging.Abstractions": "5.0.0",
+          "NJsonSchema": "10.4.4"
         }
       },
       "Azure.Core": {

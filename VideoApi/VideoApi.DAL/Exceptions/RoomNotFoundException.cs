@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace VideoApi.DAL.Exceptions
 {
     [Serializable]
-    public class RoomNotFoundException : Exception
+    public class RoomNotFoundException : VideoDalException
     {
         public RoomNotFoundException(long roomId) : base(
            $"Room '{roomId}' not found ")
