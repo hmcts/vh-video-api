@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
 namespace VideoApi.DAL
 {
+    [ExcludeFromCodeCoverage]
     public class DesignTimeHearingsContextFactory : IDesignTimeDbContextFactory<VideoApiDbContext>
     {
         public VideoApiDbContext CreateDbContext(string[] args)

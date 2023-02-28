@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Namotion.Reflection;
@@ -8,6 +9,7 @@ using NSwag.Generation.Processors.Contexts;
 
 namespace VideoApi.Swagger
 {
+    [ExcludeFromCodeCoverage]
     public class AuthResponseOperationProcessor : IOperationProcessor
     {
         public bool Process(OperationProcessorContext context)
