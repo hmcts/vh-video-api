@@ -33,7 +33,7 @@ namespace VideoApi.Common.Security
             var token = _memoryCache.Get<string>(TokenCacheKey);
             if (string.IsNullOrEmpty(token))
             {
-                var authenticationResult = _tokenProvider.GetAuthorisationResult(_azureAdConfiguration.ClientId,
+                var authenticationResult = await _tokenProvider.GetAuthorisationResult(_azureAdConfiguration.ClientId,
                     _azureAdConfiguration.ClientSecret, ClientResource);
                 token = authenticationResult.AccessToken;
                 var tokenExpireDateTime = authenticationResult.ExpiresOn.DateTime.AddMinutes(-1);

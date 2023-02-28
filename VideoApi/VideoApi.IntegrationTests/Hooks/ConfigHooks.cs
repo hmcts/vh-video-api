@@ -18,6 +18,7 @@ using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Hooks
 {
@@ -34,7 +35,7 @@ namespace VideoApi.IntegrationTests.Hooks
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
-        public void RegisterSecrets(TestContext context)
+        public async Task RegisterSecrets(TestContext context)
         {
             var azureOptions = RegisterAzureSecrets(context);
             RegisterDefaultData(context);
@@ -45,7 +46,7 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterDatabaseSettings(context);
             RegisterServer(context);
             RegisterApiSettings(context);
-            GenerateBearerTokens(context, azureOptions);
+            await GenerateBearerTokens(context, azureOptions);
         }
 
         private IOptions<AzureAdConfiguration> RegisterAzureSecrets(TestContext context)
@@ -124,9 +125,9 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Response = new HttpResponseMessage(); 
         }
 
-        private static void GenerateBearerTokens(TestContext context, IOptions<AzureAdConfiguration> azureOptions)
+        private static async Task GenerateBearerTokens(TestContext context, IOptions<AzureAdConfiguration> azureOptions)
         {
-            context.Tokens.VideoApiBearerToken = new AzureTokenProvider(azureOptions).GetClientAccessToken(
+            context.Tokens.VideoApiBearerToken = await new AzureTokenProvider(azureOptions).GetClientAccessToken(
                 azureOptions.Value.ClientId, azureOptions.Value.ClientSecret,
                 context.Config.Services.VideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();

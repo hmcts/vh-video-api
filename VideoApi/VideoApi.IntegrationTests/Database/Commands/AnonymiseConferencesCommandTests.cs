@@ -1,8 +1,8 @@
-using FluentAssertions;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
+using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
@@ -16,10 +16,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
     public class AnonymiseConferencesCommandTests : DatabaseTestsBase
     {
         private AnonymiseConferencesCommandHandler _handler;
-        private Guid _conference1Id;
-        private Guid _conference2Id;
-        private Guid _conference3Id;
-        private List<Domain.Conference> conferenceList;
+        private List<Conference> conferenceList;
         private GetConferenceByIdQueryHandler _handlerGetConferenceByIdQueryHandler;
 
         [SetUp]
@@ -27,17 +24,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new AnonymiseConferencesCommandHandler(context);
-            _conference1Id = Guid.Empty;
-            _conference2Id = Guid.Empty;
-            _conference3Id = Guid.Empty;
             _handlerGetConferenceByIdQueryHandler = new GetConferenceByIdQueryHandler(context);
         }
 
         [Test]
         public async Task Should_anonymise_data_older_than_three_months()
         {
-            conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
 
@@ -47,7 +41,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
-            _conference1Id = conference1.Id;
             conferenceList.Add(conference1);
             var conference1Rep = (Participant)conference1.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
 
@@ -77,8 +70,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task Should_not_anonymise_data_older_than_two_months_and_less_than_three_months()
         {
-            conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var hearingclosed1Month = utcDate.AddMonths(-1).AddMinutes(-50);
 
@@ -88,7 +81,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference2, DateTime.UtcNow.AddMonths(-1).AddMinutes(-10));
-            _conference2Id = conference2.Id;
             conferenceList.Add(conference2);
             var conference2Rep = conference2.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
 
@@ -112,7 +104,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task Should_not_anonymise_data_for_future_hearings()
         {
-            conferenceList = new List<Domain.Conference>();
+            conferenceList = new List<Conference>();
             var utcDate = DateTime.UtcNow;
             var futureHearing = utcDate.AddMonths(1);
 
@@ -121,7 +113,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
-            _conference3Id = conference3.Id;
             conferenceList.Add(conference3);
             var conference3Rep = conference3.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
 
@@ -145,8 +136,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task Should_not_anonymise_data_that_has_been_anonymised()
         {
-            conferenceList = new List<Domain.Conference>();
-            var conferenceType = typeof(Domain.Conference);
+            conferenceList = new List<Conference>();
+            var conferenceType = typeof(Conference);
             var utcDate = DateTime.UtcNow;
             var hearingClosed3Months = utcDate.AddMonths(-3).AddMinutes(-50);
 
@@ -156,7 +147,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference1, DateTime.UtcNow.AddMonths(-3).AddMinutes(-10));
-            _conference1Id = conference1.Id;
             conferenceList.Add(conference1);
             var conference1Rep = (Participant)conference1.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
 
