@@ -203,7 +203,9 @@ stages:
 # Run Acceptance Tests on Staging. ######
 - stage: Run_Acceptance_Tests
   displayName: "Run Acceptance Tests"
-  dependsOn: Helm
+  dependsOn: 
+    - Helm
+    - Docker_Build_Push
   variables:
   - name: fullImageName
     value: $[ stageDependencies.Docker_Build_Push.Docker_Build.outputs['pushImage.fullImageName'] ]
