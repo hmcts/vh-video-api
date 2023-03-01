@@ -59,7 +59,7 @@ namespace VideoApi
 
             services.AddCustomTypes(Environment, useStub);
             RegisterAuth(services);
-            
+
 
             services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware)));
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
@@ -71,7 +71,7 @@ namespace VideoApi
                 opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(string), 500));
             });
             services.AddValidatorsFromAssemblyContaining<IRequestModelValidatorService>();
-            
+
             services.AddDbContextPool<VideoApiDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("VideoApi"),
@@ -99,7 +99,7 @@ namespace VideoApi
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
             var serviceSettings = Configuration.GetSection("Services").Get<ServicesConfiguration>();
-            
+
             serviceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -107,7 +107,7 @@ namespace VideoApi
                 })
                 .AddJwtBearer(options =>
                 {
-                    options.Authority            = $"{securitySettings.Authority}{securitySettings.TenantId}";
+                    options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}";
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ClockSkew = TimeSpan.Zero,
@@ -120,22 +120,16 @@ namespace VideoApi
             serviceCollection.AddMvc(AddMvcPolicies);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
             app.UseOpenApi();
-            app.UseSwaggerUi3(c =>
-            {
-                c.DocumentTitle = "Video API V1";
-            });
+            app.UseSwaggerUi3(c => { c.DocumentTitle = "Video API V1"; });
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else if(!SettingsConfiguration.DisableHttpsRedirection)
+            else if (!SettingsConfiguration.DisableHttpsRedirection)
             {
                 app.UseHsts();
                 app.UseHttpsRedirection();
@@ -144,12 +138,12 @@ namespace VideoApi
             app.UseRouting();
 
             app.UseAuthorization();
-            
+
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
 
             app.UseMiddleware<ExceptionMiddleware>();
-            
+
             app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
         }
 

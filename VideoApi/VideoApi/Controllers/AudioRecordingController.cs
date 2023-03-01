@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -52,6 +53,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioApplicationWithHearingId");
@@ -72,6 +74,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> GetAudioApplicationAsync()
         {
             _logger.LogDebug("GetAudioApplication");
@@ -88,6 +91,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> DeleteAudioApplicationAsync(Guid hearingId)
         {
             _logger.LogDebug("DeleteAudioApplication");
@@ -151,6 +155,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(AudioStreamMonitoringInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        [ExcludeFromCodeCoverage]
         public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioStreamMonitoringInfo");
@@ -302,6 +307,7 @@ namespace VideoApi.Controllers
             return responses;
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task EnsureAudioFileExists(Conference conference, IAzureStorageService azureStorageService)
         {
             if (conference.AudioRecordingRequired)
@@ -316,6 +322,7 @@ namespace VideoApi.Controllers
             }
         }
         
+        [ExcludeFromCodeCoverage]
         private async Task<Conference> GetConference(Guid hearingId)
         {
             var conference =

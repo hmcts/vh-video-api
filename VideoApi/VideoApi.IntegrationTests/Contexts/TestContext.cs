@@ -1,6 +1,7 @@
 using System.Net.Http;
 using AcceptanceTests.Common.Api;
 using AcceptanceTests.Common.AudioRecordings;
+using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Testing.Common.Configuration;
@@ -44,7 +45,7 @@ namespace VideoApi.IntegrationTests.Contexts
                 client = Server.CreateClient();
             }
             
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Tokens.VideoApiBearerToken}");
+            client.SetFakeBearerToken("admin", new[] { "ROLE_ADMIN", "ROLE_GENTLEMAN" });
             return client;
         }
     }

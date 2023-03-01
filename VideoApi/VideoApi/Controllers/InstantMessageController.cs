@@ -45,7 +45,6 @@ namespace VideoApi.Controllers
         [HttpGet("{conferenceId}/instantmessages")]
         [OpenApiOperation("GetInstantMessageHistory")]
         [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
         {
             _logger.LogDebug("Retrieving instant message history");
@@ -105,7 +104,6 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveInstantMessagesForConferenceAsync(Guid conferenceId)
-
         {
             _logger.LogDebug("RemoveInstantMessagesForConference");
             try

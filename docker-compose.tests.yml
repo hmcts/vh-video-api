@@ -35,8 +35,17 @@ services:
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
     depends_on:
       - test-db
+      - azurite
     networks:
       - integration-tests
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    hostname: azurite
+    restart: always
+    command: "azurite --blobHost 127.0.0.1 --blobPort 10000"
+    ports:
+      - "10000:10000"
 
   test-db:
     image: mcr.microsoft.com/azure-sql-edge

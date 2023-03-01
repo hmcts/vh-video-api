@@ -6,3 +6,11 @@ services:
     build:
       context: .
       dockerfile: VideoApi/VideoApi/Dockerfile
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    hostname: azurite
+    restart: always
+    command: "azurite --blobHost 127.0.0.1 --blobPort 10000"
+    ports:
+      - "10000:10000"

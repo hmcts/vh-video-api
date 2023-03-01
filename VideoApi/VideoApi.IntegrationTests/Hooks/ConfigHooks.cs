@@ -1,43 +1,60 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using AcceptanceTests.Common.Api;
+using System.Security.Cryptography;
+using Azure.Storage.Blobs;
 using FluentAssertions;
+using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using VideoApi.Services;
+using VideoApi.Services.Contracts;
 using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
-using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Hooks
 {
     [Binding]
     public class ConfigHooks
     {
+        private const string KinlyApiSecretConfigKeyName = "KinlyConfiguration:ApiSecret";
+        private const string KinlyCallbackSecretConfigKeyName = "KinlyConfiguration:CallbackSecret";
+        
         private readonly IConfigurationRoot _configRoot;
 
         public ConfigHooks(TestContext context)
         {
+            AddRandomAccountKey();
             _configRoot = ConfigRootBuilder.Build();
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
         }
+        
+        /// <summary>
+        /// This will insert a random callback secret per test run
+        /// </summary>
+        private static void AddRandomAccountKey()
+        {
+            var secret = Convert.ToBase64String(new HMACSHA256().Key);
+            Environment.SetEnvironmentVariable(KinlyApiSecretConfigKeyName, secret);
+            Environment.SetEnvironmentVariable(KinlyCallbackSecretConfigKeyName, secret);
+        }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
-        public async Task RegisterSecrets(TestContext context)
+        public void RegisterSecrets(TestContext context)
         {
-            var azureOptions = RegisterAzureSecrets(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterKinlySettings(context);
@@ -46,15 +63,6 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterDatabaseSettings(context);
             RegisterServer(context);
             RegisterApiSettings(context);
-            await GenerateBearerTokens(context, azureOptions);
-        }
-
-        private IOptions<AzureAdConfiguration> RegisterAzureSecrets(TestContext context)
-        {
-            var azureOptions = Options.Create(_configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
-            context.Config.AzureAdConfiguration = azureOptions.Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.AzureAdConfiguration);
-            return azureOptions;
         }
 
         private static void RegisterDefaultData(TestContext context)
@@ -116,23 +124,32 @@ namespace VideoApi.IntegrationTests.Hooks
             var webHostBuilder = WebHost.CreateDefaultBuilder()
                     .UseKestrel(c => c.AddServerHeader = false)
                     .UseEnvironment("Development")
-                    .UseStartup<Startup>();
+                    .UseStartup<Startup>()
+                    .ConfigureTestServices(services =>
+                    {
+                        services.AddAuthentication(options =>
+                        {
+                            options.DefaultScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                            options.DefaultAuthenticateScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                            options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                        }).AddFakeJwtBearer();
+
+                        var azureiteBlobConnectionString =
+                            "DefaultEndpointsProtocol=https;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=https://127.0.0.1:10000/devstoreaccount1;";
+                        var blobClientExtension = new BlobClientExtension();
+                        
+                        var vhBlobServiceClient = new BlobServiceClient(azureiteBlobConnectionString);
+                        var cvpBlobServiceClient = new BlobServiceClient(azureiteBlobConnectionString);
+                        
+                        services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, context.Config.Wowza, false, blobClientExtension));
+                        services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, context.Config.Cvp, false, blobClientExtension));
+                    });
             context.Server = new TestServer(webHostBuilder);
         }
 
         private static void RegisterApiSettings(TestContext context)
         {
             context.Response = new HttpResponseMessage(); 
-        }
-
-        private static async Task GenerateBearerTokens(TestContext context, IOptions<AzureAdConfiguration> azureOptions)
-        {
-            context.Tokens.VideoApiBearerToken = await new AzureTokenProvider(azureOptions).GetClientAccessToken(
-                azureOptions.Value.ClientId, azureOptions.Value.ClientSecret,
-                context.Config.Services.VideoApiResourceId);
-            context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
-
-            Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
         }
     }
 }
