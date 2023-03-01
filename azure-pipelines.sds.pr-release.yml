@@ -46,34 +46,46 @@ stages:
         chartPath: ${{ variables.chartPath }}
         chartValuesPath: ${{ variables.chartPath }}
 
-  - job: UnitTests
-    displayName: "Unit Tests"
+  - job: UnitAndIntegrationTests
+    displayName: "Unit & Integration Tests"
     steps:
-    - checkout: self
+      - checkout: self
 
-    - template: templates/sonarCloud/prepare.yml@azTemplates
-      parameters:
-        ExtraProperties: |
-          sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
-          sonar.coverage.exclusions=**/Program.cs,**/Startup.cs,**/VideoApi/Extensions/**,**/VideoApiI/Swagger/**,**/VideoApi/ConfigureServicesExtensions.cs,**/Testing.Common/**/*,**/VideoApi.Common/**,**/VideoApi.DAL/Mappings/**,**/VideoApi.DAL/SeedData/**,**/VideoApi.DAL/VideoApiDbContext.cs,**/VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,**/VideoApi.DAL/Migrations/*,**/VideoApi.Domain/Ddd/*,**/VideoApi.Domain/Validations/*
-          sonar.cpd.exclusions=**/VideoApi.DAL/Migrations/**
-          sonar.issue.ignore.multicriteria=e1
-          sonar.issue.ignore.multicriteria.e1.ruleKey=csharpsquid:S107
-          sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.cs
+      - bash: |
+              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
+            displayName: Add NuGet Feed Authentication
+            workingDirectory: ${{ variables.appName }}
 
-    - template: stages\dotnet-tests\unit-tests.yml@azTemplates
-      parameters:
-        #vstsFeedId: 'Video Hearings/vh-packages'
-        dotnetCoreVersion: '6.x'
-        nugetConfigPath: ${{ variables.appName }} # Temp - Change To SDS Feed When Possible.
-        unitTestProjectPath: "${{ variables.appName }}/${{ variables.appName }}.UnitTests"
-        coverletCoverageExclusions:
-          - '[VideoApi.*Tests?]*'
-          - '[VideoApi]Startup'
-          - '[VideoApi.Common]*'
-          - '[VideoApi.Common]*'
+      - task: DockerCompose@0
+            displayName: Run Unit & Integration Tests
+            env:
+              SONAR_HOST: https://sonarcloud.io
+              SONAR_ORG: hmcts
+              SONAR_TOKEN: $(SonarLoginToken)
+              SONAR_PROJECT_KEY: $(gitRepoName)
+              SONAR_PROJECT_VERSION: $(Build.BuildNumber)
+              SONAR_PROJECT_NAME: $(Build.Repository.Name)
+            inputs:
+              action: Run a Docker Compose command
+              dockerComposeFile: docker-compose.tests.yml
+              projectName: $(Build.Repository.Name)
+              dockerComposeCommand: up
+              arguments: --build --abort-on-container-exit
 
-    - template: templates/sonarCloud/runAnalysis.yml@azTemplates
+      - task: PublishCodeCoverageResults@1
+            displayName: "Publish code coverage report"
+            inputs:
+              codeCoverageTool: "Cobertura"
+              pathToSources: $(Build.SourcesDirectory)
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml"
+
+      - task: PublishTestResults@2
+        displayName: Publish test results
+        inputs:
+          testResultsFormat: "VSTest" # Options: JUnit, NUnit, VSTest, xUnit, cTest
+          testResultsFiles: "**/*TestResults.trx"
+          searchFolder: $(System.DefaultWorkingDirectory)/TestResults
+          failTaskOnFailedTests: true
 
 ####################################################
 # Pre Release Tasks. ###############################
