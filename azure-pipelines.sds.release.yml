@@ -43,15 +43,6 @@ stages:
             workingPath: $(System.DefaultWorkingDirectory)/VideoApi/VideoApi
             projectName: ${{ variables.efProjectName }}
             migrationsPath: VideoApi/VideoApi.DAL/Migrations
-
-      - job: package_nuget
-        displayName: "Package Nuget Packages"
-        steps:
-          - template: templates\dotnet\package-nuget-packages.yml@azTemplates
-            parameters:
-              nugetProjectPath: 'VideoApi/${{ variables.nuget_package_name }}'
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-              gitVersionConfigPath: ${{ variables.git_version_config_path }}
       
 #####################################################
 # Approval Gate for EF. #############################
@@ -195,30 +186,6 @@ stages:
                 - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
                   - 'latest'
                   - '${{ variables.releaseTagName }}'
-
-#####################################################
-# Deploy Nuget Packages. #########################
-  - stage: Push_Nuget
-    displayName: Deploy Nuget Packages
-    ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      condition: and(in(dependencies.Run_Entity_Framework_Demo.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'))
-      dependsOn:
-        - Run_Entity_Framework_Demo
-    ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
-      condition: in(dependencies.Approve_Helm_Release.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
-      dependsOn: Approve_Helm_Release
-    variables:
-      - template: variables/demo.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs: 
-      - job: Publish_Nuget
-        displayName: Publish NuGet Packages
-        steps:
-          - template: templates\dotnet\push-nuget-packages.yml@azTemplates
-            parameters:
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
 
 #########################################
 # Push Helm Charts to Repo. #############
