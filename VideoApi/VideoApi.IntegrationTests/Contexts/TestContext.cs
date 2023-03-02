@@ -1,9 +1,9 @@
 using System.Net.Http;
 using AcceptanceTests.Common.Api;
-using AcceptanceTests.Common.AudioRecordings;
 using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Testing.Common;
 using Testing.Common.Configuration;
 using VideoApi.DAL;
 using VideoApi.IntegrationTests.Helper;

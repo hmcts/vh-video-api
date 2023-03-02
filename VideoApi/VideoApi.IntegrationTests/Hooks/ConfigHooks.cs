@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using Azure.Storage.Blobs;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Moq;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
@@ -31,17 +33,15 @@ namespace VideoApi.IntegrationTests.Hooks
     {
         private const string KinlyApiSecretConfigKeyName = "KinlyConfiguration:ApiSecret";
         private const string KinlyCallbackSecretConfigKeyName = "KinlyConfiguration:CallbackSecret";
-        
-        private readonly IConfigurationRoot _configRoot;
+
+        private static IConfigurationRoot _configRoot;
 
         public ConfigHooks(TestContext context)
         {
-            AddRandomAccountKey();
-            _configRoot = ConfigRootBuilder.Build();
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
         }
-        
+
         /// <summary>
         /// This will insert a random callback secret per test run
         /// </summary>
@@ -55,6 +55,8 @@ namespace VideoApi.IntegrationTests.Hooks
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
         public void RegisterSecrets(TestContext context)
         {
+            AddRandomAccountKey();
+            _configRoot = ConfigRootBuilder.Build();
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterKinlySettings(context);
@@ -83,7 +85,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Services = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.Services);
         }
-        
+
         private void RegisterKinlySettings(TestContext context)
         {
             context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
@@ -134,22 +136,36 @@ namespace VideoApi.IntegrationTests.Hooks
                             options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
                         }).AddFakeJwtBearer();
 
-                        var azureiteBlobConnectionString =
-                            "DefaultEndpointsProtocol=https;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=https://127.0.0.1:10000/devstoreaccount1;";
+                        // Remove application IEmailProvider service
+                        var azStorageServices = services.Where(d => d.ServiceType == typeof(IAzureStorageService)).ToList();
+                        foreach (var azStorageService in azStorageServices)
+                        {
+                            services.Remove(azStorageService);
+                        }
+                        // if (azStorageService != null)
+                        // {
+                        //     services.Remove(azStorageService);
+                        // }
+                        var blobConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
+                        var connectionString =
+                            "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+                        var serviceClient = new BlobServiceClient(connectionString);
+                        
+                        NUnit.Framework.TestContext.WriteLine($"Blob connectionstring is {blobConnectionString}");
                         var blobClientExtension = new BlobClientExtension();
                         
-                        var vhBlobServiceClient = new BlobServiceClient(azureiteBlobConnectionString);
-                        var cvpBlobServiceClient = new BlobServiceClient(azureiteBlobConnectionString);
+                        // var vhBlobServiceClient = new BlobServiceClient(blobConnectionString);
+                        // var cvpBlobServiceClient = new BlobServiceClient(blobConnectionString);
                         
-                        services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(vhBlobServiceClient, context.Config.Wowza, false, blobClientExtension));
-                        services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(cvpBlobServiceClient, context.Config.Cvp, false, blobClientExtension));
+                        services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(serviceClient, context.Config.Wowza, false, blobClientExtension));
+                        services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(serviceClient, context.Config.Cvp, false, blobClientExtension));
                     });
             context.Server = new TestServer(webHostBuilder);
         }
 
         private static void RegisterApiSettings(TestContext context)
         {
-            context.Response = new HttpResponseMessage(); 
+            context.Response = new HttpResponseMessage();
         }
     }
 }

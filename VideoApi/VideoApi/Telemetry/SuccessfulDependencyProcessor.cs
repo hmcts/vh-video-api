@@ -17,7 +17,7 @@ namespace VideoApi.Telemetry
         {
             var dependency = item as DependencyTelemetry;
             
-            if (dependency?.ResultCode.Equals("404", StringComparison.OrdinalIgnoreCase) == true)
+            if (dependency?.ResultCode?.Equals("404", StringComparison.OrdinalIgnoreCase) == true)
             {
                 // To filter out external 404 errors.
                 return;

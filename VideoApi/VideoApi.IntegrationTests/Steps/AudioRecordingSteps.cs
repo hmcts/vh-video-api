@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AcceptanceTests.Common.AudioRecordings;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using Testing.Common;
 using Testing.Common.Configuration;
 using VideoApi.Contract.Responses;
 using VideoApi.IntegrationTests.Contexts;
@@ -33,34 +33,10 @@ namespace VideoApi.IntegrationTests.Steps
                 .SetStorageAccountName(_context.Config.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_context.Config.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_context.Config.Wowza.StorageContainerName)
+                .SetStorageEndpoint(_context.Config.Wowza.StorageEndpoint)
                 .CreateBlobClient(_context.Test.Conference.HearingRefId.ToString());
 
             await _context.AzureStorage.UploadAudioFileToStorage(file);
-            FileManager.RemoveLocalAudioFile(file);
-        }
-
-        [Given(@"Cvp has audio recordings")]
-        public async Task CvpHasAudioRecordings(Table table)
-        {
-            var parameters = table.CreateSet<CvpGetAudioFileParameters>();
-            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", Guid.NewGuid().ToString());
-
-            _context.AzureStorage = new AzureStorageManager()
-                .SetStorageAccountName(_context.Config.Cvp.StorageAccountName)
-                .SetStorageAccountKey(_context.Config.Cvp.StorageAccountKey)
-                .SetStorageContainerName(_context.Config.Cvp.StorageContainerName)
-                .CreateBlobContainerClient();
-
-            _context.Test.CvpFileNamesOnStorage = new List<string>();
-            
-            foreach (var cvp in parameters)
-            {
-                var filePathOnStorage = $"audiostream{cvp.CloudRoom}/{cvp.CaseReference}-{cvp.Date}-{Guid.NewGuid()}.mp4";
-                _context.Test.CvpFileNamesOnStorage.Add(filePathOnStorage);
-
-                await _context.AzureStorage.UploadFileToStorage(file, filePathOnStorage);
-            }
-            
             FileManager.RemoveLocalAudioFile(file);
         }
 

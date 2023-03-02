@@ -1,3 +1,4 @@
+@azurite
 Feature: Audio Recording
   In order to enable the audio recordings of hearings
   As an api service

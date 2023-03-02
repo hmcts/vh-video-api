@@ -28,11 +28,11 @@ services:
       - SONAR_HOST=${SONAR_HOST}
       - SONAR_PROJECT_VERSION=${SONAR_PROJECT_VERSION}
       - SONAR_PROJECT_NAME=${SONAR_PROJECT_NAME}
+      - Azure__StorageConnectionString=DefaultEndpointsProtocol=https;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=https://azurite:10000/devstoreaccount1;
     volumes:
       - ./TestResults:/TestResults:rw
       - ./Coverage:/Coverage:rw
       - ./:/app:rw
-      # - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
     depends_on:
       - test-db
       - azurite
@@ -43,7 +43,7 @@ services:
     image: mcr.microsoft.com/azure-storage/azurite
     hostname: azurite
     restart: always
-    command: "azurite --blobHost 127.0.0.1 --blobPort 10000"
+    command: "azurite --blobHost 0.0.0.0 --blobPort 10000"
     ports:
       - "10000:10000"
 
