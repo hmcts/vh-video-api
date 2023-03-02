@@ -346,7 +346,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the participants should be retrieved")]
         public async Task ThenTheParticipantsShouldBeRetrieved()
         {
-            var result = await Response.GetResponses<List<ParticipantSummaryResponse>>(_context.Response.Content);
+            var result = await ApiClientResponse.GetResponses<List<ParticipantSummaryResponse>>(_context.Response.Content);
             result.Should().NotBeNull();
             AssertParticipantSummaryResponse.ForParticipant(result[1]);
         }
@@ -356,7 +356,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"(.*) heartbeat should be retrieved")]
         public async Task ThenTheHeartbeatsShouldBeRetrieved(int count)
         {
-            var result = await Response.GetResponses<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
+            var result = await ApiClientResponse.GetResponses<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
             result.Should().HaveCount(count);
             if (count > 0)
             {

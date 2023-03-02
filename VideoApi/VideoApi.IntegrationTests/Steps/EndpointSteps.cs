@@ -216,7 +216,7 @@ namespace VideoApi.IntegrationTests.Steps
         
         private async Task AssertEndpointLength(int length)
         {
-            var result = await Response.GetResponses<IList<EndpointResponse>>(_context.Response.Content);
+            var result = await ApiClientResponse.GetResponses<IList<EndpointResponse>>(_context.Response.Content);
             result.Should().HaveCount(length);
         }
 

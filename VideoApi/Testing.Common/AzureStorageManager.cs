@@ -10,34 +10,13 @@ namespace Testing.Common
 {
     public class AzureStorageManager
     {
-        private string _storageAccountName;
-        private string _storageAccountKey;
         private string _storageContainerName;
-        private string _storageEndpoint;
         private BlobContainerClient _blobContainerClient;
         private BlobClient _blobClient;
-
-        public AzureStorageManager SetStorageAccountName(string storageAccountName)
-        {
-            _storageAccountName = storageAccountName;
-            return this;
-        }
-
-        public AzureStorageManager SetStorageAccountKey(string storageAccountKey)
-        {
-            _storageAccountKey = storageAccountKey;
-            return this;
-        }
-
+        
         public AzureStorageManager SetStorageContainerName(string storageContainerName)
         {
             _storageContainerName = storageContainerName;
-            return this;
-        }
-        
-        public AzureStorageManager SetStorageEndpoint(string storageEndpoint)
-        {
-            _storageEndpoint = storageEndpoint;
             return this;
         }
 
@@ -99,12 +78,17 @@ namespace Testing.Common
             TestContext.WriteLine("Deleted audio file");
         }
 
-        private BlobContainerClient CreateContainerClient()
+        public static BlobServiceClient CreateAzuriteBlobServiceClient()
         {
-            var storageSharedKeyCredential = new StorageSharedKeyCredential(_storageAccountName, _storageAccountKey);
             var connectionString =
                 "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
             var serviceClient = new BlobServiceClient(connectionString);
+            return serviceClient;
+        }
+
+        private BlobContainerClient CreateContainerClient()
+        {
+            var serviceClient = CreateAzuriteBlobServiceClient();
             
             var containerClient = serviceClient.GetBlobContainerClient(_storageContainerName);
             containerClient.CreateIfNotExists();

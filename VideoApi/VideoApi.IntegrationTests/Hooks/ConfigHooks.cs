@@ -142,10 +142,6 @@ namespace VideoApi.IntegrationTests.Hooks
                         {
                             services.Remove(azStorageService);
                         }
-                        // if (azStorageService != null)
-                        // {
-                        //     services.Remove(azStorageService);
-                        // }
                         var blobConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
                         var connectionString =
                             "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
@@ -153,9 +149,6 @@ namespace VideoApi.IntegrationTests.Hooks
                         
                         NUnit.Framework.TestContext.WriteLine($"Blob connectionstring is {blobConnectionString}");
                         var blobClientExtension = new BlobClientExtension();
-                        
-                        // var vhBlobServiceClient = new BlobServiceClient(blobConnectionString);
-                        // var cvpBlobServiceClient = new BlobServiceClient(blobConnectionString);
                         
                         services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(serviceClient, context.Config.Wowza, false, blobClientExtension));
                         services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(serviceClient, context.Config.Cvp, false, blobClientExtension));

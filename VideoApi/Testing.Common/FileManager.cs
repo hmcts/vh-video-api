@@ -8,10 +8,7 @@ namespace Testing.Common
     {
         public static string GetAssemblyDirectory()
         {
-            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var uri = new UriBuilder(codeBase);
-            var path = Uri.UnescapeDataString(uri.Path);
-            return Path.GetDirectoryName(path);
+            return AppDomain.CurrentDomain.BaseDirectory;
         }
 
         public static string CreateNewAudioFile(string originalFileName, string fileNameWithoutExtension, string path = "TestAudioFiles")

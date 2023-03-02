@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Responses;
-using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Api.Setup;
 using VideoApi.IntegrationTests.Helper;
@@ -46,7 +45,7 @@ public class GetInstantMessageHistoryTests : ApiTest
         result.IsSuccessStatusCode.Should().BeTrue();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        var messages = await Response.GetResponses<List<InstantMessageResponse>>(result.Content);
+        var messages = await ApiClientResponse.GetResponses<List<InstantMessageResponse>>(result.Content);
         messages.Should().NotBeNullOrEmpty();
         messages.Should().BeInDescendingOrder(x => x.TimeStamp);
 
@@ -75,7 +74,7 @@ public class GetInstantMessageHistoryTests : ApiTest
         // assert
         result.IsSuccessStatusCode.Should().BeTrue();
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        var messages = await Response.GetResponses<List<InstantMessageResponse>>(result.Content);
+        var messages = await ApiClientResponse.GetResponses<List<InstantMessageResponse>>(result.Content);
         messages.Should().BeEmpty();
     }
 }

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
@@ -12,10 +11,10 @@ namespace VideoApi.IntegrationTests.Api.Setup
 {
     public class ApiTest
     {
-        protected WebApplicationFactory<Program> Application = null!;
+        protected VhApiWebApplicationFactory Application = null!;
         protected TestDataManager TestDataManager = null!;
         protected DbContextOptions<VideoApiDbContext> DbOptions { get; private set; }
-        private IConfigurationRoot _configRoot;
+        protected IConfigurationRoot ConfigRoot;
         private string _databaseConnectionString;
         private KinlyConfiguration _kinlyConfiguration;
         private ServicesConfiguration _services;
@@ -24,7 +23,7 @@ namespace VideoApi.IntegrationTests.Api.Setup
         public void OneTimeSetup()
         {
             RegisterSettings();
-            Application = new VhApiWebApplicationFactory();
+            Application = new VhApiWebApplicationFactory(ConfigRoot);
             InitTestDataManager();
         }
 
@@ -42,11 +41,11 @@ namespace VideoApi.IntegrationTests.Api.Setup
 
         private void RegisterSettings()
         {
-            _configRoot = ConfigRootBuilder.Build();
-            _services = _configRoot.GetSection("Services").Get<ServicesConfiguration>();
-            _kinlyConfiguration = _configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>();
+            ConfigRoot = ConfigRootBuilder.Build();
+            _services = ConfigRoot.GetSection("Services").Get<ServicesConfiguration>();
+            _kinlyConfiguration = ConfigRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>();
             _kinlyConfiguration.CallbackUri = _services.CallbackUri;
-            _databaseConnectionString = _configRoot.GetConnectionString("VideoApi");
+            _databaseConnectionString = ConfigRoot.GetConnectionString("VideoApi");
         }
     }
 }
