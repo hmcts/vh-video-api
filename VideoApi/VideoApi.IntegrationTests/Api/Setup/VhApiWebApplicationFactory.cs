@@ -47,8 +47,8 @@ namespace VideoApi.IntegrationTests.Api.Setup
             {
                 services.Remove(azStorageService);
             }
-            
-            var serviceClient = AzureStorageManager.CreateAzuriteBlobServiceClient();
+            var azureStorageConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
+            var serviceClient = AzureStorageManager.CreateAzuriteBlobServiceClient(azureStorageConnectionString);
             var blobClientExtension = new BlobClientExtension();
 
             var wowzaConfiguration = _configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>();

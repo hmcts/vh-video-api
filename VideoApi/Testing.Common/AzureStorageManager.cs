@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure;
-using Azure.Storage;
 using Azure.Storage.Blobs;
 using NUnit.Framework;
 
@@ -10,6 +8,8 @@ namespace Testing.Common
 {
     public class AzureStorageManager
     {
+        private static string DefaultAzuriteConnectionString =
+            "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
         private string _storageContainerName;
         private BlobContainerClient _blobContainerClient;
         private BlobClient _blobClient;
@@ -20,16 +20,16 @@ namespace Testing.Common
             return this;
         }
 
-        public AzureStorageManager CreateBlobClient(string filePathWithoutExtension)
+        public AzureStorageManager CreateBlobClient(string filePathWithoutExtension, string connectionString)
         {
-            _blobContainerClient = CreateContainerClient();
+            _blobContainerClient = CreateContainerClient(connectionString);
             _blobClient = _blobContainerClient.GetBlobClient($"{filePathWithoutExtension}.mp4");
             return this;
         }
 
-        public AzureStorageManager CreateBlobContainerClient()
+        public AzureStorageManager CreateBlobContainerClient(string connectionString)
         {
-            _blobContainerClient = CreateContainerClient();
+            _blobContainerClient = CreateContainerClient(connectionString);
             return this;
         }
 
@@ -78,18 +78,17 @@ namespace Testing.Common
             TestContext.WriteLine("Deleted audio file");
         }
 
-        public static BlobServiceClient CreateAzuriteBlobServiceClient()
+        public static BlobServiceClient CreateAzuriteBlobServiceClient(string connectionString)
         {
-            var connectionString =
-                "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
-            var serviceClient = new BlobServiceClient(connectionString);
+            connectionString ??= DefaultAzuriteConnectionString; 
+            TestContext.WriteLine($"Azure Connection string {connectionString}");
+            var serviceClient = new BlobServiceClient(connectionString, new BlobClientOptions {Retry = { MaxRetries = 2}});
             return serviceClient;
         }
 
-        private BlobContainerClient CreateContainerClient()
+        private BlobContainerClient CreateContainerClient(string connectionString)
         {
-            var serviceClient = CreateAzuriteBlobServiceClient();
-            
+            var serviceClient = CreateAzuriteBlobServiceClient(connectionString);
             var containerClient = serviceClient.GetBlobContainerClient(_storageContainerName);
             containerClient.CreateIfNotExists();
             return containerClient;

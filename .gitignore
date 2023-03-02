@@ -345,3 +345,8 @@ secrets.dev.yaml
 .DS_Store
 Coverage/
 **/SpecFlow/
+azurite/__azurite_db_blob__.json
+azurite/__azurite_db_blob_extent__.json
+azurite/__azurite_db_queue__.json
+azurite/__azurite_db_queue_extent__.json
+azurite/__azurite_db_table__.json

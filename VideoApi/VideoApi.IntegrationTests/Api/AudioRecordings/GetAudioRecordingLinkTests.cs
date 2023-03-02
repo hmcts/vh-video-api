@@ -15,6 +15,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Api.AudioRecordings;
 
+[Category("azurite")]
 public class GetAudioRecordingLinkTests : ApiTest
 {
     private Conference _conference;
@@ -83,9 +84,10 @@ public class GetAudioRecordingLinkTests : ApiTest
     private async Task SeedAudioRecordingIntoStorage(Guid hearingRefId)
     {
         var wowzaConfiguration = ConfigRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>();
+        var azureStorageConnectionString = ConfigRoot.GetValue<string>("Azure:StorageConnectionString");
         _azureStorageManager = new AzureStorageManager()
             .SetStorageContainerName(wowzaConfiguration.StorageContainerName)
-            .CreateBlobClient(hearingRefId.ToString());
+            .CreateBlobClient(hearingRefId.ToString(), azureStorageConnectionString);
 
         var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", hearingRefId.ToString());
 
