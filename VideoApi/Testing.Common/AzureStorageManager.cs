@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using NUnit.Framework;
 
@@ -11,8 +13,23 @@ namespace Testing.Common
         private static string DefaultAzuriteConnectionString =
             "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
         private string _storageContainerName;
+        
+        private string _storageAccountName;
+        private string _storageAccountKey;
+        
         private BlobContainerClient _blobContainerClient;
         private BlobClient _blobClient;
+        
+        public AzureStorageManager()
+        {
+        }
+
+        public AzureStorageManager(string accountName, string accountKey, string containerName)
+        {
+            _storageAccountName = accountName;
+            _storageAccountKey = accountKey;
+            _storageContainerName = containerName;
+        }
         
         public AzureStorageManager SetStorageContainerName(string storageContainerName)
         {
@@ -20,6 +37,13 @@ namespace Testing.Common
             return this;
         }
 
+        public AzureStorageManager CreateBlobClient(string filePathWithoutExtension)
+        {
+            _blobContainerClient = CreateContainerClient();
+            _blobClient = _blobContainerClient.GetBlobClient($"{filePathWithoutExtension}.mp4");
+            return this;
+        }
+        
         public AzureStorageManager CreateBlobClient(string filePathWithoutExtension, string connectionString)
         {
             _blobContainerClient = CreateContainerClient(connectionString);
@@ -92,6 +116,14 @@ namespace Testing.Common
             var containerClient = serviceClient.GetBlobContainerClient(_storageContainerName);
             containerClient.CreateIfNotExists();
             return containerClient;
+        }
+        
+        private BlobContainerClient CreateContainerClient()
+        {
+            var storageSharedKeyCredential = new StorageSharedKeyCredential(_storageAccountName, _storageAccountKey);
+            var serviceEndpoint = $"https://{_storageAccountName}.blob.core.windows.net/";
+            var serviceClient = new BlobServiceClient(new Uri(serviceEndpoint), storageSharedKeyCredential);
+            return serviceClient.GetBlobContainerClient(_storageContainerName);
         }
     }
 }

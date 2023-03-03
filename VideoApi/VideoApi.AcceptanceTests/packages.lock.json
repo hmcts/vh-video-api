@@ -2145,6 +2145,13 @@
           "VideoApi.Domain": "[1.0.0, )"
         }
       },
+      "videoapi.client": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "[2.2.5, )",
+          "VideoApi.Contract": "[1.0.0, )"
+        }
+      },
       "videoapi.common": {
         "type": "Project",
         "dependencies": {

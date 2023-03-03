@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />
+    <ProjectReference Include="..\VideoApi.Client\VideoApi.Client.csproj" />
     <ProjectReference Include="..\VideoApi.Contract\VideoApi.Contract.csproj" />
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
   </ItemGroup>
