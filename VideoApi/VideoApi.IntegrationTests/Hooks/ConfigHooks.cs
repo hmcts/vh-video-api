@@ -115,7 +115,6 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.DbConnection = Options.Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.DbConnection);
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
-            dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VideoApi);
             context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
             context.TestDataManager = new TestDataManager(context.Config.KinlyConfiguration, context.VideoBookingsDbContextOptions);
@@ -136,24 +135,42 @@ namespace VideoApi.IntegrationTests.Hooks
                             options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
                         }).AddFakeJwtBearer();
 
-                        // Remove application IEmailProvider service
-                        var azStorageServices = services.Where(d => d.ServiceType == typeof(IAzureStorageService)).ToList();
-                        foreach (var azStorageService in azStorageServices)
-                        {
-                            services.Remove(azStorageService);
-                        }
-                        var blobConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
-                        var connectionString =
-                            "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
-                        var serviceClient = new BlobServiceClient(connectionString);
-                        
-                        NUnit.Framework.TestContext.WriteLine($"Blob connectionstring is {blobConnectionString}");
-                        var blobClientExtension = new BlobClientExtension();
-                        
-                        services.AddSingleton<IAzureStorageService>(x => new VhAzureStorageService(serviceClient, context.Config.Wowza, false, blobClientExtension));
-                        services.AddSingleton<IAzureStorageService>(x => new CvpAzureStorageService(serviceClient, context.Config.Cvp, false, blobClientExtension));
+                        RegisterAzuriteStorageService(context, services);
+
+                        RegisterStubs(services);
                     });
             context.Server = new TestServer(webHostBuilder);
+        }
+
+        private static void RegisterStubs(IServiceCollection services)
+        {
+            services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+            services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
+            services.AddScoped<IConsultationService, ConsultationServiceStub>();
+            services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
+        }
+
+        private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)
+        {
+            // Remove application IEmailProvider service
+            var azStorageServices = services.Where(d => d.ServiceType == typeof(IAzureStorageService)).ToList();
+            foreach (var azStorageService in azStorageServices)
+            {
+                services.Remove(azStorageService);
+            }
+
+            var blobConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
+            var connectionString =
+                "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+            var serviceClient = new BlobServiceClient(connectionString);
+
+            NUnit.Framework.TestContext.WriteLine($"Blob connectionstring is {blobConnectionString}");
+            var blobClientExtension = new BlobClientExtension();
+
+            services.AddSingleton<IAzureStorageService>(x =>
+                new VhAzureStorageService(serviceClient, context.Config.Wowza, false, blobClientExtension));
+            services.AddSingleton<IAzureStorageService>(x =>
+                new CvpAzureStorageService(serviceClient, context.Config.Cvp, false, blobClientExtension));
         }
 
         private static void RegisterApiSettings(TestContext context)

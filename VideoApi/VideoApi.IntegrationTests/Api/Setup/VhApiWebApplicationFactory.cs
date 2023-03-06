@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Net.Http;
-using Azure.Storage.Blobs;
 using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -35,6 +34,7 @@ namespace VideoApi.IntegrationTests.Api.Setup
                 }).AddFakeJwtBearer();
 
                 RegisterAzuriteStorageService(services);
+                RegisterStubs(services);
             });
             builder.UseEnvironment("Development");
         }
@@ -58,6 +58,14 @@ namespace VideoApi.IntegrationTests.Api.Setup
                 new VhAzureStorageService(serviceClient, wowzaConfiguration, false, blobClientExtension));
             services.AddSingleton<IAzureStorageService>(_ =>
                 new CvpAzureStorageService(serviceClient, cvpConfiguration, false, blobClientExtension));
+        }
+        
+        private void RegisterStubs(IServiceCollection services)
+        {
+            services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+            services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
+            services.AddScoped<IConsultationService, ConsultationServiceStub>();
+            services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
         }
 
         protected override void ConfigureClient(HttpClient client)
