@@ -2,7 +2,7 @@
 
 ## HMCTS
 
-[![Build Status](https://dev.azure.com/hmctsreform/VirtualHearings/_apis/build/status/Apps-CI/hmcts.vh-video-api?repoName=hmcts%2Fvh-video-api&branchName=master)](https://dev.azure.com/hmctsreform/VirtualHearings/_build/latest?definitionId=188&repoName=hmcts%2Fvh-video-api&branchName=master)
+[![Build Status](https://hmctsreform.visualstudio.com/VirtualHearings/_apis/build/status/Apps-CI/hmcts.vh-video-api?repoName=hmcts%2Fvh-video-api&branchName=master)](https://hmctsreform.visualstudio.com/VirtualHearings/_build/latest?definitionId=107&repoName=hmcts%2Fvh-video-api&branchName=master)
 
 [![VideoApi.Client package in vh-packages feed in Azure Artifacts](https://hmctsreform.feeds.visualstudio.com/3f69a23d-fbc7-4541-afc7-4cccefcad773/_apis/public/Packaging/Feeds/vh-packages/Packages/80002570-7840-44ca-8d91-58fe07774f40/Badge)](https://hmctsreform.visualstudio.com/VirtualHearings/_artifacts/feed/vh-packages/NuGet/VideoApi.Client?preferRelease=true)
 
@@ -10,7 +10,7 @@
 
 ## SDS
 
-[![Build Status](https://dev.azure.com/hmctsreform/VirtualHearings/_apis/build/status/Apps-CI/hmcts.vh-video-api?repoName=hmcts%2Fvh-video-api&branchName=master)](https://dev.azure.com/hmctsreform/VirtualHearings/_build/latest?definitionId=188&repoName=hmcts%2Fvh-video-api&branchName=master)
+[![Build Status](https://dev.azure.com/hmcts/Video%20Hearings/_apis/build/status/vh-video-api/hmcts.vh-video-api.sds.master-release?repoName=hmcts%2Fvh-video-api&branchName=master)](https://dev.azure.com/hmcts/Video%20Hearings/_build/latest?definitionId=668&repoName=hmcts%2Fvh-video-api&branchName=master)
 
 [![VideoApi.Client package in vh-packages feed in Azure Artifacts](https://feeds.dev.azure.com/hmcts/cf3711aa-2aed-4f62-81a8-2afaee0ce26d/_apis/public/Packaging/Feeds/vh-packages/Packages/2cd477d4-635e-48e1-987f-1d91d35179a6/Badge)](https://dev.azure.com/hmcts/Video%20Hearings/_artifacts/feed/vh-packages/NuGet/VideoApi.Client?preferRelease=true)
 

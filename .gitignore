@@ -342,6 +342,7 @@ ASALocalRun/
 values.dev.yaml
 secrets.dev.yaml
 
+.env
 .DS_Store
 Coverage/
 **/SpecFlow/
