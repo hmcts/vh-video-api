@@ -20,7 +20,7 @@ Scenario: Add an endpoint to an nonexistent conference
     Given I have a conference
     And I have add endpoint to a conference request with a Nonexistent conference id
     When I send the request to the endpoint
-    Then the response should have the status InternalServerError and success status False
+    Then the response should have the status BadRequest and success status False
 
 Scenario: Add an endpoint with invalid data to a valid conference 
     Given I have a conference
@@ -48,13 +48,13 @@ Scenario: Remove an endpoint from an nonexistent conference
     And I have endpoints stored against a conference
     And I have remove endpoint to a conference request with a Nonexistent conference id
     When I send the request to the endpoint
-    Then the response should have the status InternalServerError and success status False
+    Then the response should have the status BadRequest and success status False
 
 Scenario: Remove an nonexistent endpoint from a valid conference 
     Given I have a conference
     And I have remove nonexistent endpoint to a conference request with a valid conference id
     When I send the request to the endpoint
-    Then the response should have the status InternalServerError and success status False
+    Then the response should have the status BadRequest and success status False
 
 Scenario: Update an endpoint to a valid conference 
     Given I have a conference
@@ -83,13 +83,13 @@ Scenario: Update an endpoint to an nonexistent conference
     And I have endpoints stored against a conference
     And I have update endpoint to a conference request with a Nonexistent conference id
     When I send the request to the endpoint
-    Then the response should have the status InternalServerError and success status False
+    Then the response should have the status BadRequest and success status False
 
 Scenario: Update an nonexistent endpoint from a valid conference 
     Given I have a conference
     And I have update nonexistent endpoint to a conference request with a valid conference id
     When I send the request to the endpoint
-    Then the response should have the status InternalServerError and success status False
+    Then the response should have the status BadRequest and success status False
 
 Scenario: Get endpoints for an existing conference
   Given I have a conference
