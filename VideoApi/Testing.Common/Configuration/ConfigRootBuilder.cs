@@ -9,6 +9,7 @@ namespace Testing.Common.Configuration
         {
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.Development.json", true)
                 .AddJsonFile("appsettings.Production.json", true); // CI write variables in the pipeline to this file
 
             if (useSecrets)
