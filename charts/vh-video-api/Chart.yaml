@@ -8,5 +8,5 @@ maintainers:
   - name: VH Devops 
 dependencies:
   - name: java
-    version: 3.7.9
+    version: 3.8.0
     repository: https://hmctspublic.azurecr.io/helm/v1/repo/
