@@ -1206,8 +1206,8 @@
       },
       "System.ComponentModel.Annotations": {
         "type": "Transitive",
-        "resolved": "4.7.0",
-        "contentHash": "0YFqjhp/mYkDGpU0Ye1GjE53HMp9UVfGN7seGpAMttAC0C40v5gw598jCgpbBLMmCo0E5YRLBv5Z2doypO49ZQ=="
+        "resolved": "5.0.0",
+        "contentHash": "dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg=="
       },
       "System.ComponentModel.Primitives": {
         "type": "Transitive",
@@ -2166,7 +2166,7 @@
       "videoapi.contract": {
         "type": "Project",
         "dependencies": {
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "System.ComponentModel.Annotations": "[5.0.0, )"
         }
       },
       "videoapi.domain": {
@@ -2174,7 +2174,7 @@
         "dependencies": {
           "Enums.NET": "[4.0.0, )",
           "RandomStringCreator": "[2.0.0, )",
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "System.ComponentModel.Annotations": "[5.0.0, )"
         }
       }
     }
