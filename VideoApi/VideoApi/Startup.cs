@@ -51,7 +51,7 @@ namespace VideoApi
                         .AllowCredentials();
                 }));
 
-            services.AddApplicationInsightsTelemetry(options => options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddApplicationInsightsTelemetryProcessor<SuccessfulDependencyProcessor>();
 
             services.AddJsonOptions();
