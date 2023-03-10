@@ -53,7 +53,7 @@ stages:
       parameters:
         #vstsFeedId: 'Video Hearings/vh-packages'
         dotnetCoreVersion: '6.x'
-        nugetConfigPath: ${{ variables.appName }} # Temp - Change To SDS Feed When Possible.
+        nugetConfigPath: ${{ variables.appName }}
         unitTestProjectPath: "${{ variables.appName }}/${{ variables.appName }}.UnitTests"
         coverletCoverageExclusions:
           - '[VideoApi.*Tests?]*'
@@ -136,7 +136,7 @@ stages:
         githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
     
     - bash: |
-        sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
+        sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
       displayName: Add NuGet Feed Authentication
       workingDirectory: ${{ variables.appName }}
 
