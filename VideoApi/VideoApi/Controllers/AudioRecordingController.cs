@@ -127,18 +127,23 @@ namespace VideoApi.Controllers
         [HttpGet("audiostreams/{hearingId}/{singleWowzaApp?}")]
         [OpenApiOperation("GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId, bool singleWowzaApp = true)
         {
             _logger.LogDebug("GetAudioStreamInfo");
-            
+
             var applicationName = singleWowzaApp ? _audioPlatformService.ApplicationName : hearingId.ToString();
-            
-            var response = await _audioPlatformService.GetAudioStreamInfoAsync(applicationName, hearingId.ToString());
 
-            if (response == null) return NotFound();
-
-            return Ok(AudioRecordingMapper.MapToAudioStreamInfo(response));
+            try
+            {
+                var response = await _audioPlatformService.GetAudioStreamInfoAsync(applicationName, hearingId.ToString());
+                return Ok(AudioRecordingMapper.MapToAudioStreamInfo(response));
+            }
+            catch (AggregateException agrEx)
+            {
+                var exceptions = agrEx.InnerExceptions.Select(e => e.Message);
+                return NotFound(exceptions);
+            }
         }
 
         /// <summary>

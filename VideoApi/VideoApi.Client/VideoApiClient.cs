@@ -1546,12 +1546,12 @@ namespace VideoApi.Client
                         else
                         if (status_ == 404)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Anonymous>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiException<System.Collections.Generic.ICollection<Anonymous>>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
