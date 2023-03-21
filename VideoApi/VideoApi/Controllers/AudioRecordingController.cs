@@ -41,6 +41,7 @@ namespace VideoApi.Controllers
             _logger = logger;
             _queryHandler = queryHandler;
         }
+        
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
         /// Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
@@ -104,6 +105,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
         }
+        
         #region CVP
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
@@ -234,6 +236,7 @@ namespace VideoApi.Controllers
             return conference;
         }
         #endregion
+        
         #region Obsolete
         /// <summary>
         /// Gets the audio application info for the conference by hearingId
