@@ -332,7 +332,6 @@ namespace VideoApi.Controllers
 
             return Ok(AudioRecordingMapper.MapToAudioStreamMonitoringInfo(response));
         }
-
         #endregion
     }
 }
