@@ -6,8 +6,7 @@ using VideoApi.Services.Responses;
 namespace VideoApi.Services.Contracts
 {
     public interface IAudioPlatformService
-    {    
-        
+    {
         /// <summary>
         /// Returns the status of the in-progress hearing recorder. Only requires that one node return a successful response
         /// Will throw aggregate exception if the streaming recorder can not be found on both Wowza Vms
