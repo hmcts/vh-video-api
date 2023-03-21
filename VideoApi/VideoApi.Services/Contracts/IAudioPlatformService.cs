@@ -35,10 +35,10 @@ namespace VideoApi.Services.Contracts
         /// </summary>
         Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId);     
         
-        [Obsolete]
+        [Obsolete("Not used in the current operations process")]
         Task<WowzaGetApplicationResponse> GetAudioApplicationInfoAsync(Guid? hearingId = null);   
         
-        [Obsolete]   
+        [Obsolete("Not used in the current operations process")]  
         Task<WowzaMonitorStreamResponse> GetAudioStreamMonitoringInfoAsync(Guid hearingId); 
     }
 }
