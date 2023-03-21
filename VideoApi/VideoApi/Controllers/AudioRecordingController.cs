@@ -41,82 +41,6 @@ namespace VideoApi.Controllers
             _logger = logger;
             _queryHandler = queryHandler;
         }
-        
-        /// <summary>
-        /// Gets the audio application info for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
-        /// <returns></returns>
-        [HttpGet("audioapplications/{hearingId}")]
-        [OpenApiOperation("GetAudioApplicationWithHearingId")]
-        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
-        public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
-        {
-            _logger.LogDebug("GetAudioApplicationWithHearingId");
-
-            var response = await _audioPlatformService.GetAudioApplicationInfoAsync(hearingId);
-
-            if (response == null) return NotFound();
-
-            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(response));
-        }
-                
-        /// <summary>
-        /// Gets the audio application info
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("audioapplications")]
-        [OpenApiOperation("GetAudioApplication")]
-        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
-        public async Task<IActionResult> GetAudioApplicationAsync()
-        {
-            _logger.LogDebug("GetAudioApplication");
-            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(await _audioPlatformService.GetAudioApplicationInfoAsync()));
-        }
-  
-        /// <summary>
-        /// Deletes the audio application for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
-        /// <returns></returns>
-        [HttpDelete("audioapplications/{hearingId}")]
-        [OpenApiOperation("DeleteAudioApplication")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
-        public async Task<IActionResult> DeleteAudioApplicationAsync(Guid hearingId)
-        {
-            _logger.LogDebug("DeleteAudioApplication");
-
-            try
-            {
-                var conference = await GetConference(hearingId);
-
-                //Hearings recorded to single app instance to be skipped (only one shared application, so cant be deleted)
-                if (conference.IngestUrl.Contains(_audioPlatformService.ApplicationName))
-                    return NoContent();
-                
-                await EnsureAudioFileExists(conference, _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh));
-            }
-            catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
-            {
-                _logger.LogError(ex, ex.Message);
-                return NotFound();
-            }
-
-            var response = await _audioPlatformService.DeleteAudioApplicationAsync(hearingId);
-
-            if (!response.Success)
-            {
-                return StatusCode((int)response.StatusCode, response.Message);
-            }
-            return NoContent();
-        }
-
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
         /// Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
@@ -144,27 +68,6 @@ namespace VideoApi.Controllers
                 var exceptions = agrEx.InnerExceptions.Select(e => e.Message);
                 return NotFound(exceptions);
             }
-        }
-
-        /// <summary>
-        /// Gets the audio stream for monitoring the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
-        /// <returns>AudioStreamInfoResponse</returns>
-        [HttpGet("audiostreams/{hearingId}/monitoring")]
-        [OpenApiOperation("GetAudioStreamMonitoringInfo")]
-        [ProducesResponseType(typeof(AudioStreamMonitoringInfo), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
-        public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
-        {
-            _logger.LogDebug("GetAudioStreamMonitoringInfo");
-
-            var response = await _audioPlatformService.GetAudioStreamMonitoringInfoAsync(hearingId);
-
-            if (response == null) return NotFound();
-
-            return Ok(AudioRecordingMapper.MapToAudioStreamMonitoringInfo(response));
         }
 
         /// <summary>
@@ -201,7 +104,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
         }
-
+        #region CVP
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
         /// Note: Only used by the admin web. Need to discuss if we still need this
@@ -330,5 +233,103 @@ namespace VideoApi.Controllers
                 throw new ConferenceNotFoundException(hearingId);
             return conference;
         }
+        #endregion
+        #region Obsolete
+        /// <summary>
+        /// Gets the audio application info for the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
+        /// <returns></returns>
+        [HttpGet("audioapplications/{hearingId}")]
+        [OpenApiOperation("GetAudioApplicationWithHearingId")]
+        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        public async Task<IActionResult> GetAudioApplicationAsync(Guid hearingId)
+        {
+            _logger.LogDebug("GetAudioApplicationWithHearingId");
+
+            var response = await _audioPlatformService.GetAudioApplicationInfoAsync(hearingId);
+
+            if (response == null) return NotFound();
+
+            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(response));
+        }
+                
+        /// <summary>
+        /// Gets the audio application info
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("audioapplications")]
+        [OpenApiOperation("GetAudioApplication")]
+        [ProducesResponseType(typeof(AudioApplicationInfoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        public async Task<IActionResult> GetAudioApplicationAsync()
+        {
+            _logger.LogDebug("GetAudioApplication");
+            return Ok(AudioRecordingMapper.MapToAudioApplicationInfo(await _audioPlatformService.GetAudioApplicationInfoAsync()));
+        }
+        
+        /// <summary>
+        /// Deletes the audio application for the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
+        /// <returns></returns>
+        [HttpDelete("audioapplications/{hearingId}")]
+        [OpenApiOperation("DeleteAudioApplication")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        public async Task<IActionResult> DeleteAudioApplicationAsync(Guid hearingId)
+        {
+            _logger.LogDebug("DeleteAudioApplication");
+
+            try
+            {
+                var conference = await GetConference(hearingId);
+
+                //Hearings recorded to single app instance to be skipped (only one shared application, so cant be deleted)
+                if (conference.IngestUrl.Contains(_audioPlatformService.ApplicationName))
+                    return NoContent();
+                
+                await EnsureAudioFileExists(conference, _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh));
+            }
+            catch (Exception ex) when (ex is AudioPlatformFileNotFoundException || ex is ConferenceNotFoundException)
+            {
+                _logger.LogError(ex, ex.Message);
+                return NotFound();
+            }
+
+            var response = await _audioPlatformService.DeleteAudioApplicationAsync(hearingId);
+
+            if (!response.Success)
+            {
+                return StatusCode((int)response.StatusCode, response.Message);
+            }
+            return NoContent();
+        }
+        /// <summary>
+        /// Gets the audio stream for monitoring the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
+        /// <returns>AudioStreamInfoResponse</returns>
+        [HttpGet("audiostreams/{hearingId}/monitoring")]
+        [OpenApiOperation("GetAudioStreamMonitoringInfo")]
+        [ProducesResponseType(typeof(AudioStreamMonitoringInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
+        public async Task<IActionResult> GetAudioStreamMonitoringInfoAsync(Guid hearingId)
+        {
+            _logger.LogDebug("GetAudioStreamMonitoringInfo");
+
+            var response = await _audioPlatformService.GetAudioStreamMonitoringInfoAsync(hearingId);
+
+            if (response == null) return NotFound();
+
+            return Ok(AudioRecordingMapper.MapToAudioStreamMonitoringInfo(response));
+        }
+
+        #endregion
     }
 }
