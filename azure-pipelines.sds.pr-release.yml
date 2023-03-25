@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: sonar-for-docker
       endpoint: hmcts
 
 trigger: none
