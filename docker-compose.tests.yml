@@ -23,11 +23,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__VideoApi=Data Source=test-db;Database=VideoApi;User Id=SA;Password=R4ndomP@assword;Trust Server Certificate=True;Encrypt=False
-      - SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY}
-      - SONAR_TOKEN=${SONAR_TOKEN}
-      - SONAR_HOST=${SONAR_HOST}
-      - SONAR_PROJECT_VERSION=${SONAR_PROJECT_VERSION}
-      - SONAR_PROJECT_NAME=${SONAR_PROJECT_NAME}
       - Azure__StorageConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
     volumes:
       - ./TestResults:/TestResults:rw

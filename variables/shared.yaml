@@ -7,8 +7,6 @@ parameters:
     default: ""
 
 variables:
-  - group: Sonar-Poc
-
   - name: appName
     value: VideoApi
 
