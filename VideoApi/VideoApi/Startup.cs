@@ -53,7 +53,7 @@ namespace VideoApi
 
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddApplicationInsightsTelemetryProcessor<SuccessfulDependencyProcessor>();
-
+            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["LaunchDarkly:SdkKey"]));
             services.AddJsonOptions();
             RegisterSettings(services);
             bool useStub = !bool.TryParse(Configuration["UseStub"], out useStub) || useStub;
