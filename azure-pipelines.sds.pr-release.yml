@@ -112,7 +112,7 @@ stages:
       - template: variables/shared.yaml
         parameters:
           env: ${{ variables.env }}
-          prnumber: ${{ variables.pr_number }}
+          prNumber: ${{ variables.pr_number }}
       - group: vh-github-app-credentials
     jobs:
       - job: Dock
@@ -164,7 +164,7 @@ stages:
       - template: variables/shared.yaml
         parameters:
           env: ${{ variables.env }}
-          prnumber: ${{ variables.pr_number }}
+          prNumber: ${{ variables.pr_number }}
     jobs:
       - job: Run_Entity_Framework_Dev
         pool:
@@ -197,7 +197,7 @@ stages:
       - template: variables/shared.yaml
         parameters:
           env: ${{ variables.env }}
-          prnumber: ${{ variables.pr_number }}
+          prNumber: ${{ variables.pr_number }}
       - name: dnsRecordName
         value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
     jobs:
@@ -238,7 +238,6 @@ stages:
               dnsRecordName: ${{ variables.dnsRecordName }}
               dnsZone: ${{ variables.dnsZone }}
               env: ${{ variables.env }}
-              prnumber: ${{ variables.pr_number }}
               chartName: ${{ variables.chartName }}
               chartPath: ${{ variables.chartPath }}
               subscriptionName: "${{ variables.subscriptionName }}"
@@ -257,7 +256,7 @@ stages:
       - template: variables/shared.yaml
         parameters:
           env: ${{ variables.env }}
-          prnumber: ${{ variables.pr_number }}
+          prNumber: ${{ variables.pr_number }}
     jobs:
       - job: Publish_Nuget
         displayName: Publish NuGet Packages
@@ -277,7 +276,7 @@ stages:
       - template: variables/shared.yaml
         parameters:
           env: ${{ variables.env }}
-          prnumber: ${{ variables.pr_number }}
+          prNumber: ${{ variables.pr_number }}
       - name: dnsRecordName
         value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
     jobs:
@@ -318,7 +317,7 @@ stages:
                 - name: Services:CallbackUri
                   value: $(CallbackUri)
                 - name: Services:VideoApiUrl
-                  value: "https://vh-video-api-pr-$(System.PullRequest.PullRequestNumber).dev.platform.hmcts.net"
+                  value: "https://vh-video-api-pr-${{ variables.pr_number }}.dev.platform.hmcts.net"
 
                 # Wowza Configuration
                 - name: WowzaConfiguration:RestApiEndpoints
