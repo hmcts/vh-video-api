@@ -36,6 +36,20 @@
           "FluentValidation.DependencyInjectionExtensions": "11.2.1"
         }
       },
+      "LaunchDarkly.ServerSdk": {
+        "type": "Direct",
+        "requested": "[7.0.2, )",
+        "resolved": "7.0.2",
+        "contentHash": "EfTZj5N9R45pPA+1kTbU8SI1fwxX9exDEcyZ4ZmQYiyAIebGsbfUAld7IOa/C0gxgYK0sH0qQv9q+d/3ZsLLnw==",
+        "dependencies": {
+          "LaunchDarkly.Cache": "1.0.2",
+          "LaunchDarkly.CommonSdk": "6.0.1",
+          "LaunchDarkly.EventSource": "5.0.1",
+          "LaunchDarkly.InternalSdk": "3.1.1",
+          "LaunchDarkly.Logging": "2.0.0",
+          "System.Collections.Immutable": "1.7.1"
+        }
+      },
       "MicroElements.Swashbuckle.FluentValidation": {
         "type": "Direct",
         "requested": "[5.7.0, )",
@@ -237,6 +251,45 @@
         "type": "Transitive",
         "resolved": "2.8.26",
         "contentHash": "OiKusGL20vby4uDEswj2IgkdchC1yQ6rwbIkZDVBPIR6al2b7n3pC91elBul9q33KaBgRKhbZH3+2Ur4fnWx2A=="
+      },
+      "LaunchDarkly.Cache": {
+        "type": "Transitive",
+        "resolved": "1.0.2",
+        "contentHash": "0bEnUVFVeW1TTDXb/bW6kS3FLQTLeGtw7Xh8yt6WNO56utVmtgcrMLvcnF6yeTn+N4FXrKfW09KkLNmK8YYQvw=="
+      },
+      "LaunchDarkly.CommonSdk": {
+        "type": "Transitive",
+        "resolved": "6.0.1",
+        "contentHash": "VznCYcyVawa93/hIv9i8mIGSskvMJ4rN9fkwkRU5GDnFlE69UFf2whQ5N3OrLmh4Or5dxJ0k7mnQEIxBf+eosw==",
+        "dependencies": {
+          "System.Collections.Immutable": "1.7.1"
+        }
+      },
+      "LaunchDarkly.EventSource": {
+        "type": "Transitive",
+        "resolved": "5.0.1",
+        "contentHash": "DN44Ry5M4lyrjiF7LEu0Ijco7Wm8R7mJopN+giYsYjkQlszsXdFvm3POoehIDAOtL1HHl5bZvF9k9xK034u3IA==",
+        "dependencies": {
+          "LaunchDarkly.Logging": "[1.0.1, 3.0.0)"
+        }
+      },
+      "LaunchDarkly.InternalSdk": {
+        "type": "Transitive",
+        "resolved": "3.1.1",
+        "contentHash": "CR5jPlsRDsmP3v8cwUvbUD/g0E31T6cnbvTHAjGVZa701djvOUEW0Acr0EurEyCHQlMhOyGsYqP2kZwBhZPRWw==",
+        "dependencies": {
+          "LaunchDarkly.CommonSdk": "6.0.0",
+          "LaunchDarkly.Logging": "[2.0.0, 3.0.0)",
+          "System.Collections.Immutable": "1.7.1"
+        }
+      },
+      "LaunchDarkly.Logging": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "lsLKNqAZ7HIlkdTIrf4FetfRA1SUDE3WlaZQn79aSVkLjYWEhUhkDDK7hORGh4JoA3V2gXN+cIvJQax2uR/ijA==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0"
+        }
       },
       "Microsoft.ApplicationInsights": {
         "type": "Transitive",
