@@ -42,7 +42,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Scrutor" Version="3.3.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.54.0.64047">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.56.0.67649">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
