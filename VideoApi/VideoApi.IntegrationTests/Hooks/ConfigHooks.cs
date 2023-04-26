@@ -80,13 +80,13 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
         }
 
-        private void RegisterHearingServices(TestContext context)
+        private static void RegisterHearingServices(TestContext context)
         {
             context.Config.Services = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.Services);
         }
 
-        private void RegisterKinlySettings(TestContext context)
+        private static void RegisterKinlySettings(TestContext context)
         {
             context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
@@ -94,7 +94,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.KinlyConfiguration.KinlyApiUrl.Should().NotBeEmpty();
         }
 
-        private void RegisterWowzaSettings(TestContext context)
+        private static void RegisterWowzaSettings(TestContext context)
         {
             context.Config.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
             context.Config.Wowza.StorageAccountKey.Should().NotBeNullOrEmpty();
@@ -102,7 +102,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Wowza.StorageContainerName.Should().NotBeNullOrEmpty();
         }
 
-        private void RegisterCvpSettings(TestContext context)
+        private static void RegisterCvpSettings(TestContext context)
         {
             context.Config.Cvp = Options.Create(_configRoot.GetSection("CvpConfiguration").Get<CvpConfiguration>()).Value;
             context.Config.Cvp.StorageAccountKey.Should().NotBeNullOrEmpty();
@@ -110,7 +110,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Cvp.StorageContainerName.Should().NotBeNullOrEmpty();
         }
 
-        private void RegisterDatabaseSettings(TestContext context)
+        private static void RegisterDatabaseSettings(TestContext context)
         {
             context.Config.DbConnection = Options.Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.DbConnection);
@@ -160,9 +160,11 @@ namespace VideoApi.IntegrationTests.Hooks
             }
 
             var blobConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
-#pragma warning disable S6338 // This the default test secret available in public MS documentation
+#pragma warning disable
+            // This the default test secret available in public MS documentation
             var connectionString =
                 "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+#pragma warning restore
             var serviceClient = new BlobServiceClient(connectionString);
 
             NUnit.Framework.TestContext.WriteLine($"Blob connectionstring is {blobConnectionString}");

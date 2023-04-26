@@ -60,7 +60,7 @@ namespace VideoApi.IntegrationTests.Api.Setup
                 new CvpAzureStorageService(serviceClient, cvpConfiguration, false, blobClientExtension));
         }
         
-        private void RegisterStubs(IServiceCollection services)
+        private static void RegisterStubs(IServiceCollection services)
         {
             services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();

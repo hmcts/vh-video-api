@@ -10,9 +10,11 @@ namespace Testing.Common
 {
     public class AzureStorageManager
     {
-#pragma warning disable S6338 // This the default test secret available in public MS documentation
+#pragma warning disable
+        // This the default test secret available in public MS documentation
         private static readonly string DefaultAzuriteConnectionString =
             "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+#pragma warning restore
         private string _storageContainerName;
         
         private readonly string _storageAccountName;
