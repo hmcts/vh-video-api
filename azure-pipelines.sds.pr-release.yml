@@ -60,7 +60,6 @@ stages:
                 sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
                 sonar.exclusions=**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi/Swagger/**/*, VideoApi/VideoApi.DAL/Migrations/*
                 sonar.coverage.exclusions=**/VideoApi/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi.Common/**/*, **/VideoApi.IntegrationTests/**/*, **/VideoApi.UnitTests/**/*, **/VideoApi/Extensions/*
-                sonar.verbose=true
 
   ####################################################
   # Pre Release Tasks. ###############################
