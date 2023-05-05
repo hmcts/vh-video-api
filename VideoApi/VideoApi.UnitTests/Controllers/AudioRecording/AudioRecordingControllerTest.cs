@@ -72,9 +72,9 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         {
             _audioPlatformService
                .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>()))
-               .ReturnsAsync((WowzaGetStreamRecorderResponse)null);
+               .Throws<AggregateException>();
 
-            var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as NotFoundResult;
+            var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as NotFoundObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
