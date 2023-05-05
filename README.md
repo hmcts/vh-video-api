@@ -1,5 +1,21 @@
 # vh-video-api
 
+## HMCTS
+
+[![Build Status](https://hmctsreform.visualstudio.com/VirtualHearings/_apis/build/status/Apps-CI/hmcts.vh-video-api?repoName=hmcts%2Fvh-video-api&branchName=master)](https://hmctsreform.visualstudio.com/VirtualHearings/_build/latest?definitionId=107&repoName=hmcts%2Fvh-video-api&branchName=master)
+
+[![VideoApi.Client package in vh-packages feed in Azure Artifacts](https://hmctsreform.feeds.visualstudio.com/3f69a23d-fbc7-4541-afc7-4cccefcad773/_apis/public/Packaging/Feeds/vh-packages/Packages/80002570-7840-44ca-8d91-58fe07774f40/Badge)](https://hmctsreform.visualstudio.com/VirtualHearings/_artifacts/feed/vh-packages/NuGet/VideoApi.Client?preferRelease=true)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vh-video-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=vh-video-api)
+
+## SDS
+
+[![Build Status](https://dev.azure.com/hmcts/Video%20Hearings/_apis/build/status/vh-video-api/hmcts.vh-video-api.sds.master-release?repoName=hmcts%2Fvh-video-api&branchName=master)](https://dev.azure.com/hmcts/Video%20Hearings/_build/latest?definitionId=668&repoName=hmcts%2Fvh-video-api&branchName=master)
+
+[![VideoApi.Client package in vh-packages feed in Azure Artifacts](https://feeds.dev.azure.com/hmcts/cf3711aa-2aed-4f62-81a8-2afaee0ce26d/_apis/public/Packaging/Feeds/vh-packages/Packages/2cd477d4-635e-48e1-987f-1d91d35179a6/Badge)](https://dev.azure.com/hmcts/Video%20Hearings/_artifacts/feed/vh-packages/NuGet/VideoApi.Client?preferRelease=true)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vh-video-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=vh-video-api)
+
 ## Running Sonar Analysis
 
 ``` bash
@@ -24,17 +40,18 @@ dotnet test --no-build VideoApi.IntegrationTests/VideoApi.IntegrationTests.cspro
 Under the unit test project directory
 
 ``` bash
-dotnet reportgenerator "-reports:../Artifacts/Coverage/coverage.opencover.xml" "-targetDir:../Artifacts/Coverage/Report" -reporttypes:HtmlInline_AzurePipelines
+dotnet reportgenerator "-reports:./Coverage/coverage.opencover.xml" "-targetDir:./Artifacts/Coverage/Report" -reporttypes:Html -sourcedirs:./VideoApi
 ```
 
-##Branch name git hook will run on pre commit and control the standard for new branch name.
+## Branch name git hook will run on pre commit and control the standard for new branch name.
 
 The branch name should start with: feature/VIH-XXXX-branchName  (X - is digit).
 If git version is less than 2.9 the pre-commit file from the .githooks folder need copy to local .git/hooks folder.
 To change git hooks directory to directory under source control run (works only for git version 2.9 or greater) :
 $ git config core.hooksPath .githooks
 
-##Commit message 
+## Commit message 
+
 The commit message will be validated by prepare-commit-msg hook.
 The commit message format should start with : 'feature/VIH-XXXX : ' folowing by 8 or more characters description of commit, otherwise the warning message will be presented.
 
@@ -54,30 +71,12 @@ Update following configuration under appsettings.json under VideoApi.AcceptanceT
 
 Note: Ensure you have Docker desktop engine installed and setup
 
-## Run Stryker
+### Running all tests in Docker
 
-To run stryker mutation test, go to UnitTest folder under command prompt and run the following command
+Open a terminal at the root level of the repository and run the following command
 
-```bash
-dotnet stryker
+```console
+docker-compose -f "docker-compose.tests.yml" up --build --abort-on-container-exit
 ```
 
-From the results look for line(s) of code highlighted with Survived\No Coverage and fix them.
-
-
-If in case you have not installed stryker previously, please use one of the following commands
-
-### Global
-```bash
-dotnet tool install -g dotnet-stryker
-```
-### Local
-```bash
-dotnet tool install dotnet-stryker
-```
-
-To update latest version of stryker please use the following command
-
-```bash
-dotnet tool update --global dotnet-stryker
-```
+> You may need to create a `.env` file to store the environment variables
