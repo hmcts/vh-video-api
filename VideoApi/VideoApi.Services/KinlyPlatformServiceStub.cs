@@ -7,7 +7,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 

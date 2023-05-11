@@ -5,7 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {

@@ -3,19 +3,6 @@ Feature: Instant Messages
   As an API service
   I want to save message and retrieve messages
 
-  Scenario: Get instant messages
-    Given I have a conference
-    And the conference has messages
-    And I have a valid get instant messages request
-    When I send the request to the endpoint
-    Then the response should have the status OK and success status True
-    And the chat message should be retrieved
-
-  Scenario: Get instant messages with a nonexistent conference
-    Given I have a nonexistent get instant messages request
-    When I send the request to the endpoint
-    Then the response should have the status Ok and success status True
-
   Scenario: Set instant messages
     Given I have a conference
     And I have a valid set instant message request

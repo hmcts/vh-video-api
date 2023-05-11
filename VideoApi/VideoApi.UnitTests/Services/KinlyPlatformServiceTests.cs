@@ -16,7 +16,7 @@ using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 

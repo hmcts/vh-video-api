@@ -28,7 +28,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the pexip service configuration should be retrieved")]
         public async Task ThenThePexipServiceConfigurationShouldBeRetrieved()
         {
-            var pexipConfig = await Response.GetResponses<PexipConfigResponse>(_context.Response.Content);
+            var pexipConfig = await ApiClientResponse.GetResponses<PexipConfigResponse>(_context.Response.Content);
             pexipConfig.PexipSelfTestNode.Should().NotBeNullOrWhiteSpace();
         }
     }

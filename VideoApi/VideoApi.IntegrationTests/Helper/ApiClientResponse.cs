@@ -4,7 +4,7 @@ using AcceptanceTests.Common.Api.Helpers;
 
 namespace VideoApi.IntegrationTests.Helper
 {
-    public static class Response
+    public static class ApiClientResponse
     {
         public static async Task<T> GetResponses<T>(HttpContent content)
         {

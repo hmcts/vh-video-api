@@ -10,7 +10,6 @@ using NUnit.Framework;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
-using VideoApi.Services.Kinly;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Clients

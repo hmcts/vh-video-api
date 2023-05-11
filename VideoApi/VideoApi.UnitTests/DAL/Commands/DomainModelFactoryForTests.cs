@@ -5,7 +5,7 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.UnitTests.DAL.Commands
 {
-    public class DomainModelFactoryForTests
+    public static class DomainModelFactoryForTests
     {
         public static Conference CreateConference()
         {

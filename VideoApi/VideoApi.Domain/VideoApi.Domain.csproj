@@ -6,10 +6,10 @@
   <ItemGroup>
     <PackageReference Include="Enums.NET" Version="4.0.0" />
     <PackageReference Include="RandomStringCreator" Version="2.0.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.7.0.17535">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.56.0.67649">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 </Project>

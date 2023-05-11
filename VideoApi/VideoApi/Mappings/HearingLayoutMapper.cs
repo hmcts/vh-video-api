@@ -1,5 +1,5 @@
 using VideoApi.Contract.Requests;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 
 namespace VideoApi.Mappings
 {
