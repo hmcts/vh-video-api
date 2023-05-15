@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Services.Handlers
         public async Task Should_send_http_request()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "http://somesite.com");
-            request.Properties.Add("participantId", Guid.NewGuid());
+            request.Options.Set(new HttpRequestOptionsKey<Guid>("participantId"), Guid.NewGuid());
             
             var handler = new KinlySelfTestApiDelegatingHandler(_customJwtTokenProvider.Object)
             {

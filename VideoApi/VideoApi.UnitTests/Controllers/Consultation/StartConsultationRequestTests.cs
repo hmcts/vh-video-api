@@ -11,7 +11,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Extensions;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using Task = System.Threading.Tasks.Task;
 using VhRoom = VideoApi.Domain.Enums.RoomType;
 

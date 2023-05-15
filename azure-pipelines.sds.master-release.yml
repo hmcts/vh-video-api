@@ -18,7 +18,6 @@ parameters:
   type: object
   default:
   - Dev
-  - Staging
 
 pool: 
   vmImage: ubuntu-22.04
@@ -30,7 +29,7 @@ stages:
   displayName: Pre-Release Tasks
   variables:
   - template: variables/shared.yaml
-  - template: variables/staging.yaml
+  - template: variables/dev.yaml
   jobs:
   - job: Generate_Entity_Framework_Script
     displayName: "Generate Entity Framework Script"
@@ -52,20 +51,6 @@ stages:
           vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
           gitVersionConfigPath: ${{ variables.git_version_config_path }}
 
-  - job: PublishAcceptanceTests
-    dependsOn: package_nuget
-    displayName: Publish Acceptance Tests
-    variables:
-      projectPath: "${{ variables.appName }}/${{ variables.appName }}"
-    steps:
-    - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
-      parameters:
-        netVersion: 6.x
-        coreProjectPath: $(projectPath)
-        nugetProjectPath: $(projectPath)
-        nugetConfigPath: ${{ variables.appName }}
-        useNugetConfig: true
-
 #####################################################
 # Run Entity Framework. #############################
 - ${{ each env in parameters.environment }}:
@@ -86,14 +71,6 @@ stages:
       - download: current
         displayName: Download Sql Artifact
 
-      - ${{ if eq(env, 'Staging') }}: 
-        - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
-          parameters:
-            addOrDelete: delete
-            lockName: "${{ variables.env }}-lock"
-            resourceGroup: ${{ variables.vhResourceGroup }}
-            azureSubscription: ${{ variables.subscriptionName }}
-
       - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
         parameters:
           sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
@@ -106,24 +83,14 @@ stages:
           kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
           kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
 
-      - ${{ if eq(env, 'Staging') }}: 
-        - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
-          parameters:
-            addOrDelete: add
-            lockName: "${{ variables.env }}-lock"
-            resourceGroup: ${{ variables.vhResourceGroup }}
-            azureSubscription: ${{ variables.subscriptionName }}
-            lockType: CanNotDelete
-
 #####################################################
 # Build Docker Image & Push. ########################
 - stage: Docker_Build_Push
   displayName: Docker Build & Push Image
   dependsOn:
     - Run_Entity_Framework_Dev
-    - Run_Entity_Framework_Staging
   variables:
-    - template: variables/staging.yaml
+    - template: variables/dev.yaml
     - template: variables/shared.yaml
   jobs:
   - job: Docker_Build
@@ -149,7 +116,7 @@ stages:
         repositoryName:  ${{ variables.repositoryName }}
         imageName: "${{ variables.imageName }}"
         imageTags:
-          - '${{ variables.stagingTagName }}'
+          - '${{ variables.devTagName }}'
 
 #####################################################
 # Deploy Nuget Packages. ############################
@@ -157,7 +124,6 @@ stages:
   displayName: Deploy Nuget Packages
   dependsOn:
     - Run_Entity_Framework_Dev
-    - Run_Entity_Framework_Staging
   variables:
   - template: variables/shared.yaml
     parameters:
@@ -176,7 +142,7 @@ stages:
   displayName: Push Helm Charts
   dependsOn: Docker_Build_Push
   variables:
-  - template: variables/staging.yaml
+  - template: variables/dev.yaml
   - template: variables/shared.yaml
   - group: vh-github-app-credentials
   jobs:
@@ -198,149 +164,3 @@ stages:
         githubUsername: $(gh_app_name)
         githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
         subDirectory: ${{ variables.subDirectory }}
-
-#########################################
-# Run Acceptance Tests on Staging. ######
-- stage: Run_Acceptance_Tests
-  displayName: "Run Acceptance Tests"
-  dependsOn: 
-    - Helm
-    - Docker_Build_Push
-  variables:
-  - name: fullImageName
-    value: $[ stageDependencies.Docker_Build_Push.Docker_Build.outputs['pushImage.fullImageName'] ]
-  - template: variables/staging.yaml
-  - template: variables/shared.yaml
-    parameters:
-      env: stg
-  jobs:
-  - job: CheckDeployment
-    displayName: Check AKS Deployment
-    steps:
-    - template: templates\Containerisation\check-deployment.yaml@azTemplates
-      parameters: 
-        namespace: "vh"
-        deploymentName: ${{ variables.chartName }}
-        requiredImage: $(fullImageName)
-        subscriptionName: "${{ variables.subscriptionName }}"
-        env: ${{ variables.env }}
-        retries: 20
-        
-  - job: AcceptanceTestsStaging
-    pool: VH Self Hosted
-    dependsOn: CheckDeployment
-    displayName: Acceptance Tests Staging
-    steps:
-    - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
-      parameters:
-        environment: ${{ variables.env }}
-        azureSubscription: ${{ variables.subscriptionName }}
-        acceptanceTestSettings:
-        - name: Services:VideoApiUrl
-          value: "https://vh-video-api.staging.platform.hmcts.net"
-        - name: ApplicationInsights:InstrumentationKey
-          value: applicationinsights--instrumentationkey
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: AzureAd:ClientId
-          value: azuread--clientid
-          keyVaultName: vh-video-api-${{ variables.env }}
-          secret: true
-        - name: AzureAd:ClientSecret
-          value: azuread--clientsecret
-          keyVaultName: vh-video-api-${{ variables.env }}
-          secret: true
-        - name: AzureAd:TenantId
-          value: azuread--tenantid
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-
-        # Services Configuration
-        - name: Services:VideoApiResourceId
-          value: azuread--identifieruri
-          keyVaultName: vh-video-api-${{ variables.env }}
-          secret: true
-        - name: Services:CallbackUri
-          value: $(CallbackUri)
-
-        # Wowza Configuration
-        - name: WowzaConfiguration:RestApiEndpoints
-          value: wowzaconfiguration--endpoint-https
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:StreamingEndpoint
-          value: wowzaconfiguration--endpoint-https
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:Username 
-          value: wowzaconfiguration--username
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:Password 
-          value: wowzaconfiguration--restPassword
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:StorageDirectory
-          value: wowzaconfiguration--azure-storage-directory
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:StorageAccountName
-          value: wowzaconfiguration--storage-account
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:StorageAccountKey
-          value: wowzaconfiguration--storageaccountkey
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:StorageContainerName 
-          value: wowzaconfiguration--storage-account-container
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:StorageEndpoint
-          value: wowzaconfiguration--storage-account-endpoint
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: WowzaConfiguration:ManagedIdentityClientId
-          value: wowzaconfiguration--managedidentityclientid
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-          
-        # CVP Configuration
-        - name: CvpConfiguration:StorageAccountName
-          value: CvpConfiguration--StorageAccountName
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: CvpConfiguration:StorageAccountKey
-          value: CvpConfiguration--StorageAccountKey
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: CvpConfiguration:StorageContainerName
-          value: CvpConfiguration--StorageContainerName
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-        - name: CvpConfiguration:StorageEndpoint
-          value: CvpConfiguration--StorageEndpoint
-          keyVaultName: vh-infra-core-${{ variables.env }}
-          secret: true
-
-        # Kinly Configuration
-        - name: KinlyConfiguration:ConferencePhoneNumber
-          value: $(ConferencePhoneNumber)
-        - name: KinlyConfiguration:ConferencePhoneNumberWelsh
-          value: $(ConferencePhoneNumberWelsh)
-        - name: KinlyConfiguration:KinlyApiUrl
-          value: $(KinlyApiUrl)
-        - name: KinlyConfiguration:KinlySelfTestApiUrl
-          value: $(KinlySelfTestApiUrl)
-        - name: KinlyConfiguration:ConferenceUsername
-          value: $(ConferenceUsername)
-        - name: KinlyConfiguration:CallbackUri
-          value: $(CallbackUri)
-
-        # Quick Links Configuration
-        - name: QuickLinks:Issuer
-          value: $(Issuer)
-        - name: QuickLinks:RsaPrivateKey
-          value: $(RsaPrivateKey)
-        - name: QuickLinks:ValidAudience
-          value: $(ValidAudience)

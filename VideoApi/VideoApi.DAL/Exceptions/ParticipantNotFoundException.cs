@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace VideoApi.DAL.Exceptions
 {
     [Serializable]
-    public class ParticipantNotFoundException : Exception
+    public class ParticipantNotFoundException : VideoDalException
     {
         public ParticipantNotFoundException(Guid participantId) : base($"Participant {participantId} does not exist")
         {
@@ -17,7 +17,7 @@ namespace VideoApi.DAL.Exceptions
     }
     
     [Serializable]
-    public class ParticipantLinkException : Exception
+    public class ParticipantLinkException : VideoDalException
     {
         public ParticipantLinkException(Guid participantRefId, Guid linkRefId) : base($"Cannot link participants because one or both cannot be found")
         {

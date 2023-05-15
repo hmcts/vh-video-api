@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace VideoApi.ValidationMiddleware
+namespace VideoApi.Middleware.Validation
 {
     public class RequestModelValidatorService : IRequestModelValidatorService
     {
-        private readonly IValidatorFactory _validatorFactory;
+        private readonly IServiceProvider _serviceProvider;
 
-        public RequestModelValidatorService(IValidatorFactory validatorFactory)
+        public RequestModelValidatorService(IServiceProvider serviceProvider)
         {
-            _validatorFactory = validatorFactory;
+            _serviceProvider = serviceProvider;
         }
 
         public IList<ValidationFailure> Validate(Type requestModel, object modelValue)
         {
-            var validator = _validatorFactory.GetValidator(requestModel);
+            var genericType = typeof(IValidator<>).MakeGenericType(requestModel);
+            var validator = _serviceProvider.GetService(genericType) as IValidator;
             if (validator == null)
             {
                 var failure = new ValidationFailure(modelValue.GetType().ToString(), "Validator not found for request");

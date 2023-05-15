@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.Domain;
 using VideoApi.Services.Exceptions;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;

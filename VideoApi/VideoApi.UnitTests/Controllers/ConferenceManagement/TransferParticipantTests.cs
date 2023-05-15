@@ -9,7 +9,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement

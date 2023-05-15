@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Dtos;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 

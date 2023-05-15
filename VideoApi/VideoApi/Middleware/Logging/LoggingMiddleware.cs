@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common.Helpers;
 
-namespace VideoApi.Extensions
+namespace VideoApi.Middleware.Logging
 {
     public class LoggingMiddleware : IAsyncActionFilter
     {

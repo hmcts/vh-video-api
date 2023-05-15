@@ -4,14 +4,6 @@ Feature: Audio Recording
 	I want to enable CRUD processes for audio recordings
 
 @VIH-5868
-Scenario: Get Audio Stream Monitoring - Ok
-  Given I have a conference with an audio recording
-	And I have a valid get audio stream monitoring request
-	When I send the request to the endpoint
-	Then the response should have the status Ok and success status True
-	And the audio stream monitoring details are retrieved
-
-@VIH-5868
 Scenario: Get Audio Recording Link - Ok
 	Given I have a conference
 	And the conference has an audio recording

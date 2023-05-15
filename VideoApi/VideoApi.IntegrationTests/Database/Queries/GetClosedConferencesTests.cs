@@ -14,13 +14,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
     public class GetClosedConferencesTests : DatabaseTestsBase
     {
         private GetClosedConferencesWithInstantMessagesHandler _handler;
-        private Guid _conference1Id;
-        private Guid _conference2Id;
-        private Guid _conference3Id;
-        private Guid _conference4Id;
-        private Guid _conference5Id;
-        private Guid _conference6Id;
-        private Guid _conference7Id;
         private List<Domain.Conference> conferenceList;
 
         [SetUp]
@@ -28,13 +21,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new GetClosedConferencesWithInstantMessagesHandler(context);
-            _conference1Id = Guid.Empty;
-            _conference2Id = Guid.Empty;
-            _conference3Id = Guid.Empty;
-            _conference4Id = Guid.Empty;
-            _conference5Id = Guid.Empty;
-            _conference6Id = Guid.Empty;
-            _conference7Id = Guid.Empty;
         }
 
         [TearDown]
@@ -63,7 +49,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
-            _conference1Id = conference1.Id;
             conferenceList.Add(conference1);
 
             // closed conferences with no messages.
@@ -73,7 +58,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference2, DateTime.UtcNow.AddMinutes(-35));
-            _conference2Id = conference2.Id;
             conferenceList.Add(conference2);
 
             var conference3 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
@@ -82,7 +66,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference3, DateTime.UtcNow.AddMinutes(-25));
-            _conference3Id = conference3.Id;
             conferenceList.Add(conference3);
 
             // closed conferences with messages.
@@ -93,7 +76,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference4, DateTime.UtcNow.AddMinutes(-31));
-            _conference4Id = conference4.Id;
             conferenceList.Add(conference4);
 
             var conference5 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
@@ -103,7 +85,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference5, DateTime.UtcNow.AddMinutes(-30));
-            _conference5Id = conference5.Id;
             conferenceList.Add(conference5);
 
             var conference6 = new ConferenceBuilder(true, scheduledDateTime: oldHearing)
@@ -113,7 +94,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference6, DateTime.UtcNow.AddMinutes(-29));
-            _conference6Id = conference6.Id;
             conferenceList.Add(conference6);
 
             var conference7 = new ConferenceBuilder(true, scheduledDateTime: veryOldHearing)
@@ -123,7 +103,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.Closed)
                 .Build();
             conferenceType.GetProperty("ClosedDateTime").SetValue(conference7, DateTime.UtcNow.AddMonths(-3));
-            _conference7Id = conference7.Id;
             conferenceList.Add(conference7);
 
             foreach (var c in conferenceList)

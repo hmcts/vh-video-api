@@ -223,41 +223,6 @@ namespace VideoApi.UnitTests.Services
 
         }
 
-        /*
-        [Test]
-        public void Should_Throw_AudioPlatformFileNotFoundException_If_Storage_Returns_Any_Empty_Files()
-        {
-            var mockitems = GetMockBlobItems();
-
-            var pageable1 = new Mock<AsyncPageable<BlobItem>>() ;
-
-            var blobContainerClient1 = new Mock<BlobContainerClient>();
-            var blobClientMock1 = new Mock<BlobClient>();
-            var blobServiceClient1 = new Mock<BlobServiceClient>();
-            var blobClientExtensionMock1 = new Mock<IBlobClientExtension>();
-            var blobContainerClientMock1 = new Mock<BlobContainerClient>();
-            
-
-            pageable.SetupSequence(x => x.GetAsyncEnumerator(default)).Returns(mockitems);
-            pageable1.SetupSequence(x => x.GetAsyncEnumerator(default)).Returns(mockitems);
-
-            blobContainerClientMock.SetupSequence(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, filePathPrefix, default)).Returns(pageable.Object).Returns(pageable1.Object);
-
-            blobContainerClientMock.SetupSequence(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object).Returns(blobClientMock1.Object);
-
-            blobClientExtensionMock.SetupSequence(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(emptyBlobClientProperties);
-
-            blobServiceClient.SetupSequence(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object).Returns(blobContainerClientMock1.Object);
-
-            blobClientMock.SetupSequence(x => x.Name).Returns("myFilePath.mp4").Returns("myFilePath.mp4");
-
-            var msg = $"ReconcileFilesInStorage - File name prefix :" + filePathPrefix + "  Expected: " + "1" + " Actual:" + "0";
-
-            Assert.That(async () => await service.ReconcileFilesInStorage("myFilePath", 1), Throws.TypeOf<AudioPlatformFileNotFoundException>().With.Message.Contains(msg));
-
-        }
-        */
-
         private async IAsyncEnumerator<BlobItem> GetMockBlobItems()
         {
             var blobItem = new Mock<BlobItem>();
