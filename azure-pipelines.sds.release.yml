@@ -46,7 +46,7 @@ stages:
         coreProjectPath: $(projectPath)
         nugetProjectPath: $(projectPath)
         nugetConfigPath: ${{ variables.appName }}
-        useNugetConfig: true
+        useNugetConfig: false
 
 #####################################################
 # Run Entity Framework Staging. #####################
