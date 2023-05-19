@@ -66,7 +66,7 @@ namespace VideoApi.Controllers
         /// <param name="request">Endpoint details</param>
         [HttpPost("{conferenceId}/endpoints")]
         [OpenApiOperation("AddEndpointToConference")]
-        [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId,
             [FromBody] AddEndpointRequest request)
         {
@@ -91,7 +91,7 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpDelete("{conferenceId}/endpoints/{sipAddress}")]
         [OpenApiOperation("RemoveEndpointFromConference")]
-        [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, string sipAddress)
         {
             _logger.LogDebug("Attempting to remove endpoint {sipAddress} from conference", sipAddress);
