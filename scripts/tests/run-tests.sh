@@ -16,4 +16,4 @@ dotnet test VideoApi/VideoApi.IntegrationTests/VideoApi.IntegrationTests.csproj 
     "/p:Exclude=\"${exclusions}\"" \
     "/p:CoverletOutput=${PWD}/Coverage/" \
     "/p:MergeWith=${PWD}/Coverage/coverage.json" \
-    "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\"
+    ""/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\""
