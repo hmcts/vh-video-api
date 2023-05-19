@@ -17,4 +17,3 @@ dotnet test VideoApi/VideoApi.IntegrationTests/VideoApi.IntegrationTests.csproj 
     "/p:CoverletOutput=${PWD}/Coverage/" \
     "/p:MergeWith=${PWD}/Coverage/coverage.json" \
     "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\"
-    
