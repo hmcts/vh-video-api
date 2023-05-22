@@ -35,25 +35,18 @@ stages:
         projectName: ${{ variables.efProjectName }}
         migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
 
-    - job: package_nuget
-      displayName: "Package NuGet Packages"
-      steps:
-        - template: templates\dotnet\package-nuget-packages.yml@azTemplates
-          parameters:
-            nugetProjectPath: "${{ variables.appName }}/${{ variables.nuget_package_name }}"
-            vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-            gitVersionConfigPath: ${{ variables.git_version_config_path }}
-
-    - job: PublishAcceptanceTests
-      dependsOn: package_nuget
-      displayName: Publish Acceptance Tests
-      variables:
-        projectPath: "${{ variables.appName }}/${{ variables.appName }}"
-      steps:
-        - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
-          parameters:
-            vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-            coreProjectPath: $(projectPath)
+  - job: PublishAcceptanceTests
+    displayName: Publish Acceptance Tests
+    variables:
+      projectPath: "${{ variables.appName }}/${{ variables.appName }}"
+    steps:
+      - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
+        parameters:
+          netVersion: 6.x
+          coreProjectPath: $(projectPath)
+          nugetProjectPath: $(projectPath)
+          nugetConfigPath: ${{ variables.appName }}
+          useNugetConfig: true          
 #####################################################
 # Run Entity Framework Staging. #####################
 - stage: Run_Entity_Framework_Staging
