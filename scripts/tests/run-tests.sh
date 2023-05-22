@@ -18,9 +18,3 @@ dotnet test VideoApi/VideoApi.IntegrationTests/VideoApi.IntegrationTests.csproj 
     "/p:CoverletOutput=${PWD}/Coverage/" \
     "/p:MergeWith=${PWD}/Coverage/coverage.json" \
     "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\""
-||
-    {
-        echo "##vso[task.logissue type=error]DotNet Unit Tests Failed."
-        echo "##vso[task.complete result=Failed]"
-        exit 1
-    }
