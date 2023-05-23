@@ -42,8 +42,8 @@ stages:
     steps:
       - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
         parameters:
-        vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-        coreProjectPath: $(projectPath)      
+          vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+          coreProjectPath: $(projectPath)      
 #####################################################
 # Run Entity Framework Staging. #####################
 - stage: Run_Entity_Framework_Staging
