@@ -66,9 +66,8 @@ namespace VideoApi.Controllers
         /// <param name="request">Endpoint details</param>
         [HttpPost("{conferenceId}/endpoints")]
         [OpenApiOperation("AddEndpointToConference")]
-        [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
-        public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId,
-            [FromBody] AddEndpointRequest request)
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId, [FromBody] AddEndpointRequest request)
         {
             _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
             
@@ -91,7 +90,7 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpDelete("{conferenceId}/endpoints/{sipAddress}")]
         [OpenApiOperation("RemoveEndpointFromConference")]
-        [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, string sipAddress)
         {
             _logger.LogDebug("Attempting to remove endpoint {sipAddress} from conference", sipAddress);
@@ -117,8 +116,7 @@ namespace VideoApi.Controllers
         [HttpPatch("{conferenceId}/endpoints/{sipAddress}")]
         [OpenApiOperation("UpdateDisplayNameForEndpoint")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateDisplayNameForEndpointAsync(Guid conferenceId, string sipAddress,
-            [FromBody] UpdateEndpointRequest request)
+        public async Task<IActionResult> UpdateDisplayNameForEndpointAsync(Guid conferenceId, string sipAddress, [FromBody] UpdateEndpointRequest request)
         {
             _logger.LogDebug(
                 "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
@@ -138,13 +136,9 @@ namespace VideoApi.Controllers
 
         private async Task UpdateDisplayNameInKinly(Guid conferenceId)
         {
-            var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
-                    new GetConferenceByIdQuery(conferenceId));
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id,
-                conference.AudioRecordingRequired,
-                endpointDtos);
+            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
         }
     }
 }
