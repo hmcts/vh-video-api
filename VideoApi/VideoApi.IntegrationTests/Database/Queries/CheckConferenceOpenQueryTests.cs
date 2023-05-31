@@ -23,7 +23,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         [Test]
         public async Task Should_return_null_when_conference_not_already_booked()
         {
-            var query = new CheckConferenceOpenQuery(DateTime.UtcNow, "12345678HBGH", "New Case");
+            var query = new CheckConferenceOpenQuery(DateTime.UtcNow, "12345678HBGH", "New Case", Guid.NewGuid());
 
             var conference = await _handler.Handle(query);
 
@@ -36,7 +36,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var seededConference = await TestDataManager.SeedConference();
 
             var query = new CheckConferenceOpenQuery(seededConference.ScheduledDateTime, seededConference.CaseNumber,
-                seededConference.CaseName);
+                seededConference.CaseName, seededConference.HearingRefId);
 
             var conference = await _handler.Handle(query);
 
