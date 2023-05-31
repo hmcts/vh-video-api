@@ -97,6 +97,7 @@ stages:
           - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
             parameters:
               vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+              coreProjectPath: $(projectPath)
 
   #####################################################
   # Build Docker Image. ###############################
