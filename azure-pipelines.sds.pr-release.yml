@@ -96,11 +96,7 @@ stages:
         steps:
           - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
             parameters:
-              netVersion: 6.x
-              coreProjectPath: $(projectPath)
-              nugetProjectPath: $(projectPath)
-              nugetConfigPath: ${{ variables.appName }}
-              useNugetConfig: true
+              vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
 
   #####################################################
   # Build Docker Image. ###############################
