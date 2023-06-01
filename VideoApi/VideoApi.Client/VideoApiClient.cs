@@ -647,7 +647,7 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request);
+        System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -656,20 +656,20 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress);
+        System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Update an endpoint's display name or assign the defence advocate
@@ -5362,7 +5362,7 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request)
+        public virtual System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request)
         {
             return AddEndpointToConferenceAsync(conferenceId, request, System.Threading.CancellationToken.None);
         }
@@ -5374,7 +5374,7 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
@@ -5397,7 +5397,6 @@ namespace VideoApi.Client
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -5432,12 +5431,7 @@ namespace VideoApi.Client
                         else
                         if (status_ == 204)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<EndpointResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            return;
                         }
                         else
                         {
@@ -5463,7 +5457,7 @@ namespace VideoApi.Client
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress)
+        public virtual System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress)
         {
             return RemoveEndpointFromConferenceAsync(conferenceId, sipAddress, System.Threading.CancellationToken.None);
         }
@@ -5473,7 +5467,7 @@ namespace VideoApi.Client
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
@@ -5490,7 +5484,6 @@ namespace VideoApi.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -5525,12 +5518,7 @@ namespace VideoApi.Client
                         else
                         if (status_ == 204)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<EndpointResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            return;
                         }
                         else
                         {

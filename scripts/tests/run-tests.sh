@@ -10,11 +10,21 @@ dotnet test VideoApi/VideoApi.UnitTests/VideoApi.UnitTests.csproj -c $configurat
     "/p:Exclude=\"${exclusions}\"" \
     "/p:CoverletOutput=${PWD}/Coverage/" \
     "/p:MergeWith=${PWD}/Coverage/coverage.json" \
-    "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\""
+    "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\""  ||
+    {
+        echo "##vso[task.logissue type=error]DotNet Unit Tests Failed."
+        echo "##vso[task.complete result=Failed]"
+        exit 1
+    }
 
 dotnet test VideoApi/VideoApi.IntegrationTests/VideoApi.IntegrationTests.csproj -c $configuration --results-directory ./TestResults --logger "trx;LogFileName=VideoApi-Integration-Tests-TestResults.trx" \
     "/p:CollectCoverage=true" \
     "/p:Exclude=\"${exclusions}\"" \
     "/p:CoverletOutput=${PWD}/Coverage/" \
     "/p:MergeWith=${PWD}/Coverage/coverage.json" \
-    "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\""
+    "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\"" ||
+    {
+        echo "##vso[task.logissue type=error]DotNet Integration Tests Failed."
+        echo "##vso[task.complete result=Failed]"
+        exit 1
+    }
