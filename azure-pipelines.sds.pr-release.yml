@@ -98,7 +98,6 @@ stages:
             parameters:
               vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
               coreProjectPath: $(projectPath)
-
   #####################################################
   # Build Docker Image. ###############################
   - stage: Dock
