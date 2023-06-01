@@ -9,16 +9,18 @@ namespace VideoApi.DAL.Queries
 {
     public class CheckConferenceOpenQuery : IQuery
     {
-        public CheckConferenceOpenQuery(DateTime scheduledDateTime, string caseNumber, string caseName)
+        public CheckConferenceOpenQuery(DateTime scheduledDateTime, string caseNumber, string caseName, Guid hearingRefId)
         {
             ScheduledDateTime = scheduledDateTime;
             CaseNumber = caseNumber;
             CaseName = caseName;
+            HearingRefId = hearingRefId;
         }
 
         public DateTime ScheduledDateTime { get; set; }
         public string CaseNumber { get; set; }
         public string CaseName { get; set; }
+        public Guid HearingRefId { get; set; }
     }
 
     public class CheckConferenceOpenQueryHandler : IQueryHandler<CheckConferenceOpenQuery, Conference>
@@ -38,6 +40,7 @@ namespace VideoApi.DAL.Queries
                 x.ScheduledDateTime == query.ScheduledDateTime
                 && x.CaseName == query.CaseName
                 && x.CaseNumber == query.CaseNumber
+                && x.HearingRefId == query.HearingRefId
                 && x.State != ConferenceState.Closed);
         }
     }
