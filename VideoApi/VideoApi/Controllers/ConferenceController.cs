@@ -637,7 +637,7 @@ namespace VideoApi.Controllers
         private async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
         {
             var existingConference = await _queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
-                new CheckConferenceOpenQuery(request.ScheduledDateTime, request.CaseNumber, request.CaseName));
+                new CheckConferenceOpenQuery(request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.HearingRefId));
 
             if (existingConference != null) return existingConference.Id;
 
