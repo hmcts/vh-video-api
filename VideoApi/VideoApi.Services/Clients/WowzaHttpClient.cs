@@ -211,6 +211,7 @@ namespace VideoApi.Services.Clients
         public async Task<HttpResponseMessage> GetStreamRecorderAsync(string applicationName, string server, string host, string recorder)
         {
             var requestUrl = $"v2/servers/{server}/vhosts/{host}/applications/{applicationName}/instances/_definst_/streamrecorders/{recorder}";
+            Console.WriteLine($"Request url for stream recorder: {requestUrl}");
             using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 10));
             return await _httpClient.GetAsync(requestUrl, cts.Token).ConfigureAwait(false);
         }
