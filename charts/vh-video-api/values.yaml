@@ -76,6 +76,7 @@ java:
         - QuickLinks--RsaPrivateKey
         - QuickLinks--ValidAudience
   environment:
+    APPLICATIONINSIGHTS_CONNECTION_STRING: applicationinsights--instrumentationkey
     ASPNETCORE_URLS: http://+:8080
     KINLYCONFIGURATION__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/callback
     Logging__LogLevel__Default: debug
