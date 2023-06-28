@@ -114,9 +114,9 @@ namespace VideoApi.Controllers
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         [HttpPatch("{conferenceId}/endpoints/{sipAddress}")]
-        [OpenApiOperation("UpdateDisplayNameForEndpoint")]
+        [OpenApiOperation("UpdateEndpointInConference")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateDisplayNameForEndpointAsync(Guid conferenceId, string sipAddress, [FromBody] UpdateEndpointRequest request)
+        public async Task<IActionResult> UpdateEndpointInConference(Guid conferenceId, string sipAddress, [FromBody] UpdateEndpointRequest request)
         {
             _logger.LogDebug(
                 "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);

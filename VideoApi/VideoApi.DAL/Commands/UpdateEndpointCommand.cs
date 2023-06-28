@@ -36,18 +36,16 @@ namespace VideoApi.DAL.Commands
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
-            {
                 throw new ConferenceNotFoundException(command.ConferenceId);
-            }
-
+            
             var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.SipAddress == command.SipAddress);
             if (endpoint == null)
-            {
                 throw new EndpointNotFoundException(command.SipAddress);
-            }
 
-            if (!string.IsNullOrWhiteSpace(command.DisplayName)) endpoint.UpdateDisplayName(command.DisplayName);
-            if (!string.IsNullOrWhiteSpace(command.DefenceAdvocate)) endpoint.AssignDefenceAdvocate(command.DefenceAdvocate);
+            if (!string.IsNullOrWhiteSpace(command.DisplayName)) 
+                endpoint.UpdateDisplayName(command.DisplayName);
+            
+            endpoint.AssignDefenceAdvocate(command.DefenceAdvocate);
             await _context.SaveChangesAsync();
         }
     }

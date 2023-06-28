@@ -679,7 +679,7 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request);
+        System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -690,7 +690,7 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Check Service Health
@@ -5548,9 +5548,9 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
+        public virtual System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
         {
-            return UpdateDisplayNameForEndpointAsync(conferenceId, sipAddress, request, System.Threading.CancellationToken.None);
+            return UpdateEndpointInConferenceAsync(conferenceId, sipAddress, request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -5562,7 +5562,7 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
