@@ -111,7 +111,7 @@ namespace VideoApi.Controllers
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode, _audioPlatformService.ApplicationName);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode);
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
@@ -187,7 +187,7 @@ namespace VideoApi.Controllers
             }
 
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode, _audioPlatformService.ApplicationName);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
 
@@ -368,7 +368,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _kinlyConfiguration.PexipSelfTestNode, _audioPlatformService.ApplicationName);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _kinlyConfiguration.PexipSelfTestNode);
 
             return Ok(response);
         }
@@ -720,7 +720,8 @@ namespace VideoApi.Controllers
             var conferenceForHostResponse = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
             return conferenceForHostResponse;
         }
-     private async Task DeleteAudioRecordingApplication(Guid conferenceId)
+     
+        private async Task DeleteAudioRecordingApplication(Guid conferenceId)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
