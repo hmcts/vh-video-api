@@ -132,8 +132,8 @@ namespace VideoApi.Controllers
             _logger.LogDebug("UpdateConference");
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefId);
-            var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
-
+            var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conference = conferencesList?.FirstOrDefault();
             if (conference == null)
             {
                 _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", request.HearingRefId);
@@ -229,8 +229,8 @@ namespace VideoApi.Controllers
         [HttpGet("today/vho")]
         [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync(
-            [FromQuery] ConferenceForAdminRequest request)
+        [Obsolete("Use GetAllocationsForHearingsByVenue in bookingApi instead", false)]
+        public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync([FromQuery] ConferenceForAdminRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
 
@@ -252,8 +252,8 @@ namespace VideoApi.Controllers
         [HttpGet("today/staff-member")]
         [OpenApiOperation("GetConferencesTodayForStaffMemberByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName(
-            [FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
+        [Obsolete("Use GetAllocationsForHearingsByVenue in bookingApi instead", false)]
+        public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName([FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
 
@@ -359,8 +359,10 @@ namespace VideoApi.Controllers
             _logger.LogDebug("GetConferenceByHearingRefId {HearingRefId}", hearingRefId);
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId, includeClosed.GetValueOrDefault());
-            var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
 
+            var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conference = conferencesList?.FirstOrDefault();
+            
             if (conference == null)
             {
                 _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", hearingRefId);
@@ -369,6 +371,36 @@ namespace VideoApi.Controllers
             }
 
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _kinlyConfiguration.PexipSelfTestNode);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="includeClosed">Include closed conferences in search</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpPost("hearings")]
+        [OpenApiOperation("GetConferencesByHearingRefIds")]
+        [ProducesResponseType(typeof(IEnumerable<ConferenceDetailsResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesByHearingRefIdsAsync([FromBody]IEnumerable<Guid> hearingRefIds)
+        {
+            _logger.LogDebug("GetConferenceByHearingRefId {hearingRefIds}", hearingRefIds);
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefIds, true);
+            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+
+            if (conferences == null)
+            {
+                _logger.LogWarning("Unable to find conference with hearing id {hearingRefIds}", hearingRefIds);
+
+                return NotFound();
+            }
+
+            var response = conferences
+                .Select(conference => ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _kinlyConfiguration.PexipSelfTestNode));
 
             return Ok(response);
         }

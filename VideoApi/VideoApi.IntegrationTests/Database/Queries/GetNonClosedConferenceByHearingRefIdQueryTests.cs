@@ -44,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(seededConference);
             var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(knownHearingRefId));
 
-            AssertConference(conference, conference);
+            AssertConference(conference[0], conference[0]);
         }
 
         [Test]
@@ -70,7 +70,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(knownHearingRefId));
 
-            AssertConference(conference, conference2, true);
+            AssertConference(conference[0], conference2, true);
         }
         
         [Test]
@@ -88,7 +88,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(knownHearingRefId,true));
 
-            AssertConference(conference, conference1, true);
+            AssertConference(conference[0], conference1, true);
         }
 
         private void AssertConference(Conference actual, Conference expected, bool ignoreParticipants = false)
