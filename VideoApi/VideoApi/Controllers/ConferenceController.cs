@@ -229,7 +229,7 @@ namespace VideoApi.Controllers
         [HttpGet("today/vho")]
         [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
-        [Obsolete("Use GetAllocationsForHearingsByVenue in bookingApi instead", false)]
+        [Obsolete("Use bookingApi for venue related queries instead", false)]
         public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync([FromQuery] ConferenceForAdminRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
@@ -252,7 +252,7 @@ namespace VideoApi.Controllers
         [HttpGet("today/staff-member")]
         [OpenApiOperation("GetConferencesTodayForStaffMemberByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
-        [Obsolete("Use GetAllocationsForHearingsByVenue in bookingApi instead", false)]
+        [Obsolete("Use bookingApi for venue related queries instead", false)]
         public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName([FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
@@ -379,11 +379,10 @@ namespace VideoApi.Controllers
         /// Get conferences by hearing ref id
         /// </summary>
         /// <param name="hearingRefIds">Hearing ID</param>
-        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpPost("hearings")]
         [OpenApiOperation("GetConferencesByHearingRefIds")]
-        [ProducesResponseType(typeof(IEnumerable<ConferenceDetailsResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesByHearingRefIdsAsync([FromBody]IEnumerable<Guid> hearingRefIds)
@@ -400,7 +399,8 @@ namespace VideoApi.Controllers
             }
 
             var response = conferences
-                .Select(conference => ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _kinlyConfiguration.PexipSelfTestNode));
+                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _kinlyConfiguration))
+                .ToList();
 
             return Ok(response);
         }

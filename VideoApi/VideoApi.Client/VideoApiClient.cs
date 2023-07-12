@@ -353,7 +353,7 @@ namespace VideoApi.Client
         /// <param name="hearingRefIds">Hearing ID</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -362,7 +362,7 @@ namespace VideoApi.Client
         /// <param name="hearingRefIds">Hearing ID</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get list of expired conferences
@@ -3237,7 +3237,7 @@ namespace VideoApi.Client
         /// <param name="hearingRefIds">Hearing ID</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds)
         {
             return GetConferencesByHearingRefIdsAsync(hearingRefIds, System.Threading.CancellationToken.None);
         }
@@ -3249,7 +3249,7 @@ namespace VideoApi.Client
         /// <param name="hearingRefIds">Hearing ID</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesByHearingRefIdsAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingRefIds == null)
                 throw new System.ArgumentNullException("hearingRefIds");
@@ -3303,7 +3303,7 @@ namespace VideoApi.Client
                         else
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceDetailsResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForAdminResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);

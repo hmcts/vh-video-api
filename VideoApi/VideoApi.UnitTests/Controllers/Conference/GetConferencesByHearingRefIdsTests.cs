@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using Task = System.Threading.Tasks.Task;
 
@@ -18,6 +19,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             var result = await Controller.GetConferencesByHearingRefIdsAsync(new []{Guid.NewGuid()});
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            typedResult.Value.Should().BeOfType<List<ConferenceForAdminResponse>>();
         }
 
         [Test]
