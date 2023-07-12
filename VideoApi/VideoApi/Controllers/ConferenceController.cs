@@ -418,7 +418,7 @@ namespace VideoApi.Controllers
             if (conferences == null)
                 return NotFound();
 
-            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel));
+            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
         }
         
         /// <summary>
