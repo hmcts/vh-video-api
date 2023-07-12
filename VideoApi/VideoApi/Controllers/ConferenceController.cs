@@ -229,7 +229,7 @@ namespace VideoApi.Controllers
         [HttpGet("today/vho")]
         [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
-        [Obsolete("Use bookingApi for venue related queries instead", false)]
+        [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
         public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync([FromQuery] ConferenceForAdminRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
@@ -252,7 +252,7 @@ namespace VideoApi.Controllers
         [HttpGet("today/staff-member")]
         [OpenApiOperation("GetConferencesTodayForStaffMemberByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
-        [Obsolete("Use bookingApi for venue related queries instead", false)]
+        [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
         public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName([FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
@@ -380,23 +380,18 @@ namespace VideoApi.Controllers
         /// </summary>
         /// <param name="hearingRefIds">Hearing ID</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
-        [HttpPost("hearings")]
-        [OpenApiOperation("GetConferencesByHearingRefIds")]
+        [HttpPost("hearings/staff-member")]
+        [OpenApiOperation("GetConferencesForAdminByHearingRefId")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesByHearingRefIdsAsync([FromBody]IEnumerable<Guid> hearingRefIds)
+        public async Task<IActionResult> GetConferencesForAdminByHearingRefIdAsync([FromBody]IEnumerable<Guid> hearingRefIds)
         {
-            _logger.LogDebug("GetConferenceByHearingRefId {hearingRefIds}", hearingRefIds);
             var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
             if (conferences == null)
-            {
-                _logger.LogWarning("Unable to find conference with hearing id {hearingRefIds}", hearingRefIds);
-
                 return NotFound();
-            }
 
             var response = conferences
                 .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _kinlyConfiguration))
@@ -404,7 +399,28 @@ namespace VideoApi.Controllers
 
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpPost("hearings/host")]
+        [OpenApiOperation("GetConferencesForHostByHearingRefId")]
+        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesForHostByHearingRefIdAsync([FromBody]IEnumerable<Guid> hearingRefIds)
+        {
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefIds, true);
+            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
+            if (conferences == null)
+                return NotFound();
+
+            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel));
+        }
+        
         /// <summary>
         /// Get list of expired conferences 
         /// </summary>

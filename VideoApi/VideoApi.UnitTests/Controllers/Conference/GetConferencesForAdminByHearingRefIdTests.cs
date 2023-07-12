@@ -11,12 +11,12 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
-    public class GetConferencesByHearingRefIdsTests : ConferenceControllerTestBase
+    public class GetConferencesForAdminByHearingRefIdTests : ConferenceControllerTestBase
     {
         [Test]
         public async Task Should_return_ok_result_for_given_valid_hearing_ref_id()
         {
-            var result = await Controller.GetConferencesByHearingRefIdsAsync(new []{Guid.NewGuid()});
+            var result = await Controller.GetConferencesForAdminByHearingRefIdAsync(new []{Guid.NewGuid()});
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
             typedResult.Value.Should().BeOfType<List<ConferenceForAdminResponse>>();
@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
              .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
              .ReturnsAsync((List<VideoApi.Domain.Conference>) null);
             
-            var result = await Controller.GetConferencesByHearingRefIdsAsync(new []{Guid.NewGuid()});
+            var result = await Controller.GetConferencesForAdminByHearingRefIdAsync(new []{Guid.NewGuid()});
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();
         }
