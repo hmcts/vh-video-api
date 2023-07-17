@@ -1,6 +1,5 @@
--- You may need to uncomment the next line if the connection is not specific to a default database
--- USE VideoApi;
--- GO;
+SET XACT_ABORT ON;
+GO
 BEGIN TRANSACTION;
 
 SELECT DISTINCT HearingVenueName from Conference
@@ -83,4 +82,6 @@ GO;
 SELECT DISTINCT HearingVenueName from Conference
 GO;
 
-Rollback;
+COMMIT;
+SET XACT_ABORT OFF
+GO
