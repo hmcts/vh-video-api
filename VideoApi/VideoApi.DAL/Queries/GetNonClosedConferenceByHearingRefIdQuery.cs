@@ -19,11 +19,9 @@ namespace VideoApi.DAL.Queries
             HearingRefIds = hearingRefIds.ToList();
             IncludeClosedConferences = includeClosedConferences;
         }
-        public GetNonClosedConferenceByHearingRefIdQuery(Guid hearingRefId, bool includeClosedConferences = false)
-        {
-            HearingRefIds = new List<Guid> { hearingRefId };
-            IncludeClosedConferences = includeClosedConferences;
-        }
+
+        public GetNonClosedConferenceByHearingRefIdQuery(Guid hearingRefId, bool includeClosedConferences = false) :
+            this(new List<Guid> { hearingRefId }, includeClosedConferences) {}
     }
 
     public class GetNonClosedConferenceByHearingRefIdQueryHandler :
