@@ -1,5 +1,5 @@
 SET XACT_ABORT ON;
-GO
+GO;
 BEGIN TRANSACTION;
 
 SELECT DISTINCT HearingVenueName from Conference
@@ -84,4 +84,4 @@ GO;
 
 COMMIT;
 SET XACT_ABORT OFF
-GO
+GO;
