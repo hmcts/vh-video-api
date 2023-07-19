@@ -1,4 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH $PATH:/root/.dotnet/tools
+
 WORKDIR /app
 
 # Copy wait-for-it.sh to wait for sql before running integration tests
