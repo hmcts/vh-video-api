@@ -35,6 +35,7 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [Route("conferences")]
     [ApiController]
+    [AllowAnonymous]
     public class ConferenceController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
@@ -378,16 +379,16 @@ namespace VideoApi.Controllers
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpPost("hearings/staff-member")]
         [OpenApiOperation("GetConferencesForAdminByHearingRefId")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesForAdminByHearingRefIdAsync(Guid[] hearingRefIds)
+        public async Task<IActionResult> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
         {
-            var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefIds, true);
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
             if (conferences == null)
@@ -403,16 +404,16 @@ namespace VideoApi.Controllers
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpPost("hearings/host")]
         [OpenApiOperation("GetConferencesForHostByHearingRefId")]
         [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesForHostByHearingRefIdAsync(Guid[] hearingRefIds)
+        public async Task<IActionResult> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
         {
-            var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefIds, true);
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
             if (conferences == null)

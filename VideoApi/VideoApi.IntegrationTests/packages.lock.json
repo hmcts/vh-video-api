@@ -2737,6 +2737,13 @@
           "ZymLabs.NSwag.FluentValidation": "[0.6.2, )"
         }
       },
+      "videoapi.client": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "[2.2.5, )",
+          "VideoApi.Contract": "[1.0.0, )"
+        }
+      },
       "videoapi.common": {
         "type": "Project",
         "dependencies": {

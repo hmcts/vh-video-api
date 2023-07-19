@@ -350,36 +350,36 @@ namespace VideoApi.Client
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get list of expired conferences
@@ -3251,25 +3251,25 @@ namespace VideoApi.Client
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
         {
-            return GetConferencesForAdminByHearingRefIdAsync(hearingRefIds, System.Threading.CancellationToken.None);
+            return GetConferencesForAdminByHearingRefIdAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
         {
-            if (hearingRefIds == null)
-                throw new System.ArgumentNullException("hearingRefIds");
+            if (request == null)
+                throw new System.ArgumentNullException("request");
 
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearings/staff-member");
@@ -3280,7 +3280,7 @@ namespace VideoApi.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(hearingRefIds, _settings.Value);
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
@@ -3370,25 +3370,25 @@ namespace VideoApi.Client
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
         {
-            return GetConferencesForHostByHearingRefIdAsync(hearingRefIds, System.Threading.CancellationToken.None);
+            return GetConferencesForHostByHearingRefIdAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
-        /// <param name="hearingRefIds">Hearing ID</param>
+        /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(System.Collections.Generic.IEnumerable<System.Guid> hearingRefIds, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
         {
-            if (hearingRefIds == null)
-                throw new System.ArgumentNullException("hearingRefIds");
+            if (request == null)
+                throw new System.ArgumentNullException("request");
 
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearings/host");
@@ -3399,7 +3399,7 @@ namespace VideoApi.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(hearingRefIds, _settings.Value);
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value);
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;

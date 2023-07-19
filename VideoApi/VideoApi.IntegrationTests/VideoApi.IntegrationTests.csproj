@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />
+    <ProjectReference Include="..\VideoApi.Client\VideoApi.Client.csproj" />
     <ProjectReference Include="..\VideoApi\VideoApi.csproj" />
     <ProjectReference Include="..\VideoApi.Common\VideoApi.Common.csproj" />
     <ProjectReference Include="..\VideoApi.DAL\VideoApi.DAL.csproj" />
