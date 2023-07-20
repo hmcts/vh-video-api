@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -35,7 +34,6 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [Route("conferences")]
     [ApiController]
-    [AllowAnonymous]
     public class ConferenceController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
@@ -134,7 +132,7 @@ namespace VideoApi.Controllers
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefId);
             var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
-            var conference = conferencesList?.FirstOrDefault();
+            var conference = conferencesList.FirstOrDefault();
             if (conference == null)
             {
                 _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", request.HearingRefId);
@@ -362,7 +360,7 @@ namespace VideoApi.Controllers
             var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId, includeClosed.GetValueOrDefault());
 
             var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
-            var conference = conferencesList?.FirstOrDefault();
+            var conference = conferencesList.FirstOrDefault();
             
             if (conference == null)
             {
@@ -391,7 +389,7 @@ namespace VideoApi.Controllers
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
-            if (conferences == null)
+            if (!conferences.Any())
                 return NotFound();
 
             var response = conferences
@@ -416,7 +414,7 @@ namespace VideoApi.Controllers
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
-            if (conferences == null)
+            if (!conferences.Any())
                 return NotFound();
 
             return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
@@ -579,7 +577,6 @@ namespace VideoApi.Controllers
 
         [HttpDelete("expiredHearbeats")]
         [OpenApiOperation("RemoveHeartbeatsForConferences")]
-        [AllowAnonymous]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
         {
