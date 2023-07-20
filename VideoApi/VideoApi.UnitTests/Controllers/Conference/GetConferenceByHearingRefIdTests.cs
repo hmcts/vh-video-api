@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         {
             QueryHandlerMock
              .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
-             .ReturnsAsync((List<VideoApi.Domain.Conference>) null);
+             .ReturnsAsync(new List<VideoApi.Domain.Conference>());
             
             var result = await Controller.GetConferenceByHearingRefIdAsync(Guid.NewGuid());
             var typedResult = (NotFoundResult)result;
