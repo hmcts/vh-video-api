@@ -42,6 +42,9 @@ parameters:
   - name: testSettings
     type: object
     default:
+      - name: ApplicationInsights:InstrumentationKey
+        value: vh-core-infra-AppInsightsKey
+        secret: true
       - name: AzureAd:ClientId
         value: vh-video-api-appid
         secret: true
