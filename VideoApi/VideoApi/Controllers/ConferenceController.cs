@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -132,8 +131,8 @@ namespace VideoApi.Controllers
             _logger.LogDebug("UpdateConference");
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefId);
-            var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
-
+            var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conference = conferencesList.FirstOrDefault();
             if (conference == null)
             {
                 _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", request.HearingRefId);
@@ -229,8 +228,8 @@ namespace VideoApi.Controllers
         [HttpGet("today/vho")]
         [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync(
-            [FromQuery] ConferenceForAdminRequest request)
+        [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
+        public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync([FromQuery] ConferenceForAdminRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
 
@@ -252,8 +251,8 @@ namespace VideoApi.Controllers
         [HttpGet("today/staff-member")]
         [OpenApiOperation("GetConferencesTodayForStaffMemberByHearingVenueName")]
         [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName(
-            [FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
+        [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
+        public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName([FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
         {
             _logger.LogDebug("GetConferencesTodayForAdmin");
 
@@ -359,8 +358,10 @@ namespace VideoApi.Controllers
             _logger.LogDebug("GetConferenceByHearingRefId {HearingRefId}", hearingRefId);
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId, includeClosed.GetValueOrDefault());
-            var conference = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, Conference>(query);
 
+            var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conference = conferencesList.FirstOrDefault();
+            
             if (conference == null)
             {
                 _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", hearingRefId);
@@ -373,6 +374,52 @@ namespace VideoApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpPost("hearings/staff-member")]
+        [OpenApiOperation("GetConferencesForAdminByHearingRefId")]
+        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
+        {
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
+            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+
+            if (!conferences.Any())
+                return NotFound();
+
+            var response = conferences
+                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _kinlyConfiguration))
+                .ToList();
+
+            return Ok(response);
+        }
+        
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpPost("hearings/host")]
+        [OpenApiOperation("GetConferencesForHostByHearingRefId")]
+        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
+        {
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
+            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+
+            if (!conferences.Any())
+                return NotFound();
+
+            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
+        }
+        
         /// <summary>
         /// Get list of expired conferences 
         /// </summary>
@@ -530,7 +577,6 @@ namespace VideoApi.Controllers
 
         [HttpDelete("expiredHearbeats")]
         [OpenApiOperation("RemoveHeartbeatsForConferences")]
-        [AllowAnonymous]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
         {

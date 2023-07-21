@@ -17,7 +17,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
     {
         [Test]
         public async Task Should_update_requested_conference_successfully()
-        {
+        {       
             var request = new UpdateConferenceRequest
             {
                 HearingRefId = Guid.NewGuid(),
@@ -28,10 +28,16 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 CaseNumber = "CaseNo"
             };
 
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(new [] {request.HearingRefId});
+            QueryHandlerMock
+                .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(query))
+                .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
+            
+
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
 
             await Controller.UpdateConferenceAsync(request);
-
+            
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>()), Times.Once);
         }
@@ -45,8 +51,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             };
             
             QueryHandlerMock
-                .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
-                .ReturnsAsync((VideoApi.Domain.Conference) null);
+                .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
+                .ReturnsAsync(new List<VideoApi.Domain.Conference>());
 
 
             var result = await Controller.UpdateConferenceAsync(request);
