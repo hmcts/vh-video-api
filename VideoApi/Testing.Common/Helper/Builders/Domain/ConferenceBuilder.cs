@@ -249,16 +249,30 @@ namespace Testing.Common.Helper.Builders.Domain
                 .Build();
 
             var linkedParticipants1 = new List<LinkedParticipant>();
-            var participantId = participant1.Id;
             var linkedId = participant2.Id;
-            linkedParticipants1.Add(new LinkedParticipant(participantId, linkedId, LinkedParticipantType.Interpreter));
+            var linkedParticipant1Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
+                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                .Build();
+            linkedParticipants1.Add(new LinkedParticipant(linkedParticipant1Participant, linkedId, LinkedParticipantType.Interpreter));
             participant1.LinkedParticipants = linkedParticipants1;
+            foreach (var linkedParticipant in participant1.LinkedParticipants)
+            {
+                linkedParticipant.Participant.UpdateParticipantStatus(ParticipantState.Available);
+            }
 
             var linkedParticipants2 = new List<LinkedParticipant>();
-            participantId = participant2.Id;
             linkedId = participant1.Id;
-            linkedParticipants2.Add(new LinkedParticipant(participantId, linkedId, LinkedParticipantType.Interpreter));
+            var linkedParticipant2Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
+                    new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
+                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                .Build();
+            linkedParticipants2.Add(new LinkedParticipant(linkedParticipant2Participant, linkedId, LinkedParticipantType.Interpreter));
             participant2.LinkedParticipants = linkedParticipants2;
+            foreach (var linkedParticipant in participant2.LinkedParticipants)
+            {
+                linkedParticipant.Participant.UpdateParticipantStatus(ParticipantState.Available);
+            }
 
 
             participant1.UpdateParticipantStatus(participantState == ParticipantState.None
