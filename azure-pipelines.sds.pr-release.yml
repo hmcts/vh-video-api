@@ -286,8 +286,8 @@ stages:
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 # App Insights
-                - name: ApplicationInsights:InstrumentationKey
-                  value: applicationinsights--instrumentationkey
+                - name: ApplicationInsights:ConnectionString
+                  value: connectionstrings--applicationinsights
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   secret: true
 
