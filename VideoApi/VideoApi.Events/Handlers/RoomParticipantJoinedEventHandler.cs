@@ -33,7 +33,7 @@ namespace VideoApi.Events.Handlers
             };
             participantIds.AddRange(SourceParticipant.LinkedParticipants
                 .Where(p => p.Participant.State == ParticipantState.Available)
-                .Select(linkedParticipant => linkedParticipant.Participant.Id));
+                .Select(linkedParticipant => linkedParticipant.ParticipantId));
 
             foreach (var participantId in participantIds)
             {
