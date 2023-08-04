@@ -89,8 +89,8 @@ namespace VideoApi.Contract.Responses
         public bool HearingVenueIsScottish { get; set; }
         
         /// <summary>
-        /// Url Audio Recording to be streamed to single app version of wowza
+        /// Ingest Url Audio Recording to be streamed to
         /// </summary>
-        public bool? WowzaSingleApp { get; set; }
+        public string IngestUrl { get; set; }
     }
 }

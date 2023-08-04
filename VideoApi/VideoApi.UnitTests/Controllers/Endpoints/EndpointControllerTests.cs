@@ -197,7 +197,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                         .Select(EndpointMapper.MapToEndpoint)))
                 .Returns(Task.CompletedTask);
 
-            var response = await _controller.UpdateDisplayNameForEndpointAsync(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
+            var response = await _controller.UpdateEndpointInConference(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
             {
                 DisplayName = newDisplayName
             });
@@ -249,7 +249,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                         .Select(EndpointMapper.MapToEndpoint)))
                 .Returns(Task.CompletedTask);
 
-            var response = await _controller.UpdateDisplayNameForEndpointAsync(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
+            var response = await _controller.UpdateEndpointInConference(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
             {
                 DefenceAdvocate = defenceAdvocate
             });

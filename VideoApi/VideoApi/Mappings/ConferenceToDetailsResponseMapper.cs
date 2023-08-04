@@ -8,7 +8,7 @@ namespace VideoApi.Mappings
 {
     public static class ConferenceToDetailsResponseMapper
     {
-        public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference, string pexipSelfTestNode, string wowzaAppName = "vh-recording-app")
+        public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference, string pexipSelfTestNode)
         {
             var allInterpreterRooms = conference.Rooms.OfType<ParticipantRoom>().ToList();
             var interpreterRooms = allInterpreterRooms.Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
@@ -32,7 +32,8 @@ namespace VideoApi.Mappings
                 AudioRecordingRequired = conference.AudioRecordingRequired,
                 CivilianRooms = interpreterRooms,
                 HearingVenueIsScottish = conference.IsHearingVenueInScotland(),
-                WowzaSingleApp = conference.IngestUrl.Contains(wowzaAppName)
+                IngestUrl = conference.IngestUrl
+                
             };
 
             if (response.MeetingRoom != null)
