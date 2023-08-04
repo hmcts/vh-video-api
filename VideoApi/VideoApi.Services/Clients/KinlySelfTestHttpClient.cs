@@ -9,7 +9,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Helpers;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 
 namespace VideoApi.Services.Clients
 {

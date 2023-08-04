@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -5,6 +6,7 @@ using VH.Core.Configuration;
 
 namespace VideoApi
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         protected Program()

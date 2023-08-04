@@ -143,7 +143,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the responses list should contain closed conferences")]
         public async Task ThenTheResponsesListShouldContainClosedConferences()
         {
-            var conferences = await Response.GetResponses<List<ClosedConferencesResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ClosedConferencesResponse>>(_context.Response.Content);
             foreach (var conference in conferences)
             {
                 _context.Test.ClosedConferencesWithMessages.Any(x => x.Id.Equals(conference.Id)).Should().BeTrue();
@@ -153,7 +153,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the response returns an empty list without messages")]
         public async Task ThenTheResponseReturnsAnEmptyListWithoutMessages()
         {
-            var conferences = await Response.GetResponses<List<ClosedConferencesResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ClosedConferencesResponse>>(_context.Response.Content);
             conferences.Count.Should().Be(0);
         }
 
@@ -164,14 +164,14 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var response = await Response.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
+            var response = await ApiClientResponse.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
             response.Count.Should().Be(0);
         }
 
         [Then(@"the chat message should be retrieved")]
         public async Task ThenTheChatMessagesShouldBeRetrieved()
         {
-            var messages = await Response.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
+            var messages = await ApiClientResponse.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
             messages.Should().NotBeNullOrEmpty();
             messages.Should().BeInDescendingOrder(x => x.TimeStamp);
             foreach (var message in messages)
@@ -185,7 +185,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the no chat message should be retrieved")]
         public async Task ThenTheNoChatMessageShouldBeRetrieved()
         {
-            var messages = await Response.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
+            var messages = await ApiClientResponse.GetResponses<List<InstantMessageResponse>>(_context.Response.Content);
             messages.Should().BeEmpty();
         }
     }

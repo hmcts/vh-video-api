@@ -12,11 +12,20 @@ namespace Testing.Common.Helper
         public static class AudioRecordingEndpoints
         {
             private const string ApiRoot = "conferences";
+
+            [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
             public static string GetAudioApplicationWithHearingId(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
+
+            [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
             public static string GetAudioApplication() => $"{ApiRoot}/audioapplications";
+
+            [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
             public static string DeleteAudioApplication(Guid hearingId) => $"{ApiRoot}/audioapplications/{hearingId}";
-            public static string GetAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
+
+            [Obsolete("We only have one application for all hearings now. Need to review old bookings.")]
             public static string GetAudioMonitoringStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}/monitoring";
+
+            public static string GetAudioStream(Guid hearingId) => $"{ApiRoot}/audiostreams/{hearingId}";
             public static string GetAudioRecordingLink(Guid hearingId) => $"{ApiRoot}/audio/{hearingId}";
             public static string GetCvpAudioRecordingsAll(string cloudRoom, string date, string caseReference) => $"{ApiRoot}/audio/cvp/all/{cloudRoom}/{date}/{caseReference}";
             public static string GetCvpAudioRecordingsByCloudRoom(string cloudRoom, string date) => $"{ApiRoot}/audio/cvp/cloudroom/{cloudRoom}/{date}";
@@ -48,6 +57,8 @@ namespace Testing.Common.Helper
             public static string GetConferencesTodayForIndividual(string username) => $"{ApiRoot}/today/individual?username={username}";
             public static string GetExpiredOpenConferences => $"{ApiRoot}/expired";
             public static string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
+            public static string GetConferencesForHostByHearingRefId() => $"{ApiRoot}/hearings/host";
+            public static string GetConferencesForAdminByHearingRefId() => $"{ApiRoot}/hearings/staff-member";
             public static string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
             public static string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
             public static string UpdateConference => $"{ApiRoot}";
@@ -97,7 +108,7 @@ namespace Testing.Common.Helper
             public static string RemoveInstantMessagesForConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/instantmessages";
             public static string GetClosedConferencesWithInstantMessages => $"{ApiRoot}/expiredIM";
         }
-        
+
         public static class EPEndpoints
         {
             private const string ApiRoot = "conferences";
@@ -123,10 +134,10 @@ namespace Testing.Common.Helper
 
             public static string GetInterpreterRoomForParticipant(Guid conferenceId, Guid participantId) =>
                 $"{ApiRoot}/{conferenceId}/rooms/interpreter/{participantId}";
-            
+
             public static string GetWitnessRoomForParticipant(Guid conferenceId, Guid participantId) =>
                 $"{ApiRoot}/{conferenceId}/rooms/witness/{participantId}";
-            
+
             public static string GetJudicialRoomForParticipant(Guid conferenceId, Guid participantId) =>
                 $"{ApiRoot}/{conferenceId}/rooms/judicial/{participantId}";
         }

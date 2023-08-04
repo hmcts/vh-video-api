@@ -1,22 +1,29 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
-using AcceptanceTests.Common.Api;
+using System.Security.Cryptography;
+using Azure.Storage.Blobs;
 using FluentAssertions;
+using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Moq;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
+using VideoApi.Services;
+using VideoApi.Services.Contracts;
 using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 
 namespace VideoApi.IntegrationTests.Hooks
@@ -24,19 +31,32 @@ namespace VideoApi.IntegrationTests.Hooks
     [Binding]
     public class ConfigHooks
     {
-        private readonly IConfigurationRoot _configRoot;
+        private const string KinlyApiSecretConfigKeyName = "KinlyConfiguration:ApiSecret";
+        private const string KinlyCallbackSecretConfigKeyName = "KinlyConfiguration:CallbackSecret";
+
+        private static IConfigurationRoot _configRoot;
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = ConfigurationManager.BuildConfig("9AECE566-336D-4D16-88FA-7A76C27321CD");
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
+        }
+
+        /// <summary>
+        /// This will insert a random callback secret per test run
+        /// </summary>
+        private static void AddRandomAccountKey()
+        {
+            var secret = Convert.ToBase64String(new HMACSHA256().Key);
+            Environment.SetEnvironmentVariable(KinlyApiSecretConfigKeyName, secret);
+            Environment.SetEnvironmentVariable(KinlyCallbackSecretConfigKeyName, secret);
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
         public void RegisterSecrets(TestContext context)
         {
-            var azureOptions = RegisterAzureSecrets(context);
+            AddRandomAccountKey();
+            _configRoot = ConfigRootBuilder.Build();
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterKinlySettings(context);
@@ -45,15 +65,6 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterDatabaseSettings(context);
             RegisterServer(context);
             RegisterApiSettings(context);
-            GenerateBearerTokens(context, azureOptions);
-        }
-
-        private IOptions<AzureAdConfiguration> RegisterAzureSecrets(TestContext context)
-        {
-            var azureOptions = Options.Create(_configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>());
-            context.Config.AzureAdConfiguration = azureOptions.Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.AzureAdConfiguration);
-            return azureOptions;
         }
 
         private static void RegisterDefaultData(TestContext context)
@@ -69,13 +80,13 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
         }
 
-        private void RegisterHearingServices(TestContext context)
+        private static void RegisterHearingServices(TestContext context)
         {
             context.Config.Services = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.Services);
         }
-        
-        private void RegisterKinlySettings(TestContext context)
+
+        private static void RegisterKinlySettings(TestContext context)
         {
             context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
@@ -83,7 +94,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.KinlyConfiguration.KinlyApiUrl.Should().NotBeEmpty();
         }
 
-        private void RegisterWowzaSettings(TestContext context)
+        private static void RegisterWowzaSettings(TestContext context)
         {
             context.Config.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
             context.Config.Wowza.StorageAccountKey.Should().NotBeNullOrEmpty();
@@ -91,7 +102,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Wowza.StorageContainerName.Should().NotBeNullOrEmpty();
         }
 
-        private void RegisterCvpSettings(TestContext context)
+        private static void RegisterCvpSettings(TestContext context)
         {
             context.Config.Cvp = Options.Create(_configRoot.GetSection("CvpConfiguration").Get<CvpConfiguration>()).Value;
             context.Config.Cvp.StorageAccountKey.Should().NotBeNullOrEmpty();
@@ -99,12 +110,11 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Cvp.StorageContainerName.Should().NotBeNullOrEmpty();
         }
 
-        private void RegisterDatabaseSettings(TestContext context)
+        private static void RegisterDatabaseSettings(TestContext context)
         {
             context.Config.DbConnection = Options.Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.Config.DbConnection);
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
-            dbContextOptionsBuilder.EnableSensitiveDataLogging();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VideoApi);
             context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
             context.TestDataManager = new TestDataManager(context.Config.KinlyConfiguration, context.VideoBookingsDbContextOptions);
@@ -115,23 +125,60 @@ namespace VideoApi.IntegrationTests.Hooks
             var webHostBuilder = WebHost.CreateDefaultBuilder()
                     .UseKestrel(c => c.AddServerHeader = false)
                     .UseEnvironment("Development")
-                    .UseStartup<Startup>();
+                    .UseStartup<Startup>()
+                    .ConfigureTestServices(services =>
+                    {
+                        services.AddAuthentication(options =>
+                        {
+                            options.DefaultScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                            options.DefaultAuthenticateScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                            options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                        }).AddFakeJwtBearer();
+
+                        RegisterAzuriteStorageService(context, services);
+
+                        RegisterStubs(services);
+                    });
             context.Server = new TestServer(webHostBuilder);
+        }
+
+        private static void RegisterStubs(IServiceCollection services)
+        {
+            services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+            services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
+            services.AddScoped<IConsultationService, ConsultationServiceStub>();
+            services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
+        }
+
+        private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)
+        {
+            // Remove application IEmailProvider service
+            var azStorageServices = services.Where(d => d.ServiceType == typeof(IAzureStorageService)).ToList();
+            foreach (var azStorageService in azStorageServices)
+            {
+                services.Remove(azStorageService);
+            }
+
+            var blobConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
+#pragma warning disable
+            // This the default test secret available in public MS documentation
+            var connectionString =
+                "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+#pragma warning restore
+            var serviceClient = new BlobServiceClient(connectionString);
+
+            NUnit.Framework.TestContext.WriteLine($"Blob connectionstring is {blobConnectionString}");
+            var blobClientExtension = new BlobClientExtension();
+
+            services.AddSingleton<IAzureStorageService>(x =>
+                new VhAzureStorageService(serviceClient, context.Config.Wowza, false, blobClientExtension));
+            services.AddSingleton<IAzureStorageService>(x =>
+                new CvpAzureStorageService(serviceClient, context.Config.Cvp, false, blobClientExtension));
         }
 
         private static void RegisterApiSettings(TestContext context)
         {
-            context.Response = new HttpResponseMessage(); 
-        }
-
-        private static void GenerateBearerTokens(TestContext context, IOptions<AzureAdConfiguration> azureOptions)
-        {
-            context.Tokens.VideoApiBearerToken = new AzureTokenProvider(azureOptions).GetClientAccessToken(
-                azureOptions.Value.ClientId, azureOptions.Value.ClientSecret,
-                context.Config.Services.VideoApiResourceId);
-            context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
-
-            Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
+            context.Response = new HttpResponseMessage();
         }
     }
 }

@@ -317,7 +317,7 @@ namespace VideoApi.IntegrationTests.Steps
 [Given(@"I have a valid start consultation request")]
         public async Task GivenIHaveAValidStartConsultationRequest()
         {
-            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judge =
                 conference.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
 
@@ -334,7 +334,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"the judge is in the waiting room")]
         public async Task GivenTheJudgeIsInTheWaitingRoom()
         {
-            var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var conferenceResponse = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
                 conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
 
@@ -352,7 +352,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a valid leave consultation request")]
         public async Task GivenIHaveAValidLeaveConsultationRequest()
         {
-            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judge =
                 conference.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
 
@@ -368,7 +368,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"the judge joh is in the consultation room")]
         public async Task GivenTheJudgeJohIsInTheConsultationRoom()
         {
-            var conferenceResponse = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var conferenceResponse = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             var judgeResponse =
                 conferenceResponse.Participants.First(x => x.UserRole == Contract.Enums.UserRole.Judge);
             var consultationRoom = new ConsultationRoom(conferenceResponse.Id, "name", VirtualCourtRoomType.JudgeJOH, false);

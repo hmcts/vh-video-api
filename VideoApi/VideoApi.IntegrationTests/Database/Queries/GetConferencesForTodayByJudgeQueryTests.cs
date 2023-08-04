@@ -43,7 +43,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
         public async Task Should_get_conference_with_meeting_room_for_judge()
         {
             var username = "Automation_knownuser@hmcts.net";
-            var conference1 = new ConferenceBuilder(true)
+            var scheduledDateTime = DateTime.Today.AddHours(10).AddMinutes(40);
+            var conference1 = new ConferenceBuilder(ignoreId: true, scheduledDateTime: scheduledDateTime)
                 .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Closed)
@@ -51,7 +52,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .Build();
             _newConferenceId1 = conference1.Id;
 
-            var conference2 = new ConferenceBuilder(true)
+            var conference2 = new ConferenceBuilder(ignoreId: true, scheduledDateTime: scheduledDateTime)
                 .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
@@ -59,7 +60,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .Build();
             _newConferenceId2 = conference2.Id;
 
-            var conference3 = new ConferenceBuilder(true)
+            var conference3 = new ConferenceBuilder(ignoreId: true, scheduledDateTime: scheduledDateTime)
                 .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Paused)
@@ -67,7 +68,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .Build();
             _newConferenceId3 = conference3.Id;
 
-            var conference4 = new ConferenceBuilder(true)
+            var conference4 = new ConferenceBuilder(ignoreId: true, scheduledDateTime: scheduledDateTime)
                 .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.Suspended)
@@ -83,14 +84,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .Build();
             _newConferenceId5 = conference5.Id;
 
-            var conference6 = new ConferenceBuilder(true)
+            var conference6 = new ConferenceBuilder(ignoreId: true, scheduledDateTime: scheduledDateTime)
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .Build();
             _newConferenceId6 = conference6.Id;
 
-            var conference7 = new ConferenceBuilder(true)
+            var conference7 = new ConferenceBuilder(ignoreId: true, scheduledDateTime: scheduledDateTime)
                 .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
@@ -98,7 +99,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .Build();
             _newConferenceId7 = conference7.Id;
 
-            var conference8 = new ConferenceBuilder(true)
+            var conference8 = new ConferenceBuilder(ignoreId: true, scheduledDateTime: scheduledDateTime)
                 .WithParticipant(UserRole.Representative, "Respondent", username)
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)

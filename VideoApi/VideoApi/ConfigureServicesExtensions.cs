@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using Azure.Identity;
@@ -9,6 +9,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -28,7 +29,6 @@ using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Handlers;
-using VideoApi.Services.Kinly;
 using VideoApi.Swagger;
 using ZymLabs.NSwag.FluentValidation;
 
@@ -38,21 +38,31 @@ namespace VideoApi
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
-            services.AddSingleton<FluentValidationSchemaProcessor>();
+            services.AddScoped(provider =>
+            {
+                var validationRules = provider.GetService<IEnumerable<FluentValidationRule>>();
+                var loggerFactory = provider.GetService<ILoggerFactory>();
+
+                return new FluentValidationSchemaProcessor(provider, validationRules, loggerFactory);
+            });
             services.AddOpenApiDocument((document, serviceProvider) =>
             {
-                document.AddSecurity("JWT", Enumerable.Empty<string>(),
-                    new OpenApiSecurityScheme
-                    {
-                        Type = OpenApiSecuritySchemeType.ApiKey,
-                        Name = "Authorization",
-                        In = OpenApiSecurityApiKeyLocation.Header,
-                        Description = "Type into the textbox: Bearer {your JWT token}.",
-                        Scheme = "bearer"
-                    });
+                document.DocumentProcessors.Add(
+                    new SecurityDefinitionAppender("JWT",
+                        new OpenApiSecurityScheme
+                        {
+                            Type = OpenApiSecuritySchemeType.ApiKey,
+                            Name = "Authorization",
+                            In = OpenApiSecurityApiKeyLocation.Header,
+                            Description = "Type into the textbox: Bearer {your JWT token}.",
+                            Scheme = "bearer"
+                        }));
                 document.Title = "Video API";
                 document.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
                 document.OperationProcessors.Add(new AuthResponseOperationProcessor());
+                var fluentValidationSchemaProcessor = serviceProvider.CreateScope().ServiceProvider.GetService<FluentValidationSchemaProcessor>();
+                // Add the fluent validations schema processor
+                document.SchemaProcessors.Add(fluentValidationSchemaProcessor);
             });
             return services;
         }

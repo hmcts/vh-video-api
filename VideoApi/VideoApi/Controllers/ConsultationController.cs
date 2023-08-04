@@ -17,7 +17,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Extensions;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 
 namespace VideoApi.Controllers
 {

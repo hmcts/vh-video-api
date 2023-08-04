@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FluentValidation.Results;
 
-namespace VideoApi.ValidationMiddleware
+namespace VideoApi.Middleware.Validation
 {
     public interface IRequestModelValidatorService
     {

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace VideoApi.DAL.Exceptions
 {
     [Serializable]
-    public class ConferenceNotFoundException : Exception
+    public class ConferenceNotFoundException : VideoDalException
     {
         public ConferenceNotFoundException(Guid conferenceId) : base($"Conference {conferenceId} does not exist")
         {

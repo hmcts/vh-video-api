@@ -1,0 +1,64 @@
+version: '3.4'
+
+networks:
+  integration-tests:
+    driver: bridge
+
+services:
+
+  vh-video-api-tests:
+    image: vh-api-tests
+    build:
+      context: ./
+      dockerfile: tests/Dockerfile
+    entrypoint:
+      [
+        "/wait-for-it.sh",
+        "test-db:1433",
+        "-t",
+        "120",
+        "--",
+        "/run-tests.sh"
+      ]
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__VideoApi=Data Source=test-db;Database=VideoApi;User Id=SA;Password=R4ndomP@assword;Trust Server Certificate=True;Encrypt=False
+      - Azure__StorageConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+    volumes:
+      - ./TestResults:/TestResults:rw
+      - ./Coverage:/Coverage:rw
+      - ./:/app:rw
+    depends_on:
+      - test-db
+      - azurite
+    networks:
+      - integration-tests
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    hostname: azurite
+    restart: always
+    command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --location /workspace --debug /workspace/debug.log"
+    ports:
+      - 11000:10000
+      - 11001:10000
+      - 11002:10000
+    volumes:
+      - ./azurite:/workspace
+    networks:
+      - integration-tests
+
+  test-db:
+    hostname: test-db
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: vh.videoapi.sql.testing
+    expose:
+      - 14330
+      - 1433
+    ports:
+      - 14330:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=R4ndomP@assword
+    networks:
+      - integration-tests

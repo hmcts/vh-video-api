@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System.Net;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Commands.Core;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {

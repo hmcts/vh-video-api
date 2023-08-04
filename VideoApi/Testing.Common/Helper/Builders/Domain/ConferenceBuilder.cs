@@ -30,7 +30,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             var hearingRefId = knownHearingRefId ?? Guid.NewGuid();
 
-            var scheduleDateTime = scheduledDateTime ?? DateTime.UtcNow.AddMinutes(30);
+            var scheduleDateTime = scheduledDateTime ?? DateTime.Today.AddHours(9).AddMinutes(30);
             const string caseType = "Generic";
             var randomGenerator = RandomNumberGenerator.Create(); // Compliant for security-sensitive use cases
             var data = new byte[2];

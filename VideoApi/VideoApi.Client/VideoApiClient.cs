@@ -25,55 +25,6 @@ namespace VideoApi.Client
     public partial interface IVideoApiClient
     {
         /// <summary>
-        /// Gets the audio application info for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Gets the audio application info for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Deletes the audio application for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Deletes the audio application for the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Gets the audio application info
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Gets the audio application info
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
         /// Gets the audio stream for the conference by hearingId
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
@@ -93,25 +44,6 @@ namespace VideoApi.Client
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Gets the audio stream for monitoring the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
-        /// <returns>AudioStreamInfoResponse</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Gets the audio stream for monitoring the conference by hearingId
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
-        /// <returns>AudioStreamInfoResponse</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get the audio recording link for a given hearing.
@@ -176,6 +108,74 @@ namespace VideoApi.Client
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the audio application info for the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Gets the audio application info for the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationWithHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deletes the audio application for the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Deletes the audio application for the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to stop the audio recording application</param>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task DeleteAudioApplicationAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the audio application info
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Gets the audio application info
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task<AudioApplicationInfoResponse> GetAudioApplicationAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the audio stream for monitoring the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
+        /// <returns>AudioStreamInfoResponse</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Gets the audio stream for monitoring the conference by hearingId
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to monitor the audio recording stream</param>
+        /// <returns>AudioStreamInfoResponse</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
+        System.Threading.Tasks.Task<AudioStreamMonitoringInfo> GetAudioStreamMonitoringInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Request to book a conference
@@ -248,6 +248,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -256,6 +257,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
@@ -263,6 +265,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesTodayForStaffMemberByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -271,6 +274,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesTodayForStaffMemberByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
@@ -342,6 +346,40 @@ namespace VideoApi.Client
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get list of expired conferences
@@ -647,7 +685,7 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request);
+        System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -656,20 +694,20 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress);
+        System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Update an endpoint's display name or assign the defence advocate
@@ -679,7 +717,7 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request);
+        System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -690,7 +728,7 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Check Service Health
@@ -1194,6 +1232,535 @@ namespace VideoApi.Client
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <summary>
+        /// Gets the audio stream for the conference by hearingId
+        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
+        /// <returns>AudioStreamInfoResponse</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp)
+        {
+            return GetAudioStreamInfoAsync(hearingId, singleWowzaApp, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Gets the audio stream for the conference by hearingId
+        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
+        /// </summary>
+        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
+        /// <returns>AudioStreamInfoResponse</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp, System.Threading.CancellationToken cancellationToken)
+        {
+            if (hearingId == null)
+                throw new System.ArgumentNullException("hearingId");
+
+            if (singleWowzaApp == null)
+                throw new System.ArgumentNullException("singleWowzaApp");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audiostreams/{hearingId}/{singleWowzaApp}");
+            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{singleWowzaApp}", System.Uri.EscapeDataString(ConvertToString(singleWowzaApp, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AudioStreamInfoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<string>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<System.Collections.Generic.ICollection<string>>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get the audio recording link for a given hearing.
+        /// <br/>Note: Only used by the admin web. To be decommissioned
+        /// </summary>
+        /// <param name="hearingId">The hearing id.</param>
+        /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId)
+        {
+            return GetAudioRecordingLinkAsync(hearingId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the audio recording link for a given hearing.
+        /// <br/>Note: Only used by the admin web. To be decommissioned
+        /// </summary>
+        /// <param name="hearingId">The hearing id.</param>
+        /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (hearingId == null)
+                throw new System.ArgumentNullException("hearingId");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{hearingId}");
+            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AudioRecordingResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference)
+        {
+            return GetAudioRecordingLinkAllCvpAsync(cloudRoom, date, caseReference, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/cvp/all/{cloudRoom}/{date}/{caseReference}");
+            urlBuilder_.Replace("{cloudRoom}", System.Uri.EscapeDataString(ConvertToString(cloudRoom, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{caseReference}", System.Uri.EscapeDataString(ConvertToString(caseReference, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CvpAudioFileResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date)
+        {
+            return GetAudioRecordingLinkCvpByCloudRoomAsync(cloudRoom, date, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/cvp/cloudroom/{cloudRoom}/{date}");
+            urlBuilder_.Replace("{cloudRoom}", System.Uri.EscapeDataString(ConvertToString(cloudRoom, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CvpAudioFileResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference)
+        {
+            return GetAudioRecordingLinkCvpByDateAsync(date, caseReference, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the audio recording links for a given CVP recording.
+        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
+        /// </summary>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/cvp/date/{date}/{caseReference}");
+            urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{caseReference}", System.Uri.EscapeDataString(ConvertToString(caseReference, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CvpAudioFileResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Gets the audio application info for the conference by hearingId
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to retrieve the audio application info</param>
@@ -1250,6 +1817,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<AudioApplicationInfoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -1345,6 +1922,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -1430,113 +2017,19 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<AudioApplicationInfoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Gets the audio stream for the conference by hearingId
-        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
-        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
-        /// <returns>AudioStreamInfoResponse</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp)
-        {
-            return GetAudioStreamInfoAsync(hearingId, singleWowzaApp, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Gets the audio stream for the conference by hearingId
-        /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
-        /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
-        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
-        /// <returns>AudioStreamInfoResponse</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-
-            if (singleWowzaApp == null)
-                throw new System.ArgumentNullException("singleWowzaApp");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audiostreams/{hearingId}/{singleWowzaApp}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{singleWowzaApp}", System.Uri.EscapeDataString(ConvertToString(singleWowzaApp, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<AudioStreamInfoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1632,384 +2125,19 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<AudioStreamMonitoringInfo>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Get the audio recording link for a given hearing.
-        /// <br/>Note: Only used by the admin web. To be decommissioned
-        /// </summary>
-        /// <param name="hearingId">The hearing id.</param>
-        /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId)
-        {
-            return GetAudioRecordingLinkAsync(hearingId, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get the audio recording link for a given hearing.
-        /// <br/>Note: Only used by the admin web. To be decommissioned
-        /// </summary>
-        /// <param name="hearingId">The hearing id.</param>
-        /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{hearingId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<AudioRecordingResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Get the audio recording links for a given CVP recording.
-        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference)
-        {
-            return GetAudioRecordingLinkAllCvpAsync(cloudRoom, date, caseReference, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get the audio recording links for a given CVP recording.
-        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkAllCvpAsync(string cloudRoom, string date, string caseReference, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/cvp/all/{cloudRoom}/{date}/{caseReference}");
-            urlBuilder_.Replace("{cloudRoom}", System.Uri.EscapeDataString(ConvertToString(cloudRoom, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{caseReference}", System.Uri.EscapeDataString(ConvertToString(caseReference, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CvpAudioFileResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Get the audio recording links for a given CVP recording.
-        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date)
-        {
-            return GetAudioRecordingLinkCvpByCloudRoomAsync(cloudRoom, date, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get the audio recording links for a given CVP recording.
-        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/cvp/cloudroom/{cloudRoom}/{date}");
-            urlBuilder_.Replace("{cloudRoom}", System.Uri.EscapeDataString(ConvertToString(cloudRoom, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CvpAudioFileResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Get the audio recording links for a given CVP recording.
-        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference)
-        {
-            return GetAudioRecordingLinkCvpByDateAsync(date, caseReference, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get the audio recording links for a given CVP recording.
-        /// <br/>Note: Only used by the admin web. Need to discuss if we still need this
-        /// </summary>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<CvpAudioFileResponse>> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/cvp/date/{date}/{caseReference}");
-            urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{caseReference}", System.Uri.EscapeDataString(ConvertToString(caseReference, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<CvpAudioFileResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2106,6 +2234,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 201)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ConferenceDetailsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2204,6 +2342,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -2295,6 +2443,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ConferenceDetailsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2398,6 +2556,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -2447,6 +2615,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames)
         {
             return GetConferencesTodayForAdminByHearingVenueNameAsync(hearingVenueNames, System.Threading.CancellationToken.None);
@@ -2458,6 +2627,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -2498,6 +2668,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForAdminResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2532,6 +2712,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesTodayForStaffMemberByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames)
         {
             return GetConferencesTodayForStaffMemberByHearingVenueNameAsync(hearingVenueNames, System.Threading.CancellationToken.None);
@@ -2543,6 +2724,7 @@ namespace VideoApi.Client
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesTodayForStaffMemberByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -2583,6 +2765,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForHostResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2670,6 +2862,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForHostResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2767,6 +2969,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForHostResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2864,6 +3076,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2967,6 +3189,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ConferenceDetailsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -2975,6 +3207,254 @@ namespace VideoApi.Client
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ValidationProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
+        {
+            return GetConferencesForAdminByHearingRefIdAsync(request, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new System.ArgumentNullException("request");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearings/staff-member");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForAdminResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ValidationProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
+        {
+            return GetConferencesForHostByHearingRefIdAsync(request, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForHostResponse>> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new System.ArgumentNullException("request");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearings/host");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceForHostResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 400)
@@ -3057,6 +3537,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ExpiredConferencesResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -3137,6 +3627,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ExpiredConferencesResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -3223,6 +3723,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -3308,6 +3818,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ParticipantInHearingResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -3388,6 +3908,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ParticipantInHearingResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -3473,6 +4003,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceHearingRoomsResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -3561,6 +4101,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -3627,6 +4177,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -3708,6 +4268,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -3784,6 +4354,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -3882,6 +4462,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 202)
                         {
                             return;
@@ -3973,6 +4563,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 202)
                         {
                             return;
@@ -4054,6 +4654,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 202)
                         {
                             return;
@@ -4135,6 +4745,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 202)
                         {
                             return;
@@ -4222,6 +4842,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 202)
                         {
                             return;
@@ -4303,6 +4933,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -4392,6 +5032,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -4485,6 +5135,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -4589,6 +5249,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<RoomResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -4697,6 +5367,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 202)
                         {
                             return;
@@ -4806,6 +5486,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -4907,6 +5597,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<EndpointResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -4942,7 +5642,7 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request)
+        public virtual System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request)
         {
             return AddEndpointToConferenceAsync(conferenceId, request, System.Threading.CancellationToken.None);
         }
@@ -4954,7 +5654,7 @@ namespace VideoApi.Client
         /// <param name="conferenceId">Id of conference</param>
         /// <param name="request">Endpoint details</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task AddEndpointToConferenceAsync(System.Guid conferenceId, AddEndpointRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
@@ -4977,7 +5677,6 @@ namespace VideoApi.Client
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -5000,14 +5699,19 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
+                        if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<EndpointResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return objectResponse_.Object;
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 204)
+                        {
+                            return;
                         }
                         else
                         {
@@ -5033,7 +5737,7 @@ namespace VideoApi.Client
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress)
+        public virtual System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress)
         {
             return RemoveEndpointFromConferenceAsync(conferenceId, sipAddress, System.Threading.CancellationToken.None);
         }
@@ -5043,7 +5747,7 @@ namespace VideoApi.Client
         /// Remove an endpoint from a conference
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
@@ -5060,7 +5764,6 @@ namespace VideoApi.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -5083,14 +5786,19 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
+                        if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<EndpointResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return objectResponse_.Object;
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 204)
+                        {
+                            return;
                         }
                         else
                         {
@@ -5120,9 +5828,9 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
+        public virtual System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
         {
-            return UpdateDisplayNameForEndpointAsync(conferenceId, sipAddress, request, System.Threading.CancellationToken.None);
+            return UpdateEndpointInConferenceAsync(conferenceId, sipAddress, request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -5134,7 +5842,7 @@ namespace VideoApi.Client
         /// <param name="request">the updated values of an endpoint</param>
         /// <returns>an OK status</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task UpdateEndpointInConferenceAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
@@ -5180,6 +5888,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -5255,16 +5973,6 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
                         if (status_ == 500)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -5273,6 +5981,16 @@ namespace VideoApi.Client
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new VideoApiException<HealthCheckResponse>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -5345,16 +6063,6 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
                         if (status_ == 500)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -5363,6 +6071,16 @@ namespace VideoApi.Client
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new VideoApiException<HealthCheckResponse>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -5441,6 +6159,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<InstantMessageResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -5449,16 +6177,6 @@ namespace VideoApi.Client
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new VideoApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -5545,6 +6263,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -5625,6 +6353,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -5719,6 +6457,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<InstantMessageResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -5809,6 +6557,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ClosedConferencesResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -5901,6 +6659,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -6002,6 +6770,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ParticipantSummaryResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -6104,6 +6882,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -6217,6 +7005,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -6321,6 +7119,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -6426,6 +7234,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<TestCallScoreResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -6521,6 +7339,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<TestCallScoreResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -6621,6 +7449,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ParticipantHeartbeatResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -6729,6 +7567,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -6822,6 +7670,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<JudgeNameListResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -6915,6 +7773,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<AddStaffMemberResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -7016,6 +7884,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -7097,6 +7975,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             return;
@@ -7168,6 +8056,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -7261,6 +8159,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<AddQuickLinkParticipantResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -7344,6 +8252,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ParticipantSummaryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -7434,6 +8352,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<PexipConfigResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -7528,6 +8456,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<TaskResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -7627,6 +8565,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<TaskResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -7731,6 +8679,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -7820,6 +8778,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 204)
                         {
                             return;
@@ -7911,6 +8879,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<SharedParticipantRoomResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -8007,6 +8985,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<SharedParticipantRoomResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -8103,6 +9091,16 @@ namespace VideoApi.Client
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<SharedParticipantRoomResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);

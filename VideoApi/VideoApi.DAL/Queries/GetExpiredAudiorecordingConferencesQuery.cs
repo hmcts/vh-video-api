@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.DAL.Queries.Core;
@@ -8,6 +9,7 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Queries
 {
+    [SuppressMessage("Minor Code Smell", "S2094:Classes should not be empty")]
     public class GetExpiredAudiorecordingConferencesQuery : IQuery
     {
     }

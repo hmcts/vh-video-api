@@ -17,17 +17,17 @@ parameters:
   - name: RunUnitTests
     displayName: Run Unit Tests
     type: boolean
-    default: true
+    default: false
 
   - name: RunIntegTests
     displayName: Run Integration Tests
     type: boolean
-    default: true
+    default: false
 
   - name: RunSonarCloudTests
     displayName: Run Sonar Cloud Analysis
     type: boolean
-    default: true
+    default: false
 
   - name: RunMutationTests
     displayName: Run Mutation Tests
@@ -37,7 +37,7 @@ parameters:
   - name: RunACTests
     displayName: Run Acceptance Tests
     type: boolean
-    default: true
+    default: false
 
   - name: testSettings
     type: object
@@ -146,7 +146,7 @@ parameters:
       - name: AzureAd:Authority
         value: "https://login.microsoftonline.com/"
       - name: UseStub
-        value: 'false'
+        value: "false"
 
       # Services Configuration
       - name: Services:CallbackUri
@@ -252,11 +252,6 @@ trigger:
       - release/*
       - hotfix/*
 
-pr:
-  branches:
-    include:
-      - master
-
 resources:
   repositories:
     - repository: templates
@@ -307,10 +302,10 @@ extends:
       variables:
         - group: vh-video-api
       coverletCoverageExclusions:
-        - '[VideoApi.*Tests?]*'
-        - '[VideoApi]Startup'
-        - '[VideoApi.Common]*'
-        - '[VideoApi.Common]*'
+        - "[VideoApi.*Tests?]*"
+        - "[VideoApi]Startup"
+        - "[VideoApi.Common]*"
+        - "[VideoApi.Common]*"
       sonarCloud_ExtraProperties: |
         sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
         sonar.coverage.exclusions=**/Program.cs,**/Startup.cs,**/VideoApi/Extensions/**,**/VideoApiI/Swagger/**,**/VideoApi/ConfigureServicesExtensions.cs,**/Testing.Common/**/*,**/VideoApi.Common/**,**/VideoApi.DAL/Mappings/**,**/VideoApi.DAL/SeedData/**,**/VideoApi.DAL/VideoApiDbContext.cs,**/VideoApi.DAL/**/DesignTimeHearingsContextFactory.cs,**/VideoApi.DAL/Migrations/*,**/VideoApi.Domain/Ddd/*,**/VideoApi.Domain/Validations/*

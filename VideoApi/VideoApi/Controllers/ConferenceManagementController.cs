@@ -12,7 +12,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
 
 namespace VideoApi.Controllers

@@ -1,6 +1,7 @@
 name: $(Date:yyyyMMddHHmm)-$(Rev:r)
 
-trigger: none
+trigger: 
+  - release/*
 
 pr: none
 
@@ -12,184 +13,411 @@ resources:
       ref: master
       endpoint: hmcts
 
-parameters:
-- name: environment
-  type: object
-  default:
-  - Demo
-  - Prod
-
 pool: 
   vmImage: ubuntu-22.04
 
 #####################################################
 # Pre-Release Tasks. ################################
 stages:
-- ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
-  - stage: Pre_Run_Tasks
-    displayName: Pre-Release Tasks
+- stage: Pre_Run_Tasks
+  displayName: Pre-Release Tasks
+  variables:
+  - template: variables/shared.yaml
+  jobs:
+  - job: Generate_Entity_Framework_Script
+    displayName: "Generate Entity Framework Script"
+    steps:
+    - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+      parameters:
+        outputPath: $(Build.StagingDirectory)
+        contextName: ${{ variables.efContextName }}
+        workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
+        projectName: ${{ variables.efProjectName }}
+        migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
+
+  - job: PublishAcceptanceTests
+    displayName: Publish Acceptance Tests
     variables:
-    - template: variables/shared.yaml
-    - template: variables/production.yaml
-    jobs:
-    - job: Generate_Entity_Framework_Script
-      displayName: "Generate Entity Framework Script"
-      steps:
-      - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
-        parameters:
-          outputPath: $(Build.StagingDirectory)
-          contextName: ${{ variables.efContextName }}
-          workingPath: $(System.DefaultWorkingDirectory)/VideoApi/VideoApi
-          projectName: ${{ variables.efProjectName }}
-          migrationsPath: VideoApi/VideoApi.DAL/Migrations
-        
-  #####################################################
-  # Approval Gate for EF. #############################
-  - stage: Approve_Entity_Framework
-    displayName: 'Approve EF Release'
-    jobs:
-    - job: waitForValidation
-      displayName: 'Approve Entity Framework'
-      pool: server
-      timeoutInMinutes: 4320 
-      steps:
-      - task: ManualValidation@0
-        timeoutInMinutes: 1440
-        inputs:
-          instructions: 'Please Approve to Run Entity Framework Release...'
-          onTimeout: 'reject'
+      projectPath: "${{ variables.appName }}/${{ variables.appName }}"
+    steps:
+    - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
+      parameters:
+        vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+        coreProjectPath: $(projectPath)
 
-  #####################################################
-  # Run Entity Framework. #####################
-  - ${{ each env in parameters.environment }}:
-    - stage: Run_Entity_Framework_${{ env }}
-      displayName: ${{ env }} EF Release
-      dependsOn: Approve_Entity_Framework
-      variables:
-      - ${{ if eq(env, 'Demo') }}:
-        - template: variables/demo.yaml
-      - ${{ if eq(env, 'Prod') }}:
-        - template: variables/production.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-      jobs:
-      - job: Run_Entity_Framework_${{ env }}
-        pool:
-          vmImage: 'windows-latest'
-        displayName: Run Entity Framework ${{ env }}
-        steps:
-        - download: current
-          displayName: Download Sql Artifact
+#####################################################
+# Run Entity Framework Staging. #####################
+- stage: Run_Entity_Framework_Staging
+  displayName: Staging EF Release
+  dependsOn:
+    - Pre_Run_Tasks
+  variables:
+  - template: variables/staging.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  jobs:
+  - job: Run_Entity_Framework_Staging
+    pool:
+      vmImage: 'windows-latest'
+    displayName: Run Entity Framework Staging
+    steps:
+    - download: current
+      displayName: Download Sql Artifact
 
-        - ${{ if or( eq(env, 'Staging'), eq(env, 'Prod') ) }}: 
-          - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
-            parameters:
-              addOrDelete: delete
-              lockName: "${{ variables.env }}-lock"
-              resourceGroup: ${{ variables.vhResourceGroup }}
-              azureSubscription: ${{ variables.subscriptionName }}
+    - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+      parameters:
+        addOrDelete: delete
+        lockName: "${{ variables.env }}-lock"
+        resourceGroup: ${{ variables.vhResourceGroup }}
+        azureSubscription: ${{ variables.subscriptionName }}
 
-        - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-          parameters:
-            sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-            sqlServerName: ${{ variables.vhSQLServerName }}
-            databaseName: ${{ variables.VideoApiDbName }}
-            azureSubscription: ${{ variables.subscriptionName }}
-            sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-            kvfirewallRequired: false
-            kvName: ${{ variables.vhKeyVault }}
-            kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-            kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+    - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+      parameters:
+        sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+        sqlServerName: ${{ variables.vhSQLServerName }}
+        databaseName: ${{ variables.videoApiDbName }}
+        azureSubscription: ${{ variables.subscriptionName }}
+        sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
+        kvfirewallRequired: false
+        kvName: ${{ variables.vhKeyVault }}
+        kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+        kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
 
-        - ${{ if or( eq(env, 'Staging'), eq(env, 'Prod') ) }}: 
-          - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
-            parameters:
-              addOrDelete: add
-              lockName: "${{ variables.env }}-lock"
-              resourceGroup: ${{ variables.vhResourceGroup }}
-              azureSubscription: ${{ variables.subscriptionName }}
-              lockType: CanNotDelete
+    - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+      parameters:
+        addOrDelete: add
+        lockName: "${{ variables.env }}-lock"
+        resourceGroup: ${{ variables.vhResourceGroup }}
+        azureSubscription: ${{ variables.subscriptionName }}
+        lockType: CanNotDelete
 
-  #####################################################
-  # Approval Gate for Video API Release. ############
-  - stage: Approve_Helm_Release
-    displayName: 'Approve Helm Release'
-    dependsOn: 
-    - Run_Entity_Framework_Demo
-    - Run_Entity_Framework_Prod
-    jobs:
-    - job: waitForValidation
-      displayName: 'Approve Helm Release'
-      pool: server
-      timeoutInMinutes: 4320
-      steps:
-      - task: ManualValidation@0
-        timeoutInMinutes: 1440 
-        inputs:
-          instructions: 'Please Approve for Helm Release...'
-          onTimeout: 'reject'
+#####################################################
+# Build Docker Image & Push. ########################
+- stage: Docker_Build_Push
+  displayName: Docker Build & Push Image
+  dependsOn: 
+    - Run_Entity_Framework_Staging
+  variables:
+  - template: variables/staging.yaml
+  - template: variables/shared.yaml
+  jobs:
+  - job: Docker_Build
+    displayName: "Docker Build and Push"
+    steps:
+    - checkout: self
 
-  #####################################################
-  # Build Docker Image & Push. ########################
-  - stage: Docker_Build_Push
-    displayName: Docker Build & Push Image
-    dependsOn: Approve_Helm_Release
-    variables:
-    - template: variables/production.yaml
-    - template: variables/shared.yaml
-    jobs:
-    - job: Docker_Build
-      displayName: "Docker Build and Push"
-      steps:
-      - checkout: self
+    - bash: |
+        sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
+      displayName: Add NuGet Feed Authentication
+      workingDirectory: ${{ variables.appName }}
+  
+    - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
+      parameters:
+        azureSubscription: ${{ variables.acrSubscription }}
+        acrName: ${{ variables.acrName }}
+        repositoryName:  ${{ variables.repositoryName }}
+      
+    - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+      parameters:
+        azureSubscription: ${{ variables.acrSubscription }}
+        acrName: ${{ variables.acrName }}
+        repositoryName:  ${{ variables.repositoryName }}
+        imageName: "${{ variables.imageName }}"
+        imageTags:
+          - '${{ variables.stagingTagName }}'
 
-      - bash: |
-          sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
-        displayName: Add NuGet Feed Authentication
-        workingDirectory: VideoApi
-    
-      - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
-        parameters:
-          azureSubscription: ${{ variables.acrSubscription }}
-          acrName: ${{ variables.acrName }}
-          repositoryName:  ${{ variables.repositoryName }}
-        
-      - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-        parameters:
-          azureSubscription: ${{ variables.acrSubscription }}
-          acrName: ${{ variables.acrName }}
-          repositoryName:  ${{ variables.repositoryName }}
-          imageName: "${{ variables.imageName }}"
-          imageTags:
-            - 'latest'
-            - '${{ variables.releaseTagName }}'
+#########################################
+# Push Helm Charts to Repo. #############
+- stage: Helm_Staging
+  displayName: Push Helm Charts
+  dependsOn: 
+    - Docker_Build_Push
+  variables:
+  - template: variables/staging.yaml
+  - template: variables/shared.yaml
+  - group: vh-github-app-credentials
+  jobs:
+  - job: Helm
+    displayName: "Helm Push"
+    steps:
+    - checkout: self
 
-  #########################################
-  # Push Helm Charts to Repo. #############
-  - stage: Helm
-    displayName: Push Helm Charts
-    dependsOn: Docker_Build_Push
-    variables:
-    - template: variables/production.yaml
-    - template: variables/shared.yaml
-    - group: vh-github-app-credentials
-    jobs:
-    - job: Helm
-      displayName: "Helm Push"
-      steps:
-      - checkout: self
+    - template: templates\Github\get-app-token.yaml@azTemplates
+      parameters:
+        privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
+        appId: $(gh_app_app_id)
 
-      - template: templates\Github\get-app-token.yaml@azTemplates
-        parameters:
-          privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
-          appId: $(gh_app_app_id)
+    - template: templates\Github\push-to-helm-chart-repo.yaml@azTemplates
+      parameters:
+        chartName: ${{ variables.chartName }}
+        chartPath: ${{ variables.chartPath }}
+        githubToken: $(githubappinstall.token)
+        githubUsername: $(gh_app_name)
+        githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
+        subDirectory: ${{ variables.subDirectory }}
 
-      - template: templates\Github\push-to-helm-chart-repo.yaml@azTemplates
-        parameters:
-          chartName: ${{ variables.chartName }}
-          chartPath: ${{ variables.chartPath }}
-          githubToken: $(githubappinstall.token)
-          githubUsername: $(gh_app_name)
-          githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
-          subDirectory: ${{ variables.subDirectory }}
+##################################################
+# Run Acceptance Tests. ##########################
+- stage: Acceptance_Tests_Staging
+  dependsOn: 
+    - Helm_Staging
+  displayName: Acceptance Tests Staging
+  variables:
+  - group: vh-video-api
+  - template: variables/staging.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  - name: dnsRecordName
+    value: vh-${{ variables.git_repo_name }}
+  jobs:
+  - job: AcceptanceTestsStaging
+    pool: VH Self Hosted
+    displayName: Acceptance Tests Staging
+    steps:
+    - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
+      parameters:
+        environment: ${{ variables.env }}
+        azureSubscription: ${{ variables.subscriptionName }}
+        acceptanceTestSettings:
+          # App Insights
+          - name: ApplicationInsights:ConnectionString
+            value: connectionstrings--applicationinsights
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          
+          # Azure AD 
+          - name: AzureAd:ClientId
+            value: azuread--clientid
+            keyVaultName: vh-video-api-${{ variables.env }}
+            secret: true
+          - name: AzureAd:ClientSecret
+            value: azuread--clientsecret
+            keyVaultName: vh-video-api-${{ variables.env }}
+            secret: true
+          - name: AzureAd:TenantId
+            value: azuread--tenantid
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+
+          # Services Configuration
+          - name: Services:VideoApiResourceId
+            value: azuread--identifieruri
+            keyVaultName: vh-video-api-${{ variables.env }}
+            secret: true
+          - name: Services:CallbackUri
+            value: $(CallbackUri)
+          - name: Services:VideoApiUrl
+            value: "https://vh-video-api.staging.platform.hmcts.net"
+
+          # Wowza Configuration
+          - name: WowzaConfiguration:RestApiEndpoints
+            value: wowzaconfiguration--endpoint-https
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StreamingEndpoint
+            value: wowzaconfiguration--endpoint-https
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:Username 
+            value: wowzaconfiguration--username
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:Password 
+            value: wowzaconfiguration--restPassword
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageDirectory
+            value: wowzaconfiguration--azure-storage-directory
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageAccountName
+            value: wowzaconfiguration--storage-account
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageAccountKey
+            value: wowzaconfiguration--storageaccountkey
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageContainerName 
+            value: wowzaconfiguration--storage-account-container
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:StorageEndpoint
+            value: wowzaconfiguration--storage-account-endpoint
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: WowzaConfiguration:ManagedIdentityClientId
+            value: wowzaconfiguration--managedidentityclientid
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+            
+          # CVP Configuration
+          - name: CvpConfiguration:StorageAccountName
+            value: CvpConfiguration--StorageAccountName
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: CvpConfiguration:StorageAccountKey
+            value: CvpConfiguration--StorageAccountKey
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: CvpConfiguration:StorageContainerName
+            value: CvpConfiguration--StorageContainerName
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+          - name: CvpConfiguration:StorageEndpoint
+            value: CvpConfiguration--StorageEndpoint
+            keyVaultName: vh-infra-core-${{ variables.env }}
+            secret: true
+
+          # Kinly Configuration
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
+          - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+            value: $(ConferencePhoneNumberWelsh)
+          - name: KinlyConfiguration:KinlyApiUrl
+            value: $(KinlyApiUrl)
+          - name: KinlyConfiguration:KinlySelfTestApiUrl
+            value: $(KinlySelfTestApiUrl)
+          - name: KinlyConfiguration:ConferenceUsername
+            value: $(ConferenceUsername)
+          - name: KinlyConfiguration:CallbackUri
+            value: $(CallbackUri)
+
+          # Quick Links Configuration
+          - name: QuickLinks:Issuer
+            value: $(Issuer)
+          - name: QuickLinks:RsaPrivateKey
+            value: $(RsaPrivateKey)
+          - name: QuickLinks:ValidAudience
+            value: $(ValidAudience)
+
+#########################################
+# Approve Release to Prod. ##############
+- stage: Approve_Production_Release
+  displayName: Approve Prod Release
+  jobs:
+  - job: Approve_Production_Release
+    displayName: Approve Prod Release
+    pool: server
+    timeoutInMinutes: 10080 # 7 Days
+    steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 10080 # 7 Days
+      inputs:
+        instructions: 'Please Approve Release to Production'
+        onTimeout: 'reject'
+
+#####################################################
+# Run Entity Framework Prod. ########################
+- stage: Run_Entity_Framework_Production
+  displayName: Prod EF Release
+  dependsOn:
+    - Approve_Production_Release
+  variables:
+  - template: variables/production.yaml
+  - template: variables/shared.yaml
+    parameters:
+      env: ${{ variables.env }}
+  jobs:
+  - job: Run_Entity_Framework_Production
+    pool:
+      vmImage: 'windows-latest'
+    displayName: Run Entity Framework Prod
+    steps:
+    - download: current
+      displayName: Download Sql Artifact
+
+    - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+      parameters:
+        addOrDelete: delete
+        lockName: "${{ variables.env }}-lock"
+        resourceGroup: ${{ variables.vhResourceGroup }}
+        azureSubscription: ${{ variables.subscriptionName }}
+
+    - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+      parameters:
+        sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+        sqlServerName: ${{ variables.vhSQLServerName }}
+        databaseName: ${{ variables.videoApiDbName }}
+        azureSubscription: ${{ variables.subscriptionName }}
+        sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
+        kvfirewallRequired: false
+        kvName: ${{ variables.vhKeyVault }}
+        kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+        kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+
+    - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+      parameters:
+        addOrDelete: add
+        lockName: "${{ variables.env }}-lock"
+        resourceGroup: ${{ variables.vhResourceGroup }}
+        azureSubscription: ${{ variables.subscriptionName }}
+        lockType: CanNotDelete
+
+#####################################################
+# Build Docker Image & Push. ########################
+- stage: Docker_Build_Push_Prod
+  displayName: Docker Build & Push Image
+  dependsOn: 
+    - Run_Entity_Framework_Production
+  variables:
+  - template: variables/production.yaml
+  - template: variables/shared.yaml
+  jobs:
+  - job: Docker_Build
+    displayName: "Docker Build and Push"
+    steps:
+    - checkout: self
+
+    - bash: |
+        sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
+      displayName: Add NuGet Feed Authentication
+      workingDirectory: ${{ variables.appName }}
+  
+    - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
+      parameters:
+        azureSubscription: ${{ variables.acrSubscription }}
+        acrName: ${{ variables.acrName }}
+        repositoryName:  ${{ variables.repositoryName }}
+      
+    - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+      parameters:
+        azureSubscription: ${{ variables.acrSubscription }}
+        acrName: ${{ variables.acrName }}
+        repositoryName:  ${{ variables.repositoryName }}
+        imageName: "${{ variables.imageName }}"
+        imageTags:
+          - '${{ variables.releaseTagName }}'
+          - 'latest'
+
+#########################################
+# Push Helm Charts to Repo. #############
+- stage: Helm_Prod
+  displayName: Push Helm Charts
+  dependsOn: 
+    - Docker_Build_Push_Prod
+  variables:
+  - template: variables/production.yaml
+  - template: variables/shared.yaml
+  - group: vh-github-app-credentials
+  jobs:
+  - job: Helm
+    displayName: "Helm Push"
+    steps:
+    - checkout: self
+
+    - template: templates\Github\get-app-token.yaml@azTemplates
+      parameters:
+        privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
+        appId: $(gh_app_app_id)
+
+    - template: templates\Github\push-to-helm-chart-repo.yaml@azTemplates
+      parameters:
+        chartName: ${{ variables.chartName }}
+        chartPath: ${{ variables.chartPath }}
+        githubToken: $(githubappinstall.token)
+        githubUsername: $(gh_app_name)
+        githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
+        subDirectory: ${{ variables.subDirectory }}

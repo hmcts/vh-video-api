@@ -13,12 +13,12 @@
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
-        "requested": "[17.4.0, )",
-        "resolved": "17.4.0",
-        "contentHash": "VtNZQ83ntG2aEUjy1gq6B4HNdn96se6FmdY/03At8WiqDReGrApm6OB2fNiSHz9D6IIEtWtNZ2FSH0RJDVXl/w==",
+        "requested": "[17.5.0, )",
+        "resolved": "17.5.0",
+        "contentHash": "IJ4eSPcsRbwbAZehh1M9KgejSy0u3d0wAdkJytfCh67zOaCl5U3ltruUEe15MqirdRqGmm/ngbjeaVeGapSZxg==",
         "dependencies": {
-          "Microsoft.CodeCoverage": "17.4.0",
-          "Microsoft.TestPlatform.TestHost": "17.4.0"
+          "Microsoft.CodeCoverage": "17.5.0",
+          "Microsoft.TestPlatform.TestHost": "17.5.0"
         }
       },
       "NUnit3TestAdapter": {
@@ -35,9 +35,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.23.2, )",
-        "resolved": "1.23.2",
-        "contentHash": "IACJ9+e52/ibs0O2VvHkmMbq2dggC89bNf98XKpnQNyYH5pxISM82folDA7+i2Q61tUht46UmOKIBxi7ddqX7w==",
+        "requested": "[1.24.1, )",
+        "resolved": "1.24.1",
+        "contentHash": "QhyJpkUzoTHnV6OGf5PSDBU2Qoaeii76OL9FpKxgiiaitILLA1IuygXqnvvAYBdtvNr0FIU1mCkajkCz/6jjVg==",
         "dependencies": {
           "Appium.WebDriver": "4.4.0",
           "Azure.Storage.Blobs": "12.14.1",
@@ -65,7 +65,7 @@
           "Selenium.Firefox.WebDriver": "0.27.0",
           "Selenium.Support": "4.7.0",
           "Selenium.WebDriver": "4.7.0",
-          "Selenium.WebDriver.ChromeDriver": "108.0.5359.7100",
+          "Selenium.WebDriver.ChromeDriver": "111.0.5563.6400",
           "Selenium.WebDriver.IEDriver": "4.7.0",
           "Selenium.WebDriver.MicrosoftDriver": "17.17134.0",
           "SeleniumExtras.WaitHelpers": "1.0.2",
@@ -458,8 +458,8 @@
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
-        "resolved": "17.4.0",
-        "contentHash": "2oZbSVTC2nAvQ2DnbXLlXS+c25ZyZdWeNd+znWwAxwGaPh9dwQ5NBsYyqQB7sKmJKIUdkKGmN3rzFzjVC81Dtg=="
+        "resolved": "17.5.0",
+        "contentHash": "6FQo0O6LKDqbCiIgVQhJAf810HSjFlOj7FunWaeOGDKxy8DAbpHzPk4SfBTXz9ytaaceuIIeR6hZgplt09m+ig=="
       },
       "Microsoft.CSharp": {
         "type": "Transitive",
@@ -777,8 +777,8 @@
       },
       "Microsoft.Identity.Client": {
         "type": "Transitive",
-        "resolved": "4.48.1",
-        "contentHash": "AsTnTKgmJqhL1hjZ7TA13TDQVyWdn0vpYwhDMdb1mTg+w5m9AZsacLvmxsUZt03uamZ81pDY78himvXOM//tpw==",
+        "resolved": "4.50.0",
+        "contentHash": "zCgRgMTYTkcgeNgryKyHKFJa6I7JPiepKBTnPvlvsSjBilXObn+fRwe8hvkzAcTWMBQna2TpGvwkVm1XTxnxBA==",
         "dependencies": {
           "Microsoft.IdentityModel.Abstractions": "6.22.0"
         }
@@ -857,8 +857,8 @@
       },
       "Microsoft.TestPlatform.ObjectModel": {
         "type": "Transitive",
-        "resolved": "17.4.0",
-        "contentHash": "oWe7A0wrZhxagTOcaxJ9r0NXTbgkiBQQuCpCXxnP06NsGV/qOoaY2oaangAJbOUrwEx0eka1do400NwNCjfytw==",
+        "resolved": "17.5.0",
+        "contentHash": "QwiBJcC/oEA1kojOaB0uPWOIo4i6BYuTBBYJVhUvmXkyYqZ2Ut/VZfgi+enf8LF8J4sjO98oRRFt39MiRorcIw==",
         "dependencies": {
           "NuGet.Frameworks": "5.11.0",
           "System.Reflection.Metadata": "1.6.0"
@@ -866,10 +866,10 @@
       },
       "Microsoft.TestPlatform.TestHost": {
         "type": "Transitive",
-        "resolved": "17.4.0",
-        "contentHash": "sUx48fu9wgQF1JxzXeSVtzb7KoKpJrdtIzsFamxET3ZYOKXj+Ej13HWZ0U2nuMVZtZVHBmE+KS3Vv5cIdTlycQ==",
+        "resolved": "17.5.0",
+        "contentHash": "X86aikwp9d4SDcBChwzQYZihTPGEtMdDk+9t64emAl7N0Tq+OmlLAoW+Rs+2FB2k6QdUicSlT4QLO2xABRokaw==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.4.0",
+          "Microsoft.TestPlatform.ObjectModel": "17.5.0",
           "Newtonsoft.Json": "13.0.1"
         }
       },
@@ -1079,8 +1079,8 @@
       },
       "Selenium.WebDriver.ChromeDriver": {
         "type": "Transitive",
-        "resolved": "108.0.5359.7100",
-        "contentHash": "wrDUVsoQHQct9BodCFgRi1LMKGhwv27ANuS8l7ZXcOn/VS2NqcxxBhSAkcucx4CoZgidny0+ifnFS95nTmnVvg=="
+        "resolved": "111.0.5563.6400",
+        "contentHash": "qLM1wbhtfyX/7cdqCHsuos8jKG67ojsOgKLvoHReRYCBPVbbSl/niedtAVzOLpnEn9sk9C7FH6jHc/QQIR0G4w=="
       },
       "Selenium.WebDriver.IEDriver": {
         "type": "Transitive",
@@ -1206,8 +1206,8 @@
       },
       "System.ComponentModel.Annotations": {
         "type": "Transitive",
-        "resolved": "4.7.0",
-        "contentHash": "0YFqjhp/mYkDGpU0Ye1GjE53HMp9UVfGN7seGpAMttAC0C40v5gw598jCgpbBLMmCo0E5YRLBv5Z2doypO49ZQ=="
+        "resolved": "5.0.0",
+        "contentHash": "dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg=="
       },
       "System.ComponentModel.Primitives": {
         "type": "Transitive",
@@ -2130,6 +2130,7 @@
       "testing.common": {
         "type": "Project",
         "dependencies": {
+          "Azure.Storage.Blobs": "[12.14.1, )",
           "Faker.NETCore": "[1.0.2, )",
           "FluentAssertions": "[5.10.3, )",
           "Microsoft.AspNetCore.Mvc.Core": "[2.2.5, )",
@@ -2138,9 +2139,17 @@
           "Microsoft.Extensions.Configuration.UserSecrets": "[7.0.0, )",
           "Moq": "[4.14.1, )",
           "NBuilder": "[6.1.0, )",
+          "NUnit": "[3.13.3, )",
           "VideoApi.Common": "[1.0.0, )",
           "VideoApi.Contract": "[1.0.0, )",
           "VideoApi.Domain": "[1.0.0, )"
+        }
+      },
+      "videoapi.client": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "[2.2.5, )",
+          "VideoApi.Contract": "[1.0.0, )"
         }
       },
       "videoapi.common": {
@@ -2148,7 +2157,7 @@
         "dependencies": {
           "Microsoft.ApplicationInsights.AspNetCore": "[2.21.0, )",
           "Microsoft.Extensions.Caching.Abstractions": "[7.0.0, )",
-          "Microsoft.IdentityModel.Clients.ActiveDirectory": "[5.2.8, )",
+          "Microsoft.Identity.Client": "[4.50.0, )",
           "Newtonsoft.Json": "[13.0.2, )",
           "System.IdentityModel.Tokens.Jwt": "[6.25.0, )",
           "VideoApi.Domain": "[1.0.0, )"
@@ -2157,7 +2166,7 @@
       "videoapi.contract": {
         "type": "Project",
         "dependencies": {
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "System.ComponentModel.Annotations": "[5.0.0, )"
         }
       },
       "videoapi.domain": {
@@ -2165,7 +2174,7 @@
         "dependencies": {
           "Enums.NET": "[4.0.0, )",
           "RandomStringCreator": "[2.0.0, )",
-          "System.ComponentModel.Annotations": "[4.7.0, )"
+          "System.ComponentModel.Annotations": "[5.0.0, )"
         }
       }
     }

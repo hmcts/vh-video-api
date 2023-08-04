@@ -2,7 +2,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.Mappings;
-using VideoApi.Services.Kinly;
+using VideoApi.Services.Clients;
 
 namespace VideoApi.UnitTests.Mappings
 {

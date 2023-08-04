@@ -275,7 +275,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the conference details should be retrieved")]
         public async Task ThenAConferenceDetailsShouldBeRetrieved()
         {
-            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
         }
@@ -283,7 +283,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the conference details should be retrieved with jvs endpoints")]
         public async Task ThenAConferenceDetailsShouldBeRetrievedWithJvsEndpoints()
         {
-            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
             AssertConferenceDetailsResponse.ForConferenceEndpoints(_conferenceDetails);
@@ -295,7 +295,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = GetConferenceDetailsById(_context.Test.Conference.Id); 
             _context.HttpMethod = HttpMethod.Get;
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
-            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.CurrentStatus.Should().Be(ConferenceState.Closed);
         }
 
@@ -323,7 +323,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the summary of conference details should be retrieved for judges")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ConferenceForHostResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForHostResponse>>(_context.Response.Content);
             conferences.Should().NotBeNullOrEmpty();
             foreach (var conference in conferences)
             {
@@ -340,7 +340,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the summary of conference details should be retrieved for individuals")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrievedForIndividuals()
         {
-            var conferences = await Response.GetResponses<List<ConferenceForIndividualResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForIndividualResponse>>(_context.Response.Content);
             conferences.Should().NotBeNullOrEmpty();
             foreach (var conference in conferences)
             {
@@ -352,7 +352,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"only todays conferences should be retrieved for vho")]
         public async Task ThenOnlyTodaysConferencesShouldBeRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNullOrEmpty();
             foreach (var conference in conferences)
             {
@@ -387,14 +387,14 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"an empty list is retrieved")]
         public async Task ThenAnEmptyListIsRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Should().BeEmpty();
         }
 
         [Then(@"a list without closed conferences is retrieved")]
         public async Task ThenAListWithoutClosedConferencesIsRetrieved()
         {
-            var conferences = await Response.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Count.Should().BeGreaterThan(0);
             conferences.Any(x => x.Id.Equals(_context.Test.YesterdayClosedConference.Id)).Should().BeFalse();
         }
@@ -402,14 +402,14 @@ namespace VideoApi.IntegrationTests.Steps
         [When(@"I save the conference details")]
         public async Task WhenISaveTheConferenceDetails()
         {
-            _conferenceDetails = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
         }
 
         [Then(@"the response should be the same")]
         public async Task ThenTheResponseShouldBeTheSame()
         {
-            var conference = await Response.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             conference.Should().BeEquivalentTo(_conferenceDetails);
         }
@@ -463,7 +463,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"I get (.*) hearing\(s\)")]
         public async Task ThenIGetXNumberOfHearings(int number)
         {
-            var conferences = await Response.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Count.Should().Be(number);
         }
 
