@@ -31,6 +31,14 @@ namespace VideoApi.Events.Handlers
             {
                 SourceParticipant.Id
             };
+
+            Console.WriteLine($"PublishStatusAsync - {SourceParticipant.Id}");
+            Console.WriteLine($"PublishStatusAsync - linked participants: {SourceParticipant.LinkedParticipants?.Count}");
+            foreach (var linkedParticipant in SourceParticipant.LinkedParticipants)
+            {
+                Console.WriteLine($"PublishStatusAsync - linked participant - ParticipantId: {linkedParticipant.ParticipantId}, State: {linkedParticipant.Participant.State}, ParticipantParticipantId: {linkedParticipant.Participant.Id}");
+            }
+
             participantIds.AddRange(SourceParticipant.LinkedParticipants
                 .Where(p => p.Participant.State == ParticipantState.Available)
                 .Select(linkedParticipant => linkedParticipant.ParticipantId));
