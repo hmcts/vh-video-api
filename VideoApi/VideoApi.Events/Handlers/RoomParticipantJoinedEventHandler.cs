@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
@@ -32,16 +31,9 @@ namespace VideoApi.Events.Handlers
                 SourceParticipant.Id
             };
 
-            Console.WriteLine($"PublishStatusAsync - {SourceParticipant.Id}");
-            Console.WriteLine($"PublishStatusAsync - linked participants: {SourceParticipant.LinkedParticipants?.Count}");
-            foreach (var linkedParticipant in SourceParticipant.LinkedParticipants)
-            {
-                Console.WriteLine($"PublishStatusAsync - linked participant - ParticipantId: {linkedParticipant.ParticipantId}, State: {linkedParticipant.Participant.State}, ParticipantParticipantId: {linkedParticipant.Participant.Id}");
-            }
-
             participantIds.AddRange(SourceParticipant.LinkedParticipants
-                .Where(p => p.Participant.State == ParticipantState.Available)
-                .Select(linkedParticipant => linkedParticipant.ParticipantId));
+                .Where(p => p.Linked.State == ParticipantState.Available)
+                .Select(linkedParticipant => linkedParticipant.LinkedId));
 
             foreach (var participantId in participantIds)
             {

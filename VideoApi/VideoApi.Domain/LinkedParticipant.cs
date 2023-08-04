@@ -19,12 +19,13 @@ namespace VideoApi.Domain
             Type = type;
         }
 
-        public LinkedParticipant(ParticipantBase participant, Guid linkedId, LinkedParticipantType type)
+        public LinkedParticipant(ParticipantBase participant, ParticipantBase linked, LinkedParticipantType type)
         {
             Id = Guid.NewGuid();
             ParticipantId = participant.Id;
             Participant = participant;
-            LinkedId = linkedId;
+            LinkedId = linked.Id;
+            Linked = linked;
             Type = type;
         }
     }

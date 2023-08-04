@@ -59,7 +59,7 @@ namespace VideoApi.UnitTests.Events
             };
             
             participantIds.AddRange(participantForEvent.LinkedParticipants
-                .Select(linkedParticipant => linkedParticipant.Participant.Id));
+                .Select(linkedParticipant => linkedParticipant.LinkedId));
             
             var callbackEvent = new CallbackEvent
             {
