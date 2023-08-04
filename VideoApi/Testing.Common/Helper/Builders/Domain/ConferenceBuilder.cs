@@ -249,12 +249,12 @@ namespace Testing.Common.Helper.Builders.Domain
                 .Build();
 
             var linkedParticipants1 = new List<LinkedParticipant>();
-            var linkedId = participant2.Id;
+            var linked = participant2;
             var linkedParticipant1Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
                     userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
                 .Build();
-            linkedParticipants1.Add(new LinkedParticipant(linkedParticipant1Participant, linkedId, LinkedParticipantType.Interpreter));
+            linkedParticipants1.Add(new LinkedParticipant(linkedParticipant1Participant, linked, LinkedParticipantType.Interpreter));
             participant1.LinkedParticipants = linkedParticipants1;
             foreach (var linkedParticipant in participant1.LinkedParticipants)
             {
@@ -262,12 +262,12 @@ namespace Testing.Common.Helper.Builders.Domain
             }
 
             var linkedParticipants2 = new List<LinkedParticipant>();
-            linkedId = participant1.Id;
+            linked = participant1;
             var linkedParticipant2Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
                         userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
                 .Build();
-            linkedParticipants2.Add(new LinkedParticipant(linkedParticipant2Participant, linkedId, LinkedParticipantType.Interpreter));
+            linkedParticipants2.Add(new LinkedParticipant(linkedParticipant2Participant, linked, LinkedParticipantType.Interpreter));
             participant2.LinkedParticipants = linkedParticipants2;
             foreach (var linkedParticipant in participant2.LinkedParticipants)
             {
