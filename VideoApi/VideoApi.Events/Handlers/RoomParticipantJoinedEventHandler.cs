@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -8,7 +9,6 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
-using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers
 {
