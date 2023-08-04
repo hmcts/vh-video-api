@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
@@ -18,16 +21,27 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.Joined;
 
-        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var participantState =  ParticipantState.Available;
             var room = RoomType.WaitingRoom;
-            var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
-                participantState, room, null);
+            var participantIds = new List<Guid>
+            {
+                SourceParticipant.Id
+            };
+            participantIds.AddRange(SourceParticipant.LinkedParticipants
+                .Where(p => p.Linked.State == ParticipantState.Available)
+                .Select(linkedParticipant => linkedParticipant.LinkedId));
             
-            _logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId}",
-                SourceConference.Id, SourceParticipant.Id);
-            return CommandHandler.Handle(command);
+            foreach (var participantId in participantIds)
+            {
+                var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, participantId,
+                    participantState, room, null);
+            
+                _logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId}",
+                    SourceConference.Id, participantId);
+                await CommandHandler.Handle(command);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
@@ -38,6 +39,43 @@ namespace VideoApi.UnitTests.Events
                     command.ParticipantId == participantForEvent.Id &&
                     command.ParticipantState == ParticipantState.Available &&
                     command.Room == RoomType.WaitingRoom)), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_update_room_for_participants_when_participant_with_linked_participants_joins()
+        {
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.LinkedParticipants.Count > 0);
+            
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Joined,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
+                TimeStampUtc = DateTime.UtcNow
+            };
+
+            await _sut.HandleAsync(callbackEvent);
+
+            var expectedParticipantIds = new List<Guid>
+            {
+                participantForEvent.Id
+            };
+            
+            expectedParticipantIds.AddRange(participantForEvent.LinkedParticipants
+                .Where(p => p.Linked.State == ParticipantState.Available)
+                .Select(linkedParticipant => linkedParticipant.LinkedId));
+
+            foreach (var participantId in expectedParticipantIds)
+            {
+                CommandHandlerMock.Verify(
+                    x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
+                        command.ConferenceId == conference.Id &&
+                        command.ParticipantId == participantId &&
+                        command.ParticipantState == ParticipantState.Available &&
+                        command.Room == RoomType.WaitingRoom)), Times.Once);
+            }
         }
     }
 }
