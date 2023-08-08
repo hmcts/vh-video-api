@@ -26,6 +26,9 @@ namespace VideoApi.Events.Handlers
             var participantState =  ParticipantState.Available;
             var room = RoomType.WaitingRoom;
 
+            _logger.LogInformation("Room Participant Joined callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom}",
+                SourceConference.Id, SourceParticipant.Id, participantState, room, null, SourceParticipantRoom.Id);
+            
             var participantIds = new List<Guid>
             {
                 SourceParticipant.Id
@@ -43,9 +46,6 @@ namespace VideoApi.Events.Handlers
                 var addParticipantToRoomCommand =
                     new AddParticipantToParticipantRoomCommand(SourceParticipantRoom.Id, participantId);
             
-                _logger.LogInformation("Room Participant Joined callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom}",
-                    SourceConference.Id, participantId, participantState, room, null, SourceParticipantRoom.Id);
-
                 await CommandHandler.Handle(addParticipantToRoomCommand);
             }
         }
