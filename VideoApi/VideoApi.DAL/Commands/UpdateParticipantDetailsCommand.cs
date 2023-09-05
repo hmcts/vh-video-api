@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using VideoApi.Domain.Enums;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
@@ -24,9 +25,12 @@ namespace VideoApi.DAL.Commands
         public string Username { get; set; }
         public IList<LinkedParticipantDto> LinkedParticipants { get; set; }
 
+        public UserRole UserRole { get; set; }
+        public string HearingRole { get; set; }
+
         public UpdateParticipantDetailsCommand(Guid conferenceId, Guid participantId, string fullname, string firstname,
             string lastname, string displayName, string representee, string contactEmail, string contactTelephone, 
-            IList<LinkedParticipantDto> linkedParticipants)
+            IList<LinkedParticipantDto> linkedParticipants, UserRole userRole, string hearingRole)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -38,6 +42,8 @@ namespace VideoApi.DAL.Commands
             ContactEmail = contactEmail;
             ContactTelephone = contactTelephone;
             LinkedParticipants = linkedParticipants;
+            UserRole = userRole;
+            HearingRole = hearingRole;
         }
     }
 
@@ -75,6 +81,8 @@ namespace VideoApi.DAL.Commands
                 participantCasted.Representee = command.Representee;
                 participantCasted.ContactEmail = command.ContactEmail ?? participantCasted.ContactEmail;
                 participantCasted.ContactTelephone = command.ContactTelephone ?? participantCasted.ContactTelephone;
+                participantCasted.UserRole = command.UserRole;
+                participantCasted.HearingRole = command.HearingRole;
             }
 
             // remove all linked participants where the current participant is the secondary, i.e., LinkedId

@@ -37,7 +37,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = Guid.NewGuid();
 
             var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>());
+                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>(),
+                UserRole.Individual, "Individual");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -50,7 +51,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantId = Guid.NewGuid();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>());
+                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>(),
+                UserRole.Individual, "Individual");
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -63,7 +65,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>());
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>(),
+                UserRole.Individual, "Individual");
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
@@ -125,7 +128,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             };
             
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants);
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
+                UserRole.Individual, "Individual");
             
             await _handler.Handle(command);
 
@@ -183,7 +187,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             };
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants);
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
+                UserRole.Individual, "Individual");
 
             await _handler.Handle(command);
 
@@ -251,7 +256,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             };
             
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants);
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
+                UserRole.Individual, "Individual");
             
             var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
             exception.LinkRefId.Should().Be(participantA.ParticipantRefId);
@@ -267,7 +273,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>())
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>(),
+                UserRole.Individual, "Individual")
             {
                 Username = "newUser@hmcts.net"
             };
