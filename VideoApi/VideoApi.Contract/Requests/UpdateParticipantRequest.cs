@@ -70,5 +70,10 @@ namespace VideoApi.Contract.Requests
         /// The participant hearing role
         /// </summary>
         public string HearingRole { get; set; }
+        
+        /// <summary>
+        /// The participant case type group
+        /// </summary>
+        public string CaseTypeGroup { get; set; }
     }
 }

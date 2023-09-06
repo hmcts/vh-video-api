@@ -27,10 +27,11 @@ namespace VideoApi.DAL.Commands
 
         public UserRole UserRole { get; set; }
         public string HearingRole { get; set; }
+        public string CaseTypeGroup { get; set; }
 
         public UpdateParticipantDetailsCommand(Guid conferenceId, Guid participantId, string fullname, string firstname,
             string lastname, string displayName, string representee, string contactEmail, string contactTelephone, 
-            IList<LinkedParticipantDto> linkedParticipants, UserRole userRole, string hearingRole)
+            IList<LinkedParticipantDto> linkedParticipants, UserRole userRole, string hearingRole, string caseTypeGroup)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
@@ -44,6 +45,7 @@ namespace VideoApi.DAL.Commands
             LinkedParticipants = linkedParticipants;
             UserRole = userRole;
             HearingRole = hearingRole;
+            CaseTypeGroup = caseTypeGroup;
         }
     }
 
@@ -83,6 +85,7 @@ namespace VideoApi.DAL.Commands
                 participantCasted.ContactTelephone = command.ContactTelephone ?? participantCasted.ContactTelephone;
                 participantCasted.UserRole = command.UserRole;
                 participantCasted.HearingRole = command.HearingRole;
+                participantCasted.CaseTypeGroup = command.CaseTypeGroup;
             }
 
             // remove all linked participants where the current participant is the secondary, i.e., LinkedId
