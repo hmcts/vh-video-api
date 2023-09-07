@@ -182,7 +182,8 @@ namespace VideoApi.Controllers
 
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId, participantId,
                     request.Fullname, request.FirstName, request.LastName, request.DisplayName, request.Representee,
-                    request.ContactEmail, request.ContactTelephone, linkedParticipants);
+                    request.ContactEmail, request.ContactTelephone, linkedParticipants,
+                    request.UserRole.MapToDomainEnum(), request.HearingRole, request.CaseTypeGroup);
                 if (!request.Username.IsNullOrEmpty())
                 {
                     updateParticipantDetailsCommand.Username = request.Username;

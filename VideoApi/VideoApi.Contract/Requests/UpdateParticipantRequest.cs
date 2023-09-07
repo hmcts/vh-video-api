@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
 {
@@ -59,5 +60,20 @@ namespace VideoApi.Contract.Requests
         /// Linked participants
         /// </summary>
         public IList<LinkedParticipantRequest> LinkedParticipants { get; set; }
+        
+        /// <summary>
+        /// The participant user role
+        /// </summary>
+        public UserRole UserRole { get; set; }
+        
+        /// <summary>
+        /// The participant hearing role
+        /// </summary>
+        public string HearingRole { get; set; }
+        
+        /// <summary>
+        /// The participant case type group
+        /// </summary>
+        public string CaseTypeGroup { get; set; }
     }
 }
