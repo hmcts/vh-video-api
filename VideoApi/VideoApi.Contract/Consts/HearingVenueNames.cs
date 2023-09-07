@@ -3,11 +3,11 @@ namespace VideoApi.Contract.Consts
     public static class HearingVenueNames
     {
         public const string Aberdeen = "Aberdeen Tribunal Hearing Centre";
-        public const string Dundee = "Dundee Tribunal Hearing Centre";
+        public const string Dundee = "Dundee Tribunal Hearing Centre - Endeavour House";
         public const string Edinburgh = "Edinburgh Employment Tribunal";
         public const string Glasgow = "Glasgow Tribunals Centre";
         public const string Inverness = "Inverness Employment Tribunal";
-        public const string Ayr = "Ayr";
+        public const string Ayr = "Ayr Social Security and Child Support Tribunal";
         public const string HamiltonBrandonGate = "Hamilton Brandon Gate";
         public const string StirlingWallaceHouse = "Stirling Wallace House";
         public const string EdinburghEmploymentAppealTribunal = "Edinburgh Employment Appeal Tribunal";
