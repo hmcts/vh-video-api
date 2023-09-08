@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Mappings
             var response = ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel(conference);
             
             response.Id.Should().Be(conference.Id);
-            response.HearingId.Should().Be(conference.Id);
+            response.HearingId.Should().Be(conference.HearingRefId);
             response.ScheduledDateTime.Should().Be(conference.ScheduledDateTime);
             response.CaseName.Should().Be(conference.CaseName);
             response.CaseNumber.Should().Be(conference.CaseNumber);
