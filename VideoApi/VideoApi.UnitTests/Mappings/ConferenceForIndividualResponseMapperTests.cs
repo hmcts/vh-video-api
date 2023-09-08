@@ -23,11 +23,13 @@ namespace VideoApi.UnitTests.Mappings
             var response = ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel(conference);
             
             response.Id.Should().Be(conference.Id);
+            response.HearingId.Should().Be(conference.Id);
             response.ScheduledDateTime.Should().Be(conference.ScheduledDateTime);
             response.CaseName.Should().Be(conference.CaseName);
             response.CaseNumber.Should().Be(conference.CaseNumber);
             response.Status.Should().Be(conference.State);
             response.ClosedDateTime.Should().Be(conference.ClosedDateTime);
+            response.IsWaitingRoomOpen.Should().Be(conference.IsConferenceAccessible());
         }
 
         [Test]

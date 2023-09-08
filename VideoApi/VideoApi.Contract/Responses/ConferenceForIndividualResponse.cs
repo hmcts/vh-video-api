@@ -11,6 +11,11 @@ namespace VideoApi.Contract.Responses
         public Guid Id { get; set; }
         
         /// <summary>
+        /// Booking UUID
+        /// </summary>
+        public Guid HearingId { get; set; }
+        
+        /// <summary>
         /// Scheduled date time as UTC
         /// </summary>
         public DateTime ScheduledDateTime { get; set; }
@@ -38,6 +43,12 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// Flags true when hearing venue is in Scotland
         /// </summary>
+        [Obsolete("Use the value from Bookings API. This is not maintained.")]
         public bool HearingVenueIsScottish { get; set; }
+        
+        /// <summary>
+        /// Is the waiting room still accessible for the conference
+        /// </summary>
+        public bool IsWaitingRoomOpen { get; set; }
     }
 }

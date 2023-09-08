@@ -10,6 +10,11 @@ namespace VideoApi.Contract.Responses
         /// Conference UUID
         /// </summary>
         public Guid Id { get; set; }
+        
+        /// <summary>
+        /// Booking UUID
+        /// </summary>
+        public Guid HearingId { get; set; }
 
         /// <summary>
         /// Scheduled date time as UTC

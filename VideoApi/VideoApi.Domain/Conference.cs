@@ -176,6 +176,23 @@ namespace VideoApi.Domain
             return State == ConferenceState.Closed;
         }
 
+        public bool IsConferenceAccessible()
+        {
+            if (State != ConferenceState.Closed)
+            {
+                return true;
+            }
+
+            if (!ClosedDateTime.HasValue)
+            {
+                throw new DomainRuleException(nameof(ClosedDateTime), "A closed conference must have a closed time");
+            }
+            // After a conference is closed, VH Officers can still administer conferences until this period of time
+            const int postClosedVisibilityTime = 120;
+            var endTime = ClosedDateTime.Value.AddMinutes(postClosedVisibilityTime);
+            return DateTime.UtcNow < endTime;
+        }
+        
         public void UpdateConferenceDetails(string caseType, string caseNumber, string caseName,
             int scheduledDuration, DateTime scheduledDateTime, string hearingVenueName, bool audioRecordingRequired)
         {
