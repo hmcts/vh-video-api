@@ -18,5 +18,15 @@ namespace VideoApi.Domain
             LinkedId = linkedId;
             Type = type;
         }
+
+        public LinkedParticipant(ParticipantBase participant, ParticipantBase linked, LinkedParticipantType type)
+        {
+            Id = Guid.NewGuid();
+            ParticipantId = participant.Id;
+            Participant = participant;
+            LinkedId = linked.Id;
+            Linked = linked;
+            Type = type;
+        }
     }
 }

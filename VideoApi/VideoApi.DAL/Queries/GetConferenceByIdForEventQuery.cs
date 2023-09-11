@@ -29,6 +29,7 @@ namespace VideoApi.DAL.Queries
         {
             return await _context.Conferences
                 .Include(x => x.Participants).ThenInclude(x => x.CurrentConsultationRoom)
+                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants).ThenInclude(x => x.Linked)
                 .Include(x => x.Endpoints)
                 .Include(x => x.Rooms).ThenInclude(x => x.RoomParticipants)
                 .AsNoTracking()
