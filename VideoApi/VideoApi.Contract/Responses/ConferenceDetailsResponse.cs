@@ -86,11 +86,17 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// Flags true when hearing venue is in Scotland
         /// </summary>
+        [Obsolete("Use the value from Bookings API. This is not maintained.")]
         public bool HearingVenueIsScottish { get; set; }
         
         /// <summary>
         /// Ingest Url Audio Recording to be streamed to
         /// </summary>
         public string IngestUrl { get; set; }
+        
+        /// <summary>
+        /// Is the waiting room still accessible for the conference
+        /// </summary>
+        public bool IsWaitingRoomOpen { get; set; }
     }
 }

@@ -11,12 +11,14 @@ namespace VideoApi.Mappings
             return new ConferenceForIndividualResponse
             {
                 Id = conference.Id,
+                HearingId = conference.HearingRefId,
                 CaseName = conference.CaseName,
                 CaseNumber = conference.CaseNumber,
                 ScheduledDateTime = conference.ScheduledDateTime,
                 Status = conference.GetCurrentStatus().MapToContractEnum(),
                 ClosedDateTime = conference.ClosedDateTime,
-                HearingVenueIsScottish = conference.IsHearingVenueInScotland()
+                HearingVenueIsScottish = conference.IsHearingVenueInScotland(),
+                IsWaitingRoomOpen = conference.IsConferenceAccessible()
             };
         }
     }

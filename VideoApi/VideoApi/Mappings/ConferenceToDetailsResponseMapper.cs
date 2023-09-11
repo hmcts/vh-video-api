@@ -32,7 +32,8 @@ namespace VideoApi.Mappings
                 AudioRecordingRequired = conference.AudioRecordingRequired,
                 CivilianRooms = interpreterRooms,
                 HearingVenueIsScottish = conference.IsHearingVenueInScotland(),
-                IngestUrl = conference.IngestUrl
+                IngestUrl = conference.IngestUrl,
+                IsWaitingRoomOpen = conference.IsConferenceAccessible()
                 
             };
 

@@ -32,7 +32,8 @@ namespace VideoApi.Mappings
                 HearingVenueName = conference.HearingVenueName,
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
                 TelephoneConferenceNumbers = phoneNumbers,
-                CreatedDateTime = conference.CreatedDateTime
+                CreatedDateTime = conference.CreatedDateTime,
+                IsWaitingRoomOpen = conference.IsConferenceAccessible()
             };
         }
     }

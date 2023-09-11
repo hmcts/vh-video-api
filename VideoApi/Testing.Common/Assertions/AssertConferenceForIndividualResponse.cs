@@ -13,8 +13,10 @@ namespace Testing.Common.Assertions
             conference.CaseName.Should().NotBeNullOrEmpty();
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.Id.Should().NotBeEmpty();
+            conference.HearingId.Should().NotBeEmpty();
             conference.Status.Should().NotBeNull();
             conference.ClosedDateTime.Should().NotBe(DateTime.MinValue);
+            conference.IsWaitingRoomOpen.Should().BeTrue();
         }
     }
 }

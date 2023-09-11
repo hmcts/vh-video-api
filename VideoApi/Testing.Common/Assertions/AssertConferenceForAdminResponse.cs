@@ -32,6 +32,7 @@ namespace Testing.Common.Assertions
 
             conference.Participants.Should().NotBeNullOrEmpty();
             conference.HearingVenueName.Should().NotBeNull();
+            conference.IsWaitingRoomOpen.Should().BeTrue();
         }
     }
 }

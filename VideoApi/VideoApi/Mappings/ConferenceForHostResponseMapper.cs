@@ -14,6 +14,7 @@ namespace VideoApi.Mappings
             return new ConferenceForHostResponse
             {
                 Id = conference.Id,
+                HearingId = conference.HearingRefId,
                 Status = conference.GetCurrentStatus().MapToContractEnum(),
                 CaseName = conference.CaseName,
                 CaseNumber = conference.CaseNumber,

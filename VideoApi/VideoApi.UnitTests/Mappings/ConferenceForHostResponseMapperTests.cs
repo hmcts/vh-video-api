@@ -25,6 +25,7 @@ namespace VideoApi.UnitTests.Mappings
             var response = ConferenceForHostResponseMapper.MapConferenceSummaryToModel(conference);
             
             response.Id.Should().Be(conference.Id);
+            response.HearingId.Should().Be(conference.HearingRefId);
             response.ScheduledDateTime.Should().Be(conference.ScheduledDateTime);
             response.ClosedDateTime.Should().Be(conference.ClosedDateTime);
             response.ScheduledDuration.Should().Be(conference.ScheduledDuration);

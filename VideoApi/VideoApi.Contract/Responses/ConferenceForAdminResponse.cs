@@ -21,5 +21,10 @@ namespace VideoApi.Contract.Responses
         public string TelephoneConferenceId { get; set; }
         public string TelephoneConferenceNumbers { get; set; }
         public DateTime? CreatedDateTime { get; set; }
+        
+        /// <summary>
+        /// Is the waiting room still accessible for the conference
+        /// </summary>
+        public bool IsWaitingRoomOpen { get; set; }
     }
 }
