@@ -102,7 +102,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("UpdateConferenceParticipants")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateConferenceParticipantsAsync(Guid conferenceId,
             UpdateConferenceParticipantsRequest request)
         {
@@ -146,12 +146,12 @@ namespace VideoApi.Controllers
             catch (ConferenceNotFoundException ex)
             {
                 _logger.LogError(ex, "Unable to find conference");
-                return NotFound();
+                return NotFound($"Unable to find conference {conferenceId}");
             }
             catch (ParticipantNotFoundException ex)
             {
                 _logger.LogError(ex, "Unable to find participant");
-                return NotFound();
+                return NotFound($"Unable to find participant {ex.ParticipantId} in conference {conferenceId}");
             }
         }
 
