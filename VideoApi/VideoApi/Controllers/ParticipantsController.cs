@@ -17,7 +17,6 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Validations;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
