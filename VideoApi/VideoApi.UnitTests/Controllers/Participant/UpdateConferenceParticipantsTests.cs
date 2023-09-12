@@ -105,7 +105,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             //Asssert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NotFoundResult>();
+            result.Should().BeOfType<NotFoundObjectResult>();
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             //Asssert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NotFoundResult>();
+            result.Should().BeOfType<NotFoundObjectResult>();
         }
     }
 }

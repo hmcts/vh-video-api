@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
 
             var result = await Controller.GetConferenceDetailsByIdAsync(Guid.NewGuid());
-            var typedResult = (NotFoundResult)result;
+            var typedResult = (NotFoundObjectResult)result;
             typedResult.Should().NotBeNull();
         }
     }
