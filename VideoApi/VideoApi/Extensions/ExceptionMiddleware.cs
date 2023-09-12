@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using VideoApi.Common;
 using VideoApi.Common.Helpers;
 using VideoApi.DAL.Exceptions;
+using VideoApi.Domain.Validations;
 
 namespace VideoApi.Extensions
 {
@@ -26,6 +27,13 @@ namespace VideoApi.Extensions
             try
             {
                 await _next(httpContext);
+            }
+            catch (DomainRuleException ex)
+            {
+                var modelState = new ModelStateDictionary();
+                modelState.AddDomainRuleErrors(ex.ValidationFailures);
+                var problemDetails = new ValidationProblemDetails(modelState);
+                await HandleBadRequestAsync(httpContext, problemDetails);
             }
             catch(BadRequestException ex)
             {

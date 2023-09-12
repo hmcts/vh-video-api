@@ -156,11 +156,6 @@ namespace VideoApi.Controllers
                 _logger.LogError(ex, "Unable to find participant");
                 return NotFound();
             }
-            catch (DomainRuleException ex)
-            {
-                ModelState.AddDomainRuleErrors(ex.ValidationFailures);
-                return ValidationProblem(ModelState);
-            }
         }
 
         /// <summary>
