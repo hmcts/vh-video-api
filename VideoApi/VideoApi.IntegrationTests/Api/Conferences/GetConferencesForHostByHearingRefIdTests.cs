@@ -36,6 +36,7 @@ public class GetConferencesForHostByHearingRefIdTests : ApiTest
         var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceForHostResponse>>(result.Content);
         var resultConference = conferenceResponse.FirstOrDefault();
         resultConference.Should().NotBeNull();
-        resultConference?.Id.Should().Be(conference.Id);
+        resultConference!.Id.Should().Be(conference.Id);
+        resultConference!.HearingId.Should().Be(conference.HearingRefId);
     }
 }

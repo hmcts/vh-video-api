@@ -22,6 +22,8 @@ namespace Testing.Common.Assertions
             conference.CurrentStatus.Should().NotBeNull();
             conference.HearingVenueName.Should().NotBeNull();
 
+            conference.IsWaitingRoomOpen.Should().BeTrue();
+
             conference.Participants.Should().NotBeNullOrEmpty();
             foreach (var participant in conference.Participants)
             {

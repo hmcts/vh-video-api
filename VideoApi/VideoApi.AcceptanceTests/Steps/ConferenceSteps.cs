@@ -233,6 +233,7 @@ namespace VideoApi.AcceptanceTests.Steps
             conference.ScheduledDateTime.Should().Be(expected.ScheduledDateTime.ToUniversalTime());
             conference.ScheduledDuration.Should().Be(expected.ScheduledDuration);
             conference.HearingVenueName.Should().Be(expected.HearingVenueName);
+            conference.IsWaitingRoomOpen.Should().BeTrue();
             conference.AudioRecordingRequired.Should().Be(expected.AudioRecordingRequired);
         }
 
@@ -351,7 +352,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conferences = RequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
-            _context.Test.ConferenceResponse.Id = conferences.First().Id;
+            _context.Test.ConferenceResponse.Id = conferences[0].Id;
             foreach (var conference in conferences)
             {
                 AssertConferenceForAdminResponse.ForConference(conference);

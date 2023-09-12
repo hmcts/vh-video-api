@@ -48,7 +48,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
                 .WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                        $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net",
+                        $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com",
                         Phone.Number()))
                 .All().With(x=> x.CurrentConsultationRoomId = null)
                 .Build();
@@ -77,7 +77,7 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                username = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
+                username = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
             }
 
             if (string.IsNullOrWhiteSpace(firstName))
@@ -88,7 +88,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
-                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
                 .And(x=> x.TestCallResultId = null)
                 .And(x=> x.CurrentConsultationRoomId = null)
                 .Build();
@@ -225,8 +225,8 @@ namespace Testing.Common.Helper.Builders.Domain
             string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
         {
-            var username1 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
-            var username2 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
+            var username1 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
+            var username2 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
 
             if (string.IsNullOrWhiteSpace(firstName))
             {
@@ -236,29 +236,43 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant1 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
-                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();
 
             var participant2 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username2,
-                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();
 
             var linkedParticipants1 = new List<LinkedParticipant>();
-            var participantId = participant1.Id;
-            var linkedId = participant2.Id;
-            linkedParticipants1.Add(new LinkedParticipant(participantId, linkedId, LinkedParticipantType.Interpreter));
+            var linked = participant2;
+            var linkedParticipant1Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
+                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                .Build();
+            linkedParticipants1.Add(new LinkedParticipant(linkedParticipant1Participant, linked, LinkedParticipantType.Interpreter));
             participant1.LinkedParticipants = linkedParticipants1;
+            foreach (var linkedParticipant in participant1.LinkedParticipants)
+            {
+                linkedParticipant.Participant.UpdateParticipantStatus(ParticipantState.Available);
+            }
 
             var linkedParticipants2 = new List<LinkedParticipant>();
-            participantId = participant2.Id;
-            linkedId = participant1.Id;
-            linkedParticipants2.Add(new LinkedParticipant(participantId, linkedId, LinkedParticipantType.Interpreter));
+            linked = participant1;
+            var linkedParticipant2Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
+                    new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
+                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                .Build();
+            linkedParticipants2.Add(new LinkedParticipant(linkedParticipant2Participant, linked, LinkedParticipantType.Interpreter));
             participant2.LinkedParticipants = linkedParticipants2;
+            foreach (var linkedParticipant in participant2.LinkedParticipants)
+            {
+                linkedParticipant.Participant.UpdateParticipantStatus(ParticipantState.Available);
+            }
 
 
             participant1.UpdateParticipantStatus(participantState == ParticipantState.None
@@ -278,8 +292,8 @@ namespace Testing.Common.Helper.Builders.Domain
             string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
         {
-            var username1 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
-            var username2 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net";
+            var username1 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
+            var username2 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
 
             if (string.IsNullOrWhiteSpace(firstName))
             {
@@ -289,14 +303,14 @@ namespace Testing.Common.Helper.Builders.Domain
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant1 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                 new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
-                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();
 
             var participant2 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
                     new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username2,
-                        UserRole.Individual, "Interpreter", "Claimant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                        UserRole.Individual, "Interpreter", "Claimant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();
