@@ -6,8 +6,10 @@ namespace VideoApi.DAL.Exceptions
     [Serializable]
     public class ParticipantNotFoundException : VideoDalException
     {
+        public Guid ParticipantId { get; set; }
         public ParticipantNotFoundException(Guid participantId) : base($"Participant {participantId} does not exist")
         {
+            ParticipantId = participantId;
         }
         
         protected ParticipantNotFoundException(SerializationInfo info, StreamingContext context)

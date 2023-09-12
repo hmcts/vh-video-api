@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -16,6 +17,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Validations;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
@@ -26,6 +28,7 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [Route("conferences")]
     [ApiController]
+    [AllowAnonymous]
     public class ParticipantsController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
@@ -152,6 +155,11 @@ namespace VideoApi.Controllers
             {
                 _logger.LogError(ex, "Unable to find participant");
                 return NotFound();
+            }
+            catch (DomainRuleException ex)
+            {
+                ModelState.AddDomainRuleErrors(ex.ValidationFailures);
+                return ValidationProblem(ModelState);
             }
         }
 
