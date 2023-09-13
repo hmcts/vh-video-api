@@ -74,7 +74,7 @@ namespace VideoApi.Domain
         {
             if (DoesParticipantExist(participant.Username))
             {
-                throw new DomainRuleException(nameof(participant), "Participant already exists in conference");
+                throw new DomainRuleException(nameof(participant), $"Participant already exists in conference {participant.Username}");
             }
 
             Participants.Add(participant);
@@ -84,7 +84,7 @@ namespace VideoApi.Domain
         {
             if (!DoesParticipantExist(participant.Username))
             {
-                throw new DomainRuleException(nameof(participant), "Participant does not exist in conference");
+                throw new DomainRuleException(nameof(participant), $"Participant does not exist in conference {participant.Username}");
             }
 
             var existingParticipant = Participants.Single(x => x.Username == participant.Username);

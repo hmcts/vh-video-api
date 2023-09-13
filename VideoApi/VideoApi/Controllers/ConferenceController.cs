@@ -168,7 +168,7 @@ namespace VideoApi.Controllers
         [HttpGet("{conferenceId}")]
         [OpenApiOperation("GetConferenceDetailsById")]
         [ProducesResponseType(typeof(ConferenceDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsByIdAsync(Guid conferenceId)
         {
@@ -182,7 +182,7 @@ namespace VideoApi.Controllers
             {
                 _logger.LogWarning("Unable to find conference {ConferenceId}", conferenceId);
 
-                return NotFound();
+                return NotFound($"Unable to find a conference with the given id {conferenceId}");
             }
 
             var response =
