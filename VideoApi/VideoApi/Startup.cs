@@ -1,20 +1,26 @@
 using System;
+using System.Linq;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Kinly;
 using VideoApi.DAL;
 using VideoApi.Extensions;
+using VideoApi.Health;
 using VideoApi.Middleware.Logging;
 using VideoApi.Middleware.Validation;
 using VideoApi.Telemetry;
@@ -72,6 +78,7 @@ namespace VideoApi
             });
             services.AddValidatorsFromAssemblyContaining<IRequestModelValidatorService>();
 
+            services.AddVhHealthChecks();
             services.AddDbContextPool<VideoApiDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("VideoApi"),
@@ -145,7 +152,32 @@ namespace VideoApi
             app.UseMiddleware<RequestBodyLoggingMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
-            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute(); 
+                
+                endpoints.MapHealthChecks("/healthcheck/health", new HealthCheckOptions()
+                {
+                    ResponseWriter = async (context, report) =>
+                    {
+                        var result = JsonConvert.SerializeObject(
+                            new
+                            {
+                                status = report.Status.ToString(),
+                                details = report.Entries.Select(e => new
+                                {
+                                    key = e.Key, 
+                                    value = Enum.GetName(typeof(HealthStatus), e.Value.Status),
+                                    error = e.Value.Exception?.Message
+                                })
+                            });
+                        context.Response.ContentType = "application/json";
+                        await context.Response.WriteAsync(result);
+                    }
+                });
+
+                endpoints.MapHealthChecks("health/liveness");
+            });
         }
 
         private static void AddPolicies(AuthorizationOptions options)
