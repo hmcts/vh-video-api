@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Health;
@@ -19,8 +20,8 @@ public class KinlyApiHealthCheck : IHealthCheck
     {
         try
         {
-            await _videoPlatformService.GetPlatformHealthAsync();
-            return HealthCheckResult.Healthy();
+            var result =  await _videoPlatformService.GetPlatformHealthAsync();
+            return result.Health_status == PlatformHealth.HEALTHY ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
         }
         catch (Exception exception)
         {
