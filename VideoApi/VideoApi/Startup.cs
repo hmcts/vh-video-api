@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -156,27 +157,19 @@ namespace VideoApi
             {
                 endpoints.MapDefaultControllerRoute(); 
                 
+                // TODO: need to update the config. currently this route is used for liveness and readiness checks
                 endpoints.MapHealthChecks("/healthcheck/health", new HealthCheckOptions()
                 {
-                    ResponseWriter = async (context, report) =>
-                    {
-                        var result = JsonConvert.SerializeObject(
-                            new
-                            {
-                                status = report.Status.ToString(),
-                                details = report.Entries.Select(e => new
-                                {
-                                    key = e.Key, 
-                                    value = Enum.GetName(typeof(HealthStatus), e.Value.Status),
-                                    error = e.Value.Exception?.Message
-                                })
-                            });
-                        context.Response.ContentType = "application/json";
-                        await context.Response.WriteAsync(result);
-                    }
+                    Predicate = check => check.Tags.Contains("self"),
+                    ResponseWriter = HealthCheckResponseWriter
                 });
 
-                endpoints.MapHealthChecks("health/liveness");
+                // TODO: need to update the config. currently the liveness route is used for startup
+                endpoints.MapHealthChecks("health/liveness", new HealthCheckOptions()
+                {
+                    Predicate = check => check.Tags.Contains("services"),
+                    ResponseWriter = HealthCheckResponseWriter
+                });
             });
         }
 
@@ -191,6 +184,21 @@ namespace VideoApi
         {
             options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser().Build()));
+        }
+        
+        private async Task HealthCheckResponseWriter(HttpContext context, HealthReport report)
+        {
+            var result = JsonConvert.SerializeObject(new
+            {
+                status = report.Status.ToString(),
+                details = report.Entries.Select(e => new
+                {
+                    key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status),
+                    error = e.Value.Exception?.Message
+                })
+            });
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(result);
         }
     }
 }
