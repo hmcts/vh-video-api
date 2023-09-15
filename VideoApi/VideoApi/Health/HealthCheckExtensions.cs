@@ -10,8 +10,9 @@ public static class HealthCheckExtensions
     {
         services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddDbContextCheck<VideoApiDbContext>(name: "Database VhBookings", tags: new[] {"services"})
-            .AddCheck<KinlyApiHealthCheck>(name: "Kinly API", tags: new[] {"services"});
+            .AddDbContextCheck<VideoApiDbContext>(name: "Database VhBookings", tags: new[] {"startup", "readiness"})
+            .AddCheck<KinlyApiHealthCheck>(name: "Kinly API", tags: new[] {"startup", "readiness"})
+            .AddCheck<WowzaHealthCheck>(name: "Wowza VM", tags: new[] {"startup", "readiness"});
             
         return services;
     }
