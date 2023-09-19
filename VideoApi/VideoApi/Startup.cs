@@ -157,20 +157,19 @@ namespace VideoApi
             {
                 endpoints.MapDefaultControllerRoute(); 
                 
-                // TODO: need to update the config. currently this route is used for liveness and readiness checks
-                endpoints.MapHealthChecks("/healthcheck/liveness", new HealthCheckOptions()
+                endpoints.MapHealthChecks("/health/liveness", new HealthCheckOptions()
                 {
                     Predicate = check => check.Tags.Contains("self"),
                     ResponseWriter = HealthCheckResponseWriter
                 });
 
-                endpoints.MapHealthChecks("/healthcheck/startup", new HealthCheckOptions()
+                endpoints.MapHealthChecks("/health/startup", new HealthCheckOptions()
                 {
                     Predicate = check => check.Tags.Contains("startup"),
                     ResponseWriter = HealthCheckResponseWriter
                 });
                 
-                endpoints.MapHealthChecks("/healthcheck/readiness", new HealthCheckOptions()
+                endpoints.MapHealthChecks("/health/readiness", new HealthCheckOptions()
                 {
                     Predicate = check => check.Tags.Contains("readiness"),
                     ResponseWriter = HealthCheckResponseWriter

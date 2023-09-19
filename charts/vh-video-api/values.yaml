@@ -1,13 +1,13 @@
 ---
 java:
-  image: 'sdshmctspublic.azurecr.io/vh/video-api:20210210.6'
+  image: "sdshmctspublic.azurecr.io/vh/video-api:20210210.6"
   applicationPort: 8080
   replicas: 2
   ingressHost: vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
   releaseNameOverride: vh-video-api
-  livenessPath: /healthcheck/liveness
-  readinessPath: /healthcheck/readiness
-  startupPath: /healthcheck/startup
+  livenessPath: /health/liveness
+  readinessPath: /health/readiness
+  startupPath: /health/startup
   aadIdentityName: vh-aad-identity
   keyVaults:
     vh-infra-core:
