@@ -2,16 +2,13 @@ SET XACT_ABORT ON;
 GO;
 BEGIN TRANSACTION;
 
-SELECT DISTINCT HearingVenueName from Conference
-GO;
-
 CREATE OR ALTER PROC #Conference_UpdateHearingVenueName @oldVenueName nvarchar(max), @newVenueName nvarchar(max)
 As
 BEGIN
-    IF EXISTS (SELECT * FROM dbo.Conference WHERE HearingVenueName = TRIM(@oldVenueName))
+    IF EXISTS (SELECT * FROM VideoApi.dbo.Conference WHERE HearingVenueName = TRIM(@oldVenueName))
         BEGIN
             Print ('FOUND venue with the name: ' + @oldVenueName);
-            Update Conference Set HearingVenueName = @newVenueName Where HearingVenueName = @oldVenueName;
+            Update VideoApi.dbo.Conference Set HearingVenueName = @newVenueName Where HearingVenueName = @oldVenueName;
         END
     ELSE
         BEGIN
@@ -77,9 +74,6 @@ EXEC #Conference_UpdateHearingVenueName @oldVenueName='Worthing County Court and
 EXEC #Conference_UpdateHearingVenueName @oldVenueName='Wrexham County and Family Court', @newVenueName='Wrexham Law Courts';
 EXEC #Conference_UpdateHearingVenueName @oldVenueName='King''s Lynn Crown Court', @newVenueName='King''s Lynn Crown Court (& Magistrates)';
 EXEC #Conference_UpdateHearingVenueName @oldVenueName='Hereford Magistrates Court', @newVenueName='Hereford Justice Centre';
-GO;
-
-SELECT DISTINCT HearingVenueName from Conference
 GO;
 
 COMMIT;
