@@ -168,7 +168,7 @@ stages:
               kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
               kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
   
-    - job: Run_Entity_Framework_RefData_Dev
+      - job: Run_Entity_Framework_RefData_Dev
         pool:
           vmImage: "windows-latest" # This Job Must be Run on Windows
         displayName: Run Entity Framework Ref Data Dev
