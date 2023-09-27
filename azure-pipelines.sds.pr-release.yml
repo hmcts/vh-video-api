@@ -167,6 +167,27 @@ stages:
               kvName: ${{ variables.vhKeyVault }}
               kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
               kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+  
+    - job: Run_Entity_Framework_RefData_Dev
+        pool:
+          vmImage: "windows-latest" # This Job Must be Run on Windows
+        displayName: Run Entity Framework Ref Data Dev
+        dependsOn: Run_Entity_Framework_Dev
+        steps:
+          - download: current
+            displayName: Download Sql Artifact
+
+          - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+            parameters:
+              sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+              sqlServerName: ${{ variables.vhSQLServerName }}
+              databaseName: ${{ variables.BookingsApiDbName }}
+              azureSubscription: ${{ variables.subscriptionName }}
+              sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextNameRefData }}-$(Build.BuildId)/${{ variables.efContextNameRefData }}.sql"
+              kvfirewallRequired: false
+              kvName: ${{ variables.vhKeyVault }}
+              kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+              kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
 
   #####################################################
   # Deploy Helm Chart to Dev. #########################
