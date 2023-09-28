@@ -66,6 +66,17 @@ stages:
               workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
               migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
               projectName: ${{ variables.efProjectName }}
+    
+      - job: Generate_RefData_Entity_Framework_Script
+        displayName: "Generate RefData Entity Framework Script"
+        steps:
+          - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+            parameters:
+              outputPath: $(Build.StagingDirectory)
+              contextName: ${{ variables.efContextNameRefData }}
+              workingPath: $(System.DefaultWorkingDirectory)/RefData
+              migrationsPath: RefData/Migrations
+              projectName: ${{ variables.efProjectNameRefData }}
 
       - job: package_nuget
         displayName: "Package NuGet Packages"
