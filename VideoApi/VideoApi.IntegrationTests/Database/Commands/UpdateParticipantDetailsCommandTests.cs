@@ -101,10 +101,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantB = new ParticipantBuilder(true).Build();
             var participantC = new ParticipantBuilder(true).Build();
 
-            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id,
-                LinkedParticipantType.Interpreter));
-            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id,
-                LinkedParticipantType.Interpreter));
+            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id, LinkedParticipantType.Interpreter));
+            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id, LinkedParticipantType.Interpreter));
 
             conference.AddParticipant(participantA);
             conference.AddParticipant(participantB);
@@ -320,8 +318,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var judge = seededConference.GetParticipants().First(e => e.HearingRole == "Judge");
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, judge.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789",
-                new List<LinkedParticipantDto>(),
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>(),
                 UserRole.None, null, null);
             
             await _handler.Handle(command);
@@ -343,11 +340,14 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 //HearingRole assertion
                 updatedParticipantCasted.CaseTypeGroup.Should().NotBeNullOrEmpty();
             }
-
+            else
+            {
+                Assert.Fail("Participant is not of type Participant");
+            }
 
         }
 
-    [TearDown]
+        [TearDown]
         public async Task TearDown()
         {
             if (_newConferenceId != Guid.Empty)
