@@ -192,7 +192,7 @@ stages:
             parameters:
               sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
               sqlServerName: ${{ variables.vhSQLServerName }}
-              databaseName: ${{ variables.BookingsApiDbName }}
+              databaseName: ${{ variables.videoApiDbName }}
               azureSubscription: ${{ variables.subscriptionName }}
               sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextNameRefData }}-$(Build.BuildId)/${{ variables.efContextNameRefData }}.sql"
               kvfirewallRequired: false
