@@ -65,7 +65,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>(),
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789",
+                new List<LinkedParticipantDto>(),
                 UserRole.Individual, "Litigant in person", "Applicant");
             await _handler.Handle(command);
 
@@ -88,30 +89,32 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             updatedParticipant.UpdatedAt.Should().BeAfter(updatedParticipant.CreatedAt.Value);
         }
-        
+
         [Test]
         public async Task Should_update_participant_details_and_linked_participants()
         {
             var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
-            
+
             var participantA = new ParticipantBuilder(true).Build();
             var participantB = new ParticipantBuilder(true).Build();
             var participantC = new ParticipantBuilder(true).Build();
-            
-            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id, LinkedParticipantType.Interpreter));
-            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id, LinkedParticipantType.Interpreter));
+
+            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id,
+                LinkedParticipantType.Interpreter));
+            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id,
+                LinkedParticipantType.Interpreter));
 
             conference.AddParticipant(participantA);
             conference.AddParticipant(participantB);
             conference.Participants.Add(participantC);
-            
+
             var seededConference = await TestDataManager.SeedConference(conference);
-            
+
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            
+
             var participant = seededConference.GetParticipants().First();
 
             var newLinkedParticipants = new List<LinkedParticipantDto>()
@@ -129,11 +132,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
                     Type = LinkedParticipantType.Interpreter
                 }
             };
-            
+
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
                 "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
                 UserRole.Individual, "Litigant in person", "Applicant");
-            
+
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
@@ -156,7 +159,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task Should_update_participant_details_and_linked_participants_When_linked_participant_only_on_one_participant()
+        public async Task
+            Should_update_participant_details_and_linked_participants_When_linked_participant_only_on_one_participant()
         {
             var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
                 .WithConferenceStatus(ConferenceState.InSession)
@@ -166,7 +170,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantB = new ParticipantBuilder(true).Build();
             var participantC = new ParticipantBuilder(true).Build();
 
-            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id, LinkedParticipantType.Interpreter));
+            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id,
+                LinkedParticipantType.Interpreter));
 
             conference.AddParticipant(participantA);
             conference.AddParticipant(participantB);
@@ -213,35 +218,37 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipantC.LinkedParticipants.Should().NotContain(x => x.LinkedId == participantB.Id);
             updatedParticipantC.LinkedParticipants.Should().Contain(x => x.LinkedId == participantA.Id);
         }
-        
+
         [Test]
         public async Task Should_throw_participant_link_exception_when_id_doesnt_match()
         {
             var conference = new ConferenceBuilder(true, null, DateTime.UtcNow.AddMinutes(5))
                 .WithConferenceStatus(ConferenceState.InSession)
                 .Build();
-            
+
             var participantA = new ParticipantBuilder(true).Build();
             var participantB = new ParticipantBuilder(true).Build();
             var participantC = new ParticipantBuilder(true).Build();
-            
-            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id, LinkedParticipantType.Interpreter));
-            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id, LinkedParticipantType.Interpreter));
+
+            participantA.LinkedParticipants.Add(new LinkedParticipant(participantA.Id, participantB.Id,
+                LinkedParticipantType.Interpreter));
+            participantB.LinkedParticipants.Add(new LinkedParticipant(participantB.Id, participantA.Id,
+                LinkedParticipantType.Interpreter));
 
             conference.AddParticipant(participantA);
             conference.AddParticipant(participantB);
             conference.Participants.Add(participantC);
-            
+
             var seededConference = await TestDataManager.SeedConference(conference);
-            
+
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            
+
             var participant = seededConference.GetParticipants().First();
 
             var fakeIdA = Guid.NewGuid();
             var fakeIdC = Guid.NewGuid();
-            
+
             var newLinkedParticipants = new List<LinkedParticipantDto>()
             {
                 new LinkedParticipantDto()
@@ -257,16 +264,16 @@ namespace VideoApi.IntegrationTests.Database.Commands
                     Type = LinkedParticipantType.Interpreter
                 }
             };
-            
+
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
                 "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
                 UserRole.Individual, "Litigant in person", "Applicant");
-            
+
             var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
             exception.LinkRefId.Should().Be(participantA.ParticipantRefId);
             exception.ParticipantRefId.Should().Be(fakeIdC);
         }
-        
+
         [Test]
         public async Task Should_update_participant_username_when_provided()
         {
@@ -276,7 +283,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participant = seededConference.GetParticipants().First();
 
             var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>(),
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789",
+                new List<LinkedParticipantDto>(),
                 UserRole.Individual, "Litigant in person", "Applicant")
             {
                 Username = "newUser@hmcts.net"
@@ -302,8 +310,44 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
         }
 
+        [Test]
+        public async Task Update_participant_details_when_case_hearing_user_role_properties_are_null()
+        {
+            
+            var seededConference = await TestDataManager.SeedConference();
+            
+            _newConferenceId = seededConference.Id;
+            var judge = seededConference.GetParticipants().First(e => e.HearingRole == "Judge");
 
-        [TearDown]
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, judge.Id, "fullname", "firstName",
+                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789",
+                new List<LinkedParticipantDto>(),
+                UserRole.None, null, null);
+            
+            await _handler.Handle(command);
+            
+            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
+            var updatedJudge =
+                updatedConference.GetParticipants().Single(x => x.Id == judge.Id);
+
+            if (updatedJudge is Participant updatedParticipantCasted)
+            {
+                //userRole assertion
+                updatedParticipantCasted.UserRole.Should().NotBe(UserRole.None);
+                updatedParticipantCasted.UserRole.Should().Be(judge.UserRole);
+
+                //HearingRole assertion
+                updatedParticipantCasted.HearingRole.Should().NotBeNullOrEmpty();
+                updatedParticipantCasted.HearingRole.Should().Be(judge.HearingRole);
+
+                //HearingRole assertion
+                updatedParticipantCasted.CaseTypeGroup.Should().NotBeNullOrEmpty();
+            }
+
+
+        }
+
+    [TearDown]
         public async Task TearDown()
         {
             if (_newConferenceId != Guid.Empty)

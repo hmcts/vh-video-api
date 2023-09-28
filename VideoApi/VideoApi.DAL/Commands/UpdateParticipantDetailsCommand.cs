@@ -29,7 +29,8 @@ namespace VideoApi.DAL.Commands
         public string HearingRole { get; set; }
         public string CaseTypeGroup { get; set; }
 
-        public UpdateParticipantDetailsCommand(Guid conferenceId, Guid participantId, string fullname, string firstname,
+        public UpdateParticipantDetailsCommand(Guid conferenceId,
+            Guid participantId, string fullname, string firstname,
             string lastname, string displayName, string representee, string contactEmail, string contactTelephone, 
             IList<LinkedParticipantDto> linkedParticipants, UserRole userRole, string hearingRole, string caseTypeGroup)
         {
@@ -83,11 +84,17 @@ namespace VideoApi.DAL.Commands
                 participantCasted.Representee = command.Representee;
                 participantCasted.ContactEmail = command.ContactEmail ?? participantCasted.ContactEmail;
                 participantCasted.ContactTelephone = command.ContactTelephone ?? participantCasted.ContactTelephone;
-                participantCasted.UserRole = command.UserRole;
-                participantCasted.HearingRole = command.HearingRole;
-                participantCasted.CaseTypeGroup = command.CaseTypeGroup;
-            }
+                
+                if (command.UserRole != UserRole.None)
+                    participantCasted.UserRole = command.UserRole;
 
+                if (command.HearingRole != null)
+                    participantCasted.HearingRole = command.HearingRole;
+            
+                if (command.CaseTypeGroup != null)
+                    participantCasted.CaseTypeGroup = command.CaseTypeGroup;
+            }
+        
             // remove all linked participants where the current participant is the secondary, i.e., LinkedId
             //
             // get the Ids of the participants the primary participant is linked to
@@ -98,8 +105,10 @@ namespace VideoApi.DAL.Commands
             foreach (var linkedParticipant in linkedParticipants)
             {
                 // get all linked participants between the secondary participant and primary participant
-                var linkedParticipantsFromSecondary = linkedParticipant.LinkedParticipants.Where(x =>
-                    x.ParticipantId == linkedParticipant.Id && x.LinkedId == participant.Id).ToList();
+                var linkedParticipantsFromSecondary = 
+                    linkedParticipant.LinkedParticipants
+                        .Where(x => x.ParticipantId == linkedParticipant.Id && x.LinkedId == participant.Id)
+                        .ToList();
                 
                 // remove each one
                 foreach (var linkedParticipantFromSecondary in linkedParticipantsFromSecondary)
