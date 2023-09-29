@@ -5,10 +5,10 @@ BEGIN TRANSACTION;
 CREATE OR ALTER PROC #Conference_UpdateHearingVenueName @oldVenueName nvarchar(max), @newVenueName nvarchar(max)
 As
 BEGIN
-    IF EXISTS (SELECT * FROM VideoApi.dbo.Conference WHERE HearingVenueName = TRIM(@oldVenueName))
+    IF EXISTS (SELECT * FROM VhVideo.dbo.Conference WHERE HearingVenueName = TRIM(@oldVenueName))
         BEGIN
             Print ('FOUND venue with the name: ' + @oldVenueName);
-            Update VideoApi.dbo.Conference Set HearingVenueName = @newVenueName Where HearingVenueName = @oldVenueName;
+            Update VhVideo.dbo.Conference Set HearingVenueName = @newVenueName Where HearingVenueName = @oldVenueName;
         END
     ELSE
         BEGIN
