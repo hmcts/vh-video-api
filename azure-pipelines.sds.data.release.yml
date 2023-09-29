@@ -1,0 +1,85 @@
+name: $(Date:yyyyMMddHHmm)-$(Rev:r)
+
+trigger:
+  - master
+
+pr: none
+
+parameters:
+  - name: environments
+    type: object
+    default:
+      - dev
+      - stg
+      - test
+      - ithc
+      - demo
+      - prod
+
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: master
+      endpoint: hmcts
+
+pool:
+  vmImage: windows-latest
+
+stages:
+  - stage: Generate_EF
+    displayName: "Generate Entity Framework"
+    jobs:
+      - job: Generate_EF
+        variables:
+          - template: variables/shared.yaml
+        displayName: "Generate Entity Framework Script"
+        steps:
+          - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+            parameters:
+              outputPath: $(Build.StagingDirectory)
+              contextName: ${{ variables.efContextNameRefData }}
+              workingPath: $(System.DefaultWorkingDirectory)/RefData
+              migrationsPath: RefData/Migrations
+              projectName: ${{ variables.efProjectNameRefData }}
+
+  - ${{each env in parameters.environments}}:
+      - stage: Run_EF_${{ env }}
+        dependsOn: Generate_EF
+        jobs:
+          - ${{ if ne(env, 'dev') }}:
+              - job: Approve_EF_${{ env }}
+                displayName: "Approve EF to ${{ env }}"
+                pool: server
+                timeoutInMinutes: 10080 # 7 Days
+                steps:
+                  - task: ManualValidation@0
+                    timeoutInMinutes: 10080 # 7 Days
+                    inputs:
+                      instructions: "Please Approve EF run to ${{ env }}"
+                      onTimeout: "reject"
+          - job: Run_EF_RefData_${{ env }}
+            variables:
+              - template: variables/shared.yaml
+                parameters:
+                  env: ${{ env }}
+            pool:
+              vmImage: "windows-latest" # This job must be run on Windows
+            displayName: "Run Entity Framework Ref Data ${{ env }}"
+            ${{ if ne(env, 'dev') }}:
+              dependsOn: Approve_EF_${{ env }}
+            steps:
+              - download: current
+                displayName: Download Sql Artifact
+              - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+                parameters:
+                  sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+                  sqlServerName: ${{ variables.vhSQLServerName }}
+                  databaseName: ${{ variables.BookingsApiDbName }}
+                  azureSubscription: ${{ variables.subscriptionName }}
+                  sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextNameRefData }}-$(Build.BuildId)/${{ variables.efContextNameRefData }}.sql"
+                  kvfirewallRequired: false
+                  kvName: ${{ variables.vhKeyVault }}
+                  kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+                  kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}

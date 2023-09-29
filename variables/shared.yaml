@@ -74,6 +74,10 @@ variables:
   - name: vhResourceGroup
     value: vh-infra-core-${{ parameters.env }}
 
+  - name: efContextNameRefData
+    value: RefDataContext
+  - name: efProjectNameRefData
+    value: RefData.csproj
   - name: efContextName
     value: VideoApiDbContext
   - name: efProjectName
