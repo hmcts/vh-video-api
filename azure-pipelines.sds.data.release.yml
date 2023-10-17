@@ -72,6 +72,12 @@ stages:
             steps:
               - download: current
                 displayName: Download Sql Artifact
+              - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+                parameters:
+                  addOrDelete: delete
+                  lockName: "${{ variables.env }}-lock"
+                  resourceGroup: ${{ variables.vhResourceGroup }}
+                  azureSubscription: ${{ variables.subscriptionName }}
               - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
                 parameters:
                   sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
