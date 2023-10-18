@@ -13,7 +13,6 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="GST.Fake.Authentication.JwtBearer" Version="6.0.0" />
-    <PackageReference Include="LaunchDarkly.ServerSdk" Version="7.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.11" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
