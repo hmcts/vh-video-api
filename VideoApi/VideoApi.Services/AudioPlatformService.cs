@@ -30,7 +30,7 @@ namespace VideoApi.Services
             ApplicationName     = configuration.ApplicationName;
         }
                 
-        public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{hearingId}";
+        public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/ZZY1-1353-Test-Interpreter1-{hearingId}";
         
         public string ApplicationName { get; }
         
