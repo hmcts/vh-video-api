@@ -29,8 +29,13 @@ namespace VideoApi.Services
             _logger             = logger;
             ApplicationName     = configuration.ApplicationName;
         }
-                
-        public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{hearingId}";
+
+        public string GetAudioIngestUrl(string hearingId, bool hrsIntegrationEnabled = false)
+        {
+            var filename = hrsIntegrationEnabled ? $"ZZY1-1353-{hearingId}" : hearingId;
+            
+            return $"{_configuration.StreamingEndpoint}{ApplicationName}/{filename}";
+        }
         
         public string ApplicationName { get; }
         
