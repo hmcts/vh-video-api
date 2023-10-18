@@ -70,7 +70,7 @@ namespace VideoApi.Services
             return await Task.FromResult(true);
         }
 
-        public string GetAudioIngestUrl(string hearingId)
+        public string GetAudioIngestUrl(string hearingId, bool hrsIntegrationEnabled = false)
         {
             return $"https://localhost.streaming.mediaServices.windows.net/{hearingId}";
         }
