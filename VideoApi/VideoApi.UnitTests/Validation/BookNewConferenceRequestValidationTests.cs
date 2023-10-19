@@ -137,7 +137,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoServiceIdErrorMessage)
+            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseTypeServiceIdErrorMessage)
                 .Should().BeTrue();
         }
     }
