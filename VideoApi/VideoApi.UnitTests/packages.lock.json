@@ -15,9 +15,9 @@
       },
       "coverlet.msbuild": {
         "type": "Direct",
-        "requested": "[3.2.0, )",
-        "resolved": "3.2.0",
-        "contentHash": "lu/eJJpqJb4qy3BGPtDD/LI5RSOwXYYyRErTyaG0OTP69llzVK3FEe74hBQx0JtLUTLEVBfERV4uGYcE1Br2sg=="
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "cUKI50VSVBqDQDFIdBnjN0Jk5JYhjtD0geP2BZZv71/ZrKORJXcLRswFsojI+cHdV+rFUL2XDJEpuhK3x1YqLA=="
       },
       "FluentAssertions": {
         "type": "Direct",
@@ -80,9 +80,9 @@
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[8.56.0.67649, )",
-        "resolved": "8.56.0.67649",
-        "contentHash": "u5klyn4PBAOe38/CoPbxGjuMqJQ5K0M7SA17H2DHgHyQ+neSU+abneRGjSQSVD76kbYXzG7E1/KQwTuj+nnMZw=="
+        "requested": "[9.12.0.78982, )",
+        "resolved": "9.12.0.78982",
+        "contentHash": "QxhfMFCNeZWP3gP/R8QM3MuDWm+Esj8Lt3oD61tid5TPuqsaKJtwMZNZWE2FOqqGuKlu3805o8MlkTWBL75skA=="
       },
       "Autofac": {
         "type": "Transitive",

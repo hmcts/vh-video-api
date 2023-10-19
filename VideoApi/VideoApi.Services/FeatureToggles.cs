@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
@@ -11,6 +12,7 @@ namespace VideoApi.Services
         public bool HrsIntegrationEnabled();
     }
     
+    [ExcludeFromCodeCoverage]
     public class FeatureToggles : IFeatureToggles
     {
         private readonly ILdClient _ldClient;
