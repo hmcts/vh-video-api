@@ -131,7 +131,7 @@ namespace VideoApi.UnitTests.Validation
         public async Task Should_return_missing_service_id_error()
         {
             var request = BuildRequest();
-            request.ServiceId = string.Empty;
+            request.CaseTypeServiceId = string.Empty;
 
             var result = await _validator.ValidateAsync(request);
 

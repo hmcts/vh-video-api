@@ -22,7 +22,7 @@ namespace VideoApi.Validations
             RuleFor(x => x.ScheduledDuration).NotEmpty().WithMessage(ScheduledDurationErrorMessage);
             RuleFor(x => x.ScheduledDateTime.Date)
                 .GreaterThanOrEqualTo(DateTime.Now.Date).WithMessage(ScheduleDateTimeInPastErrorMessage);
-            RuleFor(x => x.ServiceId).NotEmpty().WithMessage(NoServiceIdErrorMessage);
+            RuleFor(x => x.CaseTypeServiceId).NotEmpty().WithMessage(NoServiceIdErrorMessage);
             
             
             RuleFor(x => x.Participants).NotEmpty()

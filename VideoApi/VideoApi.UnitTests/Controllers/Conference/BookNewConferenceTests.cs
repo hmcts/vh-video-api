@@ -141,8 +141,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
         public async Task Should_book_kinly_conference_with_ingest_url_when_hrs_integration_feature_is_enabled()
         {
             Mocker.Mock<IFeatureToggles>().Setup(x => x.HrsIntegrationEnabled()).Returns(true);
-            var expectedIngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{_request.ServiceId}-{_request.CaseNumber}-{_request.HearingRefId.ToString()}";
-            AudioPlatformServiceMock.Setup(x => x.GetAudioIngestUrl(_request.ServiceId, _request.CaseNumber, _request.HearingRefId.ToString())).Returns(expectedIngestUrl);
+            var expectedIngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{_request.CaseTypeServiceId}-{_request.CaseNumber}-{_request.HearingRefId.ToString()}";
+            AudioPlatformServiceMock.Setup(x => x.GetAudioIngestUrl(_request.CaseTypeServiceId, _request.CaseNumber, _request.HearingRefId.ToString())).Returns(expectedIngestUrl);
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = expectedIngestUrl});
             SetupCallToMockRetryService(Guid.NewGuid());
             SetupCallToMockRetryService(true);
