@@ -25,6 +25,7 @@ namespace VideoApi.Services
             var config = Configuration.Builder(sdkKey)
                 .Logging(Components.Logging(Logs.ToWriter(Console.Out)).Level(LogLevel.Warn)).Build();
             _context = Context.Builder(LdUser).Name(environmentName).Build();
+            Console.WriteLine($"FeatureToggles environment name: {environmentName}");
             _ldClient = new LdClient(config);
         }
     
