@@ -84,3 +84,4 @@ java:
     Logging__LogLevel__System: warning
     SERVICES__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/callback
     UseStub: false
+    SERVICES__VIDEOAPIURL: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/

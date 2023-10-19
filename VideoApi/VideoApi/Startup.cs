@@ -57,7 +57,7 @@ namespace VideoApi
                         .AllowCredentials();
                 }));
             
-            var envName = Configuration["Services:VideoApiResourceId"]; // any service url will do here since we only care about the env name
+            var envName = Configuration["Services:VideoApiUrl"];
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["LaunchDarkly:SdkKey"], envName));
 
             services.AddApplicationInsightsTelemetry();
