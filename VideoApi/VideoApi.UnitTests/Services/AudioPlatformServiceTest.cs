@@ -383,5 +383,17 @@ namespace VideoApi.UnitTests.Services
             url.Should().Contain(_wowzaConfiguration.ApplicationName);
             url.Should().Contain(_wowzaConfiguration.StreamingEndpoint);
         }
+        
+        [Test]
+        public void GetAudioIngestUrl_overload_returns_expected_url()
+        {
+            var serviceId = "ServiceId";
+            var caseNumber = "CaseNumber";
+            var hearingId = Guid.NewGuid().ToString();
+            var url = _audioPlatformService.GetAudioIngestUrl(serviceId, caseNumber, hearingId);
+            url.Should().Contain($"{serviceId}-{caseNumber}-{hearingId}");
+            url.Should().Contain(_wowzaConfiguration.ApplicationName);
+            url.Should().Contain(_wowzaConfiguration.StreamingEndpoint);
+        }
     }
 }

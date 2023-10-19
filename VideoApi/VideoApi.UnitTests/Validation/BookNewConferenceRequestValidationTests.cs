@@ -126,5 +126,19 @@ namespace VideoApi.UnitTests.Validation
             result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoUsernameErrorMessage)
                 .Should().BeTrue();
         }
+        
+        [Test]
+        public async Task Should_return_missing_service_id_error()
+        {
+            var request = BuildRequest();
+            request.ServiceId = string.Empty;
+
+            var result = await _validator.ValidateAsync(request);
+
+            result.IsValid.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoServiceIdErrorMessage)
+                .Should().BeTrue();
+        }
     }
 }

@@ -87,9 +87,9 @@ namespace VideoApi.Controllers
                 participant.LastName = participant.LastName.Trim();
                 participant.DisplayName = participant.DisplayName.Trim();
             }
-            var audioIngestUrl = _audioPlatformService.GetAudioIngestUrl(
-                request.HearingRefId.ToString(), 
-                hrsIntegrationEnabled: _featureToggles.HrsIntegrationEnabled());
+            var audioIngestUrl = _featureToggles.HrsIntegrationEnabled() ? 
+                _audioPlatformService.GetAudioIngestUrl(request.ServiceId, request.CaseNumber, request.HearingRefId.ToString()) 
+                : _audioPlatformService.GetAudioIngestUrl(request.HearingRefId.ToString());
       
             var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
             _logger.LogDebug("Conference Created");

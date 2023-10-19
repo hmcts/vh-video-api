@@ -12,6 +12,7 @@ namespace VideoApi.Validations
         public static readonly string ScheduledDurationErrorMessage = "ScheduledDuration is required";
         public static readonly string NoCaseNumberErrorMessage = "CaseNumber is required";
         public static readonly string NoParticipantsErrorMessage = "Please provide at least one participant";
+        public static readonly string NoServiceIdErrorMessage = "ServiceId is required";
         
         public BookNewConferenceRequestValidation()
         {
@@ -21,6 +22,7 @@ namespace VideoApi.Validations
             RuleFor(x => x.ScheduledDuration).NotEmpty().WithMessage(ScheduledDurationErrorMessage);
             RuleFor(x => x.ScheduledDateTime.Date)
                 .GreaterThanOrEqualTo(DateTime.Now.Date).WithMessage(ScheduleDateTimeInPastErrorMessage);
+            RuleFor(x => x.ServiceId).NotEmpty().WithMessage(NoServiceIdErrorMessage);
             
             
             RuleFor(x => x.Participants).NotEmpty()
