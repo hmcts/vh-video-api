@@ -36,9 +36,11 @@ namespace VideoApi.Services
         public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId)
         {
             const string regex = "[^a-zA-Z0-9]";
+            const RegexOptions regexOptions = RegexOptions.None;
+            var timeout = TimeSpan.FromMilliseconds(500);
 
-            var sanitisedServiceId = Regex.Replace(serviceId, regex, "");
-            var sanitisedCaseNumber = Regex.Replace(caseNumber, regex, "");
+            var sanitisedServiceId = Regex.Replace(serviceId, regex, "", regexOptions, timeout);
+            var sanitisedCaseNumber = Regex.Replace(caseNumber, regex, "", regexOptions, timeout);
             
             return $"{_configuration.StreamingEndpoint}{ApplicationName}/{sanitisedServiceId}-{sanitisedCaseNumber}-{hearingId}";
         }
