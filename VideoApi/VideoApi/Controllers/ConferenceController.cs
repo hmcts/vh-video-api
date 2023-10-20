@@ -88,9 +88,6 @@ namespace VideoApi.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
-            var flagOn = _featureToggles.HrsIntegrationEnabled();
-            Console.WriteLine($"Hrs flag status: {flagOn}");
-            
             var audioIngestUrl = _featureToggles.HrsIntegrationEnabled() ? 
                 _audioPlatformService.GetAudioIngestUrl(request.CaseTypeServiceId, request.CaseNumber, request.HearingRefId.ToString()) 
                 : _audioPlatformService.GetAudioIngestUrl(request.HearingRefId.ToString());
