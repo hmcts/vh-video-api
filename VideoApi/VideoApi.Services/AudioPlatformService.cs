@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -32,8 +33,15 @@ namespace VideoApi.Services
 
         public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{hearingId}";
 
-        public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId) => 
-            $"{_configuration.StreamingEndpoint}{ApplicationName}/{serviceId}-{caseNumber}-{hearingId}";
+        public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId)
+        {
+            const string regex = "[^a-zA-Z0-9]";
+
+            var sanitisedServiceId = Regex.Replace(serviceId, regex, "");
+            var sanitisedCaseNumber = Regex.Replace(caseNumber, regex, "");
+            
+            return $"{_configuration.StreamingEndpoint}{ApplicationName}/{sanitisedServiceId}-{sanitisedCaseNumber}-{hearingId}";
+        }
         
         public string ApplicationName { get; }
         
