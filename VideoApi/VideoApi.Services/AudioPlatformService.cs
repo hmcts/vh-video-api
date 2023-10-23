@@ -28,6 +28,7 @@ namespace VideoApi.Services
             _configuration      = configuration;
             _logger             = logger;
             ApplicationName     = configuration.ApplicationName;
+            
         }
                 
         public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{hearingId}";
