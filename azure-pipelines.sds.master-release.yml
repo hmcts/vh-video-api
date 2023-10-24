@@ -141,7 +141,7 @@ stages:
 - stage: Push_Nuget
   displayName: Deploy Nuget Packages
   dependsOn:
-    - Run_Entity_Framework_Dev
+    - Run_Entity_Framework
   variables:
   - template: variables/shared.yaml
     parameters:
