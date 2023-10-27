@@ -3,5 +3,3 @@ java:
   image: '${IMAGE_NAME}'
   ingressHost: ${SERVICE_FQDN}
   releaseNameOverride: ${RELEASE_NAME}
-  environment:
-    SERVICES__VIDEOAPIURL: https://${SERVICE_FQDN}/
