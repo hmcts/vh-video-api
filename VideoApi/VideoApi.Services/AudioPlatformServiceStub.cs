@@ -74,6 +74,11 @@ namespace VideoApi.Services
         {
             return $"https://localhost.streaming.mediaServices.windows.net/{hearingId}";
         }
+        
+        public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId)
+        {
+            return $"https://localhost.streaming.mediaServices.windows.net/{serviceId}-{caseNumber}-{hearingId}";
+        }
 
         public string ApplicationName { get; }
     }

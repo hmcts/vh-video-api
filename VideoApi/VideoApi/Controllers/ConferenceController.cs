@@ -21,6 +21,7 @@ using VideoApi.Domain;
 using VideoApi.Extensions;
 using VideoApi.Services.Factories;
 using VideoApi.Mappings;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
@@ -45,12 +46,13 @@ namespace VideoApi.Controllers
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
-
+        private readonly IFeatureToggles _featureToggles;
 
         public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, IOptions<KinlyConfiguration> kinlyConfiguration, 
             ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
-            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, IBackgroundWorkerQueue backgroundWorkerQueue)
+            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, IBackgroundWorkerQueue backgroundWorkerQueue,
+            IFeatureToggles featureToggles)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -61,6 +63,7 @@ namespace VideoApi.Controllers
             _azureStorageServiceFactory = azureStorageServiceFactory;
             _pollyRetryService = pollyRetryService;
             _backgroundWorkerQueue = backgroundWorkerQueue;
+            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -84,7 +87,10 @@ namespace VideoApi.Controllers
                 participant.LastName = participant.LastName.Trim();
                 participant.DisplayName = participant.DisplayName.Trim();
             }
-            var audioIngestUrl = _audioPlatformService.GetAudioIngestUrl(request.HearingRefId.ToString());
+
+            var audioIngestUrl = _featureToggles.HrsIntegrationEnabled() ? 
+                _audioPlatformService.GetAudioIngestUrl(request.CaseTypeServiceId, request.CaseNumber, request.HearingRefId.ToString()) 
+                : _audioPlatformService.GetAudioIngestUrl(request.HearingRefId.ToString());
       
             var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
             _logger.LogDebug("Conference Created");
