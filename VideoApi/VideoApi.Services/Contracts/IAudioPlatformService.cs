@@ -19,6 +19,11 @@ namespace VideoApi.Services.Contracts
         public string GetAudioIngestUrl(string hearingId);
         
         /// <summary>
+        /// Builds the URI pointing to the location the wowza application that Kinly will stream the audio to
+        /// </summary>
+        public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId);
+        
+        /// <summary>
         /// Wowza recorder application name
         /// </summary>
         public string ApplicationName { get; }

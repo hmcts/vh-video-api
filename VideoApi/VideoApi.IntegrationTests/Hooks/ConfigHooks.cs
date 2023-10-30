@@ -148,6 +148,7 @@ namespace VideoApi.IntegrationTests.Hooks
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
+            services.AddSingleton<IFeatureToggles, FeatureTogglesStub>();
         }
 
         private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)

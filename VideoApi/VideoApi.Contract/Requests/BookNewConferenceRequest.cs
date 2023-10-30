@@ -9,7 +9,8 @@ namespace VideoApi.Contract.Requests
         {
             Endpoints = new List<AddEndpointRequest>();   
         }
-        
+
+        public string CaseTypeServiceId { get; set; }
         public Guid HearingRefId { get; set; }
         public string CaseType { get; set; }
         public DateTime ScheduledDateTime { get; set; }
