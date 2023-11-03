@@ -47,14 +47,14 @@ namespace VideoApi.Services
         
         public string ApplicationName { get; }
         
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string recorder)
         {
             var responses = new List<HttpResponseMessage>();
             foreach (var client in _wowzaClients)
             {
                 try
                 {
-                    var response = await client.GetStreamRecorderAsync(application, _configuration.ServerName, _configuration.HostName, recorder);
+                    var response = await client.GetStreamRecorderAsync(ApplicationName, _configuration.ServerName, _configuration.HostName, recorder);
 
                     if (response.IsSuccessStatusCode)
                     {

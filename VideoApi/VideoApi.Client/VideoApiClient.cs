@@ -29,10 +29,9 @@ namespace VideoApi.Client
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
-        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp);
+        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -40,10 +39,9 @@ namespace VideoApi.Client
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
-        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get the audio recording link for a given hearing.
@@ -1206,12 +1204,11 @@ namespace VideoApi.Client
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
-        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp)
+        public virtual System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId)
         {
-            return GetAudioStreamInfoAsync(hearingId, singleWowzaApp, System.Threading.CancellationToken.None);
+            return GetAudioStreamInfoAsync(hearingId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1220,21 +1217,16 @@ namespace VideoApi.Client
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
-        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, bool singleWowzaApp, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
                 throw new System.ArgumentNullException("hearingId");
 
-            if (singleWowzaApp == null)
-                throw new System.ArgumentNullException("singleWowzaApp");
-
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audiostreams/{hearingId}/{singleWowzaApp}");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audiostreams/{hearingId}");
             urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{singleWowzaApp}", System.Uri.EscapeDataString(ConvertToString(singleWowzaApp, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;

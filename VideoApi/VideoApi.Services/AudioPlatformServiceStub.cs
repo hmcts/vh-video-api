@@ -51,7 +51,7 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string recorder)
         {
             var hearingID = new Guid(recorder);
             if (!hearingID.Equals(_audioRecordingTestIdConfiguration.Existing))
