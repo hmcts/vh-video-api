@@ -229,7 +229,7 @@ namespace VideoApi.Services.Clients
 
         public async Task<HttpResponseMessage> GetDiagnosticsAsync(string server)
         {
-            using var cts = new CancellationTokenSource(new TimeSpan.FromSeconds(2));
+            using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 2));
             var response = await _httpClient.GetAsync
             (
                 $"v2/servers/{server}/status",
