@@ -122,7 +122,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [Test]
         public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
         {
-            var hearingId = Guid.NewGuid();
+            var hearingId = Guid.NewGuid().ToString();
             var filePath = $"{hearingId}_2020-01-01.mp4";
             
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);
