@@ -47,20 +47,20 @@ namespace VideoApi.Client
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingId">The hearing id.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId);
+        System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingId">The hearing id.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get the audio recording links for a given CVP recording.
@@ -1311,12 +1311,12 @@ namespace VideoApi.Client
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingId">The hearing id.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId)
+        public virtual System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference)
         {
-            return GetAudioRecordingLinkAsync(hearingId, System.Threading.CancellationToken.None);
+            return GetAudioRecordingLinkAsync(hearingReference, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1324,17 +1324,14 @@ namespace VideoApi.Client
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingId">The hearing id.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference, System.Threading.CancellationToken cancellationToken)
         {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{hearingId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{hearingReference}");
+            urlBuilder_.Replace("{hearingReference}", System.Uri.EscapeDataString(ConvertToString(hearingReference, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;

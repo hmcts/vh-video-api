@@ -72,19 +72,19 @@ namespace VideoApi.Controllers
         /// Get the audio recording link for a given hearing.
         /// Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingId">The hearing id.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns> AudioRecordingResponse with the link - AudioFileLink</returns>
-        [HttpGet("audio/{hearingId}")]
+        [HttpGet("audio/{hearingReference}")]
         [OpenApiOperation("GetAudioRecordingLink")]
         [ProducesResponseType(typeof(AudioRecordingResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
+        public async Task<IActionResult> GetAudioRecordingLinkAsync(string hearingReference)
         {
             _logger.LogInformation("Getting audio recording link");
             try
             {
                 var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-                var allBlobNames = await azureStorageService.GetAllBlobNamesByFilePathPrefix(hearingId.ToString());
+                var allBlobNames = await azureStorageService.GetAllBlobNamesByFilePathPrefix(hearingReference);
                 
                 return Ok(new AudioRecordingResponse
                 {
