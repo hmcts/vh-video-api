@@ -49,7 +49,7 @@ namespace VideoApi.Client
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingReference">The hearing reference containing the hearingId.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference);
@@ -59,7 +59,7 @@ namespace VideoApi.Client
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingReference">The hearing reference containing the hearingId.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference, System.Threading.CancellationToken cancellationToken);
@@ -1319,7 +1319,7 @@ namespace VideoApi.Client
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingReference">The hearing reference containing the hearingId.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference)
@@ -1332,7 +1332,7 @@ namespace VideoApi.Client
         /// Get the audio recording link for a given hearing.
         /// <br/>Note: Only used by the admin web. To be decommissioned
         /// </summary>
-        /// <param name="hearingReference">The hearing reference containing the hearingId.</param>
+        /// <param name="hearingReference">The hearing reference containing the hearing Id.</param>
         /// <returns>AudioRecordingResponse with the link - AudioFileLink</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinkAsync(string hearingReference, System.Threading.CancellationToken cancellationToken)
