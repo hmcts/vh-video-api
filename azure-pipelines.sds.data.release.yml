@@ -75,14 +75,14 @@ stages:
               - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
                 parameters:
                   addOrDelete: delete
-                  lockName: "${{ variables.env }}-lock"
+                  lockName: "${{ env }}-lock"
                   resourceGroup: ${{ variables.vhResourceGroup }}
                   azureSubscription: ${{ variables.subscriptionName }}
               - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
                 parameters:
                   sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
                   sqlServerName: ${{ variables.vhSQLServerName }}
-                  databaseName: ${{ variables.BookingsApiDbName }}
+                  databaseName: ${{ variables.VideoApiDbName }}
                   azureSubscription: ${{ variables.subscriptionName }}
                   sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextNameRefData }}-$(Build.BuildId)/${{ variables.efContextNameRefData }}.sql"
                   kvfirewallRequired: false

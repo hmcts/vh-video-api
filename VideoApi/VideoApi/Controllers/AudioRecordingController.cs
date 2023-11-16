@@ -47,21 +47,18 @@ namespace VideoApi.Controllers
         /// Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
         /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
-        /// <param name="singleWowzaApp">Boolean to signify if the conference is using the single instance version of wowza, or a bespoke made recorder</param>
-        /// <returns>AudioStreamInfoResponse</returns>
-        [HttpGet("audiostreams/{hearingId}/{singleWowzaApp?}")]
+         /// <returns>AudioStreamInfoResponse</returns>
+        [HttpGet("audiostreams/{hearingId}")]
         [OpenApiOperation("GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId, bool singleWowzaApp = true)
+        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId)
         {
             _logger.LogDebug("GetAudioStreamInfo");
-
-            var applicationName = singleWowzaApp ? _audioPlatformService.ApplicationName : hearingId.ToString();
-
+            
             try
             {
-                var response = await _audioPlatformService.GetAudioStreamInfoAsync(applicationName, hearingId.ToString());
+                var response = await _audioPlatformService.GetAudioStreamInfoAsync(hearingId.ToString());
                 return Ok(AudioRecordingMapper.MapToAudioStreamInfo(response));
             }
             catch (AggregateException agrEx)

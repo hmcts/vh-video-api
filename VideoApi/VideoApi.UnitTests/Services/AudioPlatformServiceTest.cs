@@ -185,7 +185,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
 
-            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
@@ -201,7 +201,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
 
-            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
@@ -217,7 +217,7 @@ namespace VideoApi.UnitTests.Services
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NotFound) {Content = new StringContent("Recorder Not Found") });
 
-            var action = async () => await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var action = async () => await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             await action.Should().ThrowExactlyAsync<AggregateException>();
         }
@@ -233,7 +233,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Unhandled Exception"));
 
-            var action = async () => await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var action = async () => await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             await action.Should().ThrowExactlyAsync<AggregateException>();
         }
@@ -248,7 +248,7 @@ namespace VideoApi.UnitTests.Services
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
 
-            var result = await audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var result = await audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
@@ -264,7 +264,7 @@ namespace VideoApi.UnitTests.Services
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
 
-            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
@@ -280,7 +280,7 @@ namespace VideoApi.UnitTests.Services
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
 
-            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
@@ -296,7 +296,7 @@ namespace VideoApi.UnitTests.Services
             _wowzaClient1.SetupProperty(e => e.IsLoadBalancer, false);
            
             var audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object}, _wowzaConfiguration, _logger.Object);
-            var action = async () => await audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>());
+            var action = async () => await audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
             await action.Should().ThrowExactlyAsync<AggregateException>();
         }
         
