@@ -352,8 +352,10 @@ namespace VideoApi.Controllers
 
             if (request == null)
             {
-                _logger.LogWarning("AddHeartbeatRequest is null");
-                return BadRequest();
+                const string error = "AddHeartbeatRequest is null";
+                _logger.LogWarning(error);
+                ModelState.AddModelError("", error);
+                return ValidationProblem(ModelState);
             }
 
             var command = new SaveHeartbeatCommand

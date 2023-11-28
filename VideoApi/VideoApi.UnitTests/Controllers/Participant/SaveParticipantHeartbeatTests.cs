@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using Testing.Common.Assertions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
@@ -43,8 +44,9 @@ namespace VideoApi.UnitTests.Controllers.Participant
             
             var result = await Controller.SaveHeartbeatDataForParticipantAsync(Guid.Empty, Guid.Empty, null);
 
-            var typedResult = (BadRequestResult)result;
+            var typedResult = (ObjectResult)result;
             typedResult.Should().NotBeNull();
+            typedResult.ContainsValidationErrors();
         }
     }
 }

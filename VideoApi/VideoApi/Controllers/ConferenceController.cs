@@ -289,7 +289,7 @@ namespace VideoApi.Controllers
 
             if (response is null)
             {
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             return Ok(response);
@@ -337,7 +337,7 @@ namespace VideoApi.Controllers
 
                 _logger.LogWarning("Invalid username {Username}", username);
 
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
