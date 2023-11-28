@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -35,6 +36,7 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [Route("conferences")]
     [ApiController]
+    [SuppressMessage("Info Code Smell", "S1133:Deprecated code should be removed")]
     public class ConferenceController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
