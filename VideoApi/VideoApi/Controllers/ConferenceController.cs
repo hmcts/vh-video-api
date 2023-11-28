@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -35,6 +36,7 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [Route("conferences")]
     [ApiController]
+    [SuppressMessage("Info Code Smell", "S1133:Deprecated code should be removed")]
     public class ConferenceController : ControllerBase
     {
         private readonly IQueryHandler _queryHandler;
@@ -289,7 +291,7 @@ namespace VideoApi.Controllers
 
             if (response is null)
             {
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             return Ok(response);
@@ -337,7 +339,7 @@ namespace VideoApi.Controllers
 
                 _logger.LogWarning("Invalid username {Username}", username);
 
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());

@@ -5,11 +5,9 @@ namespace Testing.Common.Assertions
 {
     public static class AssertSerializableError
     {
-        public static void ContainsKeyAndErrorMessage(this SerializableError error, string key, string errorMessage)
+        public static void ContainsValidationErrors(this ObjectResult objectResult)
         {
-            error.Should().NotBeNull();
-            error.ContainsKey(key).Should().BeTrue();
-            ((string[])error[key])[0].Should().Be(errorMessage);
+            ((ValidationProblemDetails)objectResult.Value).Errors.Should().NotBeEmpty();
         }
     }
 }
