@@ -354,7 +354,7 @@ namespace VideoApi.Controllers
             {
                 const string error = "AddHeartbeatRequest is null";
                 _logger.LogWarning(error);
-                ModelState.AddModelError("", error);
+                ModelState.AddModelError(nameof(request), error);
                 return ValidationProblem(ModelState);
             }
 
