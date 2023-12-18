@@ -33,7 +33,7 @@ public class GetConferencesForIndividualByHearingRefIdTests : ApiTest
 
         // assert
         result.IsSuccessStatusCode.Should().BeTrue();
-        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceForHostResponse>>(result.Content);
+        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceForIndividualResponse>>(result.Content);
         var resultConference = conferenceResponse.FirstOrDefault();
         resultConference.Should().NotBeNull();
         resultConference!.Id.Should().Be(conference.Id);

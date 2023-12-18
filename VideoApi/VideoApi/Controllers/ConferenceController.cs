@@ -436,7 +436,7 @@ namespace VideoApi.Controllers
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpPost("hearings/individual")]
         [OpenApiOperation("GetConferencesForHostByHearingRefId")]
-        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesForIndividualByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
