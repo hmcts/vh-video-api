@@ -435,7 +435,7 @@ namespace VideoApi.Controllers
         /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         [HttpPost("hearings/individual")]
-        [OpenApiOperation("GetConferencesForHostByHearingRefId")]
+        [OpenApiOperation("GetConferencesForIndividualByHearingRefId")]
         [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]

@@ -387,7 +387,7 @@ namespace VideoApi.Client
         /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForHostByHearingRefId2Async(GetConferencesByHearingIdsRequest request);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForIndividualByHearingRefIdAsync(GetConferencesByHearingIdsRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -396,7 +396,7 @@ namespace VideoApi.Client
         /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForHostByHearingRefId2Async(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForIndividualByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get list of expired conferences
@@ -3472,9 +3472,9 @@ namespace VideoApi.Client
         /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForHostByHearingRefId2Async(GetConferencesByHearingIdsRequest request)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForIndividualByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
         {
-            return GetConferencesForHostByHearingRefId2Async(request, System.Threading.CancellationToken.None);
+            return GetConferencesForIndividualByHearingRefIdAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -3484,7 +3484,7 @@ namespace VideoApi.Client
         /// <param name="request">Hearing ref IDs</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForHostByHearingRefId2Async(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForIndividualResponse>> GetConferencesForIndividualByHearingRefIdAsync(GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
