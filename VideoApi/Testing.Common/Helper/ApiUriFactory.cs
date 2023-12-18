@@ -58,6 +58,7 @@ namespace Testing.Common.Helper
             public static string GetExpiredOpenConferences => $"{ApiRoot}/expired";
             public static string GetConferenceDetailsById(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";
             public static string GetConferencesForHostByHearingRefId() => $"{ApiRoot}/hearings/host";
+            public static string GetConferencesForIndividualByHearingRefId() => $"{ApiRoot}/hearings/individual";
             public static string GetConferencesForAdminByHearingRefId() => $"{ApiRoot}/hearings/staff-member";
             public static string GetConferenceByHearingRefId(Guid hearingRefId) => $"{ApiRoot}/hearings/{hearingRefId}";
             public static string RemoveConference(Guid conferenceId) => $"{ApiRoot}/{conferenceId}";

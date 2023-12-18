@@ -329,6 +329,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetConferencesTodayForIndividualByUsername")]
         [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        [Obsolete("Use bookingApi GetConfirmedHearingsByUsernameForTodayAsync then hearings/individual instead", false)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
             _logger.LogDebug("GetConferencesTodayForIndividualByUsername {Username}", username);
@@ -428,6 +429,27 @@ namespace VideoApi.Controllers
             return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
         }
         
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpPost("hearings/individual")]
+        [OpenApiOperation("GetConferencesForHostByHearingRefId")]
+        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesForIndividualByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
+        {
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
+            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+
+            if (!conferences.Any())
+                return NotFound();
+
+            return Ok(conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel).ToList());
+        }
+
         /// <summary>
         /// Get list of expired conferences 
         /// </summary>
@@ -605,8 +627,7 @@ namespace VideoApi.Controllers
         [HttpPatch("anonymise-conference-with-hearing-ids")]
         [OpenApiOperation("AnonymiseConferenceWithHearingIds")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
-        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(
-            AnonymiseConferenceWithHearingIdsRequest request)
+        public async Task<IActionResult> AnonymiseConferenceWithHearingIds(AnonymiseConferenceWithHearingIdsRequest request)
         {
             await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
                 { HearingIds = request.HearingIds });
