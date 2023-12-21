@@ -497,6 +497,12 @@ namespace VideoApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Update the username for a participant
+        /// </summary>
+        /// <param name="participantId">The id of the participant to update</param>
+        /// <param name="request">New username to update to</param>
+        /// <returns></returns>
         [HttpPatch("participants/{participantId}/username", Name = "UpdateParticipantUsername")]
         [OpenApiOperation("UpdateParticipantUsername")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
