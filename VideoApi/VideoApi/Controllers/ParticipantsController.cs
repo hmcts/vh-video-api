@@ -496,5 +496,24 @@ namespace VideoApi.Controllers
                 { HearingIds = request.HearingIds });
             return Ok();
         }
+
+        [HttpPatch("participants/{participantId}/username", Name = "UpdateParticipantUsername")]
+        [OpenApiOperation("UpdateParticipantUsername")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateParticipantUsername(Guid participantId, UpdateParticipantUsernameRequest request)
+        {
+            try
+            {
+                await _commandHandler.Handle(new UpdateParticipantUsernameCommand(participantId, request.Username));
+            }
+            catch (ParticipantNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            
+            return Ok();
+        }
     }
 }
