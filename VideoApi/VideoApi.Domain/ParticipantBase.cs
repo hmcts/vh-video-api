@@ -51,6 +51,16 @@ namespace VideoApi.Domain
             ParticipantStatuses.Add(new ParticipantStatus(status));
         }
 
+        public void UpdateUsername(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new DomainRuleException(nameof(username), "Username is required");
+            }
+            
+            Username = username;
+        }
+
         public string GetCurrentRoom()
         {
             return CurrentConsultationRoom?.Label ?? CurrentRoom?.ToString() ?? throw new DomainRuleException(nameof(CurrentRoom), "Participant is not in a room");
