@@ -23,7 +23,8 @@ namespace VideoApi.Services
         private readonly KinlyConfiguration _kinlyConfigOptions;
         private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
-
+        private const string LogPrefix = "Calling Kinly API: ";
+        
         public KinlyPlatformService(IKinlyApiClient kinlyApiClient,
             IOptions<KinlyConfiguration> kinlyConfigOptions,
             ILogger<KinlyPlatformService> logger,
@@ -43,22 +44,24 @@ namespace VideoApi.Services
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
         {
-            _logger.LogInformation(
-                "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
-                _kinlyConfigOptions.CallbackUri, _kinlyConfigOptions.KinlyApiUrl);
 
+            var request = new CreateHearingParams
+            {
+                Virtual_courtroom_id = conferenceId.ToString(),
+                Callback_uri = _kinlyConfigOptions.CallbackUri,
+                Recording_enabled = audioRecordingRequired,
+                Recording_url = ingestUrl,
+                Streaming_enabled = false,
+                Streaming_url = null,
+                Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+            };
+            var serializedRequest = Newtonsoft.Json.JsonConvert.SerializeObject(request);
+            _logger.LogInformation(LogPrefix + "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}. {SerializedRequest}", conferenceId,
+                _kinlyConfigOptions.CallbackUri, _kinlyConfigOptions.KinlyApiUrl, serializedRequest);
+            
             try
             {
-                var response = await _kinlyApiClient.CreateHearingAsync(new CreateHearingParams
-                {
-                    Virtual_courtroom_id = conferenceId.ToString(),
-                    Callback_uri = _kinlyConfigOptions.CallbackUri,
-                    Recording_enabled = audioRecordingRequired,
-                    Recording_url = ingestUrl,
-                    Streaming_enabled = false,
-                    Streaming_url = null,
-                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
-                });
+                var response = await _kinlyApiClient.CreateHearingAsync(request);
 
                 return new MeetingRoom
                 (response.Uris.Admin, response.Uris.Participant, response.Uris.Participant,
@@ -118,7 +121,7 @@ namespace VideoApi.Services
         public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
             string toRoom)
         {
-            _logger.LogInformation(
+            _logger.LogInformation(LogPrefix + 
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
                 participantId, fromRoom, toRoom, conferenceId);
 
@@ -140,32 +143,45 @@ namespace VideoApi.Services
         public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
             IEnumerable<EndpointDto> endpoints)
         {
-            return _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(),
-                new UpdateHearingParams
-                {
-                    Recording_enabled = audioRecordingRequired,
-                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
-                });
+            var request = new UpdateHearingParams
+            {
+                Recording_enabled = audioRecordingRequired,
+                Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+            };
+            var serializedRequest = Newtonsoft.Json.JsonConvert.SerializeObject(request);
+            _logger.LogInformation(LogPrefix + "Updating a Virtual Court Room {ConferenceId}, {AudioRecordingIsRequired}, {Request}", 
+                conferenceId, audioRecordingRequired, serializedRequest);
+            
+            return _kinlyApiClient.UpdateHearingAsync(conferenceId.ToString(),request);
         }
 
         public Task StartHearingAsync(Guid conferenceId, IEnumerable<string> participantsToForceTransfer = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = false)
         {
-            return _kinlyApiClient.StartAsync(conferenceId.ToString(),
-                new StartHearingRequest { Hearing_layout = layout, Mute_guests = muteGuests, Force_transfer_participant_ids = participantsToForceTransfer?.ToList()});
+            var request = new StartHearingRequest
+            {
+                Hearing_layout = layout, Mute_guests = muteGuests,
+                Force_transfer_participant_ids = participantsToForceTransfer?.ToList()
+            };
+            var serializedRequest = Newtonsoft.Json.JsonConvert.SerializeObject(request);
+            _logger.LogInformation(LogPrefix + "Starting a Hearing {ConferenceId}, {Request}", conferenceId, serializedRequest);
+            return _kinlyApiClient.StartAsync(conferenceId.ToString(), request);
         }
 
         public Task PauseHearingAsync(Guid conferenceId)
         {
+            _logger.LogInformation(LogPrefix + "Pausing Hearing {ConferenceId}", conferenceId);
             return _kinlyApiClient.PauseHearingAsync(conferenceId.ToString());
         }
 
         public Task EndHearingAsync(Guid conferenceId)
         {
+            _logger.LogInformation(LogPrefix + "Ending Hearing {ConferenceId}", conferenceId);
             return _kinlyApiClient.EndHearingAsync(conferenceId.ToString());
         }
 
         public Task SuspendHearingAsync(Guid conferenceId)
         {
+            _logger.LogInformation(LogPrefix + "Suspending Hearing {ConferenceId}", conferenceId);
             return _kinlyApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
         }
 

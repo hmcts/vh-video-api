@@ -25,6 +25,7 @@ namespace VideoApi.Services
         private string InterpreterRoomPrefix => "Interpreter";
         private string PanelMemberRoomPrefix => "Panel Member";
         private string InterpreterSuffix => "_interpreter_";
+        private const string LogPrefix = "Calling Kinly API: ";
 
         public VirtualRoomService(IKinlyApiClient kinlyApiClient, ILogger<VirtualRoomService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
@@ -69,6 +70,10 @@ namespace VideoApi.Services
                 .Select(x => int.TryParse(x.Label.Replace(InterpreterRoomPrefix, string.Empty), out var n) ? n : 0)
                 .DefaultIfEmpty()
                 .Max();
+            
+            
+            _logger.LogInformation(LogPrefix+"Creating a new interpreter room for conference {Conference}", conference.Id);
+            
             interpreterRoom = await CreateAVmrAndRoom(conference, count, type, KinlyRoomType.Interpreter);
 
             return interpreterRoom;
@@ -99,7 +104,7 @@ namespace VideoApi.Services
         private async Task<ParticipantRoom> CreateAVmrAndRoom(Conference conference, int existingRooms,
             VirtualCourtRoomType roomType, KinlyRoomType kinlyRoomType)
         {
-            _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
+            _logger.LogInformation(LogPrefix+"Creating a new interpreter room for conference {Conference}", conference.Id);
             var roomId = await CreateInterpreterRoom(conference.Id, roomType);
             var ingestUrl = GetIngestUrl(conference, kinlyRoomType, roomId);
 
@@ -144,6 +149,9 @@ namespace VideoApi.Services
                 Room_type = kinlyRoomType,
                 Display_name = $"{roomPrefix}{existingRooms + 1}"
             };
+            var serializedRequest = Newtonsoft.Json.JsonConvert.SerializeObject(newRoomParams);
+            _logger.LogInformation(LogPrefix+"Creating a new room for conference {Conference} with params {Params}", conference.Id, serializedRequest);
+            
             return _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
         }
 
@@ -151,7 +159,7 @@ namespace VideoApi.Services
             IReadOnlyCollection<ParticipantRoom> rooms, ParticipantBase participant,
             VirtualCourtRoomType roomType)
         {
-            _logger.LogInformation(
+            _logger.LogInformation(LogPrefix+
                 "Checking for an existing interpreter room for participant {Participant} in conference {Conference}",
                 participant.Id, conferenceId);
             var participantIds = participant.LinkedParticipants.Select(lp => lp.LinkedId).ToList();

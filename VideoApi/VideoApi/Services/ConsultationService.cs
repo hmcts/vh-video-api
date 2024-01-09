@@ -21,6 +21,7 @@ namespace VideoApi.Services
         private readonly ILogger<ConsultationService> _logger;
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
+        private const string LogPrefix = "Calling Kinly API: ";
 
         public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
@@ -96,7 +97,7 @@ namespace VideoApi.Services
         {
             var response = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
-                "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",
+                LogPrefix + "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",
                 virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label);
 
             return response;
@@ -172,7 +173,7 @@ namespace VideoApi.Services
             string toRoom)
         {
             _logger.LogInformation(
-                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
+                LogPrefix + "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
                 participantId, fromRoom, toRoom, conferenceId);
 
             var request = new TransferParticipantParams
