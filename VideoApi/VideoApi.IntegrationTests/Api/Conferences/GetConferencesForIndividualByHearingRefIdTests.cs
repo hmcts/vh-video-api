@@ -19,7 +19,7 @@ namespace VideoApi.IntegrationTests.Api.Conferences;
 public class GetConferencesForIndividualByHearingRefIdTests : ApiTest
 {
     [Test]
-    public async Task should_get_conferences_for_host_by_HearingRefId()
+    public async Task should_get_conferences_for_individual_by_HearingRefId()
     {
         //arrange
         var conference = await TestDataManager.SeedConference();
