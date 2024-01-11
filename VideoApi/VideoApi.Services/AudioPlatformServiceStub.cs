@@ -51,7 +51,7 @@ namespace VideoApi.Services
             });
         }
 
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string recorder)
         {
             var hearingID = new Guid(recorder);
             if (!hearingID.Equals(_audioRecordingTestIdConfiguration.Existing))
@@ -73,6 +73,11 @@ namespace VideoApi.Services
         public string GetAudioIngestUrl(string hearingId)
         {
             return $"https://localhost.streaming.mediaServices.windows.net/{hearingId}";
+        }
+        
+        public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId)
+        {
+            return $"https://localhost.streaming.mediaServices.windows.net/{serviceId}-{caseNumber}-{hearingId}";
         }
 
         public string ApplicationName { get; }

@@ -352,8 +352,10 @@ namespace VideoApi.Controllers
 
             if (request == null)
             {
-                _logger.LogWarning("AddHeartbeatRequest is null");
-                return BadRequest();
+                const string error = "AddHeartbeatRequest is null";
+                _logger.LogWarning(error);
+                ModelState.AddModelError(nameof(request), error);
+                return ValidationProblem(ModelState);
             }
 
             var command = new SaveHeartbeatCommand
@@ -492,6 +494,31 @@ namespace VideoApi.Controllers
         {
             await _commandHandler.Handle(new AnonymiseQuickLinkParticipantWithHearingIdsCommand
                 { HearingIds = request.HearingIds });
+            return Ok();
+        }
+
+        /// <summary>
+        /// Update the username for a participant
+        /// </summary>
+        /// <param name="participantId">The id of the participant to update</param>
+        /// <param name="request">New username to update to</param>
+        /// <returns></returns>
+        [HttpPatch("participants/{participantId}/username", Name = "UpdateParticipantUsername")]
+        [OpenApiOperation("UpdateParticipantUsername")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateParticipantUsername(Guid participantId, UpdateParticipantUsernameRequest request)
+        {
+            try
+            {
+                await _commandHandler.Handle(new UpdateParticipantUsernameCommand(participantId, request.Username));
+            }
+            catch (ParticipantNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            
             return Ok();
         }
     }

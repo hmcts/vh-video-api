@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using FluentAssertions;
@@ -71,7 +70,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         public async Task GetAudioStreamInfoAsync_Returns_NotFound()
         {
             _audioPlatformService
-               .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>()))
+               .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>()))
                .Throws<AggregateException>();
 
             var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as NotFoundObjectResult;
@@ -79,9 +78,8 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task GetAudioStreamInfoAsync_Returns_AudioStreamInfoResponse(bool wowzaSingleApp)
+        [TestCase]
+        public async Task GetAudioStreamInfoAsync_Returns_AudioStreamInfoResponse()
         {
             var hearingId = Guid.NewGuid();
             var wowzaResponse = new WowzaGetStreamRecorderResponse
@@ -104,25 +102,22 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             };
 
             _audioPlatformService
-               .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>(), It.IsAny<string>()))
+               .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>()))
                .ReturnsAsync(wowzaResponse);
 
-            var result = await _controller.GetAudioStreamInfoAsync(hearingId, wowzaSingleApp) as OkObjectResult;
+            var result = await _controller.GetAudioStreamInfoAsync(hearingId) as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             var response = result.Value as AudioStreamInfoResponse;
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(wowzaResponse, options => options.ExcludingMissingMembers());
-            if (wowzaSingleApp)
-                _audioPlatformService.Verify(e => e.GetAudioStreamInfoAsync(ApplicationName, hearingId.ToString()), Times.Once);
-            else
-                _audioPlatformService.Verify(e => e.GetAudioStreamInfoAsync(hearingId.ToString(), hearingId.ToString()), Times.Once);
+            _audioPlatformService.Verify(e => e.GetAudioStreamInfoAsync(hearingId.ToString()), Times.Once);
         }
         
         [Test]
         public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
         {
-            var hearingId = Guid.NewGuid();
+            var hearingId = Guid.NewGuid().ToString();
             var filePath = $"{hearingId}_2020-01-01.mp4";
             
             _storageServiceFactory.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_storageService.Object);

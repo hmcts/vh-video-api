@@ -45,7 +45,7 @@ namespace Testing.Common.Helper
             public static string SetHeartbeats(Guid conferenceId, Guid participantId) => $"{ApiRoot}/{conferenceId}/participant/{participantId}/heartbeat";
             public static string GetDistinctJudgeNames() => $"{ApiRoot}/participants/Judge/firstname";
             public static string GetParticipantsByConferenceId(Guid conferenceId) => $"{ApiRoot}/{conferenceId}/participants";
-
+            public static string UpdateParticipantUsername(Guid participantId) => $"{ApiRoot}/participants/{participantId}/username";
         }
 
         public static class ConferenceEndpoints

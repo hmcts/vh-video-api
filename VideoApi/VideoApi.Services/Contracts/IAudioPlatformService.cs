@@ -11,12 +11,17 @@ namespace VideoApi.Services.Contracts
         /// Returns the status of the in-progress hearing recorder. Only requires that one node return a successful response
         /// Will throw aggregate exception if the streaming recorder can not be found on both Wowza Vms
         /// </summary>
-        Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder);
+        Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string recorder);
         
         /// <summary>
         /// Builds the URI pointing to the location the wowza application that Kinly will stream the audio to
         /// </summary>
         public string GetAudioIngestUrl(string hearingId);
+        
+        /// <summary>
+        /// Builds the URI pointing to the location the wowza application that Kinly will stream the audio to
+        /// </summary>
+        public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId);
         
         /// <summary>
         /// Wowza recorder application name

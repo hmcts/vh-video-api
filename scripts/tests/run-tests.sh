@@ -1,7 +1,7 @@
 #!/bin/sh
 set -x
 
-exclusions="[Testing.Common]*,[VideoApi.Common]VideoApi.Common.*,[VideoApi.Domain]*.Ddd*,[VideoApi.DAL]*.Migrations*,[VideoApi]*.Swagger,[VideoApi.Services]*"
+exclusions="[Testing.Common]*,[VideoApi.Common]VideoApi.Common.*,[VideoApi.Domain]*.Ddd*,[VideoApi.DAL]*.Migrations*,[VideoApi]*.Swagger"
 configuration=Release
 
 # Script is for docker compose tests where the script is at the root level

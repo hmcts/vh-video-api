@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
+using Testing.Common.Assertions;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
@@ -14,8 +15,9 @@ namespace VideoApi.UnitTests.Controllers.Conference
             var username = "invalidName";
             var result = await Controller.GetConferencesTodayForJudgeByUsernameAsync(username);
 
-            var typedResult = (BadRequestObjectResult) result;
+            var typedResult = (ObjectResult) result;
             typedResult.Value.Should().NotBeNull();
+            typedResult.ContainsValidationErrors();
 
             var modelState = Controller.ModelState;
             Assert.IsTrue(modelState.Keys.Contains("username"));
@@ -42,8 +44,9 @@ namespace VideoApi.UnitTests.Controllers.Conference
             var username = "invalidName";
             var result = await Controller.GetConferencesTodayForIndividualByUsernameAsync(username);
 
-            var typedResult = (BadRequestObjectResult)result;
+            var typedResult = (ObjectResult)result;
             typedResult.Value.Should().NotBeNull();
+            typedResult.ContainsValidationErrors();
 
             var modelState = Controller.ModelState;
             Assert.IsTrue(modelState.Keys.Contains("username"));

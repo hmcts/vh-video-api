@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -29,19 +30,31 @@ namespace VideoApi.Services
             _logger             = logger;
             ApplicationName     = configuration.ApplicationName;
         }
-                
+
         public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{hearingId}";
+
+        public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId)
+        {
+            const string regex = "[^a-zA-Z0-9]";
+            const RegexOptions regexOptions = RegexOptions.None;
+            var timeout = TimeSpan.FromMilliseconds(500);
+
+            var sanitisedServiceId = Regex.Replace(serviceId, regex, "", regexOptions, timeout);
+            var sanitisedCaseNumber = Regex.Replace(caseNumber, regex, "", regexOptions, timeout);
+            
+            return $"{_configuration.StreamingEndpoint}{ApplicationName}/{sanitisedServiceId}-{sanitisedCaseNumber}-{hearingId}";
+        }
         
         public string ApplicationName { get; }
         
-        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string application, string recorder)
+        public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string recorder)
         {
             var responses = new List<HttpResponseMessage>();
             foreach (var client in _wowzaClients)
             {
                 try
                 {
-                    var response = await client.GetStreamRecorderAsync(application, _configuration.ServerName, _configuration.HostName, recorder);
+                    var response = await client.GetStreamRecorderAsync(ApplicationName, _configuration.ServerName, _configuration.HostName, recorder);
 
                     if (response.IsSuccessStatusCode)
                     {
