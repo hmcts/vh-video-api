@@ -157,7 +157,7 @@ namespace VideoApi.Controllers
             var room = await _queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
-                _logger.LogWarning($"Unable to find room {request.RoomLabel}");
+                _logger.LogWarning("Unable to find room {RoomLabel}", request.RoomLabel);
                 return NotFound($"Unable to find room {request.RoomLabel}");
             }
 
