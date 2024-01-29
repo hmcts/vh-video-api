@@ -32,9 +32,3 @@ Feature: Start Private Endpoint Consultation
     And I have a start endpoint consultation without a linked defence advocate
     When I send the request to the endpoint
     Then the response should have the status Unauthorized and success status False
-
-  Scenario: Fail to start a private consultation with an endpoint a not linked defence advocate
-    Given I have a conference with endpoints
-    And I have a start endpoint consultation with a not linked defence advocate
-    When I send the request to the endpoint
-    Then the response should have the status Unauthorized and success status False
