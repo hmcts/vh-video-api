@@ -26,21 +26,20 @@ namespace VideoApi.DAL.Commands
             var conference = await context.Conferences
                 .Include(x => x.Participants)
                 .Include(x => x.Endpoints)
-                .SingleOrDefaultAsync(x => x.Id == command.ParticipantId);
-            
-            var participant = conference
-                .GetParticipants()
-                .SingleOrDefault(x => x.Id == command.ParticipantId);
-            
-            if (participant == null)
+                .SingleOrDefaultAsync(x => x.Participants.Any(p => p.Id == command.ParticipantId));
+              
+            if (conference == null)
                 throw new ParticipantNotFoundException(command.ParticipantId);
             
-            participant.UpdateUsername(command.Username);
+            var participant = conference.GetParticipants().Single(x => x.Id == command.ParticipantId);
             
-            //Update any endpoints linked to this participant
+            //Find any endpoints linked to this participant
             var endpoints = conference.GetEndpoints()?
-                .Where(x => x.Id == command.ParticipantId)
+                .Where(x => x.DefenceAdvocate == participant.Username)
                 .ToList();
+            
+            //Update username and endpoint defence advocates with that username
+            participant.UpdateUsername(command.Username);
             
             if(endpoints != null && endpoints.Any())
                 foreach (var endpoint in endpoints)
