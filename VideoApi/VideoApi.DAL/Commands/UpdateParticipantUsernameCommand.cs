@@ -19,11 +19,18 @@ namespace VideoApi.DAL.Commands
         }
     }
 
-    public class UpdateParticipantUsernameCommandHandler(VideoApiDbContext context) : ICommandHandler<UpdateParticipantUsernameCommand>
+    public class UpdateParticipantUsernameCommandHandler : ICommandHandler<UpdateParticipantUsernameCommand>
     {
+        private readonly VideoApiDbContext _context;
+
+        public UpdateParticipantUsernameCommandHandler(VideoApiDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task Handle(UpdateParticipantUsernameCommand command)
         {
-            var conference = await context.Conferences
+            var conference = await _context.Conferences
                 .Include(x => x.Participants)
                 .Include(x => x.Endpoints)
                 .SingleOrDefaultAsync(x => x.Participants.Any(p => p.Id == command.ParticipantId));
@@ -45,7 +52,7 @@ namespace VideoApi.DAL.Commands
                 foreach (var endpoint in endpoints)
                     endpoint.AssignDefenceAdvocate(command.Username);
             
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }
