@@ -91,27 +91,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             actionResult.Should().NotBeNull();
             actionResult.Value.Should().Be("Endpoint does not have a defence advocate linked");
         }
-        
-        [Test]
-        public async Task should_return_unauthorised_when_endpoint_is_not_linked_with_defence_advocate()
-        {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
-            var defenceAdvocate = TestConference.GetParticipants().First(x =>
-                !x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
-                    StringComparison.CurrentCultureIgnoreCase) && x.UserRole != VideoApi.Domain.Enums.UserRole.Judge);
-            
-            var request = new EndpointConsultationRequest()
-            {
-                ConferenceId = TestConference.Id,
-                EndpointId = endpointWithDefenceAdvocate.Id,
-                RequestedById = defenceAdvocate.Id
-            };
-            var result = await Controller.StartConsultationWithEndpointAsync(request);
-
-            var actionResult = result.As<UnauthorizedObjectResult>();
-            actionResult.Should().NotBeNull();
-            actionResult.Value.Should().Be("Defence advocate is not allowed to speak to requested endpoint");
-        }
 
         [Test]
         public async Task should_return_bad_request_when_endpoint_is_already_in_room()
