@@ -153,13 +153,6 @@ namespace VideoApi.Controllers
                 return Unauthorized(message);
             }
 
-            if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
-            {
-                const string message = "Defence advocate is not allowed to speak to requested endpoint";
-                _logger.LogWarning(message);
-                return Unauthorized(message);
-            }
-
             var roomQuery = new GetConsultationRoomByIdQuery(request.ConferenceId, request.RoomLabel);
             var room = await _queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
