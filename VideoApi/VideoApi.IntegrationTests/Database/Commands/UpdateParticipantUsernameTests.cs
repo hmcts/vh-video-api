@@ -7,7 +7,7 @@ using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
-using VideoApi.DAL.Queries;
+
 namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class UpdateParticipantUsernameTests : DatabaseTestsBase
