@@ -1020,10 +1020,20 @@ namespace VideoApi.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task AnonymiseQuickLinkParticipantWithHearingIdsAsync(AnonymiseQuickLinkParticipantWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Update the username for a participant
+        /// </summary>
+        /// <param name="participantId">The id of the participant to update</param>
+        /// <param name="request">New username to update to</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateParticipantUsernameAsync(System.Guid participantId, UpdateParticipantUsernameRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Update the username for a participant
+        /// </summary>
+        /// <param name="participantId">The id of the participant to update</param>
+        /// <param name="request">New username to update to</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateParticipantUsernameAsync(System.Guid participantId, UpdateParticipantUsernameRequest request, System.Threading.CancellationToken cancellationToken);
 
@@ -7795,6 +7805,11 @@ namespace VideoApi.Client
             }
         }
 
+        /// <summary>
+        /// Update the username for a participant
+        /// </summary>
+        /// <param name="participantId">The id of the participant to update</param>
+        /// <param name="request">New username to update to</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task UpdateParticipantUsernameAsync(System.Guid participantId, UpdateParticipantUsernameRequest request)
         {
@@ -7802,6 +7817,11 @@ namespace VideoApi.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Update the username for a participant
+        /// </summary>
+        /// <param name="participantId">The id of the participant to update</param>
+        /// <param name="request">New username to update to</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task UpdateParticipantUsernameAsync(System.Guid participantId, UpdateParticipantUsernameRequest request, System.Threading.CancellationToken cancellationToken)
         {

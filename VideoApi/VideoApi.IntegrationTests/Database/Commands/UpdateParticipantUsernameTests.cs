@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task Should_update_participant_username()
+        public async Task Should_update_participant_username_and_any_linked_endpoints()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -50,12 +50,19 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateParticipantUsernameCommand(participant.Id, newUsername);
             await _handler.Handle(command);
             
-            var updatedParticipant = await _context.Participants.SingleAsync(x => x.Id == command.ParticipantId);
+            var conference = await _context.Conferences
+                .Include(x => x.Participants)
+                .Include(x => x.Endpoints)
+                .SingleAsync(x => x.Id == command.ParticipantId);
 
+            var updatedParticipant = conference.GetParticipants().Single(x => x.Id == command.ParticipantId);
+            
             updatedParticipant.Username.Should().NotBe(oldUsername);
             updatedParticipant.Username.Should().Be(newUsername);
+            updatedParticipant.DisplayName.Should().Be(newUsername);
+            conference.Endpoints[0].DefenceAdvocate.Should().NotBe(oldUsername);
+            conference.Endpoints[0].DefenceAdvocate.Should().Be(newUsername);
         }
-
 
         [TearDown]
         public async Task TearDown()
