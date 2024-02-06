@@ -47,6 +47,31 @@ namespace VideoApi.IntegrationTests.Helper
             
             return await SeedConference(conference);
         }
+        
+        public async Task<Conference> SeedConferenceWithEndpoint()
+        {
+            var conference = new ConferenceBuilder(true)
+                .WithParticipant(UserRole.Individual, "Applicant", "TestApplicant@email.com")
+                .WithParticipant(UserRole.Representative, "Applicant")
+                .WithParticipant(UserRole.Individual, "Respondent")
+                .WithParticipant(UserRole.Representative, "Respondent")
+                .WithParticipant(UserRole.Judge, "Judge")
+                .WithParticipant(UserRole.JudicialOfficeHolder, "PanelMember")
+                .WithEndpoint("Endpoint1", Guid.NewGuid().ToString(), "TestApplicant@email.com")
+                .WithConferenceStatus(ConferenceState.InSession)
+                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername)
+                .WithAudioRecordingRequired(false)
+                .Build();
+            var conferenceType = typeof(Conference);
+            conferenceType.GetProperty("ActualStartTime")?.SetValue(conference, conference.ScheduledDateTime.AddMinutes(1));
+
+            foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))
+            {
+                individual.UpdateTestCallResult(true, TestScore.Okay);
+            }
+            
+            return await SeedConference(conference);
+        }
 
         public async Task<Conference> SeedConference(bool AudioRecording)
         {

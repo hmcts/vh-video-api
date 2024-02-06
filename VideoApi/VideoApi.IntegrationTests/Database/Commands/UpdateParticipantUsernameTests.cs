@@ -7,7 +7,7 @@ using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
-using VideoApi.DAL.Queries;
+
 namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class UpdateParticipantUsernameTests : DatabaseTestsBase
@@ -37,9 +37,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
         }
 
         [Test]
-        public async Task Should_update_participant_username()
+        public async Task Should_update_participant_username_and_any_linked_endpoints()
         {
-            var seededConference = await TestDataManager.SeedConference();
+            var seededConference = await TestDataManager.SeedConferenceWithEndpoint();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants()[0];
@@ -50,12 +50,20 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateParticipantUsernameCommand(participant.Id, newUsername);
             await _handler.Handle(command);
             
-            var updatedParticipant = await _context.Participants.SingleAsync(x => x.Id == command.ParticipantId);
+            var conference = await _context.Conferences
+                .Include(x => x.Participants)
+                .Include(x => x.Endpoints)
+                .Where(x => x.Participants.Any(p => p.Id == command.ParticipantId))
+                .SingleAsync();
 
+            var updatedParticipant = conference.GetParticipants().Single(x => x.Id == command.ParticipantId);
+            
             updatedParticipant.Username.Should().NotBe(oldUsername);
             updatedParticipant.Username.Should().Be(newUsername);
+            
+            conference.Endpoints[0].DefenceAdvocate.Should().NotBe(oldUsername);
+            conference.Endpoints[0].DefenceAdvocate.Should().Be(newUsername);
         }
-
 
         [TearDown]
         public async Task TearDown()
