@@ -46,19 +46,18 @@ namespace VideoApi.Controllers
         /// Gets the audio stream for the conference by hearingId
         /// Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="audioStream">The name of the audio stream recorder</param>
          /// <returns>AudioStreamInfoResponse</returns>
-        [HttpGet("audiostreams/{hearingId}")]
+        [HttpGet("audiostreams/{audioStream}")]
         [OpenApiOperation("GetAudioStreamInfo")]
         [ProducesResponseType(typeof(AudioStreamInfoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAudioStreamInfoAsync(Guid hearingId)
+        public async Task<IActionResult> GetAudioStreamInfoAsync(string audioStream)
         {
             _logger.LogDebug("GetAudioStreamInfo");
-            
             try
             {
-                var response = await _audioPlatformService.GetAudioStreamInfoAsync(hearingId.ToString());
+                var response = await _audioPlatformService.GetAudioStreamInfoAsync(audioStream);
                 return Ok(AudioRecordingMapper.MapToAudioStreamInfo(response));
             }
             catch (AggregateException agrEx)
