@@ -73,7 +73,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>()))
                .Throws<AggregateException>();
 
-            var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as NotFoundObjectResult;
+            var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<string>()) as NotFoundObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
@@ -81,7 +81,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [TestCase]
         public async Task GetAudioStreamInfoAsync_Returns_AudioStreamInfoResponse()
         {
-            var hearingId = Guid.NewGuid();
+            var hearingId = "hearingId";
             var wowzaResponse = new WowzaGetStreamRecorderResponse
             {
                 Option              = "Option",
