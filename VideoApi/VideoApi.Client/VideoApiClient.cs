@@ -28,20 +28,20 @@ namespace VideoApi.Client
         /// Gets the audio stream for the conference by hearingId
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="audioStream">The name of the audio stream recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId);
+        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(string audioStream);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Gets the audio stream for the conference by hearingId
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="audioStream">The name of the audio stream recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(string audioStream, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get the audio recording link for a given hearing.
@@ -1220,12 +1220,12 @@ namespace VideoApi.Client
         /// Gets the audio stream for the conference by hearingId
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="audioStream">The name of the audio stream recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId)
+        public virtual System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(string audioStream)
         {
-            return GetAudioStreamInfoAsync(hearingId, System.Threading.CancellationToken.None);
+            return GetAudioStreamInfoAsync(audioStream, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1233,17 +1233,14 @@ namespace VideoApi.Client
         /// Gets the audio stream for the conference by hearingId
         /// <br/>Note: Used by Video Web to determine whether or not the audio recording alert should be displayed
         /// </summary>
-        /// <param name="hearingId">The HearingRefId of the conference to get the audio recording stream</param>
+        /// <param name="audioStream">The name of the audio stream recorder</param>
         /// <returns>AudioStreamInfoResponse</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<AudioStreamInfoResponse> GetAudioStreamInfoAsync(string audioStream, System.Threading.CancellationToken cancellationToken)
         {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audiostreams/{hearingId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audiostreams/{audioStream}");
+            urlBuilder_.Replace("{audioStream}", System.Uri.EscapeDataString(ConvertToString(audioStream, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
