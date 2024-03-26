@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -43,6 +43,7 @@ namespace VideoApi.Common.Security.Kinly
                 IssuedAt = DateTime.UtcNow.AddMinutes(-1),
                 NotBefore = DateTime.UtcNow.AddMinutes(-1),
                 Issuer = _kinlyConfiguration.Issuer,
+                Audience = _kinlyConfiguration.Audience,
                 Expires =  DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
                 SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512)
             };
