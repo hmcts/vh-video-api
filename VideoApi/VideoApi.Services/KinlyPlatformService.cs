@@ -61,8 +61,8 @@ namespace VideoApi.Services
                 });
 
                 return new MeetingRoom
-                (response.Uris.Admin, response.Uris.Participant, response.Uris.Participant,
-                    response.Uris.Pexip_node, response.Telephone_conference_id);
+                (response.Uris.Admin ?? response.Uris.Participant, response.Uris.Participant, response.Uris.Participant,
+                    response.Uris.Pexip_node, response.Telephone_conference_id); // This change needs to go behind the feature flag.
             }
             catch (KinlyApiException e)
             {
