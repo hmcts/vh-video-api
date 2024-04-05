@@ -1,3 +1,7 @@
 variables:
   - name: env
-    value: "demo"
+    value: demo 
+  - name: demoTagName
+    value: "demo-#{SHORTCOMMITID}#-#{DATETIME}#"
+  - name: subDirectory
+    value: "/demo"
