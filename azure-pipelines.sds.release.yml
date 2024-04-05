@@ -509,7 +509,7 @@ stages:
 - stage: Helm_Demo
   displayName: Push Helm Charts
   dependsOn: 
-    - Docker_Build_Push
+    - Docker_Build_Push_Demo
   variables:
   - template: variables/demo.yaml
   - template: variables/shared.yaml
