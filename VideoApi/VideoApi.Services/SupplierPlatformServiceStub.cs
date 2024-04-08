@@ -3,25 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Clients;
-using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services
 {
     [ExcludeFromCodeCoverage]
-    public class KinlyPlatformServiceStub : IVideoPlatformService
+    public class SupplierPlatformServiceStub : IVideoPlatformService
     {
-        private readonly List<Guid> _bookedGuids;
-
-        public KinlyPlatformServiceStub()
-        {
-            _bookedGuids = new List<Guid>();
-        }
+        private readonly List<Guid> _bookedGuids = new();
 
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,

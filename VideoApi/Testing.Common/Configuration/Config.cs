@@ -1,5 +1,5 @@
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
 
 
 namespace Testing.Common.Configuration

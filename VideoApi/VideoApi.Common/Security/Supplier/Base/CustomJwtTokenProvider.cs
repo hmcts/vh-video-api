@@ -4,37 +4,30 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace VideoApi.Common.Security.Kinly
+namespace VideoApi.Common.Security.Supplier.Base
 {
-    public class CustomJwtTokenProvider : ICustomJwtTokenProvider
+    public abstract class CustomJwtTokenProvider(SupplierConfiguration supplierConfiguration) : ICustomJwtTokenProvider
     {
-        private readonly KinlyConfiguration _kinlyConfiguration;
-
-        public CustomJwtTokenProvider(KinlyConfiguration kinlyConfiguration)
-        {
-            _kinlyConfiguration = kinlyConfiguration;
-        }
-
         public string GenerateApiToken(string claims, int expiresInMinutes)
         {
-            byte[] key = Convert.FromBase64String(_kinlyConfiguration.ApiSecret);
+            byte[] key = Convert.FromBase64String(supplierConfiguration.ApiSecret);
             return BuildToken(claims, expiresInMinutes, key);
         }
         
         public string GenerateSelfTestApiToken(string claims, int expiresInMinutes)
         {
-            byte[] key = Convert.FromBase64String(_kinlyConfiguration.SelfTestApiSecret);
+            byte[] key = Convert.FromBase64String(supplierConfiguration.SelfTestApiSecret);
             return BuildToken(claims, expiresInMinutes, key);
         }
 
         // This is for acceptance tests only... do not use this anywhere else.
         public string GenerateTokenForCallbackEndpoint(string claims, int expiresInMinutes)
         {
-            byte[] key = new ASCIIEncoding().GetBytes(_kinlyConfiguration.CallbackSecret);
+            byte[] key = new ASCIIEncoding().GetBytes(supplierConfiguration.CallbackSecret);
             return BuildToken(claims, expiresInMinutes, key);
         }
 
-        private string BuildToken(string claims, int expiresInMinutes, byte[] key)
+        protected virtual string BuildToken(string claims, int expiresInMinutes, byte[] key)
         {
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(key);
             SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor
@@ -42,8 +35,7 @@ namespace VideoApi.Common.Security.Kinly
                 Subject = new ClaimsIdentity(new[] {new Claim(ClaimTypes.Name, claims)}),
                 IssuedAt = DateTime.UtcNow.AddMinutes(-1),
                 NotBefore = DateTime.UtcNow.AddMinutes(-1),
-                Issuer = _kinlyConfiguration.Issuer,
-                Audience = _kinlyConfiguration.Audience,
+                Issuer = supplierConfiguration.Issuer,
                 Expires =  DateTime.UtcNow.AddMinutes(expiresInMinutes + 1),
                 SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512)
             };

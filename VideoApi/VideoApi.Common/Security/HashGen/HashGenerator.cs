@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Common.Security.Supplier.Kinly;
 
 namespace VideoApi.Common.Security.HashGen
 {
-    public class HashGenerator
+    public abstract class HashGeneratorBase(SupplierConfiguration supplierConfiguration)
     {
-        private readonly KinlyConfiguration _kinlyConfiguration;
-
-        public HashGenerator(KinlyConfiguration kinlyConfiguration)
+        public virtual string GenerateHash(DateTime expiresOnUtc, string data)
         {
-            _kinlyConfiguration = kinlyConfiguration;
-        }
-
-        public string GenerateHash(DateTime expiresOnUtc, string data)
-        {
-            var key = Convert.FromBase64String(_kinlyConfiguration.ApiSecret);
+            var key = Convert.FromBase64String(supplierConfiguration.ApiSecret);
             var stringToHash = $"{expiresOnUtc}{data}";
 
             var request = Encoding.UTF8.GetBytes(stringToHash);

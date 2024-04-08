@@ -8,7 +8,6 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using VideoApi.Common.Configuration;
-using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 
 namespace VideoApi.Services

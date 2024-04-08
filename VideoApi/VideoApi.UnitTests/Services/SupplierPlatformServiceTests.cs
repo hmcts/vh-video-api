@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services;
@@ -22,37 +22,42 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Services
 {
-    public class KinlyPlatformServiceTests
+    public class SupplierPlatformServiceTests
     {
-        private Mock<IKinlyApiClient> _kinlyApiClientMock;
-        private Mock<ILogger<KinlyPlatformService>> _loggerMock;
-        private IOptions<KinlyConfiguration> _kinlyConfigOptions;
-
+        private Mock<ISupplierApiClient> _supplierApiClientMock;
+        private Mock<ILogger<SupplierPlatformService>> _loggerMock;
+        private Mock<ISupplierApiSelector> _selctorMock;
+        private SupplierConfiguration _supplierConfig;
         private Mock<IKinlySelfTestHttpClient> _kinlySelfTestHttpClient;
         private Mock<IPollyRetryService> _pollyRetryService;
-        private KinlyPlatformService _kinlyPlatformService;
+        private SupplierPlatformService _SupplierPlatformService;
         private Conference _testConference;
+        private Mock<IFeatureToggles> _featureToggles;
 
         [SetUp]
         public void Setup()
         {
-            _kinlyApiClientMock = new Mock<IKinlyApiClient>();
-            _loggerMock = new Mock<ILogger<KinlyPlatformService>>();
+            _featureToggles = new Mock<IFeatureToggles>();
+            _featureToggles.Setup(x => x.VodafoneIntegrationEnabled()).Returns(false);
+            _supplierApiClientMock = new Mock<ISupplierApiClient>();
+            _supplierConfig = new KinlyConfiguration()
+            {
+                CallbackUri = "CallbackUri", ApiUrl = "KinlyApiUrl"
+            };
+            _selctorMock = new Mock<ISupplierApiSelector>();
+            _selctorMock.Setup(e => e.GetSupplierConfiguration()).Returns(_supplierConfig);
+            _selctorMock.Setup(e => e.GetHttpClient()).Returns(_supplierApiClientMock.Object);
+            _loggerMock = new Mock<ILogger<SupplierPlatformService>>();
 
             _kinlySelfTestHttpClient = new Mock<IKinlySelfTestHttpClient>();
             _pollyRetryService = new Mock<IPollyRetryService>();
             
-            _kinlyConfigOptions = Options.Create(new KinlyConfiguration()
-            {
-                CallbackUri = "CallbackUri", KinlyApiUrl = "KinlyApiUrl"
-            });
-
-            _kinlyPlatformService = new KinlyPlatformService(
-                _kinlyApiClientMock.Object,
-                _kinlyConfigOptions,
+            _SupplierPlatformService = new SupplierPlatformService(
                 _loggerMock.Object,
                 _kinlySelfTestHttpClient.Object,
-                _pollyRetryService.Object
+                _pollyRetryService.Object,
+                _selctorMock.Object,
+                _featureToggles.Object
             );
             
             _testConference = new ConferenceBuilder()
@@ -69,12 +74,12 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public void Should_throw_double_booking_exception_on_conflict_return_status_code_when_booking_courtroom()
         {
-            _kinlyApiClientMock
+            _supplierApiClientMock
                 .Setup(x => x.CreateHearingAsync(It.IsAny<CreateHearingParams>()))
-                .ThrowsAsync(new KinlyApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
+                .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "",
+                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "",
                         new List<EndpointDto>()))
                 .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
@@ -82,12 +87,12 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public void Should_throw_kinly_api_exception_when_booking_courtroom()
         {
-            _kinlyApiClientMock
+            _supplierApiClientMock
                 .Setup(x => x.CreateHearingAsync(It.IsAny<CreateHearingParams>()))
-                .ThrowsAsync(new KinlyApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
+                .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
-            Assert.ThrowsAsync<KinlyApiException>(() =>
-                _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>()));
+            Assert.ThrowsAsync<SupplierApiException>(() =>
+                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>()));
         }
         
         [Test]
@@ -97,14 +102,14 @@ namespace VideoApi.UnitTests.Services
             const string ingestUrl = null;
             var endpoints = new List<EndpointDto>
             {
-                new EndpointDto{Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919"},
-                new EndpointDto{Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832"}
+                new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919"},
+                new () {Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832"}
             };
             
             var hearingParams = new CreateHearingParams
             {
                 Virtual_courtroom_id = _testConference.Id.ToString(),
-                Callback_uri = _kinlyConfigOptions.Value.CallbackUri,
+                Callback_uri = _supplierConfig.CallbackUri,
                 Recording_enabled = audioRecordingRequired,
                 Recording_url = ingestUrl,
                 Streaming_enabled = false,
@@ -117,7 +122,7 @@ namespace VideoApi.UnitTests.Services
                 Admin = "admin", Participant = "participant", Pexip_node = "pexip"
             };
             
-            _kinlyApiClientMock
+            _supplierApiClientMock
                 .Setup(x => x.CreateHearingAsync(It.Is<CreateHearingParams>(param =>
                     param.Virtual_courtroom_id == hearingParams.Virtual_courtroom_id &&
                     param.Callback_uri == hearingParams.Callback_uri &&
@@ -133,7 +138,7 @@ namespace VideoApi.UnitTests.Services
                     Virtual_courtroom_id = Guid.NewGuid()
                 });
 
-            var result = await _kinlyPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
+            var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
                 endpoints);
@@ -144,7 +149,7 @@ namespace VideoApi.UnitTests.Services
             result.ParticipantUri.Should().Be(uris.Participant);
             result.PexipNode.Should().Be(uris.Pexip_node);
             
-            _kinlyApiClientMock.Verify(x => x.CreateHearingAsync(It.Is<CreateHearingParams>(param =>
+            _supplierApiClientMock.Verify(x => x.CreateHearingAsync(It.Is<CreateHearingParams>(param =>
                 param.Virtual_courtroom_id == hearingParams.Virtual_courtroom_id &&
                 param.Callback_uri == hearingParams.Callback_uri &&
                 param.Recording_enabled == hearingParams.Recording_enabled &&
@@ -158,12 +163,12 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task Should_update_virtual_court_room()
         {
-            _kinlyApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
+            _supplierApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
 
             var conferenceId = Guid.NewGuid();
-            await _kinlyPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>());
+            await _SupplierPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>());
             
-            _kinlyApiClientMock.Verify(x => x.UpdateHearingAsync(conferenceId.ToString(), It.Is<UpdateHearingParams>(p => p.Recording_enabled)), Times.Once);
+            _supplierApiClientMock.Verify(x => x.UpdateHearingAsync(conferenceId.ToString(), It.Is<UpdateHearingParams>(p => p.Recording_enabled)), Times.Once);
         }
 
         [Test]
@@ -180,9 +185,9 @@ namespace VideoApi.UnitTests.Services
                 Virtual_courtroom_id = Guid.NewGuid()
             };
 
-            _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).ReturnsAsync(hearing);
+            _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).ReturnsAsync(hearing);
 
-            var result = await _kinlyPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
+            var result = await _SupplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(hearing.Uris.Admin);
@@ -193,10 +198,10 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task Should_return_null_for_kinly_virtual_court_room_when_not_found()
         {
-            var exception = new KinlyApiException("notfound", StatusCodes.Status404NotFound, "", null, null);
-            _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
+            var exception = new SupplierApiException("notfound", StatusCodes.Status404NotFound, "", null, null);
+            _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
 
-            var result = await _kinlyPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
+            var result = await _SupplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
 
             result.Should().BeNull();
         }
@@ -204,10 +209,10 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public void Should_throw_for_kinly_virtual_court_room_when_other_status()
         {
-            var exception = new KinlyApiException("BadGateway", StatusCodes.Status502BadGateway, "", null, null);
-            _kinlyApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
+            var exception = new SupplierApiException("BadGateway", StatusCodes.Status502BadGateway, "", null, null);
+            _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
 
-            Assert.ThrowsAsync<KinlyApiException>(() => _kinlyPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>()));
+            Assert.ThrowsAsync<SupplierApiException>(() => _SupplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>()));
         }
 
         [Test]
@@ -229,7 +234,7 @@ namespace VideoApi.UnitTests.Services
             })
             .ReturnsAsync(expectedTestCallResult);
 
-            var result = await _kinlyPlatformService.GetTestCallScoreAsync(participantId);
+            var result = await _SupplierPlatformService.GetTestCallScoreAsync(participantId);
             
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(expectedTestCallResult);
@@ -239,19 +244,19 @@ namespace VideoApi.UnitTests.Services
         public async Task Should_delete_virtual_court_room()
         {
             var conferenceId = Guid.NewGuid();
-            _kinlyApiClientMock.Setup(x => x.DeleteHearingAsync(conferenceId.ToString()));
+            _supplierApiClientMock.Setup(x => x.DeleteHearingAsync(conferenceId.ToString()));
 
-            await _kinlyPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
+            await _SupplierPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
             
-            _kinlyApiClientMock.Verify(x => x.DeleteHearingAsync(conferenceId.ToString()), Times.Once);
+            _supplierApiClientMock.Verify(x => x.DeleteHearingAsync(conferenceId.ToString()), Times.Once);
         }
 
         [Test]
         public async Task should_start_hearing_with_automatic_layout_as_default()
         {
             var conferenceId = Guid.NewGuid();
-            await _kinlyPlatformService.StartHearingAsync(conferenceId);
-            _kinlyApiClientMock.Verify(
+            await _SupplierPlatformService.StartHearingAsync(conferenceId);
+            _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
                     It.Is<StartHearingRequest>(l => l.Hearing_layout == Layout.AUTOMATIC)), Times.Once);
         }
@@ -263,8 +268,8 @@ namespace VideoApi.UnitTests.Services
             var layout = Layout.ONE_PLUS_SEVEN;
             var participantsToForceTransfer = new[] {"participant-one", "participant-two"};
             var muteGuests = false;
-            await _kinlyPlatformService.StartHearingAsync(conferenceId, participantsToForceTransfer, layout, muteGuests);
-            _kinlyApiClientMock.Verify(
+            await _SupplierPlatformService.StartHearingAsync(conferenceId, participantsToForceTransfer, layout, muteGuests);
+            _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
                     It.Is<StartHearingRequest>(l => l.Hearing_layout == layout && l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) && l.Mute_guests == muteGuests)), Times.Once);
         }
@@ -273,24 +278,24 @@ namespace VideoApi.UnitTests.Services
         public async Task should_pause_hearing()
         {
             var conferenceId = Guid.NewGuid();
-            await _kinlyPlatformService.PauseHearingAsync(conferenceId);
-            _kinlyApiClientMock.Verify(x => x.PauseHearingAsync(conferenceId.ToString()), Times.Once);
+            await _SupplierPlatformService.PauseHearingAsync(conferenceId);
+            _supplierApiClientMock.Verify(x => x.PauseHearingAsync(conferenceId.ToString()), Times.Once);
         }
         
         [Test]
         public async Task should_end_hearing()
         {
             var conferenceId = Guid.NewGuid();
-            await _kinlyPlatformService.EndHearingAsync(conferenceId);
-            _kinlyApiClientMock.Verify(x => x.EndHearingAsync(conferenceId.ToString()), Times.Once);
+            await _SupplierPlatformService.EndHearingAsync(conferenceId);
+            _supplierApiClientMock.Verify(x => x.EndHearingAsync(conferenceId.ToString()), Times.Once);
         }
         
         [Test]	
         public async Task should_suspend_hearing()	
         {	
             var conferenceId = Guid.NewGuid();	
-            await _kinlyPlatformService.SuspendHearingAsync(conferenceId);	
-            _kinlyApiClientMock.Verify(x => x.TechnicalAssistanceAsync(conferenceId.ToString()), Times.Once);	
+            await _SupplierPlatformService.SuspendHearingAsync(conferenceId);	
+            _supplierApiClientMock.Verify(x => x.TechnicalAssistanceAsync(conferenceId.ToString()), Times.Once);	
         }
     }
 }

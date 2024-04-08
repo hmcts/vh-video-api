@@ -62,7 +62,7 @@ namespace VideoApi.IntegrationTests.Api.Setup
         
         private static void RegisterStubs(IServiceCollection services)
         {
-            services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+            services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();

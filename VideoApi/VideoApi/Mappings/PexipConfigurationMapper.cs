@@ -1,4 +1,4 @@
-﻿using VideoApi.Common.Security.Kinly;
+﻿using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Contract.Responses;
 
 namespace VideoApi.Mappings
