@@ -17,6 +17,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
@@ -59,6 +60,7 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterKinlySettings(context);
+            RegisterVodafoneSettings(context);
             RegisterWowzaSettings(context);
             RegisterCvpSettings(context);
             RegisterDatabaseSettings(context);
@@ -91,6 +93,14 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.KinlyConfiguration.CallbackUri.Should().NotBeEmpty();
             context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
+        }
+        
+        private void RegisterVodafoneSettings(TestContext context)
+        {
+            context.Config.VodafoneConfiguration = Options.Create(_configRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>()).Value;
+            context.Config.VodafoneConfiguration.CallbackUri = context.Config.Services.CallbackUri;
+            context.Config.VodafoneConfiguration.CallbackUri.Should().NotBeEmpty();
+            context.Config.VodafoneConfiguration.ApiUrl.Should().NotBeEmpty();
         }
 
         private static void RegisterWowzaSettings(TestContext context)
