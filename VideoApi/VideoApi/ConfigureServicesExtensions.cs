@@ -63,7 +63,7 @@ namespace VideoApi
                 document.OperationProcessors.Add(new AuthResponseOperationProcessor());
                 var fluentValidationSchemaProcessor = serviceProvider.CreateScope().ServiceProvider.GetService<FluentValidationSchemaProcessor>();
                 // Add the fluent validations schema processor
-                document.SchemaSettings.SchemaProcessors.Add(fluentValidationSchemaProcessor);
+                document.SchemaProcessors.Add(fluentValidationSchemaProcessor);
             });
             return services;
         }
