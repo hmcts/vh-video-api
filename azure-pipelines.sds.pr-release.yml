@@ -395,13 +395,27 @@ stages:
                   value: $(ConferencePhoneNumber)
                 - name: KinlyConfiguration:ConferencePhoneNumberWelsh
                   value: $(ConferencePhoneNumberWelsh)
-                - name: KinlyConfiguration:KinlyApiUrl
+                - name: KinlyConfiguration:ApiUrl
                   value: $(KinlyApiUrl)
-                - name: KinlyConfiguration:KinlySelfTestApiUrl
+                - name: KinlyConfiguration:SelfTestApiUrl
                   value: $(KinlySelfTestApiUrl)
                 - name: KinlyConfiguration:ConferenceUsername
                   value: $(ConferenceUsername)
                 - name: KinlyConfiguration:CallbackUri
+                  value: $(CallbackUri)
+                
+                # Vodafone Configuration
+                - name: VodafoneConfiguration:ConferencePhoneNumber
+                  value: $(ConferencePhoneNumber)
+                - name: VodafoneConfiguration:ConferencePhoneNumberWelsh
+                  value: $(ConferencePhoneNumberWelsh)
+                - name: VodafoneConfiguration:ApiUrl
+                  value: $(ApiUrl)
+                - name: VodafoneConfiguration:SelfTestApiUrl
+                  value: $(KinlySelfTestApiUrl)
+                - name: VodafoneConfiguration:ConferenceUsername
+                  value: $(ConferenceUsername)
+                - name: VodafoneConfiguration:CallbackUri
                   value: $(CallbackUri)
 
                 # Quick Links Configuration

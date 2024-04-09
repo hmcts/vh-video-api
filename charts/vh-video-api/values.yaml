@@ -72,6 +72,20 @@ java:
         - kinlyconfiguration--pexipnode
         - kinlyconfiguration--pexipselftestnode
         - kinlyconfiguration--selftestapisecret
+        #vodafoneconfiguration
+        - vodafoneconfiguration--apisecret
+        - vodafoneconfiguration--callbacksecret
+        - vodafoneconfiguration--selftestapisecret
+        - name: vodafoneconfiguration--telephoneconferencenumber
+          alias: vodafoneconfiguration--conferencephonenumber
+        - name: vodafoneconfiguration--telephoneconferencenumberwelsh
+          alias: vodafoneconfiguration--conferencephonenumberwelsh
+        - vodafoneconfiguration--apiurl
+        - vodafoneconfiguration--selftestapiurl
+        - vodafoneconfiguration--conferenceusername
+        - vodafoneconfiguration--pexipnode
+        - vodafoneconfiguration--pexipselftestnode
+        - vodafoneconfiguration--selftestapisecret
         - QuickLinks--Issuer
         - QuickLinks--RsaPrivateKey
         - QuickLinks--ValidAudience
