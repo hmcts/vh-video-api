@@ -6,7 +6,7 @@ using VideoApi.Common.Security.Supplier.Base;
 
 namespace VideoApi.Common.Security.Supplier.Vodafone;
 
-public interface IVodafoneJwtProvider: ICustomJwtTokenProvider;
+public interface IVodafoneJwtProvider: ICustomJwtTokenProvider{}
 
 public class VodafoneJwtProvider(VodafoneConfiguration config) : CustomJwtTokenProvider(config), IVodafoneJwtProvider
 {

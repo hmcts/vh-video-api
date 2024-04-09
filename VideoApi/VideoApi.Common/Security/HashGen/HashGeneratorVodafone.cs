@@ -2,5 +2,4 @@
 
 namespace VideoApi.Common.Security.HashGen;
 
-public class HashGeneratorVodafone(VodafoneConfiguration config) 
-    : HashGeneratorBase(config);
+public class HashGeneratorVodafone(VodafoneConfiguration config) : HashGeneratorBase(config){}
