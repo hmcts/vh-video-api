@@ -93,6 +93,7 @@ java:
   environment:
     ASPNETCORE_URLS: http://+:8080
     KINLYCONFIGURATION__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/callback
+    VODAFONECONFIGURATION__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/callback
     Logging__LogLevel__Default: warning
     Logging__LogLevel__Microsoft: warning
     Logging__LogLevel__System: warning
