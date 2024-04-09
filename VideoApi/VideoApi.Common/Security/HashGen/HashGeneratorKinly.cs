@@ -2,4 +2,9 @@
 
 namespace VideoApi.Common.Security.HashGen;
 
-public class HashGeneratorKinly(KinlyConfiguration config) : HashGeneratorBase(config) {}
+public class HashGeneratorKinly : HashGeneratorBase
+{
+    public HashGeneratorKinly(KinlyConfiguration config) : base(config)
+    {
+    }
+}

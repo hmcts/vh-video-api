@@ -1,3 +1,3 @@
 namespace VideoApi.Services.Clients;
 
-public interface IKinlyApiClient : ISupplierApiClient;
+public interface IKinlyApiClient : ISupplierApiClient {}

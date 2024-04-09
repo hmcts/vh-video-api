@@ -7,8 +7,15 @@ using VideoApi.Common.Security.Supplier.Kinly;
 
 namespace VideoApi.Services.Handlers
 {
-    public class KinlySelfTestApiDelegatingHandler(IKinlyJwtProvider tokenProvider) : DelegatingHandler
+    public class KinlySelfTestApiDelegatingHandler : DelegatingHandler
     {
+        private readonly IKinlyJwtProvider _tokenProvider;
+
+        public KinlySelfTestApiDelegatingHandler(IKinlyJwtProvider tokenProvider)
+        {
+            _tokenProvider = tokenProvider;
+        }
+
         private const string ParticipantIdName = "participantId";
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -17,7 +24,7 @@ namespace VideoApi.Services.Handlers
                 ? request.Properties[ParticipantIdName] 
                 : throw new Exception($"Could not find the field {ParticipantIdName} in the request properties dictionary");
             
-            var token = tokenProvider.GenerateSelfTestApiToken(participantId.ToString(), 2);
+            var token = _tokenProvider.GenerateSelfTestApiToken(participantId.ToString(), 2);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             
             return base.SendAsync(request, cancellationToken);

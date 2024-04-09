@@ -5,11 +5,17 @@ using VideoApi.Common.Security.Supplier.Base;
 
 namespace VideoApi.Common.Security.HashGen;
 
-public abstract class HashGeneratorBase(SupplierConfiguration supplierConfiguration)
+public abstract class HashGeneratorBase
 {
+    private readonly SupplierConfiguration _supplierConfiguration;
+
+    public HashGeneratorBase(SupplierConfiguration supplierConfiguration)
+    {
+        _supplierConfiguration = supplierConfiguration;
+    }
     public virtual string GenerateHash(DateTime expiresOnUtc, string data)
     {
-        var key = Convert.FromBase64String(supplierConfiguration.ApiSecret);
+        var key = Convert.FromBase64String(_supplierConfiguration.ApiSecret);
         var stringToHash = $"{expiresOnUtc}{data}";
 
         var request = Encoding.UTF8.GetBytes(stringToHash);

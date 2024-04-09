@@ -14,18 +14,29 @@ public interface ISupplierApiSelector
     public SupplierConfiguration GetSupplierConfiguration();
 }
 
-public class SupplierApiSelector(
-    IServiceProvider serviceProvider,
-    IFeatureToggles featureToggles,
-    IOptions<KinlyConfiguration> kinlyConfigOptions,
-    IOptions<VodafoneConfiguration> vodafoneConfigOptions)
-    : ISupplierApiSelector
+public class SupplierApiSelector : ISupplierApiSelector
 {
-    public ISupplierApiClient GetHttpClient() => featureToggles.VodafoneIntegrationEnabled()
-        ? serviceProvider.GetService<IVodafoneApiClient>()
-        : serviceProvider.GetService<IKinlyApiClient>();
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IFeatureToggles _featureToggles;
+    private readonly IOptions<KinlyConfiguration> _kinlyConfigOptions;
+    private readonly IOptions<VodafoneConfiguration> _vodafoneConfigOptions;
+
+    public SupplierApiSelector(IServiceProvider serviceProvider,
+        IFeatureToggles featureToggles,
+        IOptions<KinlyConfiguration> kinlyConfigOptions,
+        IOptions<VodafoneConfiguration> vodafoneConfigOptions)
+    {
+        _serviceProvider = serviceProvider;
+        _featureToggles = featureToggles;
+        _kinlyConfigOptions = kinlyConfigOptions;
+        _vodafoneConfigOptions = vodafoneConfigOptions;
+    }
+
+    public ISupplierApiClient GetHttpClient() => _featureToggles.VodafoneIntegrationEnabled()
+        ? _serviceProvider.GetService<IVodafoneApiClient>()
+        : _serviceProvider.GetService<IKinlyApiClient>();
 
     public SupplierConfiguration GetSupplierConfiguration() =>
-        featureToggles.VodafoneIntegrationEnabled() ? vodafoneConfigOptions.Value : kinlyConfigOptions.Value;
+        _featureToggles.VodafoneIntegrationEnabled() ? _vodafoneConfigOptions.Value : _kinlyConfigOptions.Value;
 
 }

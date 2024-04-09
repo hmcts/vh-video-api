@@ -5,8 +5,15 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace VideoApi.Common.Security.Supplier.Base
 {
-    public abstract class CustomJwtTokenHandler(SupplierConfiguration supplierConfiguration) : ICustomJwtTokenHandler
+    public abstract class CustomJwtTokenHandler : ICustomJwtTokenHandler
     {
+        private readonly SupplierConfiguration _supplierConfiguration;
+
+        protected CustomJwtTokenHandler(SupplierConfiguration supplierConfiguration)
+        {
+            _supplierConfiguration = supplierConfiguration;
+        }
+
         public ClaimsPrincipal GetPrincipal(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -21,11 +28,11 @@ namespace VideoApi.Common.Security.Supplier.Base
                 return null;
             }
 
-            byte[] key = Convert.FromBase64String(supplierConfiguration.ApiSecret);
+            byte[] key = Convert.FromBase64String(_supplierConfiguration.ApiSecret);
             var parameters = new TokenValidationParameters()
             {
                 RequireExpirationTime = true,
-                ValidIssuers = new[] {supplierConfiguration.Issuer},
+                ValidIssuers = new[] {_supplierConfiguration.Issuer},
                 ValidateIssuer = true,
                 ValidateAudience = false,
                 IssuerSigningKey = new SymmetricSecurityKey(key)

@@ -4,4 +4,9 @@ namespace VideoApi.Common.Security.Supplier.Kinly;
 
 public interface IKinlyJwtTokenHandler: ICustomJwtTokenHandler{}
 
-public class KinlyJwtHandler(KinlyConfiguration config) : CustomJwtTokenHandler(config), IKinlyJwtTokenHandler{}
+public class KinlyJwtHandler : CustomJwtTokenHandler, IKinlyJwtTokenHandler
+{
+    public KinlyJwtHandler(KinlyConfiguration config) : base(config)
+    {
+    }
+}

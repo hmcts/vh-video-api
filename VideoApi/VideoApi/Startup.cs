@@ -30,10 +30,16 @@ using VideoApi.Services;
 
 namespace VideoApi
 {
-    public class Startup(IConfiguration configuration, IWebHostEnvironment environment)
+    public class Startup
     {
-        private IConfiguration Configuration { get; } = configuration;
-        private IWebHostEnvironment Environment { get; } = environment;
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        {
+            Configuration = configuration;
+            Environment = environment;
+        }
+
+        private IConfiguration Configuration { get; }
+        private IWebHostEnvironment Environment { get; }
         public SettingsConfiguration SettingsConfiguration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.

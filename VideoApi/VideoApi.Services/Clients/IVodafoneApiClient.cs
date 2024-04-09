@@ -1,3 +1,3 @@
 namespace VideoApi.Services.Clients;
 
-public interface IVodafoneApiClient : ISupplierApiClient;
+public interface IVodafoneApiClient : ISupplierApiClient {}
