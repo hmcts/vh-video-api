@@ -9,7 +9,7 @@ public abstract class HashGeneratorBase
 {
     private readonly SupplierConfiguration _supplierConfiguration;
 
-    public HashGeneratorBase(SupplierConfiguration supplierConfiguration)
+    protected HashGeneratorBase(SupplierConfiguration supplierConfiguration)
     {
         _supplierConfiguration = supplierConfiguration;
     }

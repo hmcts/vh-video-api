@@ -100,7 +100,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
         }
         
-        private void RegisterVodafoneSettings(TestContext context)
+        private static void RegisterVodafoneSettings(TestContext context)
         {
             context.Config.VodafoneConfiguration = Options.Create(_configRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>()).Value;
             context.Config.VodafoneConfiguration.CallbackUri = context.Config.Services.CallbackUri;
