@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Security.Cryptography;
 using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.Common.Security.Kinly;
@@ -15,6 +17,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         [SetUp]
         public void Setup()
         {
+            // var key = Convert.ToBase64String(new HMACSHA256().Key); // to generate a new key
             var secretKey = "6t8obpbl0iHOSvDpnUImSdZjYEpTcaEWC8SzLO4/X6iOHArHEm/3Ja6NnzaKS6JwE3U/Bjy1LE/bARMqNCN98w==";
             var customTokenSettings = new KinlyConfiguration{ ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
             _customJwtTokenProvider = new CustomJwtTokenProvider(customTokenSettings);
