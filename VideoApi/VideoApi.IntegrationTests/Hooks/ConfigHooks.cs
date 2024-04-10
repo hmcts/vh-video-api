@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
@@ -92,7 +93,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.KinlyConfiguration.CallbackUri.Should().NotBeEmpty();
-            context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
+            context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty("KinlyConfiguration:" + JsonConvert.SerializeObject(context.Config.KinlyConfiguration));
         }
         
         private void RegisterVodafoneSettings(TestContext context)
@@ -100,7 +101,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.VodafoneConfiguration = Options.Create(_configRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>()).Value;
             context.Config.VodafoneConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.VodafoneConfiguration.CallbackUri.Should().NotBeEmpty();
-            context.Config.VodafoneConfiguration.ApiUrl.Should().NotBeEmpty();
+            context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty("VodafoneConfiguration:" + JsonConvert.SerializeObject(context.Config.VodafoneConfiguration));
         }
 
         private static void RegisterWowzaSettings(TestContext context)

@@ -77,7 +77,7 @@
   </ItemGroup>
 
 
-  <Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' And '$(Configuration)' == 'Debug' ">
+  <!--<Target Name="NSwag" AfterTargets="Build" Condition="'$(TF_BUILD)'!='True' And '$(Configuration)' == 'Debug' ">
     <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
     <Exec ConsoleToMSBuild="true" ContinueOnError="true" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Net60) run /runtime:Net60 /variables:ProjectPath=&quot;$(MSBuildProjectFullPath)&quot;">
       <Output TaskParameter="ExitCode" PropertyName="NSwagExitCode" />
@@ -86,6 +86,6 @@
     <Message Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' == '0'" Importance="low" />
     <Error Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' != '0'" />
     <RemoveDir Directories="$(OutDir)References" />
-  </Target>
+  </Target>-->
 
 </Project>

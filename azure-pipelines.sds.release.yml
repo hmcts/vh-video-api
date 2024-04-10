@@ -276,9 +276,9 @@ stages:
             value: $(ConferencePhoneNumber)
           - name: KinlyConfiguration:ConferencePhoneNumberWelsh
             value: $(ConferencePhoneNumberWelsh)
-          - name: KinlyConfiguration:KinlyApiUrl
+          - name: KinlyConfiguration:ApiUrl
             value: $(KinlyApiUrl)
-          - name: KinlyConfiguration:KinlySelfTestApiUrl
+          - name: KinlyConfiguration:SelfTestApiUrl
             value: $(KinlySelfTestApiUrl)
           - name: KinlyConfiguration:ConferenceUsername
             value: $(ConferenceUsername)
