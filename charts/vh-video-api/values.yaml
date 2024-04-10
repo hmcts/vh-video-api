@@ -68,8 +68,10 @@ java:
           alias: kinlyconfiguration--conferencephonenumber
         - name: kinlyconfiguration--telephoneconferencenumberwelsh
           alias: kinlyconfiguration--conferencephonenumberwelsh
-        - kinlyconfiguration--kinlyapiurl
-        - kinlyconfiguration--kinlyselftestapiurl
+        - name: kinlyconfiguration--kinlyapiurl
+          alias: kinlyconfiguration--apiurl
+        - name: kinlyconfiguration--kinlyselftestapiurl
+          alias: kinlyconfiguration--selftestapiurl
         - kinlyconfiguration--conferenceusername
         - kinlyconfiguration--pexipnode
         - kinlyconfiguration--pexipselftestnode
