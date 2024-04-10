@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace VideoApi.Services
 {
+    [ExcludeFromCodeCoverage]
     public class FeatureTogglesStub : IFeatureToggles
     {
         public bool HrsIntegration { get; set; } = false;

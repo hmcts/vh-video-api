@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using Azure.Identity;
@@ -35,6 +36,7 @@ using ZymLabs.NSwag.FluentValidation;
 
 namespace VideoApi
 {
+    [ExcludeFromCodeCoverage]
     public static class ConfigureServicesExtensions
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services)

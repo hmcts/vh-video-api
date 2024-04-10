@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -30,6 +31,7 @@ using VideoApi.Services;
 
 namespace VideoApi
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
