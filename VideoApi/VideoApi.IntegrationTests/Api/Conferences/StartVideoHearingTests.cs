@@ -32,5 +32,6 @@ public class StartVideoHearingTests : ApiTest
 
         // assert
         result.IsSuccessStatusCode.Should().BeTrue();
+
     }
 }
