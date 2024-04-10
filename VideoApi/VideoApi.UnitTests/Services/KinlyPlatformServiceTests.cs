@@ -250,7 +250,7 @@ namespace VideoApi.UnitTests.Services
         public async Task should_start_hearing_with_automatic_layout_as_default()
         {
             var conferenceId = Guid.NewGuid();
-            await _kinlyPlatformService.StartHearingAsync(conferenceId);
+            await _kinlyPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>());
             _kinlyApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
                     It.Is<StartHearingRequest>(l => l.Hearing_layout == Layout.AUTOMATIC)), Times.Once);
@@ -263,7 +263,7 @@ namespace VideoApi.UnitTests.Services
             var layout = Layout.ONE_PLUS_SEVEN;
             var participantsToForceTransfer = new[] {"participant-one", "participant-two"};
             var muteGuests = false;
-            await _kinlyPlatformService.StartHearingAsync(conferenceId, participantsToForceTransfer, layout, muteGuests);
+            await _kinlyPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(), participantsToForceTransfer, layout, muteGuests);
             _kinlyApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
                     It.Is<StartHearingRequest>(l => l.Hearing_layout == layout && l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) && l.Mute_guests == muteGuests)), Times.Once);
