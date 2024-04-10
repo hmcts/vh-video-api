@@ -5,7 +5,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Common.Security.Supplier.Kinly;
-using VideoApi.Services.Handlers;
+using VideoApi.Services.Handlers.Kinly;
 using VideoApi.UnitTests.Clients;
 
 namespace VideoApi.UnitTests.Services.Handlers
