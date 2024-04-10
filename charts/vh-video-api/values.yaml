@@ -59,6 +59,8 @@ java:
         - azuread--clientid
         - name: azuread--identifieruri
           alias: services--videoapiresourceid
+          
+        #kinlyconfiguration
         - kinlyconfiguration--apisecret
         - kinlyconfiguration--callbacksecret
         - kinlyconfiguration--selftestapisecret
@@ -72,20 +74,21 @@ java:
         - kinlyconfiguration--pexipnode
         - kinlyconfiguration--pexipselftestnode
         - kinlyconfiguration--selftestapisecret
+      
         #vodafoneconfiguration
         - vodafoneconfiguration--apisecret
-        - vodafoneconfiguration--callbacksecret
-        - vodafoneconfiguration--selftestapisecret
-        - name: vodafoneconfiguration--telephoneconferencenumber
-          alias: vodafoneconfiguration--conferencephonenumber
-        - name: vodafoneconfiguration--telephoneconferencenumberwelsh
-          alias: vodafoneconfiguration--conferencephonenumberwelsh
+        - vodafoneconfiguration--selftestapikey
         - vodafoneconfiguration--apiurl
         - vodafoneconfiguration--selftestapiurl
-        - vodafoneconfiguration--conferenceusername
         - vodafoneconfiguration--pexipnode
-        - vodafoneconfiguration--pexipselftestnode
-        - vodafoneconfiguration--selftestapisecret
+        - vodafoneconfiguration--pexipselftestnode     
+        - name: kinlyconfiguration--callbacksecret
+          alias: vodafoneconfiguration--callbacksecret   
+        - name: kinlyconfiguration--telephoneconferencenumber
+          alias: vodafoneconfiguration--conferencephonenumber
+        - name: kinlyconfiguration--telephoneconferencenumberwelsh
+          alias: vodafoneconfiguration--conferencephonenumberwelsh
+          
         - QuickLinks--Issuer
         - QuickLinks--RsaPrivateKey
         - QuickLinks--ValidAudience

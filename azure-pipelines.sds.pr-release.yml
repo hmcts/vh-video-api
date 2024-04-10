@@ -410,9 +410,9 @@ stages:
                 - name: VodafoneConfiguration:ConferencePhoneNumberWelsh
                   value: $(ConferencePhoneNumberWelsh)
                 - name: VodafoneConfiguration:ApiUrl
-                  value: $(ApiUrl)
+                  value: $(VodafoneApiUrl)
                 - name: VodafoneConfiguration:SelfTestApiUrl
-                  value: $(KinlySelfTestApiUrl)
+                  value: $(VodafoneSelfTestApiUrl)
                 - name: VodafoneConfiguration:ConferenceUsername
                   value: $(ConferenceUsername)
                 - name: VodafoneConfiguration:CallbackUri
