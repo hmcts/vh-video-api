@@ -30,7 +30,8 @@ using VideoApi.Services.Factories;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Handlers;
+using VideoApi.Services.Handlers.Kinly;
+using VideoApi.Services.Handlers.Vodafone;
 using VideoApi.Swagger;
 using ZymLabs.NSwag.FluentValidation;
 
@@ -91,8 +92,13 @@ namespace VideoApi
             services.AddScoped<ICommandHandler, CommandHandler>();
 
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
+            
             services.AddTransient<KinlyApiTokenDelegatingHandler>();
+            services.AddTransient<VodafoneApiTokenDelegatingHandler>();
+            
             services.AddTransient<KinlySelfTestApiDelegatingHandler>();
+            services.AddTransient<VodafoneSelfTestApiDelegatingHandler>();
+            
             services.AddSingleton<IPollyRetryService, PollyRetryService>();
 
             RegisterCommandHandlers(services);
@@ -110,12 +116,12 @@ namespace VideoApi
             {
                 services
                     .AddHttpClient<IKinlyApiClient, SupplierApiClient>()
-                    .AddTypedClient(httpClient => BuildSupplierClient(kinlyConfiguration.ApiUrl, httpClient))
+                    .AddTypedClient<IKinlyApiClient>(httpClient => BuildSupplierClient(kinlyConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
                 
                 services
                     .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
-                    .AddTypedClient(httpClient => BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
+                    .AddTypedClient<IVodafoneApiClient>(httpClient => BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>();
                 
                 AddWowzaHttpClient(services, wowzaConfiguration.LoadBalancer, wowzaConfiguration, true);
