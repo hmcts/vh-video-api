@@ -27,8 +27,8 @@ public class SupplierApiSelectorTests
         _featureToggles = new Mock<IFeatureToggles>();
         _kinlyApiClient = new Mock<IKinlyApiClient>();
         _vodafoneClient = new Mock<IVodafoneApiClient>();
-        _serviceProvider.Setup(x => x.GetService<IKinlyApiClient>()).Returns(_kinlyApiClient.Object);
-        _serviceProvider.Setup(x => x.GetService<IVodafoneApiClient>()).Returns(_vodafoneClient.Object);
+        _serviceProvider.Setup(x => x.GetService(typeof(IKinlyApiClient))).Returns(_kinlyApiClient.Object);
+        _serviceProvider.Setup(x => x.GetService(typeof(IVodafoneApiClient))).Returns(_vodafoneClient.Object);
         _kinlyConfigOptions = Options.Create(new KinlyConfiguration());
         _vodafoneConfigOptions = Options.Create(new VodafoneConfiguration());
     }
