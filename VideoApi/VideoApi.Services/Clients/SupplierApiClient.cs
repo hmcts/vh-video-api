@@ -18,13 +18,13 @@ namespace VideoApi.Services.Clients
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IKinlyApiClient
+    public partial interface ISupplierApiClient
     {
         /// <remarks>
         /// Create a new hearing
         /// </remarks>
         /// <returns>Hearing created</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Hearing> CreateHearingAsync(CreateHearingParams createHearingParams);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -32,7 +32,7 @@ namespace VideoApi.Services.Clients
         /// Create a new hearing
         /// </remarks>
         /// <returns>Hearing created</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Hearing> CreateHearingAsync(CreateHearingParams createHearingParams, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -41,7 +41,7 @@ namespace VideoApi.Services.Clients
         /// <param name="judge">Filter hearings on judge id takes precedence over admin</param>
         /// <param name="admin">Filter hearings on admin id</param>
         /// <returns>List of hearings</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response> GetHearingsAsync(int? judge, int? admin);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -51,7 +51,7 @@ namespace VideoApi.Services.Clients
         /// <param name="judge">Filter hearings on judge id takes precedence over admin</param>
         /// <param name="admin">Filter hearings on admin id</param>
         /// <returns>List of hearings</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response> GetHearingsAsync(int? judge, int? admin, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -59,7 +59,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Hearing object</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Hearing> GetHearingAsync(string virtual_courtroom_id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -68,7 +68,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Hearing object</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Hearing> GetHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -76,7 +76,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>successful operation</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -85,7 +85,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>successful operation</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -93,7 +93,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Deleted</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteHearingAsync(string virtual_courtroom_id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -102,14 +102,14 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Deleted</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Start hearing
         /// </summary>
         /// <returns>Tries to start Hearing</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task StartAsync(string hearingId, StartHearingRequest startHearingRequest);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -117,7 +117,7 @@ namespace VideoApi.Services.Clients
         /// Start hearing
         /// </summary>
         /// <returns>Tries to start Hearing</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task StartAsync(string hearingId, StartHearingRequest startHearingRequest, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -125,7 +125,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Pause hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task PauseHearingAsync(string virtual_courtroom_id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -134,7 +134,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Pause hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task PauseHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -142,7 +142,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>End hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task EndHearingAsync(string virtual_courtroom_id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -151,7 +151,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>End hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task EndHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -159,7 +159,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Requested technical assistance</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task TechnicalAssistanceAsync(string virtual_courtroom_id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -168,7 +168,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Requested technical assistance</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task TechnicalAssistanceAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -176,7 +176,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -185,7 +185,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -193,7 +193,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -202,7 +202,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -210,7 +210,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>New participant room</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -219,7 +219,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>New participant room</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
@@ -227,7 +227,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>All participant rooms</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -236,14 +236,14 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>All participant rooms</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
 
         /// <remarks>
         /// Check API health
         /// </remarks>
         /// <returns>Health Check</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -251,19 +251,19 @@ namespace VideoApi.Services.Clients
         /// Check API health
         /// </remarks>
         /// <returns>Health Check</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync(System.Threading.CancellationToken cancellationToken);
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class KinlyApiClient : IKinlyApiClient
+    public partial class SupplierApiClient : IKinlyApiClient, IVodafoneApiClient
     {
         private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        public KinlyApiClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public SupplierApiClient(string baseUrl, System.Net.Http.HttpClient httpClient)
         {
             BaseUrl = baseUrl;
             _httpClient = httpClient;
@@ -295,7 +295,7 @@ namespace VideoApi.Services.Clients
         /// Create a new hearing
         /// </remarks>
         /// <returns>Hearing created</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<Hearing> CreateHearingAsync(CreateHearingParams createHearingParams)
         {
             return CreateHearingAsync(createHearingParams, System.Threading.CancellationToken.None);
@@ -306,7 +306,7 @@ namespace VideoApi.Services.Clients
         /// Create a new hearing
         /// </remarks>
         /// <returns>Hearing created</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Hearing> CreateHearingAsync(CreateHearingParams createHearingParams, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -351,7 +351,7 @@ namespace VideoApi.Services.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<Hearing>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new KinlyApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new SupplierApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -359,18 +359,18 @@ namespace VideoApi.Services.Clients
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Invalid format", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Invalid format", status_, responseText_, headers_, null);
                         }
                         else
                         if (status_ == 409)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Meeting room already exists", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Meeting room already exists", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -393,7 +393,7 @@ namespace VideoApi.Services.Clients
         /// <param name="judge">Filter hearings on judge id takes precedence over admin</param>
         /// <param name="admin">Filter hearings on admin id</param>
         /// <returns>List of hearings</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<Response> GetHearingsAsync(int? judge, int? admin)
         {
             return GetHearingsAsync(judge, admin, System.Threading.CancellationToken.None);
@@ -406,7 +406,7 @@ namespace VideoApi.Services.Clients
         /// <param name="judge">Filter hearings on judge id takes precedence over admin</param>
         /// <param name="admin">Filter hearings on admin id</param>
         /// <returns>List of hearings</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Response> GetHearingsAsync(int? judge, int? admin, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -456,14 +456,14 @@ namespace VideoApi.Services.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new KinlyApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new SupplierApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -485,7 +485,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Hearing object</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<Hearing> GetHearingAsync(string virtual_courtroom_id)
         {
             return GetHearingAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
@@ -497,7 +497,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Hearing object</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Hearing> GetHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -542,7 +542,7 @@ namespace VideoApi.Services.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<Hearing>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new KinlyApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new SupplierApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -550,12 +550,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 404)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Hearing does not exist", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Hearing does not exist", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -577,7 +577,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>successful operation</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams)
         {
             return UpdateHearingAsync(virtual_courtroom_id, updateHearingParams, System.Threading.CancellationToken.None);
@@ -589,7 +589,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>successful operation</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task UpdateHearingAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -640,12 +640,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 404)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Hearing does not exist - Invalid virtual_courtroom_id. (When virtual_courtroom_id does not exist or the hearing is already closed.)", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Hearing does not exist - Invalid virtual_courtroom_id. (When virtual_courtroom_id does not exist or the hearing is already closed.)", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -667,7 +667,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Deleted</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task DeleteHearingAsync(string virtual_courtroom_id)
         {
             return DeleteHearingAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
@@ -679,7 +679,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Deleted</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task DeleteHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -725,7 +725,7 @@ namespace VideoApi.Services.Clients
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -746,7 +746,7 @@ namespace VideoApi.Services.Clients
         /// Start hearing
         /// </summary>
         /// <returns>Tries to start Hearing</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task StartAsync(string hearingId, StartHearingRequest startHearingRequest)
         {
             return StartAsync(hearingId, startHearingRequest, System.Threading.CancellationToken.None);
@@ -757,7 +757,7 @@ namespace VideoApi.Services.Clients
         /// Start hearing
         /// </summary>
         /// <returns>Tries to start Hearing</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task StartAsync(string hearingId, StartHearingRequest startHearingRequest, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
@@ -808,18 +808,18 @@ namespace VideoApi.Services.Clients
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Absent or empty force_transfer_participant_ids", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Absent or empty force_transfer_participant_ids", status_, responseText_, headers_, null);
                         }
                         else
                         if (status_ == 401)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Absent or Invalid JWT token", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Absent or Invalid JWT token", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -841,7 +841,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Pause hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task PauseHearingAsync(string virtual_courtroom_id)
         {
             return PauseHearingAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
@@ -853,7 +853,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Pause hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task PauseHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -901,12 +901,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 401)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Unauthorized", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -928,7 +928,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>End hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task EndHearingAsync(string virtual_courtroom_id)
         {
             return EndHearingAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
@@ -940,7 +940,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>End hearing backend processes</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task EndHearingAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -988,12 +988,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 401)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Unauthorized", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1015,7 +1015,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Requested technical assistance</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task TechnicalAssistanceAsync(string virtual_courtroom_id)
         {
             return TechnicalAssistanceAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
@@ -1027,7 +1027,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Requested technical assistance</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task TechnicalAssistanceAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -1075,12 +1075,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 401)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Unauthorized", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1102,7 +1102,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams)
         {
             return TransferParticipantAsync(virtual_courtroom_id, transferParticipantParams, System.Threading.CancellationToken.None);
@@ -1114,7 +1114,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task TransferParticipantAsync(string virtual_courtroom_id, TransferParticipantParams transferParticipantParams, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -1165,12 +1165,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Data is malformed", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Data is malformed", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1192,7 +1192,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams)
         {
             return CreateConsultationRoomAsync(virtual_courtroom_id, createConsultationRoomParams, System.Threading.CancellationToken.None);
@@ -1204,7 +1204,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>Participant transferred</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtual_courtroom_id, CreateConsultationRoomParams createConsultationRoomParams, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -1253,7 +1253,7 @@ namespace VideoApi.Services.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<CreateConsultationRoomResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new KinlyApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new SupplierApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1261,12 +1261,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Data is malformed", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Data is malformed", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1288,7 +1288,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>New participant room</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams)
         {
             return CreateParticipantRoomAsync(virtual_courtroom_id, createParticipantRoomParams, System.Threading.CancellationToken.None);
@@ -1300,7 +1300,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>New participant room</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<BookedParticipantRoomResponse> CreateParticipantRoomAsync(string virtual_courtroom_id, CreateParticipantRoomParams createParticipantRoomParams, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -1349,7 +1349,7 @@ namespace VideoApi.Services.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<BookedParticipantRoomResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new KinlyApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new SupplierApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1357,12 +1357,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Data is malformed", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Data is malformed", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1384,7 +1384,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>All participant rooms</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id)
         {
             return GetParticipantRoomsAsync(virtual_courtroom_id, System.Threading.CancellationToken.None);
@@ -1396,7 +1396,7 @@ namespace VideoApi.Services.Clients
         /// </remarks>
         /// <param name="virtual_courtroom_id">Hearing ID</param>
         /// <returns>All participant rooms</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken)
         {
             if (virtual_courtroom_id == null)
@@ -1441,7 +1441,7 @@ namespace VideoApi.Services.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<ListParticipantRoomResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new KinlyApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new SupplierApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
@@ -1449,12 +1449,12 @@ namespace VideoApi.Services.Clients
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("Data is malformed", status_, responseText_, headers_, null);
+                            throw new SupplierApiException("Data is malformed", status_, responseText_, headers_, null);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1475,7 +1475,7 @@ namespace VideoApi.Services.Clients
         /// Check API health
         /// </remarks>
         /// <returns>Health Check</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync()
         {
             return HealthCheckAsync(System.Threading.CancellationToken.None);
@@ -1486,7 +1486,7 @@ namespace VideoApi.Services.Clients
         /// Check API health
         /// </remarks>
         /// <returns>Health Check</returns>
-        /// <exception cref="KinlyApiException">A server side error occurred.</exception>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1527,14 +1527,14 @@ namespace VideoApi.Services.Clients
                             var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new KinlyApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new SupplierApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new KinlyApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1584,7 +1584,7 @@ namespace VideoApi.Services.Clients
                 catch (Newtonsoft.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new KinlyApiException(message, (int)response.StatusCode, responseText, headers, exception);
+                    throw new SupplierApiException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
             }
             else
@@ -1603,7 +1603,7 @@ namespace VideoApi.Services.Clients
                 catch (Newtonsoft.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
-                    throw new KinlyApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                    throw new SupplierApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
             }
         }
@@ -2059,7 +2059,7 @@ namespace VideoApi.Services.Clients
         public string Participant_type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("room_type", Required = Newtonsoft.Json.Required.Always)]
-        public KinlyRoomType Room_type { get; set; }
+        public SupplierRoomType Room_type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("participant_room_id", Required = Newtonsoft.Json.Required.Always)]
         public string Participant_room_id { get; set; }
@@ -2083,7 +2083,7 @@ namespace VideoApi.Services.Clients
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum KinlyRoomType
+    public enum SupplierRoomType
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"Interpreter")]
@@ -2163,7 +2163,7 @@ namespace VideoApi.Services.Clients
 
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class KinlyApiException : System.Exception
+    public partial class SupplierApiException : System.Exception
     {
         public int StatusCode { get; private set; }
 
@@ -2171,7 +2171,7 @@ namespace VideoApi.Services.Clients
 
         public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
-        public KinlyApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
+        public SupplierApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
             : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
         {
             StatusCode = statusCode;
@@ -2186,11 +2186,11 @@ namespace VideoApi.Services.Clients
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class KinlyApiException<TResult> : KinlyApiException
+    public partial class SupplierApiException<TResult> : SupplierApiException
     {
         public TResult Result { get; private set; }
 
-        public KinlyApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
+        public SupplierApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
             : base(message, statusCode, response, headers, innerException)
         {
             Result = result;

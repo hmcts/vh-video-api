@@ -11,7 +11,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Contract.Responses;
 using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 
@@ -75,7 +75,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.KinlyConfiguration.CallbackUri.Should().NotBeEmpty();
-            context.Config.KinlyConfiguration.KinlyApiUrl.Should().NotBeEmpty();
+            context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
         }
 
         private void RegisterWowzaSettings(TestContext context)

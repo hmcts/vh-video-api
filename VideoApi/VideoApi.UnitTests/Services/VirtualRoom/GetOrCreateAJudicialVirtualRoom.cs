@@ -28,6 +28,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
+            _mocker.Mock<ISupplierApiSelector>().Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _service = _mocker.Create<VirtualRoomService>();
             _conference = new ConferenceBuilder().WithParticipants(3)
                 .WithParticipant(UserRole.JudicialOfficeHolder, "Judicial")
@@ -99,8 +100,8 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                 expectedJohRoom.UpdateConnectionDetails(newVmrRoom.Room_label, null, newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
             
-            _mocker.Mock<IKinlyApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
-                    It.Is<CreateParticipantRoomParams>(vmrRequest => vmrRequest.Room_type == KinlyRoomType.Panel_Member)))
+            _mocker.Mock<ISupplierApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
+                    It.Is<CreateParticipantRoomParams>(vmrRequest => vmrRequest.Room_type == SupplierRoomType.Panel_Member)))
                 .ReturnsAsync(newVmrRoom);
             
             // act
@@ -112,11 +113,11 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             room.PexipNode.Should().Be(newVmrRoom.Uris.Pexip_node);
             room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
             room.IngestUrl.Should().BeNull();
-            _mocker.Mock<IKinlyApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
+            _mocker.Mock<ISupplierApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
                 It.Is<CreateParticipantRoomParams>(createParams => 
                     createParams.Room_label_prefix == "Panel Member" && 
                     createParams.Participant_type == "Civilian" && 
-                    createParams.Room_type == KinlyRoomType.Panel_Member && 
+                    createParams.Room_type == SupplierRoomType.Panel_Member && 
                     createParams.Participant_room_id == expectedRoomId.ToString() &&
                     createParams.Audio_recording_url == string.Empty
                 )), Times.Once);

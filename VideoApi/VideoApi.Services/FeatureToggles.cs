@@ -10,6 +10,7 @@ namespace VideoApi.Services
     public interface IFeatureToggles
     {
         public bool HrsIntegrationEnabled();
+        public bool VodafoneIntegrationEnabled();
     }
     
     [ExcludeFromCodeCoverage]
@@ -19,6 +20,7 @@ namespace VideoApi.Services
         private readonly Context _context;
         private const string LdUser = "vh-video-api";
         private const string HrsIntegrationEnabledToggleKey = "hrs-integration";
+        private const string VodafoneToggleKey = "vodafone";
     
         public FeatureToggles(string sdkKey, string environmentName)
         {
@@ -36,6 +38,16 @@ namespace VideoApi.Services
             }
     
             return _ldClient.BoolVariation(HrsIntegrationEnabledToggleKey, _context);
+        }
+        
+        public bool VodafoneIntegrationEnabled()
+        {
+            if (!_ldClient.Initialized)
+            {
+                throw new InvalidOperationException("LaunchDarkly client not initialized");
+            }
+    
+            return _ldClient.BoolVariation(VodafoneToggleKey, _context);
         }
     }
 }

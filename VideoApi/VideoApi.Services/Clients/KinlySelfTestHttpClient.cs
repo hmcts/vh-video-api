@@ -4,12 +4,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Helpers;
-using VideoApi.Services.Clients;
 
 namespace VideoApi.Services.Clients
 {
@@ -28,9 +27,9 @@ namespace VideoApi.Services.Clients
 
         public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
         {
-            _logger.LogInformation("Retrieving test call score for participant {participantId} at {KinlySelfTestApiUrl}", participantId, _kinlyConfigOptions.KinlySelfTestApiUrl);
+            _logger.LogInformation("Retrieving test call score for participant {participantId} at {SelfTestApiUrl}", participantId, _kinlyConfigOptions.SelfTestApiUrl);
             
-            var requestUri = $"{_kinlyConfigOptions.KinlySelfTestApiUrl}/testcall/{participantId}";
+            var requestUri = $"{_kinlyConfigOptions.SelfTestApiUrl}/testcall/{participantId}";
             var request = new HttpRequestMessage
             {
                 RequestUri = new Uri(requestUri),

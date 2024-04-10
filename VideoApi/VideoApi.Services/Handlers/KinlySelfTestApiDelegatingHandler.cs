@@ -3,19 +3,20 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
 
 namespace VideoApi.Services.Handlers
 {
     public class KinlySelfTestApiDelegatingHandler : DelegatingHandler
     {
-        private const string ParticipantIdName = "participantId";
-        private readonly ICustomJwtTokenProvider _tokenProvider;
+        private readonly IKinlyJwtProvider _tokenProvider;
 
-        public KinlySelfTestApiDelegatingHandler(ICustomJwtTokenProvider tokenProvider)
+        public KinlySelfTestApiDelegatingHandler(IKinlyJwtProvider tokenProvider)
         {
             _tokenProvider = tokenProvider;
         }
+
+        private const string ParticipantIdName = "participantId";
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {

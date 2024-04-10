@@ -20,7 +20,8 @@ using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
@@ -71,6 +72,7 @@ namespace VideoApi
         {
             var container = services.BuildServiceProvider();
             var kinlyConfiguration = container.GetService<IOptions<KinlyConfiguration>>().Value;
+            var vodafoneConfiguration = container.GetService<IOptions<VodafoneConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
             var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
 
@@ -97,7 +99,7 @@ namespace VideoApi
 
             if (useStub)
             {
-                services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+                services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
@@ -105,10 +107,15 @@ namespace VideoApi
             else
             {
                 services
-                    .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
-                    .AddTypedClient(httpClient => BuildKinlyClient(kinlyConfiguration.KinlyApiUrl, httpClient))
+                    .AddHttpClient<IKinlyApiClient, SupplierApiClient>()
+                    .AddTypedClient(httpClient => BuildSupplierClient(kinlyConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
-
+                
+                services
+                    .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
+                    .AddTypedClient(httpClient => BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
+                    .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>();
+                
                 AddWowzaHttpClient(services, wowzaConfiguration.LoadBalancer, wowzaConfiguration, true);
                 foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)
                 {
@@ -119,14 +126,19 @@ namespace VideoApi
                     .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()
                     .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
 
-                services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
+                services.AddScoped<IVideoPlatformService, SupplierPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
+                services.AddSingleton<ISupplierApiSelector, SupplierApiSelector>();
             }
 
-            services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
-            services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
+            services.AddScoped<IKinlyJwtTokenHandler, KinlyJwtHandler>();
+            services.AddScoped<IKinlyJwtProvider, KinlyJwtProvider>();
+            
+            services.AddScoped<IVodafoneJwtProvider, VodafoneJwtProvider>();
+            services.AddScoped<IVodafoneJwtTokenHandler, VodafoneJwtHandler>();
+            
             services.AddScoped<IQuickLinksJwtTokenProvider, QuickLinksJwtTokenProvider>();
 
             var blobClientExtension = new BlobClientExtension();
@@ -186,9 +198,9 @@ namespace VideoApi
             services.AddSingleton<IWowzaHttpClient>(client);
         }
 
-        private static IKinlyApiClient BuildKinlyClient(string url, HttpClient httpClient)
+        private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient) 
         {
-            var client = new KinlyApiClient(url, httpClient){ ReadResponseAsString = true};
+            var client = new SupplierApiClient(url, httpClient){ ReadResponseAsString = true};
             var contractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()};
 
             client.JsonSerializerSettings.ContractResolver = contractResolver;

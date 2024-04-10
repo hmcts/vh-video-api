@@ -13,11 +13,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Moq;
+using Newtonsoft.Json;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL;
 using VideoApi.Domain;
 using VideoApi.IntegrationTests.Contexts;
@@ -33,6 +34,8 @@ namespace VideoApi.IntegrationTests.Hooks
     {
         private const string KinlyApiSecretConfigKeyName = "KinlyConfiguration:ApiSecret";
         private const string KinlyCallbackSecretConfigKeyName = "KinlyConfiguration:CallbackSecret";
+        private const string VodafoneApiSecretConfigKeyName = "VodafoneConfiguration:ApiSecret";
+        private const string VodafoneCallbackSecretConfigKeyName = "VodafoneConfiguration:CallbackSecret";
 
         private static IConfigurationRoot _configRoot;
 
@@ -50,6 +53,8 @@ namespace VideoApi.IntegrationTests.Hooks
             var secret = Convert.ToBase64String(new HMACSHA256().Key);
             Environment.SetEnvironmentVariable(KinlyApiSecretConfigKeyName, secret);
             Environment.SetEnvironmentVariable(KinlyCallbackSecretConfigKeyName, secret);
+            Environment.SetEnvironmentVariable(VodafoneApiSecretConfigKeyName, secret);
+            Environment.SetEnvironmentVariable(VodafoneCallbackSecretConfigKeyName, secret);
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
@@ -60,6 +65,7 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterKinlySettings(context);
+            RegisterVodafoneSettings(context);
             RegisterWowzaSettings(context);
             RegisterCvpSettings(context);
             RegisterDatabaseSettings(context);
@@ -91,7 +97,15 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.KinlyConfiguration.CallbackUri.Should().NotBeEmpty();
-            context.Config.KinlyConfiguration.KinlyApiUrl.Should().NotBeEmpty();
+            context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
+        }
+        
+        private void RegisterVodafoneSettings(TestContext context)
+        {
+            context.Config.VodafoneConfiguration = Options.Create(_configRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>()).Value;
+            context.Config.VodafoneConfiguration.CallbackUri = context.Config.Services.CallbackUri;
+            context.Config.VodafoneConfiguration.CallbackUri.Should().NotBeEmpty();
+            context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
         }
 
         private static void RegisterWowzaSettings(TestContext context)
@@ -144,7 +158,7 @@ namespace VideoApi.IntegrationTests.Hooks
 
         private static void RegisterStubs(IServiceCollection services)
         {
-            services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+            services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();

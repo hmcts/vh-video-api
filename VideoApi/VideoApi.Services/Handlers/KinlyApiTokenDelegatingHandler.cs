@@ -1,15 +1,15 @@
 ﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
 
 namespace VideoApi.Services.Handlers
 {
     public class KinlyApiTokenDelegatingHandler : DelegatingHandler
     {
-        private readonly ICustomJwtTokenProvider _tokenProvider;
+        private readonly IKinlyJwtProvider _tokenProvider;
 
-        public KinlyApiTokenDelegatingHandler(ICustomJwtTokenProvider tokenProvider)
+        public KinlyApiTokenDelegatingHandler(IKinlyJwtProvider tokenProvider)
         {
             _tokenProvider = tokenProvider;
         }

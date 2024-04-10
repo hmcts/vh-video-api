@@ -16,8 +16,8 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Extensions;
-using VideoApi.Services.Contracts;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.Controllers
 {
@@ -229,7 +229,7 @@ namespace VideoApi.Controllers
                     request.RequestedBy);
                 return NotFound("Participant doesn't exist");
             }
-            catch (KinlyApiException ex)
+            catch (SupplierApiException ex)
             {
                 _logger.LogError(ex,
                     "Unable to create a consultation room for ConferenceId: {conferenceId}",
@@ -268,7 +268,7 @@ namespace VideoApi.Controllers
                     request.RequestedBy);
                 return NotFound("Participant doesn't exist");
             }
-            catch (KinlyApiException ex)
+            catch (SupplierApiException ex)
             {
                 _logger.LogError(ex,
                     "Unable to create a consultation room for ConferenceId: {ConferenceId}",

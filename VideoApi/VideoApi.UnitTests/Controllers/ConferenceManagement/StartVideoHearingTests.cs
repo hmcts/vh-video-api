@@ -41,7 +41,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var response = "You're not allowed to start this hearing";
             var statusCode = (int) HttpStatusCode.Unauthorized;
             var exception =
-                new KinlyApiException(message, statusCode, response, null, null);
+                new SupplierApiException(message, statusCode, response, null, null);
             VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<IEnumerable<string>>(), It.IsAny<Layout>(), It.IsAny<bool>()))
                 .ThrowsAsync(exception);
             
@@ -60,7 +60,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var response = "No participants to transfer";
             var statusCode = (int) HttpStatusCode.BadRequest;
             var exception =
-                new KinlyApiException(message, statusCode, response, null, null);
+                new SupplierApiException(message, statusCode, response, null, null);
             VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<IEnumerable<string>>(),
                     It.IsAny<Layout>(), It.IsAny<bool>()))
                 .ThrowsAsync(exception);

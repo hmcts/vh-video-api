@@ -18,7 +18,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL;
 using VideoApi.Extensions;
 using VideoApi.Health;
@@ -97,10 +98,14 @@ namespace VideoApi
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
             services.Configure<WowzaConfiguration>(options => Configuration.Bind("WowzaConfiguration", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
+            services.Configure<VodafoneConfiguration>(options => Configuration.Bind("VodafoneConfiguration", options));
             services.Configure<CvpConfiguration>(options => Configuration.Bind("CvpConfiguration", options));
             services.Configure<QuickLinksConfiguration>(options => Configuration.Bind("QuickLinks", options));
+            
             services.AddSingleton(Configuration.GetSection("KinlyConfiguration").Get<KinlyConfiguration>());
+            services.AddSingleton(Configuration.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>());
             services.AddSingleton(Configuration.GetSection("WowzaConfiguration").Get<WowzaConfiguration>());
+            
             services.AddSingleton<IBlobClientExtension, BlobClientExtension>();
             services.AddHostedService<LongRunningService>();
             services.AddSingleton<IBackgroundWorkerQueue, BackgroundWorkerQueue>();
@@ -135,7 +140,6 @@ namespace VideoApi
         {
             app.UseOpenApi();
             app.UseSwaggerUi3(c => { c.DocumentTitle = "Video API V1"; });
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

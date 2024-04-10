@@ -59,7 +59,7 @@ namespace VideoApi.Controllers
                 );
                 return Accepted();
             }
-            catch (KinlyApiException ex)
+            catch (SupplierApiException ex)
             {
                 if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
@@ -88,7 +88,7 @@ namespace VideoApi.Controllers
                 await _videoPlatformService.PauseHearingAsync(conferenceId);
                 return Accepted();
             }
-            catch (KinlyApiException ex)
+            catch (SupplierApiException ex)
             {
                 _logger.LogError(ex, "Error from Kinly API. Unable to pause video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
@@ -111,7 +111,7 @@ namespace VideoApi.Controllers
                 await _videoPlatformService.EndHearingAsync(conferenceId);
                 return Accepted();
             }
-            catch (KinlyApiException ex)
+            catch (SupplierApiException ex)
             {
                 _logger.LogError(ex, "Error from Kinly API. Unable to end video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
@@ -132,7 +132,7 @@ namespace VideoApi.Controllers
                 await _videoPlatformService.SuspendHearingAsync(conferenceId);	
                 return Accepted();	
             }	
-            catch (KinlyApiException ex)	
+            catch (SupplierApiException ex)	
             {	
                 _logger.LogError(ex, "Unable to request technical assistance for video hearing");	
                 return StatusCode(ex.StatusCode, ex.Response);	
@@ -180,7 +180,7 @@ namespace VideoApi.Controllers
 
                 return Accepted();
             }
-            catch (KinlyApiException ex)
+            catch (SupplierApiException ex)
             {
                 _logger.LogError(ex,
                     "Error from Kinly API. Unable to {TransferType} Participant {Participant} in/from {Conference}",

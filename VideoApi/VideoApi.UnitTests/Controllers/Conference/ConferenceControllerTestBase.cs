@@ -9,7 +9,7 @@ using Autofac.Extras.Moq;
 using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;

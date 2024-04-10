@@ -17,7 +17,7 @@ namespace VideoApi.Services
 {
     public class VirtualRoomService : IVirtualRoomService
     {
-        private readonly IKinlyApiClient _kinlyApiClient;
+        private readonly ISupplierApiClient _supplierApiClient;
         private readonly ILogger<VirtualRoomService> _logger;
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
@@ -26,10 +26,10 @@ namespace VideoApi.Services
         private string PanelMemberRoomPrefix => "Panel Member";
         private string InterpreterSuffix => "_interpreter_";
 
-        public VirtualRoomService(IKinlyApiClient kinlyApiClient, ILogger<VirtualRoomService> logger,
+        public VirtualRoomService(ISupplierApiSelector apiSetup, ILogger<VirtualRoomService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
         {
-            _kinlyApiClient = kinlyApiClient;
+            _supplierApiClient = apiSetup.GetHttpClient();
             _logger = logger;
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
@@ -53,7 +53,7 @@ namespace VideoApi.Services
             if (judicialRoom != null) return judicialRoom;
 
             judicialRoom = await CreateAVmrAndRoom(conference, 0, VirtualCourtRoomType.JudicialShared,
-                KinlyRoomType.Panel_Member);
+                SupplierRoomType.Panel_Member);
             return judicialRoom;
         }
 
@@ -69,7 +69,7 @@ namespace VideoApi.Services
                 .Select(x => int.TryParse(x.Label.Replace(InterpreterRoomPrefix, string.Empty), out var n) ? n : 0)
                 .DefaultIfEmpty()
                 .Max();
-            interpreterRoom = await CreateAVmrAndRoom(conference, count, type, KinlyRoomType.Interpreter);
+            interpreterRoom = await CreateAVmrAndRoom(conference, count, type, SupplierRoomType.Interpreter);
 
             return interpreterRoom;
         }
@@ -97,13 +97,13 @@ namespace VideoApi.Services
         }
 
         private async Task<ParticipantRoom> CreateAVmrAndRoom(Conference conference, int existingRooms,
-            VirtualCourtRoomType roomType, KinlyRoomType kinlyRoomType)
+            VirtualCourtRoomType roomType, SupplierRoomType supplierRoomType)
         {
             _logger.LogInformation("Creating a new interpreter room for conference {Conference}", conference.Id);
             var roomId = await CreateInterpreterRoom(conference.Id, roomType);
-            var ingestUrl = GetIngestUrl(conference, kinlyRoomType, roomId);
+            var ingestUrl = GetIngestUrl(conference, supplierRoomType, roomId);
 
-            var vmr = await CreateVmr(conference, roomId, ingestUrl, roomType, existingRooms, kinlyRoomType);
+            var vmr = await CreateVmr(conference, roomId, ingestUrl, roomType, existingRooms, supplierRoomType);
             await UpdateRoomConnectionDetails(conference, roomId, vmr, ingestUrl);
             _logger.LogDebug("Updated room {Room} for conference {Conference} with joining details", roomId,
                 conference.Id);
@@ -111,9 +111,9 @@ namespace VideoApi.Services
             return await GetUpdatedRoom(conference, roomId);
         }
 
-        private string GetIngestUrl(Conference conference, KinlyRoomType kinlyRoomType, long roomId)
+        private string GetIngestUrl(Conference conference, SupplierRoomType supplierRoomType, long roomId)
         {
-            if (kinlyRoomType == KinlyRoomType.Interpreter)
+            if (supplierRoomType == SupplierRoomType.Interpreter)
                 return $"{conference.IngestUrl}{InterpreterSuffix}{roomId}";
 
             return null;
@@ -127,11 +127,11 @@ namespace VideoApi.Services
         }
 
         private Task<BookedParticipantRoomResponse> CreateVmr(Conference conference, long roomId, string ingestUrl,
-            VirtualCourtRoomType roomType, int existingRooms, KinlyRoomType kinlyRoomType)
+            VirtualCourtRoomType roomType, int existingRooms, SupplierRoomType supplierRoomType)
         {
-            var ingest = kinlyRoomType == KinlyRoomType.Panel_Member ? string.Empty : ingestUrl;
-            var kinlyParticipantType = roomType == VirtualCourtRoomType.Witness ? "Witness" : "Civilian";
-            var roomPrefix = kinlyRoomType == KinlyRoomType.Panel_Member
+            var ingest = supplierRoomType == SupplierRoomType.Panel_Member ? string.Empty : ingestUrl;
+            var supplierParticipantType = roomType == VirtualCourtRoomType.Witness ? "Witness" : "Civilian";
+            var roomPrefix = supplierRoomType == SupplierRoomType.Panel_Member
                 ? PanelMemberRoomPrefix
                 : InterpreterRoomPrefix;
 
@@ -139,12 +139,12 @@ namespace VideoApi.Services
             {
                 Audio_recording_url = ingest,
                 Participant_room_id = roomId.ToString(),
-                Participant_type = kinlyParticipantType,
+                Participant_type = supplierParticipantType,
                 Room_label_prefix = roomPrefix,
-                Room_type = kinlyRoomType,
+                Room_type = supplierRoomType,
                 Display_name = $"{roomPrefix}{existingRooms + 1}"
             };
-            return _kinlyApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
+            return _supplierApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
         }
 
         private ParticipantRoom GetInterpreterRoomForParticipant(Guid conferenceId,
@@ -169,8 +169,7 @@ namespace VideoApi.Services
         private Task UpdateRoomConnectionDetails(Conference conference, long roomId, BookedParticipantRoomResponse vmr,
             string ingestUrl)
         {
-            var updateCommand = new UpdateParticipantRoomConnectionDetailsCommand(conference.Id, roomId, vmr.Room_label,
-                ingestUrl, vmr.Uris.Pexip_node, vmr.Uris.Participant);
+            var updateCommand = new UpdateParticipantRoomConnectionDetailsCommand(conference.Id, roomId, vmr.Room_label, ingestUrl, vmr.Uris.Pexip_node, vmr.Uris.Participant);
             return _commandHandler.Handle(updateCommand);
         }
 
