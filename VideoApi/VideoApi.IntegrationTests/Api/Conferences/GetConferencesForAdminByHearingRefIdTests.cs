@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -25,15 +26,22 @@ public class GetConferencesForAdminByHearingRefIdTests : ApiTest
         var payload = RequestHelper.Serialise(new GetConferencesByHearingIdsRequest { HearingRefIds = new[] { conference.HearingRefId  } });
        
         //act
-        var result =
-            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesForAdminByHearingRefId(), 
-                    new StringContent(payload, Encoding.UTF8,"application/json"));
-
-        // assert
-        result.IsSuccessStatusCode.Should().BeTrue();
-        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceForAdminResponse>>(result.Content);
-        var resultConference = conferenceResponse.FirstOrDefault();
-        resultConference.Should().NotBeNull();
-        resultConference?.Id.Should().Be(conference.Id);
+        try
+        {
+            var result =
+                await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesForAdminByHearingRefId(),
+                    new StringContent(payload, Encoding.UTF8, "application/json"));
+            // assert
+            result.IsSuccessStatusCode.Should().BeTrue();
+            var conferenceResponse =
+                await ApiClientResponse.GetResponses<List<ConferenceForAdminResponse>>(result.Content);
+            var resultConference = conferenceResponse.FirstOrDefault();
+            resultConference.Should().NotBeNull();
+            resultConference?.Id.Should().Be(conference.Id);
+        }
+        catch (Exception e)
+        {
+            Assert.Fail(e.Message);
+        }
     }
 }
