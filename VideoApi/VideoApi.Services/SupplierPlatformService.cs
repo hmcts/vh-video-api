@@ -20,19 +20,19 @@ namespace VideoApi.Services
         private readonly ILogger<SupplierPlatformService> _logger;
         private readonly ISupplierApiClient _supplierApiClient;
         private readonly SupplierConfiguration _supplierConfigOptions;
-        private readonly IKinlySelfTestHttpClient _kinlySelfTestHttpClient;
+        private readonly ISupplierSelfTestHttpClient _supplierSelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly IFeatureToggles _featureToggles;
 
         public SupplierPlatformService(
             ILogger<SupplierPlatformService> logger,
-            IKinlySelfTestHttpClient kinlySelfTestHttpClient,
+            ISupplierSelfTestHttpClient supplierSelfTestHttpClient,
             IPollyRetryService pollyRetryService,
             ISupplierApiSelector apiSelector,
             IFeatureToggles featureToggles)
         {
             _logger = logger;
-            _kinlySelfTestHttpClient = kinlySelfTestHttpClient;
+            _supplierSelfTestHttpClient = supplierSelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
             _featureToggles = featureToggles;
             _supplierApiClient = apiSelector.GetHttpClient();
@@ -111,7 +111,7 @@ namespace VideoApi.Services
                         "Failed to retrieve test score for participant {ParticipantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}",
                         participantId, _supplierConfigOptions.ApiUrl, retryAttempt),
                 callResult => callResult == null,
-                () => _kinlySelfTestHttpClient.GetTestCallScoreAsync(participantId)
+                () => _supplierSelfTestHttpClient.GetTestCallScoreAsync(participantId)
             );
 
             return result;

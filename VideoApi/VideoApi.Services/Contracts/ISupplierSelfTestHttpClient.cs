@@ -4,7 +4,7 @@ using VideoApi.Domain;
 
 namespace VideoApi.Services.Contracts
 {
-    public interface IKinlySelfTestHttpClient
+    public interface ISupplierSelfTestHttpClient
     {
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId);
     }

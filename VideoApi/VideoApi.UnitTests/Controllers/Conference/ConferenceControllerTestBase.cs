@@ -9,6 +9,7 @@ using Autofac.Extras.Moq;
 using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
@@ -17,6 +18,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Services;
 using VideoApi.Services.Factories;
 using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
@@ -31,7 +33,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<ILogger<ConferenceController>> MockLogger;
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
         protected Mock<IOptions<ServicesConfiguration>> ServicesConfiguration;
-        protected Mock<IOptions<KinlyConfiguration>> KinlyConfiguration;
+        protected Mock<SupplierConfiguration> SupplierConfiguration;
         protected MeetingRoom MeetingRoom;
         protected VideoApi.Domain.Conference TestConference;
         protected VideoApi.Domain.Conference TestConference2;
@@ -41,6 +43,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IAzureStorageServiceFactory> AzureStorageServiceFactoryMock;
         protected Mock<IAzureStorageService> AzureStorageServiceMock;
         protected Mock<IPollyRetryService> PollyRetryServiceMock;
+        protected Mock<ISupplierApiSelector> SupplierApiSelectorMock;
         protected List<Endpoint> TestEndpoints;
         protected AutoMock Mocker;
         protected const string AppName = "vh-recording-app";
@@ -54,7 +57,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             MockLogger = Mocker.Mock<ILogger<ConferenceController>>();
             VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
             ServicesConfiguration = Mocker.Mock<IOptions<ServicesConfiguration>>();
-            KinlyConfiguration = Mocker.Mock<IOptions<KinlyConfiguration>>();
+            SupplierConfiguration = Mocker.Mock<SupplierConfiguration>();
             AudioPlatformServiceMock = Mocker.Mock<IAudioPlatformService>();
             AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(AppName);
             AzureStorageServiceFactoryMock = Mocker.Mock<IAzureStorageServiceFactory>();
@@ -148,7 +151,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .Returns(Task.FromResult(default(object)));
 
             ServicesConfiguration.Setup(s => s.Value).Returns(new ServicesConfiguration());
-            KinlyConfiguration.Setup(options => options.Value).Returns(Builder<KinlyConfiguration>.CreateNew().Build());
+            SupplierApiSelectorMock = Mocker.Mock<ISupplierApiSelector>();
+            SupplierApiSelectorMock.Setup(x => x.GetSupplierConfiguration()).Returns(SupplierConfiguration.Object);
 
             MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode",
                 "12345678");

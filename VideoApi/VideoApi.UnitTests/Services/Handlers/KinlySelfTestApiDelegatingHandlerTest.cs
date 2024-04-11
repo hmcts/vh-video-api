@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,7 +55,7 @@ namespace VideoApi.UnitTests.Services.Handlers
 
             var invoker = new HttpMessageInvoker(handler);
 
-            Assert.ThrowsAsync<Exception>(() => invoker.SendAsync(request, new CancellationToken()));
+            Assert.ThrowsAsync<KeyNotFoundException>(() => invoker.SendAsync(request, new CancellationToken()));
         }
     }
 }

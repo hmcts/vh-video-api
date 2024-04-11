@@ -1,4 +1,5 @@
 using System.Linq;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
@@ -8,7 +9,7 @@ namespace VideoApi.Mappings
 {
     public static class ConferenceForAdminResponseMapper
     {
-        public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference, KinlyConfiguration configuration)
+        public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference, SupplierConfiguration configuration)
         {
             var phoneNumbers = $"{configuration.ConferencePhoneNumber},{configuration.ConferencePhoneNumberWelsh}";
             var participants = conference.GetParticipants()

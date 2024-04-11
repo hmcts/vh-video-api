@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -21,7 +22,7 @@ public abstract class CustomSelfTestApiDelegatingHandler : DelegatingHandler
     {
         var participantId = request.Properties.ContainsKey(ParticipantIdName) 
             ? request.Properties[ParticipantIdName] 
-            : throw new Exception($"Could not find the field {ParticipantIdName} in the request properties dictionary");
+            : throw new KeyNotFoundException($"Could not find the field {ParticipantIdName} in the request properties dictionary");
             
         var token = _tokenProvider.GenerateSelfTestApiToken(participantId.ToString(), 2);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

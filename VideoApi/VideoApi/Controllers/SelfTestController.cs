@@ -1,11 +1,11 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NSwag.Annotations;
-using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Contract.Responses;
 using VideoApi.Mappings;
+using VideoApi.Services;
 
 namespace VideoApi.Controllers
 {
@@ -15,13 +15,13 @@ namespace VideoApi.Controllers
     public class SelfTestController : Controller
     {
         private readonly ILogger<SelfTestController> _logger;
-        private readonly KinlyConfiguration _kinlyConfiguration;
+        private readonly SupplierConfiguration _supplierConfiguration;
 
-        public SelfTestController(IOptions<KinlyConfiguration> kinlyConfiguration,
+        public SelfTestController(ISupplierApiSelector apiSelector,
             ILogger<SelfTestController> logger)
         {
             _logger = logger;
-            _kinlyConfiguration = kinlyConfiguration.Value;
+            _supplierConfiguration = apiSelector.GetSupplierConfiguration();
         }
 
         /// <summary>
@@ -36,13 +36,13 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug($"GetPexipServicesConfiguration");
 
-            if (_kinlyConfiguration == null)
+            if (_supplierConfiguration == null)
             {
                 _logger.LogWarning($"Unable to retrieve the pexip configuration!");
                 
                 return NotFound();
             }
-            var response = PexipConfigurationMapper.MapPexipConfigToResponse(_kinlyConfiguration);
+            var response = PexipConfigurationMapper.MapPexipConfigToResponse(_supplierConfiguration);
             return Ok(response);
         }
     }

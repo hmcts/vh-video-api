@@ -12,13 +12,13 @@ using VideoApi.Services.Helpers;
 
 namespace VideoApi.Services.Clients
 {
-    public class KinlySelfTestHttpClient : IKinlySelfTestHttpClient
+    public class SupplierSelfTestHttpClient : ISupplierSelfTestHttpClient
     {
         private readonly HttpClient _httpClient;
         private readonly KinlyConfiguration _kinlyConfigOptions;
-        private readonly ILogger<KinlySelfTestHttpClient> _logger;
+        private readonly ILogger<SupplierSelfTestHttpClient> _logger;
 
-        public KinlySelfTestHttpClient(HttpClient httpClient, IOptions<KinlyConfiguration> kinlyConfigOptions, ILogger<KinlySelfTestHttpClient> logger)
+        public SupplierSelfTestHttpClient(HttpClient httpClient, IOptions<KinlyConfiguration> kinlyConfigOptions, ILogger<SupplierSelfTestHttpClient> logger)
         {
             _httpClient = httpClient;
             _kinlyConfigOptions = kinlyConfigOptions.Value;

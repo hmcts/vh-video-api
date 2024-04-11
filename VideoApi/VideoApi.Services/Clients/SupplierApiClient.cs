@@ -290,7 +290,7 @@ namespace VideoApi.Services.Clients
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
-
+        
         /// <remarks>
         /// Create a new hearing
         /// </remarks>
@@ -1695,7 +1695,7 @@ namespace VideoApi.Services.Clients
 
         [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; }
-
+        
         public string ToJson()
         {
 
@@ -2196,6 +2196,7 @@ namespace VideoApi.Services.Clients
             Result = result;
         }
     }
+    
 
 }
 

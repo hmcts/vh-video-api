@@ -67,7 +67,7 @@ namespace VideoApi.Controllers
                         $"Invalid list of participants provided for {nameof(request.ParticipantsToForceTransfer)}. {request.ParticipantsToForceTransfer}");
                 }
                 
-                _logger.LogError(ex, "Error from Kinly API. Unable to start video hearing");
+                _logger.LogError(ex, "Error from supplier API. Unable to start video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -90,7 +90,7 @@ namespace VideoApi.Controllers
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex, "Error from Kinly API. Unable to pause video hearing");
+                _logger.LogError(ex, "Error from supplier API. Unable to pause video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -113,7 +113,7 @@ namespace VideoApi.Controllers
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex, "Error from Kinly API. Unable to end video hearing");
+                _logger.LogError(ex, "Error from supplier API. Unable to end video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -154,7 +154,7 @@ namespace VideoApi.Controllers
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
-            var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
+            var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
             var transferType = transferRequest.TransferType;
             try
             {
@@ -162,19 +162,19 @@ namespace VideoApi.Controllers
                 {
                     case TransferType.Call:
                         _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
-                            kinlyParticipantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId, kinlyParticipantId,
+                            supplierParticipantId, conferenceId);
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                            TransferFromRoomType(participant), RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
-                            kinlyParticipantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId, kinlyParticipantId,
+                            supplierParticipantId, conferenceId);
+                        await _videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                             RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
                         break;
                     default:
                         _logger.LogWarning("Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
-                            kinlyParticipantId, conferenceId, transferType);
+                            supplierParticipantId, conferenceId, transferType);
                         throw new InvalidOperationException($"Unsupported transfer type: {transferType}");
                 }
 
@@ -183,8 +183,8 @@ namespace VideoApi.Controllers
             catch (SupplierApiException ex)
             {
                 _logger.LogError(ex,
-                    "Error from Kinly API. Unable to {TransferType} Participant {Participant} in/from {Conference}",
-                    transferType, kinlyParticipantId, conferenceId);
+                    "Error from supplier API. Unable to {TransferType} Participant {Participant} in/from {Conference}",
+                    transferType, supplierParticipantId, conferenceId);
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
