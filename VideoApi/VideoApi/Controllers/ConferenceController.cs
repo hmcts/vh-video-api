@@ -53,8 +53,11 @@ namespace VideoApi.Controllers
             ICommandHandler commandHandler,
             IVideoPlatformService videoPlatformService, 
             ISupplierApiSelector supplierLocator, 
-            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
-            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, IBackgroundWorkerQueue backgroundWorkerQueue,
+            ILogger<ConferenceController> logger, 
+            IAudioPlatformService audioPlatformService,
+            IAzureStorageServiceFactory azureStorageServiceFactory,
+            IPollyRetryService pollyRetryService,
+            IBackgroundWorkerQueue backgroundWorkerQueue,
             IFeatureToggles featureToggles)
         {
             _queryHandler = queryHandler;
