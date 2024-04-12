@@ -48,5 +48,16 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
                 .ReturnsAsync(TestConference);
         }
+        
+        protected void AddWitnessToTestConference()
+        {
+            TestConference.AddParticipant(new VideoApi.Domain.Participant(Guid.NewGuid(), "contactEmail", 
+                "telephone", "displayName", "firstName", "lastName", "name", "userName") { HearingRole = "Witness", UserRole = UserRole.Individual, State = ParticipantState.Available });
+        }
+
+        protected void AddQuicklinkToTestConference()
+        {
+            TestConference.AddParticipant(new VideoApi.Domain.QuickLinkParticipant("QuciklinkName", UserRole.QuickLinkParticipant) {  State = ParticipantState.Available});
+        }
     }
 }

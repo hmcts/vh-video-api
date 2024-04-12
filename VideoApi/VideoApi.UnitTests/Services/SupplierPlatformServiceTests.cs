@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Services
         private Mock<ILogger<SupplierPlatformService>> _loggerMock;
         private Mock<ISupplierApiSelector> _selctorMock;
         private SupplierConfiguration _supplierConfig;
-        private Mock<ISupplierSelfTestHttpClient> _kinlySelfTestHttpClient;
+        private Mock<ISupplierSelfTestHttpClient> _supplierSelfTestHttpClient;
         private Mock<IPollyRetryService> _pollyRetryService;
         private SupplierPlatformService _SupplierPlatformService;
         private Conference _testConference;
@@ -49,12 +49,12 @@ namespace VideoApi.UnitTests.Services
             _selctorMock.Setup(e => e.GetHttpClient()).Returns(_supplierApiClientMock.Object);
             _loggerMock = new Mock<ILogger<SupplierPlatformService>>();
 
-            _kinlySelfTestHttpClient = new Mock<ISupplierSelfTestHttpClient>();
+            _supplierSelfTestHttpClient = new Mock<ISupplierSelfTestHttpClient>();
             _pollyRetryService = new Mock<IPollyRetryService>();
             
             _SupplierPlatformService = new SupplierPlatformService(
                 _loggerMock.Object,
-                _kinlySelfTestHttpClient.Object,
+                _supplierSelfTestHttpClient.Object,
                 _pollyRetryService.Object,
                 _selctorMock.Object,
                 _featureToggles.Object
@@ -85,7 +85,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public void Should_throw_kinly_api_exception_when_booking_courtroom()
+        public void Should_throw_supplier_api_exception_when_booking_courtroom()
         {
             _supplierApiClientMock
                 .Setup(x => x.CreateHearingAsync(It.IsAny<CreateHearingParams>()))
@@ -172,7 +172,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_get_kinly_virtual_court_room()
+        public async Task Should_get_supplier_virtual_court_room()
         {
             var hearing = new Hearing
             {
@@ -196,7 +196,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_return_null_for_kinly_virtual_court_room_when_not_found()
+        public async Task Should_return_null_for_supplier_virtual_court_room_when_not_found()
         {
             var exception = new SupplierApiException("notfound", StatusCodes.Status404NotFound, "", null, null);
             _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
@@ -207,7 +207,7 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public void Should_throw_for_kinly_virtual_court_room_when_other_status()
+        public void Should_throw_for_supplier_virtual_court_room_when_other_status()
         {
             var exception = new SupplierApiException("BadGateway", StatusCodes.Status502BadGateway, "", null, null);
             _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
@@ -255,7 +255,7 @@ namespace VideoApi.UnitTests.Services
         public async Task should_start_hearing_with_automatic_layout_as_default()
         {
             var conferenceId = Guid.NewGuid();
-            await _SupplierPlatformService.StartHearingAsync(conferenceId);
+            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>());
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
                     It.Is<StartHearingRequest>(l => l.Hearing_layout == Layout.AUTOMATIC)), Times.Once);
@@ -268,7 +268,7 @@ namespace VideoApi.UnitTests.Services
             var layout = Layout.ONE_PLUS_SEVEN;
             var participantsToForceTransfer = new[] {"participant-one", "participant-two"};
             var muteGuests = false;
-            await _SupplierPlatformService.StartHearingAsync(conferenceId, participantsToForceTransfer, layout, muteGuests);
+            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(), participantsToForceTransfer, layout, muteGuests);
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
                     It.Is<StartHearingRequest>(l => l.Hearing_layout == layout && l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) && l.Mute_guests == muteGuests)), Times.Once);

@@ -1751,6 +1751,9 @@ namespace VideoApi.Services.Clients
         [Newtonsoft.Json.JsonProperty("force_transfer_participant_ids", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<string> Force_transfer_participant_ids { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("triggered_by_host_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Triggered_by_host_id { get; set; }
+        
         public string ToJson()
         {
 

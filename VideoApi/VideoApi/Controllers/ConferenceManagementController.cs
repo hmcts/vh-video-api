@@ -54,9 +54,16 @@ namespace VideoApi.Controllers
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
-                await _videoPlatformService.StartHearingAsync(
-                    conferenceId, request.ParticipantsToForceTransfer, hearingLayout, request.MuteGuests ?? false
-                );
+               
+                // ***Remove this line when video web sends the triggered by host id attribute ****ALSO, do not expose ParticipantsToForceTransfer sa this is populated here
+                var triggeredByHostId = request.TriggeredByHostId ?? request.ParticipantsToForceTransfer?.Single();
+
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var participants = conference.Participants.Where(x => (x.State == ParticipantState.Available || x.State == ParticipantState.InConsultation) 
+                                                                      && x.UserRole != UserRole.QuickLinkParticipant && x.UserRole != UserRole.QuickLinkObserver && x.HearingRole != "Witness").Select(x => x.Id.ToString());
+
+                await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, participants, hearingLayout, request.MuteGuests ?? false);
+           
                 return Accepted();
             }
             catch (SupplierApiException ex)
