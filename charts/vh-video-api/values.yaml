@@ -82,8 +82,7 @@ java:
         - vodafoneconfiguration--selftestapiurl
         - vodafoneconfiguration--pexipnode
         - vodafoneconfiguration--pexipselftestnode     
-        - name: kinlyconfiguration--callbacksecret
-          alias: vodafoneconfiguration--callbacksecret   
+        - vodafoneconfiguration--callbacksecret   
         - name: kinlyconfiguration--telephoneconferencenumber
           alias: vodafoneconfiguration--conferencephonenumber
         - name: kinlyconfiguration--telephoneconferencenumberwelsh
