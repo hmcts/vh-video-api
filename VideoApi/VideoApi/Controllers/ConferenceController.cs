@@ -7,9 +7,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NSwag.Annotations;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -42,7 +41,7 @@ namespace VideoApi.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly IVideoPlatformService _videoPlatformService;
-        private readonly KinlyConfiguration _kinlyConfiguration;
+        private readonly SupplierConfiguration _supplierConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
@@ -50,16 +49,21 @@ namespace VideoApi.Controllers
         private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
         private readonly IFeatureToggles _featureToggles;
 
-        public ConferenceController(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            IVideoPlatformService videoPlatformService, IOptions<KinlyConfiguration> kinlyConfiguration, 
-            ILogger<ConferenceController> logger, IAudioPlatformService audioPlatformService,
-            IAzureStorageServiceFactory azureStorageServiceFactory, IPollyRetryService pollyRetryService, IBackgroundWorkerQueue backgroundWorkerQueue,
+        public ConferenceController(IQueryHandler queryHandler, 
+            ICommandHandler commandHandler,
+            IVideoPlatformService videoPlatformService, 
+            ISupplierApiSelector supplierLocator, 
+            ILogger<ConferenceController> logger, 
+            IAudioPlatformService audioPlatformService,
+            IAzureStorageServiceFactory azureStorageServiceFactory,
+            IPollyRetryService pollyRetryService,
+            IBackgroundWorkerQueue backgroundWorkerQueue,
             IFeatureToggles featureToggles)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _videoPlatformService = videoPlatformService;
-            _kinlyConfiguration = kinlyConfiguration.Value;
+            _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
             _logger = logger;
             _audioPlatformService = audioPlatformService;
             _azureStorageServiceFactory = azureStorageServiceFactory;
@@ -102,23 +106,21 @@ namespace VideoApi.Controllers
                     new GetEndpointsForConferenceQuery(conferenceId));
             var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
-            var kinlyBookedSuccess = await BookKinlyMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired, audioIngestUrl, endpointDtos);
+            var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired, audioIngestUrl, endpointDtos);
             
-            if (!kinlyBookedSuccess)
+            if (!roomBookedSuccess)
             {
-                var message = $"Could not book and find kinly meeting room for conferenceId: {conferenceId}";
+                var message = $"Could not book and find meeting room for conferenceId: {conferenceId}";
                 _logger.LogError(message);
                 return StatusCode((int) HttpStatusCode.InternalServerError, message);
             }
             
-            _logger.LogDebug("Kinly Room Booked");
+            _logger.LogDebug("Room Booked");
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration.PexipSelfTestNode);
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
@@ -194,7 +196,7 @@ namespace VideoApi.Controllers
             }
 
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _kinlyConfiguration.PexipSelfTestNode);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
 
@@ -247,7 +249,7 @@ namespace VideoApi.Controllers
             };
 
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c, _kinlyConfiguration));
+            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c, _supplierConfiguration));
 
             return Ok(response);
         }
@@ -377,7 +379,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _kinlyConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _supplierConfiguration.PexipSelfTestNode);
 
             return Ok(response);
         }
@@ -401,7 +403,7 @@ namespace VideoApi.Controllers
                 return NotFound();
 
             var response = conferences
-                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _kinlyConfiguration))
+                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _supplierConfiguration))
                 .ToList();
 
             return Ok(response);
@@ -655,7 +657,7 @@ namespace VideoApi.Controllers
             
         }
 
-        public async Task<bool> BookKinlyMeetingRoomAsync(Guid conferenceId,
+        public async Task<bool> BookMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
@@ -670,7 +672,7 @@ namespace VideoApi.Controllers
             }
             catch (DoubleBookingException ex)
             {
-                _logger.LogError(ex, "Kinly Room already booked for conference {conferenceId}", conferenceId);
+                _logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
 
                 meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             }
@@ -727,7 +729,7 @@ namespace VideoApi.Controllers
             return createConferenceCommand.NewConferenceId;
         }
 
-        private async Task<bool> BookKinlyMeetingRoomWithRetriesAsync(Guid conferenceId,
+        private async Task<bool> BookMeetingRoomWithRetriesAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
@@ -736,9 +738,9 @@ namespace VideoApi.Controllers
             (
                 3,
                 _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning($"Failed to BookKinlyMeetingRoomAsync. Retrying attempt {retryAttempt}"),
+                retryAttempt => _logger.LogWarning($"Failed to BookMeetingRoomAsync. Retrying attempt {retryAttempt}"),
                 callResult => !callResult,
-                () => BookKinlyMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints)
+                () => BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints)
             );
 
             return result;

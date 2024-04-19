@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using VideoApi.Common.Security.Kinly;
-using VideoApi.Services.Handlers;
+using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Services.Handlers.Kinly;
 using VideoApi.UnitTests.Clients;
 
 namespace VideoApi.UnitTests.Services.Handlers
 {
     public class KinlySelfTestApiDelegatingHandlerTest
     {
-        private readonly Mock<ICustomJwtTokenProvider> _customJwtTokenProvider;
+        private readonly Mock<IKinlyJwtProvider> _customJwtTokenProvider;
         private readonly string _stringToken;
 
         public KinlySelfTestApiDelegatingHandlerTest()
         {
-            _customJwtTokenProvider = new Mock<ICustomJwtTokenProvider>();
+            _customJwtTokenProvider = new Mock<IKinlyJwtProvider>();
 
             _stringToken = "StringToken";
             _customJwtTokenProvider.Setup(x => x.GenerateSelfTestApiToken(It.IsAny<string>(), It.IsAny<int>())).Returns(_stringToken);
@@ -54,7 +55,7 @@ namespace VideoApi.UnitTests.Services.Handlers
 
             var invoker = new HttpMessageInvoker(handler);
 
-            Assert.ThrowsAsync<Exception>(() => invoker.SendAsync(request, new CancellationToken()));
+            Assert.ThrowsAsync<KeyNotFoundException>(() => invoker.SendAsync(request, new CancellationToken()));
         }
     }
 }

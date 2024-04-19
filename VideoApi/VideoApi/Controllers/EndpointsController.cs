@@ -126,7 +126,7 @@ namespace VideoApi.Controllers
 
             if (!string.IsNullOrWhiteSpace(request.DisplayName))
             {
-                await UpdateDisplayNameInKinly(conferenceId);
+                await UpdateDisplayNameWithSupplier(conferenceId);
             }
 
             _logger.LogDebug(
@@ -134,7 +134,7 @@ namespace VideoApi.Controllers
             return Ok();
         }
 
-        private async Task UpdateDisplayNameInKinly(Guid conferenceId)
+        private async Task UpdateDisplayNameWithSupplier(Guid conferenceId)
         {
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);

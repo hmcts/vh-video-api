@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using VideoApi.Contract.Consts;
 using VideoApi.Domain;
 
 namespace VideoApi.Extensions

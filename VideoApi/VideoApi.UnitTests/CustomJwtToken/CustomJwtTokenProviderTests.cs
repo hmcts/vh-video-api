@@ -1,7 +1,9 @@
+
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Common.Security.Supplier.Kinly;
 
 namespace VideoApi.UnitTests.CustomJwtToken
 {
@@ -17,8 +19,8 @@ namespace VideoApi.UnitTests.CustomJwtToken
         {
             var secretKey = "6t8obpbl0iHOSvDpnUImSdZjYEpTcaEWC8SzLO4/X6iOHArHEm/3Ja6NnzaKS6JwE3U/Bjy1LE/bARMqNCN98w==";
             var customTokenSettings = new KinlyConfiguration{ ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
-            _customJwtTokenProvider = new CustomJwtTokenProvider(customTokenSettings);
-            _customJwtTokenHandler = new CustomJwtTokenHandler(customTokenSettings);
+            _customJwtTokenProvider = new KinlyJwtProvider(customTokenSettings);
+            _customJwtTokenHandler = new KinlyJwtHandler(customTokenSettings);
         }
 
         [Test]
@@ -70,7 +72,7 @@ namespace VideoApi.UnitTests.CustomJwtToken
         {
             var secretKey = "F8pf/zwOgm/kASEFs+BKRDdyq+RhHCQ9i9tPjeaPjUebm6HvzXKIsr/nX28wpwAZoWRG0FQK9LVf6nrkW/vg4w==";
             var customTokenSettings = new KinlyConfiguration { ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
-            _customJwtTokenProvider = new CustomJwtTokenProvider(customTokenSettings);
+            _customJwtTokenProvider = new KinlyJwtProvider(customTokenSettings);
 
             var token = _customJwtTokenProvider.GenerateApiToken("Test User", 1);
 
