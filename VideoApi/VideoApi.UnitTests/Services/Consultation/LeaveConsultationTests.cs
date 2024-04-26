@@ -22,6 +22,7 @@ namespace VideoApi.UnitTests.Services.Consultation
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
+            _mocker.Mock<ISupplierApiSelector>().Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _sut = _mocker.Create<ConsultationService>();
         }
 
@@ -56,7 +57,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 RoomType.WaitingRoom.ToString());
 
             // assert
-            _mocker.Mock<IKinlyApiClient>().Verify(x =>
+            _mocker.Mock<ISupplierApiClient>().Verify(x =>
                     x.TransferParticipantAsync(conference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
                             r.From == consultationRoom.Label &&
@@ -65,7 +66,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                     )
                 , Times.Once);
             
-            _mocker.Mock<IKinlyApiClient>().Verify(x =>
+            _mocker.Mock<ISupplierApiClient>().Verify(x =>
                     x.TransferParticipantAsync(conference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
                             r.From == consultationRoom.Label &&
@@ -103,11 +104,10 @@ namespace VideoApi.UnitTests.Services.Consultation
             _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(consultationRoom);
 
             // act
-            await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label,
-                RoomType.WaitingRoom.ToString());
+            await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label, RoomType.WaitingRoom.ToString());
 
             // assert
-            _mocker.Mock<IKinlyApiClient>().Verify(x =>
+            _mocker.Mock<ISupplierApiClient>().Verify(x =>
                     x.TransferParticipantAsync(conference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
                             r.From == consultationRoom.Label &&
@@ -116,7 +116,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                     )
                 , Times.Once);
             
-            _mocker.Mock<IKinlyApiClient>().Verify(x =>
+            _mocker.Mock<ISupplierApiClient>().Verify(x =>
                     x.TransferParticipantAsync(conference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
                             r.From == consultationRoom.Label &&
@@ -156,7 +156,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 RoomType.WaitingRoom.ToString());
 
             // assert
-            _mocker.Mock<IKinlyApiClient>().Verify(x =>
+            _mocker.Mock<ISupplierApiClient>().Verify(x =>
                     x.TransferParticipantAsync(conference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
                             r.From == consultationRoom.Label &&

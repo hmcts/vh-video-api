@@ -27,6 +27,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
+            _mocker.Mock<ISupplierApiSelector>().Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _service = _mocker.Create<VirtualRoomService>();
             _conference = InitConference();
             
@@ -114,7 +115,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                 expectedRoom.UpdateConnectionDetails(newVmrRoom.Room_label, expectedIngestUrl, newVmrRoom.Uris.Pexip_node,
                     newVmrRoom.Uris.Participant));
 
-            _mocker.Mock<IKinlyApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
+            _mocker.Mock<ISupplierApiClient>().Setup(x => x.CreateParticipantRoomAsync(_conference.Id.ToString(),
                     It.Is<CreateParticipantRoomParams>(vmrRequest => vmrRequest.Participant_type == "Civilian")))
                 .ReturnsAsync(newVmrRoom);
             var room = await _service.GetOrCreateAnInterpreterVirtualRoom(_conference, participant);
@@ -125,7 +126,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             room.ParticipantUri.Should().Be(newVmrRoom.Uris.Participant);
             room.IngestUrl.Should().Be(expectedIngestUrl);
 
-            _mocker.Mock<IKinlyApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
+            _mocker.Mock<ISupplierApiClient>().Verify(x=> x.CreateParticipantRoomAsync(_conference.Id.ToString(), 
                 It.Is<CreateParticipantRoomParams>(createParams => 
                     createParams.Room_label_prefix == "Interpreter" && 
                     createParams.Participant_type == "Civilian" && 

@@ -25,8 +25,7 @@ namespace VideoApi.UnitTests.Services.Consultation
     {
         private AutoMock _mocker;
         private ConsultationService _consultationService;
-
-
+        
         private StartConsultationRequest _request;
         private List<ConsultationRoom> _rooms;
 
@@ -34,8 +33,8 @@ namespace VideoApi.UnitTests.Services.Consultation
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
+            _mocker.Mock<ISupplierApiSelector>().Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _consultationService = _mocker.Create<ConsultationService>();
-
             SetupTestConference();
             _request = InitConsultationRequestForJudge();
             _rooms = CreateTestRooms(_request);
@@ -52,7 +51,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             var mockCommand = new CreateConsultationRoomCommand(_request.ConferenceId, "Judge", _request.RoomType.MapToDomainEnum(), false);
             _mocker.Mock<ICommandHandler>().Setup(x => x.Handle(mockCommand));
 
-            _mocker.Mock<IKinlyApiClient>()
+            _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
             
@@ -78,7 +77,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             var mockCommand = new CreateConsultationRoomCommand(_request.ConferenceId, "Judge", _request.RoomType.MapToDomainEnum(), false);
             _mocker.Mock<ICommandHandler>().Setup(x => x.Handle(mockCommand));
                 
-            _mocker.Mock<IKinlyApiClient>()
+            _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
             
@@ -88,7 +87,7 @@ namespace VideoApi.UnitTests.Services.Consultation
         
             // Assert
             _mocker.Mock<ICommandHandler>().Verify(x => x.Handle(It.IsAny<CloseConsultationRoomCommand>()), Times.Exactly(_rooms.Count));
-            _mocker.Mock<IKinlyApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
+            _mocker.Mock<ISupplierApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
                 y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
                 y => y.Room_label_prefix.Equals(_request.RoomType.ToString()))), Times.Once);
             _mocker.Mock<ICommandHandler>().Verify(x => x.Handle(It.IsAny<CreateConsultationRoomCommand>()), Times.Once);
@@ -114,7 +113,7 @@ namespace VideoApi.UnitTests.Services.Consultation
         
             // Assert
             _mocker.Mock<ICommandHandler>().Verify(x => x.Handle(It.IsAny<CloseConsultationRoomCommand>()), Times.Never);
-            _mocker.Mock<IKinlyApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
+            _mocker.Mock<ISupplierApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
                 y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
                 y => y.Room_label_prefix.Equals(_request.RoomType.ToString()))), Times.Never);
             _mocker.Mock<ICommandHandler>().Verify(x => x.Handle(It.IsAny<CreateConsultationRoomCommand>()), Times.Never);
@@ -135,14 +134,14 @@ namespace VideoApi.UnitTests.Services.Consultation
                 Room_label_prefix = _request.RoomType.ToString()
             };
 
-            _mocker.Mock<IKinlyApiClient>()
+            _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
 
             var returnedRoom =
                 await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
 
-            _mocker.Mock<IKinlyApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
+            _mocker.Mock<ISupplierApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
                 y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
                 y => y.Room_label_prefix.Equals(consultationRoomParams.Room_label_prefix))), Times.Once);
             returnedRoom.Should().BeOfType<ConsultationRoom>();
@@ -168,7 +167,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 Part_id = participant.Id.ToString()
             };
 
-            _mocker.Mock<IKinlyApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
+            _mocker.Mock<ISupplierApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
                     y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
                     y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
                 Times.Once);
@@ -204,7 +203,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 Part_id = interpreterRoom.Id.ToString()
             };
             
-            _mocker.Mock<IKinlyApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
+            _mocker.Mock<ISupplierApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
                     y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
                     y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
                 Times.Once);
@@ -253,7 +252,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             
             await _consultationService.LeaveConsultationAsync(TestConference.Id, participantId, fromRoom, toRoom);
 
-            _mocker.Mock<IKinlyApiClient>().Verify(x =>
+            _mocker.Mock<ISupplierApiClient>().Verify(x =>
                     x.TransferParticipantAsync(TestConference.Id.ToString(),
                         It.Is<TransferParticipantParams>(r =>
                             r.From == fromRoom &&
@@ -293,7 +292,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 Part_id = interpreterRoom.Id.ToString()
             };
             
-            _mocker.Mock<IKinlyApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
+            _mocker.Mock<ISupplierApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
                     y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
                     y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
                 Times.Once);
@@ -309,14 +308,14 @@ namespace VideoApi.UnitTests.Services.Consultation
                 Room_label_prefix = _request.RoomType.ToString()
             };
 
-            _mocker.Mock<IKinlyApiClient>()
+            _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() { Room_label = "Label" });
 
             var returnedRoom =
                 await _consultationService.CreateNewConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
 
-            _mocker.Mock<IKinlyApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
+            _mocker.Mock<ISupplierApiClient>().Verify(x => x.CreateConsultationRoomAsync(It.Is<string>(
                 y => y.Equals(_request.ConferenceId.ToString())), It.Is<CreateConsultationRoomParams>(
                 y => y.Room_label_prefix.Equals(consultationRoomParams.Room_label_prefix))), Times.Once);
             returnedRoom.Should().BeOfType<ConsultationRoom>();

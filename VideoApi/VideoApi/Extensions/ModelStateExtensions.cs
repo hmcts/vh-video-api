@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using DomainValidationFailures = VideoApi.Domain.Validations.ValidationFailures;
-using FluentValidationFailure = FluentValidation.Results.ValidationFailure;
 
 namespace VideoApi.Extensions
 {

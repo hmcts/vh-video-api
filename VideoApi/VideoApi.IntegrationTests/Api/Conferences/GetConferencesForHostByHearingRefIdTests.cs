@@ -1,8 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper;
@@ -22,15 +19,12 @@ public class GetConferencesForHostByHearingRefIdTests : ApiTest
         //arrange
         var conference = await TestDataManager.SeedConference();
         using var client = Application.CreateClient();    
-        var payload = RequestHelper.Serialise(new GetConferencesByHearingIdsRequest { HearingRefIds = new[] { conference.HearingRefId  } });
-
+        var payload = new GetConferencesByHearingIdsRequest { HearingRefIds = new[] { conference.HearingRefId  } };
        
         //act
         var result =
-            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesForHostByHearingRefId(), 
-                new StringContent(payload, Encoding.UTF8,"application/json"));
-
-
+            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesForHostByHearingRefId(), RequestBody.Set(payload));
+        
         // assert
         result.IsSuccessStatusCode.Should().BeTrue();
         var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceForHostResponse>>(result.Content);

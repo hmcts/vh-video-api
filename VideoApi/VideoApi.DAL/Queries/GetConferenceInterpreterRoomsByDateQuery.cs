@@ -40,7 +40,7 @@ namespace VideoApi.DAL.Queries
                           && @event.EventType == Domain.Enums.EventType.RoomParticipantTransfer
                           && @event.TransferredTo == Domain.Enums.RoomType.HearingRoom
                           && @event.ExternalTimestamp.Date == query.DateStamp.Date
-                          && room.Label.Contains(nameof(KinlyRoomType.Interpreter))
+                          && room.Label.Contains(nameof(SupplierRoomType.Interpreter))
                           select new HearingAudioRoom{ 
                               HearingRefId = conference.HearingRefId, 
                               Label = room.Label + room.Id.ToString(), 

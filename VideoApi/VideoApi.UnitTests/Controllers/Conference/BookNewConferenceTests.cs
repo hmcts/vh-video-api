@@ -34,20 +34,20 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        public async Task Should_book_kinly_conference_room_for_given_conference_id()
+        public async Task Should_book_supplier_conference_room_for_given_conference_id()
         {
             var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
             SetupCallToMockRetryService(audioPlatformServiceResponse);
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync((MeetingRoom)null);
             
-            await Controller.BookKinlyMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
+            await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
         }
         
         [Test]
-        public async Task Should_book_kinly_conference_room_for_given_conference_id_retries()
+        public async Task Should_book_supplier_conference_room_for_given_conference_id_retries()
         {
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
             SetupCallToMockRetryService(Guid.NewGuid());
@@ -65,7 +65,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             SetupCallToMockRetryService(audioPlatformServiceResponse);
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>())).Throws(new DoubleBookingException(Guid.NewGuid()));
 
-            await Controller.BookKinlyMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
+            await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Once);
@@ -73,33 +73,33 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        public async Task Should_book_kinly_conference_and_update_meeting_room_for_given_conference_id()
+        public async Task Should_book_supplier_conference_and_update_meeting_room_for_given_conference_id()
         {
             var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
             SetupCallToMockRetryService(audioPlatformServiceResponse);
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
 
-            await Controller.BookKinlyMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
+            await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
         }
         
         [Test]
-        public async Task Should_book_kinly_conference_with_ingesturl_when_audio_recording_not_required()
+        public async Task Should_book_supplier_conference_with_ingesturl_when_audio_recording_not_required()
         {
             var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
             SetupCallToMockRetryService(audioPlatformServiceResponse);
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), false, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
 
-            await Controller.BookKinlyMeetingRoomAsync(Guid.NewGuid(), false, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
+            await Controller.BookMeetingRoomAsync(Guid.NewGuid(), false, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), false, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
         }
         
         [Test]
-        public async Task Should_book_kinly_conference_with_ingesturl_when_audio_recording_not_required_retries()
+        public async Task Should_book_supplier_conference_with_ingesturl_when_audio_recording_not_required_retries()
         {
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
             SetupCallToMockRetryService(Guid.NewGuid());
@@ -112,20 +112,20 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        public async Task Should_book_kinly_conference_with_ingesturl_when_audio_recording_is_required()
+        public async Task Should_book_supplier_conference_with_ingesturl_when_audio_recording_is_required()
         {
             var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) { IngestUrl = "http://myIngestUrl.com" };
             SetupCallToMockRetryService(audioPlatformServiceResponse);
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
 
-            await Controller.BookKinlyMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
+            await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
 
             VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
         }
         
         [Test]
-        public async Task Should_book_kinly_conference_with_ingesturl_when_audio_recording_is_required_retries()
+        public async Task Should_book_supplier_conference_with_ingesturl_when_audio_recording_is_required_retries()
         {
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
             SetupCallToMockRetryService(Guid.NewGuid());
@@ -138,7 +138,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        public async Task Should_book_kinly_conference_with_ingest_url_when_hrs_integration_feature_is_enabled()
+        public async Task Should_book_supplier_conference_with_ingest_url_when_hrs_integration_feature_is_enabled()
         {
             Mocker.Mock<IFeatureToggles>().Setup(x => x.HrsIntegrationEnabled()).Returns(true);
             var expectedIngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{_request.CaseTypeServiceId}-{_request.CaseNumber}-{_request.HearingRefId.ToString()}";
@@ -153,7 +153,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
         
         [Test]
-        public async Task Should_book_kinly_conference_with_ingest_url_when_hrs_integration_feature_is_disabled()
+        public async Task Should_book_supplier_conference_with_ingest_url_when_hrs_integration_feature_is_disabled()
         {
             Mocker.Mock<IFeatureToggles>().Setup(x => x.HrsIntegrationEnabled()).Returns(false);
             var expectedIngestUrl = $"https://localhost.streaming.mediaServices.windows.net/{_request.HearingRefId.ToString()}";
@@ -168,13 +168,13 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
 
         [Test]
-        public async Task Should_book_kinly_conference_room_for_given_conference_id_with_endpoints()
+        public async Task Should_book_supplier_conference_room_for_given_conference_id_with_endpoints()
         {
             var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
             SetupCallToMockRetryService(audioPlatformServiceResponse);
             VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
 
-            var response = await Controller.BookKinlyMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
+            var response = await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, new EndpointDto[]{});
 
             response.Should().BeTrue();
 
@@ -210,7 +210,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         }
         
         [Test]
-        public async Task Should_return_500_when_error_saving_booking_meeting_room_kinly()
+        public async Task Should_return_500_when_error_saving_booking_meeting_room_supplier()
         {
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
             SetupCallToMockRetryService(Guid.NewGuid());

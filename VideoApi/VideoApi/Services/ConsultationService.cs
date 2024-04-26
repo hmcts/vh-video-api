@@ -17,15 +17,17 @@ namespace VideoApi.Services
 {
     public class ConsultationService : IConsultationService
     {
-        private readonly IKinlyApiClient _kinlyApiClient;
+        private readonly ISupplierApiClient _supplierApiClient;
         private readonly ILogger<ConsultationService> _logger;
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
 
-        public ConsultationService(IKinlyApiClient kinlyApiClient, ILogger<ConsultationService> logger,
-            ICommandHandler commandHandler, IQueryHandler queryHandler)
+        public ConsultationService(ISupplierApiSelector apiSelector,
+            ILogger<ConsultationService> logger,
+            ICommandHandler commandHandler,
+            IQueryHandler queryHandler)
         {
-            _kinlyApiClient = kinlyApiClient;
+            _supplierApiClient = apiSelector.GetHttpClient();
             _logger = logger;
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
@@ -94,7 +96,7 @@ namespace VideoApi.Services
         private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
             CreateConsultationRoomParams createConsultationRoomParams)
         {
-            var response = await _kinlyApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
+            var response = await _supplierApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
                 "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",
                 virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label);
@@ -143,8 +145,7 @@ namespace VideoApi.Services
             }
         }
 
-        private async Task<Participant> RetrieveLastParticipantIfLinkedAndLeftAlone(Conference conference, ParticipantBase participant,
-            string fromRoomLabel)
+        private async Task<Participant> RetrieveLastParticipantIfLinkedAndLeftAlone(Conference conference, ParticipantBase participant, string fromRoomLabel)
         {
             if (participant.GetParticipantRoom() != null)
             {
@@ -168,8 +169,7 @@ namespace VideoApi.Services
                 ? ((Participant)firstRemaining): null;
         }
 
-        private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
-            string toRoom)
+        private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom)
         {
             _logger.LogInformation(
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
@@ -182,7 +182,7 @@ namespace VideoApi.Services
                 Part_id = participantId
             };
 
-            await _kinlyApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
+            await _supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
     }
