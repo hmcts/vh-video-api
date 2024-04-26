@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using Azure.Identity;
@@ -20,7 +21,8 @@ using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
@@ -28,12 +30,14 @@ using VideoApi.Services.Factories;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Handlers;
+using VideoApi.Services.Handlers.Kinly;
+using VideoApi.Services.Handlers.Vodafone;
 using VideoApi.Swagger;
 using ZymLabs.NSwag.FluentValidation;
 
 namespace VideoApi
 {
+    [ExcludeFromCodeCoverage]
     public static class ConfigureServicesExtensions
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services)
@@ -71,6 +75,7 @@ namespace VideoApi
         {
             var container = services.BuildServiceProvider();
             var kinlyConfiguration = container.GetService<IOptions<KinlyConfiguration>>().Value;
+            var vodafoneConfiguration = container.GetService<IOptions<VodafoneConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
             var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
 
@@ -87,8 +92,13 @@ namespace VideoApi
             services.AddScoped<ICommandHandler, CommandHandler>();
 
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
+            
             services.AddTransient<KinlyApiTokenDelegatingHandler>();
+            services.AddTransient<VodafoneApiTokenDelegatingHandler>();
+            
             services.AddTransient<KinlySelfTestApiDelegatingHandler>();
+            services.AddTransient<VodafoneSelfTestApiDelegatingHandler>();
+            
             services.AddSingleton<IPollyRetryService, PollyRetryService>();
 
             RegisterCommandHandlers(services);
@@ -97,18 +107,24 @@ namespace VideoApi
 
             if (useStub)
             {
-                services.AddScoped<IVideoPlatformService, KinlyPlatformServiceStub>();
+                services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
+                services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
             }
             else
             {
                 services
-                    .AddHttpClient<IKinlyApiClient, KinlyApiClient>()
-                    .AddTypedClient(httpClient => BuildKinlyClient(kinlyConfiguration.KinlyApiUrl, httpClient))
+                    .AddHttpClient<IKinlyApiClient, SupplierApiClient>()
+                    .AddTypedClient<IKinlyApiClient>(httpClient => BuildSupplierClient(kinlyConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
-
+                
+                services
+                    .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
+                    .AddTypedClient<IVodafoneApiClient>(httpClient => BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
+                    .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>();
+                
                 AddWowzaHttpClient(services, wowzaConfiguration.LoadBalancer, wowzaConfiguration, true);
                 foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)
                 {
@@ -116,17 +132,22 @@ namespace VideoApi
                 }
 
                 services
-                    .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()
+                    .AddHttpClient<ISupplierSelfTestHttpClient, SupplierSelfTestHttpClient>()
                     .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
 
-                services.AddScoped<IVideoPlatformService, KinlyPlatformService>();
+                services.AddScoped<IVideoPlatformService, SupplierPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
+                services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
             }
 
-            services.AddScoped<ICustomJwtTokenHandler, CustomJwtTokenHandler>();
-            services.AddScoped<ICustomJwtTokenProvider, CustomJwtTokenProvider>();
+            services.AddScoped<IKinlyJwtTokenHandler, KinlyJwtHandler>();
+            services.AddScoped<IKinlyJwtProvider, KinlyJwtProvider>();
+            
+            services.AddScoped<IVodafoneJwtProvider, VodafoneJwtProvider>();
+            services.AddScoped<IVodafoneJwtTokenHandler, VodafoneJwtHandler>();
+            
             services.AddScoped<IQuickLinksJwtTokenProvider, QuickLinksJwtTokenProvider>();
 
             var blobClientExtension = new BlobClientExtension();
@@ -186,9 +207,9 @@ namespace VideoApi
             services.AddSingleton<IWowzaHttpClient>(client);
         }
 
-        private static IKinlyApiClient BuildKinlyClient(string url, HttpClient httpClient)
+        private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient) 
         {
-            var client = new KinlyApiClient(url, httpClient){ ReadResponseAsString = true};
+            var client = new SupplierApiClient(url, httpClient){ ReadResponseAsString = true};
             var contractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()};
 
             client.JsonSerializerSettings.ContractResolver = contractResolver;

@@ -17,5 +17,6 @@ namespace VideoApi.Contract.Requests
         public HearingLayout? Layout { get; set; }
         public IEnumerable<string> ParticipantsToForceTransfer { get; set; }
         public bool? MuteGuests { get; set; }
+        public string TriggeredByHostId { get; set; }
     }
 }

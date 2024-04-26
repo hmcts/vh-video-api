@@ -71,7 +71,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         {
             var request = RequestBuilder();
 
-            var kinlyApiException = new KinlyApiException("", (int) HttpStatusCode.BadRequest, "payload",
+            var kinlyApiException = new SupplierApiException("", (int) HttpStatusCode.BadRequest, "payload",
                 new Dictionary<string, IEnumerable<string>>(), new Exception());
 
             ConsultationServiceMock.Setup(x => x.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum()))
@@ -158,7 +158,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var request = RequestBuilder();
             ConsultationServiceMock.Setup(x => x.CreateNewConsultationRoomAsync(request.ConferenceId,
                 It.IsAny<VideoApi.Domain.Enums.VirtualCourtRoomType>(), It.IsAny<bool>()))
-                .ThrowsAsync(new KinlyApiException("Error", 400, "Response", null, null));
+                .ThrowsAsync(new SupplierApiException("Error", 400, "Response", null, null));
 
             ConsultationServiceMock.Setup(x =>
                 x.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, _testConsultationRoom.Label));

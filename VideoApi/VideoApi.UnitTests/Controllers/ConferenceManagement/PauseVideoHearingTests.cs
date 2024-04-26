@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var response = "You're not allowed to pause this hearing";
             var statusCode = (int) HttpStatusCode.Unauthorized;
             var exception =
-                new KinlyApiException(message, statusCode, response, null, null);
+                new SupplierApiException(message, statusCode, response, null, null);
             VideoPlatformServiceMock.Setup(x => x.PauseHearingAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(exception);
             

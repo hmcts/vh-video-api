@@ -32,8 +32,7 @@ namespace VideoApi.Services.Contracts
         /// <returns></returns>
         Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints);
 
-        Task StartHearingAsync(Guid conferenceId, IEnumerable<string> participantsToForceTransfer = null,
-            Layout layout = Layout.AUTOMATIC, bool muteGuests = true);
+        Task StartHearingAsync(Guid conferenceId, string triggeredByHostId, IEnumerable<string> participantsToForceTransfer = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = true);
         
         Task PauseHearingAsync(Guid conferenceId);
         
@@ -42,5 +41,6 @@ namespace VideoApi.Services.Contracts
         Task SuspendHearingAsync(Guid conferenceId);
 
         Task<HealthCheckResponse> GetPlatformHealthAsync();
+        
     }
 }

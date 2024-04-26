@@ -11,16 +11,16 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Health;
 
-public class KinlyApiHealthCheckTests
+public class SupplierApiHealthCheckTests
 {
     private AutoMock _mocker;
-    private KinlyApiHealthCheck _sut;
+    private SupplierApiHealthCheck _sut;
     
     [SetUp]
     public void Setup()
     {
         _mocker = AutoMock.GetLoose();
-        _sut = _mocker.Create<KinlyApiHealthCheck>();
+        _sut = _mocker.Create<SupplierApiHealthCheck>();
     }
     
     [Test]

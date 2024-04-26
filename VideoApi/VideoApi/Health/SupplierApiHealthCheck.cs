@@ -7,11 +7,11 @@ using VideoApi.Services.Contracts;
 
 namespace VideoApi.Health;
 
-public class KinlyApiHealthCheck : IHealthCheck
+public class SupplierApiHealthCheck : IHealthCheck
 {
     private readonly IVideoPlatformService _videoPlatformService;
 
-    public KinlyApiHealthCheck(IVideoPlatformService videoPlatformService)
+    public SupplierApiHealthCheck(IVideoPlatformService videoPlatformService)
     {
         _videoPlatformService = videoPlatformService;
     }

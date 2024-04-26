@@ -168,7 +168,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var response = "Unable to transfer participant";
             var statusCode = (int) HttpStatusCode.Unauthorized;
             var exception =
-                new KinlyApiException(message, statusCode, response, null, null);
+                new SupplierApiException(message, statusCode, response, null, null);
             VideoPlatformServiceMock
                 .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
                     It.IsAny<string>())).ThrowsAsync(exception);

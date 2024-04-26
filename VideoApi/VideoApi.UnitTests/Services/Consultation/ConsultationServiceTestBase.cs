@@ -1,10 +1,13 @@
 using System;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
+using VideoApi.Services;
+using VideoApi.Services.Clients;
 
 namespace VideoApi.UnitTests.Services.Consultation
 {
@@ -12,7 +15,6 @@ namespace VideoApi.UnitTests.Services.Consultation
     {
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected Mock<IQueryHandler> QueryHandlerMock;
-
         protected VideoApi.Domain.Conference TestConference;
 
         protected void SetupTestConference()

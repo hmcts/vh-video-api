@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Requests;
+using VideoApi.DAL.Queries;
+using VideoApi.DAL.Queries.Core;
 using VideoApi.Services.Clients;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
@@ -16,33 +19,42 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         [Test]
         public async Task should_return_accepted_when_start_hearing_has_been_requested()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
-            var participants = new[] {"participant-one", "participant-two"};
+            var participantIds = TestConference.Participants.Select(x => x.Id.ToString());
             var muteGuests = true;
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
-                ParticipantsToForceTransfer = participants,
+                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
+                ParticipantsToForceTransfer = participantIds,
                 MuteGuests = true
             };
+            Mocker.Mock<IQueryHandler>()
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
+                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
+                .ReturnsAsync(TestConference);
+            
             var result = await Controller.StartVideoHearingAsync(conferenceId, request);
 
             var typedResult = (AcceptedResult) result;
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
-            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, participants, Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
+            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds , Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
         }
 
-        [Test] public async Task should_return_kinly_status_code_on_error()
+        [Test] public async Task should_return_supplier_status_code_on_error()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
             var message = "Auto Test Error";
             var response = "You're not allowed to start this hearing";
             var statusCode = (int) HttpStatusCode.Unauthorized;
-            var exception =
-                new KinlyApiException(message, statusCode, response, null, null);
-            VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<IEnumerable<string>>(), It.IsAny<Layout>(), It.IsAny<bool>()))
+            Mocker.Mock<IQueryHandler>()
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
+                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
+                .ReturnsAsync(TestConference);
+            var exception = new SupplierApiException(message, statusCode, response, null, null);
+            VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<Layout>(), It.IsAny<bool>()))
                 .ThrowsAsync(exception);
             
             var result = await Controller.StartVideoHearingAsync(conferenceId, new Contract.Requests.StartHearingRequest());
@@ -53,15 +65,20 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         }
 
         [Test]
-        public async Task should_return_bad_request_when_user_a_kinly_api_error_is_thrown_with_400()
+        public async Task should_return_bad_request_when_user_a_supplier_api_error_is_thrown_with_400()
         {
-            var conferenceId = Guid.NewGuid();
+            var conferenceId = TestConference.Id;
             var message = "Auto Test Error";
             var response = "No participants to transfer";
             var statusCode = (int) HttpStatusCode.BadRequest;
-            var exception =
-                new KinlyApiException(message, statusCode, response, null, null);
-            VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<IEnumerable<string>>(),
+            var exception = new SupplierApiException(message, statusCode, response, null, null);
+            
+            Mocker.Mock<IQueryHandler>()
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
+                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
+                .ReturnsAsync(TestConference);
+
+            VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>(),
                     It.IsAny<Layout>(), It.IsAny<bool>()))
                 .ThrowsAsync(exception);
 
@@ -72,6 +89,37 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be(statusCode);
             typedResult.Value.Should().BeAssignableTo<string>().Which.Should()
                 .Contain("Invalid list of participants provided for");
+        }
+        
+        [Test]
+        public async Task should_contain_correct_participants_when_start_hearing_has_been_requested()
+        {
+            var conferenceId = TestConference.Id;
+            AddWitnessToTestConference();
+            AddQuicklinkToTestConference();
+
+            var layout = HearingLayout.OnePlus7;
+            var participantIds = TestConference.Participants.Where(x => x.UserRole != VideoApi.Domain.Enums.UserRole.QuickLinkParticipant && x.HearingRole != "Witness").Select(x => x.Id.ToString());
+            var muteGuests = true;
+            var request = new Contract.Requests.StartHearingRequest
+            {
+                Layout = layout,
+                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
+                ParticipantsToForceTransfer = participantIds,
+                MuteGuests = true
+            };
+
+            Mocker.Mock<IQueryHandler>()
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
+                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
+                .ReturnsAsync(TestConference);
+
+            var result = await Controller.StartVideoHearingAsync(conferenceId, request);
+
+            var typedResult = (AcceptedResult)result;
+            typedResult.Should().NotBeNull();
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.Accepted);
+            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds, Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
         }
     }
 }

@@ -1,30 +1,28 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using VideoApi.Common.Security.Kinly;
+using VideoApi.Common.Security.Supplier.Base;
 
-namespace VideoApi.Common.Security.HashGen
+namespace VideoApi.Common.Security.HashGen;
+
+public abstract class HashGeneratorBase
 {
-    public class HashGenerator
+    private readonly SupplierConfiguration _supplierConfiguration;
+
+    protected HashGeneratorBase(SupplierConfiguration supplierConfiguration)
     {
-        private readonly KinlyConfiguration _kinlyConfiguration;
+        _supplierConfiguration = supplierConfiguration;
+    }
+    public virtual string GenerateHash(DateTime expiresOnUtc, string data)
+    {
+        var key = Convert.FromBase64String(_supplierConfiguration.ApiSecret);
+        var stringToHash = $"{expiresOnUtc}{data}";
 
-        public HashGenerator(KinlyConfiguration kinlyConfiguration)
+        var request = Encoding.UTF8.GetBytes(stringToHash);
+        using (var hmac = new HMACSHA256(key))
         {
-            _kinlyConfiguration = kinlyConfiguration;
-        }
-
-        public string GenerateHash(DateTime expiresOnUtc, string data)
-        {
-            var key = Convert.FromBase64String(_kinlyConfiguration.ApiSecret);
-            var stringToHash = $"{expiresOnUtc}{data}";
-
-            var request = Encoding.UTF8.GetBytes(stringToHash);
-            using (var hmac = new HMACSHA256(key))
-            {
-                var computedHash = hmac.ComputeHash(request);
-                return Convert.ToBase64String(computedHash);
-            }
+            var computedHash = hmac.ComputeHash(request);
+            return Convert.ToBase64String(computedHash);
         }
     }
 }
