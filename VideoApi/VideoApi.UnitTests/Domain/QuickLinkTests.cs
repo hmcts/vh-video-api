@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
@@ -30,7 +29,7 @@ namespace VideoApi.UnitTests.Domain
             var result = QuickLink.IsValid(_conference);
 
             //Assert
-            Assert.False(result);
+            ClassicAssert.False(result);
         }
 
         [Test]
@@ -47,7 +46,7 @@ namespace VideoApi.UnitTests.Domain
             var result = QuickLink.IsValid(_conference);
 
             //Assert
-            Assert.False(result);
+            ClassicAssert.False(result);
         }
 
         [Test]
@@ -57,7 +56,7 @@ namespace VideoApi.UnitTests.Domain
             var result = QuickLink.IsValid(null);
 
             //Assert
-            Assert.False(result);
+            ClassicAssert.False(result);
         }
 
         [Test]
@@ -67,7 +66,7 @@ namespace VideoApi.UnitTests.Domain
             var result = QuickLink.IsValid(_conference);
 
             //Assert
-            Assert.True(result);
+            ClassicAssert.True(result);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NUnit.Framework;
 using VideoApi.Common;
 using VideoApi.Extensions;
 
@@ -50,7 +49,7 @@ namespace VideoApi.UnitTests.Middleware
 
             await ExceptionMiddleware.InvokeAsync(HttpContext);
 
-            Assert.AreEqual((int) HttpStatusCode.BadRequest, HttpContext.Response.StatusCode);
+            ClassicAssert.AreEqual((int) HttpStatusCode.BadRequest, HttpContext.Response.StatusCode);
         }
 
         [Test]
@@ -62,8 +61,8 @@ namespace VideoApi.UnitTests.Middleware
             ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
             
             await ExceptionMiddleware.InvokeAsync(HttpContext);
-            Assert.AreEqual("application/json; charset=utf-8", HttpContext.Response.ContentType);
-            Assert.AreEqual((int) HttpStatusCode.InternalServerError, HttpContext.Response.StatusCode);
+            ClassicAssert.AreEqual("application/json; charset=utf-8", HttpContext.Response.ContentType);
+            ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, HttpContext.Response.StatusCode);
         }
     }
 }

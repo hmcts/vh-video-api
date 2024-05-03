@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NUnit.Framework;
 using System.Collections.Generic;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
@@ -45,8 +43,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.UpdatedAt)
                 .Excluding(x => x.CreatedAt)
             );
-            response.Status.Should().BeEquivalentTo(participant.State);
-            response.Status.Should().BeEquivalentTo(participant.GetCurrentStatus().ParticipantState);
+            response.Status.Should().Be((Contract.Enums.ParticipantState)participant.State);
+            response.Status.Should().Be((Contract.Enums.ParticipantState)participant.GetCurrentStatus().ParticipantState);
             response.CaseGroup.Should().Be(participant.CaseTypeGroup);
         }
     }

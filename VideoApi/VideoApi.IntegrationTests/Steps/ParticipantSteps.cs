@@ -4,8 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using AcceptanceTests.Common.Api.Helpers;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
@@ -53,7 +51,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = AddParticipantsToConference(conferenceId);
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -109,7 +107,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateParticipantFromConference(conferenceId, participantId);
             _context.HttpMethod = HttpMethod.Patch;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -145,7 +143,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = AddParticipantsToConference(conferenceId);
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -159,7 +157,7 @@ namespace VideoApi.IntegrationTests.Steps
             };
             _context.Uri = AddParticipantsToConference(_context.Test.Conference.Id);
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 

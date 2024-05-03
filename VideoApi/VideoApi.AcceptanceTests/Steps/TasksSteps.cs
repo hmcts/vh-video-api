@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using AcceptanceTests.Common.Api.Helpers;
 using FizzWare.NBuilder;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
@@ -86,7 +84,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the tasks are retrieved")]
         public void ThenTheTaskIsRetrieved()
         {
-            var tasks = RequestHelper.Deserialise<List<TaskResponse>>(_context.Response.Content);
+            var tasks = ApiRequestHelper.Deserialise<List<TaskResponse>>(_context.Response.Content);
             tasks.Should().NotBeNull();
             tasks.First().Id.Should().BeGreaterThan(-1);
             tasks.First().Created.Should().BeBefore(DateTime.Now);
@@ -98,7 +96,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the task is updated")]
         public void ThenTheStatusIsUpdated()
         {
-            var task = RequestHelper.Deserialise<TaskResponse>(_context.Response.Content);
+            var task = ApiRequestHelper.Deserialise<TaskResponse>(_context.Response.Content);
             task.Updated.HasValue.Should().BeTrue();
             task.UpdatedBy.Should().Be(UpdatedBy);
             task.Status.Should().Be(TaskStatus.Done);
@@ -109,7 +107,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.Request = _context.Get(GetTasks(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
-            var tasks = RequestHelper.Deserialise<List<TaskResponse>>(_context.Response.Content);
+            var tasks = ApiRequestHelper.Deserialise<List<TaskResponse>>(_context.Response.Content);
             var taskRequested = _scenarioContext.Get<AddTaskRequest>(_addTaskRequest);
             var taskSaved = tasks.FirstOrDefault(t => t.OriginId == taskRequested.ParticipantId);
 

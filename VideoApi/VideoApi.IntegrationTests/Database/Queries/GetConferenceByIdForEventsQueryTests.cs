@@ -65,7 +65,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 }
             }
 
-            conference.GetCurrentStatus().Should().BeEquivalentTo(seededConference.GetCurrentStatus());
+            conference.GetCurrentStatus().Should().Be(seededConference.GetCurrentStatus());
             conference.Rooms.Count.Should().Be(1);
             conference.GetEndpoints().Count.Should().Be(0);
         }

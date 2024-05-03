@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;

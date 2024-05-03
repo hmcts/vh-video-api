@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.DAL;
+using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Alert = VideoApi.Domain.Task;
@@ -17,6 +20,7 @@ namespace VideoApi.IntegrationTests.Helper
     {
         private readonly KinlyConfiguration _kinlyConfiguration;
         private readonly DbContextOptions<VideoApiDbContext> _dbContextOptions;
+        private readonly List<Guid> _seedeConferences = new();
 
         public TestDataManager(KinlyConfiguration kinlyConfiguration, DbContextOptions<VideoApiDbContext> dbContextOptions)
         {
@@ -103,7 +107,7 @@ namespace VideoApi.IntegrationTests.Helper
             await using var db = new VideoApiDbContext(_dbContextOptions);
             await db.Conferences.AddAsync(conference);
             await db.SaveChangesAsync();
-
+            _seedeConferences.Add(conference.Id);
             return conference;
         }
 
@@ -132,19 +136,19 @@ namespace VideoApi.IntegrationTests.Helper
 
         public async Task RemoveConference(Guid conferenceId)
         {
-            await using var db = new VideoApiDbContext(_dbContextOptions);
-            var conference = await db.Conferences
-                .Include(x => x.Endpoints)
-                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
-                .Include(x => x.Participants)
-                .Include("Participants.ParticipantStatuses")
-                .Include(x => x.ConferenceStatuses)
-                .Include(x => x.Rooms).ThenInclude(x => x.RoomParticipants)
-                .SingleAsync(x => x.Id == conferenceId);
-
-            db.Remove(conference);
-            await db.SaveChangesAsync();
-
+            var command = new RemoveConferenceCommand(conferenceId);
+            var handler = new RemoveConferenceCommandHandler(new VideoApiDbContext(_dbContextOptions));
+            try
+            {
+                await handler.Handle(command);
+            }
+            catch (ConferenceNotFoundException)
+            {
+                TestContext.WriteLine($"Ignoring clean up for conference {conferenceId}. Does not exist");
+            }
+            
+            
+            
             await RemoveAlerts(conferenceId);
         }
         
@@ -276,7 +280,17 @@ namespace VideoApi.IntegrationTests.Helper
             db.Events.RemoveRange(eventsToDelete);
             await db.SaveChangesAsync();
         }
-
+        
+        public async Task CleanUpSeededData()
+        {
+            foreach (var conferenceId in _seedeConferences)
+            {
+                TestContext.WriteLine($"Removing test conference {conferenceId}");
+                await RemoveConference(conferenceId);
+            }
+            
+            _seedeConferences.Clear();
+        }
 
         public async Task SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {

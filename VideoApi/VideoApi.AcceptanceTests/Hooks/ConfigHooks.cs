@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AcceptanceTests.Common.Api;
-using AcceptanceTests.Common.Configuration;
-using AcceptanceTests.Common.Exceptions;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -11,10 +8,10 @@ using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Responses;
-using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 
 namespace VideoApi.AcceptanceTests.Hooks
 {
@@ -25,7 +22,7 @@ namespace VideoApi.AcceptanceTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = ConfigurationManager.BuildConfig("9AECE566-336D-4D16-88FA-7A76C27321CD", "6b1d4c67-28f8-4104-8424-9379113b6631");
+            _configRoot = ConfigRootBuilder.Build();
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
         }
@@ -47,7 +44,6 @@ namespace VideoApi.AcceptanceTests.Hooks
         {
             context.Config.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>()).Value;
             context.Config.AzureAdConfiguration.Authority += context.Config.AzureAdConfiguration.TenantId;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.AzureAdConfiguration);
         }
 
         private static void RegisterDefaultData(TestContext context)
@@ -68,8 +64,9 @@ namespace VideoApi.AcceptanceTests.Hooks
         {
             context.Config.Services = GetTargetTestEnvironment() == string.Empty ? Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value
                 : Options.Create(_configRoot.GetSection($"Testing.{GetTargetTestEnvironment()}.Services").Get<ServicesConfiguration>()).Value;
-            if (context.Config.Services == null && GetTargetTestEnvironment() != string.Empty) throw new TestSecretsFileMissingException(GetTargetTestEnvironment());
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.Services);
+            if (context.Config.Services == null && GetTargetTestEnvironment() != string.Empty)
+                throw new InvalidOperationException(
+                    $"Missing test secrets for running against: {GetTargetTestEnvironment()}");
         }
         
         private void RegisterKinlySettings(TestContext context)
@@ -110,27 +107,12 @@ namespace VideoApi.AcceptanceTests.Hooks
 
         private static async Task GenerateBearerTokens(TestContext context)
         {
-            var azureConfig = new AzureAdConfig()
-            {
-                Authority = context.Config.AzureAdConfiguration.Authority,
-                ClientId = context.Config.AzureAdConfiguration.ClientId,
-                ClientSecret = context.Config.AzureAdConfiguration.ClientSecret,
-                TenantId = context.Config.AzureAdConfiguration.TenantId
-            };
-
-            context.Tokens.VideoApiBearerToken = await ConfigurationManager.GetBearerToken(
-                azureConfig, context.Config.Services.VideoApiResourceId);
+            var azureConfig = context.Config.AzureAdConfiguration;
+            context.Tokens.VideoApiBearerToken = await new AzureTokenProvider(Options.Create(azureConfig))
+                .GetClientAccessToken(azureConfig.ClientId, azureConfig.ClientSecret,
+                    context.Config.Services.VideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
             
-            Zap.SetAuthToken(context.Tokens.VideoApiBearerToken);
         }
-    }
-
-    internal class AzureAdConfig : IAzureAdConfig
-    {
-        public string Authority { get; set; }
-        public string ClientId { get; set; }
-        public string ClientSecret { get; set; }
-        public string TenantId { get; set; }
     }
 }

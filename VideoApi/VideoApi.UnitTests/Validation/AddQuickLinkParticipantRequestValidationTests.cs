@@ -1,7 +1,5 @@
 using Faker;
 using FizzWare.NBuilder;
-using FluentAssertions;
-using NUnit.Framework;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Contract.Enums;

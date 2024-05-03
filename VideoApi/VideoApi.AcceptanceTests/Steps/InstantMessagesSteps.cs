@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using AcceptanceTests.Common.Api.Helpers;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
@@ -107,7 +105,7 @@ namespace VideoApi.AcceptanceTests.Steps
             GivenIHaveAGetChatMessagesRequest();
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-            return RequestHelper.Deserialise<List<InstantMessageResponse>>(_context.Response.Content);
+            return ApiRequestHelper.Deserialise<List<InstantMessageResponse>>(_context.Response.Content);
         }
 
         private void CreateMessage()
@@ -122,7 +120,7 @@ namespace VideoApi.AcceptanceTests.Steps
             GivenIHaveAGetChatMessagesRequestForParticipant();
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-            return RequestHelper.Deserialise<List<InstantMessageResponse>>(_context.Response.Content);
+            return ApiRequestHelper.Deserialise<List<InstantMessageResponse>>(_context.Response.Content);
         }
 
         private IEnumerable<InstantMessageResponse> GetMessagesForNoParticipant()
@@ -130,7 +128,7 @@ namespace VideoApi.AcceptanceTests.Steps
             GivenIHaveAGetChatMessagesRequestForNonExistentParticipant();
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-            return RequestHelper.Deserialise<List<InstantMessageResponse>>(_context.Response.Content);
+            return ApiRequestHelper.Deserialise<List<InstantMessageResponse>>(_context.Response.Content);
         }
     }
 }

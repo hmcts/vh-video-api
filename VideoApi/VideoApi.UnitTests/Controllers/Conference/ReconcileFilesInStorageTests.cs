@@ -1,12 +1,10 @@
 using Moq;
-using NUnit.Framework;
 using System.Threading.Tasks;
 using VideoApi.Services.Contracts;
 using System;
 using VideoApi.Contract.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using FluentAssertions;
 using VideoApi.Services.Exceptions;
 
 namespace VideoApi.UnitTests.Controllers.Conference

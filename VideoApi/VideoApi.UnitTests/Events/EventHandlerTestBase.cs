@@ -1,6 +1,5 @@
 using Autofac.Extras.Moq;
 using Moq;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;

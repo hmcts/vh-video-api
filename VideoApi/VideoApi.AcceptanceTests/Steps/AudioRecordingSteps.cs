@@ -1,13 +1,14 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using AcceptanceTests.Common.Api.Helpers;
-using AcceptanceTests.Common.AudioRecordings;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using Testing.Common;
 using VideoApi.AcceptanceTests.Contexts;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Responses;
 using static Testing.Common.Helper.ApiUriFactory.AudioRecordingEndpoints;
+using AzureStorageManager = Testing.Common.AcCommon.AzureStorageManager;
 
 namespace VideoApi.AcceptanceTests.Steps
 {
@@ -80,28 +81,28 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the audio application details are retrieved")]
         public void ThenTheAudioApplicationDetailsAreRetrieved()
         {
-            var audioApplication = RequestHelper.Deserialise<AudioApplicationInfoResponse>(_context.Response.Content);
+            var audioApplication = ApiRequestHelper.Deserialise<AudioApplicationInfoResponse>(_context.Response.Content);
             audioApplication.Should().NotBeNull();
         }
 
         [Then(@"the audio stream details are retrieved")]
         public void ThenTheAudioStreamDetailsAreRetrieved()
         {
-            var audioStream = RequestHelper.Deserialise<AudioStreamInfoResponse>(_context.Response.Content);
+            var audioStream = ApiRequestHelper.Deserialise<AudioStreamInfoResponse>(_context.Response.Content);
             audioStream.Should().NotBeNull();
         }
 
         [Then(@"the audio stream monitoring details are retrieved")]
         public void ThenTheAudioStreamMonitoringDetailsAreRetrieved()
         {
-            var audioMonitoring = RequestHelper.Deserialise<AudioStreamMonitoringInfo>(_context.Response.Content);
+            var audioMonitoring = ApiRequestHelper.Deserialise<AudioStreamMonitoringInfo>(_context.Response.Content);
             audioMonitoring.Should().NotBeNull();
         }
 
         [Then(@"the audio recording link is retrieved")]
         public void ThenTheAudioRecordingLinkIsRetrieved()
         {
-            var audioLink = RequestHelper.Deserialise<AudioRecordingResponse>(_context.Response.Content);
+            var audioLink = ApiRequestHelper.Deserialise<AudioRecordingResponse>(_context.Response.Content);
             audioLink.Should().NotBeNull();
             audioLink.AudioFileLinks.Should().NotBeNullOrEmpty();
         }
@@ -109,7 +110,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the audio recording links are empty")]
         public void ThenTheAudioRecordingLinksAreEmpty()
         {
-            var audioLink = RequestHelper.Deserialise<AudioRecordingResponse>(_context.Response.Content);
+            var audioLink = ApiRequestHelper.Deserialise<AudioRecordingResponse>(_context.Response.Content);
             audioLink.Should().NotBeNull();
             audioLink.AudioFileLinks.Should().BeNullOrEmpty();
         }

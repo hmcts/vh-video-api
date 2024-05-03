@@ -1,10 +1,9 @@
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using Task = System.Threading.Tasks.Task;
@@ -33,8 +32,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
             participant.Id.Should().Be(expectedParticipant.Id);
             participant.Username.Should().Be(expectedParticipant.Username);
             participant.DisplayName.Should().Be(expectedParticipant.DisplayName);
-            participant.Status.Should().Be(expectedParticipant.State);
-            participant.UserRole.Should().Be(expectedParticipant.UserRole);
+            participant.Status.Should().Be((ParticipantState)expectedParticipant.State);
+            participant.UserRole.Should().Be((UserRole)expectedParticipant.UserRole);
 
             if (expectedParticipant is VideoApi.Domain.Participant expectedParticipantCasted)
             {

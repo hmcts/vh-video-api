@@ -1,7 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.Validations;
 
@@ -40,7 +38,7 @@ namespace VideoApi.UnitTests.Validation
                 MessageText = "test message",
             };
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == AddMessageRequestValidation.NoFromErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == AddMessageRequestValidation.NoFromErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -52,7 +50,7 @@ namespace VideoApi.UnitTests.Validation
                 From = "Display Name"
             };
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == AddMessageRequestValidation.NoMessageTextErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == AddMessageRequestValidation.NoMessageTextErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -66,7 +64,7 @@ namespace VideoApi.UnitTests.Validation
             };
             
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == AddMessageRequestValidation.MaxMessageLength)
+            result.Errors.Exists(x => x.ErrorMessage == AddMessageRequestValidation.MaxMessageLength)
                 .Should().BeTrue();
         }
 
@@ -79,7 +77,7 @@ namespace VideoApi.UnitTests.Validation
                 MessageText = "test message",
             };
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == AddMessageRequestValidation.NoToErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == AddMessageRequestValidation.NoToErrorMessage)
                 .Should().BeTrue();
         }
     }

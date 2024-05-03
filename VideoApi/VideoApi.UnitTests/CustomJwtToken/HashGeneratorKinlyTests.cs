@@ -1,6 +1,4 @@
 ﻿using System;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Common.Security.HashGen;
 using VideoApi.Common.Security.Supplier.Kinly;
 

@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;

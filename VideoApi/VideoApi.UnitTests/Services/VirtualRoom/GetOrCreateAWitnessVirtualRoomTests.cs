@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.Moq;
-using FluentAssertions;
 using Moq;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;

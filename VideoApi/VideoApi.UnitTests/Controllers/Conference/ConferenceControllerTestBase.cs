@@ -2,7 +2,6 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Extras.Moq;

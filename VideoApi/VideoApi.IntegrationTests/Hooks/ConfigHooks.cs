@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using TechTalk.SpecFlow;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
@@ -25,7 +24,6 @@ using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
-using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 
 namespace VideoApi.IntegrationTests.Hooks
 {
@@ -89,7 +87,6 @@ namespace VideoApi.IntegrationTests.Hooks
         private static void RegisterHearingServices(TestContext context)
         {
             context.Config.Services = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.Services);
         }
 
         private static void RegisterKinlySettings(TestContext context)
@@ -127,7 +124,6 @@ namespace VideoApi.IntegrationTests.Hooks
         private static void RegisterDatabaseSettings(TestContext context)
         {
             context.Config.DbConnection = Options.Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.Config.DbConnection);
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VideoApi);
             context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;

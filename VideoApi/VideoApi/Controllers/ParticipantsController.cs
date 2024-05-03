@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -194,7 +193,7 @@ namespace VideoApi.Controllers
                     request.HearingRole,
                     request.CaseTypeGroup);
                 
-                if (!request.Username.IsNullOrEmpty())
+                if (!string.IsNullOrEmpty(request.Username))
                 {
                     updateParticipantDetailsCommand.Username = request.Username;
                 }

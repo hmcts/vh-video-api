@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using Faker;
 using FizzWare.NBuilder;
-using FluentAssertions;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;

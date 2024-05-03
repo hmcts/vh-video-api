@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 
 namespace VideoApi.UnitTests.Domain.MeetingRoom

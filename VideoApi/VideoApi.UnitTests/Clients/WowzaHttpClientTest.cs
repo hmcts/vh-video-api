@@ -2,9 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
-using NUnit.Framework;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Exceptions;
 

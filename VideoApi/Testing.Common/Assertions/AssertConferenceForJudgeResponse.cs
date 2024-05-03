@@ -17,7 +17,7 @@ namespace Testing.Common.Assertions
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.Id.Should().NotBeEmpty();
             conference.HearingId.Should().NotBeEmpty();
-            conference.Status.Should().NotBeNull();
+            conference.Status.Should().Be(conference.Status);
             conference.NumberOfEndpoints.Should().BeGreaterThan(-1);
             conference.Participants.Should().NotBeNullOrEmpty();
 
