@@ -1,10 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <LangVersion>latestmajor</LangVersion>
-    </PropertyGroup>
-
     <ItemGroup>
       <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
       <PackageReference Include="LaunchDarkly.ServerSdk" Version="7.1.0" />

@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac.Extras.Moq" Version="6.0.0" />
