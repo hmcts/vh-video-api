@@ -14,12 +14,10 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class CallbackSteps
     {
         private readonly TestContext _context;
-        private readonly EndPointsSteps _endPointsSteps;
 
-        public CallbackSteps(TestContext injectedContext, EndPointsSteps endPointsSteps)
+        public CallbackSteps(TestContext injectedContext)
         {
             _context = injectedContext;
-            _endPointsSteps = endPointsSteps;
         }
 
         [Given(@"I have a valid conference event request for a Judge with event type (.*)")]
@@ -31,13 +29,6 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConferenceEventRequest(participantId, eventType);
         }
         
-        [Given(@"I have a valid endpoint event request for event type (.*)")]
-        public void GivenIHaveAValidEndpointEventRequestForAConference(EventType eventType)
-        {
-            var endpointId = _endPointsSteps.GetEndPoints().First().Id;
-            CreateConferenceEventRequest(endpointId, eventType);
-        }
-
         private void CreateConferenceEventRequest(Guid participantId, EventType eventType)
         {
             _context.Test.ParticipantId = participantId;
