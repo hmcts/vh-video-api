@@ -141,5 +141,12 @@ namespace Testing.Common.Helper
             public static string GetJudicialRoomForParticipant(Guid conferenceId, Guid participantId) =>
                 $"{ApiRoot}/{conferenceId}/rooms/judicial/{participantId}";
         }
+        
+        public static class EndOfDayEndpoints
+        {
+            private const string ApiRoot = "end-of-day";
+            
+            public static string GetActiveConferences => $"{ApiRoot}/active-sessions";
+        }
     }
 }
