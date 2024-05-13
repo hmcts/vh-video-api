@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -5,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace VideoApi.Client
 {
+    [ExcludeFromCodeCoverage]
     public partial class VideoApiClient
     {
         public static VideoApiClient GetClient(HttpClient httpClient)
