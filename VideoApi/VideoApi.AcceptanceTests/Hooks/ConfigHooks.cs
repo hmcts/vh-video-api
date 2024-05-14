@@ -43,7 +43,6 @@ namespace VideoApi.AcceptanceTests.Hooks
         private void RegisterAzureSecrets(TestContext context)
         {
             context.Config.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>()).Value;
-            context.Config.AzureAdConfiguration.Authority += context.Config.AzureAdConfiguration.TenantId;
         }
 
         private static void RegisterDefaultData(TestContext context)
