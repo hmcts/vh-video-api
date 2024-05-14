@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
+using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
@@ -12,14 +13,17 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; }
         public string SipAddress { get; }
         public string DisplayName { get; }
-        public string DefenceAdvocate { get; }
+        public (string, LinkedParticipantType)[] EndpointParticipants { get; }
 
-        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName, string defenceAdvocate)
+        public UpdateEndpointCommand(Guid conferenceId,
+            string sipAddress,
+            string displayName,
+            (string Username, LinkedParticipantType Type)[] endpointParticipants)
         {
             ConferenceId = conferenceId;
             SipAddress = sipAddress;
             DisplayName = displayName;
-            DefenceAdvocate = defenceAdvocate;
+            EndpointParticipants = endpointParticipants;
         }
     }
 
@@ -44,8 +48,10 @@ namespace VideoApi.DAL.Commands
 
             if (!string.IsNullOrWhiteSpace(command.DisplayName)) 
                 endpoint.UpdateDisplayName(command.DisplayName);
+
+            if (command.EndpointParticipants.Any())
+                endpoint.LinkParticipantsToEndpoint(command.EndpointParticipants);
             
-            endpoint.AssignDefenceAdvocate(command.DefenceAdvocate);
             await _context.SaveChangesAsync();
         }
     }

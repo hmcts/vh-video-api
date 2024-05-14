@@ -18,6 +18,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 using VideoApi.Services.Factories;
 using VideoApi.Mappings;
@@ -598,6 +599,7 @@ namespace VideoApi.Controllers
             _logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
         }
+        
 
         /// <summary>
         /// Anonymise conference with matching hearing ids
@@ -706,7 +708,12 @@ namespace VideoApi.Controllers
                 .ToList();
 
             var endpoints = request.Endpoints
-                .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate)).ToList();
+                .Select(x => new Endpoint(
+                    x.DisplayName,
+                    x.SipAddress,
+                    x.Pin, 
+                    x.EndpointParticipants.Select(e => (e.ParticipantUsername, (LinkedParticipantType)e.Type)).ToArray()
+                    )).ToList();
 
             var linkedParticipants = request.Participants
                 .SelectMany(x => x.LinkedParticipants)

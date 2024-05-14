@@ -13,6 +13,7 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Mappers;
@@ -71,7 +72,11 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
             
-            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin, request.DefenceAdvocate);
+            var command = new AddEndpointCommand(conferenceId, 
+                request.DisplayName, 
+                request.SipAddress, 
+                request.Pin, 
+                request.EndpointParticipants.Select(x => (x.ParticipantUsername, (LinkedParticipantType)x.Type)).ToArray());
             await _commandHandler.Handle(command);
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
@@ -121,7 +126,11 @@ namespace VideoApi.Controllers
             _logger.LogDebug(
                 "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
 
-            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate);
+            var command = new UpdateEndpointCommand(conferenceId, 
+                sipAddress, 
+                request.DisplayName, 
+                request.EndpointParticipants.Select(x => (x.ParticipantUsername, (LinkedParticipantType)x.Type)).ToArray());
+            
             await _commandHandler.Handle(command);
 
             if (!string.IsNullOrWhiteSpace(request.DisplayName))

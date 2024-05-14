@@ -693,12 +693,19 @@
           "System.Runtime.CompilerServices.Unsafe": "4.5.3"
         }
       },
+      "videoapi.contract": {
+        "type": "Project",
+        "dependencies": {
+          "System.ComponentModel.Annotations": "[5.0.0, )"
+        }
+      },
       "videoapi.domain": {
         "type": "Project",
         "dependencies": {
           "Enums.NET": "[4.0.0, )",
           "RandomStringCreator": "[2.0.0, )",
-          "System.ComponentModel.Annotations": "[5.0.0, )"
+          "System.ComponentModel.Annotations": "[5.0.0, )",
+          "VideoApi.Contract": "[1.0.0, )"
         }
       }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -81,6 +82,7 @@ namespace VideoApi.Domain
         public string ContactTelephone { get; set; }
         public string CaseTypeGroup { get; set; }
         public string Representee { get; set; }
+        public virtual IList<EndpointParticipant> EndpointLinkedParticipants { get; set; }
 
         public bool IsJudge()
         {

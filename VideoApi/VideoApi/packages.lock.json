@@ -2340,7 +2340,8 @@
         "dependencies": {
           "Enums.NET": "[4.0.0, )",
           "RandomStringCreator": "[2.0.0, )",
-          "System.ComponentModel.Annotations": "[5.0.0, )"
+          "System.ComponentModel.Annotations": "[5.0.0, )",
+          "VideoApi.Contract": "[1.0.0, )"
         }
       },
       "videoapi.events": {

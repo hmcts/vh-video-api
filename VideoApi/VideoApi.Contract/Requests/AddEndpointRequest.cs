@@ -20,6 +20,6 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Username of a defence advocate
         /// </summary>
-        public string DefenceAdvocate { get; set; }
+        public EndpointParticipantRequest[] EndpointParticipants { get; set; }
     }
 }
