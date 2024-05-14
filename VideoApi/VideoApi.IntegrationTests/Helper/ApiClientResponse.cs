@@ -1,6 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
-using AcceptanceTests.Common.Api.Helpers;
+using VideoApi.Common.Helpers;
 
 namespace VideoApi.IntegrationTests.Helper
 {
@@ -9,7 +9,7 @@ namespace VideoApi.IntegrationTests.Helper
         public static async Task<T> GetResponses<T>(HttpContent content)
         {
             var json = await content.ReadAsStringAsync();
-            return RequestHelper.Deserialise<T>(json);
+            return ApiRequestHelper.Deserialise<T>(json);
         }
     }
 }

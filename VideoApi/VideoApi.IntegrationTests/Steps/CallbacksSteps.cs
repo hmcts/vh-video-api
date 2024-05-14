@@ -2,13 +2,13 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using AcceptanceTests.Common.Api.Helpers;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.Common;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL;
@@ -36,7 +36,7 @@ namespace VideoApi.IntegrationTests.Steps
             var request = BuildRequest(eventType, conference);
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -51,7 +51,7 @@ namespace VideoApi.IntegrationTests.Steps
             request.TransferTo = room.Label;
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -80,7 +80,7 @@ namespace VideoApi.IntegrationTests.Steps
             request.TransferTo = RoomType.WaitingRoom.ToString();
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -90,7 +90,7 @@ namespace VideoApi.IntegrationTests.Steps
             var request = BuildRequest(eventType, _context.Test.Conference, "0123456789");
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -101,7 +101,7 @@ namespace VideoApi.IntegrationTests.Steps
             var request = BuildRequest(eventType, _context.Test.Conference, null, roomId.ToString());
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -114,7 +114,7 @@ namespace VideoApi.IntegrationTests.Steps
             request.ParticipantId = participantId.ToString();
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -147,7 +147,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -159,7 +159,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -184,10 +184,10 @@ namespace VideoApi.IntegrationTests.Steps
                 .ThenInclude(x => x.RoomParticipants).SingleAsync(x => x.Id == conference.Id);
             var judge = updatedConference.Participants.First(x => x is Participant && ((Participant)x).IsJudge());
 
-            judge.State.Should().Be(expectedState);
+            judge.State.Should().Be((Domain.Enums.ParticipantState)expectedState);
             
             var updatedRoom = await db.Rooms.SingleAsync(x => x.Label == room.Label);
-            updatedRoom.RoomParticipants.Any(x => x.ParticipantId == judge.Id).Should().Be(shouldBeInRoom);
+            updatedRoom.RoomParticipants.Exists(x => x.ParticipantId == judge.Id).Should().Be(shouldBeInRoom);
         }
         
         private ConferenceEventRequest BuildRequest(EventType eventType, Conference conference = null, string phone = null, string participantRoomId = null)

@@ -4,9 +4,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using VideoApi.Common.Helpers;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
-using VideoApi.Services.Helpers;
 using VideoApi.Services.Responses;
 
 namespace VideoApi.Services.Clients

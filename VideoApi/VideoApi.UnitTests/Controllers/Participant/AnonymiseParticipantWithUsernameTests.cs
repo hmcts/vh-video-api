@@ -1,9 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using VideoApi.DAL.Commands;
 
 namespace VideoApi.UnitTests.Controllers.Participant

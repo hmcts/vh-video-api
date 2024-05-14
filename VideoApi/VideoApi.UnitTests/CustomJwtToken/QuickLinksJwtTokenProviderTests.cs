@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Options;
 using Moq;
-using NUnit.Framework;
 using System;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
@@ -36,8 +35,8 @@ namespace VideoApi.UnitTests.CustomJwtToken
             var token = _tokenProvider.GenerateToken("name", "username", UserRole.Individual);
 
             //Assert
-            Assert.Greater(token.Expiry, expiryAfter);
-            Assert.IsNotNull(token.Token);
+            ClassicAssert.Greater(token.Expiry, expiryAfter);
+            ClassicAssert.IsNotNull(token.Token);
         }
     }
 }

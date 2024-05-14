@@ -1,8 +1,6 @@
 using System;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using Testing.Common.Assertions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;

@@ -1,6 +1,4 @@
 using FizzWare.NBuilder;
-using FluentAssertions;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain.Enums;
@@ -46,7 +44,7 @@ namespace VideoApi.UnitTests.Mappings
             );
             
             response.StartedDateTime.Should().Be(conference.ActualStartTime);
-            response.Status.Should().BeEquivalentTo(conference.GetCurrentStatus());
+            response.Status.Should().Be((Contract.Enums.ConferenceState)conference.GetCurrentStatus());
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
             response.TelephoneConferenceNumbers.Should().Be($"{conferencePhoneNumber},{conferencePhoneNumberWelsh}");

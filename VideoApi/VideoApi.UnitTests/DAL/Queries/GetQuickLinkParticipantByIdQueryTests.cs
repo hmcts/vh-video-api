@@ -1,6 +1,4 @@
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;

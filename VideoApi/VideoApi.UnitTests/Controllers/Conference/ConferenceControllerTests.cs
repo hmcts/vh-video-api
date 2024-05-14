@@ -1,8 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework;
 using Testing.Common.Assertions;
 
 namespace VideoApi.UnitTests.Controllers.Conference
@@ -20,8 +18,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             typedResult.ContainsValidationErrors();
 
             var modelState = Controller.ModelState;
-            Assert.IsTrue(modelState.Keys.Contains("username"));
-            Assert.AreEqual("Please provide a valid username", modelState["username"].Errors[0].ErrorMessage);
+            ClassicAssert.IsTrue(modelState.Keys.Contains("username"));
+            ClassicAssert.AreEqual("Please provide a valid username", modelState["username"].Errors[0].ErrorMessage);
         }
 
         [Test]
@@ -34,8 +32,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             typedResult.Value.Should().NotBeNull();
 
             var modelState = Controller.ModelState;
-            Assert.IsTrue(modelState.Keys.Contains("username"));
-            Assert.AreEqual("Please provide a valid username", modelState["username"].Errors[0].ErrorMessage);
+            ClassicAssert.IsTrue(modelState.Keys.Contains("username"));
+            ClassicAssert.AreEqual("Please provide a valid username", modelState["username"].Errors[0].ErrorMessage);
         }
 
         [Test]
@@ -49,8 +47,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             typedResult.ContainsValidationErrors();
 
             var modelState = Controller.ModelState;
-            Assert.IsTrue(modelState.Keys.Contains("username"));
-            Assert.AreEqual("Please provide a valid username", modelState["username"].Errors[0].ErrorMessage);
+            ClassicAssert.IsTrue(modelState.Keys.Contains("username"));
+            ClassicAssert.AreEqual("Please provide a valid username", modelState["username"].Errors[0].ErrorMessage);
         }
     }
 }

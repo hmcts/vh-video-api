@@ -1,9 +1,6 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using AcceptanceTests.Common.Api.Helpers;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
@@ -100,7 +97,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheResponseShouldHaveConnectionDetailsForTheRoom()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var room = RequestHelper.Deserialise<SharedParticipantRoomResponse>(json);
+            var room = ApiRequestHelper.Deserialise<SharedParticipantRoomResponse>(json);
             room.PexipNode.Should().NotBeNullOrWhiteSpace();
             room.ParticipantJoinUri.Should().NotBeNullOrWhiteSpace();
         }

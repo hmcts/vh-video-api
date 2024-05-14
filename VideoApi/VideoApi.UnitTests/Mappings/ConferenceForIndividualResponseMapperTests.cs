@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Consts;
 using VideoApi.Domain.Enums;
@@ -27,7 +25,7 @@ namespace VideoApi.UnitTests.Mappings
             response.ScheduledDateTime.Should().Be(conference.ScheduledDateTime);
             response.CaseName.Should().Be(conference.CaseName);
             response.CaseNumber.Should().Be(conference.CaseNumber);
-            response.Status.Should().Be(conference.State);
+            response.Status.Should().Be((Contract.Enums.ConferenceState)conference.State);
             response.ClosedDateTime.Should().Be(conference.ClosedDateTime);
             response.IsWaitingRoomOpen.Should().Be(conference.IsConferenceAccessible());
         }

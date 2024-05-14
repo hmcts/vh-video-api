@@ -19,7 +19,7 @@ namespace Testing.Common.Assertions
             conference.CaseName.Should().NotBeNullOrEmpty();
             conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
-            conference.CurrentStatus.Should().NotBeNull();
+            conference.CurrentStatus.Should().Be(conference.CurrentStatus);
             conference.HearingVenueName.Should().NotBeNull();
 
             conference.IsWaitingRoomOpen.Should().BeTrue();

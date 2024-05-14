@@ -1,7 +1,5 @@
 
 using System.Linq;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 

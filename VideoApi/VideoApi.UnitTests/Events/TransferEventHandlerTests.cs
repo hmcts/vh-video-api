@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Moq;
-using NUnit.Framework;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;

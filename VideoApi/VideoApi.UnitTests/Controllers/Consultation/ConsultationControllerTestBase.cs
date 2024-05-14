@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands;

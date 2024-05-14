@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.Mappings;
 using VideoApi.Services.Clients;

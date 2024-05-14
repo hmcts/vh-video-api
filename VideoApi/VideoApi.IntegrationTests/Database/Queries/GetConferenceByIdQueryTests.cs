@@ -81,7 +81,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 }
             }
 
-            conference.GetCurrentStatus().Should().BeEquivalentTo(seededConference.GetCurrentStatus());
+            conference.GetCurrentStatus().Should().Be(seededConference.GetCurrentStatus());
         }
 
         [TearDown]

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;

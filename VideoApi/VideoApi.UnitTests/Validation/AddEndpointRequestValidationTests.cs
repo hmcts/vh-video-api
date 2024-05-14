@@ -1,7 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.Validations;
 
@@ -45,7 +43,7 @@ namespace VideoApi.UnitTests.Validation
             };
 
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == AddEndpointRequestValidation.NoDisplayNameError)
+            result.Errors.Exists(x => x.ErrorMessage == AddEndpointRequestValidation.NoDisplayNameError)
                 .Should().BeTrue();
         }
         
@@ -61,7 +59,7 @@ namespace VideoApi.UnitTests.Validation
             };
 
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == AddEndpointRequestValidation.NoPinError)
+            result.Errors.Exists(x => x.ErrorMessage == AddEndpointRequestValidation.NoPinError)
                 .Should().BeTrue();
         }
         
@@ -77,7 +75,7 @@ namespace VideoApi.UnitTests.Validation
             };
 
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == AddEndpointRequestValidation.NoSipError)
+            result.Errors.Exists(x => x.ErrorMessage == AddEndpointRequestValidation.NoSipError)
                 .Should().BeTrue();
         }
     }

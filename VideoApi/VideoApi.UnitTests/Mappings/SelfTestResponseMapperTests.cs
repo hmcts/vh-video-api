@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-using VideoApi.Common.Security.Supplier.Kinly;
+﻿using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Mappings;
 
 namespace VideoApi.UnitTests.Mappings

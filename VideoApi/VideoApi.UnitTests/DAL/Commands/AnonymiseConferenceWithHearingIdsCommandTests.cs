@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;

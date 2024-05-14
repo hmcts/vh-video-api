@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
-using NUnit.Framework;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
@@ -49,7 +47,6 @@ namespace VideoApi.UnitTests.Clients
 
             result.Should().NotBeNull();
             result.Passed.Should().BeTrue();
-            result.Score.Should().NotBeNull();
             result.Score.Should().Be(TestScore.Good);
 
         }

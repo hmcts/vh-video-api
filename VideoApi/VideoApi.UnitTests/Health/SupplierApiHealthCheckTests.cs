@@ -1,9 +1,7 @@
 using System;
 using Autofac.Extras.Moq;
-using FluentAssertions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Moq;
-using NUnit.Framework;
 using VideoApi.Health;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;

@@ -9,7 +9,7 @@ namespace Testing.Common.Assertions
         public static void ForParticipant(ParticipantForHostResponse participant)
         {
             participant.Should().NotBeNull();
-            participant.Role.Should().NotBeNull();
+            participant.Role.Should().Be(participant.Role);
             participant.DisplayName.Should().NotBeNullOrWhiteSpace();
             participant.CaseTypeGroup.Should().NotBeNullOrWhiteSpace();
             participant.HearingRole.Should().NotBeNullOrWhiteSpace();

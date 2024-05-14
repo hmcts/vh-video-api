@@ -23,7 +23,7 @@ namespace Testing.Common.Helper.Builders.Domain
         public static void SetProtectedField(this object instance, string fieldName, object value)
         {
             var instanceType = instance.GetType();
-            var field = instanceType.FindField(fieldName, value.GetType());
+            var field = instanceType.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             if (field == null) throw new InvalidOperationException($"No field '{fieldName}' found on object of type '{instanceType.Name}'");
             field.SetValue(instance, value);
         }

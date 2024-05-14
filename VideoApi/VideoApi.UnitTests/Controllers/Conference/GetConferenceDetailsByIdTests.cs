@@ -1,6 +1,4 @@
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
 using VideoApi.Contract.Requests;

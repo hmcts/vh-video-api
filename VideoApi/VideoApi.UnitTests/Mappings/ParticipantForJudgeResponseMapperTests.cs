@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using FluentAssertions;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -26,7 +24,7 @@ namespace VideoApi.UnitTests.Mappings
             var response = ParticipantForJudgeResponseMapper.MapParticipantSummaryToModel(participant);
 
             response.DisplayName.Should().BeEquivalentTo(participant.DisplayName);
-            response.Role.Should().BeEquivalentTo(participant.UserRole);
+            response.Role.Should().Be((Contract.Enums.UserRole)participant.UserRole);
             response.Representee.Should().BeEquivalentTo(participant.Representee);
             response.CaseTypeGroup.Should().BeEquivalentTo(participant.CaseTypeGroup);
             response.HearingRole.Should().BeEquivalentTo(participant.HearingRole);

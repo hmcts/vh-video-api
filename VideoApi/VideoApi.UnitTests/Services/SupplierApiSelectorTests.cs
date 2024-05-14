@@ -1,8 +1,6 @@
 using System;
-using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
-using NUnit.Framework;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Services;

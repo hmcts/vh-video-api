@@ -45,6 +45,7 @@ namespace VideoApi.DAL.Commands
             }
 
             conference.RemoveEndpoint(ep);
+            _context.Remove(ep);
             await _context.SaveChangesAsync();
         }
     }

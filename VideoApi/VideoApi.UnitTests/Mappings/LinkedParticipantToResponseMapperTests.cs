@@ -1,6 +1,4 @@
 using System;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
@@ -18,7 +16,7 @@ namespace VideoApi.UnitTests.Mappings
             var response = LinkedParticipantToResponseMapper.MapLinkedParticipantsToResponse(linkedParticipant);
             
             response.LinkedId.Should().Be(linkedParticipant.LinkedId);
-            response.Type.Should().Be(linkedParticipant.Type);
+            response.Type.Should().Be((Contract.Enums.LinkedParticipantType)linkedParticipant.Type);
         }
     }
 }

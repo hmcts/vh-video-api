@@ -33,8 +33,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 TestContext.WriteLine($"Removing test conference {_newConferenceId}");
                 await TestDataManager.RemoveConference(_newConferenceId);
             }
-
+            
             await TestDataManager.RemoveEvents();
+            await TestDataManager.CleanUpSeededData();
         }
 
         [Test]

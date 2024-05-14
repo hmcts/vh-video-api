@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>VH Video API client</Title>
         <Authors>HMCTS VH</Authors>
@@ -10,7 +9,6 @@
         <License>https://github.com/hmcts/vh-video-api/blob/master/LICENSE</License>
         <RepositoryUrl>https://github.com/hmcts/vh-video-api</RepositoryUrl>
         <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

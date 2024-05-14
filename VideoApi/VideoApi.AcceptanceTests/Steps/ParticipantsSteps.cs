@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using AcceptanceTests.Common.Api.Helpers;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
 using Testing.Common.Helper.Builders.Api;
@@ -85,7 +83,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
 
-            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             
             var confParticipants = conference.Participants;
             var linkCount = confParticipants.Sum(x => x.LinkedParticipants.Count);
@@ -167,7 +165,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the heartbeat data is retrieved")]
         public void ThenTheHeartbeatDataIsRetrieved()
         {
-            var heartbeatData = RequestHelper.Deserialise<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
+            var heartbeatData = ApiRequestHelper.Deserialise<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
             heartbeatData.First().BrowserName.Should().Be(_context.Test.HeartbeatData.BrowserName);
             heartbeatData.First().BrowserVersion.Should().Be(_context.Test.HeartbeatData.BrowserVersion);
             heartbeatData.First().OperatingSystem.Should().Be(_context.Test.HeartbeatData.OperatingSystem);
@@ -182,7 +180,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
-            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var exists = conference.Participants.Any(participant =>
                 participant.Username.ToLower().Equals(_scenarioContext.Get<string>(ParticipantUsernameKey).ToLower()));
@@ -216,7 +214,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the judge names should be retrieved")]
         public void ThenTheJudgeNamesShouldBeRetrieved()
         {
-            var judgesList = RequestHelper.Deserialise<JudgeNameListResponse>(_context.Response.Content).FirstNames;
+            var judgesList = ApiRequestHelper.Deserialise<JudgeNameListResponse>(_context.Response.Content).FirstNames;
             var conferences = _context.Test.ConferenceDetailsResponses;
 
             var judges = conferences.SelectMany(c => c.Participants).Where(p => p.UserRole == UserRole.Judge).ToList();
@@ -240,7 +238,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the participants should be retrieved")]
         public void ThenTheParticipantsShouldBeRetrieved()
         {
-            var participants = RequestHelper.Deserialise<List<ParticipantSummaryResponse>>(_context.Response.Content);
+            var participants = ApiRequestHelper.Deserialise<List<ParticipantSummaryResponse>>(_context.Response.Content);
             participants.Should().NotBeNull();
             AssertParticipantSummaryResponse.ForParticipant(participants[1]);
         }

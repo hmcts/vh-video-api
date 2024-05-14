@@ -1,7 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 
@@ -26,7 +24,7 @@ namespace VideoApi.UnitTests.Services
                 3, i => TimeSpan.FromMilliseconds(1), retryAttempt => retryInvoked = true,
                 executeFunction: () => throw new Exception("What"));
 
-            Assert.True(retryInvoked);
+            ClassicAssert.True(retryInvoked);
         }
 
         [Test]
@@ -40,7 +38,7 @@ namespace VideoApi.UnitTests.Services
                 () => Task.FromResult<object>("returned")
             );
 
-            Assert.False(retryInvoked);
+            ClassicAssert.False(retryInvoked);
             result.Should().Be("returned");
         }
 
@@ -56,7 +54,7 @@ namespace VideoApi.UnitTests.Services
                 () => throw new Exception("What")
             );
 
-            Assert.True(retryInvoked);
+            ClassicAssert.True(retryInvoked);
         }
 
         [Test]
@@ -71,7 +69,7 @@ namespace VideoApi.UnitTests.Services
                 () => Task.FromResult(new TestResult{Success = false})
             );
 
-            Assert.True(retryInvoked);
+            ClassicAssert.True(retryInvoked);
         }
 
         [Test]
@@ -86,7 +84,7 @@ namespace VideoApi.UnitTests.Services
                 () => Task.FromResult(new TestResult {Success = true})
             );
 
-            Assert.False(retryInvoked);
+            ClassicAssert.False(retryInvoked);
             result.Success.Should().BeTrue();
         }
 
