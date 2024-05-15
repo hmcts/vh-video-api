@@ -19,6 +19,8 @@ pool:
 
 #########################################
 # Push Helm Charts to Repo. #############
+#############
+stages:
 - stage: Helm_Staging
   displayName: Push Helm Charts
   dependsOn: 
