@@ -21,10 +21,10 @@ pool:
 # Push Helm Charts to Repo. #############
 #############
 stages:
-- stage: Helm_Production
+- stage: Helm_Demo
   displayName: Push Helm Charts
   variables:
-  - template: variables/production.yaml
+  - template: variables/demo.yaml
   - template: variables/shared.yaml
   - group: vh-github-app-credentials
   jobs:
