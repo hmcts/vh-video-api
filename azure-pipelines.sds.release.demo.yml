@@ -35,15 +35,6 @@ stages:
         projectName: ${{ variables.efProjectName }}
         migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
 
-  - job: PublishAcceptanceTests
-    displayName: Publish Acceptance Tests
-    variables:
-      projectPath: "${{ variables.appName }}/${{ variables.appName }}"
-    steps:
-    - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
-      parameters:
-        vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-        coreProjectPath: $(projectPath)
 
 #####################################################
 # Run Entity Framework Staging. #####################
