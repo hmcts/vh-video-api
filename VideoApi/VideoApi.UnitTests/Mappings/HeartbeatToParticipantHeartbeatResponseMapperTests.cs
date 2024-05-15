@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Mappings;

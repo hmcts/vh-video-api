@@ -1,8 +1,6 @@
 using System;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
@@ -25,7 +23,7 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<OkObjectResult>();
             var response = result.As<OkObjectResult>().Value.As<ParticipantSummaryResponse>();
-            response.Username.Should().Equals(QuickLinksParticipant.Username);
+            QuickLinksParticipant.Username.Should().StartWith(response.Username);
         }
         
         [Test]

@@ -141,7 +141,7 @@ namespace VideoApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseOpenApi();
-            app.UseSwaggerUi3(c => { c.DocumentTitle = "Video API V1"; });
+            app.UseSwaggerUi(c => { c.DocumentTitle = "Video API V1"; });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

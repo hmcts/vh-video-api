@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using AcceptanceTests.Common.Api.Helpers;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.Contract.Requests;
@@ -26,7 +25,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = ApiUriFactory.ConferenceManagementEndpoints.StartVideoHearing(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
             var request = new StartHearingRequest {Layout = HearingLayout.OnePlus7};
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -74,7 +73,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Post;
             var request = new TransferParticipantRequest
                 {ParticipantId = conference.Participants.First().Id, TransferType = transferType};
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
     }

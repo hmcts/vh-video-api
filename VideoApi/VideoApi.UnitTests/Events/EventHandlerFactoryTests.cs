@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using Autofac;
 using Autofac.Extras.Moq;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Contract.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Handlers.Core;

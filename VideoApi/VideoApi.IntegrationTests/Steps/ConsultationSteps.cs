@@ -4,10 +4,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using AcceptanceTests.Common.Api.Helpers;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -388,7 +388,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -396,7 +396,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.HandleConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -404,7 +404,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.LeaveConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -412,7 +412,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.LeaveConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -420,7 +420,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.EndpointConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -428,7 +428,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = ConsultationEndpoints.StartPrivateConsultationRequest;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         

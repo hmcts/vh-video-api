@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using Faker;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using Task = System.Threading.Tasks.Task;
@@ -123,7 +121,7 @@ namespace VideoApi.UnitTests.DAL.Commands
                 await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
 
             processedParticipant.Representee.Should().NotBe(participantCopyBeforeAnonymisation.Representee);
-            processedParticipant.Name.Should().Equals(processedParticipant.Representee);
+            processedParticipant.Name.Should().BeEquivalentTo(processedParticipant.Representee);
         }
 
         [Test]

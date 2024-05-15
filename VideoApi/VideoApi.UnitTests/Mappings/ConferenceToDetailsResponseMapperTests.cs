@@ -1,10 +1,6 @@
 using System.Linq;
-using FluentAssertions;
-using FluentAssertions.Equivalency;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Consts;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 
@@ -33,7 +29,6 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.ConferenceStatuses)
                 .Excluding(x => x.State)
                 .Excluding(x => x.InstantMessageHistory)
-                .Excluding(x => ExcludeIdFromMessage(x))
                 .Excluding(x => x.IngestUrl)
                 .Excluding(x => x.ActualStartTime)
                 .Excluding(x => x.Endpoints)
@@ -44,7 +39,7 @@ namespace VideoApi.UnitTests.Mappings
 
             response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
-            response.CurrentStatus.Should().BeEquivalentTo(conference.GetCurrentStatus());
+            response.CurrentStatus.Should().Be((Contract.Enums.ConferenceState)conference.GetCurrentStatus());
 
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options
@@ -62,7 +57,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CreatedAt)
             );
 
-            var civilianRoom = response.CivilianRooms.First();
+            var civilianRoom = response.CivilianRooms[0];
             var room = conference.Rooms.First();
             civilianRoom.Id.Should().Be(room.Id);
             civilianRoom.Label.Should().Be(room.Label);
@@ -96,9 +91,9 @@ namespace VideoApi.UnitTests.Mappings
         }
 
 
-        bool ExcludeIdFromMessage(IMemberInfo member)
-        {
-            return member.SelectedMemberPath.Contains(nameof(InstantMessage)) && member.SelectedMemberInfo.Name.Contains("Id");
-        }
+        // bool ExcludeIdFromMessage(IMemberInfo member)
+        // {
+        //     return member.SelectedMemberPath.Contains(nameof(InstantMessage)) && member.SelectedMemberInfo.Name.Contains("Id");
+        // }
     }
 }

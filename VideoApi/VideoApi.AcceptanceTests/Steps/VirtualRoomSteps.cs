@@ -1,6 +1,4 @@
 using System.Linq;
-using AcceptanceTests.Common.Api.Helpers;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Enums;
@@ -49,7 +47,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the response should have connection details for the room")]
         public void ThenTheResponseShouldHaveConnectionDetailsForTheRoom()
         {
-            var interpreterRoom = RequestHelper.Deserialise<SharedParticipantRoomResponse>(_context.Response.Content);
+            var interpreterRoom = ApiRequestHelper.Deserialise<SharedParticipantRoomResponse>(_context.Response.Content);
             interpreterRoom.Should().NotBeNull();
             interpreterRoom.PexipNode.Should().NotBeNullOrWhiteSpace();
             interpreterRoom.ParticipantJoinUri.Should().NotBeNullOrWhiteSpace();

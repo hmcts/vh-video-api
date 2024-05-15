@@ -4,8 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using AcceptanceTests.Common.Api.Helpers;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.Contract.Requests;
@@ -68,14 +66,14 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheListOfTasksShouldBeRetrieved()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var tasks = RequestHelper.Deserialise<List<TaskResponse>>(json);
+            var tasks = ApiRequestHelper.Deserialise<List<TaskResponse>>(json);
             tasks.Should().NotBeNullOrEmpty();
             tasks.Should().BeInDescendingOrder(x => x.Created);
             foreach (var task in tasks)
             {
                 task.Id.Should().BeGreaterThan(0);
                 task.Body.Should().NotBeNullOrWhiteSpace();
-                task.Type.Should().BeOfType<Contract.Enums.TaskType>();
+                task.Type.Should().BeOneOf((Contract.Enums.TaskType[])Enum.GetValues(typeof(Contract.Enums.TaskType)));
             }
         }
 
@@ -83,7 +81,7 @@ namespace VideoApi.IntegrationTests.Steps
         public async Task ThenTheTaskShouldBeRetrievedWithUpdatedDetails()
         {
             var json = await _context.Response.Content.ReadAsStringAsync();
-            var updatedTask = RequestHelper.Deserialise<TaskResponse>(json);
+            var updatedTask = ApiRequestHelper.Deserialise<TaskResponse>(json);
             updatedTask.Should().NotBeNull();
             updatedTask.Updated.Should().NotBeNull();
             updatedTask.UpdatedBy.Should().Be(_context.Test.UpdateTaskRequest.UpdatedBy);
@@ -117,7 +115,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateTaskStatus(conferenceId, taskId);
             _context.HttpMethod = HttpMethod.Patch;
-            var jsonBody = RequestHelper.Serialise(_context.Test.UpdateTaskRequest);
+            var jsonBody = ApiRequestHelper.Serialise(_context.Test.UpdateTaskRequest);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -144,7 +142,7 @@ namespace VideoApi.IntegrationTests.Steps
             }
             _context.Uri = AddTask(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(addTaskRequest);
+            var jsonBody = ApiRequestHelper.Serialise(addTaskRequest);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
     }

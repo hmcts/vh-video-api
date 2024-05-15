@@ -1,7 +1,5 @@
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -36,8 +34,8 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
             var result = await Controller.AddQuickLinkParticipant(HearingId, AddQuickLinkParticipantRequest) as NotFoundObjectResult;
 
             //Assert
-            Assert.IsInstanceOf<NotFoundObjectResult>(result);
-            Assert.False((bool)result.Value);
+            ClassicAssert.IsInstanceOf<NotFoundObjectResult>(result);
+            ClassicAssert.False((bool)result!.Value!);
         }
 
         [Test]
@@ -85,7 +83,7 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
             var result = await Controller.AddQuickLinkParticipant(HearingId, AddQuickLinkParticipantRequest) as OkObjectResult;
 
             //Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            ClassicAssert.IsInstanceOf<OkObjectResult>(result);
             var quickLinkResponse = result?.Value.Should().BeAssignableTo<AddQuickLinkParticipantResponse>().Which;
             quickLinkResponse?.Token.Should().Be(QuickLinksJwtDetails.Token);
             quickLinkResponse?.ConferenceId.Should().Be(Conference.Id);

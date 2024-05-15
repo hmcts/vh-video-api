@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using AcceptanceTests.Common.Api.Helpers;
 using FizzWare.NBuilder;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Requests;
@@ -16,12 +14,10 @@ namespace VideoApi.AcceptanceTests.Steps
     public sealed class CallbackSteps
     {
         private readonly TestContext _context;
-        private readonly EndPointsSteps _endPointsSteps;
 
-        public CallbackSteps(TestContext injectedContext, EndPointsSteps endPointsSteps)
+        public CallbackSteps(TestContext injectedContext)
         {
             _context = injectedContext;
-            _endPointsSteps = endPointsSteps;
         }
 
         [Given(@"I have a valid conference event request for a Judge with event type (.*)")]
@@ -33,13 +29,6 @@ namespace VideoApi.AcceptanceTests.Steps
             CreateConferenceEventRequest(participantId, eventType);
         }
         
-        [Given(@"I have a valid endpoint event request for event type (.*)")]
-        public void GivenIHaveAValidEndpointEventRequestForAConference(EventType eventType)
-        {
-            var endpointId = _endPointsSteps.GetEndPoints().First().Id;
-            CreateConferenceEventRequest(endpointId, eventType);
-        }
-
         private void CreateConferenceEventRequest(Guid participantId, EventType eventType)
         {
             _context.Test.ParticipantId = participantId;
@@ -64,7 +53,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Request = _context.Get(ConferenceEndpoints.GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
-            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
+            var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var participant = conference.Participants.First(x => x.Id == _context.Test.ParticipantId);
             participant.CurrentStatus.Should().Be(ParticipantState.Available);

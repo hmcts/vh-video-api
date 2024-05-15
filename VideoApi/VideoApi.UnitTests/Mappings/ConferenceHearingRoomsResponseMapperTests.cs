@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Domain;
 using VideoApi.Mappings;
 

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit.Framework;
 using System;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security;

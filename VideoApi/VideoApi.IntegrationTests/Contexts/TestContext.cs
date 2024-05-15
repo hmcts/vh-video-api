@@ -1,5 +1,4 @@
 using System.Net.Http;
-using AcceptanceTests.Common.Api;
 using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -23,28 +22,10 @@ namespace VideoApi.IntegrationTests.Contexts
         public string Uri { get; set; }
         public DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions { get; set; }
         public AzureStorageManager AzureStorage { get; set; }
-
+        
         public HttpClient CreateClient()
         {
-            HttpClient client;
-            if (Zap.SetupProxy)
-            {
-                var handler = new HttpClientHandler
-                {
-                    Proxy = Zap.WebProxy,
-                    UseProxy = true,
-                };
-
-                client = new HttpClient(handler)
-                {
-                    BaseAddress = new System.Uri(Config.Services.VideoApiUrl)
-                };
-            }
-            else
-            {
-                client = Server.CreateClient();
-            }
-            
+            var client = Server.CreateClient();
             client.SetFakeBearerToken("admin", new[] { "ROLE_ADMIN", "ROLE_GENTLEMAN" });
             return client;
         }

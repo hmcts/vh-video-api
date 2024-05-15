@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AcceptanceTests.Common.Api.Helpers;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
 using VideoApi.AcceptanceTests.Contexts;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Responses;
 using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 
@@ -44,7 +44,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Request = context.Get(GetConferencesTodayForAdmin);
             context.Response = context.Client().Execute(context.Request);
             context.Response.IsSuccessful.Should().BeTrue($"conferences for today were retrieved, but status code was {context.Response.StatusCode} with error message '{context.Response.Content}'");
-            var conferences = RequestHelper.Deserialise<List<ConferenceForAdminResponse>>(context.Response.Content);
+            var conferences = ApiRequestHelper.Deserialise<List<ConferenceForAdminResponse>>(context.Response.Content);
             if (conferences == null || conferences.Count <= 0) return;
             foreach (var conference in conferences.Where(conference => conference.CaseName.Contains(context.Test.CaseName)))
             {

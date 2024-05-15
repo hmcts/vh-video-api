@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using AcceptanceTests.Common.Api.Helpers;
 using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -228,7 +228,7 @@ namespace VideoApi.IntegrationTests.Steps
         
         private void SetupAddEndpointRequest(Guid conferenceId, AddEndpointRequest request)
         {
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             _context.Uri = AddEndpointsToConference(conferenceId);
             _context.HttpMethod = HttpMethod.Post;
@@ -242,7 +242,7 @@ namespace VideoApi.IntegrationTests.Steps
 
         private void SetupUpdateEndpointRequest(Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
         {
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             _context.Uri = UpdateEndpoint(conferenceId, sipAddress);
             _context.HttpMethod = HttpMethod.Patch;

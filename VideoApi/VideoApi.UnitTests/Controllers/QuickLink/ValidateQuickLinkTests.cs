@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using VideoApi.DAL.Queries;
 using Task = System.Threading.Tasks.Task;
 
@@ -31,8 +30,8 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
             var result = await Controller.ValidateQuickLink(HearingId) as OkObjectResult;
 
             //Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
-            Assert.False((bool)result.Value);
+            ClassicAssert.IsInstanceOf<OkObjectResult>(result);
+            ClassicAssert.False((bool)result.Value);
         }
 
         [Test]
@@ -42,8 +41,8 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
             var result = await Controller.ValidateQuickLink(HearingId) as OkObjectResult;
 
             //Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
-            Assert.True((bool)result.Value);
+            ClassicAssert.IsInstanceOf<OkObjectResult>(result);
+            ClassicAssert.True((bool)result.Value);
         }
     }
 }

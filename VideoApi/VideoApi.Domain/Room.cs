@@ -107,12 +107,12 @@ namespace VideoApi.Domain
 
         public bool DoesParticipantExist(RoomParticipant participant)
         {
-            return RoomParticipants.Any(x => x.ParticipantId == participant.ParticipantId);
+            return RoomParticipants.Exists(x => x.ParticipantId == participant.ParticipantId);
         }
 
         public bool DoesEndpointExist(RoomEndpoint endpoint)
         {
-            return RoomEndpoints.Any(x => x.EndpointId == endpoint.EndpointId);
+            return RoomEndpoints.Exists(x => x.EndpointId == endpoint.EndpointId);
         }
     }
 }

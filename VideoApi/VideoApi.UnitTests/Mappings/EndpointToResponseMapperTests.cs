@@ -1,5 +1,4 @@
-using FluentAssertions;
-using NUnit.Framework;
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Mappings;
 
@@ -15,7 +14,7 @@ namespace VideoApi.UnitTests.Mappings
             
             response.Id.Should().Be(endpoint.Id);
             response.Pin.Should().Be(endpoint.Pin);
-            response.Status.Should().Be(endpoint.State);
+            response.Status.Should().Be((EndpointState)endpoint.State);
             response.SipAddress.Should().Be(endpoint.SipAddress);
             response.DefenceAdvocate.Should().Be(endpoint.DefenceAdvocate);
         }

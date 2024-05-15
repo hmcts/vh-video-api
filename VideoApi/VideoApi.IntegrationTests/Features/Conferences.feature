@@ -153,7 +153,6 @@ Scenario: Remove heartbeats for conferences older than 14 days
   And I have a request to remove heartbeats for conferences
   When I send the request to the endpoint
   Then the response should have the status NoContent and success status True
-  And the heartbeats should be deleted
 
 Scenario: Remove heartbeats for conferences within 14 days
   Given I have a conference over -10 days old

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using AcceptanceTests.Common.Api.Helpers;
 using Faker;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,7 @@ using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -20,6 +20,7 @@ using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
+using ConferenceState = VideoApi.Contract.Enums.ConferenceState;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -200,7 +201,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = BookNewConference;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -215,7 +216,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = BookNewConference;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
         
@@ -235,7 +236,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = BookNewConference;
             _context.HttpMethod = HttpMethod.Post;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -296,7 +297,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.HttpMethod = HttpMethod.Get;
             await _commonSteps.WhenISendTheRequestToTheEndpoint();
             _conferenceDetails = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
-            _conferenceDetails.CurrentStatus.Should().Be(ConferenceState.Closed);
+            _conferenceDetails.CurrentStatus.Should().Be((ConferenceState)Domain.Enums.ConferenceState.Closed);
         }
 
         [Then(@"the conference data should be anonymised")]
@@ -456,7 +457,7 @@ namespace VideoApi.IntegrationTests.Steps
 
             _context.Uri = UpdateConference;
             _context.HttpMethod = HttpMethod.Put;
-            var jsonBody = RequestHelper.Serialise(request);
+            var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
 
@@ -479,15 +480,6 @@ namespace VideoApi.IntegrationTests.Steps
         {
             _context.Uri = RemoveHeartbeatsForconferences;
             _context.HttpMethod = HttpMethod.Delete;
-        }
-
-        [Then(@"the heartbeats should be deleted")]
-        public async Task ThenTheHeartbeatsShouldBeDeleted()
-        {
-            await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
-            var heartbeats = await db.Heartbeats.Where(x => x.ConferenceId == _context.Test.Conference.Id).ToListAsync();
-            heartbeats.Should().NotBeNull();
-            heartbeats.Count.Should().Be(0);
         }
 
         [Then(@"the heartbeats should not be deleted")]

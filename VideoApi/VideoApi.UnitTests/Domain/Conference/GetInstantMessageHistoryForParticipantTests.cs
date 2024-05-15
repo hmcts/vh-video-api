@@ -1,5 +1,3 @@
-using FluentAssertions;
-using NUnit.Framework;
 using System.Linq;
 using Testing.Common.Helper.Builders.Domain;
 

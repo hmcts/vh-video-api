@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;

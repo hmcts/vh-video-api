@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using FluentAssertions;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
@@ -35,7 +33,7 @@ namespace VideoApi.UnitTests.Domain.Conference
 
             var beforeCount = conference.GetParticipants().Count;
 
-            var participant = conference.GetParticipants().First();
+            var participant = conference.GetParticipants()[0];
 
             Action action = () => conference.AddParticipant(participant);
 

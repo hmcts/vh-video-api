@@ -33,7 +33,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_remove_heartbeats_for_conferences_older_than_14_days()
         {
             _conferenceList = new List<Conference>();
-            var utcDate = DateTime.UtcNow;
+            var utcDate = DateTime.UtcNow.Date;
             var olderThan14Days = utcDate.AddDays(-14);
 
             var conference1 = new ConferenceBuilder(true, scheduledDateTime: olderThan14Days)

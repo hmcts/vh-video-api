@@ -1,7 +1,5 @@
-using AcceptanceTests.Common.Api;
-using AcceptanceTests.Common.Api.Helpers;
-using AcceptanceTests.Common.AudioRecordings;
 using RestSharp;
+using Testing.Common.AcCommon;
 using Testing.Common.Configuration;
 
 namespace VideoApi.AcceptanceTests.Contexts
@@ -17,7 +15,7 @@ namespace VideoApi.AcceptanceTests.Contexts
 
         public RestClient Client()
         {
-            var client = new RestClient(Config.Services.VideoApiUrl) {Proxy = Zap.WebProxy};
+            var client = new RestClient(Config.Services.VideoApiUrl);
             client.AddDefaultHeader("Accept", "application/json");
             client.AddDefaultHeader("Authorization", $"Bearer {Tokens.VideoApiBearerToken}");
             return client;
@@ -36,7 +34,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Post(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.POST);            
-            request.AddParameter("Application/json", RequestHelper.Serialise(requestBody),
+            request.AddParameter("Application/json", ApiRequestHelper.Serialise(requestBody),
                 ParameterType.RequestBody);
             return request;
         }
@@ -49,7 +47,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Put(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.PUT);
-            request.AddParameter("Application/json", RequestHelper.Serialise(requestBody),
+            request.AddParameter("Application/json", ApiRequestHelper.Serialise(requestBody),
                 ParameterType.RequestBody);
             return request;
         }
@@ -57,7 +55,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public RestRequest Patch(string path, object requestBody = null)
         {
             var request = new RestRequest(path, Method.PATCH);
-            request.AddParameter("Application/json", RequestHelper.Serialise(requestBody),
+            request.AddParameter("Application/json", ApiRequestHelper.Serialise(requestBody),
                 ParameterType.RequestBody);
             return request;
         }

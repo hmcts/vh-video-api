@@ -1,6 +1,4 @@
 using System;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 

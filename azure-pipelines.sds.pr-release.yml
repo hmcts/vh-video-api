@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: fix-vh-templates-for-dotnet-8
       endpoint: hmcts
 
 trigger: none
@@ -41,6 +41,7 @@ stages:
 
           - template: templates/dotnet/build-test-analyse.yml@azTemplates
             parameters:
+              dotnetVersion: ${{ variables.dotnetVersion }}
               nugetConfigPath: nuget.config
               appName: ${{ variables.appName }}
               dockerComposeTestFile: docker-compose.tests.yml
@@ -61,6 +62,7 @@ stages:
         steps:
           - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
             parameters:
+              efVersion: ${{ variables.efDotnetToolVersion }}
               outputPath: $(Build.StagingDirectory)
               contextName: ${{ variables.efContextName }}
               workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
@@ -72,6 +74,7 @@ stages:
         steps:
           - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
             parameters:
+              efVersion: ${{ variables.efDotnetToolVersion }}
               outputPath: $(Build.StagingDirectory)
               contextName: ${{ variables.efContextNameRefData }}
               workingPath: $(System.DefaultWorkingDirectory)/RefData
@@ -95,6 +98,7 @@ stages:
         steps:
           - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
             parameters:
+              netVersion: ${{ variables.dotnetVersion }}
               vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
               coreProjectPath: $(projectPath)
   #####################################################
@@ -297,6 +301,7 @@ stages:
         steps:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
             parameters:
+              netVersion: ${{ variables.dotnetVersion }}
               environment: ${{ variables.env }}
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:

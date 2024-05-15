@@ -1,6 +1,4 @@
 using Autofac.Extras.Moq;
-using FluentAssertions;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using VideoApi.Common.Helpers;

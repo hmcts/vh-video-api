@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
-using FluentAssertions;
-using NUnit.Framework;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Enums;
 using VideoApi.Validations;

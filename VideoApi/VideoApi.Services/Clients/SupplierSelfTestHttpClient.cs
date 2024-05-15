@@ -4,11 +4,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using VideoApi.Common.Helpers;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Helpers;
 
 namespace VideoApi.Services.Clients
 {

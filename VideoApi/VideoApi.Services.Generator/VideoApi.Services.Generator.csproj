@@ -1,12 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <LangVersion>latestmajor</LangVersion>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="NSwag.MSBuild" Version="13.18.2">
+        <PackageReference Include="NSwag.MSBuild" Version="14.0.7">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

@@ -1,5 +1,3 @@
-using AcceptanceTests.Common.Api.Helpers;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Contract.Responses;
@@ -25,7 +23,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the pexip service configuration should be retrieved")]
         public void ThenThePexipServiceConfigurationShouldBeRetrieved()
         {
-            var pexipConfig = RequestHelper.Deserialise<PexipConfigResponse>(_context.Response.Content);
+            var pexipConfig = ApiRequestHelper.Deserialise<PexipConfigResponse>(_context.Response.Content);
             pexipConfig.PexipSelfTestNode.Should().NotBeNullOrWhiteSpace();
         }
     }

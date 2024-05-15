@@ -1,7 +1,6 @@
 using System.Linq;
 using Autofac.Extras.Moq;
 using Moq;
-using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 using VideoApi.DAL;
 
 namespace VideoApi.UnitTests.DAL.Commands
