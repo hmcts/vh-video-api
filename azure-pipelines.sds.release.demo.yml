@@ -36,14 +36,6 @@ stages:
         projectName: ${{ variables.efProjectName }}
         migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
 
-  - job: package_nuget
-    displayName: "Package Nuget Packages"
-    steps:
-      - template: templates\dotnet\package-nuget-packages.yml@azTemplates
-        parameters:
-          nugetProjectPath: '${{ variables.appName }}/${{ variables.nuget_package_name }}'
-          vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-          gitVersionConfigPath: ${{ variables.git_version_config_path }}
 
 #####################################################
 # Run Entity Framework. #############################
