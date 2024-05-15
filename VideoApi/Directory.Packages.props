@@ -8,5 +8,6 @@
     </PropertyGroup>
     <PropertyGroup>
         <LangVersion>latestmajor</LangVersion>
+        <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
     </PropertyGroup>
 </Project>
