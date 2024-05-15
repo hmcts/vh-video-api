@@ -34,5 +34,36 @@ stages:
         workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
         projectName: ${{ variables.efProjectName }}
         migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
+  #####################################################
+  # Build Docker Image & Push. ########################
+- stage: Docker_Build_Push_Prod
+  displayName: Docker Build & Push Image
+  variables:
+  - template: variables/production.yaml
+  - template: variables/shared.yaml
+  jobs:
+      - job: Docker_Build
+        displayName: 'Docker Build and Push'
+        steps:
+          - checkout: self
 
-  
+          - bash: |
+              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
+            displayName: Add NuGet Feed Authentication
+            workingDirectory: ${{ variables.appName }}
+
+          - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
+            parameters:
+              azureSubscription: ${{ variables.acrSubscription }}
+              acrName: ${{ variables.acrName }}
+              repositoryName: ${{ variables.repositoryName }}
+
+          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+            parameters:
+              azureSubscription: ${{ variables.acrSubscription }}
+              acrName: ${{ variables.acrName }}
+              repositoryName: ${{ variables.repositoryName }}
+              imageName: '${{ variables.imageName }}'
+              imageTags:
+                - '${{ variables.releaseTagName }}'
+                - 'latest'
