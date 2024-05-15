@@ -19,7 +19,7 @@ pool:
 
 #########################################
 # Push Helm Charts to Repo. #############
-- stage: Helm_Demo
+- stage: Helm_Staging
   displayName: Push Helm Charts
   dependsOn: 
     - Docker_Build_Push
