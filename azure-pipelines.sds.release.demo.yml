@@ -23,8 +23,6 @@ pool:
 stages:
 - stage: Helm_Staging
   displayName: Push Helm Charts
-  dependsOn: 
-    - Docker_Build_Push
   variables:
   - template: variables/staging.yaml
   - template: variables/shared.yaml
