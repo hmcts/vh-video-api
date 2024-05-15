@@ -49,8 +49,6 @@ stages:
   # Build Docker Image & Push. ########################
   - stage: Docker_Build_Push_Prod
     displayName: Docker Build & Push Image
-    dependsOn:
-      - PublishAcceptanceTests
     variables:
       - template: variables/production.yaml
       - template: variables/shared.yaml
