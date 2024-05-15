@@ -1,432 +1,735 @@
 name: $(Date:yyyyMMddHHmm)-$(Rev:r)
-
+trigger:
+  branches:
+    include:
+    - master
+pr:
+  enabled: false
 resources:
   repositories:
-    - repository: azTemplates
-      type: github
-      name: hmcts/azure-devops-templates
-      ref: fix-vh-templates-for-dotnet-8
-      endpoint: hmcts
-
-trigger: none
-
-pr:
-  - master
-
+  - repository: azTemplates
+    type: github
+    name: hmcts/azure-devops-templates
+    ref: master
+    endpoint: hmcts
 pool:
   vmImage: ubuntu-22.04
-
 stages:
-  ####################################################
-  # CI Build Checks. #################################
-  - stage: CI_Build
-    displayName: CI Build
+- stage: Pre_Run_Tasks
+  displayName: Pre-Release Tasks
+  variables:
+  - name: appName
+    value: VideoApi
+  - name: nuget_org_name
+    value: "Video Hearings/vh-packages"
+  - name: nuget_feed_name
+    value: "vh-packages"
+  - name: git_version_config_path
+    value: $(Build.SourcesDirectory)/sds-git-version-config.yml
+  - name: nuget_package_name
+    value: "VideoApi.Client"
+  - name: git_repo_name
+    value: "video-api"
+  - name: sonar_exclusion
+    value: "**/VideoApi.Contract/**,**/Video.API/Program.cs, **/Video.API/Startup.cs, **/Video.API/Extensions/**, **/Video.API/Swagger/**, **/Video.API/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Video.Common/**, **/Video.DAL/Mappings/**, **/Video.DAL/SeedData/**, **/Video.DAL/VideoDbContext.cs, **/Video.DAL/**/DesignTimeHearingsContextFactory.cs, Video.DAL/Migrations/**, **/Video.Domain/Ddd/**, **/Video.DAL/Commands/Core/**, **/Video.DAL/Queries/Core/**, **/Testing.Common/**, **/Video.DAL/Migrations/*, **/Video.DAL/Migrations/**, **/Migrations/*"
+  - name: prNumber
+    value: $(System.PullRequest.PullRequestNumber)
+  - name: prTagPrefix
+    value: pr-$(System.PullRequest.PullRequestNumber)
+  - name: prTagName
+    value: pr-$(System.PullRequest.PullRequestNumber)-$(Build.BuildNumber)
+  - name: imageName
+    value: videoapi
+  - name: subscriptionName
+    value: DTS-SHAREDSERVICES--Video Hearings
+  - name: acrSubscription
+    value: "DTS-SHAREDSERVICES-PROD-Video Hearings"
+  - name: acrName
+    value: "sdshmctspublic"
+  - name: repositoryName
+    value: vh/video-api
+  - name: gitRepoName
+    value: vh-video-api
+  - name: chartName
+    value: vh-video-api
+  - name: chartRepoPath
+    value: "$(Build.SourcesDirectory)/"
+  - name: chartPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api
+  - name: envValuesPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.yaml
+  - name: envValuesTemplatePath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.template.yaml
+  - name: dnsZoneSubscription
+    value: "DTS-CFTPTL-INTSVC"
+  - name: dnsZoneResourceGroup
+    value: "core-infra-intsvc-rg"
+  - name: dnsZone
+    value: .platform.hmcts.net
+  - name: gh_app_private_key_file_name
+    value: hmcts-ado-cnp-app.private-key.pem
+  - name: vhSQLServerName
+    value: vh-infra-core-
+  - name: VideoApiDbName
+    value: vhvideo
+  - name: vhResourceGroup
+    value: vh-infra-core-
+  - name: efContextNameRefData
+    value: RefDataContext
+  - name: efProjectNameRefData
+    value: RefData.csproj
+  - name: efContextName
+    value: VideoApiDbContext
+  - name: efProjectName
+    value: VideoApi.csproj
+  - name: vhKeyVault
+    value: vh-infra-core-
+  - name: vhSqlUsernameSecret
+    value: vh-infra-core--sql-username
+  - name: vhSqlPasswordSecret
+    value: vh-infra-core--sql-password
+  - name: env
+    value: "demo"
+  jobs:
+  - job: Generate_Entity_Framework_Script
+    displayName: "Generate Entity Framework Script"
+    steps:
+    - task: NuGetAuthenticate@0
+      displayName: NuGet Authentication
+    - task: PowerShell@2
+      displayName: Install EF Tool
+      inputs:
+        targetType: inline
+        script: >
+          $efVersion="6.0.24"
+
+
+          dotnet tool update dotnet-ef --global --version $efVersion
+        pwsh: true
+    - task: PowerShell@2
+      displayName: Generate VideoApiDbContext Scripts
+      inputs:
+        targetType: inline
+        script: "$outputPath=\"$(Build.StagingDirectory)\"\n$workingPath=\"$(System.DefaultWorkingDirectory)/VideoApi/VideoApi\"\n$projectName=\"VideoApi.csproj\"\n\n$contextName=\"VideoApiDbContext\"\n$outputName=\"$contextName.sql\"\n\n$env:PATH += \":$Env:HOME/.dotnet/tools\"    \n\ndotnet ef migrations script --output \"$outputPath/$outputName\" --context $contextName --idempotent --project \"$workingPath/$projectName\" --startup-project \"$workingPath/$projectName\" -v\n"
+        pwsh: true
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Artifacts
+      inputs:
+        targetPath: $(Build.StagingDirectory)
+        publishLocation: Pipeline
+        artifact: VideoApiDbContext-$(Build.BuildId)
+- stage: Run_Entity_Framework
+  displayName: Demo EF Release
+  dependsOn:
+  - Pre_Run_Tasks
+  jobs:
+  - job: Run_Entity_Framework_Demo
     variables:
-      - template: variables/shared.yaml
-    jobs:
-      - job: CI_Helm
-        displayName: "Helm CI"
-        steps:
-          - checkout: self
+    - name: env
+      value: "demo"
+    - name: appName
+      value: VideoApi
+    - name: nuget_org_name
+      value: "Video Hearings/vh-packages"
+    - name: nuget_feed_name
+      value: "vh-packages"
+    - name: git_version_config_path
+      value: $(Build.SourcesDirectory)/sds-git-version-config.yml
+    - name: nuget_package_name
+      value: "VideoApi.Client"
+    - name: git_repo_name
+      value: "video-api"
+    - name: sonar_exclusion
+      value: "**/VideoApi.Contract/**,**/Video.API/Program.cs, **/Video.API/Startup.cs, **/Video.API/Extensions/**, **/Video.API/Swagger/**, **/Video.API/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Video.Common/**, **/Video.DAL/Mappings/**, **/Video.DAL/SeedData/**, **/Video.DAL/VideoDbContext.cs, **/Video.DAL/**/DesignTimeHearingsContextFactory.cs, Video.DAL/Migrations/**, **/Video.Domain/Ddd/**, **/Video.DAL/Commands/Core/**, **/Video.DAL/Queries/Core/**, **/Testing.Common/**, **/Video.DAL/Migrations/*, **/Video.DAL/Migrations/**, **/Migrations/*"
+    - name: prNumber
+      value: $(System.PullRequest.PullRequestNumber)
+    - name: prTagPrefix
+      value: pr-$(System.PullRequest.PullRequestNumber)
+    - name: prTagName
+      value: pr-$(System.PullRequest.PullRequestNumber)-$(Build.BuildNumber)
+    - name: imageName
+      value: videoapi
+    - name: subscriptionName
+      value: DTS-SHAREDSERVICES-DEMO-Video Hearings
+    - name: acrSubscription
+      value: "DTS-SHAREDSERVICES-PROD-Video Hearings"
+    - name: acrName
+      value: "sdshmctspublic"
+    - name: repositoryName
+      value: vh/video-api
+    - name: gitRepoName
+      value: vh-video-api
+    - name: chartName
+      value: vh-video-api
+    - name: chartRepoPath
+      value: "$(Build.SourcesDirectory)/"
+    - name: chartPath
+      value: $(Build.SourcesDirectory)/charts/vh-video-api
+    - name: envValuesPath
+      value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.yaml
+    - name: envValuesTemplatePath
+      value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.template.yaml
+    - name: dnsZoneSubscription
+      value: "DTS-CFTPTL-INTSVC"
+    - name: dnsZoneResourceGroup
+      value: "core-infra-intsvc-rg"
+    - name: dnsZone
+      value: demo.platform.hmcts.net
+    - name: gh_app_private_key_file_name
+      value: hmcts-ado-cnp-app.private-key.pem
+    - name: vhSQLServerName
+      value: vh-infra-core-demo
+    - name: VideoApiDbName
+      value: vhvideo
+    - name: vhResourceGroup
+      value: vh-infra-core-demo
+    - name: efContextNameRefData
+      value: RefDataContext
+    - name: efProjectNameRefData
+      value: RefData.csproj
+    - name: efContextName
+      value: VideoApiDbContext
+    - name: efProjectName
+      value: VideoApi.csproj
+    - name: vhKeyVault
+      value: vh-infra-core-demo
+    - name: vhSqlUsernameSecret
+      value: vh-infra-core-demo-sql-username
+    - name: vhSqlPasswordSecret
+      value: vh-infra-core-demo-sql-password
+    displayName: Run Entity Framework Demo
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: 30f35852-3f7e-4c0c-9a88-e127b4f97211@1
+      displayName: Download Sql Artifact
+      inputs:
+        alias: current
+    - task: AzureCLI@2
+      name: GetSecretPassword
+      displayName: Get Secret vh-infra-core-demo-sql-password from vh-infra-core-demo
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-DEMO-Video Hearings
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: >-
+          $KvSecret = az keyvault secret show --vault-name vh-infra-core-demo --name vh-infra-core-demo-sql-password -o json
 
-          - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
-            parameters:
-              chartPath: ${{ variables.chartPath }}
-              chartValuesPath: ${{ variables.chartPath }}
+          $KvSecretObj = $KvSecret | ConvertFrom-Json
 
-      - job: UnitAndIntegrationTests
-        displayName: "Unit and Integration Tests"
-        steps:
-          - checkout: self
+          $SecretId = $KvSecretObj.id
 
-          - template: templates/dotnet/build-test-analyse.yml@azTemplates
-            parameters:
-              dotnetVersion: ${{ variables.dotnetVersion }}
-              nugetConfigPath: nuget.config
-              appName: ${{ variables.appName }}
-              dockerComposeTestFile: docker-compose.tests.yml
-              sonarExtraProperties: |
-                sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
-                sonar.exclusions=**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi/Swagger/**/*, VideoApi/VideoApi.DAL/Migrations/*
-                sonar.coverage.exclusions=**/VideoApi/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi.Common/**/*, **/VideoApi.IntegrationTests/**/*, **/VideoApi.UnitTests/**/*, **/VideoApi/Extensions/*
+          $keyVaultURL = '@Microsoft.KeyVault(SecretUri=' + $KvSecretObj.id + ')'
 
-  ####################################################
-  # Pre Release Tasks. ###############################
-  - stage: Pre_Release_Tasks
-    displayName: Pre-Release Tasks
-    variables:
-      - template: variables/shared.yaml
-    jobs:
-      - job: Generate_Entity_Framework_Script
-        displayName: "Generate Entity Framework Script"
-        steps:
-          - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
-            parameters:
-              efVersion: ${{ variables.efDotnetToolVersion }}
-              outputPath: $(Build.StagingDirectory)
-              contextName: ${{ variables.efContextName }}
-              workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
-              migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
-              projectName: ${{ variables.efProjectName }}
-    
-      - job: Generate_RefData_Entity_Framework_Script
-        displayName: "Generate RefData Entity Framework Script"
-        steps:
-          - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
-            parameters:
-              efVersion: ${{ variables.efDotnetToolVersion }}
-              outputPath: $(Build.StagingDirectory)
-              contextName: ${{ variables.efContextNameRefData }}
-              workingPath: $(System.DefaultWorkingDirectory)/RefData
-              migrationsPath: RefData/Migrations
-              projectName: ${{ variables.efProjectNameRefData }}
+          $SecretValue = $KvSecretObj.value
 
-      - job: package_nuget
-        displayName: "Package NuGet Packages"
-        steps:
-          - template: templates\dotnet\package-nuget-packages.yml@azTemplates
-            parameters:
-              nugetProjectPath: "${{ variables.appName }}/${{ variables.nuget_package_name }}"
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-              gitVersionConfigPath: ${{ variables.git_version_config_path }}
+          $SecretName = $KvSecretObj.name
 
-      - job: PublishAcceptanceTests
-        dependsOn: package_nuget
-        displayName: Publish Acceptance Tests
-        variables:
-          projectPath: "${{ variables.appName }}/${{ variables.appName }}"
-        steps:
-          - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
-            parameters:
-              netVersion: ${{ variables.dotnetVersion }}
-              vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-              coreProjectPath: $(projectPath)
-  #####################################################
-  # Build Docker Image. ###############################
-  - stage: Dock
-    displayName: Docker Build & Push Image
-    variables:
-      - group: aks-cluster-info
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-      - group: vh-github-app-credentials
-    jobs:
-      - job: Dock
-        displayName: "Build and Push Image ${{ variables.git_repo_name }}"
-        steps:
-          - checkout: self
 
-          - template: templates\Github\get-app-token.yaml@azTemplates
-            parameters:
-              privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
-              appId: $(gh_app_app_id)
+          Write-Host("##vso[task.setvariable variable=prop.value;isOutput=true;issecret=true]$SecretValue")
 
-          - template: templates\Github\bump-chart-versions.yaml@azTemplates
-            parameters:
-              chartName: ${{ variables.chartName }}
-              chartPath: $(Build.SourcesDirectory)
-              chartBranch: $(System.PullRequest.SourceBranch)
-              githubToken: $(githubappinstall.token)
-              githubUsername: $(gh_app_name)
-              githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
+          Write-Host("##vso[task.setvariable variable=prop.id;isOutput=true]$SecretId")
 
-          - bash: |
-              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
-            displayName: Add NuGet Feed Authentication
-            workingDirectory: ${{ variables.appName }}
+          Write-Host("##vso[task.setvariable variable=prop.keyVaultURL;isOutput=true]$keyVaultURL")
 
-          - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
+          Write-Host("##vso[task.setvariable variable=prop.name;isOutput=true]$SecretName")
+    - task: AzureCLI@2
+      name: GetSecretUser
+      displayName: Get Secret vh-infra-core-demo-sql-username from vh-infra-core-demo
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-DEMO-Video Hearings
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: >-
+          $KvSecret = az keyvault secret show --vault-name vh-infra-core-demo --name vh-infra-core-demo-sql-username -o json
 
-          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
-              imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
-              imageTags:
-                - "${{ variables.prTagName }}"
+          $KvSecretObj = $KvSecret | ConvertFrom-Json
 
-  #####################################################
-  # Run Entity Framework Dev. #########################
-  - stage: Run_Entity_Framework_Dev
-    displayName: Run Entity Framework Dev
-    dependsOn: Dock
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs:
-      - job: Run_Entity_Framework_Dev
-        pool:
-          vmImage: "windows-latest" # This Job Must be Run on Windows
-        displayName: Run Entity Framework Dev
-        steps:
-          - download: current
-            displayName: Download Sql Artifact
+          $SecretId = $KvSecretObj.id
 
-          - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-            parameters:
-              sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-              sqlServerName: ${{ variables.vhSQLServerName }}
-              databaseName: ${{ variables.videoApiDbName }}
-              azureSubscription: ${{ variables.subscriptionName }}
-              sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-              kvfirewallRequired: false
-              kvName: ${{ variables.vhKeyVault }}
-              kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-              kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
-  
-      - job: Run_Entity_Framework_RefData_Dev
-        pool:
-          vmImage: "windows-latest" # This Job Must be Run on Windows
-        displayName: Run Entity Framework Ref Data Dev
-        dependsOn: Run_Entity_Framework_Dev
-        steps:
-          - download: current
-            displayName: Download Sql Artifact
+          $keyVaultURL = '@Microsoft.KeyVault(SecretUri=' + $KvSecretObj.id + ')'
 
-          - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-            parameters:
-              sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-              sqlServerName: ${{ variables.vhSQLServerName }}
-              databaseName: ${{ variables.videoApiDbName }}
-              azureSubscription: ${{ variables.subscriptionName }}
-              sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextNameRefData }}-$(Build.BuildId)/${{ variables.efContextNameRefData }}.sql"
-              kvfirewallRequired: false
-              kvName: ${{ variables.vhKeyVault }}
-              kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-              kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+          $SecretValue = $KvSecretObj.value
 
-  #####################################################
-  # Deploy Helm Chart to Dev. #########################
-  - stage: Install
-    dependsOn: Run_Entity_Framework_Dev
-    displayName: Deploy Helm Chart Dev AKS
-    variables:
-      - group: vh-github-app-credentials
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-      - name: dnsRecordName
-        value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
-    jobs:
-      - job: helm_uninstall
-        displayName: Uninstall Helm from Dev
-        steps:
-          - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
-            parameters:
-              subscriptionName: "${{ variables.subscriptionName }}"
-              environment: ${{ variables.env }}
+          $SecretName = $KvSecretObj.name
 
-          - template: templates/Containerisation/helm/helm-uninstall.yaml@azTemplates
-            parameters:
-              namespace: "vh"
-              releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
-              azureSubscription: "${{ variables.subscriptionName }}"
-              aksResourceGroupName: "$(aksCluster.resourceGroup)"
-              aksClusterName: "$(aksCluster.name)"
 
-      - job: aks_push
-        displayName: Deploy To Dev AKS
-        dependsOn: helm_uninstall
-        steps:
-          - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
-            parameters:
-              subscriptionName: "${{ variables.subscriptionName }}"
-              environment: ${{ variables.env }}
-          - template: templates/Containerisation/helm/helm-install.yaml@azTemplates
-            parameters:
-              privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
-              appId: $(gh_app_app_id)
-              envValuesTemplatePath: ${{ variables.envValuesTemplatePath }}
-              envValuesPath: ${{ variables.envValuesPath }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
-              prTagName: ${{ variables.prTagName }}
-              releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
-              dnsRecordName: ${{ variables.dnsRecordName }}
-              dnsZone: ${{ variables.dnsZone }}
-              env: ${{ variables.env }}
-              chartName: ${{ variables.chartName }}
-              chartPath: ${{ variables.chartPath }}
-              subscriptionName: "${{ variables.subscriptionName }}"
-              aksResourceGroupName: "$(aksCluster.resourceGroup)"
-              aksClusterName: "$(aksCluster.name)"
-              dnsSubscriptionName: "${{ variables.dnsZoneSubscription }}"
-              dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
+          Write-Host("##vso[task.setvariable variable=prop.value;isOutput=true;issecret=true]$SecretValue")
 
-  ##################################################
-  # Deploy Nuget Packages. #########################
-  - stage: Push_Nuget
-    dependsOn: Run_Entity_Framework_Dev
-    displayName: Deploy NuGet Packages
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs:
-      - job: Publish_Nuget
-        displayName: Publish NuGet Packages
-        steps:
-          - template: templates\dotnet\push-nuget-packages.yml@azTemplates
-            parameters:
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+          Write-Host("##vso[task.setvariable variable=prop.id;isOutput=true]$SecretId")
 
-  ##################################################
-  # Run Acceptance Tests. ##########################
-  - stage: Acceptance_Tests_Dev
-    dependsOn: Install
-    displayName: Acceptance Tests Dev
-    variables:
-      - group: vh-video-api
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-      - name: dnsRecordName
-        value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
-    jobs:
-      - job: AcceptanceTestsDev
-        pool: VH Self Hosted
-        displayName: Acceptance Tests Dev
-        steps:
-          - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
-            parameters:
-              netVersion: ${{ variables.dotnetVersion }}
-              environment: ${{ variables.env }}
-              azureSubscription: ${{ variables.subscriptionName }}
-              acceptanceTestSettings:
-                # App Insights
-                - name: ApplicationInsights:ConnectionString
-                  value: connectionstrings--applicationinsights
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
+          Write-Host("##vso[task.setvariable variable=prop.keyVaultURL;isOutput=true]$keyVaultURL")
 
-                # Azure AD
-                - name: AzureAd:ClientId
-                  value: azuread--clientid
-                  keyVaultName: vh-video-api-${{ variables.env }}
-                  secret: true
-                - name: AzureAd:ClientSecret
-                  value: azuread--clientsecret
-                  keyVaultName: vh-video-api-${{ variables.env }}
-                  secret: true
-                - name: AzureAd:TenantId
-                  value: azuread--tenantid
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
+          Write-Host("##vso[task.setvariable variable=prop.name;isOutput=true]$SecretName")
+    - task: AzureCLI@2
+      name: AddFirewallRule
+      displayName: Add SQL Firewall Rule
+      continueOnError: false
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-DEMO-Video Hearings
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: >
+          $ruleName = "AzureDevOpsRule-$(Build.BuildId)"
 
-                # Services Configuration
-                - name: Services:VideoApiResourceId
-                  value: azuread--identifieruri
-                  keyVaultName: vh-video-api-${{ variables.env }}
-                  secret: true
-                - name: Services:CallbackUri
-                  value: $(CallbackUri)
-                - name: Services:VideoApiUrl
-                  value: "https://vh-video-api-pr-$(System.PullRequest.PullRequestNumber).dev.platform.hmcts.net"
+          $publicIp = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
 
-                # Wowza Configuration
-                - name: WowzaConfiguration:RestApiEndpoints
-                  value: wowzaconfiguration--endpoint-https
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StreamingEndpoint
-                  value: wowzaconfiguration--endpoint-https
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:Username
-                  value: wowzaconfiguration--username
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:Password
-                  value: wowzaconfiguration--restPassword
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageDirectory
-                  value: wowzaconfiguration--azure-storage-directory
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageAccountName
-                  value: wowzaconfiguration--storage-account
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageAccountKey
-                  value: wowzaconfiguration--storageaccountkey
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageContainerName
-                  value: wowzaconfiguration--storage-account-container
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:StorageEndpoint
-                  value: wowzaconfiguration--storage-account-endpoint
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: WowzaConfiguration:ManagedIdentityClientId
-                  value: wowzaconfiguration--managedidentityclientid
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
+          $sqlServer = "vh-infra-core-demo"
 
-                # CVP Configuration
-                - name: CvpConfiguration:StorageAccountName
-                  value: CvpConfiguration--StorageAccountName
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: CvpConfiguration:StorageAccountKey
-                  value: CvpConfiguration--StorageAccountKey
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: CvpConfiguration:StorageContainerName
-                  value: CvpConfiguration--StorageContainerName
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
-                - name: CvpConfiguration:StorageEndpoint
-                  value: CvpConfiguration--StorageEndpoint
-                  keyVaultName: vh-infra-core-${{ variables.env }}
-                  secret: true
+          $sqlResourceGroup = "vh-infra-core-demo"
 
-                # Kinly Configuration
-                - name: KinlyConfiguration:ConferencePhoneNumber
-                  value: $(ConferencePhoneNumber)
-                - name: KinlyConfiguration:ConferencePhoneNumberWelsh
-                  value: $(ConferencePhoneNumberWelsh)
-                - name: KinlyConfiguration:ApiUrl
-                  value: $(KinlyApiUrl)
-                - name: KinlyConfiguration:SelfTestApiUrl
-                  value: $(KinlySelfTestApiUrl)
-                - name: KinlyConfiguration:ConferenceUsername
-                  value: $(ConferenceUsername)
-                - name: KinlyConfiguration:CallbackUri
-                  value: $(CallbackUri)
-                
-                # Vodafone Configuration
-                - name: VodafoneConfiguration:ConferencePhoneNumber
-                  value: $(ConferencePhoneNumber)
-                - name: VodafoneConfiguration:ConferencePhoneNumberWelsh
-                  value: $(ConferencePhoneNumberWelsh)
-                - name: VodafoneConfiguration:ApiUrl
-                  value: $(VodafoneApiUrl)
-                - name: VodafoneConfiguration:SelfTestApiUrl
-                  value: $(VodafoneSelfTestApiUrl)
-                - name: VodafoneConfiguration:ConferenceUsername
-                  value: $(ConferenceUsername)
-                - name: VodafoneConfiguration:CallbackUri
-                  value: $(CallbackUri)
 
-                # Quick Links Configuration
-                - name: QuickLinks:Issuer
-                  value: $(Issuer)
-                - name: QuickLinks:RsaPrivateKey
-                  value: $(RsaPrivateKey)
-                - name: QuickLinks:ValidAudience
-                  value: $(ValidAudience)
+          az sql server firewall-rule create -g $sqlResourceGroup  -s $sqlServer -n $ruleName  --start-ip-address $publicIp --end-ip-address $publicIp
+
+
+          $check = az sql server firewall-rule list -g $sqlResourceGroup  -s $sqlServer
+
+
+          if ($check -like "*$ruleName*") {
+            Write-Host "##vso[task.setvariable variable=fwRuleAdded;isOutput=true]yes"
+          }
+
+          else {
+            Throw "Failed To Add Firewall Rule To SQL Server..."
+          }
+    - task: SqlAzureDacpacDeployment@1
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-DEMO-Video Hearings
+        AuthenticationType: 'server'
+        ServerName: vh-infra-core-demo.database.windows.net
+        DatabaseName: vhvideo
+        SqlUsername: $(GetSecretUser.prop.value)
+        SqlPassword: $(GetSecretPassword.prop.value)
+        deployType: 'SqlTask'
+        SqlFile: $(Pipeline.Workspace)/VideoApiDbContext-$(Build.BuildId)/VideoApiDbContext.sql
+        IpDetectionMethod: 'AutoDetect'
+    - task: AzureCLI@2
+      name: RemoveFirewallRule
+      displayName: Remove SQL Firewall Rule
+      condition: eq(variables['AddFirewallRule.fwRuleAdded'], 'yes')
+      continueOnError: false
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-DEMO-Video Hearings
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: >
+          $ruleName = "AzureDevOpsRule-$(Build.BuildId)"
+
+          $sqlServer = "vh-infra-core-demo"
+
+          $sqlResourceGroup = "vh-infra-core-demo"
+
+
+          az sql server firewall-rule delete -g $sqlResourceGroup  -s $sqlServer -n $ruleName
+- stage: Docker_Build_Push
+  displayName: Docker Build & Push Image
+  dependsOn:
+  - Run_Entity_Framework
+  variables:
+  - name: env
+    value: "demo"
+  - name: appName
+    value: VideoApi
+  - name: nuget_org_name
+    value: "Video Hearings/vh-packages"
+  - name: nuget_feed_name
+    value: "vh-packages"
+  - name: git_version_config_path
+    value: $(Build.SourcesDirectory)/sds-git-version-config.yml
+  - name: nuget_package_name
+    value: "VideoApi.Client"
+  - name: git_repo_name
+    value: "video-api"
+  - name: sonar_exclusion
+    value: "**/VideoApi.Contract/**,**/Video.API/Program.cs, **/Video.API/Startup.cs, **/Video.API/Extensions/**, **/Video.API/Swagger/**, **/Video.API/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Video.Common/**, **/Video.DAL/Mappings/**, **/Video.DAL/SeedData/**, **/Video.DAL/VideoDbContext.cs, **/Video.DAL/**/DesignTimeHearingsContextFactory.cs, Video.DAL/Migrations/**, **/Video.Domain/Ddd/**, **/Video.DAL/Commands/Core/**, **/Video.DAL/Queries/Core/**, **/Testing.Common/**, **/Video.DAL/Migrations/*, **/Video.DAL/Migrations/**, **/Migrations/*"
+  - name: prNumber
+    value: $(System.PullRequest.PullRequestNumber)
+  - name: prTagPrefix
+    value: pr-$(System.PullRequest.PullRequestNumber)
+  - name: prTagName
+    value: pr-$(System.PullRequest.PullRequestNumber)-$(Build.BuildNumber)
+  - name: imageName
+    value: videoapi
+  - name: subscriptionName
+    value: DTS-SHAREDSERVICES--Video Hearings
+  - name: acrSubscription
+    value: "DTS-SHAREDSERVICES-PROD-Video Hearings"
+  - name: acrName
+    value: "sdshmctspublic"
+  - name: repositoryName
+    value: vh/video-api
+  - name: gitRepoName
+    value: vh-video-api
+  - name: chartName
+    value: vh-video-api
+  - name: chartRepoPath
+    value: "$(Build.SourcesDirectory)/"
+  - name: chartPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api
+  - name: envValuesPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.yaml
+  - name: envValuesTemplatePath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.template.yaml
+  - name: dnsZoneSubscription
+    value: "DTS-CFTPTL-INTSVC"
+  - name: dnsZoneResourceGroup
+    value: "core-infra-intsvc-rg"
+  - name: dnsZone
+    value: .platform.hmcts.net
+  - name: gh_app_private_key_file_name
+    value: hmcts-ado-cnp-app.private-key.pem
+  - name: vhSQLServerName
+    value: vh-infra-core-
+  - name: VideoApiDbName
+    value: vhvideo
+  - name: vhResourceGroup
+    value: vh-infra-core-
+  - name: efContextNameRefData
+    value: RefDataContext
+  - name: efProjectNameRefData
+    value: RefData.csproj
+  - name: efContextName
+    value: VideoApiDbContext
+  - name: efProjectName
+    value: VideoApi.csproj
+  - name: vhKeyVault
+    value: vh-infra-core-
+  - name: vhSqlUsernameSecret
+    value: vh-infra-core--sql-username
+  - name: vhSqlPasswordSecret
+    value: vh-infra-core--sql-password
+  jobs:
+  - job: Docker_Build
+    displayName: "Docker Build and Push"
+    steps:
+    - task: 6d15af64-176c-496d-b583-fd2ae21d4df4@1
+      inputs:
+        repository: self
+    - task: Bash@3
+      displayName: Add NuGet Feed Authentication
+      inputs:
+        targetType: inline
+        script: |
+          sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
+        workingDirectory: VideoApi
+    - task: AzureCLI@2
+      displayName: Get ID for sdshmctspublic
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-PROD-Video Hearings
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: >
+          $acrId=az acr show -n 'sdshmctspublic' --query "id" -o tsv
+
+          echo "##vso[task.setvariable variable=acrId;isOutput=true]$acrId"
+    - task: DockerCompose@0
+      displayName: 'Run a Docker Compose Build'
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-PROD-Video Hearings
+        azureContainerRegistry: '{"loginServer":"sdshmctspublic.azurecr.io", "id" : "$(acrId)"}'
+        projectName: sdshmctspublic/vh/video-api
+        qualifyImageNames: false
+        dockerComposeCommand: build
+        dockerComposeFile: '**/docker-compose.yml'
+    - task: AzureCLI@2
+      displayName: Push videoapi to sdshmctspublic
+      name: pushImage
+      inputs:
+        azureSubscription: DTS-SHAREDSERVICES-PROD-Video Hearings
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: "$tags= $env:tags | ConvertFrom-Json\n$repositoryName=$env:repositoryName\n$imageName=$env:imageName\n$acrName=$env:acrName\n\nWrite-Host \"$tags\"\nWrite-Host \"$repositoryName\"\nWrite-Host \"$imageName\"\nWrite-Host \"$acrName\"\n\nWrite-Host \"List Images\"\ndocker images\n\nWrite-Host \"Sign Into ACR $acrName\"\naz acr login --name $acrName\n\nforeach ($tag in $tags){\n\n  Write-Host \"Process Tag $tag\"\n\n  $date=$(Get-Date -Format yyyyMMddHHmm);\n  $commitId=\"$(Build.SourceVersion)\"\n  $shorterCommitId=$commitId.SubString(0,7)\n\n  $newTag= $tag -replace \"#{DATETIME}#\", $date -replace \"#{SHORTCOMMITID}#\", $shorterCommitId\n  Write-Host \"##[command]NEW TAG : $newTag\"\n\n  $imageTag=\"$acrName.azurecr.io/${repositoryName}:$newTag\"\n\n  Write-Host \"##vso[task.setvariable variable=fullImageName;isOutput=true]$imageTag\"\n\n  docker tag $imageName $imageTag\n  \n  Write-Host \"Push $imageTag\"\n  docker push $imageTag\n}\n"
+      env:
+        acrName: sdshmctspublic
+        repositoryName: vh/video-api
+        imageName: videoapi
+        tags: >-
+          [
+            ""
+          ]
+- stage: Push_Nuget
+  displayName: Deploy Nuget Packages
+  dependsOn:
+  - Run_Entity_Framework
+  variables:
+  - name: appName
+    value: VideoApi
+  - name: nuget_org_name
+    value: "Video Hearings/vh-packages"
+  - name: nuget_feed_name
+    value: "vh-packages"
+  - name: git_version_config_path
+    value: $(Build.SourcesDirectory)/sds-git-version-config.yml
+  - name: nuget_package_name
+    value: "VideoApi.Client"
+  - name: git_repo_name
+    value: "video-api"
+  - name: sonar_exclusion
+    value: "**/VideoApi.Contract/**,**/Video.API/Program.cs, **/Video.API/Startup.cs, **/Video.API/Extensions/**, **/Video.API/Swagger/**, **/Video.API/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Video.Common/**, **/Video.DAL/Mappings/**, **/Video.DAL/SeedData/**, **/Video.DAL/VideoDbContext.cs, **/Video.DAL/**/DesignTimeHearingsContextFactory.cs, Video.DAL/Migrations/**, **/Video.Domain/Ddd/**, **/Video.DAL/Commands/Core/**, **/Video.DAL/Queries/Core/**, **/Testing.Common/**, **/Video.DAL/Migrations/*, **/Video.DAL/Migrations/**, **/Migrations/*"
+  - name: prNumber
+    value: $(System.PullRequest.PullRequestNumber)
+  - name: prTagPrefix
+    value: pr-$(System.PullRequest.PullRequestNumber)
+  - name: prTagName
+    value: pr-$(System.PullRequest.PullRequestNumber)-$(Build.BuildNumber)
+  - name: imageName
+    value: videoapi
+  - name: subscriptionName
+    value: DTS-SHAREDSERVICES--Video Hearings
+  - name: acrSubscription
+    value: "DTS-SHAREDSERVICES-PROD-Video Hearings"
+  - name: acrName
+    value: "sdshmctspublic"
+  - name: repositoryName
+    value: vh/video-api
+  - name: gitRepoName
+    value: vh-video-api
+  - name: chartName
+    value: vh-video-api
+  - name: chartRepoPath
+    value: "$(Build.SourcesDirectory)/"
+  - name: chartPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api
+  - name: envValuesPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.yaml
+  - name: envValuesTemplatePath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.template.yaml
+  - name: dnsZoneSubscription
+    value: "DTS-CFTPTL-INTSVC"
+  - name: dnsZoneResourceGroup
+    value: "core-infra-intsvc-rg"
+  - name: dnsZone
+    value: .platform.hmcts.net
+  - name: gh_app_private_key_file_name
+    value: hmcts-ado-cnp-app.private-key.pem
+  - name: vhSQLServerName
+    value: vh-infra-core-
+  - name: VideoApiDbName
+    value: vhvideo
+  - name: vhResourceGroup
+    value: vh-infra-core-
+  - name: efContextNameRefData
+    value: RefDataContext
+  - name: efProjectNameRefData
+    value: RefData.csproj
+  - name: efContextName
+    value: VideoApiDbContext
+  - name: efProjectName
+    value: VideoApi.csproj
+  - name: vhKeyVault
+    value: vh-infra-core-
+  - name: vhSqlUsernameSecret
+    value: vh-infra-core--sql-username
+  - name: vhSqlPasswordSecret
+    value: vh-infra-core--sql-password
+  jobs:
+  - job: Publish_Nuget
+    displayName: Publish NuGet Packages
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: 'NugetPackages'
+        path: $(Build.SourcesDirectory)/nugets
+    - task: NuGetCommand@2
+      displayName: Push NuGet Packages
+      inputs:
+        command: push
+        packagesToPush: '$(Build.SourcesDirectory)/nugets/*.nupkg'
+        publishVstsFeed: Video Hearings/vh-packages/vh-packages
+        versioningScheme: byBuildNumber
+        allowPackageConflicts: true
+- stage: Helm
+  displayName: Push Helm Charts
+  dependsOn:
+  - Docker_Build_Push
+  variables:
+  - name: env
+    value: "demo"
+  - name: appName
+    value: VideoApi
+  - name: nuget_org_name
+    value: "Video Hearings/vh-packages"
+  - name: nuget_feed_name
+    value: "vh-packages"
+  - name: git_version_config_path
+    value: $(Build.SourcesDirectory)/sds-git-version-config.yml
+  - name: nuget_package_name
+    value: "VideoApi.Client"
+  - name: git_repo_name
+    value: "video-api"
+  - name: sonar_exclusion
+    value: "**/VideoApi.Contract/**,**/Video.API/Program.cs, **/Video.API/Startup.cs, **/Video.API/Extensions/**, **/Video.API/Swagger/**, **/Video.API/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Video.Common/**, **/Video.DAL/Mappings/**, **/Video.DAL/SeedData/**, **/Video.DAL/VideoDbContext.cs, **/Video.DAL/**/DesignTimeHearingsContextFactory.cs, Video.DAL/Migrations/**, **/Video.Domain/Ddd/**, **/Video.DAL/Commands/Core/**, **/Video.DAL/Queries/Core/**, **/Testing.Common/**, **/Video.DAL/Migrations/*, **/Video.DAL/Migrations/**, **/Migrations/*"
+  - name: prNumber
+    value: $(System.PullRequest.PullRequestNumber)
+  - name: prTagPrefix
+    value: pr-$(System.PullRequest.PullRequestNumber)
+  - name: prTagName
+    value: pr-$(System.PullRequest.PullRequestNumber)-$(Build.BuildNumber)
+  - name: imageName
+    value: videoapi
+  - name: subscriptionName
+    value: DTS-SHAREDSERVICES--Video Hearings
+  - name: acrSubscription
+    value: "DTS-SHAREDSERVICES-PROD-Video Hearings"
+  - name: acrName
+    value: "sdshmctspublic"
+  - name: repositoryName
+    value: vh/video-api
+  - name: gitRepoName
+    value: vh-video-api
+  - name: chartName
+    value: vh-video-api
+  - name: chartRepoPath
+    value: "$(Build.SourcesDirectory)/"
+  - name: chartPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api
+  - name: envValuesPath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.yaml
+  - name: envValuesTemplatePath
+    value: $(Build.SourcesDirectory)/charts/vh-video-api/values.${env}.template.yaml
+  - name: dnsZoneSubscription
+    value: "DTS-CFTPTL-INTSVC"
+  - name: dnsZoneResourceGroup
+    value: "core-infra-intsvc-rg"
+  - name: dnsZone
+    value: .platform.hmcts.net
+  - name: gh_app_private_key_file_name
+    value: hmcts-ado-cnp-app.private-key.pem
+  - name: vhSQLServerName
+    value: vh-infra-core-
+  - name: VideoApiDbName
+    value: vhvideo
+  - name: vhResourceGroup
+    value: vh-infra-core-
+  - name: efContextNameRefData
+    value: RefDataContext
+  - name: efProjectNameRefData
+    value: RefData.csproj
+  - name: efContextName
+    value: VideoApiDbContext
+  - name: efProjectName
+    value: VideoApi.csproj
+  - name: vhKeyVault
+    value: vh-infra-core-
+  - name: vhSqlUsernameSecret
+    value: vh-infra-core--sql-username
+  - name: vhSqlPasswordSecret
+    value: vh-infra-core--sql-password
+  - group: vh-github-app-credentials
+  jobs:
+  - job: Helm
+    displayName: "Helm Push"
+    steps:
+    - task: 6d15af64-176c-496d-b583-fd2ae21d4df4@1
+      inputs:
+        repository: self
+    - task: DownloadSecureFile@1
+      name: secureFileDownload
+      displayName: Download hmcts-ado-cnp-app.private-key.pem
+      inputs:
+        secureFile: hmcts-ado-cnp-app.private-key.pem
+    - task: Bash@3
+      displayName: Get Github App JWT
+      name: githubapp
+      env:
+        private_key_file_path: $(secureFileDownload.secureFilePath)
+        app_id: $(gh_app_app_id)
+      inputs:
+        targetType: inline
+        script: |
+          private_key_file_path="${private_key_file_path}"
+          app_id="${app_id}"
+
+          private_key=$(cat $private_key_file_path)
+
+          # Shared content to use as template
+          header='{
+              "alg": "RS256",
+              "typ": "JWT"
+          }'
+          payload_template='{}'
+
+          build_payload() {
+                  jq -c \
+                          --arg iat_str "$(date +%s)" \
+                          --arg app_id "${app_id}" \
+                  '
+                  ($iat_str | tonumber) as $iat
+                  | .iat = $iat
+                  | .exp = ($iat + 300)
+                  | .iss = ($app_id | tonumber)
+                  ' <<< "${payload_template}" | tr -d '\n'
+          }
+
+          b64enc() { openssl enc -base64 -A | tr '+/' '-_' | tr -d '='; }
+          json() { jq -c . | LC_CTYPE=C tr -d '\n'; }
+          rs256_sign() { openssl dgst -binary -sha256 -sign <(printf '%s\n' "$1"); }
+
+          sign() {
+              local algo payload sig
+              algo=${1:-RS256}; algo=${algo^^}
+              payload=$(build_payload) || return
+              signed_content="$(json <<<"$header" | b64enc).$(json <<<"$payload" | b64enc)"
+              sig=$(printf %s "$signed_content" | rs256_sign "$private_key" | b64enc)
+              printf '%s.%s\n' "${signed_content}" "${sig}"
+          }
+
+          token=$(sign)
+          echo "##vso[task.setvariable variable=token;isOutput=true]$token"
+    - task: Bash@3
+      env:
+        githubToken: $(githubapp.token)
+        githubOrganisationName: hmcts
+      displayName: Get Installation Token
+      name: githubappinstall
+      inputs:
+        targetType: inline
+        script: |
+          ACCOUNT_NAME="${githubOrganisationName}"
+          APP_TOKEN="${githubToken}"
+
+          INSTALLATION_ID_RESPONSE=$(curl -s -H "Authorization: Bearer ${APP_TOKEN}" \
+            -H "Accept: application/vnd.github.machine-man-preview+json" \
+            https://api.github.com/app/installations)
+
+          INSTALLATION_ID=$(echo $INSTALLATION_ID_RESPONSE | jq '.[] | select(.account.login=="'${ACCOUNT_NAME}'")' | jq -r '.id')
+
+          if [ -z "$INSTALLATION_ID" ];
+          then
+            >&2 echo "Unable to obtain installation ID"
+            >&2 echo "$INSTALLATION_ID_RESPONSE"
+            exit 1
+          fi
+
+          # authenticate as github app and get access token
+          INSTALLATION_TOKEN_RESPONSE=$(curl -s -X POST \
+                -H "Authorization: Bearer ${APP_TOKEN}" \
+                -H "Accept: application/vnd.github.machine-man-preview+json" \
+                https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens)
+
+          INSTALLATION_TOKEN=$(echo $INSTALLATION_TOKEN_RESPONSE | jq -r '.token')
+
+          if [ -z "$INSTALLATION_TOKEN" ];
+          then
+            >&2 echo "Unable to obtain installation token"
+            >&2 echo "$INSTALLATION_TOKEN_RESPONSE"
+            exit 1
+          fi
+
+          echo $INSTALLATION_TOKEN
+          echo "##vso[task.setvariable variable=token;isOutput=true]$INSTALLATION_TOKEN"
+    - task: Bash@3
+      env:
+        chartPath: $(Build.SourcesDirectory)/charts/vh-video-api
+        chartName: vh-video-api
+        chartRepoName: hmcts-charts
+        chartRepoBranch: master
+        githubToken: $(githubappinstall.token)
+        githubUsername: $(gh_app_name)
+        githubEmail: $(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com
+        subDirectory: ''
+        exclusions: values.demo.template.yaml;values.dev.template.yaml
+      displayName: Push chart to helm-chart repo
+      inputs:
+        targetType: inline
+        script: "CHART_DIRECTORY=\"${chartPath}\"\nCHART_NAME=\"${chartName}\"\nrepo_name=\"${chartRepoName}\"\nbranch_name=\"${chartRepoBranch}\"\n\nhmcts_chart_root=\"./stable\"\nhmcts_chart_directory=\"${CHART_NAME}${subDirectory}\"\n\nRETRIES=3\nDELAY=5\nCOUNT=0\n\necho \"Chart Directory: $CHART_DIRECTORY\"\necho \"Chart Name: $CHART_NAME\"\n\necho \"github User: ${githubUsername}\"\necho \"github Email: ${githubEmail}\"\necho \"github Token: ${githubToken}\"\n\necho \"Repo Name: ${repo_name}\"\n\necho \"-------------------\"\n\nVERSION=$(cat \"$CHART_DIRECTORY/Chart.yaml\" | grep ^version | cut -d  ':' -f 2 | tr -d '[:space:]')\necho \"Chart Version: $VERSION\"\n\necho \"-------------------\"\n\nif [ -d \"${repo_name}\" ]; then\n  echo \"Remove Chart Directory\"\n  rm -rf ${repo_name}\nfi\necho \"-------------------\"\n\nwhile [ $COUNT -lt $RETRIES ]; do\n  if git clone https://github.com/hmcts/${repo_name}.git; then\n    echo \"Cloned\"\n    COUNT=0\n    break\n  fi\n  COUNT=$(($COUNT + 1))\n  if [ \"$COUNT\" = \"$RETRIES\" ]; then\n    exit 1\n  fi\n    echo \"Failed to Cloned\"\n  sleep $DELAY\ndone\necho \"-------------------\"\n\nif cd ${repo_name}; then\n  if [ -d \"${CHART_NAME}\" ]; then\n    GIT_CHART_VERSION=$(helm inspect chart \"${CHART_NAME}\" | grep ^version | cut -d ':' -f 2 | tr -d '[:space:]')\n    if [ \"${GIT_CHART_VERSION}\" = \"${VERSION}\" ]; then\n      echo \"No differences in the charts. Nothing to publish\" 1>&2\n      exit 0\n    fi\n  else\n    echo \"Chart version ${GIT_CHART_VERSION} not published to git yet\" 1>&2\n  fi\n  echo \"-------------------\"\n\n  echo \"Make Directory ${hmcts_chart_root}/${hmcts_chart_directory}\"\n  mkdir -p \"${hmcts_chart_root}/${hmcts_chart_directory}\"\n  echo \"-------------------\"\n\n  if rsync -a --delete-after \"${CHART_DIRECTORY}/\" \"${hmcts_chart_root}/${hmcts_chart_directory}\"; then\n\n    if [ -d ${hmcts_chart_root}/${hmcts_chart_directory}/charts ]; then\n      rm -rf ${hmcts_chart_root}/${hmcts_chart_directory}/charts\n      if [[ $? -ne 0 ]]; then\n        echo \"Unable to delete ${hmcts_chart_root}/${hmcts_chart_directory}/charts directory\" 1>&2\n      fi\n    fi\n    echo \"-------------------\"\n\n    if [ -e ${hmcts_chart_root}/${hmcts_chart_directory}/Chart.lock ]; then\n      rm -f ${hmcts_chart_root}/${hmcts_chart_directory}/Chart.lock\n      if [[ $? -ne 0 ]]; then\n        echo \"Unable to delete ${hmcts_chart_root}/${CHART_NAME}/Chart.lock \" 1>&2\n      fi\n    fi\n    echo \"-------------------\"\n\n\n\n    if [ -e ${hmcts_chart_root}/${hmcts_chart_directory}/requirements.lock ]; then\n      rm -f ${hmcts_chart_root}/${hmcts_chart_directory}/requirements.lock\n      if [[ $? -ne 0 ]]; then\n        echo \"Unable to delete ${hmcts_chart_root}/${hmcts_chart_directory}/requirements.lock \" 1>&2\n      fi\n    fi\n    echo \"-------------------\"\n\n    IFS=';' read -ra FILES <<< \"$exclusions\"\n    for file in \"${FILES[@]}\"; do\n      if [ -f ${hmcts_chart_root}/${hmcts_chart_directory}/$file ]; then\n      \n        echo \"Removing ${hmcts_chart_root}/${hmcts_chart_directory}/$file\"\n        rm -f ${hmcts_chart_root}/${hmcts_chart_directory}/$file\n\n        if [[ $? -ne 0 ]]; then\n          echo \"Unable to delete ${hmcts_chart_root}/${hmcts_chart_directory}/$file \" 1>&2\n        fi\n      fi\n    done\n\n    echo \"-------------------\"\n\n    git remote set-url origin $(git config remote.origin.url | sed \"s/github.com/${githubUsername}:${githubToken}@github.com/g\")\n    git config --global user.name \"${githubUsername}\"\n    git config --global user.email \"${githubEmail}\"\n    echo \"-------------------\"\n\n    git add \"${hmcts_chart_root}/${hmcts_chart_directory}/\"\n    git commit -m \"Auto-release ${CHART_NAME} ${VERSION} from ADO\"\n\n    echo \"-------------------\"\n    while [ $COUNT -lt $RETRIES ]; do\n      git pull origin ${branch_name}\n      if git push origin HEAD:${branch_name} --verbose; then\n        echo \"Chart published successfully with ${GIT_CHART_VERSION}\"\n        COUNT=0\n        break\n      else\n        echo \"Failed to publish chart to git. Retry count $COUNT of $RETRIES\"\n      fi\n      COUNT=$(($COUNT + 1))\n      if [ \"$COUNT\" = \"$RETRIES\" ]; then\n        exit 1\n      fi\n      sleep $DELAY\n    done\n    echo \"-------------------\"\n\n  else\n    echo \"Could not copy charts directory! Aborting\" 1>&2\n    exit 1\n  fi\n  echo \"-------------------\"\nelse\n  echo \"Could not change directory! Aborting\" 1>&2\n  exit 1\nfi\necho \"-------------------\"\n"
