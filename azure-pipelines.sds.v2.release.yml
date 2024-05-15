@@ -83,6 +83,7 @@ stages:
   # Push Helm Charts to Repo. #############
   - ${{each env in parameters.environments}}:
       - stage: Run_Helm_${{ env }}
+        dependsOn: Docker_Build_Push_Prod
         jobs:
           - ${{ if ne(env, 'dev') }}:
               - job: Approve_${{ env }}
