@@ -37,9 +37,9 @@ stages:
 
 
 #####################################################
-# Run Entity Framework Staging. #####################
+# Run Entity Framework Demo. #####################
 - stage: Run_Entity_Framework_Demo
-  displayName: Staging EF Release
+  displayName: Demo EF Release
   dependsOn:
     - Pre_Run_Tasks
   variables:
@@ -116,11 +116,12 @@ stages:
         repositoryName:  ${{ variables.repositoryName }}
         imageName: "${{ variables.imageName }}"
         imageTags:
-          - '${{ variables.stagingTagName }}'
+          - '${{ variables.releaseTagName }}'
+          - 'demo'
 
 #########################################
 # Push Helm Charts to Repo. #############
-- stage: Helm_Staging
+- stage: Helm_Demo
   displayName: Push Helm Charts
   dependsOn: 
     - Docker_Build_Push
