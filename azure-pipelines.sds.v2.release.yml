@@ -1,0 +1,105 @@
+name: $(Date:yyyyMMddHHmm)-$(Rev:r)
+
+trigger:
+  - master
+
+pr: none
+
+parameters:
+  - name: environments
+    type: object
+    default:
+      - dev
+      - stg
+      - test
+      - ithc
+      - demo
+      - prod
+
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: master
+      endpoint: hmcts
+
+pool:
+  vmImage: ubuntu-22.04
+
+stages:
+  #####################################################
+  # Pre-Release Tasks. ################################
+  - stage: Pre_Run_Tasks
+    displayName: 'Pre-Release Tasks'
+    variables:
+      - template: variables/shared.yaml
+    jobs:
+      - job: PublishAcceptanceTests
+        displayName: Publish Acceptance Tests
+        variables:
+          projectPath: '${{ variables.appName }}/${{ variables.appName }}'
+        steps:
+          - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
+            parameters:
+              vstsFeedId: '${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}'
+              coreProjectPath: $(projectPath)
+
+  #####################################################
+  # Build Docker Image & Push. ########################
+  - stage: Docker_Build_Push_Prod
+    displayName: Docker Build & Push Image
+    dependsOn:
+      - PublishAcceptanceTests
+    variables:
+      - template: variables/production.yaml
+      - template: variables/shared.yaml
+    jobs:
+      - job: Docker_Build
+        displayName: 'Docker Build and Push'
+        steps:
+          - checkout: self
+
+          - bash: |
+              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
+            displayName: Add NuGet Feed Authentication
+            workingDirectory: ${{ variables.appName }}
+
+          - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
+            parameters:
+              azureSubscription: ${{ variables.acrSubscription }}
+              acrName: ${{ variables.acrName }}
+              repositoryName: ${{ variables.repositoryName }}
+
+          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+            parameters:
+              azureSubscription: ${{ variables.acrSubscription }}
+              acrName: ${{ variables.acrName }}
+              repositoryName: ${{ variables.repositoryName }}
+              imageName: '${{ variables.imageName }}'
+              imageTags:
+                - '${{ variables.releaseTagName }}'
+                - 'latest'
+
+  #########################################
+  # Push Helm Charts to Repo. #############
+  - ${{each env in parameters.environments}}:
+      - stage: Run_Helm_${{ env }}
+        dependsOn: Docker_Build
+        jobs:
+          - ${{ if ne(env, 'dev') }}:
+              - job: Approve_${{ env }}
+                displayName: 'Approve to ${{ env }}'
+                pool: server
+                timeoutInMinutes: 10080 # 7 Days
+                steps:
+                  - task: ManualValidation@0
+                    timeoutInMinutes: 10080 # 7 Days
+                    inputs:
+                      instructions: 'Please Approve run to ${{ env }}'
+                      onTimeout: 'reject'
+          - job: Helm_${{ env }}
+            variables:
+              - template: variables/shared.yaml
+                parameters:
+                  env: ${{ env }}
