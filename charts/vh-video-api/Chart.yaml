@@ -2,7 +2,7 @@
 apiVersion: v2
 name: vh-video-api
 home: https://github.com/hmcts/vh-video-api
-version: 0.0.17
+version: 0.0.16
 description: Helm Chart for Video Hearing video-api
 maintainers:
   - name: VH Devops 
