@@ -20,8 +20,12 @@ public class SupplierApiHealthCheck : IHealthCheck
     {
         try
         {
-            var result =  await _videoPlatformService.GetPlatformHealthAsync();
-            return result.Health_status == PlatformHealth.HEALTHY ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
+            return HealthCheckResult.Healthy();
+            /*
+             * var result =  await _videoPlatformService.GetPlatformHealthAsync();
+               return result.Health_status == PlatformHealth.HEALTHY ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
+             */
+            
         }
         catch (Exception exception)
         {

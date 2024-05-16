@@ -59,8 +59,11 @@ namespace VideoApi
                         .SetIsOriginAllowed((host) => true)
                         .AllowCredentials();
                 }));
-            
-            var envName = Configuration["Services:VideoApiUrl"];
+            string envName;
+            if (Environment.IsDevelopment())
+                envName = "localhost";
+            else
+                envName = Configuration["Services:VideoApiUrl"];
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["LaunchDarkly:SdkKey"], envName));
 
             services.AddApplicationInsightsTelemetry();
