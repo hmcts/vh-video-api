@@ -16,11 +16,12 @@ public class AddEndpointCommand : ICommand
     public string Pin { get; }
     public (string, LinkedParticipantType)[] EndpointParticipants { get; }
 
-    public AddEndpointCommand(Guid conferenceId, 
+    public AddEndpointCommand(
+        Guid conferenceId, 
         string displayName, 
         string sipAddress, 
         string pin,
-        (string Username, LinkedParticipantType type)[] endpointParticipants)
+        params (string Username, LinkedParticipantType type)[] endpointParticipants)
     {
         ConferenceId = conferenceId;
         DisplayName = displayName;

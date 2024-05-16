@@ -247,10 +247,14 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                         .Select(EndpointMapper.MapToEndpoint)))
                 .Returns(Task.CompletedTask);
 
-            var response = await _controller.UpdateEndpointInConference(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
-            {
-                DefenceAdvocate = defenceAdvocate
-            });
+            var endpointParticipants = new [] { new EndpointParticipantRequest { ParticipantUsername = defenceAdvocate, Type = Contract.Enums.LinkedParticipantType.DefenceAdvocate } };
+            var response = await _controller.UpdateEndpointInConference(
+                testConference.Id, 
+                "sip@sip.com", 
+                new UpdateEndpointRequest
+                {
+                    DisplayName = "DisplayName", EndpointParticipants = endpointParticipants
+                });
 
             response.Should().NotBeNull();
             response.Should().BeAssignableTo<OkResult>();
@@ -258,8 +262,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
 
             _commandHandlerMock.Verify(x => x.Handle(It.Is<UpdateEndpointCommand>
             (
-                y => y.ConferenceId == testConference.Id && y.SipAddress == "sip@sip.com" && y.DefenceAdvocate == defenceAdvocate
-            )), Times.Once);
+                y => y.ConferenceId == testConference.Id && y.SipAddress == "sip@sip.com" && y.DisplayName == "DisplayName")
+            ), Times.Once);
 
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,

@@ -12,7 +12,9 @@ public class Endpoint : TrackableEntity<Guid>
     public string SipAddress { get; }
     public string Pin { get; }
     public EndpointState State { get; private set; }
-    public string DefenceAdvocate { get; private set; }
+    
+    [Obsolete("This property is only used for EF. Use EndpointParticipants instead")]
+    public string DefenceAdvocate { get; }
     public RoomType? CurrentRoom { get; private set; }
     public long? CurrentConsultationRoomId { get; set; }
     public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
@@ -23,14 +25,24 @@ public class Endpoint : TrackableEntity<Guid>
         Id = Guid.NewGuid();
         State = EndpointState.NotYetJoined;
     }
-
-    public Endpoint(string displayName, string sipAddress, string pin, (string username, LinkedParticipantType type)[] participants) : this()
+    
+    public Endpoint(string displayName, string sipAddress, string pin, string username) : this()
     {
         DisplayName = displayName;
         SipAddress = sipAddress;
         Pin = pin;
         EndpointParticipants = new List<EndpointParticipant>();
-        LinkParticipantsToEndpoint(participants);
+        AssignDefenceAdvocate(username);
+    }
+
+    public Endpoint(string displayName, string sipAddress, string pin, params (string username, LinkedParticipantType type)[] participants) : this()
+    {
+        DisplayName = displayName;
+        SipAddress = sipAddress;
+        Pin = pin;
+        EndpointParticipants = new List<EndpointParticipant>();
+        if (participants.Any())
+            LinkParticipantsToEndpoint(participants);
     }
 
     public void UpdateDisplayName(string displayName)

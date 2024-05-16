@@ -47,8 +47,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234", ("Defence Sol", Domain.Enums.LinkedParticipantType.DefenceAdvocate)),
+                new ("name2", GetSipAddress(), "5678", ("Defence Old", Domain.Enums.LinkedParticipantType.DefenceAdvocate))
             };
 
             var command =
@@ -99,8 +99,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234", ("Defence Sol", Domain.Enums.LinkedParticipantType.DefenceAdvocate)),
+                new ("name2", GetSipAddress(), "5678", ("Defence Old", Domain.Enums.LinkedParticipantType.DefenceAdvocate))
             };
             
             
@@ -157,8 +157,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234", ("Defence Sol", Domain.Enums.LinkedParticipantType.DefenceAdvocate)),
+                new ("name2", GetSipAddress(), "5678", ("Defence Old", Domain.Enums.LinkedParticipantType.DefenceAdvocate))
             };
 
             var command =

@@ -146,14 +146,14 @@ namespace VideoApi.Controllers
                 return NotFound($"Unable to find defence advocate {request.RequestedById}");
             }
 
-            if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
+            if (string.IsNullOrWhiteSpace(endpoint.GetDefenceAdvocate()))
             {
                 const string message = "Endpoint does not have a defence advocate linked";
                 _logger.LogWarning(message);
                 return Unauthorized(message);
             }
 
-            if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
+            if (!endpoint.GetDefenceAdvocate().Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 const string message = "Defence advocate is not allowed to speak to requested endpoint";
                 _logger.LogWarning(message);

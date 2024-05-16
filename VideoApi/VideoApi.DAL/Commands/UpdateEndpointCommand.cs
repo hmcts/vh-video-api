@@ -18,7 +18,7 @@ namespace VideoApi.DAL.Commands
         public UpdateEndpointCommand(Guid conferenceId,
             string sipAddress,
             string displayName,
-            (string Username, LinkedParticipantType Type)[] endpointParticipants)
+            params (string Username, LinkedParticipantType Type)[] endpointParticipants)
         {
             ConferenceId = conferenceId;
             SipAddress = sipAddress;

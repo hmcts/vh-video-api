@@ -21,6 +21,7 @@ using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 using ConferenceState = VideoApi.Contract.Enums.ConferenceState;
+using LinkedParticipantType = VideoApi.Contract.Enums.LinkedParticipantType;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -223,14 +224,20 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a valid book a new conference request with jvs endpoints")]
         public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpoints()
         {
+            var endpointParticipants = new List<EndpointParticipantRequest>
+            {
+                new EndpointParticipantRequest
+                    { ParticipantUsername = "Defence Sol", Type = LinkedParticipantType.DefenceAdvocate }
+
+            };
             var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
                 .WithJudge()
                 .WithRepresentative("Applicant").WithIndividual("Applicant")
                 .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .WithEndpoints(new List<AddEndpointRequest>
                 {
-                    new AddEndpointRequest{DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                    new AddEndpointRequest{DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                    new() { DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", EndpointParticipants = [new EndpointParticipantRequest { ParticipantUsername = "Defence Sol", Type = LinkedParticipantType.DefenceAdvocate }] },
+                    new() {DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678",  EndpointParticipants = [new EndpointParticipantRequest { ParticipantUsername = "Defence Bol", Type = LinkedParticipantType.DefenceAdvocate }] },
                 })
                 .Build();
 

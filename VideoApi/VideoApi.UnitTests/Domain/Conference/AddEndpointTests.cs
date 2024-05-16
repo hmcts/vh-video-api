@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
@@ -14,7 +15,12 @@ namespace VideoApi.UnitTests.Domain.Conference
         {
             var conference = new ConferenceBuilder().Build();
             var beforeCount = conference.GetEndpoints().Count;
-            var endpoint = new Endpoint("Display", "test@sip.com", "1234", "Defence Sol");
+            var endpointParticipants = new[] {
+                ("Defence Sol", LinkedParticipantType.DefenceAdvocate),
+                ("Defence Sol", LinkedParticipantType.Representative),
+                ("Defence Sol", LinkedParticipantType.Interpreter)
+            };
+            var endpoint = new Endpoint("Display", "test@sip.com", "1234", endpointParticipants);
             conference.AddEndpoint(endpoint);
             var afterCount = conference.GetEndpoints().Count;
             afterCount.Should().BeGreaterThan(beforeCount);
@@ -30,7 +36,7 @@ namespace VideoApi.UnitTests.Domain.Conference
         public void should_not_add_same_endpoint_twice()
         {
             var conference = new ConferenceBuilder().Build();
-            var endpoint = new Endpoint("Display", "test@sip.com", "1234", "Defence Sol");
+            var endpoint = new Endpoint("Display", "test@sip.com", "1234");
             conference.AddEndpoint(endpoint);
             
             Action action = () => conference.AddEndpoint(endpoint);

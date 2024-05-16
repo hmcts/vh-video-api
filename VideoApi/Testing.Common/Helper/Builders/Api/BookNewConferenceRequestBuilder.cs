@@ -157,9 +157,16 @@ namespace Testing.Common.Helper.Builders.Api
         }
 
         public BookNewConferenceRequestBuilder WithEndpoint(string displayName, string sip, string pin)
-        {
-            _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest
-                {DisplayName = displayName, SipAddress = sip, Pin = pin, DefenceAdvocate = "Defence Sol"});
+        {    
+            var endpointParticipants = new EndpointParticipantRequest[]
+            {
+                new() {ParticipantUsername = "Defence Sol", Type = LinkedParticipantType.DefenceAdvocate}
+            };
+            _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest {DisplayName = displayName,
+                SipAddress = sip, 
+                Pin = pin,
+                EndpointParticipants = endpointParticipants
+            });
             return this;
         }
 

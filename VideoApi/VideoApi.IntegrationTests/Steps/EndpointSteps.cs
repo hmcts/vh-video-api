@@ -17,6 +17,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory.EPEndpoints;
+using LinkedParticipantType = VideoApi.Contract.Enums.LinkedParticipantType;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
@@ -26,6 +27,11 @@ namespace VideoApi.IntegrationTests.Steps
     {
         private readonly TestContext _context;
         private readonly CommonSteps _commonSteps;
+        private EndpointParticipantRequest endpointParticipant = new ()
+        {
+            ParticipantUsername = "Defence Sol",
+            Type = LinkedParticipantType.DefenceAdvocate
+        };
         
         public EndpointSteps(TestContext context, CommonSteps commonSteps)
         {
@@ -101,7 +107,7 @@ namespace VideoApi.IntegrationTests.Steps
                 Pin = "1234",
                 SipAddress = $"{Guid.NewGuid()}@sip.com",
                 DisplayName = "Automated Add EP test", 
-                DefenceAdvocate = "Defence Sol"
+                EndpointParticipants = [endpointParticipant]
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -115,7 +121,7 @@ namespace VideoApi.IntegrationTests.Steps
                 Pin = "1234",
                 SipAddress = "1234add_auto_test@sip.com",
                 DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Defence Sol"
+                EndpointParticipants = [endpointParticipant]
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -199,7 +205,7 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Sol One"
+                EndpointParticipants = [endpointParticipant]
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }

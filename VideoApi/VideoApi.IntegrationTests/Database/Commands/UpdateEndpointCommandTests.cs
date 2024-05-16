@@ -8,6 +8,7 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
@@ -80,7 +81,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
             updatedEndpoint.DisplayName.Should().Be(newDisplayName);
-            updatedEndpoint.DefenceAdvocate.Should().Be(ep.DefenceAdvocate);
+            updatedEndpoint.GetDefenceAdvocate().Should().Be(ep.GetDefenceAdvocate());
             
             ep.CreatedAt.Should().Be(updatedEndpoint.CreatedAt);
             updatedEndpoint.UpdatedAt.Should().BeAfter(updatedEndpoint.CreatedAt.Value);
@@ -89,8 +90,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         [Test]
         public async Task Should_update_existing_endpoint_with_defence_advocate()
         {
-            var conference1 = new ConferenceBuilder()
-                .WithEndpoint("DisplayName", "sip@123.com").Build();
+            var conference1 = new ConferenceBuilder().WithEndpoint("DisplayName", "sip@123.com").Build();
             var seededConference = await TestDataManager.SeedConference(conference1);
             var ep = conference1.Endpoints.First();
             var sipAddress = ep.SipAddress;
@@ -98,7 +98,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, null, defenceAdvocate);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, null, (defenceAdvocate, LinkedParticipantType.DefenceAdvocate));
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -110,7 +110,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
             updatedEndpoint.DisplayName.Should().Be(ep.DisplayName);
-            updatedEndpoint.DefenceAdvocate.Should().Be(defenceAdvocate);
+            updatedEndpoint.GetDefenceAdvocate().Should().Be(defenceAdvocate);
         }
     }
 }

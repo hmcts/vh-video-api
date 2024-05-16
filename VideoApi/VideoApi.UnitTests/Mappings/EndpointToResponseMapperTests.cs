@@ -1,6 +1,7 @@
 using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Mappings;
+using LinkedParticipantType = VideoApi.Domain.Enums.LinkedParticipantType;
 
 namespace VideoApi.UnitTests.Mappings
 {
@@ -9,7 +10,7 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void should_map_endpoint_to_response()
         {
-            var endpoint = new Endpoint("Display", "sip123", "1245", "Defence Sol");
+            var endpoint = new Endpoint("Display", "sip123", "1245", ("user1", LinkedParticipantType.DefenceAdvocate));
             var response = EndpointToResponseMapper.MapEndpointResponse(endpoint);
             
             response.Id.Should().Be(endpoint.Id);

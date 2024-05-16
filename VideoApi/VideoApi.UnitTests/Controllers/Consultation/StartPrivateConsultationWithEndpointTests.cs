@@ -114,16 +114,15 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_bad_request_when_endpoint_is_already_in_room()
         {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.GetDefenceAdvocate()));
             var defenceAdvocate = TestConference.GetParticipants().First(x =>
-                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
-                    StringComparison.CurrentCultureIgnoreCase));
+                x.Username.Equals(endpointWithDefenceAdvocate.GetDefenceAdvocate(), StringComparison.CurrentCultureIgnoreCase));
 
             var room = new ConsultationRoom(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
             room.AddEndpoint(new RoomEndpoint(Guid.NewGuid()));
             QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
 
-            var request = new EndpointConsultationRequest()
+            var request = new EndpointConsultationRequest
             {
                 ConferenceId = TestConference.Id,
                 EndpointId = endpointWithDefenceAdvocate.Id,
@@ -140,9 +139,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_not_found_when_endpoint_is_requested_to_not_found_room()
         {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.GetDefenceAdvocate()));
             var defenceAdvocate = TestConference.GetParticipants().First(x =>
-                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
+                x.Username.Equals(endpointWithDefenceAdvocate.GetDefenceAdvocate(),
                     StringComparison.CurrentCultureIgnoreCase));
 
             QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(null as ConsultationRoom);
@@ -164,9 +163,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_ok_when_endpoint_is_linked_with_defence_advocate()
         {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.GetDefenceAdvocate()));
             var defenceAdvocate = TestConference.GetParticipants().First(x =>
-                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
+                x.Username.Equals(endpointWithDefenceAdvocate.GetDefenceAdvocate(),
                     StringComparison.CurrentCultureIgnoreCase));
 
             var room = new ConsultationRoom(TestConference.Id, "Label", VideoApi.Domain.Enums.VirtualCourtRoomType.Participant, false);
@@ -188,7 +187,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task should_return_ok_when_vho_invites()
         {
             // Arrange
-            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.GetDefenceAdvocate()));
             var request = new EndpointConsultationRequest()
             {
                 ConferenceId = TestConference.Id,
@@ -208,7 +207,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task should_return_ok_when_judge_invites()
         {
             // Arrange
-            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.GetDefenceAdvocate()));
             var requestedByJudge = TestConference.GetParticipants().First(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge);
             var request = new EndpointConsultationRequest()
             {
@@ -229,7 +228,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         public async Task should_return_ok_when_staff_member_invites()
         {
             // Arrange
-            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.GetDefenceAdvocate()));
             var requestedByJudge = TestConference.GetParticipants().First(x => x.UserRole == VideoApi.Domain.Enums.UserRole.StaffMember);
             var request = new EndpointConsultationRequest()
             {

@@ -118,7 +118,8 @@ namespace Testing.Common.Helper.Builders.Domain
 
         public ConferenceBuilder WithEndpoint(string displayName, string sipAddress, string defenceAdvocate = null)
         {
-            var endpoint = new Endpoint(displayName, sipAddress, "1234", defenceAdvocate);
+            var endpoint = new Endpoint(displayName, sipAddress, "1234");
+            endpoint.AssignDefenceAdvocate(defenceAdvocate);
             _conference.AddEndpoint(endpoint);
 
             return this;
