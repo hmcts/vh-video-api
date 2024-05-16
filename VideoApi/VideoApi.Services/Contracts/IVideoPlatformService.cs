@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Clients;
-using Endpoint = VideoApi.Domain.Endpoint;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Services.Contracts
 {
     public interface IVideoPlatformService
     {
+        SupplierConfiguration GetConfig();
+        
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl, IEnumerable<EndpointDto> endpoints);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
