@@ -25,7 +25,9 @@ public class SupplierApiHealthCheck : IHealthCheck
         }
         catch (Exception exception)
         {
-            return HealthCheckResult.Unhealthy(exception.Message, exception);
+            var aggregateException = new AggregateException(new InvalidOperationException(
+                $"Failed to get platform health for URI {_videoPlatformService.GetConfig().ApiUrl}", exception));
+            return HealthCheckResult.Unhealthy("Supplier health check failed", aggregateException);
         }
     }
 }

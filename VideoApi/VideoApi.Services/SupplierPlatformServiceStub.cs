@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -15,7 +17,12 @@ namespace VideoApi.Services
     public class SupplierPlatformServiceStub : IVideoPlatformService
     {
         private readonly List<Guid> _bookedGuids = new();
-
+        
+        public SupplierConfiguration GetConfig()
+        {
+            return new KinlyConfiguration();
+        }
+        
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,

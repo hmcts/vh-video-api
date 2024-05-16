@@ -38,8 +38,13 @@ namespace VideoApi.Services
             _supplierApiClient = apiSelector.GetHttpClient();
             _supplierConfigOptions = apiSelector.GetSupplierConfiguration();
         }
-
-
+        
+        
+        public SupplierConfiguration GetConfig()
+        {
+            return this._supplierConfigOptions;
+        }
+        
         public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
