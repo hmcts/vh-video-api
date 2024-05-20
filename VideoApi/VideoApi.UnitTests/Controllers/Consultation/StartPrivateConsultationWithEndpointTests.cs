@@ -71,10 +71,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_unauthorised_when_endpoint_does_not_have_defence_advocate()
         {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
-            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => x.GetDefenceAdvocate() != null);
+            var endpointWithoutDefenceAdvocate = TestConference.GetEndpoints().First(x => x.GetDefenceAdvocate() == null);
             var defenceAdvocate = TestConference.GetParticipants().First(x =>
-                x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
+                x.Username.Equals(endpointWithDefenceAdvocate.GetDefenceAdvocate(),
                     StringComparison.CurrentCultureIgnoreCase));
             
             var request = new EndpointConsultationRequest()
@@ -93,7 +93,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
         [Test]
         public async Task should_return_unauthorised_when_endpoint_is_not_linked_with_defence_advocate()
         {
-            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocate));
+            var endpointWithDefenceAdvocate = TestConference.GetEndpoints().First(x => x.GetDefenceAdvocate() != null);
             var defenceAdvocate = TestConference.GetParticipants().First(x =>
                 !x.Username.Equals(endpointWithDefenceAdvocate.DefenceAdvocate,
                     StringComparison.CurrentCultureIgnoreCase) && x.UserRole != VideoApi.Domain.Enums.UserRole.Judge);

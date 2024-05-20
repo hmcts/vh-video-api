@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
             var newDefenceAdvocate = "a@hmcts.net";
             endpoint.AssignDefenceAdvocate(newDefenceAdvocate);
 
-            endpoint.DefenceAdvocate.Should().Be(newDefenceAdvocate);
+            endpoint.GetDefenceAdvocate().Should().Be(newDefenceAdvocate);
         }
     }
 }

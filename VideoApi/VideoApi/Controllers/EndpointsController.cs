@@ -71,12 +71,11 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId, [FromBody] AddEndpointRequest request)
         {
             _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
-            
             var command = new AddEndpointCommand(conferenceId, 
                 request.DisplayName, 
                 request.SipAddress, 
                 request.Pin, 
-                request.EndpointParticipants.Select(x => (x.ParticipantUsername, (LinkedParticipantType)x.Type)).ToArray());
+                request.EndpointParticipants?.Map());
             await _commandHandler.Handle(command);
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
@@ -129,7 +128,7 @@ namespace VideoApi.Controllers
             var command = new UpdateEndpointCommand(conferenceId, 
                 sipAddress, 
                 request.DisplayName, 
-                request.EndpointParticipants.Select(x => (x.ParticipantUsername, (LinkedParticipantType)x.Type)).ToArray());
+                request.EndpointParticipants?.Map());
             
             await _commandHandler.Handle(command);
 

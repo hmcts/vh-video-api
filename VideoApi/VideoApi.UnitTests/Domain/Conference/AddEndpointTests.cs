@@ -16,9 +16,9 @@ namespace VideoApi.UnitTests.Domain.Conference
             var conference = new ConferenceBuilder().Build();
             var beforeCount = conference.GetEndpoints().Count;
             var endpointParticipants = new[] {
-                ("Defence Sol", LinkedParticipantType.DefenceAdvocate),
-                ("Defence Sol", LinkedParticipantType.Representative),
-                ("Defence Sol", LinkedParticipantType.Interpreter)
+                ("Defence Advocate", LinkedParticipantType.DefenceAdvocate),
+                ("Legal Rep", LinkedParticipantType.Representative),
+                ("Intermediary", LinkedParticipantType.Intermediary)
             };
             var endpoint = new Endpoint("Display", "test@sip.com", "1234", endpointParticipants);
             conference.AddEndpoint(endpoint);
@@ -29,7 +29,9 @@ namespace VideoApi.UnitTests.Domain.Conference
             endpoint.DisplayName.Should().Be("Display");
             endpoint.SipAddress.Should().Be("test@sip.com");
             endpoint.Pin.Should().Be("1234");
-            endpoint.DefenceAdvocate.Should().Be("Defence Sol");
+            endpoint.GetDefenceAdvocate().Should().Be("Defence Advocate");
+            endpoint.GetIntermediary().Should().Be("Intermediary");
+            endpoint.GetRepresentative().Should().Be("Legal Rep");
         }
 
         [Test]
