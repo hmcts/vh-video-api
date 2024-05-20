@@ -12,7 +12,7 @@ namespace VideoApi.DAL.Mappings
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).IsRequired().ValueGeneratedNever();
             builder.Property(x => x.EndpointId).IsRequired();
-            builder.Property(x => x.Participant).IsRequired();
+            builder.Property(x => x.ParticipantUsername).IsRequired();
             builder.HasOne(x => x.Endpoint)
                 .WithMany(x => x.EndpointParticipants)
                 .HasForeignKey(x => x.EndpointId)

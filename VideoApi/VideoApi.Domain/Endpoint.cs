@@ -82,7 +82,7 @@ public class Endpoint : TrackableEntity<Guid>
         
     public string GetDefenceAdvocate()
     {
-        return EndpointParticipants.FirstOrDefault(x => x.Type == LinkedParticipantType.DefenceAdvocate)?.Participant;
+        return EndpointParticipants.FirstOrDefault(x => x.Type == LinkedParticipantType.DefenceAdvocate)?.ParticipantUsername;
     }
         
     public void AssignIntermediary(string intermediary)
@@ -96,7 +96,7 @@ public class Endpoint : TrackableEntity<Guid>
         
     public string GetIntermediary()
     {
-        return EndpointParticipants.FirstOrDefault(x => x.Type == LinkedParticipantType.Intermediary)?.Participant;
+        return EndpointParticipants.FirstOrDefault(x => x.Type == LinkedParticipantType.Intermediary)?.ParticipantUsername;
     }
         
     public void AssignRepresentative(string rep)
@@ -110,12 +110,12 @@ public class Endpoint : TrackableEntity<Guid>
         
     public string GetRepresentative()
     {
-        return EndpointParticipants.FirstOrDefault(x => x.Type == LinkedParticipantType.Representative)?.Participant;
+        return EndpointParticipants.FirstOrDefault(x => x.Type == LinkedParticipantType.Representative)?.ParticipantUsername;
     }
 
     public void RemoveLinkedParticipant(string participant)
     {
-        var linkedParticipant = EndpointParticipants.FirstOrDefault(x => x.Participant == participant);
+        var linkedParticipant = EndpointParticipants.FirstOrDefault(x => x.ParticipantUsername == participant);
         if(linkedParticipant != null)
             EndpointParticipants.Remove(linkedParticipant);
     }
