@@ -27,7 +27,7 @@ public class AddEndpointCommand : ICommand
         DisplayName = displayName;
         SipAddress = sipAddress;
         Pin = pin;
-        EndpointParticipants = endpointParticipants;
+        EndpointParticipants = endpointParticipants ?? Array.Empty<(string, LinkedParticipantType)>();
     }
 }
 
@@ -42,15 +42,21 @@ public class AddEndpointCommandHandler : ICommandHandler<AddEndpointCommand>
 
     public async Task Handle(AddEndpointCommand command)
     {
-        var conference = await _context.Conferences.Include(x => x.Endpoints)
+        var conference = await _context.Conferences
+            .Include(x => x.Endpoints).ThenInclude(x => x.EndpointParticipants)
             .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
         if (conference == null)
             throw new ConferenceNotFoundException(command.ConferenceId);
             
         var ep = new Endpoint(command.DisplayName, command.SipAddress, command.Pin, command.EndpointParticipants);
+        
         conference.AddEndpoint(ep);
         _context.Entry(ep).State = EntityState.Added;
+        
+        foreach (var epp in ep.EndpointParticipants)
+            _context.Entry(epp).State = EntityState.Added;
+        
         await _context.SaveChangesAsync();
     }
 }

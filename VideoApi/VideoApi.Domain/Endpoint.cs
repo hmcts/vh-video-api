@@ -18,7 +18,7 @@ public class Endpoint : TrackableEntity<Guid>
     public RoomType? CurrentRoom { get; private set; }
     public long? CurrentConsultationRoomId { get; set; }
     public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
-    public virtual IList<EndpointParticipant> EndpointParticipants { get; }
+    public virtual IList<EndpointParticipant> EndpointParticipants { get; set; } = new List<EndpointParticipant>();
 
     private Endpoint()
     {
@@ -40,8 +40,7 @@ public class Endpoint : TrackableEntity<Guid>
         DisplayName = displayName;
         SipAddress = sipAddress;
         Pin = pin;
-        EndpointParticipants = new List<EndpointParticipant>();
-        if (participants.Any())
+        if (participants.Length != 0)
             LinkParticipantsToEndpoint(participants);
     }
 
@@ -75,7 +74,10 @@ public class Endpoint : TrackableEntity<Guid>
     {
         if(EndpointParticipants.Any(x => x.Type == LinkedParticipantType.DefenceAdvocate))
             EndpointParticipants.Remove(EndpointParticipants.First(x => x.Type == LinkedParticipantType.DefenceAdvocate));
-
+        
+        if(EndpointParticipants.Any(x => x.ParticipantUsername == defenceAdvocate))
+            RemoveLinkedParticipant(defenceAdvocate);
+        
         EndpointParticipants.Add(
             new EndpointParticipant(this, defenceAdvocate, LinkedParticipantType.DefenceAdvocate));
     }
@@ -89,7 +91,10 @@ public class Endpoint : TrackableEntity<Guid>
     {
         if(EndpointParticipants.Any(x => x.Type == LinkedParticipantType.Intermediary))
             EndpointParticipants.Remove(EndpointParticipants.First(x => x.Type == LinkedParticipantType.Intermediary));
-
+        
+        if(EndpointParticipants.Any(x => x.ParticipantUsername == intermediary))
+            RemoveLinkedParticipant(intermediary);
+        
         EndpointParticipants.Add(
             new EndpointParticipant(this, intermediary, LinkedParticipantType.Intermediary));
     }
@@ -104,6 +109,9 @@ public class Endpoint : TrackableEntity<Guid>
         if(EndpointParticipants.Any(x => x.Type == LinkedParticipantType.Representative))
             EndpointParticipants.Remove(EndpointParticipants.First(x => x.Type == LinkedParticipantType.Representative));
 
+        if(EndpointParticipants.Any(x => x.ParticipantUsername == rep))
+            RemoveLinkedParticipant(rep);
+        
         EndpointParticipants.Add(
             new EndpointParticipant(this, rep, LinkedParticipantType.Representative));
     }

@@ -132,11 +132,6 @@ namespace VideoApi.Domain
             return Endpoints;
         }
 
-        public IList<Endpoint> GetEndpointsForParticipant(string Username)
-        {
-            return Endpoints.Where(x => x.EndpointParticipants.Any(p => p.ParticipantUsername == Username)).ToList();
-        }
-        
         public void UpdateConferenceStatus(ConferenceState status)
         {
             if (status == ConferenceState.NotStarted)

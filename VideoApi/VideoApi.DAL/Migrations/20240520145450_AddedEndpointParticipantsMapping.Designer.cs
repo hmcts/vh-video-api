@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideoApi.DAL;
 
@@ -11,9 +12,11 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    partial class VideoApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240520145450_AddedEndpointParticipantsMapping")]
+    partial class AddedEndpointParticipantsMapping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -752,7 +755,7 @@ namespace VideoApi.DAL.Migrations
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
-                    b.OwnsOne("VideoApi.Domain.Conference.MeetingRoom#VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
+                    b.OwnsOne("VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
                         {
                             b1.Property<Guid>("ConferenceId")
                                 .HasColumnType("uniqueidentifier");
@@ -779,7 +782,7 @@ namespace VideoApi.DAL.Migrations
 
                             b1.HasKey("ConferenceId");
 
-                            b1.ToTable("Conference", (string)null);
+                            b1.ToTable("Conference");
 
                             b1.WithOwner()
                                 .HasForeignKey("ConferenceId");

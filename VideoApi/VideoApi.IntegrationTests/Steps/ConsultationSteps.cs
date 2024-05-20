@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -217,9 +216,9 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAStartEndpointConsultationWithALinkedDefenceAdvocate()
         {
             var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
+            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.GetDefenceAdvocate()));
             var defenceAdvocate =
-                _context.Test.Conference.Participants.First(x => x.Username.Equals(endpoint.DefenceAdvocate));
+                _context.Test.Conference.Participants.First(x => x.Username.Equals(endpoint.GetDefenceAdvocate()));
 
             var request = new EndpointConsultationRequest
             {
@@ -236,7 +235,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAStartEndpointConsultationWithoutALinkedDefenceAdvocate()
         {
             var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> string.IsNullOrEmpty(x.DefenceAdvocate));
+            var endpoint = _context.Test.Conference.Endpoints.First(x=> string.IsNullOrEmpty(x.GetDefenceAdvocate()));
             var defenceAdvocate =
                 _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Representative);
 
@@ -253,9 +252,9 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a start endpoint consultation for a non-existent conference")]
         public void GivenIHaveAStartEndpointConsultationForNonexistentConference()
         {
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
+            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.GetDefenceAdvocate()));
             var defenceAdvocate =
-                _context.Test.Conference.Participants.First(x => x.Username.Equals(endpoint.DefenceAdvocate));
+                _context.Test.Conference.Participants.First(x => x.Username.Equals(endpoint.GetDefenceAdvocate()));
 
             var request = new EndpointConsultationRequest
             {
@@ -285,7 +284,7 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAStartEndpointConsultationForNonexistentDefenceAdvocate()
         {
             var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
+            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.GetDefenceAdvocate()));
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = conference.Id,
@@ -300,9 +299,9 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAStartEndpointConsultationWithANotLinkedDefenceAdvocate()
         {
             var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
+            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.GetDefenceAdvocate()));
             var defenceAdvocate =
-                _context.Test.Conference.Participants.First(x => !x.Username.Equals(endpoint.DefenceAdvocate));
+                _context.Test.Conference.Participants.First(x => !x.Username.Equals(endpoint.GetDefenceAdvocate()));
 
             var request = new EndpointConsultationRequest
             {

@@ -1,3 +1,4 @@
+using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Extensions;
@@ -15,8 +16,13 @@ namespace VideoApi.Mappings
                 Status = endpoint.State.MapToContractEnum(),
                 DisplayName = endpoint.DisplayName,
                 SipAddress = endpoint.SipAddress,
-                DefenceAdvocate = endpoint.DefenceAdvocate,
-                CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(endpoint.CurrentConsultationRoom)
+                CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(endpoint.CurrentConsultationRoom),
+                EndpointParticipants = endpoint.EndpointParticipants.Select(ep =>
+                    new EndpointParticipantResponse
+                    { 
+                        ParticipantUsername = ep.ParticipantUsername, 
+                        Type = ep.Type.MapToContractEnum()
+                    }).ToList()
             };
         }
     }

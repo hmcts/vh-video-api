@@ -69,7 +69,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, newDisplayName, null);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, newDisplayName);
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -104,7 +104,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Conference updatedConference;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                updatedConference = await db.Conferences.Include(x => x.Endpoints)
+                updatedConference = await db.Conferences.Include(x => x.Endpoints).ThenInclude(e => e.EndpointParticipants)
                     .AsNoTracking().SingleAsync(x => x.Id == _newConferenceId);
             }
             

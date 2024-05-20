@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
@@ -31,9 +32,9 @@ namespace VideoApi.Contract.Responses
         public EndpointState Status { get; set; }
         
         /// <summary>
-        /// The defence advocate
+        /// List of Participants linked to the endpoint
         /// </summary>
-        public string DefenceAdvocate { get; set; }
+        public List<EndpointParticipantResponse> EndpointParticipants { get; set; }
 
         /// <summary>
         /// Current consultation room details

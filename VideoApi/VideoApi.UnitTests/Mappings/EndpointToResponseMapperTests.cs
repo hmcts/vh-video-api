@@ -10,14 +10,15 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void should_map_endpoint_to_response()
         {
-            var endpoint = new Endpoint("Display", "sip123", "1245", ("user1", LinkedParticipantType.DefenceAdvocate));
+            var endpointParticipant = ("sip123", LinkedParticipantType.DefenceAdvocate);
+            var endpoint = new Endpoint("Display", "sip123", "1245", endpointParticipant);
             var response = EndpointToResponseMapper.MapEndpointResponse(endpoint);
             
             response.Id.Should().Be(endpoint.Id);
             response.Pin.Should().Be(endpoint.Pin);
             response.Status.Should().Be((EndpointState)endpoint.State);
             response.SipAddress.Should().Be(endpoint.SipAddress);
-            response.DefenceAdvocate.Should().Be(endpoint.DefenceAdvocate);
+            response.EndpointParticipants.Should().ContainSingle(ep => ep.ParticipantUsername == endpointParticipant.Item1);
         }
     }
 }

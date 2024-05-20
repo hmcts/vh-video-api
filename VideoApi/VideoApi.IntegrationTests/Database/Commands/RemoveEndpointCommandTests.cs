@@ -70,7 +70,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Conference updatedConference;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                updatedConference = await db.Conferences.Include(x => x.Endpoints)
+                updatedConference = await db.Conferences
+                    .Include(x => x.Endpoints)
                     .AsNoTracking().SingleOrDefaultAsync(x => x.Id == _newConferenceId);
             }
 

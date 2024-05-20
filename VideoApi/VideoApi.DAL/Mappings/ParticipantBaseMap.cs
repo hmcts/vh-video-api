@@ -31,7 +31,9 @@ namespace VideoApi.DAL.Mappings
 
             builder.HasMany<ParticipantStatus>("ParticipantStatuses").WithOne(x => x.Participant).HasForeignKey(x => x.ParticipantId)
                 .OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany(x => x.LinkedParticipants).WithOne(x => x.Participant).HasForeignKey(x => x.ParticipantId);
+            builder.HasMany(x => x.LinkedParticipants)
+                .WithOne(x => x.Participant)
+                .HasForeignKey(x => x.ParticipantId);
 
             builder.HasMany<RoomParticipant>(nameof(ParticipantBase.RoomParticipants)).WithOne(x => x.Participant)
                 .HasForeignKey(x => x.ParticipantId);

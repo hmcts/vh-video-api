@@ -52,7 +52,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
             var conference = await _context.Conferences
                 .Include(x => x.Participants)
-                .Include(x => x.Endpoints)
+                .Include(x => x.Endpoints).ThenInclude(x => x.EndpointParticipants)
                 .Where(x => x.Participants.Any(p => p.Id == command.ParticipantId))
                 .SingleAsync();
 
@@ -61,8 +61,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant.Username.Should().NotBe(oldUsername);
             updatedParticipant.Username.Should().Be(newUsername);
             
-            conference.Endpoints[0].DefenceAdvocate.Should().NotBe(oldUsername);
-            conference.Endpoints[0].DefenceAdvocate.Should().Be(newUsername);
+            conference.Endpoints[0].GetDefenceAdvocate().Should().NotBe(oldUsername);
+            conference.Endpoints[0].GetDefenceAdvocate().Should().Be(newUsername);
         }
 
         [TearDown]

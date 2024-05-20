@@ -11,19 +11,12 @@ namespace VideoApi.DAL
     public class VideoApiDbContext : DbContext
     {
         public DbSet<Event> Events { get; set; }
-
         public DbSet<Conference> Conferences { get; set; }
-
         public DbSet<ConferenceStatus> ConferenceStatuses { get; set; }
-
         public DbSet<Heartbeat> Heartbeats { get; set; }
-
         public DbSet<InstantMessage> InstantMessages { get; set; }
-
         public DbSet<Domain.Task> Tasks { get; set; }
-
         public DbSet<Participant> Participants { get; set; }
-
         public DbSet<Room> Rooms { get; set; }
         public DbSet<ParticipantToken> ParticipantTokens { get; set; }
 

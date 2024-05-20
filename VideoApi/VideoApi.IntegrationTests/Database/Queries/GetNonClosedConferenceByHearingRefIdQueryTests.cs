@@ -37,7 +37,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                     {
                         new Endpoint("one", "44564", "1234", ("Defence Sol", LinkedParticipantType.DefenceAdvocate)),
                         new Endpoint("two", "867744", "5678", ("Rep", LinkedParticipantType.Representative)),
-                        new Endpoint("three", "86774234", "562378", ("Inter", LinkedParticipantType.Interpreter))
+                        new Endpoint("three", "86774234", "562378", ("Inter", LinkedParticipantType.Intermediary))
                     })
                 .Build();
             _newConferenceId1 = seededConference.Id;

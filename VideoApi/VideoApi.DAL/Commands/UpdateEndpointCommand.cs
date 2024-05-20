@@ -23,7 +23,7 @@ namespace VideoApi.DAL.Commands
             ConferenceId = conferenceId;
             SipAddress = sipAddress;
             DisplayName = displayName;
-            EndpointParticipants = endpointParticipants;
+            EndpointParticipants = endpointParticipants ?? Array.Empty<(string, LinkedParticipantType)>();
         }
     }
 
@@ -36,7 +36,7 @@ namespace VideoApi.DAL.Commands
         }
         public async Task Handle(UpdateEndpointCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Endpoints)
+            var conference = await _context.Conferences.Include(x => x.Endpoints).ThenInclude(x => x.EndpointParticipants)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -50,8 +50,12 @@ namespace VideoApi.DAL.Commands
                 endpoint.UpdateDisplayName(command.DisplayName);
 
             if (command.EndpointParticipants.Any())
+            {
                 endpoint.LinkParticipantsToEndpoint(command.EndpointParticipants);
-            
+                foreach (var epp in endpoint.EndpointParticipants)
+                    _context.Entry(epp).State = EntityState.Added;
+            }
+                
             await _context.SaveChangesAsync();
         }
     }
