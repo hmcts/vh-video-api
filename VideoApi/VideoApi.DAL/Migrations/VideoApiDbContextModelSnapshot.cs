@@ -17,10 +17,10 @@ namespace VideoApi.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "6.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
@@ -81,7 +81,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
@@ -151,41 +151,13 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Endpoint", (string)null);
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.EndpointParticipant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("EndpointId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ParticipantUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EndpointId");
-
-                    b.ToTable("EndpointParticipant", (string)null);
-                });
-
             modelBuilder.Entity("VideoApi.Domain.Event", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
@@ -242,7 +214,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("BrowserName")
                         .HasColumnType("nvarchar(max)");
@@ -360,7 +332,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
@@ -437,8 +409,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -480,8 +451,6 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Participant", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("ParticipantBase");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("VideoApi.Domain.ParticipantStatus", b =>
@@ -490,7 +459,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<Guid>("ParticipantId")
                         .HasColumnType("uniqueidentifier");
@@ -538,7 +507,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
@@ -548,8 +517,7 @@ namespace VideoApi.DAL.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Label")
                         .HasColumnType("nvarchar(max)");
@@ -573,8 +541,6 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Room", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Room");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("VideoApi.Domain.RoomEndpoint", b =>
@@ -583,7 +549,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -610,7 +576,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -639,7 +605,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Body")
                         .HasColumnType("nvarchar(max)");
@@ -678,7 +644,7 @@ namespace VideoApi.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<bool>("Passed")
                         .HasColumnType("bit");
@@ -692,6 +658,13 @@ namespace VideoApi.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TestCallResult", (string)null);
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.ConsultationRoom", b =>
+                {
+                    b.HasBaseType("VideoApi.Domain.Room");
+
+                    b.HasDiscriminator().HasValue("ConsultationRoom");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Participant", b =>
@@ -719,20 +692,6 @@ namespace VideoApi.DAL.Migrations
                     b.HasDiscriminator().HasValue("Participant");
                 });
 
-            modelBuilder.Entity("VideoApi.Domain.QuickLinkParticipant", b =>
-                {
-                    b.HasBaseType("VideoApi.Domain.ParticipantBase");
-
-                    b.HasDiscriminator().HasValue("QuickLinkParticipant");
-                });
-
-            modelBuilder.Entity("VideoApi.Domain.ConsultationRoom", b =>
-                {
-                    b.HasBaseType("VideoApi.Domain.Room");
-
-                    b.HasDiscriminator().HasValue("ConsultationRoom");
-                });
-
             modelBuilder.Entity("VideoApi.Domain.ParticipantRoom", b =>
                 {
                     b.HasBaseType("VideoApi.Domain.Room");
@@ -747,6 +706,13 @@ namespace VideoApi.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("ParticipantRoom");
+                });
+
+            modelBuilder.Entity("VideoApi.Domain.QuickLinkParticipant", b =>
+                {
+                    b.HasBaseType("VideoApi.Domain.ParticipantBase");
+
+                    b.HasDiscriminator().HasValue("QuickLinkParticipant");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
@@ -808,17 +774,6 @@ namespace VideoApi.DAL.Migrations
                         .HasForeignKey("CurrentConsultationRoomId");
 
                     b.Navigation("CurrentConsultationRoom");
-                });
-
-            modelBuilder.Entity("VideoApi.Domain.EndpointParticipant", b =>
-                {
-                    b.HasOne("VideoApi.Domain.Endpoint", "Endpoint")
-                        .WithMany("EndpointParticipants")
-                        .HasForeignKey("EndpointId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.Navigation("Endpoint");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.InstantMessage", b =>
@@ -939,11 +894,6 @@ namespace VideoApi.DAL.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("Rooms");
-                });
-
-            modelBuilder.Entity("VideoApi.Domain.Endpoint", b =>
-                {
-                    b.Navigation("EndpointParticipants");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.ParticipantBase", b =>
