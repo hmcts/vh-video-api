@@ -21,8 +21,7 @@ pool:
 stages:
 - stage: Run_Entity_Framework
   displayName: Demo EF Release
-  dependsOn:
-    - Pre_Run_Tasks
+  
   variables:
   - template: variables/demo.yaml
   - template: variables/shared.yaml
