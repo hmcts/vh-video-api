@@ -64,7 +64,6 @@ stages:
       - template: variables/shared.yaml
     jobs:
       - job: Docker_Build
-        dependsOn: Pre_Run_Tasks
         displayName: 'Docker Build and Push'
         steps:
           - checkout: self
@@ -96,7 +95,7 @@ stages:
       - stage: Run_Entity_Framework_${{ env }}
         displayName: EF DAL Release ${{ env }}
         dependsOn:
-          - Pre_Run_Tasks
+          - Docker_Build_Push_Prod
         variables:
           - template: variables/shared.yaml
             parameters:
