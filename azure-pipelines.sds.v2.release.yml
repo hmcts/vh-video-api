@@ -116,7 +116,8 @@ stages:
           - job: Run_Entity_Framework_Staging
             pool:
               vmImage: 'windows-latest'
-            displayName: Run Entity Framework Staging
+            displayName: Run EF Migrations ${{ env }}
+            dependsOn: Approve_${{ env }}
             steps:
               - download: current
                 displayName: Download Sql Artifact
@@ -161,7 +162,7 @@ stages:
                       environment: ${{ variables.env }}
                       azureSubscription: ${{ variables.subscriptionName }}
                       acceptanceTestSettings:
-                        #
+                        # todo: add acceptance test settings
                         - name: ApplicationInsights:ConnectionString
                           value: connectionstrings--applicationinsights
                           keyVaultName: vh-infra-core-${{ variables.env }}
