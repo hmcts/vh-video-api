@@ -160,3 +160,9 @@ stages:
                     parameters:
                       environment: ${{ variables.env }}
                       azureSubscription: ${{ variables.subscriptionName }}
+                      acceptanceTestSettings:
+                        #
+                        - name: ApplicationInsights:ConnectionString
+                          value: connectionstrings--applicationinsights
+                          keyVaultName: vh-infra-core-${{ variables.env }}
+                          secret: true
