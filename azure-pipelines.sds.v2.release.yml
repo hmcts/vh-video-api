@@ -109,33 +109,6 @@ stages:
               - download: current
                 displayName: Download Sql Artifact
 
-              - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
-                parameters:
-                  addOrDelete: delete
-                  lockName: '${{ variables.env }}-lock'
-                  resourceGroup: ${{ variables.vhResourceGroup }}
-                  azureSubscription: ${{ variables.subscriptionName }}
-
-              - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-                parameters:
-                  sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-                  sqlServerName: ${{ variables.vhSQLServerName }}
-                  databaseName: ${{ variables.videoApiDbName }}
-                  azureSubscription: ${{ variables.subscriptionName }}
-                  sqlScriptLocation: '$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql'
-                  kvfirewallRequired: false
-                  kvName: ${{ variables.vhKeyVault }}
-                  kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-                  kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
-
-              - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
-                parameters:
-                  addOrDelete: add
-                  lockName: '${{ variables.env }}-lock'
-                  resourceGroup: ${{ variables.vhResourceGroup }}
-                  azureSubscription: ${{ variables.subscriptionName }}
-                  lockType: CanNotDelete
-
       - stage: Run_Helm_${{ env }}
         dependsOn: Run_Entity_Framework_${{ env }}
         jobs:
