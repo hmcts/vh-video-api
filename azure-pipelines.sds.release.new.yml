@@ -38,7 +38,7 @@ stages:
 
 #####################################################
 # Run Entity Framework Demo. #####################
-- stage: Run_Entity_Framework_Demo
+- stage: Run_Entity_Framework
   displayName: Demo EF Release
   dependsOn:
     - Pre_Run_Tasks
