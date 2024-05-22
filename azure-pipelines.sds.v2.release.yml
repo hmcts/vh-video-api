@@ -139,3 +139,24 @@ stages:
               - template: variables/shared.yaml
                 parameters:
                   env: ${{ env }}
+
+      - ${{ if ne(env, 'prod') }}:
+          - stage: Acceptance_Tests_${{ env }}
+            dependsOn: Run_Helm_${{ env }}
+            displayName: Acceptance Tests ${{ env }}
+            variables:
+              - group: vh-video-api
+              - template: variables/shared.yaml
+                parameters:
+                  env: ${{ env }}
+              - name: dnsRecordName
+                value: vh-${{ variables.git_repo_name }}
+            jobs:
+              - job: AcceptanceTests${{ env }}
+                pool: VH Self Hosted
+                displayName: Acceptance Tests {{ env }}
+                steps:
+                  - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
+                    parameters:
+                      environment: ${{ variables.env }}
+                      azureSubscription: ${{ variables.subscriptionName }}
