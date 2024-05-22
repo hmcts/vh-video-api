@@ -89,7 +89,7 @@ stages:
               imageName: '${{ variables.imageName }}'
               imageTags:
                 - '${{ variables.releaseTagName }}'
-                - 'latest'
+                - 'latest-beta'
 
   #########################################
   # Push Helm Charts to Repo. #############
@@ -103,6 +103,16 @@ stages:
             parameters:
               env: ${{ variables.env }}
         jobs:
+          - job: Approve_${{ env }}
+            displayName: 'Approve to ${{ env }}'
+            pool: server
+            timeoutInMinutes: 10080 # 7 Days
+            steps:
+              - task: ManualValidation@0
+                timeoutInMinutes: 10080 # 7 Days
+                inputs:
+                  instructions: 'Please Approve run to ${{ env }}'
+                  onTimeout: 'reject'
           - job: Run_Entity_Framework_Staging
             pool:
               vmImage: 'windows-latest'
@@ -114,17 +124,16 @@ stages:
       - stage: Run_Helm_${{ env }}
         dependsOn: Run_Entity_Framework_${{ env }}
         jobs:
-          - ${{ if ne(env, 'dev') }}:
-              - job: Approve_${{ env }}
-                displayName: 'Approve to ${{ env }}'
-                pool: server
+          - job: Approve_${{ env }}
+            displayName: 'Approve to ${{ env }}'
+            pool: server
+            timeoutInMinutes: 10080 # 7 Days
+            steps:
+              - task: ManualValidation@0
                 timeoutInMinutes: 10080 # 7 Days
-                steps:
-                  - task: ManualValidation@0
-                    timeoutInMinutes: 10080 # 7 Days
-                    inputs:
-                      instructions: 'Please Approve run to ${{ env }}'
-                      onTimeout: 'reject'
+                inputs:
+                  instructions: 'Please Approve run to ${{ env }}'
+                  onTimeout: 'reject'
           - job: Helm_${{ env }}
             variables:
               - template: variables/shared.yaml
