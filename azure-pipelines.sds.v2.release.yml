@@ -35,6 +35,16 @@ stages:
     variables:
       - template: variables/shared.yaml
     jobs:
+      - job: Generate_Entity_Framework_Script
+        displayName: 'Generate Entity Framework Script'
+        steps:
+          - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+            parameters:
+              outputPath: $(Build.StagingDirectory)
+              contextName: ${{ variables.efContextName }}
+              workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
+              projectName: ${{ variables.efProjectName }}
+              migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
       - job: PublishAcceptanceTests
         displayName: Publish Acceptance Tests
         variables:
@@ -54,6 +64,7 @@ stages:
       - template: variables/shared.yaml
     jobs:
       - job: Docker_Build
+        dependsOn: Pre_Run_Tasks
         displayName: 'Docker Build and Push'
         steps:
           - checkout: self
@@ -82,8 +93,52 @@ stages:
   #########################################
   # Push Helm Charts to Repo. #############
   - ${{each env in parameters.environments}}:
+      - stage: Run_Entity_Framework_${{ env }}
+        displayName: EF DAL Release ${{ env }}
+        dependsOn:
+          - Pre_Run_Tasks
+        variables:
+          - template: variables/shared.yaml
+            parameters:
+              env: ${{ variables.env }}
+        jobs:
+          - job: Run_Entity_Framework_Staging
+            pool:
+              vmImage: 'windows-latest'
+            displayName: Run Entity Framework Staging
+            steps:
+              - download: current
+                displayName: Download Sql Artifact
+
+              - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+                parameters:
+                  addOrDelete: delete
+                  lockName: '${{ variables.env }}-lock'
+                  resourceGroup: ${{ variables.vhResourceGroup }}
+                  azureSubscription: ${{ variables.subscriptionName }}
+
+              - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+                parameters:
+                  sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+                  sqlServerName: ${{ variables.vhSQLServerName }}
+                  databaseName: ${{ variables.videoApiDbName }}
+                  azureSubscription: ${{ variables.subscriptionName }}
+                  sqlScriptLocation: '$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql'
+                  kvfirewallRequired: false
+                  kvName: ${{ variables.vhKeyVault }}
+                  kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+                  kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+
+              - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+                parameters:
+                  addOrDelete: add
+                  lockName: '${{ variables.env }}-lock'
+                  resourceGroup: ${{ variables.vhResourceGroup }}
+                  azureSubscription: ${{ variables.subscriptionName }}
+                  lockType: CanNotDelete
+
       - stage: Run_Helm_${{ env }}
-        dependsOn: Docker_Build_Push_Prod
+        dependsOn: Run_Entity_Framework_${{ env }}
         jobs:
           - ${{ if ne(env, 'dev') }}:
               - job: Approve_${{ env }}
