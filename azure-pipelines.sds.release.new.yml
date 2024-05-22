@@ -17,11 +17,31 @@ pool:
   vmImage: ubuntu-22.04
 
 #####################################################
-########### Pre-Release Tasks. #####################
+# Pre-Release Tasks. ################################
 stages:
-- stage: Run_Entity_Framework
+- stage: Pre_Run_Tasks
+  displayName: Pre-Release Tasks
+  variables:
+  - template: variables/shared.yaml
+  jobs:
+  - job: Generate_Entity_Framework_Script
+    displayName: "Generate Entity Framework Script"
+    steps:
+    - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+      parameters:
+        outputPath: $(Build.StagingDirectory)
+        contextName: ${{ variables.efContextName }}
+        workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
+        projectName: ${{ variables.efProjectName }}
+        migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
+
+
+#####################################################
+# Run Entity Framework Demo. #####################
+- stage: Run_Entity_Framework_Demo
   displayName: Demo EF Release
-  
+  dependsOn:
+    - Pre_Run_Tasks
   variables:
   - template: variables/demo.yaml
   - template: variables/shared.yaml
