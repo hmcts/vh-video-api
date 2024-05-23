@@ -90,7 +90,7 @@ stages:
               repositoryName: ${{ variables.repositoryName }}
               imageName: '${{ variables.imageName }}'
               imageTags:
-                - '${{ variables.staging }}'
+                - '${{ variables.stagingTagName }}'
                 - 'beta'
 
   #########################################
