@@ -59,7 +59,7 @@ stages:
 
   #####################################################
   # Build Docker Image & Push. ########################
-  - stage: Docker_Build_Push_Prod
+  - stage: Docker_Build_Push
     displayName: Docker Build & Push Image
     variables:
       - template: variables/demo.yaml
@@ -187,7 +187,7 @@ stages:
 
       - ${{ if ne(env, 'prod') }}:
           - stage: Acceptance_Tests_${{ env }}
-            dependsOn: Push_Helm_${{ env }}
+            dependsOn: Run_Helm_${{ env }}
             displayName: Acceptance Tests ${{ env }}
             variables:
               - group: vh-video-api
