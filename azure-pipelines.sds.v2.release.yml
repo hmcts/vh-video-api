@@ -62,8 +62,10 @@ stages:
   - stage: Docker_Build_Push
     displayName: Docker Build & Push Image
     variables:
-      - template: variables/demo.yaml
       - template: variables/shared.yaml
+        parameters:
+          env: 'demo'
+          # env: ${{ variables.env }} when pipeline is ready use this line
     jobs:
       - job: Docker_Build
         displayName: 'Docker Build and Push'
@@ -117,6 +119,10 @@ stages:
             pool:
               vmImage: 'windows-latest'
             displayName: Run EF Migrations ${{ env }}
+            variables:
+              - template: variables/shared.yaml
+                parameters:
+                  env: ${{ env }}
             dependsOn: Approve_EF_${{ env }}
             steps:
               - download: current
