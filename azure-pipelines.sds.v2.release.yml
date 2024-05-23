@@ -99,7 +99,6 @@ stages:
         dependsOn:
           - Docker_Build_Push
         variables:
-          - template: variables/{{env}}.yaml
           - template: variables/shared.yaml
             parameters:
               env: ${{ variables.env }}
