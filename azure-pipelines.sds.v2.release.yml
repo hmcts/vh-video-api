@@ -90,8 +90,12 @@ stages:
               repositoryName: ${{ variables.repositoryName }}
               imageName: '${{ variables.imageName }}'
               imageTags:
-                - '${{ variables.releaseTagName }}'
-                - 'latest-demo'
+                ${{ if ne(env, 'prod') }}:
+                  - '${{ variables.nonProdTagName }}'
+                  - 'latest-demo'
+                ${{ else }}:
+                  - '${{ variables.releaseTagName }}'
+                  - 'latest'
 
   #########################################
   # Push Helm Charts to Repo. #############

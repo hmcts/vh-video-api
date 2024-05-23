@@ -34,6 +34,9 @@ variables:
   - name: prTagName
     value: "${{ variables.prTagPrefix }}-$(Build.BuildNumber)"
 
+  - name: nonProdTagName
+    value: "nonProd-#{SHORTCOMMITID}#-#{DATETIME}#"
+
   - name: imageName
     value: "${{ replace(variables.git_repo_name, '-', '') }}"
   - name: subscriptionName
