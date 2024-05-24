@@ -9,6 +9,8 @@
         <License>https://github.com/hmcts/vh-video-api/blob/master/LICENSE</License>
         <RepositoryUrl>https://github.com/hmcts/vh-video-api</RepositoryUrl>
         <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+        <TargetFrameworks>net8.0;netstandard2.1</TargetFrameworks>
+        <TargetFramework />
     </PropertyGroup>
 
     <ItemGroup>
