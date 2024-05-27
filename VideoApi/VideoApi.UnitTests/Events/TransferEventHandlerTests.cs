@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using VideoApi.DAL.Commands;
@@ -175,18 +176,18 @@ namespace VideoApi.UnitTests.Events
         }
 
         [Test]
-        public async Task Should_transfer_endpoints_out_of_room_when_defense_advocate_participant_leaves_and_room_not_empty()
+        public async Task Should_transfer_endpoints_out_of_room_when_all_endpoint_participants_leaves_and_room_not_empty()
         {
             var conference = TestConference;
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Representative && x.Username == "DA1@test.com");
+            
             var room = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
             room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
             room.AddParticipant(new RoomParticipant(Guid.NewGuid()));
+            
             foreach (var endpoint in conference.GetEndpoints())
-            {
                 room.AddEndpoint(new RoomEndpoint(endpoint.Id));
-            }
-
+            
             QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
 
             var callbackEvent = new CallbackEvent
@@ -199,7 +200,15 @@ namespace VideoApi.UnitTests.Events
                 TransferTo = RoomType.WaitingRoom,
                 TransferredFromRoomLabel = "ConsultationRoom2",
                 TransferredToRoomLabel = RoomType.WaitingRoom.ToString(),
-                TimeStampUtc = DateTime.UtcNow
+                TimeStampUtc = DateTime.UtcNow,
+                Endpoints =
+                [
+                    new EndpointLink
+                    {
+                        Id = room.RoomEndpoints[0].EndpointId,
+                        LinkedParticipantIds = [participantForEvent.Id, Guid.NewGuid()]
+                    }
+                ]
             };
             await _sut.HandleAsync(callbackEvent);
 
@@ -212,6 +221,54 @@ namespace VideoApi.UnitTests.Events
                     command.RoomLabel == RoomType.WaitingRoom.ToString())), Times.Once);
 
             _mocker.Mock<IConsultationService>().Verify(x => x.EndpointTransferToRoomAsync(conference.Id, It.IsAny<Guid>(), RoomType.WaitingRoom.ToString()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_not_transfer_endpoints_out_of_room_when_all_but_one_endpoint_participant_leaves_and_room_not_empty()
+        {
+            var conference = TestConference;
+            var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Representative && x.Username == "DA1@test.com");
+            var secondLinkedParticipant = new RoomParticipant(Guid.NewGuid());
+            
+            var room = new ConsultationRoom(conference.Id, "ConsultationRoom2", VirtualCourtRoomType.Participant, false);
+            room.AddParticipant(secondLinkedParticipant);
+            
+            foreach (var endpoint in conference.GetEndpoints())
+                room.AddEndpoint(new RoomEndpoint(endpoint.Id));
+            
+            QueryHandlerMock.Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(room);
+
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Transfer,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEvent.Id,
+                TransferFrom = null,
+                TransferTo = RoomType.WaitingRoom,
+                TransferredFromRoomLabel = "ConsultationRoom2",
+                TransferredToRoomLabel = RoomType.WaitingRoom.ToString(),
+                TimeStampUtc = DateTime.UtcNow,
+                Endpoints =
+                [
+                    new EndpointLink
+                    {
+                        Id = room.RoomEndpoints[0].EndpointId,
+                        LinkedParticipantIds = [participantForEvent.Id, secondLinkedParticipant.ParticipantId]
+                    }
+                ]
+            };
+            await _sut.HandleAsync(callbackEvent);
+
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.Is<UpdateParticipantStatusAndRoomCommand>(command =>
+                    command.ConferenceId == conference.Id &&
+                    command.ParticipantId == participantForEvent.Id &&
+                    command.ParticipantState == ParticipantState.Available &&
+                    command.Room == RoomType.WaitingRoom &&
+                    command.RoomLabel == RoomType.WaitingRoom.ToString())), Times.Once);
+
+            _mocker.Mock<IConsultationService>().Verify(x => x.EndpointTransferToRoomAsync(conference.Id, It.IsAny<Guid>(), RoomType.WaitingRoom.ToString()), Times.Never);
         }
 
         [Test]

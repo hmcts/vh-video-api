@@ -13,16 +13,13 @@ namespace VideoApi.DAL.Commands
         public string DisplayName { get; }
         public string SipAddress { get; }
         public string Pin { get; }
-        public string DefenceAdvocate { get; }
 
-        public AddEndpointCommand(Guid conferenceId, string displayName, string sipAddress, string pin,
-            string defenceAdvocate)
+        public AddEndpointCommand(Guid conferenceId, string displayName, string sipAddress, string pin)
         {
             ConferenceId = conferenceId;
             DisplayName = displayName;
             SipAddress = sipAddress;
             Pin = pin;
-            DefenceAdvocate = defenceAdvocate;
         }
     }
 
@@ -45,7 +42,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var ep = new Endpoint(command.DisplayName, command.SipAddress, command.Pin, command.DefenceAdvocate);
+            var ep = new Endpoint(command.DisplayName, command.SipAddress, command.Pin);
             conference.AddEndpoint(ep);
             _context.Entry(ep).State = EntityState.Added;
             await _context.SaveChangesAsync();

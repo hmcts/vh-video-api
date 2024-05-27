@@ -5,11 +5,9 @@ using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Extras.Moq;
-using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -64,8 +62,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             PollyRetryServiceMock = Mocker.Mock<IPollyRetryService>();
             TestEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234", "Defence Sol"),
-                new Endpoint("two", "867744", "5678", "Defence Sol")
+                new ("one", "44564", "1234"),
+                new ("two", "867744", "5678")
             };
 
             TestConference = new ConferenceBuilder()

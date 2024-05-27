@@ -11,7 +11,6 @@ namespace VideoApi.Domain
         public string SipAddress { get; }
         public string Pin { get; }
         public EndpointState State { get; private set; }
-        public string DefenceAdvocate { get; private set; }
         public RoomType? CurrentRoom { get; private set; }
         public long? CurrentConsultationRoomId { get; set; }
         public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
@@ -22,12 +21,11 @@ namespace VideoApi.Domain
             State = EndpointState.NotYetJoined;
         }
 
-        public Endpoint(string displayName, string sipAddress, string pin, string defenceAdvocate) : this()
+        public Endpoint(string displayName, string sipAddress, string pin) : this()
         {
             DisplayName = displayName;
             SipAddress = sipAddress;
             Pin = pin;
-            DefenceAdvocate = defenceAdvocate;
         }
 
         public void UpdateDisplayName(string displayName)
@@ -38,11 +36,6 @@ namespace VideoApi.Domain
         public void UpdateStatus(EndpointState status)
         {
             State = status;
-        }
-
-        public void AssignDefenceAdvocate(string username)
-        {
-            DefenceAdvocate = username;
         }
 
         public string GetCurrentRoom()

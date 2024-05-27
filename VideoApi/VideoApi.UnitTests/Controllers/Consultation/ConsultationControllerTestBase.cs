@@ -38,7 +38,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.StaffMember, null)
-                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net", "rep1@hmcts.net")
+                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .Build();
 

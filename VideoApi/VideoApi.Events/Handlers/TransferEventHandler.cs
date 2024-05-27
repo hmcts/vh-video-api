@@ -50,6 +50,7 @@ namespace VideoApi.Events.Handlers
             {
                 _logger.LogError("Unable to find room {roomLabel} in conference {conferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
             }
+            // If room is live and empty, transfer all endpoints to waiting room
             else if (room.Status == RoomStatus.Live && !room.RoomParticipants.Any())
             {
                 foreach (var endpoint in room.RoomEndpoints)
@@ -57,14 +58,11 @@ namespace VideoApi.Events.Handlers
                     await _consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
                 }
             }
-            else if (room.RoomEndpoints.Any())
-            {
-                var participantsEndpoints = SourceConference.GetEndpoints().Where(x => x.DefenceAdvocate?.Equals(SourceParticipant.Username, System.StringComparison.OrdinalIgnoreCase) ?? false).Select(x => x.Id).ToList();
-                foreach (var endpoint in room.RoomEndpoints.Where(roomEndpoint => participantsEndpoints.Contains(roomEndpoint.EndpointId)))
-                {
-                    await _consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
-                }
-            }
+            // If the room has endpoints connected, if none of the participants left in the room are participants the endpoint is linked to, transfer to waiting room
+            else if (room.RoomEndpoints.Count != 0 && callbackEvent.Endpoints.Any())
+               foreach (var endpoint in callbackEvent.Endpoints.Where(endpoint => room.RoomEndpoints.Exists(re => re.EndpointId == endpoint.Id) &&
+                            !room.RoomParticipants.Exists(x => endpoint.LinkedParticipantIds.Contains(x.ParticipantId))))
+                   await _consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.Id, RoomType.WaitingRoom.ToString());
         }
 
         private ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)

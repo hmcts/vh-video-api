@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -217,15 +216,12 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAStartEndpointConsultationWithALinkedDefenceAdvocate()
         {
             var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
-            var defenceAdvocate =
-                _context.Test.Conference.Participants.First(x => x.Username.Equals(endpoint.DefenceAdvocate));
+            var endpoint = _context.Test.Conference.Endpoints[0];
 
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                RequestedById = defenceAdvocate.Id,
                 RoomLabel = "name"
             };
 
@@ -236,15 +232,12 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAStartEndpointConsultationWithoutALinkedDefenceAdvocate()
         {
             var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> string.IsNullOrEmpty(x.DefenceAdvocate));
-            var defenceAdvocate =
-                _context.Test.Conference.Participants.First(x => x.UserRole == UserRole.Representative);
+            var endpoint = _context.Test.Conference.Endpoints[0];
 
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                RequestedById = defenceAdvocate.Id
             };
 
             SerialiseEndpointConsultationRequest(request);
@@ -253,15 +246,12 @@ namespace VideoApi.IntegrationTests.Steps
         [Given(@"I have a start endpoint consultation for a non-existent conference")]
         public void GivenIHaveAStartEndpointConsultationForNonexistentConference()
         {
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
-            var defenceAdvocate =
-                _context.Test.Conference.Participants.First(x => x.Username.Equals(endpoint.DefenceAdvocate));
+            var endpoint = _context.Test.Conference.Endpoints[0];
 
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = Guid.NewGuid(),
                 EndpointId = endpoint.Id,
-                RequestedById = defenceAdvocate.Id
             };
 
             SerialiseEndpointConsultationRequest(request);
@@ -274,47 +264,13 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = conference.Id,
-                EndpointId = Guid.NewGuid(),
-                RequestedById = Guid.NewGuid()
-            };
-
-            SerialiseEndpointConsultationRequest(request);
-        }
-        
-        [Given(@"I have a start endpoint consultation for a non-existent defence advocate")]
-        public void GivenIHaveAStartEndpointConsultationForNonexistentDefenceAdvocate()
-        {
-            var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
-            var request = new EndpointConsultationRequest
-            {
-                ConferenceId = conference.Id,
-                EndpointId = endpoint.Id,
-                RequestedById = Guid.NewGuid()
-            };
-
-            SerialiseEndpointConsultationRequest(request);
-        }
-        
-        [Given(@"I have a start endpoint consultation with a not linked defence advocate")]
-        public void GivenIHaveAStartEndpointConsultationWithANotLinkedDefenceAdvocate()
-        {
-            var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> !string.IsNullOrEmpty(x.DefenceAdvocate));
-            var defenceAdvocate =
-                _context.Test.Conference.Participants.First(x => !x.Username.Equals(endpoint.DefenceAdvocate));
-
-            var request = new EndpointConsultationRequest
-            {
-                ConferenceId = conference.Id,
-                EndpointId = endpoint.Id,
-                RequestedById = defenceAdvocate.Id
+                EndpointId = Guid.NewGuid()
             };
 
             SerialiseEndpointConsultationRequest(request);
         }
 
-[Given(@"I have a valid start consultation request")]
+        [Given(@"I have a valid start consultation request")]
         public async Task GivenIHaveAValidStartConsultationRequest()
         {
             var conference = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);

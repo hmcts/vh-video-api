@@ -4,11 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Faker;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -54,7 +52,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hmcts.net")
+                .WithEndpoint("Display1", Internet.FreeEmail())
                 .WithEndpoint("Display2", Internet.FreeEmail())
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
@@ -76,7 +74,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hmcts.net")
+                .WithEndpoint("Display1", Internet.FreeEmail())
                 .WithEndpoint("Display2", Internet.FreeEmail())
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
@@ -100,8 +98,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 Pin = "1234",
                 SipAddress = $"{Guid.NewGuid()}@sip.com",
-                DisplayName = "Automated Add EP test", 
-                DefenceAdvocate = "Defence Sol"
+                DisplayName = "Automated Add EP test"
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -114,8 +111,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 Pin = "1234",
                 SipAddress = "1234add_auto_test@sip.com",
-                DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Defence Sol"
+                DisplayName = "Automated Add EP test"
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -196,11 +192,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conferenceId = _context.Test.Conference.Id;
             var sipAddress = _context.Test.Conference.Endpoints.First().SipAddress;
-            var request = new UpdateEndpointRequest
-            {
-                DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Sol One"
-            };
+            var request = new UpdateEndpointRequest { DisplayName = "Automated Add EP test" };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
 

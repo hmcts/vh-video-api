@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
         [TestCase(RoomType.AdminRoom)]
         public void should_get_current_room(RoomType newRoom)
         {
-            var endpoint = new Endpoint("old name", "123@sip.com", "1234", "defence@sol.com");
+            var endpoint = new Endpoint("old name", "123@sip.com", "1234");
             endpoint.UpdateCurrentRoom(newRoom);
             endpoint.GetCurrentRoom().Should().Be(newRoom.ToString());
         }
@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
         [Test]
         public void should_throw_exception_when_endpoint_is_not_in_a_room()
         {
-            var endpoint = new Endpoint("old name", "123@sip.com", "1234", "defence@sol.com");
+            var endpoint = new Endpoint("old name", "123@sip.com", "1234");
             endpoint.UpdateCurrentRoom(null);
             Assert.Throws<DomainRuleException>(() => endpoint.GetCurrentRoom()).ValidationFailures
                 .Any(x => x.Message == "Endpoint is not in a room").Should().BeTrue();

@@ -706,7 +706,7 @@ namespace VideoApi.Controllers
                 .ToList();
 
             var endpoints = request.Endpoints
-                .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate)).ToList();
+                .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin)).ToList();
 
             var linkedParticipants = request.Participants
                 .SelectMany(x => x.LinkedParticipants)

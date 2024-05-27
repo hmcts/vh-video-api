@@ -113,7 +113,6 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
-            var isVhoRequest = request.RequestedById == Guid.Empty;
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
@@ -129,37 +128,7 @@ namespace VideoApi.Controllers
                 _logger.LogWarning("Unable to find endpoint");
                 return NotFound($"Unable to find endpoint {request.EndpointId}");
             }
-
-            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedById);
-            if (isVhoRequest 
-                || requestedBy?.UserRole == UserRole.Judge
-                || requestedBy?.UserRole == UserRole.StaffMember
-                || requestedBy?.UserRole == UserRole.JudicialOfficeHolder)
-            {
-                await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
-                return Ok();
-            }
             
-            if (requestedBy == null)
-            {
-                _logger.LogWarning("Unable to find defence advocate");
-                return NotFound($"Unable to find defence advocate {request.RequestedById}");
-            }
-
-            if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
-            {
-                const string message = "Endpoint does not have a defence advocate linked";
-                _logger.LogWarning(message);
-                return Unauthorized(message);
-            }
-
-            if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
-            {
-                const string message = "Defence advocate is not allowed to speak to requested endpoint";
-                _logger.LogWarning(message);
-                return Unauthorized(message);
-            }
-
             var roomQuery = new GetConsultationRoomByIdQuery(request.ConferenceId, request.RoomLabel);
             var room = await _queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)

@@ -12,14 +12,12 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; }
         public string SipAddress { get; }
         public string DisplayName { get; }
-        public string DefenceAdvocate { get; }
 
-        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName, string defenceAdvocate)
+        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName)
         {
             ConferenceId = conferenceId;
             SipAddress = sipAddress;
             DisplayName = displayName;
-            DefenceAdvocate = defenceAdvocate;
         }
     }
 
@@ -45,7 +43,6 @@ namespace VideoApi.DAL.Commands
             if (!string.IsNullOrWhiteSpace(command.DisplayName)) 
                 endpoint.UpdateDisplayName(command.DisplayName);
             
-            endpoint.AssignDefenceAdvocate(command.DefenceAdvocate);
             await _context.SaveChangesAsync();
         }
     }

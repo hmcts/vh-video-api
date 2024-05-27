@@ -16,10 +16,5 @@ namespace VideoApi.Contract.Requests
         /// The pin
         /// </summary>
         public string Pin { get; set; }
-        
-        /// <summary>
-        /// Username of a defence advocate
-        /// </summary>
-        public string DefenceAdvocate { get; set; }
     }
 }

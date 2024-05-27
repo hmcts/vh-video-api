@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 .WithParticipant(UserRole.Representative, "Applicant", "rep1@hmcts.net")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
-                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net", "rep1@hmcts.net")
+                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .Build();
             Mocker = AutoMock.GetLoose();

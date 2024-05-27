@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
@@ -39,7 +38,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var command = new AddEndpointCommand(conferenceId, "display", "sip@hmcts.net", "pin", "Defence Sol");
+            var command = new AddEndpointCommand(conferenceId, "display", "sip@hmcts.net", "pin");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -55,7 +54,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var pin = "123";
             var defenceAdvocate = "Defence Sol";
             
-            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin, defenceAdvocate);
+            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin);
             await _handler.Handle(command);
             
             Conference updatedConference;
@@ -70,7 +69,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
             ep.SipAddress.Should().Be(sip);
             ep.DisplayName.Should().Be(displayName);
             ep.Id.Should().NotBeEmpty();
-            ep.DefenceAdvocate.Should().Be(defenceAdvocate);
             ep.State.Should().Be(EndpointState.NotYetJoined);
             ep.CreatedAt.Should().NotBeNull();
             ep.UpdatedAt.Should().NotBeNull();

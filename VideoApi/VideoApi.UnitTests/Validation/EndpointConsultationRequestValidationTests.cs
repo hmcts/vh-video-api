@@ -22,8 +22,7 @@ namespace VideoApi.UnitTests.Validation
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = Guid.NewGuid(),
-                EndpointId = Guid.NewGuid(),
-                RequestedById = Guid.NewGuid()
+                EndpointId = Guid.NewGuid()
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -37,12 +36,12 @@ namespace VideoApi.UnitTests.Validation
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = Guid.Empty,
-                EndpointId = Guid.NewGuid(),
-                RequestedById = Guid.NewGuid()
+                EndpointId = Guid.NewGuid()
             };
 
             var result = await _validator.ValidateAsync(request);
-            result.Errors.Any(x => x.ErrorMessage == EndpointConsultationRequestValidation.NoConferenceError)
+            result.Errors
+                .Any(x => x.ErrorMessage == EndpointConsultationRequestValidation.NoConferenceError)
                 .Should().BeTrue();
         }
 
@@ -52,8 +51,7 @@ namespace VideoApi.UnitTests.Validation
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = Guid.NewGuid(),
-                EndpointId = Guid.Empty,
-                RequestedById = Guid.NewGuid()
+                EndpointId = Guid.Empty
             };
 
             var result = await _validator.ValidateAsync(request);
