@@ -62,7 +62,7 @@ namespace VideoApi.Controllers
                 var participants = conference.Participants.Where(x => (x.State == ParticipantState.Available || x.State == ParticipantState.InConsultation) 
                                                                       && x.UserRole != UserRole.QuickLinkParticipant && x.UserRole != UserRole.QuickLinkObserver && x.HearingRole != "Witness").Select(x => x.Id.ToString());
 
-                await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, participants, hearingLayout, request.MuteGuests ?? false);
+                await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, participants, hearingLayout, request.MuteGuests ?? true);
            
                 return Accepted();
             }
