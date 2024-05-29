@@ -52,8 +52,7 @@ namespace VideoApi.DAL.Commands
                 ? new ConsultationRoom(command.ConferenceId, command.Type, command.Locked)
                 : new ConsultationRoom(command.ConferenceId, command.Label, command.Type, command.Locked);
             
-
-            _context.Rooms.Add(room);
+            conference.AddRoom(room);
 
             await _context.SaveChangesAsync();
 
