@@ -3,5 +3,7 @@ variables:
     value: "demo"
   - name: demoTagName
     value: "demo-#{SHORTCOMMITID}#-#{DATETIME}#"
+  - name: tagName
+    value: "demo-#{SHORTCOMMITID}#-#{DATETIME}#"
   - name: subDirectory
     value: "/demo"
