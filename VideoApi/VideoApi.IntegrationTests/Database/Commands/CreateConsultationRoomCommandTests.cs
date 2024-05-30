@@ -1,6 +1,6 @@
-using FluentAssertions;
 using NUnit.Framework;
 using System;
+using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
@@ -36,6 +36,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             command.NewRoomId.Should().BeGreaterThan(0);
             command.ConferenceId.Should().Be(_newConferenceId);
             command.Type.Should().Be(VirtualCourtRoomType.JudgeJOH);
+            
+            await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
+            var updatedConference = await db.Conferences.Include(x => x.Rooms).FirstAsync(x => x.Id == seededConference.Id);
+            updatedConference.Rooms.Should().Contain(x => x.Label == "Room1");
         }
 
         [Test]

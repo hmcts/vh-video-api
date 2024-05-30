@@ -278,5 +278,22 @@ namespace VideoApi.Domain
         {
             _rooms.AddRange(rooms);
         }
+        
+        public void AddRoom(ConsultationRoom room)
+        {
+            ArgumentNullException.ThrowIfNull(room);
+            
+            if (string.IsNullOrWhiteSpace(room.Label))
+            {
+                _rooms.Add(room);
+                return;
+            }
+            
+            if (_rooms.Exists(r => r.Label == room.Label && r.Status == RoomStatus.Live))
+            {
+                throw new DomainRuleException(nameof(room), $"Room {room.Label} already exists in conference and is still open");
+            }
+            _rooms.Add(room);
+        }
     }
 }
