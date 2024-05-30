@@ -54,8 +54,8 @@ stages:
 
   #####################################################
   # Build Docker Image & Push. ########################
-  - stage: Docker_Build_Push
-    displayName: Docker Build & Push Image
+  - stage: Docker_Build
+    displayName: Docker Build
     variables:
       - template: variables/shared.yaml
         parameters:
@@ -63,7 +63,7 @@ stages:
           # env: ${{ variables.env }} when pipeline is ready use this line
     jobs:
       - job: Docker_Build
-        displayName: 'Docker Build and Push'
+        displayName: 'Docker Build'
         steps:
           - checkout: self
 
@@ -84,7 +84,7 @@ stages:
       - stage: Run_Entity_Framework_${{ env }}
         displayName: EF DAL Release ${{ env }}
         dependsOn:
-          - Docker_Build_Push
+          - Docker_Build
         variables:
           - template: variables/shared.yaml
             parameters:
@@ -155,7 +155,6 @@ stages:
                   onTimeout: 'reject'
 
           - job: Tag_And_Push_${{ env }}
-            dependsOn: Docker_Build
             displayName: Tag and Push Helm Chart ${{ env }}
             variables:
               - template: variables/shared.yaml
