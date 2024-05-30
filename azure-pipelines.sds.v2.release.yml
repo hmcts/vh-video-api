@@ -9,12 +9,7 @@ parameters:
   - name: environments
     type: object
     default:
-      - dev
-      - stg
-      - test
-      - ithc
       - demo
-      - prod
 
 resources:
   repositories:
@@ -83,15 +78,6 @@ stages:
               acrName: ${{ variables.acrName }}
               repositoryName: ${{ variables.repositoryName }}
 
-          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
-              imageName: '${{ variables.imageName }}'
-              imageTags:
-                - '${{ variables.stagingTagName }}'
-                - 'beta'
 
   #########################################
   # Push Helm Charts to Repo. #############
@@ -104,7 +90,22 @@ stages:
           - template: variables/shared.yaml
             parameters:
               env: ${{ variables.env }}
-        jobs:
+    jobs:
+      - job: Docker_Build
+        displayName: 'Docker Build and Push'
+        steps:
+          - checkout: self
+
+            - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+            parameters:
+              azureSubscription: ${{ variables.acrSubscription }}
+              acrName: ${{ variables.acrName }}
+              repositoryName: ${{ variables.repositoryName }}
+              imageName: '${{ variables.imageName }}'
+              imageTags:
+                - '${{ variables.stagingTagName }}'
+                - 'beta'
+
           - job: Approve_EF_${{ env }}
             displayName: 'Approve to ${{ env }}'
             pool: server
