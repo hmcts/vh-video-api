@@ -9,7 +9,7 @@ parameters:
   - name: environments
     type: object
     default:
-      - demo
+      - ithc
 
 resources:
   repositories:
@@ -59,7 +59,7 @@ stages:
     variables:
       - template: variables/shared.yaml
         parameters:
-          env: 'demo'
+          env: 'ithc'
           # env: ${{ variables.env }} when pipeline is ready use this line
     jobs:
       - job: Docker_Build
