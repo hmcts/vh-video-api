@@ -78,7 +78,6 @@ stages:
               acrName: ${{ variables.acrName }}
               repositoryName: ${{ variables.repositoryName }}
 
-
   #########################################
   # Push Helm Charts to Repo. #############
   - ${{each env in parameters.environments}}:
@@ -90,22 +89,7 @@ stages:
           - template: variables/shared.yaml
             parameters:
               env: ${{ variables.env }}
-    jobs:
-      - job: Docker_Build
-        displayName: 'Docker Build and Push'
-        steps:
-          - checkout: self
-
-            - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
-              imageName: '${{ variables.imageName }}'
-              imageTags:
-                - '${{ variables.stagingTagName }}'
-                - 'beta'
-
+        jobs:
           - job: Approve_EF_${{ env }}
             displayName: 'Approve to ${{ env }}'
             pool: server
@@ -169,6 +153,26 @@ stages:
                 inputs:
                   instructions: 'Please Approve run to ${{ env }}'
                   onTimeout: 'reject'
+
+          - job: Tag_And_Push_${{ env }}
+            dependsOn: Docker_Build
+            displayName: Tag and Push Helm Chart ${{ env }}
+            variables:
+              - template: variables/shared.yaml
+                parameters:
+                  env: ${{ env }}
+            steps:
+              - checkout: self
+
+              - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+                parameters:
+                  azureSubscription: ${{ variables.acrSubscription }}
+                  acrName: ${{ variables.acrName }}
+                  repositoryName: ${{ variables.repositoryName }}
+                  imageName: '${{ variables.imageName }}'
+                  imageTags:
+                    - '${{ variables.tagName }}'
+
           - job: Push_Helm_${{ env }}
             displayName: Push Helm Chart ${{ env }}
             variables:
