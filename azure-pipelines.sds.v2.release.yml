@@ -155,7 +155,7 @@ stages:
                   onTimeout: 'reject'
 
           - job: Tag_And_Push_${{ env }}
-            displayName: Tag and Push Helm Chart ${{ env }}
+            displayName: Tag and Push to ACR ${{ env }}
             variables:
               - template: variables/shared.yaml
                 parameters:
