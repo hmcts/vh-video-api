@@ -209,7 +209,7 @@ stages:
             jobs:
               - job: AcceptanceTests${{ env }}
                 pool: VH Self Hosted
-                displayName: Acceptance Tests {{ env }}
+                displayName: Acceptance Tests ${{ env }}
                 steps:
                   - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
                     parameters:
