@@ -157,6 +157,7 @@ stages:
             displayName: Push Helm Chart ${{ env }}
             variables:
               - template: variables/shared.yaml
+              - group: vh-github-app-credentials
               - template: variables/ithc.yaml
                 parameters:
                   env: ${{ env }}
