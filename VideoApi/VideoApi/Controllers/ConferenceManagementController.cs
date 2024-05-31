@@ -59,10 +59,19 @@ namespace VideoApi.Controllers
                 var triggeredByHostId = request.TriggeredByHostId ?? request.ParticipantsToForceTransfer?.Single();
 
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var participants = conference.Participants.Where(x => (x.State == ParticipantState.Available || x.State == ParticipantState.InConsultation) 
-                                                                      && x.UserRole != UserRole.QuickLinkParticipant && x.UserRole != UserRole.QuickLinkObserver && x.HearingRole != "Witness").Select(x => x.Id.ToString());
+                var participants = conference.Participants.Where(x =>
+                    (x.State == ParticipantState.Available || x.State == ParticipantState.InConsultation)
+                    && x.UserRole != UserRole.QuickLinkParticipant && x.UserRole != UserRole.QuickLinkObserver &&
+                    x.HearingRole != "Witness");
+                
+                // all endpoints get pulled into a hearing
+                var endpoints = conference.Endpoints.Where(x =>
+                    x.State == EndpointState.Connected || x.State == EndpointState.InConsultation);
+                
+                var ids = participants.Select(x => x.Id.ToString()).ToList();
+                ids.AddRange(endpoints.Select(x => x.Id.ToString()));
 
-                await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, participants, hearingLayout, request.MuteGuests ?? true);
+                await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, ids, hearingLayout, request.MuteGuests ?? true);
            
                 return Accepted();
             }
