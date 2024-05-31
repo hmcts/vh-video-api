@@ -184,7 +184,8 @@ stages:
             displayName: Acceptance Tests ${{ env }}
             variables:
               - group: vh-video-api
-              - template: variables/shared.yaml
+              - template: variables/ithc.yaml
+              
                 parameters:
                   env: ${{ env }}
               - name: dnsRecordName
