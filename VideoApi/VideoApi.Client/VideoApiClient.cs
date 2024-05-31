@@ -5778,9 +5778,6 @@ namespace VideoApi.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceForAdminResponse>> GetActiveConferencesAsync(System.Threading.CancellationToken cancellationToken)
         {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/end-of-day/active-sessions");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -5789,6 +5786,11 @@ namespace VideoApi.Client
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "end-of-day/active-sessions"
+                    urlBuilder_.Append("end-of-day/active-sessions");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -5801,7 +5803,9 @@ namespace VideoApi.Client
                     var disposeResponse_ = true;
                     try
                     {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
                         if (response_.Content != null && response_.Content.Headers != null)
                         {
                             foreach (var item_ in response_.Content.Headers)

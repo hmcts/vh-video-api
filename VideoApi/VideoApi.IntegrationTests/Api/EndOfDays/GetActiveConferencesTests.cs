@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using NUnit.Framework;
-using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Responses;
+using VideoApi.Client;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Api.Setup;
-using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Api.EndOfDays;
@@ -53,12 +50,11 @@ public class GetActiveConferencesTests : ApiTest
         using var client = Application.CreateClient();
         
         // Act
-        var result = await client.GetAsync(ApiUriFactory.EndOfDayEndpoints.GetActiveConferences);
+        var apiClient = VideoApiClient.GetClient(client);
+        var conferenceResponse = await apiClient.GetActiveConferencesAsync();
         
         
         // Assert
-        result.IsSuccessStatusCode.Should().BeTrue(result.Content.ReadAsStringAsync().Result);
-        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceForAdminResponse>>(result.Content);
         conferenceResponse.Should().NotBeNullOrEmpty();
         conferenceResponse.Should().NotContain(x=> x.Id == conferenceClosed.Id);
         
