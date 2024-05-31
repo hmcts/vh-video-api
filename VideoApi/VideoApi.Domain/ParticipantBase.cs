@@ -85,6 +85,11 @@ namespace VideoApi.Domain
             CurrentConsultationRoom?.RemoveParticipant(new RoomParticipant(Id));
             CurrentConsultationRoom = consultationRoom;
         }
+        
+        public bool CanAutoTransferToHearingRoom()
+        {
+            return UserRole != UserRole.QuickLinkParticipant && UserRole != UserRole.QuickLinkObserver && HearingRole != "Witness";
+        }
 
     }
 }
