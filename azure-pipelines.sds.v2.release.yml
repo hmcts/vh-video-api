@@ -157,7 +157,7 @@ stages:
                   repositoryName: ${{ variables.repositoryName }}
                   imageName: '${{ variables.imageName }}'
                   imageTags:
-                    - "ithc"
+                    - 'ithcTagName'
 
           - job: Push_Helm_${{ env }}
             displayName: Push Helm Chart ${{ env }}
