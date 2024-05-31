@@ -8,6 +8,7 @@ using Moq;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Services;
 using VideoApi.Services.Clients;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
@@ -39,6 +40,35 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds , Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_return_accepted_when_start_hearing_with_muted_guests_has_been_requested_voda_feature_toggle_enabled()
+        {
+            var featureToggle = Mocker.Mock<IFeatureToggles>();
+            featureToggle.Setup(x => x.VodafoneIntegrationEnabled()).Returns(true);
+            
+            var conferenceId = TestConference.Id;
+            var layout = HearingLayout.OnePlus7;
+            var participantIds = TestConference.Participants.Select(x => x.Id.ToString());
+            var muteGuests = true;
+            var request = new Contract.Requests.StartHearingRequest
+            {
+                Layout = layout,
+                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
+                ParticipantsToForceTransfer = participantIds,
+            };
+            Mocker.Mock<IQueryHandler>()
+                .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
+                    It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
+                .ReturnsAsync(TestConference);
+            
+            var result = await Controller.StartVideoHearingAsync(conferenceId, request);
+            
+            var typedResult = (AcceptedResult) result;
+            typedResult.Should().NotBeNull();
+            typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
+            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds , Layout.ONE_PLUS_SEVEN, true), Times.Once);
         }
 
         [Test] public async Task should_return_supplier_status_code_on_error()

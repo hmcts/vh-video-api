@@ -11,6 +11,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Clients;
 using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
@@ -26,14 +27,16 @@ namespace VideoApi.Controllers
     {
         private readonly IVideoPlatformService _videoPlatformService;
         private readonly IQueryHandler _queryHandler;
+        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<ConferenceManagementController> _logger;
 
         public ConferenceManagementController(IVideoPlatformService videoPlatformService,
-            ILogger<ConferenceManagementController> logger, IQueryHandler queryHandler)
+            ILogger<ConferenceManagementController> logger, IQueryHandler queryHandler, IFeatureToggles featureToggles)
         {
             _videoPlatformService = videoPlatformService;
             _logger = logger;
             _queryHandler = queryHandler;
+            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -60,9 +63,8 @@ namespace VideoApi.Controllers
 
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
                 var participants = conference.Participants.Where(x =>
-                    (x.State == ParticipantState.Available || x.State == ParticipantState.InConsultation)
-                    && x.UserRole != UserRole.QuickLinkParticipant && x.UserRole != UserRole.QuickLinkObserver &&
-                    x.HearingRole != "Witness");
+                    x.State is ParticipantState.Available or ParticipantState.InConsultation 
+                    && x.CanAutoTransferToHearingRoom());
                 
                 // all endpoints get pulled into a hearing
                 var endpoints = conference.Endpoints.Where(x =>
@@ -70,8 +72,16 @@ namespace VideoApi.Controllers
                 
                 var ids = participants.Select(x => x.Id.ToString()).ToList();
                 ids.AddRange(endpoints.Select(x => x.Id.ToString()));
-
-                await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, ids, hearingLayout, request.MuteGuests ?? true);
+                
+                if (_featureToggles.VodafoneIntegrationEnabled())
+                {
+                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, ids, hearingLayout, request.MuteGuests ?? true);    
+                }
+                else
+                {
+                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, ids, hearingLayout, request.MuteGuests ?? true);
+                }
+                
            
                 return Accepted();
             }

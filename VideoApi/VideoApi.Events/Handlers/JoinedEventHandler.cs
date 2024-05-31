@@ -6,6 +6,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Events.Handlers
@@ -13,10 +14,13 @@ namespace VideoApi.Events.Handlers
     public class JoinedEventHandler : EventHandlerBase<JoinedEventHandler>
     {
         private readonly IVideoPlatformService _videoPlatformService;
-        public JoinedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<JoinedEventHandler> logger, IVideoPlatformService videoPlatformService) : base(
+        private readonly IFeatureToggles _featureToggles;
+        
+        public JoinedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<JoinedEventHandler> logger, IVideoPlatformService videoPlatformService, IFeatureToggles featureToggles) : base(
             queryHandler, commandHandler, logger)
         {
             _videoPlatformService = videoPlatformService;
+            _featureToggles = featureToggles;
         }
 
         public override EventType EventType => EventType.Joined;
@@ -30,13 +34,22 @@ namespace VideoApi.Events.Handlers
             
             _logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId}",
                 SourceConference.Id, SourceParticipant.Id);
-            if (SourceConference.State == ConferenceState.InSession &&
-                            SourceParticipant.UserRole != UserRole.QuickLinkParticipant && SourceParticipant.UserRole != UserRole.QuickLinkObserver && SourceParticipant.HearingRole != "Witness")
+            
+            if (_featureToggles.VodafoneIntegrationEnabled())
+            {
+                TransferToHearingRoomIfHearingIsAlreadyInSession();
+            }
+            
+            return CommandHandler.Handle(command);
+        }
+        
+        private void TransferToHearingRoomIfHearingIsAlreadyInSession()
+        {
+            if (SourceConference.State == ConferenceState.InSession && SourceParticipant.CanAutoTransferToHearingRoom())
             {
                 _videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceParticipant.Id.ToString(),
-                  RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
             }
-            return CommandHandler.Handle(command);
         }
     }
 }
