@@ -78,6 +78,17 @@ stages:
               acrName: ${{ variables.acrName }}
               repositoryName: ${{ variables.repositoryName }}
 
+          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+            parameters:
+                  azureSubscription: ${{ variables.acrSubscription }}
+                  acrName: ${{ variables.acrName }}
+                  repositoryName: ${{ variables.repositoryName }}
+                  imageName: '${{ variables.imageName }}'
+                  imageTags:
+                    - 'ithcTagName'
+
+
+
   #########################################
   # Push Helm Charts to Repo. #############
   - ${{each env in parameters.environments}}:
@@ -141,23 +152,6 @@ stages:
                   instructions: 'Please Approve run to ${{ env }}'
                   onTimeout: 'reject'
 
-          - job: Tag_And_Push_${{ env }}
-            displayName: Tag and Push to ACR ${{ env }}
-            variables:
-              - template: variables/shared.yaml
-                parameters:
-                  env: ${{ env }}
-            steps:
-              - checkout: self
-
-              - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-                parameters:
-                  azureSubscription: ${{ variables.acrSubscription }}
-                  acrName: ${{ variables.acrName }}
-                  repositoryName: ${{ variables.repositoryName }}
-                  imageName: '${{ variables.imageName }}'
-                  imageTags:
-                    - 'ithcTagName'
 
           - job: Push_Helm_${{ env }}
             displayName: Push Helm Chart ${{ env }}
