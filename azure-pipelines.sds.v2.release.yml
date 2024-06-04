@@ -185,6 +185,7 @@ stages:
             variables:
               - group: vh-video-api
               - template: variables/ithc.yaml
+              - template: variables/shared.yaml
               
                 parameters:
                   env: ${{ env }}
