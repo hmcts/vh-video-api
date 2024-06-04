@@ -10,12 +10,11 @@ parameters:
     type: object
     default:
       - ithc
-    values: 
-        - dev
-        - stg
-        - test
-        - demo
-        - prod
+      - dev
+      - stg
+      - test
+      - demo
+      - prod
 
 resources:
   repositories:
