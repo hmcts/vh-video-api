@@ -205,3 +205,16 @@ stages:
                           value: connectionstrings--applicationinsights
                           keyVaultName: vh-infra-core-${{ variables.env }}
                           secret: true
+
+                        - name: AzureAd:ClientId
+                          value: azuread--clientid
+                          keyVaultName: vh-video-api-${{ variables.env }}
+                          secret: true
+                        - name: AzureAd:ClientSecret
+                          value: azuread--clientsecret
+                          keyVaultName: vh-video-api-${{ variables.env }}
+                          secret: true
+                        - name: AzureAd:TenantId
+                          value: azuread--tenantid
+                          keyVaultName: vh-infra-core-${{ variables.env }}
+                          secret: true
