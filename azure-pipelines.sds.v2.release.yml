@@ -85,7 +85,7 @@ stages:
                   repositoryName: ${{ variables.repositoryName }}
                   imageName: '${{ variables.imageName }}'
                   imageTags:
-                     - "${{ variables.prTagName }}"
+                     - "${{ variables.demoTagName}}"
 
 
 
