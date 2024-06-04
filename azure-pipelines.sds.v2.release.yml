@@ -10,7 +10,12 @@ parameters:
     type: object
     default:
       - ithc
-    values: ['dev','stg','demo','test','prod']
+    values: 
+        - dev
+        - stg
+        - test
+        - demo
+        - prod
 
 resources:
   repositories:
