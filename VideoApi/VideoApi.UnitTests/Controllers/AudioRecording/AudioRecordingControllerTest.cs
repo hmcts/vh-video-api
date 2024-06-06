@@ -4,12 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Responses;
 using VideoApi.Controllers;
+using VideoApi.DAL.Commands;
+using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
@@ -30,6 +34,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
 
         private AudioRecordingController _controller;
         private Mock<BlobClient> _blobClientMock;
+        private Mock<ICommandHandler> _commandHandler;
 
         private const string ApplicationName = "vh-recording-app";
 
@@ -41,11 +46,13 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             _audioPlatformService.Setup(x => x.ApplicationName).Returns(ApplicationName);
             _storageServiceFactory = new Mock<IAzureStorageServiceFactory>();
             _storageService        = new Mock<IAzureStorageService>();
+            _commandHandler = new Mock<ICommandHandler>();
+            
 
             _controller = new AudioRecordingController
                 (
                  _storageServiceFactory.Object, _audioPlatformService.Object,
-                 new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object
+                 new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object, _commandHandler.Object
                 );
 
             _testConference = new ConferenceBuilder()
@@ -356,6 +363,30 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
+        }
+        
+        [Test]
+        public async Task should_add_audio_recording_alert()
+        {
+            var conferenceId = _testConference.Id;
+            
+            _commandHandler.Setup(x => x.Handle(It.IsAny<AddAudioRecordingAlertCommand>()));
+            
+            var result = await _controller.AudioRecordingAlertsAsync(conferenceId);
+            result.Should().BeOfType<NoContentResult>();
+            
+        }
+        
+        [Test]
+        public async Task should_not_add_audio_recording_alert_and_returning_notfound()
+        {
+            var conferenceId = _testConference.Id;
+            
+            _commandHandler.Setup(x => x.Handle(It.IsAny<AddAudioRecordingAlertCommand>())).Throws<ConferenceNotFoundException>();
+            
+            var result = await _controller.AudioRecordingAlertsAsync(conferenceId);
+            result.Should().BeOfType<NotFoundResult>();
+            
         }
 
         private async IAsyncEnumerable<BlobClient> GetMockBlobClients()

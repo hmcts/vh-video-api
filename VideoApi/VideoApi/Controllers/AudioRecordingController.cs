@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using VideoApi.Contract.Responses;
+using VideoApi.DAL.Commands;
+using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -30,16 +32,18 @@ namespace VideoApi.Controllers
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly ILogger<AudioRecordingController> _logger;
         private readonly IQueryHandler _queryHandler;
+        private readonly ICommandHandler _commandHandler;
 
         public AudioRecordingController(IAzureStorageServiceFactory azureStorageServiceFactory, 
             IAudioPlatformService audioPlatformService, 
             ILogger<AudioRecordingController> logger, 
-            IQueryHandler queryHandler)
+            IQueryHandler queryHandler, ICommandHandler commandHandler)
         {
             _azureStorageServiceFactory = azureStorageServiceFactory;
             _audioPlatformService = audioPlatformService;
             _logger = logger;
             _queryHandler = queryHandler;
+            _commandHandler = commandHandler;
         }
         
         /// <summary>
@@ -99,6 +103,33 @@ namespace VideoApi.Controllers
             catch (ConferenceNotFoundException ex)
             {
                 _logger.LogError(ex, ex.Message);
+                return NotFound();
+            }
+        }
+        
+        /// <summary>
+        /// Logging Audio Recording Alerts
+        /// </summary>
+        /// <param name="conferenceId">Id for conference</param>
+        /// <returns></returns>
+        [HttpPost("{conferenceId}/AudioRecordingAlerts")]
+        [OpenApiOperation("AudioRecordingAlerts")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> AudioRecordingAlertsAsync(Guid conferenceId)
+        {
+            try
+            {
+                _logger.LogDebug("Attempting to create audio recording alert for conference Id {Conference}",
+                    conferenceId);
+                var command = new AddAudioRecordingAlertCommand(conferenceId);
+                await _commandHandler.Handle(command);
+                
+                return NoContent();
+            }
+            catch (ConferenceNotFoundException ex)
+            {
+                _logger.LogError(ex, "Unable to find conference {ConferenceId}", conferenceId);
                 return NotFound();
             }
         }

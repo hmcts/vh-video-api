@@ -14,5 +14,9 @@ namespace VideoApi.DAL.Exceptions
             : base(info, context)
         {
         }
+        
+        public ConferenceNotFoundException() : base($"Conference does not exist")
+        {
+        }
     }
 }

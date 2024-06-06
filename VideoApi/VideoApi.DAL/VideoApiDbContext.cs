@@ -13,6 +13,8 @@ namespace VideoApi.DAL
         public DbSet<Event> Events { get; set; }
 
         public DbSet<Conference> Conferences { get; set; }
+        
+        public DbSet<AudioRecordingAlert> AudioRecordingAlerts { get; set; }
 
         public DbSet<ConferenceStatus> ConferenceStatuses { get; set; }
 
