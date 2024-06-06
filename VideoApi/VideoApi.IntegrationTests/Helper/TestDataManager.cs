@@ -61,7 +61,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, "Judge")
                 .WithParticipant(UserRole.JudicialOfficeHolder, "PanelMember")
-                .WithEndpoint("Endpoint1", Guid.NewGuid().ToString(), "TestApplicant@email.com")
+                .WithEndpoint("Endpoint1", Guid.NewGuid().ToString())
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername)
                 .WithAudioRecordingRequired(false)

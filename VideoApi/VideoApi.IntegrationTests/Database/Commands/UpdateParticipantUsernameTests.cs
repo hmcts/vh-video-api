@@ -60,9 +60,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
             updatedParticipant.Username.Should().NotBe(oldUsername);
             updatedParticipant.Username.Should().Be(newUsername);
-            
-            conference.Endpoints[0].DefenceAdvocate.Should().NotBe(oldUsername);
-            conference.Endpoints[0].DefenceAdvocate.Should().Be(newUsername);
         }
 
         [TearDown]

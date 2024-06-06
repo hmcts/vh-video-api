@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using VideoApi.Domain.Enums;
 
@@ -21,5 +22,13 @@ namespace VideoApi.Events.Models
         public string Reason { get; set; }
         public string Phone { get; set; }
         public long? ParticipantRoomId { get; set; }
+        
+        public List<EndpointLink> Endpoints { get; set; }
+    }
+
+    public class EndpointLink
+    {
+        public Guid Id { get; set; }
+        public List<Guid> LinkedParticipantIds { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
@@ -36,8 +35,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithEndpoints(new List<Endpoint>
                     {
-                        new Endpoint("one", "44564", "1234", "Defence Sol"),
-                        new Endpoint("two", "867744", "5678", "Defence Sol")
+                        new ("one", "44564", "1234"),
+                        new ("two", "867744", "5678")
                     })
                 .Build();
             _newConferenceId1 = seededConference.Id;
@@ -124,7 +123,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 endpoint.DisplayName.Should().NotBeNullOrEmpty();
                 endpoint.Pin.Should().NotBeNullOrEmpty();
                 endpoint.SipAddress.Should().NotBeNullOrEmpty();
-                endpoint.DefenceAdvocate.Should().NotBeEmpty();
             }
         }
 

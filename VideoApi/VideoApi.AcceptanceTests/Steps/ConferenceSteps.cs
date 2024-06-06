@@ -60,8 +60,8 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var endpoints = new List<AddEndpointRequest>
             {
-                new AddEndpointRequest {DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                new AddEndpointRequest {DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                new AddEndpointRequest {DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234"},
+                new AddEndpointRequest {DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678"}
             };
             
             CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), endpoints: endpoints);

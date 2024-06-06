@@ -71,7 +71,7 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
             
-            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin, request.DefenceAdvocate);
+            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin);
             await _commandHandler.Handle(command);
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
@@ -121,13 +121,11 @@ namespace VideoApi.Controllers
             _logger.LogDebug(
                 "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
 
-            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate);
+            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName);
             await _commandHandler.Handle(command);
 
             if (!string.IsNullOrWhiteSpace(request.DisplayName))
-            {
                 await UpdateDisplayNameWithSupplier(conferenceId);
-            }
 
             _logger.LogDebug(
                 "Successfully updated endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);

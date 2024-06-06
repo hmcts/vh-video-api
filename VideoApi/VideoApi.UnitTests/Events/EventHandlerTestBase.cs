@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Events
             CommandHandlerMock = _mocker.Mock<ICommandHandler>();
 
             TestConference = new ConferenceBuilder()
-                .WithEndpoint("Endpoint1", "Endpoint1234@sip.com", "da1@test.com")
+                .WithEndpoint("Endpoint1", "Endpoint1234@sip.com")
                 .WithEndpoint("Endpoint2", "Endpoint2345@sip.com")
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant")

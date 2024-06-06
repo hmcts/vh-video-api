@@ -84,8 +84,7 @@ namespace VideoApi.Controllers
 
                 await _commandHandler.Handle(addParticipantsToConferenceCommand);
 
-                var jwtDetails = _quickLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username,
-                    participant.UserRole);
+                var jwtDetails = _quickLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username, participant.UserRole);
 
                 var addQuickLinkParticipantTokenCommand = new AddQuickLinkParticipantTokenCommand(participant.Id, jwtDetails);
                 

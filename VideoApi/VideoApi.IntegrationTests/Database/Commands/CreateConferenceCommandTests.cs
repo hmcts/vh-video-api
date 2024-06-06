@@ -47,8 +47,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234"),
+                new ("name2", GetSipAddress(), "5678")
             };
 
             var command =
@@ -99,8 +99,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234"),
+                new ("name2", GetSipAddress(), "5678")
             };
             
             
@@ -157,8 +157,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234"),
+                new ("name2", GetSipAddress(), "5678")
             };
 
             var command =

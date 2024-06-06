@@ -22,8 +22,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 DisplayName = "Display name",
                 Pin = "1234",
-                SipAddress = "te124@sip.com", 
-                DefenceAdvocate = "Defence Sol"
+                SipAddress = "te124@sip.com"
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -38,8 +37,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 DisplayName = string.Empty,
                 Pin = "1234",
-                SipAddress = "te124@sip.com", 
-                DefenceAdvocate = "Defence Sol"
+                SipAddress = "te124@sip.com"
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -54,8 +52,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 DisplayName = "Display name",
                 Pin = string.Empty,
-                SipAddress = "te124@sip.com", 
-                DefenceAdvocate = "Defence Sol"
+                SipAddress = "te124@sip.com"
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -70,8 +67,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 DisplayName = "Display name",
                 Pin = "1234",
-                SipAddress = string.Empty, 
-                DefenceAdvocate = "Defence Sol"
+                SipAddress = string.Empty
             };
 
             var result = await _validator.ValidateAsync(request);

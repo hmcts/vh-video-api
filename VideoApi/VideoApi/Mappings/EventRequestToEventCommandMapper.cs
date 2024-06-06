@@ -30,8 +30,7 @@ namespace VideoApi.Mappings
             return command;
         }
 
-        public static CallbackEvent MapEventRequestToEventHandlerDto(Guid conferenceId, Guid participantId,
-            ConferenceEventRequest request)
+        public static CallbackEvent MapEventRequestToEventHandlerDto(Guid conferenceId, Guid participantId, ConferenceEventRequest request)
         {
             GetRoomTypeEnums(request, out var transferTo, out var transferFrom);
             var isValidRoomId = long.TryParse(request.ParticipantRoomId, out var roomId);

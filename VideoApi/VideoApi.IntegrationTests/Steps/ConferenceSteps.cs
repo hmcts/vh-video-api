@@ -4,13 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Faker;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -229,8 +227,8 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .WithEndpoints(new List<AddEndpointRequest>
                 {
-                    new AddEndpointRequest{DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                    new AddEndpointRequest{DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                    new AddEndpointRequest{DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234"},
+                    new AddEndpointRequest{DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678"}
                 })
                 .Build();
 
