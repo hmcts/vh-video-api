@@ -51,11 +51,23 @@ public class GetActiveConferencesTests : ApiTest
         conferenceClosedWithActiveConsultation.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
         conferenceClosedWithActiveConsultation.Participants[1].UpdateCurrentConsultationRoom(consultationRoomPostClosed);
         
+        
+        var conferenceSuspendedWithActiveConsultation = new ConferenceBuilder(ignoreId: true)
+            .WithConferenceStatus(ConferenceState.Suspended).WithParticipants(2).Build();
+        var consultationSuspendedClosed = new ConsultationRoom(conferenceSuspendedWithActiveConsultation.Id,
+            "Civilian_ConsultationRoom1", VirtualCourtRoomType.Civilian, false);
+        
+        conferenceSuspendedWithActiveConsultation.Participants[0].UpdateParticipantStatus(ParticipantState.InConsultation);
+        conferenceSuspendedWithActiveConsultation.Participants[0].UpdateCurrentConsultationRoom(consultationSuspendedClosed);
+        conferenceSuspendedWithActiveConsultation.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
+        conferenceSuspendedWithActiveConsultation.Participants[1].UpdateCurrentConsultationRoom(consultationSuspendedClosed);
+        
         await TestDataManager.SeedConference(conferenceInSession);
         await TestDataManager.SeedConference(conferencePaused);
         await TestDataManager.SeedConference(conferenceClosed);
         await TestDataManager.SeedConference(conferenceClosedWithActiveConsultation);
         await TestDataManager.SeedConference(conferenceNotStartedWithActiveConsultation);
+        await TestDataManager.SeedConference(conferenceSuspendedWithActiveConsultation);
         
         
         using var client = Application.CreateClient();
@@ -74,7 +86,8 @@ public class GetActiveConferencesTests : ApiTest
             conferenceInSession.Id,
             conferencePaused.Id,
             conferenceClosedWithActiveConsultation.Id,
-            conferenceNotStartedWithActiveConsultation.Id
+            conferenceNotStartedWithActiveConsultation.Id,
+            conferenceSuspendedWithActiveConsultation.Id
         });
     }
 }

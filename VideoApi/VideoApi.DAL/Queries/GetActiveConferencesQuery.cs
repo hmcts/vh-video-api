@@ -30,10 +30,7 @@ public class GetActiveConferencesQueryHandler : IQueryHandler<GetActiveConferenc
             .Include(c => c.Participants)
             .Where(c => c.State == ConferenceState.Paused
                         || c.State == ConferenceState.InSession
-                        || (c.State == ConferenceState.Closed &&
-                            c.Participants.Any(p => p.State == ParticipantState.InConsultation))
-                        || (c.State == ConferenceState.NotStarted &&
-                            c.Participants.Any(p => p.State == ParticipantState.InConsultation))
+                        || c.Participants.Any(p => p.State == ParticipantState.InConsultation)
             )
             .Where(c => c.ScheduledDateTime >= today && c.ScheduledDateTime < tomorrow)
             .AsNoTracking()
