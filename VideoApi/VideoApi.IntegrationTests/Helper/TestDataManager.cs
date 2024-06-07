@@ -133,7 +133,8 @@ namespace VideoApi.IntegrationTests.Helper
 
             return seedAlerts;
         }
-
+        
+        
         public async Task RemoveConference(Guid conferenceId)
         {
             var command = new RemoveConferenceCommand(conferenceId);
@@ -152,26 +153,27 @@ namespace VideoApi.IntegrationTests.Helper
             await RemoveAlerts(conferenceId);
         }
         
+        public async Task CleanUpSeededData()
+        {
+            foreach (var conferenceId in _seedeConferences)
+            {
+                TestContext.WriteLine($"Removing test conference {conferenceId}");
+                await RemoveConference(conferenceId);
+            }
+            
+            _seedeConferences.Clear();
+        }
+        
         public async Task RemoveConferences(List<Conference> conferences)
         {
-            await using var db = new VideoApiDbContext(_dbContextOptions);
             var conferenceIds = conferences.Select(conference => conference.Id).ToList();
-            var allConferences = await db.Conferences
-                .Include(x => x.Endpoints)
-                .Include(x => x.Participants).ThenInclude(x => x.LinkedParticipants)
-                .Include("Participants.ParticipantStatuses")
-                .Include(x => x.ConferenceStatuses)
-                .Where(x => conferenceIds.Contains(x.Id)).ToListAsync();
-
-            db.RemoveRange(allConferences);
-            await db.SaveChangesAsync();
-
+            
             foreach (var id in conferenceIds)
             {
-                await RemoveAlerts(id);
+                await RemoveConference(id);
             }
         }
-
+        
         
         public async Task SeedHeartbeats(IEnumerable<Heartbeat> heartbeats)
         {
@@ -279,17 +281,6 @@ namespace VideoApi.IntegrationTests.Helper
             var eventsToDelete = db.Events.Where(x => x.Reason.StartsWith("Automated"));
             db.Events.RemoveRange(eventsToDelete);
             await db.SaveChangesAsync();
-        }
-        
-        public async Task CleanUpSeededData()
-        {
-            foreach (var conferenceId in _seedeConferences)
-            {
-                TestContext.WriteLine($"Removing test conference {conferenceId}");
-                await RemoveConference(conferenceId);
-            }
-            
-            _seedeConferences.Clear();
         }
 
         public async Task SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
