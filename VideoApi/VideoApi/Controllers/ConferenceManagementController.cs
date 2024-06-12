@@ -62,24 +62,22 @@ namespace VideoApi.Controllers
                 var triggeredByHostId = request.TriggeredByHostId ?? request.ParticipantsToForceTransfer?.Single();
 
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var participants = conference.Participants.Where(x =>
-                    x.State is ParticipantState.Available or ParticipantState.InConsultation 
-                    && x.CanAutoTransferToHearingRoom());
+                var participants = conference.Participants.Where(x => x.State is ParticipantState.Available or ParticipantState.InConsultation 
+                                                                      && x.CanAutoTransferToHearingRoom()).Select(x => x.Id.ToString()).ToList();
                 
-                // all endpoints get pulled into a hearing
-                var endpoints = conference.Endpoints.Where(x =>
-                    x.State == EndpointState.Connected || x.State == EndpointState.InConsultation);
+                var endpoints = conference.Endpoints
+                    .Where(x => x.State is EndpointState.Connected or EndpointState.InConsultation)
+                    .Select(x => x.Id.ToString()).ToList();
                 
-                var ids = participants.Select(x => x.Id.ToString()).ToList();
-                ids.AddRange(endpoints.Select(x => x.Id.ToString()));
+                var allIdsToTransfer = participants.Concat(endpoints).ToList();
                 
                 if (_featureToggles.VodafoneIntegrationEnabled())
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, ids, hearingLayout, request.MuteGuests ?? true);    
+                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
                 }
                 else
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, ids, hearingLayout, request.MuteGuests ?? true);
+                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);
                 }
                 
            
