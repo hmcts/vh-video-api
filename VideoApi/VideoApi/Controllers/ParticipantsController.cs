@@ -52,8 +52,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId,
-            AddParticipantsToConferenceRequest request)
+        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, AddParticipantsToConferenceRequest request)
         {
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>

@@ -12,9 +12,10 @@ namespace VideoApi.Validations
 
         public UpdateParticipantRequestValidation()
         {
-            RuleFor(x => x.Fullname).NotEmpty().WithMessage(NoNameErrorMessage);
-            RuleFor(x => x.FirstName).NotEmpty().WithMessage(NoFirstNameErrorMessage);
-            RuleFor(x => x.LastName).NotEmpty().WithMessage(NoLastNameErrorMessage);
+            //TODO: Validation rules to be updated
+            //RuleFor(x => x.Fullname).NotEmpty().WithMessage(NoNameErrorMessage);
+            //RuleFor(x => x.FirstName).NotEmpty().WithMessage(NoFirstNameErrorMessage);
+            //RuleFor(x => x.LastName).NotEmpty().WithMessage(NoLastNameErrorMessage);
             RuleFor(x => x.DisplayName).NotEmpty().WithMessage(NoDisplayNameErrorMessage);
         }
 

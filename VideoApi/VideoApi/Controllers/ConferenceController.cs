@@ -249,7 +249,7 @@ namespace VideoApi.Controllers
             };
 
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c, _supplierConfiguration));
+            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, _supplierConfiguration));
 
             return Ok(response);
         }
@@ -403,7 +403,7 @@ namespace VideoApi.Controllers
                 return NotFound();
 
             var response = conferences
-                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _supplierConfiguration))
+                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
                 .ToList();
 
             return Ok(response);

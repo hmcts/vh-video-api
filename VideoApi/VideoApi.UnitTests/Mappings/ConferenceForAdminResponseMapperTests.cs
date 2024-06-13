@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Mappings
                 .With(x => x.ConferencePhoneNumber = conferencePhoneNumber)
                 .With(x => x.ConferencePhoneNumberWelsh = conferencePhoneNumberWelsh).Build();
 
-            var response = ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, configuration);
+            var response = ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, configuration);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)

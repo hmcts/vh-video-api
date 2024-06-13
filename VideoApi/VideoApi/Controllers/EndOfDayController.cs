@@ -19,18 +19,13 @@ namespace VideoApi.Controllers;
 [Produces("application/json")]
 [Route("end-of-day")]
 [ApiController]
-public class EndOfDayController : ControllerBase
+public class EndOfDayController(
+    IQueryHandler queryHandler,
+    ILogger<EndOfDayController> logger,
+    ISupplierApiSelector supplierLocator)
+    : ControllerBase
 {
-    private readonly IQueryHandler _queryHandler;
-    private readonly SupplierConfiguration _supplierConfiguration;
-    private readonly ILogger<EndOfDayController> _logger;
-    
-    public EndOfDayController(IQueryHandler queryHandler, ILogger<EndOfDayController> logger, ISupplierApiSelector supplierLocator)
-    {
-        _queryHandler = queryHandler;
-        _logger = logger;
-        _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
-    }
+    private readonly SupplierConfiguration _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
     
     /// <summary>
     /// Get all active conferences.
@@ -40,18 +35,17 @@ public class EndOfDayController : ControllerBase
     /// <returns></returns>
     [HttpGet("active-sessions")]
     [OpenApiOperation("GetActiveConferences")]
-    [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
     public async Task<IActionResult> GetActiveConferences()
     {
-        _logger.LogDebug("Getting all active conferences");
+        logger.LogDebug("Getting all active conferences");
         var query = new GetActiveConferencesQuery();
-        var conferences = await _queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
+        var conferences = await queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
         
         var response = conferences
-            .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _supplierConfiguration))
+            .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
             .ToList();
         
         return Ok(response);
     }
-    
 }
