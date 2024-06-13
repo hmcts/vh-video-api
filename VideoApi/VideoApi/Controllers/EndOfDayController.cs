@@ -25,8 +25,7 @@ public class EndOfDayController : ControllerBase
     private readonly SupplierConfiguration _supplierConfiguration;
     private readonly ILogger<EndOfDayController> _logger;
     
-    public EndOfDayController(IQueryHandler queryHandler, ILogger<EndOfDayController> logger,
-        ISupplierApiSelector supplierLocator)
+    public EndOfDayController(IQueryHandler queryHandler, ILogger<EndOfDayController> logger, ISupplierApiSelector supplierLocator)
     {
         _queryHandler = queryHandler;
         _logger = logger;
@@ -41,7 +40,7 @@ public class EndOfDayController : ControllerBase
     /// <returns></returns>
     [HttpGet("active-sessions")]
     [OpenApiOperation("GetActiveConferences")]
-    [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int) HttpStatusCode.OK)]
     public async Task<IActionResult> GetActiveConferences()
     {
         _logger.LogDebug("Getting all active conferences");

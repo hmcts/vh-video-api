@@ -13,7 +13,7 @@ namespace VideoApi.Mappings
         {
             var phoneNumbers = $"{configuration.ConferencePhoneNumber},{configuration.ConferencePhoneNumberWelsh}";
             var participants = conference.GetParticipants()
-                .Select(p => ParticipantToSummaryResponseMapper.MapParticipantToSummary(p))
+                .Select(p => ParticipantResponseMapper.Map(p))
                 .ToList();
 
             return new ConferenceForAdminResponse

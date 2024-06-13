@@ -8,7 +8,6 @@ using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using Task = System.Threading.Tasks.Task;
 using VideoApi.Contract.Responses;
-using VideoApi.Contract.Consts;
 
 namespace VideoApi.UnitTests.Controllers.Participant
 {
@@ -31,10 +30,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
             result.Should().NotBeNull();
             var response = result?.Value.Should().BeAssignableTo<AddStaffMemberResponse>().Which;
             response.ConferenceId.Should().Be(TestConference.Id);
-            response.ParticipantDetails.Should().NotBeNull();
-            response.ParticipantDetails.HearingRole.Should().Be(HearingRoleName.StaffMember);
-            response.ParticipantDetails.LastName.Should().Be(_request.LastName);
-            response.ParticipantDetails.CurrentInterpreterRoom.Should().BeNull();
+            response.Participant.Should().NotBeNull();
+            response.Participant.CurrentInterpreterRoom.Should().BeNull();
         }
 
         [Test]
