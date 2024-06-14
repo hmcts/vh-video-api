@@ -18,6 +18,7 @@ namespace VideoApi.Validations
             //RuleFor(x => x.LastName).NotEmpty().WithMessage(NoLastNameErrorMessage);
             RuleFor(x => x.DisplayName).NotEmpty().WithMessage(NoDisplayNameErrorMessage);
         }
+        
 
     }
 }
