@@ -47,6 +47,8 @@ namespace VideoApi.Events.Handlers
         {
             if (SourceConference.State == ConferenceState.InSession)
             {
+                _logger.LogInformation("Conference {ConferenceId} already in session, transferring endpoint {EndpointId} to hearing room",
+                    SourceConference.Id, SourceEndpoint.Id);
                 _videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceEndpoint.Id.ToString(),
                     RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
             }
