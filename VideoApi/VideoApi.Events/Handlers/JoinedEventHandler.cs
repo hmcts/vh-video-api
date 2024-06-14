@@ -50,6 +50,12 @@ namespace VideoApi.Events.Handlers
                 _videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceParticipant.Id.ToString(),
                     RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
             }
+            
+            if(SourceConference.State == ConferenceState.InSession && SourceEndpoint != null)
+            {
+                _videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceEndpoint.Id.ToString(),
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
+            }
         }
     }
 }
