@@ -73,14 +73,21 @@ namespace VideoApi.DAL.Commands
                 throw new ParticipantNotFoundException(command.ParticipantId);
             }
 
-            participant.Name = command.Fullname;
+            if (command.Fullname != null)
+                participant.Name = command.Fullname;
+            
             participant.DisplayName = command.DisplayName;
             participant.Username = command.Username ?? participant.Username;
 
             if (participant is Participant participantCasted)
             {
-                participantCasted.FirstName = command.FirstName;
-                participantCasted.LastName = command.LastName;
+                if(command.FirstName != null)
+                    participantCasted.FirstName = command.FirstName;
+                
+                if(command.LastName != null)
+                    participantCasted.LastName = command.LastName;
+                
+                
                 participantCasted.Representee = command.Representee;
                 participantCasted.ContactEmail = command.ContactEmail ?? participantCasted.ContactEmail;
                 participantCasted.ContactTelephone = command.ContactTelephone ?? participantCasted.ContactTelephone;
