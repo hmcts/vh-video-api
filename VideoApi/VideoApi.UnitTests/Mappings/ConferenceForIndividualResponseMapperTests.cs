@@ -29,25 +29,5 @@ namespace VideoApi.UnitTests.Mappings
             response.ClosedDateTime.Should().Be(conference.ClosedDateTime);
             response.IsWaitingRoomOpen.Should().Be(conference.IsConferenceAccessible());
         }
-
-        [Test]
-        [TestCase(HearingVenueNames.Aberdeen, true)]
-        [TestCase(HearingVenueNames.Dundee, true)]
-        [TestCase(HearingVenueNames.Edinburgh, true)]
-        [TestCase(HearingVenueNames.Glasgow, true)]
-        [TestCase(HearingVenueNames.Inverness, true)]
-        [TestCase(HearingVenueNames.Ayr, true)]
-        [TestCase("Crown Court", false)]
-        [TestCase("Birmingham", false)]
-        [TestCase(null, false)]
-        [TestCase("", false)]
-        public void Maps_Venue_Flag_Correctly(string venueName, bool expectedValue)
-        {
-            var conference = new ConferenceBuilder(false, null, null, venueName).Build();
-
-            var response = ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel(conference);
-
-            response.HearingVenueIsScottish.Should().Be(expectedValue);
-        }
     }
 }

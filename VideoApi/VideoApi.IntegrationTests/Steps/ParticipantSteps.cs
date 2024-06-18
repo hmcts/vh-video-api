@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using TechTalk.SpecFlow;
+using Testing.Common.Assertions;
 using Testing.Common.Helper.Builders.Api;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -14,7 +15,6 @@ using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ParticipantsEndpoints;
 using TestContext = VideoApi.IntegrationTests.Contexts.TestContext;
-using Testing.Common.Assertions;
 using Testing.Common.Helper;
 
 namespace VideoApi.IntegrationTests.Steps
@@ -66,7 +66,7 @@ namespace VideoApi.IntegrationTests.Steps
                 case Scenario.Valid:
                 {
                     conferenceId = _context.Test.Conference.Id; 
-                    participantId = _context.Test.Conference.Participants.First().Id;
+                    participantId = _context.Test.Conference.Participants[0].Id;
                     request = new UpdateParticipantRequest
                     {
                         Fullname = "Automation_Mr Test_Fullname",
@@ -172,7 +172,7 @@ namespace VideoApi.IntegrationTests.Steps
                 case Scenario.Valid:
                 {
                     conferenceId = _context.Test.Conference.Id;
-                    participantId = _context.Test.Conference.GetParticipants().First().Id;
+                    participantId = _context.Test.Conference.GetParticipants()[0].Id;
                     break;
                 }
 
@@ -344,9 +344,9 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the participants should be retrieved")]
         public async Task ThenTheParticipantsShouldBeRetrieved()
         {
-            var result = await ApiClientResponse.GetResponses<List<ParticipantSummaryResponse>>(_context.Response.Content);
+            var result = await ApiClientResponse.GetResponses<List<ParticipantResponse>>(_context.Response.Content);
             result.Should().NotBeNull();
-            AssertParticipantSummaryResponse.ForParticipant(result[1]);
+            AssertParticipantResponse.ForParticipant(result[1]);
         }
 
 

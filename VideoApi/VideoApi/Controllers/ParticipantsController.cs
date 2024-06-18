@@ -52,8 +52,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId,
-            AddParticipantsToConferenceRequest request)
+        public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId, AddParticipantsToConferenceRequest request)
         {
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>
@@ -379,28 +378,13 @@ namespace VideoApi.Controllers
         }
 
         /// <summary>
-        /// Get a list of distinct first name of judges
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("participants/Judge/firstname")]
-        [OpenApiOperation("GetDistinctJudgeNames")]
-        [ProducesResponseType(typeof(JudgeNameListResponse), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetDistinctJudgeNamesAsync()
-        {
-            _logger.LogDebug("GetDistinctJudgeNames");
-            var query = new GetDistinctJudgeListByFirstNameQuery();
-            var judgeFirstNames = await _queryHandler.Handle<GetDistinctJudgeListByFirstNameQuery, List<string>>(query);
-            return Ok(new JudgeNameListResponse { FirstNames = judgeFirstNames });
-        }
-
-        /// <summary>
         /// Get a list of participants for a given conference Id
         /// </summary>
         /// <param name="conferenceId">The conference Id</param>
         /// <returns>The list of participants</returns>
         [HttpGet("{conferenceId}/participants")]
         [OpenApiOperation("GetParticipantsByConferenceId")]
-        [ProducesResponseType(typeof(List<ParticipantSummaryResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ParticipantResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetParticipantsByConferenceId(Guid conferenceId)
         {
@@ -417,9 +401,8 @@ namespace VideoApi.Controllers
             var participantRooms = conference.Rooms.OfType<ParticipantRoom>().ToList();
             var participants = conference.Participants.Select(x =>
             {
-                var participantRoom =
-                    participantRooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(x.Id)));
-                return ParticipantToSummaryResponseMapper.MapParticipantToSummary(x, participantRoom);
+                var participantRoom = participantRooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(x.Id)));
+                return ParticipantResponseMapper.Map(x, participantRoom);
             }).ToList();
             return Ok(participants);
         }
@@ -453,7 +436,7 @@ namespace VideoApi.Controllers
                 var response = new AddStaffMemberResponse
                 {
                     ConferenceId = conferenceId,
-                    ParticipantDetails = ParticipantToDetailsResponseMapper.MapParticipantToResponse(participant)
+                    Participant = ParticipantResponseMapper.Map(participant)
                 };
 
                 return Ok(response);

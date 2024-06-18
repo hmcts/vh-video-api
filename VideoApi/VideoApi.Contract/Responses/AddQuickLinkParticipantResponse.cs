@@ -4,7 +4,7 @@ namespace VideoApi.Contract.Responses
 {
     public class AddQuickLinkParticipantResponse
     {
-        public ParticipantDetailsResponse ParticipantDetails { get; set; }
+        public ParticipantResponse Participant { get; set; }
         public string Token { get; set; }
         public Guid ConferenceId { get; set; }
     }

@@ -62,7 +62,7 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// List of participants in conference
         /// </summary>
-        public List<ParticipantDetailsResponse> Participants { get; set; }
+        public List<ParticipantResponse> Participants { get; set; }
         
         /// <summary>
         /// List of endpoints in conference
@@ -82,12 +82,6 @@ namespace VideoApi.Contract.Responses
         public bool AudioRecordingRequired { get; set; }
         
         public List<CivilianRoomResponse> CivilianRooms { get; set; }
-
-        /// <summary>
-        /// Flags true when hearing venue is in Scotland
-        /// </summary>
-        [Obsolete("Use the value from Bookings API. This is not maintained.")]
-        public bool HearingVenueIsScottish { get; set; }
         
         /// <summary>
         /// Ingest Url Audio Recording to be streamed to
@@ -98,5 +92,7 @@ namespace VideoApi.Contract.Responses
         /// Is the waiting room still accessible for the conference
         /// </summary>
         public bool IsWaitingRoomOpen { get; set; }
+        public string TelephoneConferenceId { get; set; }
+        public string TelephoneConferenceNumbers { get; set; }
     }
 }

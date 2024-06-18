@@ -124,7 +124,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I close the last created conference")]
         public void GivenICloseTheLastCreatedConference()
         {
-            var conferenceId = _context.Test.ConferenceIds.Last();
+            var conferenceId = _context.Test.ConferenceIds[^1];
             if (conferenceId == Guid.Empty) throw new Exception("Could not delete the last conference created");
             CloseAndCheckConferenceClosed(conferenceId);
         }
@@ -274,20 +274,20 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conferences = ApiRequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
             conferences.Should().NotBeNull();
-            conferences.Any(x => x.CaseName.StartsWith(_context.Test.CaseName)).Should().BeTrue();
+            conferences.Exists(x => x.CaseName.StartsWith(_context.Test.CaseName)).Should().BeTrue();
             foreach (var conference in conferences)
             {
                 if (conference.CaseName.StartsWith(_context.Test.CaseName))
                 {
                     AssertConferenceForAdminResponse.ForConference(conference);
                     foreach (var participant in conference.Participants)
-                        AssertParticipantSummaryResponse.ForParticipant(participant);
+                        AssertParticipantResponse.ForParticipant(participant);
                     conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
                 }
             }
 
             _context.Test.ConferenceResponses = conferences.Where(x => x.CaseName.StartsWith(_context.Test.CaseName)).ToList();
-            conferences.Any(x => x.Id.Equals(_context.Test.TomorrowsConference)).Should().BeFalse();
+            conferences.Exists(x => x.Id.Equals(_context.Test.TomorrowsConference)).Should().BeFalse();
         }
 
         [Then(@"a list containing only judge todays hearings conference details should be retrieved")]
@@ -355,7 +355,7 @@ namespace VideoApi.AcceptanceTests.Steps
             {
                 AssertConferenceForAdminResponse.ForConference(conference);
                 foreach (var participant in conference.Participants)
-                    AssertParticipantSummaryResponse.ForParticipant(participant);
+                    AssertParticipantResponse.ForParticipant(participant);
             }
         }
 

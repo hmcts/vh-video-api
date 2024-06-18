@@ -38,7 +38,7 @@ namespace VideoApi.AcceptanceTests.Steps
             {
                 Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}
             };
-            _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
+            _scenarioContext.Add(ParticipantUsernameKey, request.Participants[0].Username);
             _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
         }
         
@@ -71,7 +71,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 },
             };
             
-            _scenarioContext.Add(ParticipantUsernameKey, request.Participants.First().Username);
+            _scenarioContext.Add(ParticipantUsernameKey, request.Participants[0].Username);
             _scenarioContext.Add(RequestBodyKey, request);
             _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
         }
@@ -104,8 +104,8 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have an remove participant from a valid conference request")]
         public void GivenIHaveAnRemoveParticipantFromAValidConferenceRequest()
         {
-            _scenarioContext.Add(ParticipantUsernameKey, _context.Test.ConferenceResponse.Participants.Last().DisplayName);
-            _context.Request = _context.Delete(RemoveParticipantFromConference(_context.Test.ConferenceResponse.Id, _context.Test.ConferenceResponse.Participants.Last().Id));
+            _scenarioContext.Add(ParticipantUsernameKey, _context.Test.ConferenceResponse.Participants[^1].DisplayName);
+            _context.Request = _context.Delete(RemoveParticipantFromConference(_context.Test.ConferenceResponse.Id, _context.Test.ConferenceResponse.Participants[^1].Id));
         }
 
         [Given(@"I have an update participant details request")]
@@ -114,11 +114,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var participant = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual);
             var request = new UpdateParticipantRequest()
             {
-                Fullname = $"Updated {participant.Name}",
-                FirstName = $"Updated {participant.FirstName}",
-                LastName = $"Updated {participant.LastName}",
-                DisplayName = $"Updated {participant.DisplayName}",
-                Representee = $"Updated {participant.Representee}"
+                DisplayName = $"Updated {participant.DisplayName}"
             };
             _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
             _context.Request = _context.Patch(UpdateParticipantFromConference(_context.Test.ConferenceResponse.Id, participant.Id), request);
@@ -166,12 +162,12 @@ namespace VideoApi.AcceptanceTests.Steps
         public void ThenTheHeartbeatDataIsRetrieved()
         {
             var heartbeatData = ApiRequestHelper.Deserialise<List<ParticipantHeartbeatResponse>>(_context.Response.Content);
-            heartbeatData.First().BrowserName.Should().Be(_context.Test.HeartbeatData.BrowserName);
-            heartbeatData.First().BrowserVersion.Should().Be(_context.Test.HeartbeatData.BrowserVersion);
-            heartbeatData.First().OperatingSystem.Should().Be(_context.Test.HeartbeatData.OperatingSystem);
-            heartbeatData.First().OperatingSystemVersion.Should().Be(_context.Test.HeartbeatData.OperatingSystemVersion);
-            heartbeatData.First().RecentPacketLoss.Should().Be(LossPercentage);
-            heartbeatData.First().Timestamp.Minute.Should().BeOneOf(DateTime.Now.Minute, DateTime.Now.AddMinutes(-1).Minute);
+            heartbeatData[0].BrowserName.Should().Be(_context.Test.HeartbeatData.BrowserName);
+            heartbeatData[0].BrowserVersion.Should().Be(_context.Test.HeartbeatData.BrowserVersion);
+            heartbeatData[0].OperatingSystem.Should().Be(_context.Test.HeartbeatData.OperatingSystem);
+            heartbeatData[0].OperatingSystemVersion.Should().Be(_context.Test.HeartbeatData.OperatingSystemVersion);
+            heartbeatData[0].RecentPacketLoss.Should().Be(LossPercentage);
+            heartbeatData[0].Timestamp.Minute.Should().BeOneOf(DateTime.Now.Minute, DateTime.Now.AddMinutes(-1).Minute);
         }
 
         [Then(@"the participant is (.*)")]
@@ -182,7 +178,7 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue();
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
-            var exists = conference.Participants.Any(participant =>
+            var exists = conference.Participants.Exists(participant =>
                 participant.Username.ToLower().Equals(_scenarioContext.Get<string>(ParticipantUsernameKey).ToLower()));
             if (state.Equals("added"))
             {
@@ -197,11 +193,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 var participant = conference.Participants.First(x =>
                     x.Username.Equals(_scenarioContext.Get<string>(ParticipantUsernameKey)));
 
-                participant.Name.Should().Contain("Updated");
-                participant.FirstName.Should().Contain("Updated");
-                participant.LastName.Should().Contain("Updated");
                 participant.DisplayName.Should().Contain("Updated");
-                participant.Representee.Should().Contain("Updated");
             }
         }
 
@@ -210,25 +202,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             _context.Request = _context.Get(GetDistinctJudgeNames());
         }
-
-        [Then(@"the judge names should be retrieved")]
-        public void ThenTheJudgeNamesShouldBeRetrieved()
-        {
-            var judgesList = ApiRequestHelper.Deserialise<JudgeNameListResponse>(_context.Response.Content).FirstNames;
-            var conferences = _context.Test.ConferenceDetailsResponses;
-
-            var judges = conferences.SelectMany(c => c.Participants).Where(p => p.UserRole == UserRole.Judge).ToList();
-            judges.Should().NotBeNull();
-            judges.Count.Should().BeGreaterOrEqualTo(4);
-            judgesList.Count.Should().BeGreaterOrEqualTo(2);
-            judgesList.Should().NotBeNull();
-
-            foreach (var judge in judges)
-            {
-                judgesList.Count(x => x.Contains(judge.FirstName)).Should().Be(1);
-            }
-        }
-
+        
         [Given(@"I have a get participants for a participants request with a conference id")]
         public void GivenIHaveAGetParticipantsForConferenceRequest()
         {
@@ -238,9 +212,9 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the participants should be retrieved")]
         public void ThenTheParticipantsShouldBeRetrieved()
         {
-            var participants = ApiRequestHelper.Deserialise<List<ParticipantSummaryResponse>>(_context.Response.Content);
+            var participants = ApiRequestHelper.Deserialise<List<ParticipantResponse>>(_context.Response.Content);
             participants.Should().NotBeNull();
-            AssertParticipantSummaryResponse.ForParticipant(participants[1]);
+            AssertParticipantResponse.ForParticipant(participants[1]);
         }
     }
 }

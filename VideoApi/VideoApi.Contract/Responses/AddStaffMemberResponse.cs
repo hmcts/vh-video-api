@@ -4,7 +4,7 @@ namespace VideoApi.Contract.Responses
 {
     public class AddStaffMemberResponse
     {
-        public ParticipantDetailsResponse ParticipantDetails { get; set; }
+        public ParticipantResponse Participant { get; set; }
         public Guid ConferenceId { get; set; }
     }
 }

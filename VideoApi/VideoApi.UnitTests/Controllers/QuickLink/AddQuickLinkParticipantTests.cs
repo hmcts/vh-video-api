@@ -87,9 +87,9 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
             var quickLinkResponse = result?.Value.Should().BeAssignableTo<AddQuickLinkParticipantResponse>().Which;
             quickLinkResponse?.Token.Should().Be(QuickLinksJwtDetails.Token);
             quickLinkResponse?.ConferenceId.Should().Be(Conference.Id);
-            quickLinkResponse?.ParticipantDetails.Should().NotBeNull();
-            quickLinkResponse?.ParticipantDetails.Name.Should().Be(AddQuickLinkParticipantRequest.Name);
-            quickLinkResponse?.ParticipantDetails.UserRole.Should().Be(AddQuickLinkParticipantRequest.UserRole);
+            quickLinkResponse?.Participant.Should().NotBeNull();
+            quickLinkResponse?.Participant.DisplayName.Should().Be(AddQuickLinkParticipantRequest.Name);
+            quickLinkResponse?.Participant.UserRole.Should().Be(AddQuickLinkParticipantRequest.UserRole);
         }
     }
 }
