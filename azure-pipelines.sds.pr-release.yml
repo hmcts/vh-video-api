@@ -45,7 +45,6 @@ stages:
               nugetConfigPath: nuget.config
               appName: ${{ variables.appName }}
               dockerComposeTestFile: docker-compose.tests.yml
-              dockerComposePath: '/usr/libexec/docker/cli-plugins/docker-compose'
               sonarExtraProperties: |
                 sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
                 sonar.exclusions=**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi/Swagger/**/*, VideoApi/VideoApi.DAL/Migrations/*
