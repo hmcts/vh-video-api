@@ -353,7 +353,7 @@ namespace VideoApi.Controllers
         }
 
         /// <summary>
-        /// Get conferences by hearing ref id
+        /// Get conferences by hearing ref id.
         /// </summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <param name="includeClosed">Include closed conferences in search</param>
