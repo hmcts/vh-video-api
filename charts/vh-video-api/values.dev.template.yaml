@@ -3,3 +3,6 @@ java:
   image: '${IMAGE_NAME}'
   ingressHost: ${SERVICE_FQDN}
   releaseNameOverride: ${RELEASE_NAME}
+  environment:
+    KINLYCONFIGURATION__CALLBACKURI : https://workable-wolf-generally.ngrok-free.app/callback
+    SERVICES__CALLBACKURI : https://workable-wolf-generally.ngrok-free.app/callback
