@@ -22,6 +22,11 @@ namespace VideoApi.Contract.Responses
         public string Username { get; set; }
         
         /// <summary>
+        /// The username
+        /// </summary>
+        public string ContactEmail { get; set; }
+
+        /// <summary>
         /// The display name
         /// </summary>
         public string DisplayName { get; set; }
