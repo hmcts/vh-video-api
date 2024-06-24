@@ -652,10 +652,6 @@ namespace VideoApi.Controllers
             
         }
         
-        [HttpGet("Wowza/BookMeetingRoom")]
-        [OpenApiOperation("BookMeetingRoom")]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<bool> BookMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
