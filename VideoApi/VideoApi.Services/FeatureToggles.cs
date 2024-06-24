@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
-using LaunchDarkly.Sdk.Server.Interfaces;
 
 namespace VideoApi.Services
 {
@@ -15,7 +14,7 @@ namespace VideoApi.Services
     [ExcludeFromCodeCoverage]
     public class FeatureToggles : IFeatureToggles
     {
-        private readonly ILdClient _ldClient;
+        private readonly LdClient _ldClient;
         private readonly Context _context;
         private const string LdUser = "vh-video-api";
         private const string VodafoneToggleKey = "vodafone";

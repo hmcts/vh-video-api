@@ -47,7 +47,6 @@ namespace VideoApi.Controllers
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
-        private readonly IFeatureToggles _featureToggles;
 
         public ConferenceController(IQueryHandler queryHandler, 
             ICommandHandler commandHandler,
@@ -57,8 +56,7 @@ namespace VideoApi.Controllers
             IAudioPlatformService audioPlatformService,
             IAzureStorageServiceFactory azureStorageServiceFactory,
             IPollyRetryService pollyRetryService,
-            IBackgroundWorkerQueue backgroundWorkerQueue,
-            IFeatureToggles featureToggles)
+            IBackgroundWorkerQueue backgroundWorkerQueue)
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
@@ -69,7 +67,6 @@ namespace VideoApi.Controllers
             _azureStorageServiceFactory = azureStorageServiceFactory;
             _pollyRetryService = pollyRetryService;
             _backgroundWorkerQueue = backgroundWorkerQueue;
-            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -397,7 +394,7 @@ namespace VideoApi.Controllers
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
-            if (!conferences.Any())
+            if (conferences.Count > 0)
                 return NotFound();
 
             var response = conferences
@@ -422,7 +419,7 @@ namespace VideoApi.Controllers
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
-            if (!conferences.Any())
+            if (conferences.Count > 0)
                 return NotFound();
 
             return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
@@ -654,7 +651,11 @@ namespace VideoApi.Controllers
             }
             
         }
-
+        
+        [HttpGet("Wowza/BookMeetingRoom")]
+        [OpenApiOperation("BookMeetingRoom")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<bool> BookMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
