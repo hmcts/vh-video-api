@@ -36,39 +36,20 @@ namespace VideoApi.Controllers
     [Route("conferences")]
     [ApiController]
     [SuppressMessage("Info Code Smell", "S1133:Deprecated code should be removed")]
-    public class ConferenceController : ControllerBase
+    public class ConferenceController(
+        IQueryHandler queryHandler,
+        ICommandHandler commandHandler,
+        IVideoPlatformService videoPlatformService,
+        ISupplierApiSelector supplierLocator,
+        ILogger<ConferenceController> logger,
+        IAudioPlatformService audioPlatformService,
+        IAzureStorageServiceFactory azureStorageServiceFactory,
+        IPollyRetryService pollyRetryService,
+        IBackgroundWorkerQueue backgroundWorkerQueue)
+        : ControllerBase
     {
-        private readonly IQueryHandler _queryHandler;
-        private readonly ICommandHandler _commandHandler;
-        private readonly IVideoPlatformService _videoPlatformService;
-        private readonly SupplierConfiguration _supplierConfiguration;
-        private readonly ILogger<ConferenceController> _logger;
-        private readonly IAudioPlatformService _audioPlatformService;
-        private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
-        private readonly IPollyRetryService _pollyRetryService;
-        private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
-
-        public ConferenceController(IQueryHandler queryHandler, 
-            ICommandHandler commandHandler,
-            IVideoPlatformService videoPlatformService, 
-            ISupplierApiSelector supplierLocator, 
-            ILogger<ConferenceController> logger, 
-            IAudioPlatformService audioPlatformService,
-            IAzureStorageServiceFactory azureStorageServiceFactory,
-            IPollyRetryService pollyRetryService,
-            IBackgroundWorkerQueue backgroundWorkerQueue)
-        {
-            _queryHandler = queryHandler;
-            _commandHandler = commandHandler;
-            _videoPlatformService = videoPlatformService;
-            _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
-            _logger = logger;
-            _audioPlatformService = audioPlatformService;
-            _azureStorageServiceFactory = azureStorageServiceFactory;
-            _pollyRetryService = pollyRetryService;
-            _backgroundWorkerQueue = backgroundWorkerQueue;
-        }
-
+        private readonly SupplierConfiguration _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
+        
         /// <summary>
         /// Request to book a conference
         /// </summary>
@@ -80,7 +61,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
         {
-            _logger.LogDebug("BookNewConference");
+            logger.LogDebug("BookNewConference");
 
             foreach (var participant in request.Participants)
             {
@@ -91,13 +72,13 @@ namespace VideoApi.Controllers
                 participant.DisplayName = participant.DisplayName.Trim();
             }
 
-            var audioIngestUrl = _audioPlatformService.GetAudioIngestUrl(request.CaseTypeServiceId, request.CaseNumber, request.HearingRefId.ToString());
+            var audioIngestUrl = audioPlatformService.GetAudioIngestUrl(request.CaseTypeServiceId, request.CaseNumber, request.HearingRefId.ToString());
       
             var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
-            _logger.LogDebug("Conference Created");
+            logger.LogDebug("Conference Created");
 
             var conferenceEndpoints =
-                await _queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
+                await queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
                     new GetEndpointsForConferenceQuery(conferenceId));
             var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
@@ -106,18 +87,18 @@ namespace VideoApi.Controllers
             if (!roomBookedSuccess)
             {
                 var message = $"Could not book and find meeting room for conferenceId: {conferenceId}";
-                _logger.LogError(message);
+                logger.LogError(message);
                 return StatusCode((int) HttpStatusCode.InternalServerError, message);
             }
             
-            _logger.LogDebug("Room Booked");
+            logger.LogDebug("Room Booked");
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-            var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var queriedConference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration.PexipSelfTestNode);
 
-            _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
+            logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
             return CreatedAtAction("GetConferenceDetailsById", new {conferenceId = response.Id}, response);
         }
@@ -133,20 +114,20 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateConferenceAsync(UpdateConferenceRequest request)
         {
-            _logger.LogDebug("UpdateConference");
+            logger.LogDebug("UpdateConference");
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefId);
-            var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conferencesList = await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
             var conference = conferencesList.FirstOrDefault();
             if (conference == null)
             {
-                _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", request.HearingRefId);
+                logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", request.HearingRefId);
 
                 return NotFound();
             }
 
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
                 endpointDtos);
 
             try
@@ -155,7 +136,7 @@ namespace VideoApi.Controllers
                     request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime,
                     request.HearingVenueName, request.AudioRecordingRequired);
 
-                await _commandHandler.Handle(command);
+                await commandHandler.Handle(command);
 
                 return Ok();
             }
@@ -177,15 +158,15 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceDetailsByIdAsync(Guid conferenceId)
         {
-            _logger.LogDebug("GetConferenceDetailsById {ConferenceId}", conferenceId);
+            logger.LogDebug("GetConferenceDetailsById {ConferenceId}", conferenceId);
 
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (queriedConference == null)
             {
-                _logger.LogWarning("Unable to find conference {ConferenceId}", conferenceId);
+                logger.LogWarning("Unable to find conference {ConferenceId}", conferenceId);
 
                 return NotFound($"Unable to find a conference with the given id {conferenceId}");
             }
@@ -207,20 +188,20 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> RemoveConferenceAsync(Guid conferenceId)
         {
-            _logger.LogDebug("RemoveConference {ConferenceId}", conferenceId);
+            logger.LogDebug("RemoveConference {ConferenceId}", conferenceId);
             var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
             try
             {
-                await _commandHandler.Handle(removeConferenceCommand);
+                await commandHandler.Handle(removeConferenceCommand);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
 
-                _logger.LogInformation("Successfully removed conference {ConferenceId}", conferenceId);
+                logger.LogInformation("Successfully removed conference {ConferenceId}", conferenceId);
 
                 return NoContent();
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference {ConferenceId}", conferenceId);
+                logger.LogError(ex, "Unable to find conference {ConferenceId}", conferenceId);
 
                 return NotFound();
             }
@@ -236,14 +217,14 @@ namespace VideoApi.Controllers
         [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
         public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync([FromQuery] ConferenceForAdminRequest request)
         {
-            _logger.LogDebug("GetConferencesTodayForAdmin");
+            logger.LogDebug("GetConferencesTodayForAdmin");
 
             var query = new GetConferencesTodayForAdminByHearingVenueNameQuery
             {
                 HearingVenueNames = request.HearingVenueNames
             };
 
-            var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
+            var conferences = await queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
             var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c, _supplierConfiguration));
 
             return Ok(response);
@@ -259,14 +240,14 @@ namespace VideoApi.Controllers
         [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
         public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName([FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
         {
-            _logger.LogDebug("GetConferencesTodayForAdmin");
+            logger.LogDebug("GetConferencesTodayForAdmin");
 
             var query = new GetConferencesTodayForStaffMemberByHearingVenueNameQuery
             {
                 HearingVenueNames = request.HearingVenueNames
             };
 
-            var conferences = await _queryHandler.Handle<GetConferencesTodayForStaffMemberByHearingVenueNameQuery, List<Conference>>(query);
+            var conferences = await queryHandler.Handle<GetConferencesTodayForStaffMemberByHearingVenueNameQuery, List<Conference>>(query);
 
             return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel));
         }
@@ -282,7 +263,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
         {
-            _logger.LogDebug("GetConferencesTodayForJudgeByUsername {Username}", username);
+            logger.LogDebug("GetConferencesTodayForJudgeByUsername {Username}", username);
 
             var response = await GetHostConferencesForToday(username);
 
@@ -305,7 +286,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForHostAsync([FromQuery] string username)
         {
-            _logger.LogDebug("GetConferencesTodayForHost {Username}", username);
+            logger.LogDebug("GetConferencesTodayForHost {Username}", username);
 
             var response = await GetHostConferencesForToday(username);
 
@@ -328,20 +309,20 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
         {
-            _logger.LogDebug("GetConferencesTodayForIndividualByUsername {Username}", username);
+            logger.LogDebug("GetConferencesTodayForIndividualByUsername {Username}", username);
 
             if (!username.IsValidEmail())
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
 
-                _logger.LogWarning("Invalid username {Username}", username);
+                logger.LogWarning("Invalid username {Username}", username);
 
                 return ValidationProblem(ModelState);
             }
 
             var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
             var conferences =
-                await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
+                await queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel);
 
             return Ok(response);
@@ -360,16 +341,16 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferenceByHearingRefIdAsync(Guid hearingRefId, [FromQuery]bool? includeClosed = false)
         {
-            _logger.LogDebug("GetConferenceByHearingRefId {HearingRefId}", hearingRefId);
+            logger.LogDebug("GetConferenceByHearingRefId {HearingRefId}", hearingRefId);
 
             var query = new GetNonClosedConferenceByHearingRefIdQuery(hearingRefId, includeClosed.GetValueOrDefault());
 
-            var conferencesList = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conferencesList = await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
             var conference = conferencesList.FirstOrDefault();
             
             if (conference == null)
             {
-                _logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", hearingRefId);
+                logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", hearingRefId);
 
                 return NotFound();
             }
@@ -392,7 +373,7 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
         {
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
-            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conferences = await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
             if (conferences.Count <= 0)
                 return NotFound();
@@ -417,7 +398,7 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
         {
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
-            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            var conferences = await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
             if (conferences.Count <= 0)
                 return NotFound();
@@ -435,10 +416,10 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetExpiredOpenConferencesAsync()
         {
-            _logger.LogDebug("GetExpiredOpenConferences");
+            logger.LogDebug("GetExpiredOpenConferences");
 
             var query = new GetExpiredUnclosedConferencesQuery();
-            var conferences = await _queryHandler.Handle<GetExpiredUnclosedConferencesQuery, List<Conference>>(query);
+            var conferences = await queryHandler.Handle<GetExpiredUnclosedConferencesQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceToExpiredConferenceMapper.MapConferenceToExpiredResponse);
 
             return Ok(response);
@@ -454,10 +435,10 @@ namespace VideoApi.Controllers
 
         public async Task<IActionResult> GetExpiredAudiorecordingConferencesAsync()
         {
-            _logger.LogDebug("GetExpiredAudiorecordingConferences");
+            logger.LogDebug("GetExpiredAudiorecordingConferences");
             var query = new GetExpiredAudiorecordingConferencesQuery();
             var conferences =
-                await _queryHandler.Handle<GetExpiredAudiorecordingConferencesQuery, List<Conference>>(query);
+                await queryHandler.Handle<GetExpiredAudiorecordingConferencesQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceToExpiredConferenceMapper.MapConferenceToExpiredResponse);
 
             return Ok(response);
@@ -479,7 +460,7 @@ namespace VideoApi.Controllers
             {
                 var command = new CloseConferenceCommand(conferenceId);
 
-                await _commandHandler.Handle(command);
+                await commandHandler.Handle(command);
                 await SafelyRemoveCourtRoomAsync(conferenceId);
                 await DeleteAudioRecordingApplication(conferenceId);
 
@@ -487,7 +468,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference {conferenceId}", conferenceId);
+                logger.LogError(ex, "Unable to find conference {conferenceId}", conferenceId);
 
                 return NotFound();
             }
@@ -502,7 +483,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(List<ParticipantInHearingResponse>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
         {
-            _logger.LogDebug("GetJudgesInHearingsToday");
+            logger.LogDebug("GetJudgesInHearingsToday");
 
             var response = await GetHostsInHearingsToday(judgesOnly: true);
 
@@ -518,7 +499,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(List<ParticipantInHearingResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetHostsInHearingsTodayAsync()
         {
-            _logger.LogDebug("GetHostsInHearingsToday");
+            logger.LogDebug("GetHostsInHearingsToday");
 
             var response = await GetHostsInHearingsToday();
 
@@ -535,17 +516,17 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetConferencesHearingRoomsAsync([FromQuery]string date)
         {
-            _logger.LogDebug("GetConferencesHearingRooms");
+            logger.LogDebug("GetConferencesHearingRooms");
 
             try
             {
                 var requestedDate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                var interpreterRooms = await _queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
+                var interpreterRooms = await queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
                         new GetConferenceInterpreterRoomsByDateQuery(requestedDate));
 
                 var conferences =
-                    await _queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>(
+                    await queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>(
                         new GetConferenceHearingRoomsByDateQuery(requestedDate));
 
 
@@ -557,7 +538,7 @@ namespace VideoApi.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                logger.LogError(e, e.Message);
                 return NoContent();
             }
         }
@@ -571,12 +552,12 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> AnonymiseConferencesAsync()
         {
-            _logger.LogDebug("AnonymiseConferencesAndParticipantInformation");
+            logger.LogDebug("AnonymiseConferencesAndParticipantInformation");
 
             var anonymiseConferenceCommand = new AnonymiseConferencesCommand();
-            await _commandHandler.Handle(anonymiseConferenceCommand);
+            await commandHandler.Handle(anonymiseConferenceCommand);
 
-            _logger.LogInformation("Records updated: {RecordsUpdated}", anonymiseConferenceCommand.RecordsUpdated);
+            logger.LogInformation("Records updated: {RecordsUpdated}", anonymiseConferenceCommand.RecordsUpdated);
             return NoContent();
         }
 
@@ -585,12 +566,12 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
         {
-            _logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
+            logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
 
             var removeHeartbeatsCommand = new RemoveHeartbeatsForConferencesCommand();
-            await _backgroundWorkerQueue.QueueBackgroundWorkItem(removeHeartbeatsCommand);
+            await backgroundWorkerQueue.QueueBackgroundWorkItem(removeHeartbeatsCommand);
 
-            _logger.LogInformation($"Successfully removed heartbeats for conferences");
+            logger.LogInformation($"Successfully removed heartbeats for conferences");
             return NoContent();
         }
 
@@ -605,17 +586,17 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> AnonymiseConferenceWithHearingIds(
             AnonymiseConferenceWithHearingIdsRequest request)
         {
-            await _commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
+            await commandHandler.Handle(new AnonymiseConferenceWithHearingIdsCommand
                 { HearingIds = request.HearingIds });
             return Ok();
         }
 
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
-            var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+            var meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             if (meetingRoom != null)
             {
-                await _videoPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
+                await videoPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
             }
         }
 
@@ -639,7 +620,7 @@ namespace VideoApi.Controllers
 
             try
             {
-                var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+                var azureStorageService = azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
 
                 var result = await azureStorageService.ReconcileFilesInStorage(request.FileNamePrefix, request.FilesCount);
 
@@ -660,16 +641,16 @@ namespace VideoApi.Controllers
             MeetingRoom meetingRoom;
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
+                meetingRoom = await videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
                     audioRecordingRequired,
                     ingestUrl,
                     endpoints);
             }
             catch (DoubleBookingException ex)
             {
-                _logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
+                logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
 
-                meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+                meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             }
 
             if (meetingRoom == null)  return false;
@@ -680,14 +661,14 @@ namespace VideoApi.Controllers
                 meetingRoom.PexipNode, meetingRoom.TelephoneConferenceId
             );
 
-            await _commandHandler.Handle(command);
+            await commandHandler.Handle(command);
 
             return true;
         }
         
         private async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
         {
-            var existingConference = await _queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
+            var existingConference = await queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
                 new CheckConferenceOpenQuery(request.ScheduledDateTime, request.CaseNumber, request.CaseName, request.HearingRefId));
 
             if (existingConference != null) return existingConference.Id;
@@ -719,7 +700,7 @@ namespace VideoApi.Controllers
                 request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants
             );
 
-            await _commandHandler.Handle(createConferenceCommand);
+            await commandHandler.Handle(createConferenceCommand);
 
             return createConferenceCommand.NewConferenceId;
         }
@@ -729,11 +710,11 @@ namespace VideoApi.Controllers
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints)
         {
-            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, bool>
+            var result = await pollyRetryService.WaitAndRetryAsync<Exception, bool>
             (
                 3,
                 _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning($"Failed to BookMeetingRoomAsync. Retrying attempt {retryAttempt}"),
+                retryAttempt => logger.LogWarning($"Failed to BookMeetingRoomAsync. Retrying attempt {retryAttempt}"),
                 callResult => !callResult,
                 () => BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints)
             );
@@ -743,11 +724,11 @@ namespace VideoApi.Controllers
 
         private async Task<Guid> CreateConferenceWithRetiesAsync(BookNewConferenceRequest request, string ingestUrl)
         {
-            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, Guid>
+            var result = await pollyRetryService.WaitAndRetryAsync<Exception, Guid>
             (
                 3,
                 _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning("Failed to CreateConferenceAsync. Retrying attempt {RetryAttempt}", retryAttempt),
+                retryAttempt => logger.LogWarning("Failed to CreateConferenceAsync. Retrying attempt {RetryAttempt}", retryAttempt),
                 callResult => callResult == Guid.Empty,
                 async () => await CreateConferenceAsync(request, ingestUrl));
 
@@ -761,13 +742,13 @@ namespace VideoApi.Controllers
             {
                 ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
 
-                _logger.LogWarning("Invalid username {Username}", username);
+                logger.LogWarning("Invalid username {Username}", username);
 
                 return null;
             }
 
             var query = new GetConferencesForTodayByHostQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
+            var conferences = await queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
             var conferenceForHostResponse = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
             return conferenceForHostResponse;
         }
@@ -776,19 +757,19 @@ namespace VideoApi.Controllers
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             
             if (queriedConference is {AudioRecordingRequired: true} &&
-                !queriedConference.IngestUrl.Contains(_audioPlatformService.ApplicationName)) //should not delete application, if on single instance version
+                !queriedConference.IngestUrl.Contains(audioPlatformService.ApplicationName)) //should not delete application, if on single instance version
             {
                 try
                 {
                     await EnsureAudioFileExists(queriedConference);
-                    await _audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
+                    await audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
                 }
                 catch (AudioPlatformFileNotFoundException ex)
                 {
-                    _logger.LogError(ex, ex.Message);
+                    logger.LogError(ex, ex.Message);
                 }
 
             }
@@ -796,7 +777,7 @@ namespace VideoApi.Controllers
 
         private async Task EnsureAudioFileExists(Conference conference)
         {
-            var azureStorageService = _azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+            var azureStorageService = azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
             var allBlobs = await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
 
             if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
@@ -808,7 +789,7 @@ namespace VideoApi.Controllers
         private async Task<IEnumerable<ParticipantInHearingResponse>> GetHostsInHearingsToday(bool judgesOnly = false)
         {
             var conferences =
-                await _queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(
+                await queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(
                     new GetHostsInHearingsTodayQuery(judgesOnly));
 
             return judgesOnly
