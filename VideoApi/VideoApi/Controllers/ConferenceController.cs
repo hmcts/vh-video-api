@@ -394,7 +394,7 @@ namespace VideoApi.Controllers
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
-            if (conferences.Count > 0)
+            if (conferences.Count <= 0)
                 return NotFound();
 
             var response = conferences
@@ -419,7 +419,7 @@ namespace VideoApi.Controllers
             var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
             var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
-            if (conferences.Count > 0)
+            if (conferences.Count <= 0)
                 return NotFound();
 
             return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
