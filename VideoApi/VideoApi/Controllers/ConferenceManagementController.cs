@@ -77,7 +77,7 @@ namespace VideoApi.Controllers
                 }
                 else
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
+                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);
                 }
                 
            
