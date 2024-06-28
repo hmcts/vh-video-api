@@ -16,7 +16,6 @@ using Task = System.Threading.Tasks.Task;
 namespace VideoApi.IntegrationTests.Api.AudioRecordings;
 
 [Category("azurite")]
-[Obsolete("Those tests are failing locally but they will pass on the pipeline.")]
 public class GetAudioRecordingLinkTests : ApiTest
 {
     private Conference _conference;
