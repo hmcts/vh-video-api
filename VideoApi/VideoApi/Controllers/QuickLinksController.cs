@@ -25,22 +25,13 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [ApiController]
     [Route("quickjoin")]
-    public class QuickLinksController : Controller
+    public class QuickLinksController(
+        ICommandHandler commandHandler,
+        IQueryHandler queryHandler,
+        IQuickLinksJwtTokenProvider quickLinksJwtTokenProvider,
+        ILogger<QuickLinksController> logger)
+        : ControllerBase
     {
-        private readonly IQueryHandler _queryHandler;
-        private readonly IQuickLinksJwtTokenProvider _quickLinksJwtTokenProvider;
-        private readonly ICommandHandler _commandHandler;
-        private readonly ILogger<QuickLinksController> _logger;
-
-        public QuickLinksController(ICommandHandler commandHandler, IQueryHandler queryHandler, IQuickLinksJwtTokenProvider quickLinksJwtTokenProvider, ILogger<QuickLinksController> logger)
-        {
-            _commandHandler = commandHandler;
-            _queryHandler = queryHandler;
-            _quickLinksJwtTokenProvider = quickLinksJwtTokenProvider;
-
-            _logger = logger;
-        }
-
         [HttpGet("ValidateQuickLink/{hearingId}")]
         [OpenApiOperation("ValidateQuickLink")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
@@ -51,15 +42,15 @@ namespace VideoApi.Controllers
             {
                 var query = new GetConferenceByHearingRefIdQuery(hearingId);
                 var conference =
-                    await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+                    await queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
                 var isQuickLinkValid = QuickLink.IsValid(conference);
-                
+
                 return Ok(isQuickLinkValid);
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference");
+                logger.LogError(ex, "Unable to find conference");
                 return NotFound(false);
             }
         }
@@ -74,7 +65,7 @@ namespace VideoApi.Controllers
             {
                 var query = new GetConferenceByHearingRefIdQuery(hearingId);
                 var conference =
-                    await _queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
+                    await queryHandler.Handle<GetConferenceByHearingRefIdQuery, Conference>(query);
 
                 var participant = new QuickLinkParticipant(quickLinkParticipantRequest.Name, quickLinkParticipantRequest.UserRole.MapToDomainEnum());
 
@@ -82,50 +73,48 @@ namespace VideoApi.Controllers
 
                 var addParticipantsToConferenceCommand = new AddParticipantsToConferenceCommand(conference.Id, participantsToAdd, new List<LinkedParticipantDto>());
 
-                await _commandHandler.Handle(addParticipantsToConferenceCommand);
+                await commandHandler.Handle(addParticipantsToConferenceCommand);
 
-                var jwtDetails = _quickLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username,
+                var jwtDetails = quickLinksJwtTokenProvider.GenerateToken(participant.Name, participant.Username,
                     participant.UserRole);
 
                 var addQuickLinkParticipantTokenCommand = new AddQuickLinkParticipantTokenCommand(participant.Id, jwtDetails);
-                
-                await _commandHandler.Handle(addQuickLinkParticipantTokenCommand);
-                
+
+                await commandHandler.Handle(addQuickLinkParticipantTokenCommand);
+
                 var response = new AddQuickLinkParticipantResponse
                 {
                     Token = jwtDetails.Token,
                     ConferenceId = conference.Id,
-                    ParticipantDetails = ParticipantToDetailsResponseMapper.MapParticipantToResponse(participant)
+                    Participant = ParticipantResponseMapper.Map(participant)
                 };
-                
+
                 return Ok(response);
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference");
+                logger.LogError(ex, "Unable to find conference");
                 return NotFound(false);
             }
         }
 
         [HttpGet("GetQuickLinkParticipantByUserName/{userName}")]
         [OpenApiOperation("GetQuickLinkParticipantByUserName")]
-        [ProducesResponseType(typeof(ParticipantSummaryResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ParticipantSummaryResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ParticipantResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetQuickLinkParticipantByUserName(string userName)
         {
 
-            var query = new GetQuickLinkParticipantByIdQuery(
-                Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain, string.Empty)));
-            var quickLinkParticipant =
-                await _queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
+            var query = new GetQuickLinkParticipantByIdQuery(Guid.Parse(userName.Replace(QuickLinkParticipantConst.Domain, string.Empty)));
+            var quickLinkParticipant = await queryHandler.Handle<GetQuickLinkParticipantByIdQuery, ParticipantBase>(query);
 
             if (quickLinkParticipant == null)
             {
-                _logger.LogError($"Unable to find QuickLink participant {userName}");
+                logger.LogError("Unable to find QuickLink participant {UserName}", userName);
                 return NotFound();
             }
 
-            return Ok(new ParticipantSummaryResponse()
+            return Ok(new ParticipantResponse
             {
                 Id = quickLinkParticipant.Id,
                 Username = quickLinkParticipant.Id.ToString(),

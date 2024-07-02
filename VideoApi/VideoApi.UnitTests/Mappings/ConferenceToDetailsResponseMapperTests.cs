@@ -55,6 +55,9 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.RoomParticipants)
                 .Excluding(x => x.UpdatedAt)
                 .Excluding(x => x.CreatedAt)
+                .Excluding(x => x.Name)
+                .Excluding(x => x.HearingRole)
+                .Excluding(x => x.HearingRole)
             );
 
             var civilianRoom = response.CivilianRooms[0];
@@ -64,36 +67,5 @@ namespace VideoApi.UnitTests.Mappings
             civilianRoom.Participants.Select(x => x).Should()
                 .BeEquivalentTo(room.RoomParticipants.Select(x => x.ParticipantId));
         }
-
-        [Test]
-        [TestCase(HearingVenueNames.Aberdeen, true)]
-        [TestCase(HearingVenueNames.Dundee, true)]
-        [TestCase(HearingVenueNames.Edinburgh, true)]
-        [TestCase(HearingVenueNames.Glasgow, true)]
-        [TestCase(HearingVenueNames.Inverness, true)]
-        [TestCase(HearingVenueNames.Ayr, true)]
-        [TestCase(HearingVenueNames.EdinburghEmploymentAppealTribunal, true)]
-        [TestCase(HearingVenueNames.InvernessJusticeCentre, true)]
-        [TestCase(HearingVenueNames.EdinburghSocialSecurityAndChildSupportTribunal, true)]
-        [TestCase(HearingVenueNames.EdinburghUpperTribunal, true)]
-        [TestCase("Crown Court", false)]
-        [TestCase("Birmingham", false)]
-        [TestCase(null, false)]
-        [TestCase("", false)]
-        public void Maps_Venue_Flag_Correctly(string venueName, bool expectedValue)
-        {
-            var conference = new ConferenceBuilder(false, null, null, venueName).Build();
-            var pexipSelfTestNode = "selttest@pexip.node";
-
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, pexipSelfTestNode);
-
-            response.HearingVenueIsScottish.Should().Be(expectedValue);
-        }
-
-
-        // bool ExcludeIdFromMessage(IMemberInfo member)
-        // {
-        //     return member.SelectedMemberPath.Contains(nameof(InstantMessage)) && member.SelectedMemberInfo.Name.Contains("Id");
-        // }
     }
 }

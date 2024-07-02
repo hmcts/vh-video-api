@@ -225,7 +225,7 @@ namespace VideoApi.Controllers
             };
 
             var conferences = await queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(c, _supplierConfiguration));
+            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, _supplierConfiguration));
 
             return Ok(response);
         }

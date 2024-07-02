@@ -23,7 +23,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
-            var participantsSummary = (List<ParticipantSummaryResponse>)typedResult.Value;
+            var participantsSummary = (List<ParticipantResponse>)typedResult.Value;
             participantsSummary.Count.Should().Be(5);
 
             var participant = participantsSummary[1];
@@ -32,20 +32,8 @@ namespace VideoApi.UnitTests.Controllers.Participant
             participant.Id.Should().Be(expectedParticipant.Id);
             participant.Username.Should().Be(expectedParticipant.Username);
             participant.DisplayName.Should().Be(expectedParticipant.DisplayName);
-            participant.Status.Should().Be((ParticipantState)expectedParticipant.State);
+            participant.CurrentStatus.Should().Be((ParticipantState)expectedParticipant.State);
             participant.UserRole.Should().Be((UserRole)expectedParticipant.UserRole);
-
-            if (expectedParticipant is VideoApi.Domain.Participant expectedParticipantCasted)
-            {
-                participant.CaseGroup.Should().Be(expectedParticipantCasted.CaseTypeGroup);
-                participant.FirstName.Should().Be(expectedParticipantCasted.FirstName);
-                participant.LastName.Should().Be(expectedParticipantCasted.LastName);
-                participant.HearingRole.Should().Be(expectedParticipantCasted.HearingRole);
-                participant.Representee.Should().Be(expectedParticipantCasted.Representee);
-                participant.ContactEmail.Should().Be(expectedParticipantCasted.ContactEmail);
-                participant.ContactTelephone.Should().Be(expectedParticipantCasted.ContactTelephone);
-            }
-
         }
 
         [Test]
