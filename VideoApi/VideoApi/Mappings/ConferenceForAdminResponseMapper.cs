@@ -9,11 +9,11 @@ namespace VideoApi.Mappings
 {
     public static class ConferenceForAdminResponseMapper
     {
-        public static ConferenceForAdminResponse MapConferenceToSummaryResponse(Conference conference, SupplierConfiguration configuration)
+        public static ConferenceForAdminResponse MapConferenceToAdminResponse(Conference conference, SupplierConfiguration configuration)
         {
             var phoneNumbers = $"{configuration.ConferencePhoneNumber},{configuration.ConferencePhoneNumberWelsh}";
             var participants = conference.GetParticipants()
-                .Select(p => ParticipantToSummaryResponseMapper.MapParticipantToSummary(p))
+                .Select(p => ParticipantResponseMapper.Map(p))
                 .ToList();
 
             return new ConferenceForAdminResponse

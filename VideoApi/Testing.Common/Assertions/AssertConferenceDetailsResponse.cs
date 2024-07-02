@@ -27,20 +27,10 @@ namespace Testing.Common.Assertions
             conference.Participants.Should().NotBeNullOrEmpty();
             foreach (var participant in conference.Participants)
             {
-                participant.Name.Should().NotBeNullOrEmpty();
                 participant.DisplayName.Should().NotBeNullOrEmpty();
                 participant.Username.Should().NotBeNullOrEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
-                participant.CaseTypeGroup.Should().NotBeNullOrEmpty();
-                participant.HearingRole.Should().NotBeNullOrEmpty();
-                participant.FirstName.Should().NotBeNullOrWhiteSpace();
-                participant.LastName.Should().NotBeNullOrWhiteSpace();
-                participant.ContactEmail.Should().NotBeNullOrWhiteSpace();
                 participant.CurrentStatus.Should().NotBe(ParticipantState.None);
-                if (participant.UserRole == UserRole.Representative)
-                {
-                    participant.Representee.Should().NotBeNullOrEmpty();
-                }
             }
 
             conference.MeetingRoom.Should().NotBeNull();

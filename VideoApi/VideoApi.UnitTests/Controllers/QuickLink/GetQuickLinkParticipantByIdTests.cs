@@ -22,7 +22,7 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
                 It.IsAny<GetQuickLinkParticipantByIdQuery>()), Times.Once);
             result.Should().NotBeNull();
             result.Should().BeAssignableTo<OkObjectResult>();
-            var response = result.As<OkObjectResult>().Value.As<ParticipantSummaryResponse>();
+            var response = result.As<OkObjectResult>().Value.As<ParticipantResponse>();
             QuickLinksParticipant.Username.Should().StartWith(response.Username);
         }
         

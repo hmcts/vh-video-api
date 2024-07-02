@@ -31,7 +31,6 @@ namespace VideoApi.Mappings
                 HearingVenueName = conference.HearingVenueName,
                 AudioRecordingRequired = conference.AudioRecordingRequired,
                 CivilianRooms = interpreterRooms,
-                HearingVenueIsScottish = conference.IsHearingVenueInScotland(),
                 IngestUrl = conference.IngestUrl,
                 IsWaitingRoomOpen = conference.IsConferenceAccessible()
                 
@@ -45,14 +44,14 @@ namespace VideoApi.Mappings
             return response;
         }
 
-        private static List<ParticipantDetailsResponse> MapParticipants(IList<ParticipantBase> participants,
+        private static List<ParticipantResponse> MapParticipants(IList<ParticipantBase> participants,
             List<ParticipantRoom> interpreterRooms)
         {
             return participants.Select(x =>
             {
                 var interpreterRoom =
                     interpreterRooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(x.Id)));
-                return ParticipantToDetailsResponseMapper.MapParticipantToResponse(x, interpreterRoom);
+                return ParticipantResponseMapper.Map(x, interpreterRoom);
             }).ToList();
         }
     }

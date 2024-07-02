@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper;
-using VideoApi.Client;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.IntegrationTests.Api.Setup;
@@ -39,7 +37,7 @@ namespace VideoApi.IntegrationTests.Api.Participants
             result.IsSuccessStatusCode.Should().BeTrue();
             result.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var participantsResponse = await ApiClientResponse.GetResponses<List<ParticipantSummaryResponse>>(getConference.Content);
+            var participantsResponse = await ApiClientResponse.GetResponses<List<ParticipantResponse>>(getConference.Content);
             var participant = participantsResponse.First(x => x.Id == seededParticipant.Id);
             
             participant.Username.Should().Be(newUsername);
