@@ -379,7 +379,7 @@ namespace VideoApi.Controllers
                 return NotFound();
 
             var response = conferences
-                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToSummaryResponse(conference, _supplierConfiguration))
+                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
                 .ToList();
 
             return Ok(response);
