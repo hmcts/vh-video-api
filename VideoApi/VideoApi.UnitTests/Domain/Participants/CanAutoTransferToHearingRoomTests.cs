@@ -20,6 +20,14 @@ public class CanAutoTransferToHearingRoomTests
         var result = participant.CanAutoTransferToHearingRoom();
         result.Should().BeFalse();
     }
+
+    [Test]
+    public void Should_return_false_when_user_role_is_StaffMember()
+    {
+        var participant = new ParticipantBuilder().WithUserRole(UserRole.StaffMember).Build();
+        var result = participant.CanAutoTransferToHearingRoom();
+        result.Should().BeFalse();
+    }
     
     [Test]
     public void Should_return_false_when_user_role_is_Witness()

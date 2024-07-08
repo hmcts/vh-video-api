@@ -26,7 +26,6 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             {
                 Layout = layout,
                 TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
-                ParticipantsToForceTransfer = participantIds,
                 MuteGuests = true
             };
             Mocker.Mock<IQueryHandler>()
@@ -51,12 +50,11 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
             var participantIds = TestConference.Participants.Select(x => x.Id.ToString());
-            var muteGuests = true;
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
                 TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
-                ParticipantsToForceTransfer = participantIds,
+                MuteGuests = true
             };
             Mocker.Mock<IQueryHandler>()
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
@@ -128,12 +126,10 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             var layout = HearingLayout.OnePlus7;
             var participantIds = TestConference.Participants.Where(x => x.UserRole != VideoApi.Domain.Enums.UserRole.QuickLinkParticipant && x.HearingRole != "Witness").Select(x => x.Id.ToString());
-            var muteGuests = true;
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
                 TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
-                ParticipantsToForceTransfer = participantIds,
                 MuteGuests = true
             };
 
@@ -147,7 +143,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var typedResult = (AcceptedResult)result;
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.Accepted);
-            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds, Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
+            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds, Layout.ONE_PLUS_SEVEN, true), Times.Once);
         }
     }
 }

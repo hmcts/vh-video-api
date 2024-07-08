@@ -57,14 +57,11 @@ namespace VideoApi.Controllers
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
-               
-                // ***Remove this line when video web sends the triggered by host id attribute ****ALSO, do not expose ParticipantsToForceTransfer sa this is populated here
-                var triggeredByHostId = request.TriggeredByHostId ?? request.ParticipantsToForceTransfer?.Single();
 
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
                 var participants = conference.Participants.Where(x => x.State is ParticipantState.Available or ParticipantState.InConsultation 
                                                                       && x.CanAutoTransferToHearingRoom()).Select(x => x.Id.ToString()).ToList();
-                
+
                 var endpoints = conference.Endpoints
                     .Where(x => x.State is EndpointState.Connected or EndpointState.InConsultation)
                     .Select(x => x.Id.ToString()).ToList();
@@ -73,11 +70,11 @@ namespace VideoApi.Controllers
                 
                 if (_featureToggles.VodafoneIntegrationEnabled())
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
+                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
                 }
                 else
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, triggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
+                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
                 }
                 
            
@@ -85,13 +82,12 @@ namespace VideoApi.Controllers
             }
             catch (SupplierApiException ex)
             {
+                _logger.LogError(ex, "Error from supplier API. Unable to start video hearing");
                 if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(
-                        $"Invalid list of participants provided for {nameof(request.ParticipantsToForceTransfer)}. {request.ParticipantsToForceTransfer}");
+                        $"Invalid list of participants provided for participantsToForceTransfer");
                 }
-                
-                _logger.LogError(ex, "Error from supplier API. Unable to start video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }

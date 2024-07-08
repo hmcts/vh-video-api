@@ -88,7 +88,8 @@ namespace VideoApi.Domain
         
         public bool CanAutoTransferToHearingRoom()
         {
-            return UserRole != UserRole.QuickLinkParticipant && UserRole != UserRole.QuickLinkObserver && HearingRole != "Witness";
+            return UserRole != UserRole.QuickLinkParticipant && UserRole != UserRole.QuickLinkObserver &&
+                   HearingRole != "Witness" && UserRole != UserRole.StaffMember;
         }
 
     }
