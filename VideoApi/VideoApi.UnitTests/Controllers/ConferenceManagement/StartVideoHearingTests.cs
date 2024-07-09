@@ -25,7 +25,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
-                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
+                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id,
                 MuteGuests = true
             };
             Mocker.Mock<IQueryHandler>()
@@ -38,7 +38,9 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var typedResult = (AcceptedResult) result;
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
-            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds , Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
+            VideoPlatformServiceMock.Verify(
+                x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds,
+                    Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
         }
         
         [Test]
@@ -53,7 +55,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
-                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
+                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id,
                 MuteGuests = true
             };
             Mocker.Mock<IQueryHandler>()
@@ -66,7 +68,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var typedResult = (AcceptedResult) result;
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
-            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds , Layout.ONE_PLUS_SEVEN, true), Times.Once);
+            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds , Layout.ONE_PLUS_SEVEN, true), Times.Once);
         }
 
         [Test] public async Task should_return_supplier_status_code_on_error()
@@ -125,11 +127,13 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             AddQuicklinkToTestConference();
 
             var layout = HearingLayout.OnePlus7;
-            var participantIds = TestConference.Participants.Where(x => x.UserRole != VideoApi.Domain.Enums.UserRole.QuickLinkParticipant && x.HearingRole != "Witness").Select(x => x.Id.ToString());
+            var participantIds = TestConference.Participants
+                .Where(x => x.UserRole != VideoApi.Domain.Enums.UserRole.QuickLinkParticipant &&
+                            x.HearingRole != "Witness").Select(x => x.Id.ToString());
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
-                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id.ToString(),
+                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id,
                 MuteGuests = true
             };
 
@@ -143,7 +147,9 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var typedResult = (AcceptedResult)result;
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.Accepted);
-            VideoPlatformServiceMock.Verify(x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId, participantIds, Layout.ONE_PLUS_SEVEN, true), Times.Once);
+            VideoPlatformServiceMock.Verify(
+                x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds,
+                    Layout.ONE_PLUS_SEVEN, true), Times.Once);
         }
     }
 }

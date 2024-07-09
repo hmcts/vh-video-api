@@ -59,8 +59,10 @@ namespace VideoApi.Controllers
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
 
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var participants = conference.Participants.Where(x => x.State is ParticipantState.Available or ParticipantState.InConsultation 
-                                                                      && x.CanAutoTransferToHearingRoom()).Select(x => x.Id.ToString()).ToList();
+
+                var participants = conference.Participants.Where(x =>
+                    x.State is ParticipantState.Available or ParticipantState.InConsultation
+                    && x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id.ToString()).ToList();
 
                 var endpoints = conference.Endpoints
                     .Where(x => x.State is EndpointState.Connected or EndpointState.InConsultation)
@@ -70,11 +72,11 @@ namespace VideoApi.Controllers
                 
                 if (_featureToggles.VodafoneIntegrationEnabled())
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
+                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
                 }
                 else
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId, allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
+                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
                 }
                 
            

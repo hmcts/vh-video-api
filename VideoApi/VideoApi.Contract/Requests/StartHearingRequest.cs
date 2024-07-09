@@ -1,3 +1,5 @@
+using System;
+
 namespace VideoApi.Contract.Requests
 {
     public enum HearingLayout
@@ -14,6 +16,6 @@ namespace VideoApi.Contract.Requests
         }
         public HearingLayout? Layout { get; set; }
         public bool? MuteGuests { get; set; }
-        public string TriggeredByHostId { get; set; }
+        public Guid TriggeredByHostId { get; set; }
     }
 }

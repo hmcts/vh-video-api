@@ -89,7 +89,12 @@ namespace VideoApi.Domain
         public bool CanAutoTransferToHearingRoom()
         {
             return UserRole != UserRole.QuickLinkParticipant && UserRole != UserRole.QuickLinkObserver &&
-                   HearingRole != "Witness" && UserRole != UserRole.StaffMember;
+                   HearingRole != "Witness" && UserRole != UserRole.StaffMember && UserRole != UserRole.Judge;
+        }
+
+        public bool IsHost()
+        {
+            return UserRole is UserRole.Judge or UserRole.StaffMember;
         }
 
     }
