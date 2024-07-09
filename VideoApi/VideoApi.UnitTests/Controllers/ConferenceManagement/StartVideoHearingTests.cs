@@ -20,7 +20,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         {
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
-            var participantIds = TestConference.Participants.Select(x => x.Id.ToString());
+            var participantIds = TestConference.Participants
+                .Where(x => x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id.ToString());
             var muteGuests = true;
             var request = new Contract.Requests.StartHearingRequest
             {
@@ -51,7 +52,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
-            var participantIds = TestConference.Participants.Select(x => x.Id.ToString());
+            var participantIds = TestConference.Participants
+                .Where(x => x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id.ToString());
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
@@ -128,8 +130,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             var layout = HearingLayout.OnePlus7;
             var participantIds = TestConference.Participants
-                .Where(x => x.UserRole != VideoApi.Domain.Enums.UserRole.QuickLinkParticipant &&
-                            x.HearingRole != "Witness").Select(x => x.Id.ToString());
+                .Where(x => x.CanAutoTransferToHearingRoom() &&
+                            !x.IsHost()).Select(x => x.Id.ToString());
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
