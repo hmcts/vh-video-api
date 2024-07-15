@@ -20,13 +20,15 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         {
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
+            var hostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id;
             var participantIds = TestConference.Participants
                 .Where(x => x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id.ToString());
+            participantIds = participantIds.Append(hostId.ToString());
             var muteGuests = true;
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
-                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id,
+                TriggeredByHostId = hostId,
                 MuteGuests = true
             };
             Mocker.Mock<IQueryHandler>()
@@ -52,12 +54,14 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
+            var hostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id;
             var participantIds = TestConference.Participants
                 .Where(x => x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id.ToString());
+            participantIds = participantIds.Append(hostId.ToString()).ToList();
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
-                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id,
+                TriggeredByHostId = hostId,
                 MuteGuests = true
             };
             Mocker.Mock<IQueryHandler>()
@@ -129,13 +133,15 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             AddQuicklinkToTestConference();
 
             var layout = HearingLayout.OnePlus7;
+            var hostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id;
             var participantIds = TestConference.Participants
                 .Where(x => x.CanAutoTransferToHearingRoom() &&
                             !x.IsHost()).Select(x => x.Id.ToString());
+            participantIds = participantIds.Append(hostId.ToString());
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
-                TriggeredByHostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id,
+                TriggeredByHostId = hostId,
                 MuteGuests = true
             };
 

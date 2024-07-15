@@ -69,7 +69,9 @@ namespace VideoApi.Controllers
                     .Select(x => x.Id.ToString()).ToList();
                 
                 var allIdsToTransfer = participants.Concat(endpoints).ToList();
-                
+                // if only hosts are connected and no participants the supplier will not start the hearing, so provide the host id to force the hearing to start
+                allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
+
                 if (_featureToggles.VodafoneIntegrationEnabled())
                 {
                     await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
