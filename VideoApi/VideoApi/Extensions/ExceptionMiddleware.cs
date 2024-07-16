@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using VideoApi.Common;
 using VideoApi.Common.Helpers;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain.Validations;
+using VideoApi.Services.Clients;
 
 namespace VideoApi.Extensions
 {
@@ -35,23 +37,41 @@ namespace VideoApi.Extensions
                 var problemDetails = new ValidationProblemDetails(modelState);
                 await HandleBadRequestAsync(httpContext, problemDetails);
             }
-            catch(BadRequestException ex)
+            catch (BadRequestException ex)
             {
                 var modelState = new ModelStateDictionary();
                 modelState.AddModelError("request", ex.Message);
                 var problemDetails = new ValidationProblemDetails(modelState);
                 await HandleBadRequestAsync(httpContext, problemDetails);
             }
-            catch(VideoDalException ex)
+            catch (VideoDalException ex)
             {
                 var modelState = new ModelStateDictionary();
                 modelState.AddModelError("database", ex.Message);
                 var problemDetails = new ValidationProblemDetails(modelState);
                 await HandleBadRequestAsync(httpContext, problemDetails);
             }
+            catch (SupplierApiException ex)
+            {
+                ApplicationLogger.TraceException(TraceCategory.SupplierApiException.ToString(),
+                    "Supplier API Exception", ex, null, null);
+                if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    var modelState = new ModelStateDictionary();
+                    var jsonDoc = JsonDocument.Parse(ex.Response);
+                    modelState.AddModelError("supplier", jsonDoc.RootElement.ToString());
+                    var problemDetails = new ValidationProblemDetails(modelState);
+                    await HandleBadRequestAsync(httpContext, problemDetails);
+                }
+                else
+                {
+                    await HandleExceptionAsync(httpContext, (HttpStatusCode)ex.StatusCode, ex);
+                }
+            }
             catch (Exception ex)
             {
-                ApplicationLogger.TraceException(TraceCategory.APIException.ToString(), "API Exception", ex,null, null);
+                ApplicationLogger.TraceException(TraceCategory.APIException.ToString(), "API Exception", ex, null,
+                    null);
                 await HandleExceptionAsync(httpContext, HttpStatusCode.InternalServerError, ex);
             }
         }
