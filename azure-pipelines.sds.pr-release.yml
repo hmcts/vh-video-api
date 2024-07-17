@@ -438,3 +438,9 @@ stages:
                   value: $(RsaPrivateKey)
                 - name: QuickLinks:ValidAudience
                   value: $(ValidAudience)
+
+                # Launch Darkly
+                - name: LaunchDarkly:SdkKey
+                  value: launchdarkly--sdkkey
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true
