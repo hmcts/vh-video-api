@@ -458,10 +458,7 @@ namespace VideoApi.AcceptanceTests.Steps
         
         private string GetSupplierSipAddressStem()
         {
-            var sipStem = _context.FeatureToggle.VodafoneIntegrationEnabled()
-                ? _context.Config.VodafoneConfiguration.SipAddressStem
-                : _context.Config.KinlyConfiguration.SipAddressStem;
-            return sipStem;
+            return _context.Config.VodafoneConfiguration.SipAddressStem;
         }
     }
 }
