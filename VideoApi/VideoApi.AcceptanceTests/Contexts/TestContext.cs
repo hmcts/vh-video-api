@@ -1,6 +1,7 @@
 using RestSharp;
 using Testing.Common.AcCommon;
 using Testing.Common.Configuration;
+using VideoApi.Services;
 
 namespace VideoApi.AcceptanceTests.Contexts
 {
@@ -12,6 +13,7 @@ namespace VideoApi.AcceptanceTests.Contexts
         public Test Test { get; set; }
         public VideoApiTokens Tokens { get; set; }
         public AzureStorageManager AzureStorage { get; set; }
+        public IFeatureToggles FeatureToggle { get; set; }
 
         public RestClient Client()
         {

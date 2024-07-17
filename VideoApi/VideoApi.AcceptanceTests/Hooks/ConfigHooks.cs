@@ -12,6 +12,7 @@ using VideoApi.Common.Security;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Responses;
+using VideoApi.Services;
 
 namespace VideoApi.AcceptanceTests.Hooks
 {
@@ -38,6 +39,13 @@ namespace VideoApi.AcceptanceTests.Hooks
             RegisterWowzaSettings(context);
             RegisterAudioRecordingTestIdConfiguration(context);
             await GenerateBearerTokens(context);
+            InitFeatureToggle(context);
+        }
+
+        private void InitFeatureToggle(TestContext context)
+        {
+            var envName = context.Config.Services.VideoApiUrl;
+            context.FeatureToggle = new FeatureToggles(_configRoot["LaunchDarkly:SdkKey"], envName);
         }
 
         private void RegisterAzureSecrets(TestContext context)

@@ -24,6 +24,7 @@
     <ProjectReference Include="..\VideoApi.Client\VideoApi.Client.csproj" />
     <ProjectReference Include="..\VideoApi.Contract\VideoApi.Contract.csproj" />
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
+    <ProjectReference Include="..\VideoApi.Services\VideoApi.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,5 +15,6 @@ namespace VideoApi.Common.Security.Supplier.Base
         public string PexipNode { get; set; }
         public string PexipSelfTestNode { get; set; }
         public string ConferenceUsername { get; set; }
+        public string SipAddressStem { get; set; }
     }
 }

@@ -82,7 +82,7 @@ stages:
               projectName: ${{ variables.efProjectNameRefData }}
 
       - job: package_nuget
-        displayName: "Package NuGet Packages"
+        displayName: 'Package NuGet Packages'
         steps:
           - template: templates\dotnet\package-nuget-packages.yml@azTemplates
             parameters:
@@ -408,7 +408,13 @@ stages:
                   value: $(ConferenceUsername)
                 - name: KinlyConfiguration:CallbackUri
                   value: $(CallbackUri)
-                
+                - name: KinlyConfiguration:SipAddressStem
+                  value: $(KinlySipAddressStem)
+                - name: KinlyConfiguration:SipAddressStem
+                  value: KinlyConfiguration--SipAddressStem
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true
+
                 # Vodafone Configuration
                 - name: VodafoneConfiguration:ConferencePhoneNumber
                   value: $(ConferencePhoneNumber)
@@ -422,6 +428,10 @@ stages:
                   value: $(ConferenceUsername)
                 - name: VodafoneConfiguration:CallbackUri
                   value: $(CallbackUri)
+                - name: VodafoneConfiguration:SipAddressStem
+                  value: VodafoneConfiguration--SipAddressStem
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true
 
                 # Quick Links Configuration
                 - name: QuickLinks:Issuer
