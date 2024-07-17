@@ -409,8 +409,6 @@ stages:
                 - name: KinlyConfiguration:CallbackUri
                   value: $(CallbackUri)
                 - name: KinlyConfiguration:SipAddressStem
-                  value: $(KinlySipAddressStem)
-                - name: KinlyConfiguration:SipAddressStem
                   value: KinlyConfiguration--SipAddressStem
                   keyVaultName: vh-video-api-${{ variables.env }}
                   secret: true
