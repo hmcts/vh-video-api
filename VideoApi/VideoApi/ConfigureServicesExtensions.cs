@@ -30,6 +30,7 @@ using VideoApi.Services.Factories;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Handlers;
 using VideoApi.Services.Handlers.Kinly;
 using VideoApi.Services.Handlers.Vodafone;
 using VideoApi.Swagger;
@@ -115,15 +116,18 @@ namespace VideoApi
             }
             else
             {
+                services.AddTransient<SupplierLoggingDelegatingHandler>();
                 services
                     .AddHttpClient<IKinlyApiClient, SupplierApiClient>()
                     .AddTypedClient<IKinlyApiClient>(httpClient => BuildSupplierClient(kinlyConfiguration.ApiUrl, httpClient))
-                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
+                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>()
+                    .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
                 
                 services
                     .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
                     .AddTypedClient<IVodafoneApiClient>(httpClient => BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
-                    .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>();
+                    .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
+                    .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();;
                 
                 AddWowzaHttpClient(services, wowzaConfiguration.LoadBalancer, wowzaConfiguration, true);
                 foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)

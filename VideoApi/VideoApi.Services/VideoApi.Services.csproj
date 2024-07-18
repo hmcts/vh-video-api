@@ -19,8 +19,4 @@
       <ProjectReference Include="..\VideoApi.Services.Generator\VideoApi.Services.Generator.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Helpers\" />
-    </ItemGroup>
-
 </Project>
