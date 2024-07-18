@@ -8,6 +8,7 @@ namespace VideoApi.UnitTests.Validation
     public class AddEndpointRequestValidationTests
     {
         private AddEndpointRequestValidation _validator;
+        private readonly string _validSipAddress = "2834712384@test.net";
         
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -22,7 +23,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 DisplayName = "Display name",
                 Pin = "1234",
-                SipAddress = "te124@sip.com", 
+                SipAddress = _validSipAddress, 
                 DefenceAdvocate = "Defence Sol"
             };
 
@@ -38,7 +39,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 DisplayName = string.Empty,
                 Pin = "1234",
-                SipAddress = "te124@sip.com", 
+                SipAddress = _validSipAddress, 
                 DefenceAdvocate = "Defence Sol"
             };
 
@@ -54,7 +55,7 @@ namespace VideoApi.UnitTests.Validation
             {
                 DisplayName = "Display name",
                 Pin = string.Empty,
-                SipAddress = "te124@sip.com", 
+                SipAddress = _validSipAddress, 
                 DefenceAdvocate = "Defence Sol"
             };
 
@@ -76,6 +77,22 @@ namespace VideoApi.UnitTests.Validation
 
             var result = await _validator.ValidateAsync(request);
             result.Errors.Exists(x => x.ErrorMessage == AddEndpointRequestValidation.NoSipError)
+                .Should().BeTrue();
+        }
+
+        [Test]
+        public async Task should_fail_validation_when_sip_address_is_not_a_correct_format()
+        {
+            var request = new AddEndpointRequest
+            {
+                DisplayName = "Display name",
+                Pin = "1234",
+                SipAddress = "9f90f88-fc7f-4874-9837-669400385e49@test.net", 
+                DefenceAdvocate = "Defence Sol"
+            };
+
+            var result = await _validator.ValidateAsync(request);
+            result.Errors.Exists(x => x.ErrorMessage == AddEndpointRequestValidation.SipFormatError)
                 .Should().BeTrue();
         }
     }

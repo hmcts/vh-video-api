@@ -58,10 +58,12 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid book a new conference request with jvs endpoints")]
         public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpoints()
         {
+            var sipStem = GetSupplierSipAddressStem();
+            
             var endpoints = new List<AddEndpointRequest>
             {
-                new AddEndpointRequest {DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                new AddEndpointRequest {DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                new() {DisplayName = "one", SipAddress = $"1234567890{sipStem}", Pin = "1234", DefenceAdvocate = "Defence Sol"},
+                new() {DisplayName = "two", SipAddress = $"2345678901{sipStem}", Pin = "5678", DefenceAdvocate = "Defence Bol"}
             };
             
             CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), endpoints: endpoints);

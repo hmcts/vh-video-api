@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VideoApi.IntegrationTests.Contexts;
@@ -34,6 +35,18 @@ namespace VideoApi.IntegrationTests.Steps
         {
             using var client = testContext.CreateClient();
             return await client.DeleteAsync(testContext.Uri);
+        }
+        
+        
+        public static string GenerateRandomDigits()
+        {
+            var random = new Random();
+            var digits = "";
+            for (var i = 0; i < 10; i++)
+            {
+                digits += random.Next(0, 10).ToString();
+            }
+            return digits;
         }
     }
 }

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Faker;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -99,7 +97,7 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new AddEndpointRequest
             {
                 Pin = "1234",
-                SipAddress = $"{Guid.NewGuid()}@sip.com",
+                SipAddress = $"{GenerateRandomDigits()}@sip.com",
                 DisplayName = "Automated Add EP test", 
                 DefenceAdvocate = "Defence Sol"
             };
