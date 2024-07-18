@@ -39,6 +39,8 @@ public class SupplierLoggingDelegatingHandler(
         requestTelemetry.Duration = stopwatch.Elapsed;
         requestTelemetry.ResponseCode = response.StatusCode.ToString();
         requestTelemetry.Success = response.IsSuccessStatusCode;
+        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+        requestTelemetry.Properties.Add("SupplierApiResponseBody", responseBody);
 
         telemetryClient.TrackRequest(requestTelemetry);
 

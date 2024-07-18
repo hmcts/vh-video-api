@@ -61,9 +61,10 @@ namespace VideoApi.Services
                     Streaming_url = null,
                     Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
                 });
-                
+                // vodafone telephone conference id not yet implemented so a made up value is in place to avoid null reference exception
+                // TODO: remove the temp value at the next milestone
                 return _featureToggles.VodafoneIntegrationEnabled() 
-                    ? new MeetingRoom(response.Uris.Admin ?? response.Uris.Participant, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id)
+                    ? new MeetingRoom(response.Uris.Admin ?? response.Uris.Participant, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id ?? "99173907")
                     : new MeetingRoom(response.Uris.Admin, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id);
             }
             catch (SupplierApiException e)
