@@ -83,10 +83,9 @@ java:
         - vodafoneconfiguration--pexipnode
         - vodafoneconfiguration--pexipselftestnode     
         - vodafoneconfiguration--callbacksecret   
-        - name: kinlyconfiguration--telephoneconferencenumber
-          alias: vodafoneconfiguration--conferencephonenumber
-        - name: kinlyconfiguration--telephoneconferencenumberwelsh
-          alias: vodafoneconfiguration--conferencephonenumberwelsh
+        - vodafoneconfiguration--conferencephonenumber
+        - vodafoneconfiguration--telephoneconferencenumber
+        - vodafoneconfiguration--telephoneconferencenumberwelsh
         - QuickLinks--Issuer
         - QuickLinks--RsaPrivateKey
         - QuickLinks--ValidAudience
