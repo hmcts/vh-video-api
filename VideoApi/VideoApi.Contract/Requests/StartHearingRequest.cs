@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 
 namespace VideoApi.Contract.Requests
 {
@@ -15,8 +15,7 @@ namespace VideoApi.Contract.Requests
             Layout = HearingLayout.Dynamic;
         }
         public HearingLayout? Layout { get; set; }
-        public IEnumerable<string> ParticipantsToForceTransfer { get; set; }
         public bool? MuteGuests { get; set; }
-        public string TriggeredByHostId { get; set; }
+        public Guid TriggeredByHostId { get; set; }
     }
 }
