@@ -82,7 +82,7 @@ stages:
               projectName: ${{ variables.efProjectNameRefData }}
 
       - job: package_nuget
-        displayName: 'Package NuGet Packages'
+        displayName: "Package NuGet Packages"
         steps:
           - template: templates\dotnet\package-nuget-packages.yml@azTemplates
             parameters:
@@ -91,7 +91,7 @@ stages:
               gitVersionConfigPath: ${{ variables.git_version_config_path }}
 
       - job: PublishAcceptanceTests
-        # dependsOn: package_nuget
+        dependsOn: package_nuget
         displayName: Publish Acceptance Tests
         variables:
           projectPath: "${{ variables.appName }}/${{ variables.appName }}"
@@ -207,7 +207,7 @@ stages:
   #####################################################
   # Deploy Helm Chart to Dev. #########################
   - stage: Install
-    # dependsOn: Run_Entity_Framework_Dev
+    dependsOn: Run_Entity_Framework_Dev
     displayName: Deploy Helm Chart Dev AKS
     variables:
       - group: vh-github-app-credentials
