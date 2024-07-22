@@ -30,6 +30,9 @@ namespace VideoApi.Validations
             
             RuleForEach(x => x.Participants)
                 .SetValidator(new ParticipantRequestValidation());
+            
+            RuleForEach(x=> x.Endpoints)
+                .SetValidator(new AddEndpointRequestValidation());
         }
     }
 }

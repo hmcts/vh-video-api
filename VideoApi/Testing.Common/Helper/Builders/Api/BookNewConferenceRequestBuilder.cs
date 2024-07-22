@@ -12,9 +12,11 @@ namespace Testing.Common.Helper.Builders.Api
     public class BookNewConferenceRequestBuilder
     {
         private readonly BookNewConferenceRequest _bookNewConferenceRequest;
+        private readonly string _sipAddressStem;
 
-        public BookNewConferenceRequestBuilder(string caseName)
+        public BookNewConferenceRequestBuilder(string caseName, string sipAddressStem = null)
         {
+            _sipAddressStem = sipAddressStem;
             var fromRandomNumber = new Random();
             _bookNewConferenceRequest = Builder<BookNewConferenceRequest>.CreateNew()
                 .With(x => x.HearingRefId = Guid.NewGuid())
@@ -158,6 +160,10 @@ namespace Testing.Common.Helper.Builders.Api
 
         public BookNewConferenceRequestBuilder WithEndpoint(string displayName, string sip, string pin)
         {
+            if (_sipAddressStem != null)
+            {
+                sip = $"{sip}{_sipAddressStem}";
+            }
             _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest
                 {DisplayName = displayName, SipAddress = sip, Pin = pin, DefenceAdvocate = "Defence Sol"});
             return this;

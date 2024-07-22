@@ -70,7 +70,12 @@ namespace VideoApi.Common.Helpers
         /// <summary>
         /// API Exception
         /// </summary>
-        APIException
+        APIException,
+        
+        /// <summary>
+        /// Supplier API Exception
+        /// </summary>
+        SupplierApiException
 
     }
 }

@@ -1,6 +1,7 @@
 using RestSharp;
 using Testing.Common.AcCommon;
 using Testing.Common.Configuration;
+using VideoApi.Services;
 
 namespace VideoApi.AcceptanceTests.Contexts
 {

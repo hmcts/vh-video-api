@@ -408,7 +408,11 @@ stages:
                   value: $(ConferenceUsername)
                 - name: KinlyConfiguration:CallbackUri
                   value: $(CallbackUri)
-                
+                - name: KinlyConfiguration:SipAddressStem
+                  value: KinlyConfiguration--SipAddressStem
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true
+
                 # Vodafone Configuration
                 - name: VodafoneConfiguration:ConferencePhoneNumber
                   value: $(ConferencePhoneNumber)
@@ -422,6 +426,10 @@ stages:
                   value: $(ConferenceUsername)
                 - name: VodafoneConfiguration:CallbackUri
                   value: $(CallbackUri)
+                - name: VodafoneConfiguration:SipAddressStem
+                  value: VodafoneConfiguration--SipAddressStem
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true
 
                 # Quick Links Configuration
                 - name: QuickLinks:Issuer
@@ -430,3 +438,9 @@ stages:
                   value: $(RsaPrivateKey)
                 - name: QuickLinks:ValidAudience
                   value: $(ValidAudience)
+
+                # Launch Darkly
+                - name: LaunchDarkly:SdkKey
+                  value: launchdarkly--sdkkey
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true

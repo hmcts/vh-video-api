@@ -8,6 +8,9 @@ using Testing.Common.Configuration;
 using VideoApi.Client;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
+using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
+using VideoApi.Services;
 
 namespace VideoApi.AcceptanceTests.ApiTests;
 
@@ -16,8 +19,9 @@ public abstract class AcApiTest
     private IConfigurationRoot _configRoot;
     private AzureAdConfiguration _azureConfiguration;
     private ServicesConfiguration _serviceConfiguration;
+    private VodafoneConfiguration _vodafoneConfiguration;
+    
     protected WowzaConfiguration WowzaConfiguration;
-
     protected VideoApiClient VideoApiClient { get; set; }
     
     [OneTimeSetUp]
@@ -27,11 +31,17 @@ public abstract class AcApiTest
         await InitApiClients();
     }
     
+    protected string GetSupplierSipAddressStem()
+    {
+        return _vodafoneConfiguration.SipAddressStem;
+    }
+    
     private void RegisterSettings()
     {
         _configRoot = ConfigRootBuilder.Build();
         _azureConfiguration = _configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>();
         _serviceConfiguration = _configRoot.GetSection("Services").Get<ServicesConfiguration>();
+        _vodafoneConfiguration = _configRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>();
         WowzaConfiguration =  _configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>();
     }
     

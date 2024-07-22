@@ -58,10 +58,12 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid book a new conference request with jvs endpoints")]
         public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpoints()
         {
+            var sipStem = GetSupplierSipAddressStem();
+            
             var endpoints = new List<AddEndpointRequest>
             {
-                new AddEndpointRequest {DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                new AddEndpointRequest {DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                new() {DisplayName = "one", SipAddress = $"1234567890{sipStem}", Pin = "1234", DefenceAdvocate = "Defence Sol"},
+                new() {DisplayName = "two", SipAddress = $"2345678901{sipStem}", Pin = "5678", DefenceAdvocate = "Defence Bol"}
             };
             
             CreateNewConferenceRequest(DateTime.Now.ToLocalTime().AddMinutes(2), endpoints: endpoints);
@@ -76,7 +78,8 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a conference with a linked participant")]
         public void GivenIHaveAConferenceWithALinkedParticipant()
         {
-            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
+            var sipStem = GetSupplierSipAddressStem();
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName, sipStem)
                 .WithJudge()
                 .WithIndividualAndInterpreter()
                 .WithHearingRefId(Guid.NewGuid())
@@ -431,7 +434,8 @@ namespace VideoApi.AcceptanceTests.Steps
 
         private void CreateNewConferenceRequest(DateTime date, string judgeFirstName = null, bool audioRequired = false, List<AddEndpointRequest> endpoints = null)
         {
-            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
+            var stem = GetSupplierSipAddressStem();
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName, stem)
                 .WithJudge(judgeFirstName)
                 .WithJudicialOfficeHolder()
                 .WithRepresentative("Applicant").WithIndividual("Applicant")
@@ -452,6 +456,11 @@ namespace VideoApi.AcceptanceTests.Steps
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.CurrentStatus.Should().Be(ConferenceState.Closed);
+        }
+        
+        private string GetSupplierSipAddressStem()
+        {
+            return _context.Config.VodafoneConfiguration.SipAddressStem;
         }
     }
 }
