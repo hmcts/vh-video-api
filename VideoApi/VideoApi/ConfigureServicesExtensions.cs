@@ -112,8 +112,7 @@ namespace VideoApi
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
-                services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
-                services.AddScoped<ISupplierPlatformServiceFactory, SupplierPlatformServiceFactory>();
+                services.AddScoped<ISupplierPlatformServiceFactory, TestSupplierPlatformServiceFactory>();
             }
             else
             {
@@ -144,7 +143,6 @@ namespace VideoApi
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
-                services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
                 services.AddScoped<ISupplierPlatformServiceFactory, SupplierPlatformServiceFactory>();
             }
 

@@ -154,7 +154,10 @@ namespace VideoApi.IntegrationTests.Hooks
 
         private static void RegisterStubs(IServiceCollection services)
         {
-            var supplierPlatformService = new SupplierPlatformServiceStub();
+            var serviceProvider = services.BuildServiceProvider();
+            
+            var kinlyConfigOptions = serviceProvider.GetService<IOptions<KinlyConfiguration>>();
+            var supplierPlatformService = new SupplierPlatformServiceStub(kinlyConfigOptions);
             services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();

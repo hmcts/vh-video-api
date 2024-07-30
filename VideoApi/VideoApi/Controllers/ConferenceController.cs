@@ -42,7 +42,6 @@ namespace VideoApi.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
         private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
-        private readonly SupplierConfiguration _supplierConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
@@ -53,7 +52,6 @@ namespace VideoApi.Controllers
         public ConferenceController(IQueryHandler queryHandler, 
             ICommandHandler commandHandler,
             ISupplierPlatformServiceFactory supplierPlatformServiceFactory, 
-            ISupplierApiSelector supplierLocator, 
             ILogger<ConferenceController> logger, 
             IAudioPlatformService audioPlatformService,
             IAzureStorageServiceFactory azureStorageServiceFactory,
@@ -64,7 +62,6 @@ namespace VideoApi.Controllers
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
             _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
-            _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
             _logger = logger;
             _audioPlatformService = audioPlatformService;
             _azureStorageServiceFactory = azureStorageServiceFactory;
@@ -121,7 +118,9 @@ namespace VideoApi.Controllers
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration.PexipSelfTestNode);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration.PexipSelfTestNode);
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
@@ -197,8 +196,10 @@ namespace VideoApi.Controllers
                 return NotFound($"Unable to find a conference with the given id {conferenceId}");
             }
 
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration.PexipSelfTestNode);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration.PexipSelfTestNode);
             return Ok(response);
         }
 
@@ -251,7 +252,9 @@ namespace VideoApi.Controllers
             };
 
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, _supplierConfiguration));
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
+            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, supplierConfiguration));
 
             return Ok(response);
         }
@@ -381,7 +384,9 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _supplierConfiguration.PexipSelfTestNode);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, supplierConfiguration.PexipSelfTestNode);
 
             return Ok(response);
         }
@@ -404,8 +409,10 @@ namespace VideoApi.Controllers
             if (!conferences.Any())
                 return NotFound();
 
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             var response = conferences
-                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
+                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, supplierConfiguration))
                 .ToList();
 
             return Ok(response);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
 using VideoApi.Mappings;
 using VideoApi.Services;
@@ -14,14 +15,14 @@ namespace VideoApi.Controllers
     [ApiController]
     public class SelfTestController : Controller
     {
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly ILogger<SelfTestController> _logger;
-        private readonly SupplierConfiguration _supplierConfiguration;
 
-        public SelfTestController(ISupplierApiSelector apiSelector,
+        public SelfTestController(ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
             ILogger<SelfTestController> logger)
         {
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
-            _supplierConfiguration = apiSelector.GetSupplierConfiguration();
         }
 
         /// <summary>
@@ -36,13 +37,16 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug($"GetPexipServicesConfiguration");
 
-            if (_supplierConfiguration == null)
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
+            
+            if (supplierConfiguration == null)
             {
                 _logger.LogWarning($"Unable to retrieve the pexip configuration!");
                 
                 return NotFound();
             }
-            var response = PexipConfigurationMapper.MapPexipConfigToResponse(_supplierConfiguration);
+            var response = PexipConfigurationMapper.MapPexipConfigToResponse(supplierConfiguration);
             return Ok(response);
         }
     }

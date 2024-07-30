@@ -2,13 +2,17 @@ using System.Linq;
 using Autofac.Extras.Moq;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Contracts;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
+using UserRole = VideoApi.Domain.Enums.UserRole;
+using VirtualCourtRoomType = VideoApi.Domain.Enums.VirtualCourtRoomType;
 
 namespace VideoApi.UnitTests.Services.Consultation
 {
@@ -21,7 +25,10 @@ namespace VideoApi.UnitTests.Services.Consultation
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<ISupplierApiSelector>().Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
+            supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            supplierPlatformServiceFactory.Setup(x => x.Create(Supplier.Kinly)).Returns(supplierPlatformService.Object);
             _sut = _mocker.Create<ConsultationService>();
         }
 

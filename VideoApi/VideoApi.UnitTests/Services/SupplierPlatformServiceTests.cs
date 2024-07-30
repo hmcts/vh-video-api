@@ -26,7 +26,6 @@ namespace VideoApi.UnitTests.Services
     {
         private Mock<ISupplierApiClient> _supplierApiClientMock;
         private Mock<ILogger<SupplierPlatformService>> _loggerMock;
-        private Mock<ISupplierApiSelector> _selctorMock;
         private SupplierConfiguration _supplierConfig;
         private Mock<ISupplierSelfTestHttpClient> _supplierSelfTestHttpClient;
         private Mock<IPollyRetryService> _pollyRetryService;
@@ -44,9 +43,6 @@ namespace VideoApi.UnitTests.Services
             {
                 CallbackUri = "CallbackUri", ApiUrl = "KinlyApiUrl"
             };
-            _selctorMock = new Mock<ISupplierApiSelector>();
-            _selctorMock.Setup(e => e.GetSupplierConfiguration()).Returns(_supplierConfig);
-            _selctorMock.Setup(e => e.GetHttpClient()).Returns(_supplierApiClientMock.Object);
             _loggerMock = new Mock<ILogger<SupplierPlatformService>>();
 
             _supplierSelfTestHttpClient = new Mock<ISupplierSelfTestHttpClient>();

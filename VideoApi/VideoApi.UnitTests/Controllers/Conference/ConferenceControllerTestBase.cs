@@ -45,7 +45,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IAzureStorageServiceFactory> AzureStorageServiceFactoryMock;
         protected Mock<IAzureStorageService> AzureStorageServiceMock;
         protected Mock<IPollyRetryService> PollyRetryServiceMock;
-        protected Mock<ISupplierApiSelector> SupplierApiSelectorMock;
         protected List<Endpoint> TestEndpoints;
         protected AutoMock Mocker;
         protected const string AppName = "vh-recording-app";
@@ -156,8 +155,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .Returns(Task.FromResult(default(object)));
 
             ServicesConfiguration.Setup(s => s.Value).Returns(new ServicesConfiguration());
-            SupplierApiSelectorMock = Mocker.Mock<ISupplierApiSelector>();
-            SupplierApiSelectorMock.Setup(x => x.GetSupplierConfiguration()).Returns(SupplierConfiguration.Object);
+            VideoPlatformServiceMock.Setup(x => x.GetSupplierConfiguration()).Returns(SupplierConfiguration.Object);
 
             MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode",
                 "12345678");

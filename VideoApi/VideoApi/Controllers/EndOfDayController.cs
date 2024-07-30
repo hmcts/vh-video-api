@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -22,11 +23,9 @@ namespace VideoApi.Controllers;
 public class EndOfDayController(
     IQueryHandler queryHandler,
     ILogger<EndOfDayController> logger,
-    ISupplierApiSelector supplierLocator)
+    ISupplierPlatformServiceFactory supplierPlatformServiceFactory)
     : ControllerBase
 {
-    private readonly SupplierConfiguration _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
-    
     /// <summary>
     /// Get all active conferences.
     /// This includes conferences that are in progress or paused.
@@ -41,9 +40,11 @@ public class EndOfDayController(
         logger.LogDebug("Getting all active conferences");
         var query = new GetActiveConferencesQuery();
         var conferences = await queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
-        
+
+        var supplierPlatformService = supplierPlatformServiceFactory.Create(Supplier.Kinly);
+        var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
         var response = conferences
-            .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
+            .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, supplierConfiguration))
             .ToList();
         
         return Ok(response);

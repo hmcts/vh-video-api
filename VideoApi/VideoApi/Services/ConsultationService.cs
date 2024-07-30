@@ -3,31 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Clients;
 using Task = System.Threading.Tasks.Task;
+using VirtualCourtRoomType = VideoApi.Domain.Enums.VirtualCourtRoomType;
 
 namespace VideoApi.Services
 {
     public class ConsultationService : IConsultationService
     {
-        private readonly ISupplierApiClient _supplierApiClient;
         private readonly ILogger<ConsultationService> _logger;
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
 
-        public ConsultationService(ISupplierApiSelector apiSelector,
+        public ConsultationService(ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
             ILogger<ConsultationService> logger,
             ICommandHandler commandHandler,
             IQueryHandler queryHandler)
         {
-            _supplierApiClient = apiSelector.GetHttpClient();
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
@@ -96,7 +97,9 @@ namespace VideoApi.Services
         private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
             CreateConsultationRoomParams createConsultationRoomParams)
         {
-            var response = await _supplierApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierApiClient = supplierPlatformService.GetHttpClient();
+            var response = await supplierApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
                 "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",
                 virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label);
@@ -182,7 +185,9 @@ namespace VideoApi.Services
                 Part_id = participantId
             };
 
-            await _supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierApiClient = supplierPlatformService.GetHttpClient();
+            await supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
 
     }
