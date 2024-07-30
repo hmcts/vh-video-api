@@ -3,11 +3,15 @@ using Autofac.Extras.Moq;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain.Enums;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
@@ -18,6 +22,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
         protected AutoMock Mocker;
         protected VideoApi.Domain.Conference TestConference;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
 
         [SetUp]
         public void Setup()
@@ -36,6 +41,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             UpdateConferenceQueryMock();
             VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
+            _supplierPlatformServiceFactory = Mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(VideoPlatformServiceMock.Object);
 
             Controller = Mocker.Create<ConferenceManagementController>();
         }

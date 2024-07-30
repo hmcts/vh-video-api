@@ -2,12 +2,17 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
+using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
-using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
+using EndpointState = VideoApi.Domain.Enums.EndpointState;
+using EventType = VideoApi.Domain.Enums.EventType;
+using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -45,6 +50,8 @@ namespace VideoApi.UnitTests.Events
         {
             var featureToggle = _mocker.Mock<IFeatureToggles>();
             var videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
+            var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(videoPlatformServiceMock.Object);
             featureToggle.Setup(x => x.VodafoneIntegrationEnabled()).Returns(true);
 
             var conference = TestConference;

@@ -2,12 +2,17 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
+using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
-using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
+using EventType = VideoApi.Domain.Enums.EventType;
+using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -45,7 +50,9 @@ namespace VideoApi.UnitTests.Events
         public async Task Should_transfer_participant_to_hearing_room_when_conference_is_in_session_and_feature_toggle_is_enabled()
         {
             var featureToggle = _mocker.Mock<IFeatureToggles>();
-            var VideoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
+            var videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
+            var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(videoPlatformServiceMock.Object);
             featureToggle.Setup(x => x.VodafoneIntegrationEnabled()).Returns(true);
             
             var conference = TestConference;
@@ -73,7 +80,7 @@ namespace VideoApi.UnitTests.Events
                     command.ParticipantState == ParticipantState.Available &&
                     command.Room == RoomType.WaitingRoom)), Times.Once);
             
-            VideoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+            videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
         }
     }
 }

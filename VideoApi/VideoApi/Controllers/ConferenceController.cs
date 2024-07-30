@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -40,7 +41,7 @@ namespace VideoApi.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
-        private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly SupplierConfiguration _supplierConfiguration;
         private readonly ILogger<ConferenceController> _logger;
         private readonly IAudioPlatformService _audioPlatformService;
@@ -51,7 +52,7 @@ namespace VideoApi.Controllers
 
         public ConferenceController(IQueryHandler queryHandler, 
             ICommandHandler commandHandler,
-            IVideoPlatformService videoPlatformService, 
+            ISupplierPlatformServiceFactory supplierPlatformServiceFactory, 
             ISupplierApiSelector supplierLocator, 
             ILogger<ConferenceController> logger, 
             IAudioPlatformService audioPlatformService,
@@ -62,7 +63,7 @@ namespace VideoApi.Controllers
         {
             _queryHandler = queryHandler;
             _commandHandler = commandHandler;
-            _videoPlatformService = videoPlatformService;
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
             _logger = logger;
             _audioPlatformService = audioPlatformService;
@@ -151,7 +152,8 @@ namespace VideoApi.Controllers
             }
 
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
                 endpointDtos);
 
             try
@@ -617,10 +619,11 @@ namespace VideoApi.Controllers
 
         private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
         {
-            var meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             if (meetingRoom != null)
             {
-                await _videoPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
+                await videoPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
             }
         }
 
@@ -663,9 +666,10 @@ namespace VideoApi.Controllers
             IEnumerable<EndpointDto> endpoints)
         {
             MeetingRoom meetingRoom;
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
             try
             {
-                meetingRoom = await _videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
+                meetingRoom = await videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
                     audioRecordingRequired,
                     ingestUrl,
                     endpoints);
@@ -674,7 +678,7 @@ namespace VideoApi.Controllers
             {
                 _logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
 
-                meetingRoom = await _videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
+                meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             }
 
             if (meetingRoom == null)  return false;

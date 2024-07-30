@@ -5,15 +5,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services;
-using VideoApi.Services.Contracts;
 using VideoApi.Services.Clients;
+using EndpointState = VideoApi.Domain.Enums.EndpointState;
+using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
 
 namespace VideoApi.Controllers
@@ -25,15 +27,15 @@ namespace VideoApi.Controllers
     [ApiController]
     public class ConferenceManagementController : ControllerBase
     {
-        private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly IQueryHandler _queryHandler;
         private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<ConferenceManagementController> _logger;
 
-        public ConferenceManagementController(IVideoPlatformService videoPlatformService,
+        public ConferenceManagementController(ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
             ILogger<ConferenceManagementController> logger, IQueryHandler queryHandler, IFeatureToggles featureToggles)
         {
-            _videoPlatformService = videoPlatformService;
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
             _queryHandler = queryHandler;
             _featureToggles = featureToggles;
@@ -72,13 +74,14 @@ namespace VideoApi.Controllers
                 // if only hosts are connected and no participants the supplier will not start the hearing, so provide the host id to force the hearing to start
                 allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
 
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
                 if (_featureToggles.VodafoneIntegrationEnabled())
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
+                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
                 }
                 else
                 {
-                    await _videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
+                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
                 }
                 
            
@@ -109,7 +112,8 @@ namespace VideoApi.Controllers
             try
             {
                 _logger.LogDebug("Attempting to pause hearing");
-                await _videoPlatformService.PauseHearingAsync(conferenceId);
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                await videoPlatformService.PauseHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (SupplierApiException ex)
@@ -132,7 +136,8 @@ namespace VideoApi.Controllers
             try
             {
                 _logger.LogDebug("Attempting to end hearing");
-                await _videoPlatformService.EndHearingAsync(conferenceId);
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                await videoPlatformService.EndHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (SupplierApiException ex)
@@ -153,7 +158,8 @@ namespace VideoApi.Controllers
         {	
             try	
             {	
-                await _videoPlatformService.SuspendHearingAsync(conferenceId);	
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                await videoPlatformService.SuspendHearingAsync(conferenceId);	
                 return Accepted();	
             }	
             catch (SupplierApiException ex)	
@@ -180,6 +186,7 @@ namespace VideoApi.Controllers
             var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
             var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
             var transferType = transferRequest.TransferType;
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
             try
             {
                 switch (transferType)
@@ -187,13 +194,13 @@ namespace VideoApi.Controllers
                     case TransferType.Call:
                         _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
                             supplierParticipantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
+                        await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                            TransferFromRoomType(participant), RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
                             supplierParticipantId, conferenceId);
-                        await _videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
+                        await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                             RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
                         break;
                     default:

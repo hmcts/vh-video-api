@@ -1,25 +1,28 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using VideoApi.Services;
-using VideoApi.Services.Contracts;
+using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
+using EventType = VideoApi.Domain.Enums.EventType;
+using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 
 namespace VideoApi.Events.Handlers
 {
     public class JoinedEventHandler : EventHandlerBase<JoinedEventHandler>
     {
-        private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly IFeatureToggles _featureToggles;
         
-        public JoinedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<JoinedEventHandler> logger, IVideoPlatformService videoPlatformService, IFeatureToggles featureToggles) : base(
+        public JoinedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<JoinedEventHandler> logger, ISupplierPlatformServiceFactory supplierPlatformServiceFactory, IFeatureToggles featureToggles) : base(
             queryHandler, commandHandler, logger)
         {
-            _videoPlatformService = videoPlatformService;
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _featureToggles = featureToggles;
         }
 
@@ -47,7 +50,8 @@ namespace VideoApi.Events.Handlers
         {
             if (SourceConference.State == ConferenceState.InSession && SourceParticipant.CanAutoTransferToHearingRoom())
             {
-                _videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceParticipant.Id.ToString(),
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceParticipant.Id.ToString(),
                     RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
             }
         }

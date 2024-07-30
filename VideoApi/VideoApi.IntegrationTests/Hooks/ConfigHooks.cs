@@ -154,11 +154,13 @@ namespace VideoApi.IntegrationTests.Hooks
 
         private static void RegisterStubs(IServiceCollection services)
         {
-            services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
+            var supplierPlatformService = new SupplierPlatformServiceStub();
+            services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
             services.AddSingleton<IFeatureToggles, FeatureTogglesStub>();
+            services.AddScoped<ISupplierPlatformServiceFactory>(_ => new TestSupplierPlatformServiceFactory(supplierPlatformService));
         }
 
         private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)

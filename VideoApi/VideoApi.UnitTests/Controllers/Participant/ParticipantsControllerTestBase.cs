@@ -2,11 +2,14 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain.Enums;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using RoomType = VideoApi.Domain.Enums.RoomType;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Controllers.Participant
 {
@@ -25,6 +28,9 @@ namespace VideoApi.UnitTests.Controllers.Participant
             MockQueryHandler = new Mock<IQueryHandler>();
             MockCommandHandler = new Mock<ICommandHandler>();
             MockVideoPlatformService = new Mock<IVideoPlatformService>();
+            var supplierPlatformServiceFactory = new Mock<ISupplierPlatformServiceFactory>();
+            supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(MockVideoPlatformService.Object);
+            
             _mockLogger = new Mock<ILogger<ParticipantsController>>();
 
             TestConference = new ConferenceBuilder()
@@ -37,7 +43,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
               .Build();
 
             Controller = new ParticipantsController(MockCommandHandler.Object, MockQueryHandler.Object,
-                MockVideoPlatformService.Object, _mockLogger.Object);
+                supplierPlatformServiceFactory.Object, _mockLogger.Object);
         }
     }
 }

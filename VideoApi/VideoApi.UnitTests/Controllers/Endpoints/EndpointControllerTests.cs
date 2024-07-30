@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Controllers;
@@ -14,11 +15,13 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Mappers;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Controllers.Endpoints
 {
@@ -36,10 +39,12 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _commandHandlerMock = new Mock<ICommandHandler>();
             var mockLogger = new Mock<ILogger<EndpointsController>>();
             _videoPlatformServiceMock = new Mock<IVideoPlatformService>();
+            var supplierPlatformServiceFactory = new Mock<ISupplierPlatformServiceFactory>();
+            supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(_videoPlatformServiceMock.Object);
 
             _controller = new EndpointsController(_queryHandlerMock.Object,
                 _commandHandlerMock.Object,
-                _videoPlatformServiceMock.Object,
+                supplierPlatformServiceFactory.Object,
                 mockLogger.Object);
         }
 

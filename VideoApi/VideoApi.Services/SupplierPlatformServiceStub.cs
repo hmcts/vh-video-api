@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -80,6 +81,16 @@ namespace VideoApi.Services
             {
                 Health_status = PlatformHealth.HEALTHY
             });
+        }
+        
+        public ISupplierApiClient GetHttpClient()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public SupplierConfiguration GetSupplierConfiguration()
+        {
+            throw new NotImplementedException();
         }
 
         private static MeetingRoom Create()

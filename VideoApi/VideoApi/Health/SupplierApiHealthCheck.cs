@@ -2,6 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using VideoApi.Contract.Enums;
+using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 
@@ -9,18 +11,19 @@ namespace VideoApi.Health;
 
 public class SupplierApiHealthCheck : IHealthCheck
 {
-    private readonly IVideoPlatformService _videoPlatformService;
+    private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
 
-    public SupplierApiHealthCheck(IVideoPlatformService videoPlatformService)
+    public SupplierApiHealthCheck(ISupplierPlatformServiceFactory supplierPlatformServiceFactory)
     {
-        _videoPlatformService = videoPlatformService;
+        _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
     }
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new ())
     {
         try
         {
-            var result =  await _videoPlatformService.GetPlatformHealthAsync();
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var result =  await videoPlatformService.GetPlatformHealthAsync();
             return result.Health_status == PlatformHealth.HEALTHY ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
         }
         catch (Exception exception)

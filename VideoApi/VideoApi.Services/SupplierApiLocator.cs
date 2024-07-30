@@ -14,6 +14,7 @@ public interface ISupplierApiSelector
     public SupplierConfiguration GetSupplierConfiguration();
 }
 
+// TODO deprecate this class, call GetHttpClient and GetSupplierConfiguration from SupplierPlatformService instead
 public class SupplierApiSelector : ISupplierApiSelector
 {
     private readonly IServiceProvider _serviceProvider;

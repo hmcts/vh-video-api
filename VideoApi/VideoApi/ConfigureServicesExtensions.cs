@@ -113,6 +113,7 @@ namespace VideoApi
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
                 services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
+                services.AddScoped<ISupplierPlatformServiceFactory, SupplierPlatformServiceFactory>();
             }
             else
             {
@@ -144,6 +145,7 @@ namespace VideoApi
                 services.AddScoped<IConsultationService, ConsultationService>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
                 services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
+                services.AddScoped<ISupplierPlatformServiceFactory, SupplierPlatformServiceFactory>();
             }
 
             services.AddScoped<IKinlyJwtTokenHandler, KinlyJwtHandler>();

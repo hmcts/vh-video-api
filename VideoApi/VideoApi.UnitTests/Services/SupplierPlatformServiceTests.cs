@@ -8,8 +8,8 @@ using Moq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -17,6 +17,8 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
+using TestScore = VideoApi.Domain.Enums.TestScore;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Services
 {
@@ -54,8 +56,9 @@ namespace VideoApi.UnitTests.Services
                 _loggerMock.Object,
                 _supplierSelfTestHttpClient.Object,
                 _pollyRetryService.Object,
-                _selctorMock.Object,
-                _featureToggles.Object
+                _supplierApiClientMock.Object,
+                _supplierConfig,
+                Supplier.Kinly
             );
             
             _testConference = new ConferenceBuilder()

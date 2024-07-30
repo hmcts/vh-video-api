@@ -10,17 +10,20 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Factories;
 using VideoApi.Services.Contracts;
+using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
@@ -46,6 +49,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected List<Endpoint> TestEndpoints;
         protected AutoMock Mocker;
         protected const string AppName = "vh-recording-app";
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
         
         [SetUp]
         public void Setup()
@@ -55,6 +59,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             CommandHandlerMock = Mocker.Mock<ICommandHandler>();
             MockLogger = Mocker.Mock<ILogger<ConferenceController>>();
             VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
+            _supplierPlatformServiceFactory = Mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactory.Setup(x => x.Create(Supplier.Kinly)).Returns(VideoPlatformServiceMock.Object);
             ServicesConfiguration = Mocker.Mock<IOptions<ServicesConfiguration>>();
             SupplierConfiguration = Mocker.Mock<SupplierConfiguration>();
             AudioPlatformServiceMock = Mocker.Mock<IAudioPlatformService>();
