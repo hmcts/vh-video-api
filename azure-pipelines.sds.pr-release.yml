@@ -105,7 +105,7 @@ stages:
   ##################################################
   # Deploy Nuget Packages. #########################
   - stage: Push_Nuget
-    dependsOn: Run_Entity_Framework_Dev
+    dependsOn: Pre_Release_Tasks
     displayName: Deploy NuGet Packages
     variables:
       - template: variables/dev.yaml
