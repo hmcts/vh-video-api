@@ -101,6 +101,25 @@ stages:
               netVersion: ${{ variables.dotnetVersion }}
               vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
               coreProjectPath: $(projectPath)
+
+  ##################################################
+  # Deploy Nuget Packages. #########################
+  - stage: Push_Nuget
+    dependsOn: Run_Entity_Framework_Dev
+    displayName: Deploy NuGet Packages
+    variables:
+      - template: variables/dev.yaml
+      - template: variables/shared.yaml
+        parameters:
+          env: ${{ variables.env }}
+    jobs:
+      - job: Publish_Nuget
+        displayName: Publish NuGet Packages
+        steps:
+          - template: templates\dotnet\push-nuget-packages.yml@azTemplates
+            parameters:
+              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+
   #####################################################
   # Build Docker Image. ###############################
   - stage: Dock
@@ -262,24 +281,6 @@ stages:
               aksClusterName: "$(aksCluster.name)"
               dnsSubscriptionName: "${{ variables.dnsZoneSubscription }}"
               dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
-
-  ##################################################
-  # Deploy Nuget Packages. #########################
-  - stage: Push_Nuget
-    dependsOn: Run_Entity_Framework_Dev
-    displayName: Deploy NuGet Packages
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs:
-      - job: Publish_Nuget
-        displayName: Publish NuGet Packages
-        steps:
-          - template: templates\dotnet\push-nuget-packages.yml@azTemplates
-            parameters:
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
 
   ##################################################
   # Run Acceptance Tests. ##########################
