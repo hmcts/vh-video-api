@@ -2,10 +2,8 @@ using System;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Testing.Common.Extensions;
 using VideoApi.DAL.Queries;
 using Task = System.Threading.Tasks.Task;
-using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {

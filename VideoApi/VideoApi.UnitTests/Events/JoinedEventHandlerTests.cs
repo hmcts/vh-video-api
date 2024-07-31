@@ -2,20 +2,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
-using Testing.Common.Extensions;
-using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
-using VideoApi.Services;
-using VideoApi.Services.Contracts;
 using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
 using EventType = VideoApi.Domain.Enums.EventType;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using UserRole = VideoApi.Domain.Enums.UserRole;
-using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Events
 {

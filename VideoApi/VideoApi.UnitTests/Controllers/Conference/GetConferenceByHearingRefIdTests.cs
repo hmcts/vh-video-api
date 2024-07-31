@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Testing.Common.Extensions;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Conference

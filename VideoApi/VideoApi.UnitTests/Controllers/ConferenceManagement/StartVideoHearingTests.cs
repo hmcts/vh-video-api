@@ -5,11 +5,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Testing.Common.Extensions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 

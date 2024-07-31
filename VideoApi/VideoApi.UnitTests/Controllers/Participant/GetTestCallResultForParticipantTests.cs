@@ -2,7 +2,6 @@ using System;
 using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Testing.Common.Extensions;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;

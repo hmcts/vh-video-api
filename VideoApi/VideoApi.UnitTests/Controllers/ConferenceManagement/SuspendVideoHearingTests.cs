@@ -3,8 +3,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Testing.Common.Extensions;
-using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement

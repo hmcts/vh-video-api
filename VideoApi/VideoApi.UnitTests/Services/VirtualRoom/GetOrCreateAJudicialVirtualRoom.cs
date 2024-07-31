@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.Moq;
 using Moq;
-using Testing.Common.Extensions;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;

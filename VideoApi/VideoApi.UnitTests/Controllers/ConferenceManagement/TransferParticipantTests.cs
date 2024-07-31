@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Testing.Common.Extensions;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;

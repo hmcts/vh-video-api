@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Moq;
-using Testing.Common.Extensions;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
@@ -12,7 +11,6 @@ using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
-using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
 
