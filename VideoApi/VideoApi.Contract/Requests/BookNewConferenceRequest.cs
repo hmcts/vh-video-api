@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
 {
@@ -21,5 +22,6 @@ namespace VideoApi.Contract.Requests
         public string HearingVenueName { get; set; }
         public bool AudioRecordingRequired { get; set; }
         public List<AddEndpointRequest> Endpoints { get; set; }
+        public Supplier Supplier { get; set; }
     }
 }
