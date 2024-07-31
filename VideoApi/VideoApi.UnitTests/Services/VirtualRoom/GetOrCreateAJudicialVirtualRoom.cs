@@ -83,8 +83,6 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                     Pexip_node = "test.node.com"
                 }
             };
-            const Supplier supplier = Supplier.Vodafone;
-            _conference.SetSupplier(supplier);
             
             var joh = (Participant)_conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
             
@@ -127,7 +125,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                     createParams.Participant_room_id == expectedRoomId.ToString() &&
                     createParams.Audio_recording_url == string.Empty
                 )), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(1));
+            VerifySupplierUsed(_conference.Supplier, Times.Exactly(1));
         }
 
         protected void VerifySupplierUsed(Supplier supplier, Times times)

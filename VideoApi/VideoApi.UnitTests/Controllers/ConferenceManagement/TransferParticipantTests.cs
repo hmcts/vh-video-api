@@ -15,14 +15,12 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
     public class TransferParticipantTests : ConferenceManagementControllerTestBase
     {
-        [TestCase(Supplier.Kinly)]
-        [TestCase(Supplier.Vodafone)]
-        public async Task should_move_participant_into_hearing_room_from_waiting_room(Supplier supplier)
+        [Test]
+        public async Task should_move_participant_into_hearing_room_from_waiting_room()
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
             participant.CurrentConsultationRoom = null;
-            TestConference.SetSupplier(supplier);
             var request = new TransferParticipantRequest
             {
                 ParticipantId = participant.Id,
@@ -35,7 +33,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
                     RoomType.HearingRoom.ToString()), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(1));
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]

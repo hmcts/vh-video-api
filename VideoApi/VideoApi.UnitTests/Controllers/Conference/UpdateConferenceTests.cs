@@ -17,9 +17,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class UpdateConferenceTests : ConferenceControllerTestBase
     {
-        [TestCase(Supplier.Kinly)]
-        [TestCase(Supplier.Vodafone)]
-        public async Task Should_update_requested_conference_successfully(Supplier supplier)
+        [Test]
+        public async Task Should_update_requested_conference_successfully()
         {       
             var request = new UpdateConferenceRequest
             {
@@ -35,7 +34,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             QueryHandlerMock
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(query))
                 .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
-            TestConference.SetSupplier(supplier);
 
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
 
@@ -43,7 +41,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>()), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(1));
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]

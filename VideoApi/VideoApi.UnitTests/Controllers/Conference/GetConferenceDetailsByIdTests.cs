@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using Moq;
 using Testing.Common.Extensions;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Requests;
@@ -29,8 +30,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
         public async Task Should_return_ok_result_for_given_conference_id()
         {
             var hearingVenueNames = new List<string>(new string[] { _hearingVenueName });
-            TestConference.SetSupplier(Supplier.Kinly);
-            TestConference2.SetSupplier(Supplier.Vodafone);
+            TestConference.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Kinly);
+            TestConference2.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Vodafone);
             var kinlyConfiguration = new KinlyConfiguration
             {
                 ConferencePhoneNumber = "KinlyConferencePhoneNumber",

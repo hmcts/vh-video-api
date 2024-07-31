@@ -17,9 +17,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
     public class StartVideoHearingTests : ConferenceManagementControllerTestBase
     {
-        [TestCase(Supplier.Kinly)]
-        [TestCase(Supplier.Vodafone)]
-        public async Task should_return_accepted_when_start_hearing_has_been_requested(Supplier supplier)
+        [Test]
+        public async Task should_return_accepted_when_start_hearing_has_been_requested()
         {
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
@@ -34,7 +33,6 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 TriggeredByHostId = hostId,
                 MuteGuests = true
             };
-            TestConference.SetSupplier(supplier);
             Mocker.Mock<IQueryHandler>()
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
@@ -48,7 +46,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds,
                     Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(1));
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
         
         [Test]

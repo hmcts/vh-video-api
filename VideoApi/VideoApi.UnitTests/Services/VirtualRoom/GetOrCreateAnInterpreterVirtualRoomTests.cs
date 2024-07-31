@@ -3,7 +3,6 @@ using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
@@ -32,6 +31,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
             supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(supplierPlatformService.Object);
+            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(supplierPlatformService.Object);
             _service = _mocker.Create<VirtualRoomService>();
             _conference = InitConference();
             

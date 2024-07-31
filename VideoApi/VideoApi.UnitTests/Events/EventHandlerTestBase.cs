@@ -7,6 +7,8 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using VideoApi.Services;
+using VideoApi.Services.Contracts;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -19,6 +21,9 @@ namespace VideoApi.UnitTests.Events
         protected Mock<IQueryHandler> QueryHandlerMock;
 
         protected Conference TestConference;
+        
+        protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
 
         [SetUp]
         public void Setup()
@@ -44,6 +49,15 @@ namespace VideoApi.UnitTests.Events
             QueryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdForEventQuery, Conference>(It.IsAny<GetConferenceByIdForEventQuery>()))
                 .ReturnsAsync(TestConference);
+            
+            VideoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
+            _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(VideoPlatformServiceMock.Object);
+        }
+        
+        protected void VerifySupplierUsed(Supplier supplier, Times times)
+        {
+            _supplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), times);
         }
     }
 }

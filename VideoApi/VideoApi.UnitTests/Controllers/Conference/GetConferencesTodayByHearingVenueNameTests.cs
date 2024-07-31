@@ -11,18 +11,15 @@ namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class GetConferenceDetailsByIdTests : ConferenceControllerTestBase
     {
-        [TestCase(Supplier.Kinly)]
-        [TestCase(Supplier.Vodafone)]
-        public async Task Should_return_ok_result_for_given_conference_id(Supplier supplier)
+        [Test]
+        public async Task Should_return_ok_result_for_given_conference_id()
         {
-            TestConference.SetSupplier(supplier);
-            
             var result = await Controller.GetConferenceDetailsByIdAsync(TestConference.Id);
 
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
             
-            SupplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]

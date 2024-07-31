@@ -28,13 +28,11 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var command =
                 new UpdateSelfTestCallResultCommand(conferenceId, participantId, testResult.Passed, testResult.Score);
             MockCommandHandler.Setup(x => x.Handle(command));
-            const Supplier supplier = Supplier.Vodafone;
-            TestConference.SetSupplier(supplier);
 
             var response = await Controller.GetTestCallResultForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
-            VerifySupplierUsed(supplier, Times.Exactly(1));
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]

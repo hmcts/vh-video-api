@@ -93,8 +93,6 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithEndpoints(testEndpoints)
                 .Build();
-            var supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
-            testConference.SetSupplier(supplier);
 
             _queryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
@@ -121,7 +119,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(1));
+            VerifySupplierUsed(testConference.Supplier, Times.Exactly(1));
         }
 
         [Test]
@@ -142,8 +140,6 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithEndpoints(testEndpoints)
                 .Build();
-            var supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
-            testConference.SetSupplier(supplier);
 
             _queryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
@@ -173,7 +169,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(2));
+            VerifySupplierUsed(testConference.Supplier, Times.Exactly(2));
         }
 
         [Test]
@@ -194,8 +190,6 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithEndpoints(testEndpoints)
                 .Build();
-            var supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
-            testConference.SetSupplier(supplier);
 
             _queryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
@@ -228,7 +222,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(3));
+            VerifySupplierUsed(testConference.Supplier, Times.Exactly(3));
         }
 
         [Test]

@@ -20,7 +20,18 @@ using Supplier = VideoApi.Domain.Enums.Supplier;
 namespace VideoApi.UnitTests.Events
 {
     public class EndpointJoinedHandlerTests : EventHandlerTestBase<EndpointJoinedEventHandler>
-    {        
+    {
+        private Mock<IVideoPlatformService> _videoPlatformServiceMock;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
+        
+        [SetUp]
+        public void SetUp()
+        {
+            _videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
+            _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(_videoPlatformServiceMock.Object);
+        }
+        
         [Test]
         public async Task Should_update_endpoint_status_to_connected()
         {
@@ -51,14 +62,8 @@ namespace VideoApi.UnitTests.Events
         public async Task
             Should_transfer_endpoint_to_hearing_room_when_conference_is_in_session()
         {
-            var videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
-            var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(videoPlatformServiceMock.Object);
-
             var conference = TestConference;
             conference.UpdateConferenceStatus(ConferenceState.InSession);
-            const Supplier supplier = Supplier.Vodafone;
-            conference.SetSupplier(supplier);
             var endpointForEvent = conference.GetEndpoints()[0];
             
             var callbackEvent = new CallbackEvent
@@ -80,8 +85,8 @@ namespace VideoApi.UnitTests.Events
                     command.ConferenceId == conference.Id && command.EndpointId == endpointForEvent.Id &&
                     command.Status == EndpointState.Connected && command.Room == RoomType.WaitingRoom)), Times.Once);
             
-            videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, endpointForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
-            supplierPlatformServiceFactory.Verify(x => x.Create(supplier), Times.Once);
+            _videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, endpointForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
     }
 }

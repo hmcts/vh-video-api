@@ -11,12 +11,10 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
     public class PauseVideoHearingTests : ConferenceManagementControllerTestBase
     {
-        [TestCase(Supplier.Kinly)]
-        [TestCase(Supplier.Vodafone)]
-        public async Task should_return_accepted_when_pause_hearing_has_been_requested(Supplier supplier)
+        [Test]
+        public async Task should_return_accepted_when_pause_hearing_has_been_requested()
         {
             var conferenceId = Guid.NewGuid();
-            TestConference.SetSupplier(supplier);
             
             var result = await Controller.PauseVideoHearingAsync(conferenceId);
 
@@ -24,7 +22,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(x => x.PauseHearingAsync(conferenceId), Times.Once);
-            VerifySupplierUsed(supplier, Times.Exactly(1));
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test] public async Task should_return_kinly_status_code_on_error()

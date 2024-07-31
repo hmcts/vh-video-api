@@ -52,14 +52,8 @@ namespace VideoApi.UnitTests.Events
         [Test]
         public async Task Should_transfer_participant_to_hearing_room_when_conference_is_in_session()
         {
-            var videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
-            var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(videoPlatformServiceMock.Object);
-            
             var conference = TestConference;
             conference.UpdateConferenceStatus(ConferenceState.InSession);
-            const Supplier supplier = Supplier.Vodafone;
-            conference.SetSupplier(supplier);
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
             
             var callbackEvent = new CallbackEvent
@@ -83,8 +77,8 @@ namespace VideoApi.UnitTests.Events
                     command.ParticipantState == ParticipantState.Available &&
                     command.Room == RoomType.WaitingRoom)), Times.Once);
             
-            videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
-            supplierPlatformServiceFactory.Verify(x => x.Create(supplier), Times.Once);
+            VideoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
     }
 }

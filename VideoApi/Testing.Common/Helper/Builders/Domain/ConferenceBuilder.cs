@@ -40,7 +40,7 @@ namespace Testing.Common.Helper.Builders.Domain
             const string caseName = CaseName;
             const int scheduledDuration = 120;
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
-                scheduledDuration, venueName, false, "ingesturl");
+                scheduledDuration, venueName, false, "ingesturl", Supplier.Vodafone);
         }
 
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
