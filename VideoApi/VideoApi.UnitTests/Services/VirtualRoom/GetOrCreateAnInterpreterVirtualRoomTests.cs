@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
             supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(Supplier.Kinly)).Returns(supplierPlatformService.Object);
+            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(supplierPlatformService.Object);
             _service = _mocker.Create<VirtualRoomService>();
             _conference = InitConference();
             

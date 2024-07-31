@@ -22,7 +22,7 @@ public class SupplierApiHealthCheck : IHealthCheck
     {
         try
         {
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
             var result =  await videoPlatformService.GetPlatformHealthAsync();
             return result.Health_status == PlatformHealth.HEALTHY ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
         }

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using VideoApi.Contract.Enums;
 using VideoApi.Services.Contracts;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Services
 {

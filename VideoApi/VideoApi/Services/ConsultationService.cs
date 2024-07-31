@@ -97,7 +97,7 @@ namespace VideoApi.Services
         private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
             CreateConsultationRoomParams createConsultationRoomParams)
         {
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
             var supplierApiClient = supplierPlatformService.GetHttpClient();
             var response = await supplierApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
@@ -185,7 +185,7 @@ namespace VideoApi.Services
                 Part_id = participantId
             };
 
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
             var supplierApiClient = supplierPlatformService.GetHttpClient();
             await supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }

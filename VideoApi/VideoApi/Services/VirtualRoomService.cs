@@ -145,7 +145,7 @@ namespace VideoApi.Services
                 Room_type = supplierRoomType,
                 Display_name = $"{roomPrefix}{existingRooms + 1}"
             };
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             var supplierApiClient = supplierPlatformService.GetHttpClient();
             return supplierApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
         }

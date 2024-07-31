@@ -34,7 +34,7 @@ public class SupplierApiHealthCheckTests
                 Health_status = PlatformHealth.HEALTHY
             });
         _mocker.Mock<ISupplierPlatformServiceFactory>()
-            .Setup(x => x.Create(It.IsAny<Supplier>())).Returns(videoPlatformServiceMock.Object);
+            .Setup(x => x.Create(It.IsAny<VideoApi.Domain.Enums.Supplier>())).Returns(videoPlatformServiceMock.Object);
         
         var result = await _sut.CheckHealthAsync(new HealthCheckContext());
         result.Status.Should().Be(HealthStatus.Healthy);

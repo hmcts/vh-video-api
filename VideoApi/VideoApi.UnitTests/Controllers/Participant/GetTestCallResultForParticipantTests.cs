@@ -2,6 +2,7 @@ using System;
 using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Testing.Common.Extensions;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -27,10 +28,13 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var command =
                 new UpdateSelfTestCallResultCommand(conferenceId, participantId, testResult.Passed, testResult.Score);
             MockCommandHandler.Setup(x => x.Handle(command));
+            const Supplier supplier = Supplier.Vodafone;
+            TestConference.SetSupplier(supplier);
 
             var response = await Controller.GetTestCallResultForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
+            VerifySupplierUsed(supplier, Times.Exactly(1));
         }
 
         [Test]

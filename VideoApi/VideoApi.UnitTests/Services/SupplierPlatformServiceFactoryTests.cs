@@ -48,7 +48,7 @@ namespace VideoApi.UnitTests.Services
             var sut = new SupplierPlatformServiceFactory(_serviceProvider.Object);
 
             // Act
-            var service = sut.Create(supplier);
+            var service = sut.Create((VideoApi.Domain.Enums.Supplier)supplier);
 
             // Assert
             service.Should().BeOfType<SupplierPlatformService>();

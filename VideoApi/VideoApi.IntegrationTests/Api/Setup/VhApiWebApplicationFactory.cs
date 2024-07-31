@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Testing.Common;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 
@@ -62,7 +64,11 @@ namespace VideoApi.IntegrationTests.Api.Setup
         
         private static void RegisterStubs(IServiceCollection services)
         {
-            services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
+            var serviceProvider = services.BuildServiceProvider();
+            
+            var kinlyConfigOptions = serviceProvider.GetService<IOptions<KinlyConfiguration>>();
+            var supplierPlatformService = new SupplierPlatformServiceStub(kinlyConfigOptions.Value);
+            services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();

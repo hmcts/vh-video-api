@@ -10,6 +10,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
@@ -48,7 +49,15 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected List<Endpoint> TestEndpoints;
         protected AutoMock Mocker;
         protected const string AppName = "vh-recording-app";
-        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
+        protected Mock<ISupplierPlatformServiceFactory> SupplierPlatformServiceFactoryMock;
+        protected KinlyConfiguration KinlyConfig = new()
+        {
+            PexipSelfTestNode = "KinlyPexipSelfTestNode"
+        };
+        protected VodafoneConfiguration VodafoneConfig = new()
+        {
+            PexipSelfTestNode = "VodafonePexipSelfTestNode"
+        };
         
         [SetUp]
         public void Setup()
@@ -58,8 +67,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             CommandHandlerMock = Mocker.Mock<ICommandHandler>();
             MockLogger = Mocker.Mock<ILogger<ConferenceController>>();
             VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
-            _supplierPlatformServiceFactory = Mocker.Mock<ISupplierPlatformServiceFactory>();
-            _supplierPlatformServiceFactory.Setup(x => x.Create(Supplier.Kinly)).Returns(VideoPlatformServiceMock.Object);
+            SupplierPlatformServiceFactoryMock = Mocker.Mock<ISupplierPlatformServiceFactory>();
+            SupplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<VideoApi.Domain.Enums.Supplier>())).Returns(VideoPlatformServiceMock.Object);
             ServicesConfiguration = Mocker.Mock<IOptions<ServicesConfiguration>>();
             SupplierConfiguration = Mocker.Mock<SupplierConfiguration>();
             AudioPlatformServiceMock = Mocker.Mock<IAudioPlatformService>();
@@ -189,6 +198,26 @@ namespace VideoApi.UnitTests.Controllers.Conference
                     await executeFunction();
                 })
                 .ReturnsAsync(expectedReturn);
+        }
+
+        protected void UseSupplierPlatformServiceStub()
+        {
+            SupplierPlatformServiceFactoryMock
+                .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly))
+                .Returns(new SupplierPlatformServiceStub(KinlyConfig));
+            SupplierPlatformServiceFactoryMock
+                .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone))
+                .Returns(new SupplierPlatformServiceStub(VodafoneConfig));
+        }
+
+        protected void VerifySupplierUsed(Supplier supplier, Times times)
+        {
+            VerifySupplierUsed((VideoApi.Domain.Enums.Supplier)supplier, times);
+        }
+        
+        protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
+        {
+            SupplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), times);
         }
     }
 }

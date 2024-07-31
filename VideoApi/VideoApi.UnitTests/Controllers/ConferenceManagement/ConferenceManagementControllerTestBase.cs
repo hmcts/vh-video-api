@@ -23,6 +23,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         protected AutoMock Mocker;
         protected VideoApi.Domain.Conference TestConference;
         private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
+        private Mock<IQueryHandler> _queryHandlerMock;
 
         [SetUp]
         public void Setup()
@@ -42,8 +43,14 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             UpdateConferenceQueryMock();
             VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
             _supplierPlatformServiceFactory = Mocker.Mock<ISupplierPlatformServiceFactory>();
-            _supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(VideoPlatformServiceMock.Object);
+            _supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<VideoApi.Domain.Enums.Supplier>())).Returns(VideoPlatformServiceMock.Object);
 
+            _queryHandlerMock = Mocker.Mock<IQueryHandler>();
+            _queryHandlerMock
+                .Setup(x =>
+                    x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
+            
             Controller = Mocker.Create<ConferenceManagementController>();
         }
 
@@ -64,6 +71,16 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         protected void AddQuicklinkToTestConference()
         {
             TestConference.AddParticipant(new VideoApi.Domain.QuickLinkParticipant("QuciklinkName", UserRole.QuickLinkParticipant) {  State = ParticipantState.Available});
+        }
+        
+        protected void VerifySupplierUsed(Supplier supplier, Times times)
+        {
+            VerifySupplierUsed((VideoApi.Domain.Enums.Supplier)supplier, times);
+        }
+        
+        protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
+        {
+            _supplierPlatformServiceFactory.Verify(x => x.Create(supplier), times);
         }
     }
 }

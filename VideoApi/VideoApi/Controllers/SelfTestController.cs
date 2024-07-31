@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
-using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
 using VideoApi.Mappings;
 using VideoApi.Services;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Controllers
 {
@@ -17,12 +16,14 @@ namespace VideoApi.Controllers
     {
         private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly ILogger<SelfTestController> _logger;
+        private readonly IFeatureToggles _featureToggles;
 
         public SelfTestController(ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
-            ILogger<SelfTestController> logger)
+            ILogger<SelfTestController> logger, IFeatureToggles featureToggles)
         {
             _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
+            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -36,8 +37,9 @@ namespace VideoApi.Controllers
         public IActionResult GetPexipServicesConfiguration()
         {
             _logger.LogDebug($"GetPexipServicesConfiguration");
-
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            
+            var supplier = _featureToggles.VodafoneIntegrationEnabled() ? Supplier.Vodafone : Supplier.Kinly;
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(supplier);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             
             if (supplierConfiguration == null)

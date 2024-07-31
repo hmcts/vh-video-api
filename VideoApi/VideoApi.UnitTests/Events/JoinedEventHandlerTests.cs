@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
+using Testing.Common.Extensions;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.Events.Handlers;
@@ -13,6 +15,7 @@ using EventType = VideoApi.Domain.Enums.EventType;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using UserRole = VideoApi.Domain.Enums.UserRole;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Events
 {
@@ -47,16 +50,16 @@ namespace VideoApi.UnitTests.Events
         }
         
         [Test]
-        public async Task Should_transfer_participant_to_hearing_room_when_conference_is_in_session_and_feature_toggle_is_enabled()
+        public async Task Should_transfer_participant_to_hearing_room_when_conference_is_in_session()
         {
-            var featureToggle = _mocker.Mock<IFeatureToggles>();
             var videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
             var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
             supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(videoPlatformServiceMock.Object);
-            featureToggle.Setup(x => x.VodafoneIntegrationEnabled()).Returns(true);
             
             var conference = TestConference;
             conference.UpdateConferenceStatus(ConferenceState.InSession);
+            const Supplier supplier = Supplier.Vodafone;
+            conference.SetSupplier(supplier);
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
             
             var callbackEvent = new CallbackEvent
@@ -81,6 +84,7 @@ namespace VideoApi.UnitTests.Events
                     command.Room == RoomType.WaitingRoom)), Times.Once);
             
             videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+            supplierPlatformServiceFactory.Verify(x => x.Create(supplier), Times.Once);
         }
     }
 }

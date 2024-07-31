@@ -108,11 +108,13 @@ namespace VideoApi
 
             if (useStub)
             {
-                services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
+                var kinlyConfigOptions = container.GetService<IOptions<KinlyConfiguration>>();
+                var supplierPlatformService = new SupplierPlatformServiceStub(kinlyConfigOptions.Value);
+                services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
-                services.AddScoped<ISupplierPlatformServiceFactory, TestSupplierPlatformServiceFactory>();
+                services.AddScoped<ISupplierPlatformServiceFactory>(_ => new TestSupplierPlatformServiceFactory(supplierPlatformService));
             }
             else
             {

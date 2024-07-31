@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -27,6 +26,7 @@ namespace VideoApi.UnitTests.Services.Consultation
     {
         private AutoMock _mocker;
         private ConsultationService _consultationService;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
         
         private StartConsultationRequest _request;
         private List<ConsultationRoom> _rooms;
@@ -37,8 +37,8 @@ namespace VideoApi.UnitTests.Services.Consultation
             _mocker = AutoMock.GetLoose();
             var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
             supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
-            var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(Supplier.Kinly)).Returns(supplierPlatformService.Object);
+            _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(supplierPlatformService.Object);
             
             _consultationService = _mocker.Create<ConsultationService>();
             SetupTestConference();
@@ -326,6 +326,11 @@ namespace VideoApi.UnitTests.Services.Consultation
                 y => y.Room_label_prefix.Equals(consultationRoomParams.Room_label_prefix))), Times.Once);
             returnedRoom.Should().BeOfType<ConsultationRoom>();
             returnedRoom.Should().NotBeNull();
+        }
+
+        protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
+        {
+            _supplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), times);
         }
     }
 }

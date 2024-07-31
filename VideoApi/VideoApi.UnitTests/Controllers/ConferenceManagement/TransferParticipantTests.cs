@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Testing.Common.Extensions;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Domain;
@@ -14,12 +15,14 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
     public class TransferParticipantTests : ConferenceManagementControllerTestBase
     {
-        [Test]
-        public async Task should_move_participant_into_hearing_room_from_waiting_room()
+        [TestCase(Supplier.Kinly)]
+        [TestCase(Supplier.Vodafone)]
+        public async Task should_move_participant_into_hearing_room_from_waiting_room(Supplier supplier)
         {
             var conferenceId = TestConference.Id;
             var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
             participant.CurrentConsultationRoom = null;
+            TestConference.SetSupplier(supplier);
             var request = new TransferParticipantRequest
             {
                 ParticipantId = participant.Id,
@@ -32,6 +35,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
                     RoomType.HearingRoom.ToString()), Times.Once);
+            VerifySupplierUsed(supplier, Times.Exactly(1));
         }
 
         [Test]

@@ -1,3 +1,4 @@
+using System;
 using Autofac.Extras.Moq;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;

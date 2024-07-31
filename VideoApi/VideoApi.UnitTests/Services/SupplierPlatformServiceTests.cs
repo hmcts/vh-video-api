@@ -8,7 +8,6 @@ using Moq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
-using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
@@ -19,6 +18,7 @@ using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 using TestScore = VideoApi.Domain.Enums.TestScore;
 using UserRole = VideoApi.Domain.Enums.UserRole;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Services
 {

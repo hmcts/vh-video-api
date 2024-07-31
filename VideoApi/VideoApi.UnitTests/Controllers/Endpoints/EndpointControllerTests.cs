@@ -5,6 +5,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Testing.Common.Extensions;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
@@ -22,6 +23,7 @@ using VideoApi.Services.Mappers;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
 using UserRole = VideoApi.Domain.Enums.UserRole;
+using Supplier = VideoApi.Contract.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Controllers.Endpoints
 {
@@ -30,6 +32,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
         private readonly Mock<ICommandHandler> _commandHandlerMock;
         private readonly Mock<IQueryHandler> _queryHandlerMock;
         private readonly Mock<IVideoPlatformService> _videoPlatformServiceMock;
+        private readonly Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
 
         private readonly EndpointsController _controller;
 
@@ -39,12 +42,12 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _commandHandlerMock = new Mock<ICommandHandler>();
             var mockLogger = new Mock<ILogger<EndpointsController>>();
             _videoPlatformServiceMock = new Mock<IVideoPlatformService>();
-            var supplierPlatformServiceFactory = new Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(_videoPlatformServiceMock.Object);
+            _supplierPlatformServiceFactoryMock = new Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<VideoApi.Domain.Enums.Supplier>())).Returns(_videoPlatformServiceMock.Object);
 
             _controller = new EndpointsController(_queryHandlerMock.Object,
                 _commandHandlerMock.Object,
-                supplierPlatformServiceFactory.Object,
+                _supplierPlatformServiceFactoryMock.Object,
                 mockLogger.Object);
         }
 
@@ -90,6 +93,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithEndpoints(testEndpoints)
                 .Build();
+            var supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
+            testConference.SetSupplier(supplier);
 
             _queryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
@@ -116,6 +121,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+            VerifySupplierUsed(supplier, Times.Exactly(1));
         }
 
         [Test]
@@ -136,6 +142,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithEndpoints(testEndpoints)
                 .Build();
+            var supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
+            testConference.SetSupplier(supplier);
 
             _queryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
@@ -165,6 +173,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+            VerifySupplierUsed(supplier, Times.Exactly(2));
         }
 
         [Test]
@@ -185,6 +194,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithEndpoints(testEndpoints)
                 .Build();
+            var supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
+            testConference.SetSupplier(supplier);
 
             _queryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
@@ -217,6 +228,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+            VerifySupplierUsed(supplier, Times.Exactly(3));
         }
 
         [Test]
@@ -269,6 +281,16 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
                 It.IsAny<IEnumerable<EndpointDto>>()), Times.Never);
+        }
+        
+        protected void VerifySupplierUsed(Supplier supplier, Times times)
+        {
+            VerifySupplierUsed((VideoApi.Domain.Enums.Supplier)supplier, times);
+        }
+        
+        protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
+        {
+            _supplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), times);
         }
     }
 }

@@ -5,9 +5,9 @@ using Microsoft.Extensions.Options;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
-using VideoApi.Contract.Enums;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Services
 {

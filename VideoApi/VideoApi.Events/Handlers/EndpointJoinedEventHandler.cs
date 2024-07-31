@@ -11,6 +11,7 @@ using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
 using EndpointState = VideoApi.Domain.Enums.EndpointState;
 using EventType = VideoApi.Domain.Enums.EventType;
 using RoomType = VideoApi.Domain.Enums.RoomType;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Events.Handlers
 {
@@ -41,7 +42,7 @@ namespace VideoApi.Events.Handlers
             _logger.LogInformation("Endpoint joined callback - {ConferenceId}/{EndpointId}",
                 SourceConference.Id, SourceEndpoint.Id);
             
-            if (_featureToggles.VodafoneIntegrationEnabled())
+            if (SourceConference.Supplier == Supplier.Vodafone)
             {
                 _logger.LogInformation("Vodafone integration enabled, transferring endpoint {EndpointId} to hearing room if in session",
                     SourceEndpoint.Id);
@@ -59,7 +60,7 @@ namespace VideoApi.Events.Handlers
             {
                 _logger.LogInformation("Conference {ConferenceId} already in session, transferring endpoint {EndpointId} to hearing room",
                     SourceConference.Id, SourceEndpoint.Id);
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(SourceConference.Supplier);
                 videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceEndpoint.Id.ToString(),
                     RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
             }

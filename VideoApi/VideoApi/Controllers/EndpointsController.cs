@@ -77,7 +77,7 @@ namespace VideoApi.Controllers
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
             
             _logger.LogDebug("Successfully added endpoint {DisplayName} to conference", request.DisplayName);
@@ -102,7 +102,7 @@ namespace VideoApi.Controllers
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
             
             _logger.LogDebug("Successfully removed endpoint {sipAddress} from conference", sipAddress);
@@ -141,7 +141,7 @@ namespace VideoApi.Controllers
         {
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
         }
     }

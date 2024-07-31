@@ -5,9 +5,11 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Testing.Common.Extensions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 
@@ -15,8 +17,9 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
     public class StartVideoHearingTests : ConferenceManagementControllerTestBase
     {
-        [Test]
-        public async Task should_return_accepted_when_start_hearing_has_been_requested()
+        [TestCase(Supplier.Kinly)]
+        [TestCase(Supplier.Vodafone)]
+        public async Task should_return_accepted_when_start_hearing_has_been_requested(Supplier supplier)
         {
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
@@ -31,6 +34,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 TriggeredByHostId = hostId,
                 MuteGuests = true
             };
+            TestConference.SetSupplier(supplier);
             Mocker.Mock<IQueryHandler>()
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
@@ -44,6 +48,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds,
                     Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
+            VerifySupplierUsed(supplier, Times.Exactly(1));
         }
         
         [Test]

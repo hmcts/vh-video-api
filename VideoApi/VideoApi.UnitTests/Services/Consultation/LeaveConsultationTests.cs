@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
             supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(Supplier.Kinly)).Returns(supplierPlatformService.Object);
+            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(supplierPlatformService.Object);
             _sut = _mocker.Create<ConsultationService>();
         }
 

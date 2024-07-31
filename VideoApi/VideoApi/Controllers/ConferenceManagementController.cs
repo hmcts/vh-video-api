@@ -74,7 +74,7 @@ namespace VideoApi.Controllers
                 // if only hosts are connected and no participants the supplier will not start the hearing, so provide the host id to force the hearing to start
                 allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
 
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
                 if (_featureToggles.VodafoneIntegrationEnabled())
                 {
                     await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
@@ -112,7 +112,8 @@ namespace VideoApi.Controllers
             try
             {
                 _logger.LogDebug("Attempting to pause hearing");
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
                 await videoPlatformService.PauseHearingAsync(conferenceId);
                 return Accepted();
             }
@@ -136,7 +137,8 @@ namespace VideoApi.Controllers
             try
             {
                 _logger.LogDebug("Attempting to end hearing");
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
                 await videoPlatformService.EndHearingAsync(conferenceId);
                 return Accepted();
             }
@@ -158,7 +160,8 @@ namespace VideoApi.Controllers
         {	
             try	
             {	
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
                 await videoPlatformService.SuspendHearingAsync(conferenceId);	
                 return Accepted();	
             }	
@@ -186,7 +189,7 @@ namespace VideoApi.Controllers
             var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
             var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
             var transferType = transferRequest.TransferType;
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             try
             {
                 switch (transferType)

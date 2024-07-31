@@ -41,7 +41,7 @@ public class EndOfDayController(
         var query = new GetActiveConferencesQuery();
         var conferences = await queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
 
-        var supplierPlatformService = supplierPlatformServiceFactory.Create(Supplier.Kinly);
+        var supplierPlatformService = supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
         var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
         var response = conferences
             .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, supplierConfiguration))

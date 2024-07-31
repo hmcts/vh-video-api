@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -18,9 +19,9 @@ namespace VideoApi.Services
     public class SupplierPlatformServiceStub : IVideoPlatformService
     {
         private readonly List<Guid> _bookedGuids = new();
-        private readonly IOptions<KinlyConfiguration> _supplierConfiguration;
+        private readonly SupplierConfiguration _supplierConfiguration;
 
-        public SupplierPlatformServiceStub(IOptions<KinlyConfiguration> supplierConfiguration)
+        public SupplierPlatformServiceStub(SupplierConfiguration supplierConfiguration)
         {
             _supplierConfiguration = supplierConfiguration;
         }
@@ -96,7 +97,7 @@ namespace VideoApi.Services
             throw new NotImplementedException();
         }
 
-        public SupplierConfiguration GetSupplierConfiguration() => _supplierConfiguration.Value;
+        public SupplierConfiguration GetSupplierConfiguration() => _supplierConfiguration;
 
         private static MeetingRoom Create()
         {

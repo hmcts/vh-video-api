@@ -2,19 +2,24 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Testing.Common.Extensions;
+using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Services.Dtos;
 using Task = System.Threading.Tasks.Task;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
     public class UpdateConferenceTests : ConferenceControllerTestBase
     {
-        [Test]
-        public async Task Should_update_requested_conference_successfully()
+        [TestCase(Supplier.Kinly)]
+        [TestCase(Supplier.Vodafone)]
+        public async Task Should_update_requested_conference_successfully(Supplier supplier)
         {       
             var request = new UpdateConferenceRequest
             {
@@ -30,7 +35,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             QueryHandlerMock
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(query))
                 .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
-            
+            TestConference.SetSupplier(supplier);
 
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
 
@@ -38,6 +43,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>()), Times.Once);
+            VerifySupplierUsed(supplier, Times.Exactly(1));
         }
 
         [Test]

@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Clients;
@@ -13,6 +12,7 @@ using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Mappers;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Services
 {

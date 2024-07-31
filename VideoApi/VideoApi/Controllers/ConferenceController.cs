@@ -104,7 +104,7 @@ namespace VideoApi.Controllers
                     new GetEndpointsForConferenceQuery(conferenceId));
             var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
-            var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired, audioIngestUrl, endpointDtos);
+            var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired, audioIngestUrl, endpointDtos, request.Supplier);
             
             if (!roomBookedSuccess)
             {
@@ -118,7 +118,7 @@ namespace VideoApi.Controllers
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)request.Supplier);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration.PexipSelfTestNode);
 
@@ -151,7 +151,7 @@ namespace VideoApi.Controllers
             }
 
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
                 endpointDtos);
 
@@ -196,7 +196,7 @@ namespace VideoApi.Controllers
                 return NotFound($"Unable to find a conference with the given id {conferenceId}");
             }
 
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(queriedConference.Supplier);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             var response =
                 ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration.PexipSelfTestNode);
@@ -219,8 +219,9 @@ namespace VideoApi.Controllers
             var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
             try
             {
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
                 await _commandHandler.Handle(removeConferenceCommand);
-                await SafelyRemoveCourtRoomAsync(conferenceId);
+                await SafelyRemoveCourtRoomAsync(conferenceId, conference.Supplier);
 
                 _logger.LogInformation("Successfully removed conference {ConferenceId}", conferenceId);
 
@@ -252,9 +253,14 @@ namespace VideoApi.Controllers
             };
 
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
-            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
-            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, supplierConfiguration));
+            var configMapper = new SupplierConfigurationMapper(_supplierPlatformServiceFactory);
+            var supplierConfigurations = configMapper.ExtractSupplierConfigurations(conferences);
+
+            var response = conferences.Select(c =>
+            {
+                var supplierConfig = supplierConfigurations.Find(sc => sc.Supplier == c.Supplier);
+                return ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, supplierConfig.Configuration);
+            });
 
             return Ok(response);
         }
@@ -384,7 +390,7 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, supplierConfiguration.PexipSelfTestNode);
 
@@ -409,7 +415,7 @@ namespace VideoApi.Controllers
             if (!conferences.Any())
                 return NotFound();
 
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             var response = conferences
                 .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, supplierConfiguration))
@@ -493,8 +499,9 @@ namespace VideoApi.Controllers
             {
                 var command = new CloseConferenceCommand(conferenceId);
 
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
                 await _commandHandler.Handle(command);
-                await SafelyRemoveCourtRoomAsync(conferenceId);
+                await SafelyRemoveCourtRoomAsync(conferenceId, conference.Supplier);
                 await DeleteAudioRecordingApplication(conferenceId);
 
                 return NoContent();
@@ -624,9 +631,9 @@ namespace VideoApi.Controllers
             return Ok();
         }
 
-        private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId)
+        private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId, VideoApi.Domain.Enums.Supplier supplier)
         {
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(supplier);
             var meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
             if (meetingRoom != null)
             {
@@ -670,10 +677,11 @@ namespace VideoApi.Controllers
         public async Task<bool> BookMeetingRoomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints)
+            IEnumerable<EndpointDto> endpoints,
+            Supplier supplier = Supplier.Kinly)
         {
             MeetingRoom meetingRoom;
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Kinly);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)supplier);
             try
             {
                 meetingRoom = await videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
@@ -732,7 +740,8 @@ namespace VideoApi.Controllers
             (
                 request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
                 request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
-                request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants
+                request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
+                (Domain.Enums.Supplier)request.Supplier
             );
 
             await _commandHandler.Handle(createConferenceCommand);
@@ -743,7 +752,8 @@ namespace VideoApi.Controllers
         private async Task<bool> BookMeetingRoomWithRetriesAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints)
+            IEnumerable<EndpointDto> endpoints,
+            Supplier supplier = Supplier.Kinly)
         {
             var result = await _pollyRetryService.WaitAndRetryAsync<Exception, bool>
             (
@@ -751,7 +761,7 @@ namespace VideoApi.Controllers
                 _ => TimeSpan.FromSeconds(10),
                 retryAttempt => _logger.LogWarning($"Failed to BookMeetingRoomAsync. Retrying attempt {retryAttempt}"),
                 callResult => !callResult,
-                () => BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints)
+                () => BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints, supplier)
             );
 
             return result;
@@ -830,6 +840,34 @@ namespace VideoApi.Controllers
             return judgesOnly
                 ? conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToJudgeInHearingResponse)
                 : conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToHostInHearingResponse);
+        }
+
+        private List<SupplierConfigurationMapping> ExtractSupplierConfigurations(List<Conference> conferences)
+        {
+            var supplierConfigurations = new List<SupplierConfigurationMapping>();
+            
+            CheckAndAddConfiguration(Domain.Enums.Supplier.Kinly);
+            CheckAndAddConfiguration(Domain.Enums.Supplier.Vodafone);
+
+            return supplierConfigurations;
+
+            void CheckAndAddConfiguration(Domain.Enums.Supplier supplier)
+            {
+                if (!conferences.Exists(x => x.Supplier == supplier))
+                {
+                    return;
+                }
+                
+                var platformService = _supplierPlatformServiceFactory.Create(supplier);
+                var configuration = platformService.GetSupplierConfiguration();
+                supplierConfigurations.Add(new SupplierConfigurationMapping(supplier, configuration));
+            }
+        }
+
+        private sealed class SupplierConfigurationMapping(Domain.Enums.Supplier supplier, SupplierConfiguration configuration)
+        {
+            public Domain.Enums.Supplier Supplier { get; private set; } = supplier;
+            public SupplierConfiguration Configuration { get; private set; } = configuration;
         }
     }
 }
