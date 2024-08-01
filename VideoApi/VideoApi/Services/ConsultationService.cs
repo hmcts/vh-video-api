@@ -11,6 +11,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Clients;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 using Task = System.Threading.Tasks.Task;
 using VirtualCourtRoomType = VideoApi.Domain.Enums.VirtualCourtRoomType;
 
@@ -40,7 +41,10 @@ namespace VideoApi.Services
             {
                 Room_label_prefix = roomType.ToString()
             };
-            var createConsultationRoomResponse = await CreateConsultationRoomAsync(conferenceId.ToString(), consultationRoomParams);
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
+            var createConsultationRoomResponse = await CreateConsultationRoomAsync(conferenceId.ToString(), consultationRoomParams, conference.Supplier);
             var createRoomCommand = new CreateConsultationRoomCommand(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
             await _commandHandler.Handle(createRoomCommand);
             var room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
@@ -59,9 +63,12 @@ namespace VideoApi.Services
                 {
                     Room_label_prefix = roomType.ToString()
                 };
+                var conference =
+                    await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                        new GetConferenceByIdQuery(conferenceId));
                 var createConsultationRoomResponse =
                     await CreateConsultationRoomAsync(conferenceId.ToString(),
-                        consultationRoomParams);
+                        consultationRoomParams, conference.Supplier);
                 var createRoomCommand = new CreateConsultationRoomCommand(conferenceId,
                     createConsultationRoomResponse.Room_label,
                     roomType,
@@ -95,9 +102,9 @@ namespace VideoApi.Services
 
 
         private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
-            CreateConsultationRoomParams createConsultationRoomParams)
+            CreateConsultationRoomParams createConsultationRoomParams, Supplier supplier)
         {
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(supplier);
             var supplierApiClient = supplierPlatformService.GetHttpClient();
             var response = await supplierApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             _logger.LogInformation(
@@ -115,7 +122,7 @@ namespace VideoApi.Services
                     new GetConferenceByIdQuery(conferenceId));
             var endpint = conference.GetEndpoints().Single(x => x.Id == endpointId);
 
-            await TransferParticipantAsync(conferenceId, endpointId.ToString(), endpint.GetCurrentRoom(), room);
+            await TransferParticipantAsync(conferenceId, endpointId.ToString(), endpint.GetCurrentRoom(), room, conference.Supplier);
         }
 
         public async Task ParticipantTransferToRoomAsync(Guid conferenceId, Guid participantId, string room)
@@ -126,7 +133,7 @@ namespace VideoApi.Services
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
             var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
-            await TransferParticipantAsync(conferenceId, kinlyParticipantId, participant.GetCurrentRoom(), room);
+            await TransferParticipantAsync(conferenceId, kinlyParticipantId, participant.GetCurrentRoom(), room, conference.Supplier);
         }
         
         public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
@@ -138,13 +145,13 @@ namespace VideoApi.Services
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
             var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
-            await TransferParticipantAsync(conferenceId, kinlyParticipantId, fromRoom, toRoom);
+            await TransferParticipantAsync(conferenceId, kinlyParticipantId, fromRoom, toRoom, conference.Supplier);
 
             var lastLinkedParticipant =
                 await RetrieveLastParticipantIfLinkedAndLeftAlone(conference, participant, fromRoom); 
             if (lastLinkedParticipant != null)
             {
-                await TransferParticipantAsync(conferenceId, lastLinkedParticipant.GetParticipantRoom()?.Id.ToString(), fromRoom, toRoom);
+                await TransferParticipantAsync(conferenceId, lastLinkedParticipant.GetParticipantRoom()?.Id.ToString(), fromRoom, toRoom, conference.Supplier);
             }
         }
 
@@ -172,7 +179,7 @@ namespace VideoApi.Services
                 ? ((Participant)firstRemaining): null;
         }
 
-        private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom)
+        private async Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, Supplier supplier)
         {
             _logger.LogInformation(
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
@@ -185,7 +192,7 @@ namespace VideoApi.Services
                 Part_id = participantId
             };
 
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(supplier);
             var supplierApiClient = supplierPlatformService.GetHttpClient();
             await supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }

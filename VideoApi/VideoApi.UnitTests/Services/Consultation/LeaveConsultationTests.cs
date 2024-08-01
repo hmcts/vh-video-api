@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
             supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(supplierPlatformService.Object);
+            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(supplierPlatformService.Object);
             _sut = _mocker.Create<ConsultationService>();
         }
 
@@ -57,6 +57,9 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .ReturnsAsync(conference);
             
             _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(consultationRoom);
+            
+            _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(conference);
 
             // act
             await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label,
@@ -108,6 +111,9 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .ReturnsAsync(conference);
             
             _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(consultationRoom);
+            
+            _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(conference);
 
             // act
             await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label, RoomType.WaitingRoom.ToString());
@@ -156,6 +162,9 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .ReturnsAsync(conference);
             
             _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(It.IsAny<GetConsultationRoomByIdQuery>())).ReturnsAsync(consultationRoom);
+            
+            _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(conference);
 
             // act
             await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label,

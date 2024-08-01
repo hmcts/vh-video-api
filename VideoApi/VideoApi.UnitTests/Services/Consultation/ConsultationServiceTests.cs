@@ -35,10 +35,13 @@ namespace VideoApi.UnitTests.Services.Consultation
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
-            supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            var kinlyPlatformService = new Mock<IVideoPlatformService>();
+            kinlyPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            var vodafonePlatformService = new Mock<IVideoPlatformService>();
+            vodafonePlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(supplierPlatformService.Object);
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(kinlyPlatformService.Object);
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(vodafonePlatformService.Object);
             
             _consultationService = _mocker.Create<ConsultationService>();
             SetupTestConference();
@@ -60,6 +63,9 @@ namespace VideoApi.UnitTests.Services.Consultation
             _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
+            
+            _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
             
             var returnedRoom =
                 await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
@@ -86,6 +92,9 @@ namespace VideoApi.UnitTests.Services.Consultation
             _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
+            
+            _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
             
             // Act
             var returnedRoom =
@@ -143,6 +152,9 @@ namespace VideoApi.UnitTests.Services.Consultation
             _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() {Room_label = "Label"});
+            
+            _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
 
             var returnedRoom =
                 await _consultationService.GetAvailableConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
@@ -317,6 +329,9 @@ namespace VideoApi.UnitTests.Services.Consultation
             _mocker.Mock<ISupplierApiClient>()
                 .Setup(x => x.CreateConsultationRoomAsync(It.IsAny<string>(), It.IsAny<CreateConsultationRoomParams>()))
                 .ReturnsAsync(new CreateConsultationRoomResponse() { Room_label = "Label" });
+            
+            _mocker.Mock<IQueryHandler>().Setup(x => x.Handle<GetConferenceByIdQuery, Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
 
             var returnedRoom =
                 await _consultationService.CreateNewConsultationRoomAsync(_request.ConferenceId, _request.RoomType.MapToDomainEnum());
@@ -326,6 +341,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 y => y.Room_label_prefix.Equals(consultationRoomParams.Room_label_prefix))), Times.Once);
             returnedRoom.Should().BeOfType<ConsultationRoom>();
             returnedRoom.Should().NotBeNull();
+            VerifySupplierUsed(TestConference.Supplier, Times.Once());
         }
 
         protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
