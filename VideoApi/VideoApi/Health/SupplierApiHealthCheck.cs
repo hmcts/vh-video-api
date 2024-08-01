@@ -12,17 +12,22 @@ namespace VideoApi.Health;
 public class SupplierApiHealthCheck : IHealthCheck
 {
     private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
+    private readonly IFeatureToggles _featureToggles;
 
-    public SupplierApiHealthCheck(ISupplierPlatformServiceFactory supplierPlatformServiceFactory)
+    public SupplierApiHealthCheck(ISupplierPlatformServiceFactory supplierPlatformServiceFactory, 
+        IFeatureToggles featureToggles)
     {
         _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
+        _featureToggles = featureToggles;
     }
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new ())
     {
         try
         {
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
+            var vodafoneEnabled = _featureToggles.VodafoneIntegrationEnabled();
+            var supplier = vodafoneEnabled ? Domain.Enums.Supplier.Vodafone : Domain.Enums.Supplier.Kinly;
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(supplier);
             var result =  await videoPlatformService.GetPlatformHealthAsync();
             return result.Health_status == PlatformHealth.HEALTHY ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
         }

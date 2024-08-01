@@ -300,7 +300,8 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetIndependentTestCallResultAsync(Guid participantId)
         {
             _logger.LogDebug("GetIndependentTestCallResult");
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
+            var conference = await _queryHandler.Handle<GetConferenceForParticipantQuery, Conference>(new GetConferenceForParticipantQuery(participantId));
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             var testCallResult = await videoPlatformService.GetTestCallScoreAsync(participantId);
             if (testCallResult == null)
             {

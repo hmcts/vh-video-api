@@ -49,6 +49,11 @@ namespace VideoApi.UnitTests.Controllers.Participant
                     x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
                 .ReturnsAsync(TestConference);
             
+            MockQueryHandler
+                .Setup(x =>
+                    x.Handle<GetConferenceForParticipantQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceForParticipantQuery>()))
+                .ReturnsAsync(TestConference);
+            
             Controller = new ParticipantsController(MockCommandHandler.Object, MockQueryHandler.Object,
                 _mockSupplierPlatformServiceFactory.Object, _mockLogger.Object);
         }
