@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using Azure.Storage.Blobs;
-using FluentAssertions;
 using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -127,7 +126,8 @@ namespace VideoApi.IntegrationTests.Hooks
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VideoApi);
             context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            context.TestDataManager = new TestDataManager(context.Config.KinlyConfiguration, context.VideoBookingsDbContextOptions);
+            context.TestDataManager = new TestDataManager(context.Config.KinlyConfiguration, 
+                context.VideoBookingsDbContextOptions, context.Config.VodafoneConfiguration);
         }
 
         private static void RegisterServer(TestContext context)
@@ -157,13 +157,13 @@ namespace VideoApi.IntegrationTests.Hooks
             var serviceProvider = services.BuildServiceProvider();
             
             var kinlyConfigOptions = serviceProvider.GetService<IOptions<KinlyConfiguration>>();
-            var supplierPlatformService = new SupplierPlatformServiceStub(kinlyConfigOptions.Value);
-            services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
+            var vodafoneConfigOptions = serviceProvider.GetService<IOptions<VodafoneConfiguration>>();
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
             services.AddSingleton<IFeatureToggles, FeatureTogglesStub>();
-            services.AddScoped<ISupplierPlatformServiceFactory>(_ => new TestSupplierPlatformServiceFactory(supplierPlatformService));
+            services.AddScoped<ISupplierPlatformServiceFactory>(_ => 
+                new TestSupplierPlatformServiceFactory(kinlyConfigOptions.Value, vodafoneConfigOptions.Value));
         }
 
         private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)

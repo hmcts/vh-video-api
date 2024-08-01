@@ -109,12 +109,12 @@ namespace VideoApi
             if (useStub)
             {
                 var kinlyConfigOptions = container.GetService<IOptions<KinlyConfiguration>>();
-                var supplierPlatformService = new SupplierPlatformServiceStub(kinlyConfigOptions.Value);
-                services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
+                var vodafoneConfigOptions = container.GetService<IOptions<VodafoneConfiguration>>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
-                services.AddScoped<ISupplierPlatformServiceFactory>(_ => new TestSupplierPlatformServiceFactory(supplierPlatformService));
+                services.AddScoped<ISupplierPlatformServiceFactory>(_ => 
+                    new TestSupplierPlatformServiceFactory(kinlyConfigOptions.Value, vodafoneConfigOptions.Value));
             }
             else
             {

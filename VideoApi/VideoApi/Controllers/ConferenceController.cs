@@ -253,12 +253,12 @@ namespace VideoApi.Controllers
             };
 
             var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-            var configMapper = new SupplierConfigurationMapper(_supplierPlatformServiceFactory);
-            var supplierConfigurations = configMapper.ExtractSupplierConfigurations(conferences);
+            var supplierConfigMapper = new SupplierConfigurationMapper(_supplierPlatformServiceFactory);
+            var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferences);
 
             var response = conferences.Select(c =>
             {
-                var supplierConfig = supplierConfigurations.Find(sc => sc.Supplier == c.Supplier);
+                var supplierConfig = supplierConfigs.Find(sc => sc.Supplier == c.Supplier);
                 return ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, supplierConfig.Configuration);
             });
 
@@ -415,10 +415,14 @@ namespace VideoApi.Controllers
             if (!conferences.Any())
                 return NotFound();
 
-            var supplierPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Kinly);
-            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
+            var supplierConfigMapper = new SupplierConfigurationMapper(_supplierPlatformServiceFactory);
+            var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferences);
             var response = conferences
-                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, supplierConfiguration))
+                .Select(conference =>
+                {
+                    var supplierConfiguration = supplierConfigs.Find(sc => sc.Supplier == conference.Supplier);
+                    return ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, supplierConfiguration.Configuration);
+                })
                 .ToList();
 
             return Ok(response);
