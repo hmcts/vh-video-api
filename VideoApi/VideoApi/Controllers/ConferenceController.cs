@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
-using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
@@ -844,34 +843,6 @@ namespace VideoApi.Controllers
             return judgesOnly
                 ? conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToJudgeInHearingResponse)
                 : conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToHostInHearingResponse);
-        }
-
-        private List<SupplierConfigurationMapping> ExtractSupplierConfigurations(List<Conference> conferences)
-        {
-            var supplierConfigurations = new List<SupplierConfigurationMapping>();
-            
-            CheckAndAddConfiguration(Domain.Enums.Supplier.Kinly);
-            CheckAndAddConfiguration(Domain.Enums.Supplier.Vodafone);
-
-            return supplierConfigurations;
-
-            void CheckAndAddConfiguration(Domain.Enums.Supplier supplier)
-            {
-                if (!conferences.Exists(x => x.Supplier == supplier))
-                {
-                    return;
-                }
-                
-                var platformService = _supplierPlatformServiceFactory.Create(supplier);
-                var configuration = platformService.GetSupplierConfiguration();
-                supplierConfigurations.Add(new SupplierConfigurationMapping(supplier, configuration));
-            }
-        }
-
-        private sealed class SupplierConfigurationMapping(Domain.Enums.Supplier supplier, SupplierConfiguration configuration)
-        {
-            public Domain.Enums.Supplier Supplier { get; private set; } = supplier;
-            public SupplierConfiguration Configuration { get; private set; } = configuration;
         }
     }
 }
