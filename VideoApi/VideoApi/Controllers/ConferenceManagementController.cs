@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
-using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
@@ -17,6 +16,7 @@ using EndpointState = VideoApi.Domain.Enums.EndpointState;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Controllers
 {
@@ -29,16 +29,14 @@ namespace VideoApi.Controllers
     {
         private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly IQueryHandler _queryHandler;
-        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<ConferenceManagementController> _logger;
 
         public ConferenceManagementController(ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
-            ILogger<ConferenceManagementController> logger, IQueryHandler queryHandler, IFeatureToggles featureToggles)
+            ILogger<ConferenceManagementController> logger, IQueryHandler queryHandler)
         {
             _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
             _queryHandler = queryHandler;
-            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -75,7 +73,7 @@ namespace VideoApi.Controllers
                 allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
 
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
-                if (_featureToggles.VodafoneIntegrationEnabled())
+                if (conference.Supplier == Supplier.Vodafone)
                 {
                     await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
                 }

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -18,14 +17,11 @@ namespace VideoApi.Events.Handlers
     public class EndpointJoinedEventHandler : EventHandlerBase<EndpointJoinedEventHandler>
     {
         private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
-        private readonly IFeatureToggles _featureToggles;
 
         public EndpointJoinedEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            ILogger<EndpointJoinedEventHandler> logger, ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
-            IFeatureToggles featureToggles) : base(
+            ILogger<EndpointJoinedEventHandler> logger, ISupplierPlatformServiceFactory supplierPlatformServiceFactory) : base(
             queryHandler, commandHandler, logger)
         {
-            _featureToggles = featureToggles;
             _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
         }
 
