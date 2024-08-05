@@ -26,7 +26,6 @@ using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Mappers;
-using VideoApi.Validations;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Controllers
@@ -120,7 +119,7 @@ namespace VideoApi.Controllers
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration);
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
@@ -196,7 +195,7 @@ namespace VideoApi.Controllers
             }
 
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration.PexipSelfTestNode);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, _supplierConfiguration);
             return Ok(response);
         }
 
@@ -232,127 +231,6 @@ namespace VideoApi.Controllers
         }
 
         /// <summary>
-        /// Get today's conferences by HearingVenueName
-        /// </summary>
-        /// <returns>Conference details</returns>
-        [HttpGet("today/vho")]
-        [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
-        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int)HttpStatusCode.OK)]
-        [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
-        public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync([FromQuery] ConferenceForAdminRequest request)
-        {
-            _logger.LogDebug("GetConferencesTodayForAdmin");
-
-            var query = new GetConferencesTodayForAdminByHearingVenueNameQuery
-            {
-                HearingVenueNames = request.HearingVenueNames
-            };
-
-            var conferences = await _queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-            var response = conferences.Select(c => ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, _supplierConfiguration));
-
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Get today's conferences by HearingVenueName for staff members
-        /// </summary>
-        /// <returns>Conference details</returns>
-        [HttpGet("today/staff-member")]
-        [OpenApiOperation("GetConferencesTodayForStaffMemberByHearingVenueName")]
-        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
-        [Obsolete("Use booking-api:GetHearingsForTodayByVenue instead", false)]
-        public async Task<IActionResult> GetConferencesTodayForStaffMemberByHearingVenueName([FromQuery] ConferenceForStaffMembertWithSelectedVenueRequest request)
-        {
-            _logger.LogDebug("GetConferencesTodayForAdmin");
-
-            var query = new GetConferencesTodayForStaffMemberByHearingVenueNameQuery
-            {
-                HearingVenueNames = request.HearingVenueNames
-            };
-
-            var conferences = await _queryHandler.Handle<GetConferencesTodayForStaffMemberByHearingVenueNameQuery, List<Conference>>(query);
-
-            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel));
-        }
-
-        /// <summary>
-        /// Get all conferences for a judge
-        /// </summary>
-        /// <param name="username">judge username</param>
-        /// <returns>List of conferences for judge</returns>
-        [HttpGet("today/judge")]
-        [OpenApiOperation("GetConferencesTodayForJudgeByUsername")]
-        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesTodayForJudgeByUsernameAsync([FromQuery] string username)
-        {
-            _logger.LogDebug("GetConferencesTodayForJudgeByUsername {Username}", username);
-
-            var response = await GetHostConferencesForToday(username);
-
-            if (response is null)
-            {
-                return ValidationProblem(ModelState);
-            }
-
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Get all conferences for a host
-        /// </summary>
-        /// <param name="username">Host username</param>
-        /// <returns>List of conferences for host</returns>
-        [HttpGet("today/host")]
-        [OpenApiOperation("GetConferencesTodayForHost")]
-        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesTodayForHostAsync([FromQuery] string username)
-        {
-            _logger.LogDebug("GetConferencesTodayForHost {Username}", username);
-
-            var response = await GetHostConferencesForToday(username);
-
-            if (response is null)
-            {
-                return BadRequest(ModelState);
-            }
-
-            return Ok(response);
-        }
-
-        /// <summary>
-        /// Get non-closed conferences for a participant by their username
-        /// </summary>
-        /// <param name="username">person username</param>
-        /// <returns>List of non-closed conferences for judge</returns>
-        [HttpGet("today/individual")]
-        [OpenApiOperation("GetConferencesTodayForIndividualByUsername")]
-        [ProducesResponseType(typeof(List<ConferenceForIndividualResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
-        {
-            _logger.LogDebug("GetConferencesTodayForIndividualByUsername {Username}", username);
-
-            if (!username.IsValidEmail())
-            {
-                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-
-                _logger.LogWarning("Invalid username {Username}", username);
-
-                return ValidationProblem(ModelState);
-            }
-
-            var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
-            var conferences =
-                await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
-            var response = conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel);
-
-            return Ok(response);
-        }
-
-        /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
         /// <param name="hearingRefId">Hearing ID</param>
@@ -379,57 +257,11 @@ namespace VideoApi.Controllers
                 return NotFound();
             }
 
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _supplierConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _supplierConfiguration);
 
             return Ok(response);
         }
 
-        /// <summary>
-        /// Get conferences by hearing ref id
-        /// </summary>
-        /// <param name="request">Hearing ref IDs</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
-        [HttpPost("hearings/staff-member")]
-        [OpenApiOperation("GetConferencesForAdminByHearingRefId")]
-        [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesForAdminByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
-        {
-            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
-            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
-
-            if (!conferences.Any())
-                return NotFound();
-
-            var response = conferences
-                .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
-                .ToList();
-
-            return Ok(response);
-        }
-        
-        /// <summary>
-        /// Get conferences by hearing ref id
-        /// </summary>
-        /// <param name="request">Hearing ref IDs</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
-        [HttpPost("hearings/host")]
-        [OpenApiOperation("GetConferencesForHostByHearingRefId")]
-        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
-        {
-            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
-            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
-
-            if (!conferences.Any())
-                return NotFound();
-
-            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
-        }
-        
         /// <summary>
         /// Get list of expired conferences 
         /// </summary>
@@ -457,7 +289,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetExpiredAudiorecordingConferences")]
         [ProducesResponseType(typeof(List<ExpiredConferencesResponse>), (int) HttpStatusCode.OK)]
 
-        public async Task<IActionResult> GetExpiredAudiorecordingConferencesAsync()
+        public async Task<IActionResult> GetExpiredAudioRecordingConferencesAsync()
         {
             _logger.LogDebug("GetExpiredAudiorecordingConferences");
             var query = new GetExpiredAudiorecordingConferencesQuery();
@@ -508,9 +340,8 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetJudgesInHearingsTodayAsync()
         {
             _logger.LogDebug("GetJudgesInHearingsToday");
-
-            var response = await GetHostsInHearingsToday(judgesOnly: true);
-
+            var conferences = await _queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(new GetHostsInHearingsTodayQuery(true));
+            var response = conferences.Select(ParticipantInHearingResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
             return Ok(response);
         }
 
@@ -524,9 +355,8 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetHostsInHearingsTodayAsync()
         {
             _logger.LogDebug("GetHostsInHearingsToday");
-
-            var response = await GetHostsInHearingsToday();
-
+            var conferences = await _queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(new GetHostsInHearingsTodayQuery());
+            var response = conferences.Select(ParticipantInHearingResponseMapper.MapConferenceSummaryToHostInHearingResponse);
             return Ok(response);
         }
         
@@ -758,24 +588,6 @@ namespace VideoApi.Controllers
 
             return result;
         }
-
-        private async Task<IEnumerable<ConferenceForHostResponse>> GetHostConferencesForToday(string username)
-        {
-
-            if (!username.IsValidEmail())
-            {
-                ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-
-                _logger.LogWarning("Invalid username {Username}", username);
-
-                return null;
-            }
-
-            var query = new GetConferencesForTodayByHostQuery(username.ToLower().Trim());
-            var conferences = await _queryHandler.Handle<GetConferencesForTodayByHostQuery, List<Conference>>(query);
-            var conferenceForHostResponse = conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel);
-            return conferenceForHostResponse;
-        }
      
         private async Task DeleteAudioRecordingApplication(Guid conferenceId)
         {
@@ -809,16 +621,6 @@ namespace VideoApi.Controllers
                 var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
                 throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
             }
-        }
-        private async Task<IEnumerable<ParticipantInHearingResponse>> GetHostsInHearingsToday(bool judgesOnly = false)
-        {
-            var conferences =
-                await _queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(
-                    new GetHostsInHearingsTodayQuery(judgesOnly));
-
-            return judgesOnly
-                ? conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToJudgeInHearingResponse)
-                : conferences.SelectMany(ConferenceForHostResponseMapper.MapConferenceSummaryToHostInHearingResponse);
         }
     }
 }

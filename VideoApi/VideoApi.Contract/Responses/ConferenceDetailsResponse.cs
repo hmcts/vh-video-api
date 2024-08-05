@@ -35,21 +35,6 @@ namespace VideoApi.Contract.Responses
         public DateTime? ClosedDateTime { get; set; }
         
         /// <summary>
-        /// The case type
-        /// </summary>
-        public string CaseType { get; set; }
-        
-        /// <summary>
-        /// The case number
-        /// </summary>
-        public string CaseNumber { get; set; }
-        
-        /// <summary>
-        /// The case name
-        /// </summary>
-        public string CaseName { get; set; }
-        
-        /// <summary>
         /// The scheduled duration of a conference in minutes
         /// </summary>
         public int ScheduledDuration { get; set; }
@@ -74,8 +59,6 @@ namespace VideoApi.Contract.Responses
         /// </summary>
         public MeetingRoomResponse MeetingRoom { get; set; }
         
-        public string HearingVenueName { get; set;  }
-
         /// <summary>
         /// The option to indicate hearing audio recording
         /// </summary>

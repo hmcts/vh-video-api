@@ -35,13 +35,9 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var request = new UpdateConferenceRequest
             {
-                CaseName = $"{_context.Test.ConferenceResponse.CaseName} UPDATED",
-                CaseNumber = $"{_context.Test.ConferenceResponse.CaseNumber} UPDATED",
-                CaseType = "Financial Remedy",
                 HearingRefId = _context.Test.ConferenceResponse.HearingId,
                 ScheduledDateTime = DateTime.Now.AddHours(1),
                 ScheduledDuration = 12,
-                HearingVenueName = "MyVenue",
                 AudioRecordingRequired = true
             };
 
@@ -228,12 +224,8 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var expected = _scenarioContext.Get<UpdateConferenceRequest>(UpdatedKey);
-            conference.CaseName.Should().Be(expected.CaseName);
-            conference.CaseNumber.Should().Be(expected.CaseNumber);
-            conference.CaseType.Should().Be(expected.CaseType);
             conference.ScheduledDateTime.Should().Be(expected.ScheduledDateTime.ToUniversalTime());
             conference.ScheduledDuration.Should().Be(expected.ScheduledDuration);
-            conference.HearingVenueName.Should().Be(expected.HearingVenueName);
             conference.IsWaitingRoomOpen.Should().BeTrue();
             conference.AudioRecordingRequired.Should().Be(expected.AudioRecordingRequired);
         }
@@ -256,73 +248,7 @@ namespace VideoApi.AcceptanceTests.Steps
             AssertConferenceDetailsResponse.ForConference(conference);
             AssertConferenceDetailsResponse.ForConferenceEndpoints(conference);
         }
-
-        [Then(@"the admin response should contain the conference")]
-        public void ThenTheAdminResponseShouldContainTheConference()
-        {
-            var conferences = ApiRequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNull();
-            var conference = conferences.Single(x => x.CaseName.StartsWith(_context.Test.ConferenceResponse.CaseName));
-
-            foreach (var participant in conference.Participants)
-            {
-                var expectedParticipant =
-                    _context.Test.ConferenceResponse.Participants.Single(x => x.Username.Equals(participant.Username));
-                participant.Should().BeEquivalentTo(expectedParticipant, x => x.ExcludingMissingMembers());
-            }
-        }
-
-        [Then(@"a list containing only todays hearings conference details should be retrieved")]
-        public void ThenAListOfTheConferenceDetailsShouldBeRetrieved()
-        {
-            var conferences = ApiRequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNull();
-            conferences.Exists(x => x.CaseName.StartsWith(_context.Test.CaseName)).Should().BeTrue();
-            foreach (var conference in conferences)
-            {
-                if (conference.CaseName.StartsWith(_context.Test.CaseName))
-                {
-                    AssertConferenceForAdminResponse.ForConference(conference);
-                    foreach (var participant in conference.Participants)
-                        AssertParticipantResponse.ForParticipant(participant);
-                    conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
-                }
-            }
-
-            _context.Test.ConferenceResponses = conferences.Where(x => x.CaseName.StartsWith(_context.Test.CaseName)).ToList();
-            conferences.Exists(x => x.Id.Equals(_context.Test.TomorrowsConference)).Should().BeFalse();
-        }
-
-        [Then(@"a list containing only judge todays hearings conference details should be retrieved")]
-        public void ThenAListOfTheConferenceDetailsForJudgeShouldBeRetrieved()
-        {
-            var conferences = ApiRequestHelper.Deserialise<List<ConferenceForHostResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNull();
-            foreach (var conference in conferences)
-            {
-                AssertConferenceForJudgeResponse.ForConference(conference);
-                foreach (var participant in conference.Participants)
-                    AssertParticipantForJudgeResponse.ForParticipant(participant);
-                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
-            }
-
-            _context.Test.ConferenceJudgeResponses = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
-        }
-
-        [Then(@"a list containing only individual todays hearings conference details should be retrieved")]
-        public void ThenAListOfTheConferenceDetailsForIndividualShouldBeRetrieved()
-        {
-            var conferences = ApiRequestHelper.Deserialise<List<ConferenceForIndividualResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNull();
-            foreach (var conference in conferences)
-            {
-                AssertConferenceForIndividualResponse.ForConference(conference);
-                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
-            }
-
-            _context.Test.ConferenceIndividualResponses = conferences.Where(x => x.CaseName.StartsWith("Automated Test Hearing")).ToList();
-        }
-
+        
         [Then(@"I have an empty list of expired conferences")]
         public void ThenAListOfNonClosedConferenceDetailsShouldBeRetrieved()
         {
@@ -346,20 +272,6 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var conferences = ApiRequestHelper.Deserialise<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Select(x => x.Id).Should().NotContain(_context.Test.ConferenceIds);
-        }
-
-        [Then(@"the summary of conference details should be retrieved")]
-        public void ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
-        {
-            var conferences = ApiRequestHelper.Deserialise<List<ConferenceForAdminResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNull();
-            _context.Test.ConferenceResponse.Id = conferences[0].Id;
-            foreach (var conference in conferences)
-            {
-                AssertConferenceForAdminResponse.ForConference(conference);
-                foreach (var participant in conference.Participants)
-                    AssertParticipantResponse.ForParticipant(participant);
-            }
         }
 
         [Then(@"the conference should be removed")]

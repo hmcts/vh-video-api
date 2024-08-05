@@ -24,7 +24,7 @@ namespace VideoApi.IntegrationTests.Hooks
         public static async Task RemoveConferenceData(TestContext context)
         {
             var todaysConferences = await GetTodaysConferences(context);
-            foreach (var conference in todaysConferences.Where(conference => conference.CaseName.StartsWith(context.Test.CaseName)))
+            foreach (var conference in todaysConferences.Where(conference => conference.Id == context.Test.Conference.Id))
             {
                 await context.TestDataManager.RemoveConference(conference.Id);
                 await context.TestDataManager.RemoveHeartbeats(conference.Id);
