@@ -15,7 +15,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         public async Task Should_get_list_of_expired_conferences_with_audiorecording()
         {
 
-            var conferences = await Controller.GetExpiredAudiorecordingConferencesAsync();
+            var conferences = await Controller.GetExpiredAudioRecordingConferencesAsync();
 
             QueryHandlerMock
                 .Verify(x => x.Handle<GetExpiredAudiorecordingConferencesQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetExpiredAudiorecordingConferencesQuery>()), Times.Once);

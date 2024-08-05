@@ -4,13 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Faker;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
 using Testing.Common.Helper;
 using Testing.Common.Helper.Builders.Api;
-using VideoApi.Common.Helpers;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
@@ -324,43 +322,20 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the summary of conference details should be retrieved for judges")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrieved()
         {
-            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForHostResponse>>(_context.Response.Content);
+            var conferences = await ApiClientResponse.GetResponses<List<ConferenceDetailsResponse>>(_context.Response.Content);
             conferences.Should().NotBeNullOrEmpty();
             foreach (var conference in conferences)
             {
                 conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
-                AssertConferenceForJudgeResponse.ForConference(conference);
+                AssertConferenceDetailsResponse.ForConference(conference);
                 conference.Participants.Should().NotBeNullOrEmpty();
                 foreach (var participant in conference.Participants)
                 {
-                    AssertParticipantForJudgeResponse.ForParticipant(participant);
+                    AssertParticipantResponse.ForParticipant(participant);
                 }
             }
         }
         
-        [Then(@"the summary of conference details should be retrieved for individuals")]
-        public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrievedForIndividuals()
-        {
-            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForIndividualResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNullOrEmpty();
-            foreach (var conference in conferences)
-            {
-                conference.ScheduledDateTime.DayOfYear.Should().Be(DateTime.Now.DayOfYear);
-                AssertConferenceForIndividualResponse.ForConference(conference);
-            }
-        }
-
-        [Then(@"only todays conferences should be retrieved for vho")]
-        public async Task ThenOnlyTodaysConferencesShouldBeRetrieved()
-        {
-            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
-            conferences.Should().NotBeNullOrEmpty();
-            foreach (var conference in conferences)
-            {
-                AssertConferenceForAdminResponse.ForConference(conference);
-                conference.ScheduledDateTime.Day.Should().Be(DateTime.Now.Day);
-            }
-        }
 
         [Then(@"the conference should be removed")]
         public async Task ThenTheHearingShouldBeRemoved()
@@ -460,14 +435,7 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-
-        [Then(@"I get (.*) hearing\(s\)")]
-        public async Task ThenIGetXNumberOfHearings(int number)
-        {
-            var conferences = await ApiClientResponse.GetResponses<List<ConferenceForAdminResponse>>(_context.Response.Content);
-            conferences.Count.Should().Be(number);
-        }
-
+        
         [Given(@"I have a request to anonymise the data")]
         public void GivenIHaveARequestToAnonymiseTheData()
         {

@@ -22,9 +22,6 @@ namespace Testing.Common.Configuration
         public List<Guid> ConferenceIds { get; set; }
         public ConferenceDetailsResponse ConferenceResponse { get; set; }
         public List<ConferenceDetailsResponse> ConferenceDetailsResponses { get; set; }
-        public List<ConferenceForAdminResponse> ConferenceResponses { get; set; }
-        public List<ConferenceForHostResponse> ConferenceJudgeResponses { get; set; }
-        public List<ConferenceForIndividualResponse> ConferenceIndividualResponses { get; set; }
         public Guid TomorrowsConference { get; set; }
         public List<Conference> Conferences { get; set; }
         public AddHeartbeatRequest HeartbeatData { get; set; }

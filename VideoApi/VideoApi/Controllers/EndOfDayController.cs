@@ -35,7 +35,7 @@ public class EndOfDayController(
     /// <returns></returns>
     [HttpGet("active-sessions")]
     [OpenApiOperation("GetActiveConferences")]
-    [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int) HttpStatusCode.OK)]
     public async Task<IActionResult> GetActiveConferences()
     {
         logger.LogDebug("Getting all active conferences");
@@ -43,7 +43,7 @@ public class EndOfDayController(
         var conferences = await queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
         
         var response = conferences
-            .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
+            .Select(conference =>  ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, _supplierConfiguration))
             .ToList();
         
         return Ok(response);
