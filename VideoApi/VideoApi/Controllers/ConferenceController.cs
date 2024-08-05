@@ -341,7 +341,7 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("GetJudgesInHearingsToday");
             var conferences = await _queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(new GetHostsInHearingsTodayQuery(true));
-            var response = conferences.Select(ParticipantInHearingResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
+            var response = conferences.SelectMany(ParticipantInHearingResponseMapper.MapConferenceSummaryToJudgeInHearingResponse);
             return Ok(response);
         }
 
@@ -356,7 +356,7 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("GetHostsInHearingsToday");
             var conferences = await _queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(new GetHostsInHearingsTodayQuery());
-            var response = conferences.Select(ParticipantInHearingResponseMapper.MapConferenceSummaryToHostInHearingResponse);
+            var response = conferences.SelectMany(ParticipantInHearingResponseMapper.MapConferenceSummaryToHostInHearingResponse);
             return Ok(response);
         }
         
