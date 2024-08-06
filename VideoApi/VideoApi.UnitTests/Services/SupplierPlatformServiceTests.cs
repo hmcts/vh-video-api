@@ -9,7 +9,6 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -17,6 +16,9 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
+using TestScore = VideoApi.Domain.Enums.TestScore;
+using UserRole = VideoApi.Domain.Enums.UserRole;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Services
 {
@@ -24,7 +26,6 @@ namespace VideoApi.UnitTests.Services
     {
         private Mock<ISupplierApiClient> _supplierApiClientMock;
         private Mock<ILogger<SupplierPlatformService>> _loggerMock;
-        private Mock<ISupplierApiSelector> _selctorMock;
         private SupplierConfiguration _supplierConfig;
         private Mock<ISupplierSelfTestHttpClient> _supplierSelfTestHttpClient;
         private Mock<IPollyRetryService> _pollyRetryService;
@@ -42,9 +43,6 @@ namespace VideoApi.UnitTests.Services
             {
                 CallbackUri = "CallbackUri", ApiUrl = "KinlyApiUrl"
             };
-            _selctorMock = new Mock<ISupplierApiSelector>();
-            _selctorMock.Setup(e => e.GetSupplierConfiguration()).Returns(_supplierConfig);
-            _selctorMock.Setup(e => e.GetHttpClient()).Returns(_supplierApiClientMock.Object);
             _loggerMock = new Mock<ILogger<SupplierPlatformService>>();
 
             _supplierSelfTestHttpClient = new Mock<ISupplierSelfTestHttpClient>();
@@ -54,8 +52,9 @@ namespace VideoApi.UnitTests.Services
                 _loggerMock.Object,
                 _supplierSelfTestHttpClient.Object,
                 _pollyRetryService.Object,
-                _selctorMock.Object,
-                _featureToggles.Object
+                _supplierApiClientMock.Object,
+                _supplierConfig,
+                Supplier.Kinly
             );
             
             _testConference = new ConferenceBuilder()

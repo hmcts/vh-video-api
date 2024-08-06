@@ -3,9 +3,15 @@ using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using Testing.Common.Configuration;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
+using VideoApi.Contract.Responses;
 using VideoApi.DAL;
+using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Helper;
+using VideoApi.Mappings;
 
 namespace VideoApi.IntegrationTests.Api.Setup
 {
@@ -17,6 +23,7 @@ namespace VideoApi.IntegrationTests.Api.Setup
         protected IConfigurationRoot ConfigRoot;
         private string _databaseConnectionString;
         private KinlyConfiguration _kinlyConfiguration;
+        private VodafoneConfiguration _vodafoneConfiguration;
         private ServicesConfiguration _services;
 
         [OneTimeSetUp]
@@ -36,7 +43,7 @@ namespace VideoApi.IntegrationTests.Api.Setup
             var context = new VideoApiDbContext(DbOptions);
             context.Database.Migrate();
 
-            TestDataManager = new TestDataManager(_kinlyConfiguration, dbContextOptionsBuilder.Options);
+            TestDataManager = new TestDataManager(_kinlyConfiguration, dbContextOptionsBuilder.Options, _vodafoneConfiguration);
         }
 
         private void RegisterSettings()
@@ -45,7 +52,23 @@ namespace VideoApi.IntegrationTests.Api.Setup
             _services = ConfigRoot.GetSection("Services").Get<ServicesConfiguration>();
             _kinlyConfiguration = ConfigRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>();
             _kinlyConfiguration.CallbackUri = _services.CallbackUri;
+            _vodafoneConfiguration = ConfigRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>();
+            _vodafoneConfiguration.CallbackUri = _services.CallbackUri;
             _databaseConnectionString = ConfigRoot.GetConnectionString("VideoApi");
+        }
+        
+        protected void VerifyConferenceInResponse(ConferenceForAdminResponse conferenceInResponse, Conference conferenceInDb)
+        {
+            var kinlyConfiguration = TestDataManager.GetKinlyConfiguration();
+            var vodafoneConfiguration = TestDataManager.GetVodafoneConfiguration();
+            
+            conferenceInResponse.Should().NotBeNull();
+            conferenceInResponse.Id.Should().Be(conferenceInDb.Id);
+            SupplierConfiguration supplierConfiguration = 
+                conferenceInDb.Supplier == Supplier.Vodafone ? vodafoneConfiguration : kinlyConfiguration;
+            conferenceInResponse.Should().BeEquivalentTo(
+                ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conferenceInDb, supplierConfiguration), options => options
+                    .Excluding(x => x.Participants));
         }
     }
 }

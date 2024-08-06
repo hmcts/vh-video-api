@@ -16,6 +16,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             var result = await Controller.GetConferenceByHearingRefIdAsync(Guid.NewGuid());
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]

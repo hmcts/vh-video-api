@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
-using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Mappings;
 using VideoApi.Services;
+using VideoApi.Services.Mappers;
 
 namespace VideoApi.Controllers;
 
@@ -22,11 +22,9 @@ namespace VideoApi.Controllers;
 public class EndOfDayController(
     IQueryHandler queryHandler,
     ILogger<EndOfDayController> logger,
-    ISupplierApiSelector supplierLocator)
+    ISupplierPlatformServiceFactory supplierPlatformServiceFactory)
     : ControllerBase
 {
-    private readonly SupplierConfiguration _supplierConfiguration = supplierLocator.GetSupplierConfiguration();
-    
     /// <summary>
     /// Get all active conferences.
     /// This includes conferences that are in progress or paused.
@@ -42,9 +40,14 @@ public class EndOfDayController(
         var query = new GetActiveConferencesQuery();
         var conferences = await queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
         
-        var response = conferences
-            .Select(conference =>  ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conference, _supplierConfiguration))
-            .ToList();
+        var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
+        var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferences);
+
+        var response = conferences.Select(c =>
+        {
+            var supplierConfig = supplierConfigs.Find(sc => sc.Supplier == c.Supplier);
+            return ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, supplierConfig.Configuration);
+        });
         
         return Ok(response);
     }

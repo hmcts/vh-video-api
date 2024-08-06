@@ -24,6 +24,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.IngestUrl);
             builder.Property(x => x.ActualStartTime);
             builder.Property(x => x.CreatedDateTime);
+            builder.Property<Supplier>("Supplier").HasDefaultValue(Supplier.Kinly);
 
             builder.HasMany<Participant>("Participants").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.Endpoints).WithOne().OnDelete(DeleteBehavior.Cascade);

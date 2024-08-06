@@ -30,7 +30,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             QueryHandlerMock
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(query))
                 .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
-            
 
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
 
@@ -38,6 +37,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>()), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]

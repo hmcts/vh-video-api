@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -17,6 +18,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Controllers
@@ -29,15 +31,15 @@ namespace VideoApi.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
-        private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly ILogger<ParticipantsController> _logger;
 
         public ParticipantsController(ICommandHandler commandHandler, IQueryHandler queryHandler,
-            IVideoPlatformService videoPlatformService, ILogger<ParticipantsController> logger)
+            ISupplierPlatformServiceFactory supplierPlatformServiceFactory, ILogger<ParticipantsController> logger)
         {
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
-            _videoPlatformService = videoPlatformService;
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
         }
 
@@ -264,7 +266,9 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("GetTestCallResultForParticipant");
 
-            var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
+            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            var testCallResult = await videoPlatformService.GetTestCallScoreAsync(participantId);
 
             if (testCallResult == null)
             {
@@ -296,7 +300,9 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> GetIndependentTestCallResultAsync(Guid participantId)
         {
             _logger.LogDebug("GetIndependentTestCallResult");
-            var testCallResult = await _videoPlatformService.GetTestCallScoreAsync(participantId);
+            var conference = await _queryHandler.Handle<GetConferenceForParticipantQuery, Conference>(new GetConferenceForParticipantQuery(participantId));
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            var testCallResult = await videoPlatformService.GetTestCallScoreAsync(participantId);
             if (testCallResult == null)
             {
                 _logger.LogWarning("Unable to find test call result");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Testing.Common.Helper.Builders.Api;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -235,6 +236,38 @@ namespace VideoApi.UnitTests.Controllers.Conference
             response.Should().BeAssignableTo<ObjectResult>();
 
             QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
+        }
+
+        [TestCase(Supplier.Kinly)]
+        [TestCase(Supplier.Vodafone)]
+        public async Task Should_book_supplier_conference_with_requested_supplier(Supplier supplier)
+        {
+            SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"});
+            SetupCallToMockRetryService(Guid.NewGuid());
+            SetupCallToMockRetryService(true);
+            _request.Supplier = supplier;
+            TestConference.UpdateMeetingRoom("adminUri", "judgeUri", "participantUri", "pexipNode", "telephoneConferenceId");
+            UseSupplierPlatformServiceStub();
+
+            var response = await Controller.BookNewConferenceAsync(_request) as ActionResult;
+
+            response.Should().NotBeNull();
+            response.Should().BeAssignableTo<CreatedAtActionResult>();
+            var result = ((CreatedAtActionResult)response).Value as ConferenceDetailsResponse;
+            
+            VerifySupplierUsed(supplier, Times.Exactly(2));
+            result.MeetingRoom.Should().NotBeNull();
+            switch (supplier)
+            {
+                case Supplier.Kinly:
+                    result.MeetingRoom.PexipSelfTestNode.Should().Be(KinlyConfig.PexipSelfTestNode);
+                    break;
+                case Supplier.Vodafone:
+                    result.MeetingRoom.PexipSelfTestNode.Should().Be(VodafoneConfig.PexipSelfTestNode);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(supplier), supplier, null);
+            }
         }
     }
 }

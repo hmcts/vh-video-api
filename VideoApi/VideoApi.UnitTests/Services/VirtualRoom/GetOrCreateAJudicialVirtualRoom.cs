@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Extras.Moq;
@@ -9,10 +8,13 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
+using UserRole = VideoApi.Domain.Enums.UserRole;
+using VirtualCourtRoomType = VideoApi.Domain.Enums.VirtualCourtRoomType;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Services.VirtualRoom
 {
@@ -21,12 +23,16 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         private AutoMock _mocker;
         private VirtualRoomService _service;
         private Conference _conference;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceMock;
         
         [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<ISupplierApiSelector>().Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
+            supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            _supplierPlatformServiceMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceMock.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(supplierPlatformService.Object);
             _service = _mocker.Create<VirtualRoomService>();
             _conference = new ConferenceBuilder().WithParticipants(3)
                 .WithParticipant(UserRole.JudicialOfficeHolder, "Judicial")
@@ -55,7 +61,6 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
             
             // assert
             room.Should().Be(existingJohRoom);
-
         }
         
         [Test]
@@ -119,6 +124,12 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                     createParams.Participant_room_id == expectedRoomId.ToString() &&
                     createParams.Audio_recording_url == string.Empty
                 )), Times.Once);
+            VerifySupplierUsed(_conference.Supplier, Times.Exactly(1));
+        }
+
+        protected void VerifySupplierUsed(Supplier supplier, Times times)
+        {
+            _supplierPlatformServiceMock.Verify(x => x.Create(supplier), times);
         }
     }
 }

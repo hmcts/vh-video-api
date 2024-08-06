@@ -5,9 +5,11 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 
@@ -31,6 +33,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 TriggeredByHostId = hostId,
                 MuteGuests = true
             };
+            TestConference.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Kinly);
             Mocker.Mock<IQueryHandler>()
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
@@ -44,14 +47,12 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds,
                     Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
         
         [Test]
-        public async Task should_return_accepted_when_start_hearing_with_muted_guests_has_been_requested_voda_feature_toggle_enabled()
+        public async Task should_return_accepted_when_start_hearing_with_muted_guests_has_been_requested_when_supplier_is_vodafone()
         {
-            var featureToggle = Mocker.Mock<IFeatureToggles>();
-            featureToggle.Setup(x => x.VodafoneIntegrationEnabled()).Returns(true);
-            
             var conferenceId = TestConference.Id;
             var layout = HearingLayout.OnePlus7;
             var hostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id;
@@ -68,6 +69,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
                 .ReturnsAsync(TestConference);
+            TestConference.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Vodafone);
             
             var result = await Controller.StartVideoHearingAsync(conferenceId, request);
             

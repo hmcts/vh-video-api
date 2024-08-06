@@ -23,10 +23,12 @@ public class GetActiveConferencesTests : ApiTest
     public async Task should_return_active_conferences()
     {
         // Arrange
-        var conferenceInSession = new ConferenceBuilder(ignoreId: true).WithParticipants(2)
+        var conferenceInSession = new ConferenceBuilder(ignoreId: true, supplier: Supplier.Kinly).WithParticipants(2)
             .WithConferenceStatus(ConferenceState.InSession).Build();
-        var conferencePaused = new ConferenceBuilder(ignoreId: true).WithParticipants(2)
+        var kinlyConference = conferenceInSession;
+        var conferencePaused = new ConferenceBuilder(ignoreId: true, supplier: Supplier.Vodafone).WithParticipants(2)
             .WithConferenceStatus(ConferenceState.Paused).Build();
+        var vodafoneConference = conferencePaused;
         
         var conferenceClosed = new ConferenceBuilder(ignoreId: true).WithParticipants(2)
             .WithConferenceStatus(ConferenceState.Closed).Build();
@@ -89,5 +91,11 @@ public class GetActiveConferencesTests : ApiTest
             conferenceNotStartedWithActiveConsultation.Id,
             conferenceSuspendedWithActiveConsultation.Id
         });
+        
+        var kinlyConferenceResponse = conferenceResponse.FirstOrDefault(x => x.Id == kinlyConference.Id);
+        VerifyConferenceInResponse(kinlyConferenceResponse, kinlyConference);
+        
+        var vodafoneConferenceResponse = conferenceResponse.FirstOrDefault(x => x.Id == vodafoneConference.Id);
+        VerifyConferenceInResponse(vodafoneConferenceResponse, vodafoneConference);
     }
 }

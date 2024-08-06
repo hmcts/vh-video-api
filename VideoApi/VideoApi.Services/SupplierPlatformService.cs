@@ -12,6 +12,7 @@ using Task = System.Threading.Tasks.Task;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Mappers;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Services
 {
@@ -22,21 +23,22 @@ namespace VideoApi.Services
         private readonly SupplierConfiguration _supplierConfigOptions;
         private readonly ISupplierSelfTestHttpClient _supplierSelfTestHttpClient;
         private readonly IPollyRetryService _pollyRetryService;
-        private readonly IFeatureToggles _featureToggles;
+        private readonly Supplier _supplier;
 
         public SupplierPlatformService(
             ILogger<SupplierPlatformService> logger,
             ISupplierSelfTestHttpClient supplierSelfTestHttpClient,
             IPollyRetryService pollyRetryService,
-            ISupplierApiSelector apiSelector,
-            IFeatureToggles featureToggles)
+            ISupplierApiClient supplierApiClient,
+            SupplierConfiguration supplierConfiguration,
+            Supplier supplier)
         {
             _logger = logger;
             _supplierSelfTestHttpClient = supplierSelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
-            _featureToggles = featureToggles;
-            _supplierApiClient = apiSelector.GetHttpClient();
-            _supplierConfigOptions = apiSelector.GetSupplierConfiguration();
+            _supplierApiClient = supplierApiClient;
+            _supplierConfigOptions = supplierConfiguration;
+            _supplier = supplier;
         }
 
 
@@ -63,7 +65,7 @@ namespace VideoApi.Services
                 });
                 // vodafone telephone conference id not yet implemented so a made up value is in place to avoid null reference exception
                 // TODO: remove the temp value at the next milestone
-                return _featureToggles.VodafoneIntegrationEnabled() 
+                return _supplier == Supplier.Vodafone 
                     ? new MeetingRoom(response.Uris.Admin ?? response.Uris.Participant, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id ?? "99173907")
                     : new MeetingRoom(response.Uris.Admin, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id);
             }
@@ -153,7 +155,7 @@ namespace VideoApi.Services
 
         public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId, IEnumerable<string> participantsToForceTransfer = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = false)
         {
-            if(!_featureToggles.VodafoneIntegrationEnabled())
+            if(_supplier != Supplier.Vodafone)
                 triggeredByHostId = null;
             return _supplierApiClient.StartAsync(conferenceId.ToString(),
                 new StartHearingRequest { Hearing_layout = layout, Mute_guests = muteGuests, Force_transfer_participant_ids = participantsToForceTransfer?.ToList(), Triggered_by_host_id = triggeredByHostId});
@@ -178,5 +180,9 @@ namespace VideoApi.Services
         {
             return _supplierApiClient.HealthCheckAsync();
         }
+        
+        public ISupplierApiClient GetHttpClient() => _supplierApiClient;
+
+        public SupplierConfiguration GetSupplierConfiguration() => _supplierConfigOptions;
     }
 }

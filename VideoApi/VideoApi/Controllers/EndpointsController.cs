@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -14,7 +15,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Mappings;
-using VideoApi.Services.Contracts;
+using VideoApi.Services;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 
@@ -28,18 +29,18 @@ namespace VideoApi.Controllers
     {
         private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
-        private readonly IVideoPlatformService _videoPlatformService;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly ILogger<EndpointsController> _logger;
 
         public EndpointsController(IQueryHandler queryHandler, 
             ICommandHandler commandHandler, 
-            IVideoPlatformService videoPlatformService,
+            ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
             ILogger<EndpointsController> logger)
         {
             _queryHandler = queryHandler;
             _logger = logger;
             _commandHandler = commandHandler;
-            _videoPlatformService = videoPlatformService;
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
         }
 
         /// <summary>
@@ -76,7 +77,8 @@ namespace VideoApi.Controllers
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
             
             _logger.LogDebug("Successfully added endpoint {DisplayName} to conference", request.DisplayName);
             return NoContent();
@@ -100,7 +102,8 @@ namespace VideoApi.Controllers
 
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
             
             _logger.LogDebug("Successfully removed endpoint {sipAddress} from conference", sipAddress);
             return NoContent();
@@ -138,7 +141,8 @@ namespace VideoApi.Controllers
         {
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
-            await _videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
         }
     }
 }

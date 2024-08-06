@@ -16,6 +16,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
 
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]
