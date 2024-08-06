@@ -4,4 +4,4 @@
 /.github/ @hmcts/vh-devops
 /.githooks/ @hmcts/vh-devops
 /.config/ @hmcts/vh-devops
-azure-pipelines* @hmcts/vh-devops
+azure-pipelines* @hmcts/vh-devops @hmcts/vh
