@@ -119,7 +119,7 @@ namespace VideoApi.Controllers
 
             var supplierPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)request.Supplier);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration);
 
             _logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id, request.HearingRefId);
 
@@ -198,7 +198,7 @@ namespace VideoApi.Controllers
             var supplierPlatformService = _supplierPlatformServiceFactory.Create(queriedConference.Supplier);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
             var response =
-                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration.PexipSelfTestNode);
+                ConferenceToDetailsResponseMapper.MapConferenceToResponse(queriedConference, supplierConfiguration);
             return Ok(response);
         }
 
@@ -355,8 +355,7 @@ namespace VideoApi.Controllers
             }
 
             var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
-            var conferences =
-                await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
+            var conferences = await _queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
             var response = conferences.Select(ConferenceForIndividualResponseMapper.MapConferenceSummaryToModel);
 
             return Ok(response);
@@ -391,11 +390,33 @@ namespace VideoApi.Controllers
 
             var supplierPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, supplierConfiguration.PexipSelfTestNode);
+            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, supplierConfiguration);
 
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Get conferences by hearing ref id
+        /// </summary>
+        /// <param name="request">Hearing ref IDs</param>
+        /// <returns>Full details including participants and statuses of a conference</returns>
+        [HttpPost("hearings/query")]
+        [OpenApiOperation("GetConferencesByQuery")]
+        [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetConferencesByQueryAsync(GetConferencesByHearingIdsRequest request)
+        {
+            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
+            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+            
+            if (!conferences.Any())
+                return NotFound();
+            
+            return Ok(conferences.Select(c => ConferenceToDetailsResponseMapper.MapConferenceToResponse(c, _supplierPlatformServiceFactory.GetSupplierConfiguration(c.Supplier))).ToList());
+        }
 
+        
         /// <summary>
         /// Get conferences by hearing ref id
         /// </summary>
@@ -427,27 +448,7 @@ namespace VideoApi.Controllers
             return Ok(response);
         }
         
-        /// <summary>
-        /// Get conferences by hearing ref id
-        /// </summary>
-        /// <param name="request">Hearing ref IDs</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
-        [HttpPost("hearings/host")]
-        [OpenApiOperation("GetConferencesForHostByHearingRefId")]
-        [ProducesResponseType(typeof(List<ConferenceForHostResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConferencesForHostByHearingRefIdAsync(GetConferencesByHearingIdsRequest request)
-        {
-            var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, true);
-            var conferences = await _queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
 
-            if (!conferences.Any())
-                return NotFound();
-
-            return Ok(conferences.Select(ConferenceForHostResponseMapper.MapConferenceSummaryToModel).ToList());
-        }
-        
         /// <summary>
         /// Get list of expired conferences 
         /// </summary>
