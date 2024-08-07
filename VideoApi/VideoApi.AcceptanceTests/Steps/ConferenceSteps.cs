@@ -36,12 +36,9 @@ namespace VideoApi.AcceptanceTests.Steps
             var request = new UpdateConferenceRequest
             {
                 CaseName = $"{_context.Test.ConferenceResponse.CaseName} UPDATED",
-                CaseNumber = $"{_context.Test.ConferenceResponse.CaseNumber} UPDATED",
-                CaseType = "Financial Remedy",
                 HearingRefId = _context.Test.ConferenceResponse.HearingId,
                 ScheduledDateTime = DateTime.Now.AddHours(1),
                 ScheduledDuration = 12,
-                HearingVenueName = "MyVenue",
                 AudioRecordingRequired = true
             };
 
@@ -228,12 +225,8 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
             conference.Should().NotBeNull();
             var expected = _scenarioContext.Get<UpdateConferenceRequest>(UpdatedKey);
-            conference.CaseName.Should().Be(expected.CaseName);
-            conference.CaseNumber.Should().Be(expected.CaseNumber);
-            conference.CaseType.Should().Be(expected.CaseType);
             conference.ScheduledDateTime.Should().Be(expected.ScheduledDateTime.ToUniversalTime());
             conference.ScheduledDuration.Should().Be(expected.ScheduledDuration);
-            conference.HearingVenueName.Should().Be(expected.HearingVenueName);
             conference.IsWaitingRoomOpen.Should().BeTrue();
             conference.AudioRecordingRequired.Should().Be(expected.AudioRecordingRequired);
         }

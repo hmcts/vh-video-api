@@ -23,11 +23,11 @@ public class GetConferencesForHostByHearingRefIdTests : ApiTest
        
         //act
         var result =
-            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesForHostByHearingRefId(), RequestBody.Set(payload));
+            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesByQueryAsync(), RequestBody.Set(payload));
         
         // assert
         result.IsSuccessStatusCode.Should().BeTrue();
-        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceForHostResponse>>(result.Content);
+        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceDetailsResponse>>(result.Content);
         var resultConference = conferenceResponse.FirstOrDefault();
         resultConference.Should().NotBeNull();
         resultConference!.Id.Should().Be(conference.Id);

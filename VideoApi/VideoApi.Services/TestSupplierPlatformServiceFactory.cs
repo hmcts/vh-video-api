@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Services.Contracts;
@@ -17,5 +18,10 @@ namespace VideoApi.Services
                 Supplier.Vodafone => new SupplierPlatformServiceStub(vodafoneConfiguration),
                 _ => throw new ArgumentOutOfRangeException(nameof(supplier), supplier, null)
             };
+        
+        public SupplierConfiguration GetSupplierConfiguration(Supplier supplier)
+        {
+            return supplier == Supplier.Kinly ? kinlyConfiguration : vodafoneConfiguration;
+        }
     }
 }

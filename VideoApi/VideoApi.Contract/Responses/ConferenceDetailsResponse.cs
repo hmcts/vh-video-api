@@ -35,21 +35,6 @@ namespace VideoApi.Contract.Responses
         public DateTime? ClosedDateTime { get; set; }
         
         /// <summary>
-        /// The case type
-        /// </summary>
-        public string CaseType { get; set; }
-        
-        /// <summary>
-        /// The case number
-        /// </summary>
-        public string CaseNumber { get; set; }
-        
-        /// <summary>
-        /// The case name
-        /// </summary>
-        public string CaseName { get; set; }
-        
-        /// <summary>
         /// The scheduled duration of a conference in minutes
         /// </summary>
         public int ScheduledDuration { get; set; }
@@ -73,8 +58,6 @@ namespace VideoApi.Contract.Responses
         /// The Kinly meeting room details
         /// </summary>
         public MeetingRoomResponse MeetingRoom { get; set; }
-        
-        public string HearingVenueName { get; set;  }
 
         /// <summary>
         /// The option to indicate hearing audio recording
@@ -92,7 +75,16 @@ namespace VideoApi.Contract.Responses
         /// Is the waiting room still accessible for the conference
         /// </summary>
         public bool IsWaitingRoomOpen { get; set; }
+        
         public string TelephoneConferenceId { get; set; }
+        
         public string TelephoneConferenceNumbers { get; set; }
+        
+        
+        /// <summary>
+        /// The case name
+        /// </summary>
+        [Obsolete("Used in integration tests only")]
+        public string CaseName { get; set; }
     }
 }

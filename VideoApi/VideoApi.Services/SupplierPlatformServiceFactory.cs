@@ -14,6 +14,7 @@ namespace VideoApi.Services
     public interface ISupplierPlatformServiceFactory
     {
         IVideoPlatformService Create(Supplier supplier);
+        SupplierConfiguration GetSupplierConfiguration(Supplier supplier);
     }
     
     public class SupplierPlatformServiceFactory(IServiceProvider serviceProvider) : ISupplierPlatformServiceFactory
@@ -30,19 +31,19 @@ namespace VideoApi.Services
             return new SupplierPlatformService(logger, selfTestHttpClient, pollyRetryService, supplierApiClient, supplierConfig, supplier);
         }
 
+        public SupplierConfiguration GetSupplierConfiguration(Supplier supplier) =>
+            supplier switch
+            {
+                Supplier.Kinly => serviceProvider.GetRequiredService<IOptions<KinlyConfiguration>>().Value,
+                Supplier.Vodafone => serviceProvider.GetRequiredService<IOptions<VodafoneConfiguration>>().Value,
+                _ => throw new InvalidOperationException($"Unsupported supplier {supplier}")
+            };
+        
         private ISupplierApiClient GetSupplierApiClient(Supplier supplier) =>
             supplier switch
             {
                 Supplier.Kinly => serviceProvider.GetService<IKinlyApiClient>(),
                 Supplier.Vodafone => serviceProvider.GetService<IVodafoneApiClient>(),
-                _ => throw new InvalidOperationException($"Unsupported supplier {supplier}")
-            };
-
-        private SupplierConfiguration GetSupplierConfiguration(Supplier supplier) =>
-            supplier switch
-            {
-                Supplier.Kinly => serviceProvider.GetRequiredService<IOptions<KinlyConfiguration>>().Value,
-                Supplier.Vodafone => serviceProvider.GetRequiredService<IOptions<VodafoneConfiguration>>().Value,
                 _ => throw new InvalidOperationException($"Unsupported supplier {supplier}")
             };
     }
