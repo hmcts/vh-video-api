@@ -10,17 +10,21 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
+using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Factories;
 using VideoApi.Services.Contracts;
+using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Controllers.Conference
 {
@@ -42,10 +46,18 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IAzureStorageServiceFactory> AzureStorageServiceFactoryMock;
         protected Mock<IAzureStorageService> AzureStorageServiceMock;
         protected Mock<IPollyRetryService> PollyRetryServiceMock;
-        protected Mock<ISupplierApiSelector> SupplierApiSelectorMock;
         protected List<Endpoint> TestEndpoints;
         protected AutoMock Mocker;
         protected const string AppName = "vh-recording-app";
+        protected Mock<ISupplierPlatformServiceFactory> SupplierPlatformServiceFactoryMock;
+        protected KinlyConfiguration KinlyConfig = new()
+        {
+            PexipSelfTestNode = "KinlyPexipSelfTestNode"
+        };
+        protected VodafoneConfiguration VodafoneConfig = new()
+        {
+            PexipSelfTestNode = "VodafonePexipSelfTestNode"
+        };
         
         [SetUp]
         public void Setup()
@@ -55,6 +67,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             CommandHandlerMock = Mocker.Mock<ICommandHandler>();
             MockLogger = Mocker.Mock<ILogger<ConferenceController>>();
             VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
+            SupplierPlatformServiceFactoryMock = Mocker.Mock<ISupplierPlatformServiceFactory>();
+            SupplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<VideoApi.Domain.Enums.Supplier>())).Returns(VideoPlatformServiceMock.Object);
             ServicesConfiguration = Mocker.Mock<IOptions<ServicesConfiguration>>();
             SupplierConfiguration = Mocker.Mock<SupplierConfiguration>();
             AudioPlatformServiceMock = Mocker.Mock<IAudioPlatformService>();
@@ -150,8 +164,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .Returns(Task.FromResult(default(object)));
 
             ServicesConfiguration.Setup(s => s.Value).Returns(new ServicesConfiguration());
-            SupplierApiSelectorMock = Mocker.Mock<ISupplierApiSelector>();
-            SupplierApiSelectorMock.Setup(x => x.GetSupplierConfiguration()).Returns(SupplierConfiguration.Object);
+            VideoPlatformServiceMock.Setup(x => x.GetSupplierConfiguration()).Returns(SupplierConfiguration.Object);
 
             MeetingRoom = new MeetingRoom($"http://adminuri", $"http://judgeuri", $"http://participanturi", "pexipnode",
                 "12345678");
@@ -185,6 +198,26 @@ namespace VideoApi.UnitTests.Controllers.Conference
                     await executeFunction();
                 })
                 .ReturnsAsync(expectedReturn);
+        }
+
+        protected void UseSupplierPlatformServiceStub()
+        {
+            SupplierPlatformServiceFactoryMock
+                .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly))
+                .Returns(new SupplierPlatformServiceStub(KinlyConfig));
+            SupplierPlatformServiceFactoryMock
+                .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone))
+                .Returns(new SupplierPlatformServiceStub(VodafoneConfig));
+        }
+
+        protected void VerifySupplierUsed(Supplier supplier, Times times)
+        {
+            VerifySupplierUsed((VideoApi.Domain.Enums.Supplier)supplier, times);
+        }
+        
+        protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
+        {
+            SupplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), times);
         }
     }
 }

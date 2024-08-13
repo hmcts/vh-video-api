@@ -8,10 +8,12 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Contracts;
+using LinkedParticipantType = VideoApi.Domain.Enums.LinkedParticipantType;
 using Task = System.Threading.Tasks.Task;
+using VirtualCourtRoomType = VideoApi.Domain.Enums.VirtualCourtRoomType;
 
 namespace VideoApi.UnitTests.Services.VirtualRoom
 {
@@ -25,7 +27,11 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<ISupplierApiSelector>().Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
+            supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(supplierPlatformService.Object);
+            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(supplierPlatformService.Object);
             _service = _mocker.Create<VirtualRoomService>();
             _conference = InitConference();
             

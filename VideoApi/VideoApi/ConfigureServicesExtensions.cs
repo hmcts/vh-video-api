@@ -30,6 +30,7 @@ using VideoApi.Services.Factories;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Handlers;
 using VideoApi.Services.Handlers.Kinly;
 using VideoApi.Services.Handlers.Vodafone;
 using VideoApi.Swagger;
@@ -107,23 +108,28 @@ namespace VideoApi
 
             if (useStub)
             {
-                services.AddScoped<IVideoPlatformService, SupplierPlatformServiceStub>();
+                var kinlyConfigOptions = container.GetService<IOptions<KinlyConfiguration>>();
+                var vodafoneConfigOptions = container.GetService<IOptions<VodafoneConfiguration>>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
-                services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
+                services.AddScoped<ISupplierPlatformServiceFactory>(_ => 
+                    new TestSupplierPlatformServiceFactory(kinlyConfigOptions.Value, vodafoneConfigOptions.Value));
             }
             else
             {
+                services.AddTransient<SupplierLoggingDelegatingHandler>();
                 services
                     .AddHttpClient<IKinlyApiClient, SupplierApiClient>()
                     .AddTypedClient<IKinlyApiClient>(httpClient => BuildSupplierClient(kinlyConfiguration.ApiUrl, httpClient))
-                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>();
+                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>()
+                    .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
                 
                 services
                     .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
                     .AddTypedClient<IVodafoneApiClient>(httpClient => BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
-                    .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>();
+                    .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
+                    .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();;
                 
                 AddWowzaHttpClient(services, wowzaConfiguration.LoadBalancer, wowzaConfiguration, true);
                 foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)
@@ -139,7 +145,7 @@ namespace VideoApi
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
-                services.AddScoped<ISupplierApiSelector, SupplierApiSelector>();
+                services.AddScoped<ISupplierPlatformServiceFactory, SupplierPlatformServiceFactory>();
             }
 
             services.AddScoped<IKinlyJwtTokenHandler, KinlyJwtHandler>();

@@ -41,6 +41,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.Endpoints)
                 .Excluding(x => x.Rooms)
                 .Excluding(x => x.UpdatedAt)
+                .Excluding(x => x.Supplier)
             );
             
             response.StartedDateTime.Should().Be(conference.ActualStartTime);

@@ -31,6 +31,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
             var response = await Controller.GetTestCallResultForParticipantAsync(Guid.NewGuid(), Guid.NewGuid());
             var typedResult = (OkObjectResult) response;
             typedResult.Should().NotBeNull();
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test]

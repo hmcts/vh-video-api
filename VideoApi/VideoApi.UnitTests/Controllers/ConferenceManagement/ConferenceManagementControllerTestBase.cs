@@ -3,11 +3,15 @@ using Autofac.Extras.Moq;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain.Enums;
+using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
+using UserRole = VideoApi.Domain.Enums.UserRole;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
@@ -18,6 +22,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
         protected AutoMock Mocker;
         protected VideoApi.Domain.Conference TestConference;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
+        private Mock<IQueryHandler> _queryHandlerMock;
 
         [SetUp]
         public void Setup()
@@ -36,7 +42,15 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             UpdateConferenceQueryMock();
             VideoPlatformServiceMock = Mocker.Mock<IVideoPlatformService>();
+            _supplierPlatformServiceFactory = Mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<VideoApi.Domain.Enums.Supplier>())).Returns(VideoPlatformServiceMock.Object);
 
+            _queryHandlerMock = Mocker.Mock<IQueryHandler>();
+            _queryHandlerMock
+                .Setup(x =>
+                    x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
+                .ReturnsAsync(TestConference);
+            
             Controller = Mocker.Create<ConferenceManagementController>();
         }
 
@@ -57,6 +71,16 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         protected void AddQuicklinkToTestConference()
         {
             TestConference.AddParticipant(new VideoApi.Domain.QuickLinkParticipant("QuciklinkName", UserRole.QuickLinkParticipant) {  State = ParticipantState.Available});
+        }
+        
+        protected void VerifySupplierUsed(Supplier supplier, Times times)
+        {
+            VerifySupplierUsed((VideoApi.Domain.Enums.Supplier)supplier, times);
+        }
+        
+        protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
+        {
+            _supplierPlatformServiceFactory.Verify(x => x.Create(supplier), times);
         }
     }
 }

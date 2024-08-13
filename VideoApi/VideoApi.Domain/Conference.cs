@@ -11,7 +11,8 @@ namespace VideoApi.Domain
     public class Conference : Entity<Guid>
     {
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
-            string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl)
+            string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl,
+            Supplier supplier = Supplier.Kinly)
         {
             Id = Guid.NewGuid();
             Participants = new List<ParticipantBase>();
@@ -33,6 +34,7 @@ namespace VideoApi.Domain
             IngestUrl = ingestUrl;
             CreatedDateTime = DateTime.UtcNow;
             UpdatedAt = CreatedDateTime;
+            Supplier = supplier;
         }
 
         public Guid HearingRefId { get; private set; }
@@ -57,6 +59,7 @@ namespace VideoApi.Domain
 
         private readonly List<Room> _rooms;
         public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
+        public Supplier Supplier { get; private set; }
         
         
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode,

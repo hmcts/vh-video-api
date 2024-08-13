@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
-using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Clients;
 using Task = System.Threading.Tasks.Task;
+using VirtualCourtRoomType = VideoApi.Domain.Enums.VirtualCourtRoomType;
 
 namespace VideoApi.Services
 {
     public class VirtualRoomService : IVirtualRoomService
     {
-        private readonly ISupplierApiClient _supplierApiClient;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly ILogger<VirtualRoomService> _logger;
         private readonly ICommandHandler _commandHandler;
         private readonly IQueryHandler _queryHandler;
@@ -26,10 +27,10 @@ namespace VideoApi.Services
         private string PanelMemberRoomPrefix => "Panel Member";
         private string InterpreterSuffix => "_interpreter_";
 
-        public VirtualRoomService(ISupplierApiSelector apiSetup, ILogger<VirtualRoomService> logger,
+        public VirtualRoomService(ISupplierPlatformServiceFactory supplierPlatformServiceFactory, ILogger<VirtualRoomService> logger,
             ICommandHandler commandHandler, IQueryHandler queryHandler)
         {
-            _supplierApiClient = apiSetup.GetHttpClient();
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
             _commandHandler = commandHandler;
             _queryHandler = queryHandler;
@@ -144,7 +145,9 @@ namespace VideoApi.Services
                 Room_type = supplierRoomType,
                 Display_name = $"{roomPrefix}{existingRooms + 1}"
             };
-            return _supplierApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            var supplierApiClient = supplierPlatformService.GetHttpClient();
+            return supplierApiClient.CreateParticipantRoomAsync(conference.Id.ToString(), newRoomParams);
         }
 
         private ParticipantRoom GetInterpreterRoomForParticipant(Guid conferenceId,

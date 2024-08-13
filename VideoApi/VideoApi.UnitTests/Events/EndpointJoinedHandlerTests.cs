@@ -3,16 +3,32 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using VideoApi.DAL.Commands;
-using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
+using ConferenceState = VideoApi.Domain.Enums.ConferenceState;
+using EndpointState = VideoApi.Domain.Enums.EndpointState;
+using EventType = VideoApi.Domain.Enums.EventType;
+using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
+using RoomType = VideoApi.Domain.Enums.RoomType;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Events
 {
     public class EndpointJoinedHandlerTests : EventHandlerTestBase<EndpointJoinedEventHandler>
-    {        
+    {
+        private Mock<IVideoPlatformService> _videoPlatformServiceMock;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
+        
+        [SetUp]
+        public void SetUp()
+        {
+            _videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
+            _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(_videoPlatformServiceMock.Object);
+        }
+        
         [Test]
         public async Task Should_update_endpoint_status_to_connected()
         {
@@ -41,12 +57,8 @@ namespace VideoApi.UnitTests.Events
         
         [Test]
         public async Task
-            Should_transfer_endpoint_to_hearing_room_when_conference_is_in_session_and_feature_toggle_is_enabled()
+            Should_transfer_endpoint_to_hearing_room_when_conference_is_in_session()
         {
-            var featureToggle = _mocker.Mock<IFeatureToggles>();
-            var videoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
-            featureToggle.Setup(x => x.VodafoneIntegrationEnabled()).Returns(true);
-
             var conference = TestConference;
             conference.UpdateConferenceStatus(ConferenceState.InSession);
             var endpointForEvent = conference.GetEndpoints()[0];
@@ -70,7 +82,8 @@ namespace VideoApi.UnitTests.Events
                     command.ConferenceId == conference.Id && command.EndpointId == endpointForEvent.Id &&
                     command.Status == EndpointState.Connected && command.Room == RoomType.WaitingRoom)), Times.Once);
             
-            videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, endpointForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+            _videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, endpointForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
     }
 }

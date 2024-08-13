@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
@@ -19,16 +20,20 @@ namespace VideoApi.IntegrationTests.Helper
     public class TestDataManager
     {
         private readonly KinlyConfiguration _kinlyConfiguration;
+        private readonly VodafoneConfiguration _vodafoneConfiguration;
         private readonly DbContextOptions<VideoApiDbContext> _dbContextOptions;
         private readonly List<Guid> _seedeConferences = new();
 
-        public TestDataManager(KinlyConfiguration kinlyConfiguration, DbContextOptions<VideoApiDbContext> dbContextOptions)
+        public TestDataManager(KinlyConfiguration kinlyConfiguration, 
+            DbContextOptions<VideoApiDbContext> dbContextOptions,
+            VodafoneConfiguration vodafoneConfiguration)
         {
             _kinlyConfiguration = kinlyConfiguration;
+            _vodafoneConfiguration = vodafoneConfiguration;
             _dbContextOptions = dbContextOptions;
         }
 
-        public async Task<Conference> SeedConference()
+        public async Task<Conference> SeedConference(Supplier supplier = Supplier.Vodafone)
         {
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Applicant")
@@ -43,6 +48,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .Build();
             var conferenceType = typeof(Conference);
             conferenceType.GetProperty("ActualStartTime")?.SetValue(conference, conference.ScheduledDateTime.AddMinutes(1));
+            conference.SetProtectedProperty(nameof(conference.Supplier), supplier);
 
             foreach (var individual in conference.GetParticipants().Where(x => x.UserRole == UserRole.Individual))
             {
@@ -294,5 +300,9 @@ namespace VideoApi.IntegrationTests.Helper
             
             await db.SaveChangesAsync();
         }
+
+        public KinlyConfiguration GetKinlyConfiguration() => _kinlyConfiguration;
+
+        public VodafoneConfiguration GetVodafoneConfiguration() => _vodafoneConfiguration;
     }
 }

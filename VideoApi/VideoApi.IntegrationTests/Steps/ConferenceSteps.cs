@@ -229,8 +229,8 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithRepresentative("Respondent").WithIndividual("Respondent")
                 .WithEndpoints(new List<AddEndpointRequest>
                 {
-                    new AddEndpointRequest{DisplayName = "one", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
-                    new AddEndpointRequest{DisplayName = "two", SipAddress = $"{Guid.NewGuid()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
+                    new() {DisplayName = "one", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "1234", DefenceAdvocate = "Defence Sol"},
+                    new() {DisplayName = "two", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "5678", DefenceAdvocate = "Defence Bol"}
                 })
                 .Build();
 

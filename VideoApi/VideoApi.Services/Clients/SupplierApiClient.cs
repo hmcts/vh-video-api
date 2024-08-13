@@ -718,7 +718,8 @@ namespace VideoApi.Services.Clients
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 202)
+                        // temp check to include 200 until voda 
+                        if (status_ == 202 || status_ == 200)
                         {
                             return;
                         }

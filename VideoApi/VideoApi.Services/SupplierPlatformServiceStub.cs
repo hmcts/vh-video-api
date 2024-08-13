@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Domain;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -15,6 +19,12 @@ namespace VideoApi.Services
     public class SupplierPlatformServiceStub : IVideoPlatformService
     {
         private readonly List<Guid> _bookedGuids = new();
+        private readonly SupplierConfiguration _supplierConfiguration;
+
+        public SupplierPlatformServiceStub(SupplierConfiguration supplierConfiguration)
+        {
+            _supplierConfiguration = supplierConfiguration;
+        }
 
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
@@ -81,6 +91,13 @@ namespace VideoApi.Services
                 Health_status = PlatformHealth.HEALTHY
             });
         }
+        
+        public ISupplierApiClient GetHttpClient()
+        {
+            throw new NotImplementedException();
+        }
+
+        public SupplierConfiguration GetSupplierConfiguration() => _supplierConfiguration;
 
         private static MeetingRoom Create()
         {

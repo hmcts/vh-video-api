@@ -101,6 +101,7 @@ stages:
               netVersion: ${{ variables.dotnetVersion }}
               vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
               coreProjectPath: $(projectPath)
+
   #####################################################
   # Build Docker Image. ###############################
   - stage: Dock
@@ -151,6 +152,24 @@ stages:
               imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
               imageTags:
                 - "${{ variables.prTagName }}"
+
+  ##################################################
+  # Deploy Nuget Packages. #########################
+  - stage: Push_Nuget
+    dependsOn: Pre_Release_Tasks
+    displayName: Deploy NuGet Packages
+    variables:
+      - template: variables/dev.yaml
+      - template: variables/shared.yaml
+        parameters:
+          env: ${{ variables.env }}
+    jobs:
+      - job: Publish_Nuget
+        displayName: Publish NuGet Packages
+        steps:
+          - template: templates\dotnet\push-nuget-packages.yml@azTemplates
+            parameters:
+              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
 
   #####################################################
   # Run Entity Framework Dev. #########################
@@ -262,24 +281,6 @@ stages:
               aksClusterName: "$(aksCluster.name)"
               dnsSubscriptionName: "${{ variables.dnsZoneSubscription }}"
               dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
-
-  ##################################################
-  # Deploy Nuget Packages. #########################
-  - stage: Push_Nuget
-    dependsOn: Run_Entity_Framework_Dev
-    displayName: Deploy NuGet Packages
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs:
-      - job: Publish_Nuget
-        displayName: Publish NuGet Packages
-        steps:
-          - template: templates\dotnet\push-nuget-packages.yml@azTemplates
-            parameters:
-              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
 
   ##################################################
   # Run Acceptance Tests. ##########################
@@ -408,7 +409,11 @@ stages:
                   value: $(ConferenceUsername)
                 - name: KinlyConfiguration:CallbackUri
                   value: $(CallbackUri)
-                
+                - name: KinlyConfiguration:SipAddressStem
+                  value: KinlyConfiguration--SipAddressStem
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true
+
                 # Vodafone Configuration
                 - name: VodafoneConfiguration:ConferencePhoneNumber
                   value: $(ConferencePhoneNumber)
@@ -422,6 +427,10 @@ stages:
                   value: $(ConferenceUsername)
                 - name: VodafoneConfiguration:CallbackUri
                   value: $(CallbackUri)
+                - name: VodafoneConfiguration:SipAddressStem
+                  value: VodafoneConfiguration--SipAddressStem
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true
 
                 # Quick Links Configuration
                 - name: QuickLinks:Issuer
@@ -430,3 +439,9 @@ stages:
                   value: $(RsaPrivateKey)
                 - name: QuickLinks:ValidAudience
                   value: $(ValidAudience)
+
+                # Launch Darkly
+                - name: LaunchDarkly:SdkKey
+                  value: launchdarkly--sdkkey
+                  keyVaultName: vh-video-api-${{ variables.env }}
+                  secret: true

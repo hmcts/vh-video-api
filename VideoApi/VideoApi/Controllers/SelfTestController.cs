@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
-using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Contract.Responses;
 using VideoApi.Mappings;
 using VideoApi.Services;
+using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.Controllers
 {
@@ -14,14 +14,16 @@ namespace VideoApi.Controllers
     [ApiController]
     public class SelfTestController : Controller
     {
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly ILogger<SelfTestController> _logger;
-        private readonly SupplierConfiguration _supplierConfiguration;
+        private readonly IFeatureToggles _featureToggles;
 
-        public SelfTestController(ISupplierApiSelector apiSelector,
-            ILogger<SelfTestController> logger)
+        public SelfTestController(ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
+            ILogger<SelfTestController> logger, IFeatureToggles featureToggles)
         {
+            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
             _logger = logger;
-            _supplierConfiguration = apiSelector.GetSupplierConfiguration();
+            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -35,14 +37,18 @@ namespace VideoApi.Controllers
         public IActionResult GetPexipServicesConfiguration()
         {
             _logger.LogDebug($"GetPexipServicesConfiguration");
-
-            if (_supplierConfiguration == null)
+            
+            var supplier = _featureToggles.VodafoneIntegrationEnabled() ? Supplier.Vodafone : Supplier.Kinly;
+            var supplierPlatformService = _supplierPlatformServiceFactory.Create(supplier);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
+            
+            if (supplierConfiguration == null)
             {
                 _logger.LogWarning($"Unable to retrieve the pexip configuration!");
                 
                 return NotFound();
             }
-            var response = PexipConfigurationMapper.MapPexipConfigToResponse(_supplierConfiguration);
+            var response = PexipConfigurationMapper.MapPexipConfigToResponse(supplierConfiguration);
             return Ok(response);
         }
     }

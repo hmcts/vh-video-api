@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Dtos;
@@ -42,5 +43,7 @@ namespace VideoApi.Services.Contracts
 
         Task<HealthCheckResponse> GetPlatformHealthAsync();
         
+        ISupplierApiClient GetHttpClient();
+        SupplierConfiguration GetSupplierConfiguration();
     }
 }

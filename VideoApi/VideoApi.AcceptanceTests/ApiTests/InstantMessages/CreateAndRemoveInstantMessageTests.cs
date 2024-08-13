@@ -57,7 +57,8 @@ namespace VideoApi.AcceptanceTests.ApiTests.InstantMessages
         private async Task CreateAConference()
         {
             var date = DateTime.Now.ToLocalTime().AddMinutes(2);
-            var request = new BookNewConferenceRequestBuilder("AC InstantMessage Tests")
+            var sipStem = GetSupplierSipAddressStem();
+            var request = new BookNewConferenceRequestBuilder("AC InstantMessage Tests", sipStem)
                 .WithJudge()
                 .WithRepresentative().WithIndividual()
                 .WithHearingRefId(Guid.NewGuid())

@@ -20,6 +20,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.Should().NotBeNull();
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(x => x.PauseHearingAsync(conferenceId), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
         [Test] public async Task should_return_kinly_status_code_on_error()
