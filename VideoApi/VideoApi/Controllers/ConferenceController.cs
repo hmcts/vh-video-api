@@ -46,8 +46,7 @@ namespace VideoApi.Controllers
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
-        private readonly IFeatureToggles _featureToggles;
-
+        
         public ConferenceController(IQueryHandler queryHandler, 
             ICommandHandler commandHandler,
             ISupplierPlatformServiceFactory supplierPlatformServiceFactory, 
@@ -66,7 +65,6 @@ namespace VideoApi.Controllers
             _azureStorageServiceFactory = azureStorageServiceFactory;
             _pollyRetryService = pollyRetryService;
             _backgroundWorkerQueue = backgroundWorkerQueue;
-            _featureToggles = featureToggles;
         }
 
         /// <summary>
