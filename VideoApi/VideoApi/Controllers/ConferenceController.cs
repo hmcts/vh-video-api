@@ -40,7 +40,6 @@ namespace VideoApi.Controllers
     {
         private readonly IAudioPlatformService _audioPlatformService;
         private readonly IAzureStorageServiceFactory _azureStorageServiceFactory;
-        private readonly IBackgroundWorkerQueue _backgroundWorkerQueue;
         private readonly ICommandHandler _commandHandler;
         private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<ConferenceController> _logger;
@@ -65,7 +64,6 @@ namespace VideoApi.Controllers
             _audioPlatformService = audioPlatformService;
             _azureStorageServiceFactory = azureStorageServiceFactory;
             _pollyRetryService = pollyRetryService;
-            _backgroundWorkerQueue = backgroundWorkerQueue;
             _featureToggles = featureToggles;
         }
         
@@ -774,7 +772,8 @@ namespace VideoApi.Controllers
             (
                 3,
                 _ => TimeSpan.FromSeconds(10),
-                retryAttempt => _logger.LogWarning($"Failed to BookMeetingRoomAsync. Retrying attempt {retryAttempt}"),
+                retryAttempt => _logger.LogWarning("Failed to BookMeetingRoomAsync. Retrying attempt {RetryAttempt}",
+                    retryAttempt),
                 callResult => !callResult,
                 () => BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl, endpoints, supplier)
             );
