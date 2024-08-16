@@ -4,17 +4,18 @@ using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Extensions;
+
 namespace VideoApi.Mappings
 {
     public static class ConferenceToDetailsResponseMapper
     {
-        public static ConferenceDetailsResponse MapConferenceToResponse(Conference conference, SupplierConfiguration configuration)
+        public static ConferenceDetailsResponse Map(Conference conference, SupplierConfiguration configuration)
         {
             var allInterpreterRooms = conference.Rooms.OfType<ParticipantRoom>().ToList();
             var interpreterRooms = allInterpreterRooms.Select(RoomToCivilianRoomResponseMapper.MapToResponse).ToList();
             var phoneNumbers = $"{configuration.ConferencePhoneNumber},{configuration.ConferencePhoneNumberWelsh}";
             var pexipSelfTestNode = configuration.PexipSelfTestNode;
-
+            
             var response = new ConferenceDetailsResponse
             {
                 Id = conference.Id,
@@ -32,10 +33,9 @@ namespace VideoApi.Mappings
                 IngestUrl = conference.IngestUrl,
                 IsWaitingRoomOpen = conference.IsConferenceAccessible(),
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
-                TelephoneConferenceNumbers = phoneNumbers,
-                CaseName = conference.CaseName,
+                TelephoneConferenceNumbers = phoneNumbers
             };
-
+            
             if (response.MeetingRoom != null)
             {
                 response.MeetingRoom.PexipSelfTestNode = pexipSelfTestNode;
@@ -43,8 +43,9 @@ namespace VideoApi.Mappings
             
             return response;
         }
-
-        private static List<ParticipantResponse> MapParticipants(IList<ParticipantBase> participants, List<ParticipantRoom> interpreterRooms)
+        
+        private static List<ParticipantResponse> MapParticipants(IList<ParticipantBase> participants,
+            List<ParticipantRoom> interpreterRooms)
         {
             return participants.Select(x =>
             {

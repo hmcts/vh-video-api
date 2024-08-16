@@ -33,7 +33,7 @@ public class EndOfDayController(
     /// <returns></returns>
     [HttpGet("active-sessions")]
     [OpenApiOperation("GetActiveConferences")]
-    [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetActiveConferences()
     {
         logger.LogDebug("Getting all active conferences");
@@ -42,11 +42,11 @@ public class EndOfDayController(
         
         var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
         var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferences);
-
+        
         var response = conferences.Select(c =>
         {
             var supplierConfig = supplierConfigs.Find(sc => sc.Supplier == c.Supplier);
-            return ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, supplierConfig.Configuration);
+            return ConferenceToDetailsResponseMapper.Map(c, supplierConfig.Configuration);
         });
         
         return Ok(response);

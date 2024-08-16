@@ -2,7 +2,6 @@ using System.Linq;
 using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
-using VideoApi.Contract.Consts;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 
@@ -31,7 +30,7 @@ namespace VideoApi.UnitTests.Mappings
                 .With(x => x.ConferencePhoneNumberWelsh = conferencePhoneNumberWelsh)
                 .With(x => x.PexipSelfTestNode = pexipSelfTestNode).Build();
             
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, configuration);
+            var response = ConferenceToDetailsResponseMapper.Map(conference, configuration);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
@@ -56,7 +55,7 @@ namespace VideoApi.UnitTests.Mappings
             response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.CurrentStatus.Should().Be((Contract.Enums.ConferenceState)conference.GetCurrentStatus());
-
+            
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options
                 .Excluding(x => x.ParticipantRefId)
@@ -75,7 +74,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.HearingRole)
                 .Excluding(x => x.HearingRole)
             );
-
+            
             var civilianRoom = response.CivilianRooms[0];
             var room = conference.Rooms.First();
             civilianRoom.Id.Should().Be(room.Id);
