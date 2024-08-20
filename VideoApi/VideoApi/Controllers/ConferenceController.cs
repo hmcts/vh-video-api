@@ -273,7 +273,7 @@ public class ConferenceController(
             return NotFound();
         
         // If verbose is true, return full conference details
-        if (verbose == true)
+        if (verbose)
         {
             var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
             var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferencesList);
