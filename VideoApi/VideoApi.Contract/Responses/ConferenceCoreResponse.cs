@@ -16,7 +16,7 @@ public class ConferenceCoreResponse
     /// <summary>
     /// The UUID of the booking
     /// </summary>
-    public Guid HearingRefId { get; set; }
+    public Guid HearingId { get; set; }
     
     /// <summary>
     /// The scheduled start time of a conference

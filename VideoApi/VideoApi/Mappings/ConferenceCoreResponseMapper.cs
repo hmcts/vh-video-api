@@ -10,7 +10,7 @@ public static class ConferenceCoreResponseMapper
     {
         var response = new ConferenceCoreResponse();
         response.Id = conference.Id;
-        response.HearingRefId = conference.HearingRefId;
+        response.HearingId = conference.HearingRefId;
         response.ScheduledDateTime = conference.ScheduledDateTime;
         response.StartedDateTime = conference.ActualStartTime;
         response.ClosedDateTime = conference.ClosedDateTime;

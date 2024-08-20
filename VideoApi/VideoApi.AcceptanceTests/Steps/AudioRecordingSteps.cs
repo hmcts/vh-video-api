@@ -32,7 +32,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get audio stream request")]
         public void GivenIHaveAValidGetAudioStreamRequest()
         {
-            _context.Request = _context.Get(GetAudioStream(_context.Test.ConferenceResponse.HearingRefId));
+            _context.Request = _context.Get(GetAudioStream(_context.Test.ConferenceResponse.HearingId));
         }
         
         [Given(@"I have a valid get audio stream request that has no stream")]
@@ -44,7 +44,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"the conference has an audio recording")]
         public async Task GivenTheConferenceHasAnAudioRecording()
         {
-            var hearingId = _context.Test.ConferenceResponse.HearingRefId;
+            var hearingId = _context.Test.ConferenceResponse.HearingId;
             var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", hearingId.ToString());
             
             _context.AzureStorage = new AzureStorageManager()
@@ -60,7 +60,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get audio recording link request")]
         public void GivenIHaveAValidGetAudioRecordingLinkRequest()
         {
-            _context.Request = _context.Get(GetAudioRecordingLink(_context.Test.ConferenceResponse.HearingRefId));
+            _context.Request = _context.Get(GetAudioRecordingLink(_context.Test.ConferenceResponse.HearingId));
         }
         
         [Given(@"I have a valid get audio recording link request for non existing hearing")]

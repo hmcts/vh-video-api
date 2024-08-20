@@ -36,7 +36,7 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var request = new UpdateConferenceRequest
             {
-                HearingRefId = _context.Test.ConferenceResponse.HearingRefId,
+                HearingRefId = _context.Test.ConferenceResponse.HearingId,
                 ScheduledDateTime = DateTime.Now.AddHours(1),
                 ScheduledDuration = 12,
                 AudioRecordingRequired = true
@@ -218,7 +218,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAGetDetailsForAConferenceRequestByHearingIdWithAValidHearingId()
         {
             var requestBody = new GetConferencesByHearingIdsRequest
-                { HearingRefIds = [_context.Test.ConferenceResponse.HearingRefId] };
+                { HearingRefIds = [_context.Test.ConferenceResponse.HearingId] };
             _context.Request = _context.Post(GetConferencesByHearingRefIds(), requestBody);
         }
         

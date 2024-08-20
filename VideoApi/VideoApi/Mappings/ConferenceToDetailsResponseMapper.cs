@@ -19,7 +19,7 @@ namespace VideoApi.Mappings
             var response = new ConferenceDetailsResponse
             {
                 Id = conference.Id,
-                HearingRefId = conference.HearingRefId,
+                HearingId = conference.HearingRefId,
                 ScheduledDateTime = conference.ScheduledDateTime,
                 StartedDateTime = conference.ActualStartTime,
                 ClosedDateTime = conference.ClosedDateTime,
