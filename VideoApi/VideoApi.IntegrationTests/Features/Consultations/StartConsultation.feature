@@ -3,7 +3,6 @@ Feature: Start Consultation
   As an api service
   I want to be able to join and leave consultation rooms
 
-  @VIH-6876
   Scenario: Start Consultation for a Judge
     Given I have a booked conference
     And the judge is in the waiting room

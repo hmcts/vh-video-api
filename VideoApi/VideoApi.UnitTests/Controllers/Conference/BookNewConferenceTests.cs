@@ -92,9 +92,9 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             await Controller.BookNewConferenceAsync(_request);
             
-            VideoPlatformServiceMock.Verify(
-                v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
-                    It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+            BookingServiceMock.Verify(v
+                => v.BookMeetingRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
+                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<Supplier>()), Times.Once);
         }
         
         [Test]
@@ -111,9 +111,9 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             await Controller.BookNewConferenceAsync(_request);
             
-            VideoPlatformServiceMock.Verify(
-                v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
-                    It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+            BookingServiceMock.Verify(v
+                => v.BookMeetingRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
+                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<Supplier>()), Times.Once);
         }
         
         [Test]
@@ -203,7 +203,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             response.Should().BeAssignableTo<CreatedAtActionResult>();
             var result = ((CreatedAtActionResult)response).Value as ConferenceDetailsResponse;
             
-            VerifySupplierUsed(supplier, Times.Exactly(2));
+            VerifySupplierUsed(supplier, Times.Exactly(1));
             result.MeetingRoom.Should().NotBeNull();
             switch (supplier)
             {

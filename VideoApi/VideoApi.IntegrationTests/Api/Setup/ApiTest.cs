@@ -17,15 +17,15 @@ namespace VideoApi.IntegrationTests.Api.Setup
 {
     public class ApiTest
     {
-        protected VhApiWebApplicationFactory Application = null!;
-        protected TestDataManager TestDataManager = null!;
-        protected DbContextOptions<VideoApiDbContext> DbOptions { get; private set; }
-        protected IConfigurationRoot ConfigRoot;
         private string _databaseConnectionString;
         private KinlyConfiguration _kinlyConfiguration;
-        private VodafoneConfiguration _vodafoneConfiguration;
         private ServicesConfiguration _services;
-
+        private VodafoneConfiguration _vodafoneConfiguration;
+        protected VhApiWebApplicationFactory Application = null!;
+        protected IConfigurationRoot ConfigRoot;
+        protected TestDataManager TestDataManager = null!;
+        protected DbContextOptions<VideoApiDbContext> DbOptions { get; private set; }
+        
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -33,19 +33,20 @@ namespace VideoApi.IntegrationTests.Api.Setup
             Application = new VhApiWebApplicationFactory(ConfigRoot);
             InitTestDataManager();
         }
-
+        
         private void InitTestDataManager()
         {
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.UseSqlServer(_databaseConnectionString);
             DbOptions = dbContextOptionsBuilder.Options;
-
+            
             var context = new VideoApiDbContext(DbOptions);
             context.Database.Migrate();
-
-            TestDataManager = new TestDataManager(_kinlyConfiguration, dbContextOptionsBuilder.Options, _vodafoneConfiguration);
+            
+            TestDataManager = new TestDataManager(_kinlyConfiguration, dbContextOptionsBuilder.Options,
+                _vodafoneConfiguration);
         }
-
+        
         private void RegisterSettings()
         {
             ConfigRoot = ConfigRootBuilder.Build();
@@ -57,18 +58,19 @@ namespace VideoApi.IntegrationTests.Api.Setup
             _databaseConnectionString = ConfigRoot.GetConnectionString("VideoApi");
         }
         
-        protected void VerifyConferenceInResponse(ConferenceForAdminResponse conferenceInResponse, Conference conferenceInDb)
+        protected void VerifyConferenceInResponse(ConferenceDetailsResponse conferenceInResponse,
+            Conference conferenceInDb)
         {
             var kinlyConfiguration = TestDataManager.GetKinlyConfiguration();
             var vodafoneConfiguration = TestDataManager.GetVodafoneConfiguration();
             
             conferenceInResponse.Should().NotBeNull();
             conferenceInResponse.Id.Should().Be(conferenceInDb.Id);
-            SupplierConfiguration supplierConfiguration = 
+            SupplierConfiguration supplierConfiguration =
                 conferenceInDb.Supplier == Supplier.Vodafone ? vodafoneConfiguration : kinlyConfiguration;
             conferenceInResponse.Should().BeEquivalentTo(
-                ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(conferenceInDb, supplierConfiguration), options => options
-                    .Excluding(x => x.Participants));
+                ConferenceToDetailsResponseMapper.Map(conferenceInDb, supplierConfiguration),
+                options => options.Excluding(x => x.Participants));
         }
     }
 }

@@ -10,13 +10,14 @@ public static class ConferenceCoreResponseMapper
     {
         var response = new ConferenceCoreResponse();
         response.Id = conference.Id;
-        response.HearingId = conference.HearingRefId;
+        response.HearingRefId = conference.HearingRefId;
         response.ScheduledDateTime = conference.ScheduledDateTime;
         response.StartedDateTime = conference.ActualStartTime;
         response.ClosedDateTime = conference.ClosedDateTime;
         response.ScheduledDuration = conference.ScheduledDuration;
         response.CurrentStatus = conference.GetCurrentStatus().MapToContractEnum();
         response.IsWaitingRoomOpen = conference.IsConferenceAccessible();
+        response.CaseName = conference.CaseName;
         return response;
     }
 }

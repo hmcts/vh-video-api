@@ -7,13 +7,13 @@ Feature: Conferences
     Given I have a valid book a new conference request
     When I send the request to the endpoint
     Then the response should have the status Created and success status True
-    And the conference details should be retrieved
+    And the conference should be retrieved
 
   Scenario: Create a new conference with linked participants
     Given I have a valid book a new conference request with linked participants
     When I send the request to the endpoint
     Then the response should have the status Created and success status True
-    And the conference details should be retrieved
+    And the conference should be retrieved
 
   Scenario: Create a new conference with jvs endpoints
     Given I have a valid book a new conference request with jvs endpoints
@@ -44,7 +44,7 @@ Feature: Conferences
     And I have a get details for a conference request with a valid conference id
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And the conference details should be retrieved
+    And the conference should be retrieved
 
   Scenario: Get details for an invalid conference
     Given I have a get details for a conference request with an invalid conference id
@@ -80,13 +80,13 @@ Feature: Conferences
     And I have a get details for a conference request with a valid hearing ref id
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
-    And the conference details should be retrieved
+    And the conferences should be retrieved
 
   Scenario: Get details for an invalid conference by hearing ref id
     Given I have a get details for a conference request with an invalid hearing ref id
     When I send the request to the endpoint
     Then the response should have the status BadRequest and success status False
-    And the error response message should also contain 'Please provide a valid hearingRefId'
+    And the error response message should also contain 'Please provide at least one hearing id'
 
   Scenario: Get details for a non-existent conference by hearing ref id
     Given I have a get details for a conference request with a nonexistent hearing ref id
@@ -100,7 +100,7 @@ Feature: Conferences
     Then the response should have the status OK and success status True
 
   Scenario: Update a conference with audio recording required for a valid request
-    Given I have a conference
+    Given I have a conference 
     And I have a valid update a conference request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True

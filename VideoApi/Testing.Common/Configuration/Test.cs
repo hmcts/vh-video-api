@@ -11,7 +11,7 @@ namespace Testing.Common.Configuration
     {
         public Test()
         {
-            CvpFileNamesOnStorage = new List<string>();    
+            CvpFileNamesOnStorage = new List<string>();
         }
         
         public string CaseName { get; set; }
@@ -21,10 +21,7 @@ namespace Testing.Common.Configuration
         public List<Alert> Alerts { get; set; }
         public List<Guid> ConferenceIds { get; set; }
         public ConferenceDetailsResponse ConferenceResponse { get; set; }
-        public List<ConferenceDetailsResponse> ConferenceDetailsResponses { get; set; }
-        public List<ConferenceForAdminResponse> ConferenceResponses { get; set; }
-        public List<ConferenceForHostResponse> ConferenceJudgeResponses { get; set; }
-        public List<ConferenceForIndividualResponse> ConferenceIndividualResponses { get; set; }
+        public List<ConferenceDetailsResponse> ConferenceResponses { get; set; }
         public Guid TomorrowsConference { get; set; }
         public List<Conference> Conferences { get; set; }
         public AddHeartbeatRequest HeartbeatData { get; set; }

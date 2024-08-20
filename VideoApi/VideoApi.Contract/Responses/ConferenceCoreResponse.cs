@@ -16,7 +16,7 @@ public class ConferenceCoreResponse
     /// <summary>
     /// The UUID of the booking
     /// </summary>
-    public Guid HearingId { get; set; }
+    public Guid HearingRefId { get; set; }
     
     /// <summary>
     /// The scheduled start time of a conference
@@ -47,4 +47,9 @@ public class ConferenceCoreResponse
     /// Is the waiting room still accessible for the conference
     /// </summary>
     public bool IsWaitingRoomOpen { get; set; }
+    
+    /// <summary>
+    /// FOR TESTING ONLY: The case name of the conference
+    /// </summary>
+    public string CaseName { get; set; }
 }

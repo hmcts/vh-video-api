@@ -29,7 +29,7 @@ public class BookingService(
     ISupplierPlatformServiceFactory _supplierPlatformServiceFactory,
     ICommandHandler _commandHandler,
     IQueryHandler _queryHandler,
-    Logger<BookingService> _logger)
+    ILogger<BookingService> _logger)
     : IBookingService
 {
     public async Task<bool> BookMeetingRoomAsync(Guid conferenceId,

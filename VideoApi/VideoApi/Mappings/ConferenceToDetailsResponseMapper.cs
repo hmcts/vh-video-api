@@ -19,7 +19,7 @@ namespace VideoApi.Mappings
             var response = new ConferenceDetailsResponse
             {
                 Id = conference.Id,
-                HearingId = conference.HearingRefId,
+                HearingRefId = conference.HearingRefId,
                 ScheduledDateTime = conference.ScheduledDateTime,
                 StartedDateTime = conference.ActualStartTime,
                 ClosedDateTime = conference.ClosedDateTime,
@@ -33,7 +33,8 @@ namespace VideoApi.Mappings
                 IngestUrl = conference.IngestUrl,
                 IsWaitingRoomOpen = conference.IsConferenceAccessible(),
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
-                TelephoneConferenceNumbers = phoneNumbers
+                TelephoneConferenceNumbers = phoneNumbers,
+                CaseName = conference.CaseName
             };
             
             if (response.MeetingRoom != null)
