@@ -266,6 +266,7 @@ namespace VideoApi.Client
         /// Get conferences by hearing ref ids
         /// </summary>
         /// <param name="includeClosed">Include closed conferences in search</param>
+        /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferenceByHearingRefIdAsync(bool? includeClosed, GetConferencesByHearingIdsRequest request);
@@ -275,6 +276,7 @@ namespace VideoApi.Client
         /// Get conferences by hearing ref ids
         /// </summary>
         /// <param name="includeClosed">Include closed conferences in search</param>
+        /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferenceByHearingRefIdAsync(bool? includeClosed, GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
@@ -927,6 +929,21 @@ namespace VideoApi.Client
         /// <param name="request">New username to update to</param>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateParticipantUsernameAsync(System.Guid participantId, UpdateParticipantUsernameRequest request, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Get today's conferences where hosts are in hearings
+        /// </summary>
+        /// <returns>Conference details</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetHostsInHearingsTodayAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get today's conferences where hosts are in hearings
+        /// </summary>
+        /// <returns>Conference details</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetHostsInHearingsTodayAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> ValidateQuickLinkAsync(System.Guid hearingId);
@@ -2684,6 +2701,7 @@ namespace VideoApi.Client
         /// Get conferences by hearing ref ids
         /// </summary>
         /// <param name="includeClosed">Include closed conferences in search</param>
+        /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferenceByHearingRefIdAsync(bool? includeClosed, GetConferencesByHearingIdsRequest request)
@@ -2696,6 +2714,7 @@ namespace VideoApi.Client
         /// Get conferences by hearing ref ids
         /// </summary>
         /// <param name="includeClosed">Include closed conferences in search</param>
+        /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferenceByHearingRefIdAsync(bool? includeClosed, GetConferencesByHearingIdsRequest request, System.Threading.CancellationToken cancellationToken)
@@ -7385,6 +7404,100 @@ namespace VideoApi.Client
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new VideoApiException<ValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get today's conferences where hosts are in hearings
+        /// </summary>
+        /// <returns>Conference details</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetHostsInHearingsTodayAsync()
+        {
+            return GetHostsInHearingsTodayAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get today's conferences where hosts are in hearings
+        /// </summary>
+        /// <returns>Conference details</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ParticipantInHearingResponse>> GetHostsInHearingsTodayAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "conferences/today/hostsinhearings"
+                    urlBuilder_.Append("conferences/today/hostsinhearings");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ParticipantInHearingResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {

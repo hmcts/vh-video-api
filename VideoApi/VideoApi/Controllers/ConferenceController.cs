@@ -244,7 +244,7 @@ public class ConferenceController(
     /// <summary>
     /// Get conferences by hearing ref ids
     /// </summary>
-    /// <param name="hearingRefIds">Hearing IDs</param>
+    /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
     /// <param name="includeClosed">Include closed conferences in search</param>
     /// <returns>Full details including participants and statuses of a conference</returns>
     [HttpPost("hearings")]
