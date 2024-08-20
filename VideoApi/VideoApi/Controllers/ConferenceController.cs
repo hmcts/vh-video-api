@@ -255,7 +255,7 @@ public class ConferenceController(
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferencesByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request,
-        [FromQuery] bool? includeClosed = false, [FromQuery] bool? verbose = false)
+        [FromQuery] bool includeClosed = false, [FromQuery] bool verbose = false)
     {
         if (request.HearingRefIds == null || !request.HearingRefIds.Any() ||
             request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
@@ -264,8 +264,7 @@ public class ConferenceController(
             return ValidationProblem(ModelState);
         }
         
-        var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds,
-            includeClosed.GetValueOrDefault());
+        var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, includeClosed);
         
         var conferencesList =
             await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
