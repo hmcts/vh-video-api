@@ -14,7 +14,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         public async Task Should_return_ok_result_for_given_valid_hearing_ref_id()
         {
             var request = new GetConferencesByHearingIdsRequest { HearingRefIds = [TestConference.HearingRefId] };
-            var result = await Controller.GetConferenceByHearingRefIdsAsync(request);
+            var result = await Controller.GetConferencesByHearingRefIdsAsync(request);
             var typedResult = (OkObjectResult)result;
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
         }
@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
                         It.IsAny<GetNonClosedConferenceByHearingRefIdQuery>()))
                 .ReturnsAsync(new List<VideoApi.Domain.Conference>());
             
-            var result = await Controller.GetConferenceByHearingRefIdsAsync(new GetConferencesByHearingIdsRequest
+            var result = await Controller.GetConferencesByHearingRefIdsAsync(new GetConferencesByHearingIdsRequest
                 { HearingRefIds = [TestConference.HearingRefId] });
             var typedResult = (NotFoundResult)result;
             typedResult.Should().NotBeNull();

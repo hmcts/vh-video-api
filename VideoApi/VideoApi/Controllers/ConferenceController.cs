@@ -246,14 +246,16 @@ public class ConferenceController(
     /// </summary>
     /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
     /// <param name="includeClosed">Include closed conferences in search</param>
+    /// <param name="verbose">Include full conference details in response</param>
     /// <returns>Full details including participants and statuses of a conference</returns>
     [HttpPost("hearings")]
-    [OpenApiOperation("GetConferenceByHearingRefId")]
+    [OpenApiOperation("GetConferencesByHearingRefIds")]
     [ProducesResponseType(typeof(List<ConferenceCoreResponse>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> GetConferenceByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request,
-        [FromQuery] bool? includeClosed = false)
+    public async Task<IActionResult> GetConferencesByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request,
+        [FromQuery] bool? includeClosed = false, [FromQuery] bool? verbose = false)
     {
         if (request.HearingRefIds == null || !request.HearingRefIds.Any() ||
             request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
@@ -271,6 +273,21 @@ public class ConferenceController(
         if (conferencesList == null || !conferencesList.Any())
             return NotFound();
         
+        // If verbose is true, return full conference details
+        if (verbose == true)
+        {
+            var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
+            var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferencesList);
+            
+            var response = conferencesList.Select(c =>
+            {
+                var supplierConfig = supplierConfigs.Find(sc => sc.Supplier == c.Supplier);
+                return ConferenceToDetailsResponseMapper.Map(c, supplierConfig.Configuration);
+            });
+            return Ok(response);
+        }
+        
+        //return core conference details
         return Ok(conferencesList.Select(ConferenceCoreResponseMapper.Map));
     }
     
