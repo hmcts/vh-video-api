@@ -41,7 +41,6 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.Endpoints)
                 .Excluding(x => x.Rooms)
                 .Excluding(x => x.UpdatedAt)
-                .Excluding(x => x.Supplier)
             );
             
             response.StartedDateTime.Should().Be(conference.ActualStartTime);
@@ -50,6 +49,7 @@ namespace VideoApi.UnitTests.Mappings
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
             response.TelephoneConferenceNumbers.Should().Be($"{conferencePhoneNumber},{conferencePhoneNumberWelsh}");
             response.CreatedDateTime.Should().Be(conference.CreatedDateTime);
+            response.Supplier.Should().Be((Contract.Enums.Supplier)conference.Supplier);
         }
     }
 }

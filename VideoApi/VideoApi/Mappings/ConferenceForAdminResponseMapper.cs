@@ -33,7 +33,8 @@ namespace VideoApi.Mappings
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
                 TelephoneConferenceNumbers = phoneNumbers,
                 CreatedDateTime = conference.CreatedDateTime,
-                IsWaitingRoomOpen = conference.IsConferenceAccessible()
+                IsWaitingRoomOpen = conference.IsConferenceAccessible(),
+                Supplier = (Contract.Enums.Supplier)conference.Supplier
             };
         }
     }
