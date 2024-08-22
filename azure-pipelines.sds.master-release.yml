@@ -13,6 +13,14 @@ resources:
       ref: master
       endpoint: hmcts
 
+parameters:
+- name: environment
+  type: object
+  default:
+  - Dev
+  - Test
+  - Demo
+
 pool: 
   vmImage: ubuntu-22.04
 
@@ -47,66 +55,42 @@ stages:
 
 #####################################################
 # Run Entity Framework. #############################
-
-- stage: Run_Entity_Framework
-  displayName: Dev EF Release
-  dependsOn: Pre_Run_Tasks
-  jobs:
-  - job: Run_Entity_Framework_Dev
+- ${{ each env in parameters.environment }}:
+  - stage: Run_Entity_Framework_${{ env }}
+    displayName: ${{ env }} EF Release
+    dependsOn: Pre_Run_Tasks
     variables:
-    - template: variables/dev.yaml
+    - template: variables/${{ lower(env) }}.yaml
     - template: variables/shared.yaml
       parameters:
-        env: dev
-    displayName: Run Entity Framework Dev
-    pool:
-      vmImage: 'windows-latest' # MUST BE RUN ON WINDOWS
-    steps:
-    - download: current
-      displayName: Download Sql Artifact
+        env: ${{ variables.env }}
+    jobs:
+    - job: Run_Entity_Framework_${{ env }}
+      displayName: Run Entity Framework ${{ env }}
+      pool:
+        vmImage: 'windows-latest' # MUST BE RUN ON WINDOWS
+      steps:
+      - download: current
+        displayName: Download Sql Artifact
 
-    - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-      parameters:
-        sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-        sqlServerName: ${{ variables.vhSQLServerName }}
-        databaseName: ${{ variables.videoApiDbName }}
-        azureSubscription: ${{ variables.subscriptionName }}
-        sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-        kvfirewallRequired: false
-        kvName: ${{ variables.vhKeyVault }}
-        kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-        kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
-  - job: Run_Entity_Framework_Test
-    variables:
-    - template: variables/test.yaml
-    - template: variables/shared.yaml
-      parameters:
-        env: test
-    displayName: Run Entity Framework Test
-    pool:
-      vmImage: 'windows-latest' # MUST BE RUN ON WINDOWS
-    steps:
-    - download: current
-      displayName: Download Sql Artifact
-
-    - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-      parameters:
-        sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-        sqlServerName: ${{ variables.vhSQLServerName }}
-        databaseName: ${{ variables.videoApiDbName }}
-        azureSubscription: ${{ variables.subscriptionName }}
-        sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-        kvfirewallRequired: false
-        kvName: ${{ variables.vhKeyVault }}
-        kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-        kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+      - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+        parameters:
+          sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+          sqlServerName: ${{ variables.vhSQLServerName }}
+          databaseName: ${{ variables.videoApiDbName }}
+          azureSubscription: ${{ variables.subscriptionName }}
+          sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
+          kvfirewallRequired: false
+          kvName: ${{ variables.vhKeyVault }}
+          kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+          kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
 
 #####################################################
 # Build Docker Image & Push. ########################
 - stage: Docker_Build_Push
   displayName: Docker Build & Push Image
   dependsOn:
-    - Run_Entity_Framework
+    - Run_Entity_Framework_Dev
   variables:
     - template: variables/dev.yaml
     - template: variables/shared.yaml
@@ -141,7 +125,7 @@ stages:
 - stage: Push_Nuget
   displayName: Deploy Nuget Packages
   dependsOn:
-    - Run_Entity_Framework
+    - Run_Entity_Framework_Dev
   variables:
   - template: variables/shared.yaml
     parameters:
