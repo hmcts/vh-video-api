@@ -26,5 +26,7 @@ namespace VideoApi.Contract.Responses
         /// Is the waiting room still accessible for the conference
         /// </summary>
         public bool IsWaitingRoomOpen { get; set; }
+        
+        public Supplier Supplier { get; set; }
     }
 }

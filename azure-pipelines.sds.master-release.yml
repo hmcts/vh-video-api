@@ -90,7 +90,7 @@ stages:
 - stage: Docker_Build_Push
   displayName: Docker Build & Push Image
   dependsOn:
-    - Run_Entity_Framework
+    - Run_Entity_Framework_Dev
   variables:
     - template: variables/dev.yaml
     - template: variables/shared.yaml
@@ -125,7 +125,7 @@ stages:
 - stage: Push_Nuget
   displayName: Deploy Nuget Packages
   dependsOn:
-    - Run_Entity_Framework
+    - Run_Entity_Framework_Dev
   variables:
   - template: variables/shared.yaml
     parameters:
