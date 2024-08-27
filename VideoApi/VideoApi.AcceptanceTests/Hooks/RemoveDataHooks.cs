@@ -45,12 +45,13 @@ namespace VideoApi.AcceptanceTests.Hooks
                 .BeTrue(
                     $"conferences for today were retrieved, but status code was {context.Response.StatusCode} with error message '{context.Response.Content}'");
             var conferences = ApiRequestHelper.Deserialise<List<ConferenceDetailsResponse>>(context.Response.Content);
-            if (conferences == null || conferences.Count <= 0) return;
+            
+            if (conferences == null || conferences.Count <= 0)
+                return;
+            
             foreach (var conference in conferences.Where(conference =>
-                         conference.CaseName.Contains(context.Test.CaseName)))
-            {
+                         conference.CaseName != null && conference.CaseName.Contains(context.Test.CaseName)))
                 RemoveConference(context, conference.Id);
-            }
         }
         
         private static void RemoveConference(TestContext context, Guid conferenceId)

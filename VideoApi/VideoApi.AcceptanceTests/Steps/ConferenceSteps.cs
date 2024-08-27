@@ -246,6 +246,16 @@ namespace VideoApi.AcceptanceTests.Steps
             AssertConferenceDetailsResponse.ForConference(conference);
         }
         
+        
+        [Then(@"the conferences should be retrieved")]
+        public void ThenTheConferencesShouldBeRetrieved()
+        {
+            var conferences = ApiRequestHelper.Deserialise<List<ConferenceDetailsResponse>>(_context.Response.Content);
+            conferences.Should().NotBeNull();
+            _context.Test.ConferenceResponse = conferences[0];
+            AssertConferenceCoreResponse.ForConference(conferences[0]);
+        }
+        
         [Then(@"the conference details should be retrieved with jvs endpoints")]
         public void ThenTheConferenceDetailsShouldBeRetrievedWithJvsEndpoints()
         {

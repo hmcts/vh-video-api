@@ -47,10 +47,10 @@ Feature: Conference
 
   Scenario: Get conference details by hearing id
 	  Given I have a conference
-	  And I have a get details for a conference request by hearing id with a valid username
+    And I have a get details for a conference request by hearing id with a valid Hearing Id
 	  When I send the request to the endpoint
 	  Then the response should have the status OK and success status True
-	  And the conference details should be retrieved
+    And the conferences should be retrieved
 
   Scenario: Get expired conferences
 	  Given I have a conference
