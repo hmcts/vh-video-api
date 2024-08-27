@@ -84,7 +84,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAConferenceWithALinkedParticipant()
         {
             var sipStem = GetSupplierSipAddressStem();
-            var request = new BookNewConferenceRequestBuilder(sipStem)
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName, sipStem)
                 .WithJudge()
                 .WithIndividualAndInterpreter()
                 .WithHearingRefId(Guid.NewGuid())
@@ -370,7 +370,7 @@ namespace VideoApi.AcceptanceTests.Steps
             List<AddEndpointRequest> endpoints = null)
         {
             var stem = GetSupplierSipAddressStem();
-            var request = new BookNewConferenceRequestBuilder(stem)
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName, stem)
                 .WithJudge(judgeFirstName)
                 .WithJudicialOfficeHolder()
                 .WithRepresentative("Applicant").WithIndividual("Applicant")
