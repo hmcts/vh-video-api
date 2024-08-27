@@ -567,7 +567,7 @@ namespace VideoApi.Client
         /// <br/>This includes conferences that are closed but the participants are still in consultation.
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetActiveConferencesAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetActiveConferencesAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -576,7 +576,7 @@ namespace VideoApi.Client
         /// <br/>This includes conferences that are closed but the participants are still in consultation.
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetActiveConferencesAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetActiveConferencesAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get all endpoints for a conference
@@ -4964,7 +4964,7 @@ namespace VideoApi.Client
         /// <br/>This includes conferences that are closed but the participants are still in consultation.
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetActiveConferencesAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetActiveConferencesAsync()
         {
             return GetActiveConferencesAsync(System.Threading.CancellationToken.None);
         }
@@ -4976,7 +4976,7 @@ namespace VideoApi.Client
         /// <br/>This includes conferences that are closed but the participants are still in consultation.
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetActiveConferencesAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetActiveConferencesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5027,7 +5027,7 @@ namespace VideoApi.Client
                         else
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceDetailsResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceCoreResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);

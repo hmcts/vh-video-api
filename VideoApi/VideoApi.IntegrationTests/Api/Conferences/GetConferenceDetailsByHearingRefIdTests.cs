@@ -12,10 +12,10 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Api.Conferences;
 
-public class GetConferencesByHearingRefIdTests : ApiTest
+public class GetConferenceDetailsByHearingRefIdTests : ApiTest
 {
     [Test]
-    public async Task should_get_conferences_by_HearingRefIds()
+    public async Task should_get_conferences_details_by_HearingRefIds()
     {
         //arrange
         var kinlyConference = await TestDataManager.SeedConference(Supplier.Kinly);
@@ -32,19 +32,19 @@ public class GetConferencesByHearingRefIdTests : ApiTest
         
         //act
         var result =
-            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesByHearingRefIds(),
+            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferenceDetailsByHearingRefIds(),
                 RequestBody.Set(payload));
         
         // assert
         result.IsSuccessStatusCode.Should().BeTrue();
-        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceCoreResponse>>(result.Content);
+        var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceDetailsResponse>>(result.Content);
         conferenceResponse.Count.Should().Be(2);
     }
     
     [TestCase("default guid")]
     [TestCase("null parameter")]
     [TestCase("empty list")]
-    public async Task should_get_bad_request_when_querying_conferences_by_HearingRefIds(string parameter)
+    public async Task should_get_bad_request_when_querying_conferences_details_by_HearingRefIds(string parameter)
     {
         //arrange
         using var client = Application.CreateClient();
@@ -58,7 +58,7 @@ public class GetConferencesByHearingRefIdTests : ApiTest
         
         //act
         var result =
-            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesByHearingRefIds(),
+            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferenceDetailsByHearingRefIds(),
                 RequestBody.Set(payload));
         
         // assert
@@ -68,7 +68,7 @@ public class GetConferencesByHearingRefIdTests : ApiTest
     }
     
     [Test]
-    public async Task should_get_not_found_when_querying_conferences_by_HearingRefIds()
+    public async Task should_get_not_found_when_querying_conferences_details_by_HearingRefIds()
     {
         //arrange
         using var client = Application.CreateClient();
@@ -76,7 +76,7 @@ public class GetConferencesByHearingRefIdTests : ApiTest
         
         //act
         var result =
-            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferencesByHearingRefIds(),
+            await client.PostAsync(ApiUriFactory.ConferenceEndpoints.GetConferenceDetailsByHearingRefIds(),
                 RequestBody.Set(payload));
         
         // assert

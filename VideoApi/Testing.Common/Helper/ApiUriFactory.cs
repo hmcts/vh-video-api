@@ -59,6 +59,7 @@ namespace Testing.Common.Helper
             public static string AnonymiseConferences => $"{ApiRoot}/anonymiseconferences";
             public static string RemoveHeartbeatsForconferences => $"{ApiRoot}/expiredHeartbeats";
             public static string GetConferencesByHearingRefIds() => $"{ApiRoot}/hearings";
+            public static string GetConferenceDetailsByHearingRefIds() => $"{ApiRoot}/hearings/details";
             
             public static string GetConferencesTodayForIndividual(string username) =>
                 $"{ApiRoot}/today/individual?username={username}";

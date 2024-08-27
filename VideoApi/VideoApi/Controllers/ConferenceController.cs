@@ -286,7 +286,7 @@ public class ConferenceController(
     [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> GetConferenceDetailssByHearingRefIdsAsync(
+    public async Task<IActionResult> GetConferenceDetailsByHearingRefIdsAsync(
         GetConferencesByHearingIdsRequest request, [FromQuery] bool includeClosed = false)
     {
         if (request.HearingRefIds == null || !request.HearingRefIds.Any() ||
