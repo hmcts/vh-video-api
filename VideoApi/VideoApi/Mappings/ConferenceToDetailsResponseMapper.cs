@@ -16,38 +16,33 @@ namespace VideoApi.Mappings
             var phoneNumbers = $"{configuration.ConferencePhoneNumber},{configuration.ConferencePhoneNumberWelsh}";
             var pexipSelfTestNode = configuration.PexipSelfTestNode;
             
-            var response = new ConferenceDetailsResponse
-            {
-                Id = conference.Id,
-                HearingId = conference.HearingRefId,
-                ScheduledDateTime = conference.ScheduledDateTime,
-                StartedDateTime = conference.ActualStartTime,
-                ClosedDateTime = conference.ClosedDateTime,
-                ScheduledDuration = conference.ScheduledDuration,
-                CurrentStatus = conference.GetCurrentStatus().MapToContractEnum(),
-                Participants = MapParticipants(conference.Participants, allInterpreterRooms),
-                MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom()),
-                Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList(),
-                AudioRecordingRequired = conference.AudioRecordingRequired,
-                CivilianRooms = interpreterRooms,
-                IngestUrl = conference.IngestUrl,
-                IsWaitingRoomOpen = conference.IsConferenceAccessible(),
-                TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
-                TelephoneConferenceNumbers = phoneNumbers,
-                CaseName = conference.CaseName,
-                Supplier = (Contract.Enums.Supplier)conference.Supplier
-            };
+            var response = new ConferenceDetailsResponse();
+            response.Id = conference.Id;
+            response.HearingId = conference.HearingRefId;
+            response.ScheduledDateTime = conference.ScheduledDateTime;
+            response.StartedDateTime = conference.ActualStartTime;
+            response.ClosedDateTime = conference.ClosedDateTime;
+            response.ScheduledDuration = conference.ScheduledDuration;
+            response.CurrentStatus = conference.GetCurrentStatus().MapToContractEnum();
+            response.Participants = MapParticipants(conference.Participants, allInterpreterRooms);
+            response.MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom());
+            response.Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList();
+            response.AudioRecordingRequired = conference.AudioRecordingRequired;
+            response.CivilianRooms = interpreterRooms;
+            response.IngestUrl = conference.IngestUrl;
+            response.IsWaitingRoomOpen = conference.IsConferenceAccessible();
+            response.TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId;
+            response.TelephoneConferenceNumbers = phoneNumbers;
+            response.CaseName = conference.CaseName;
+            response.Supplier = (Contract.Enums.Supplier)conference.Supplier;
             
             if (response.MeetingRoom != null)
-            {
                 response.MeetingRoom.PexipSelfTestNode = pexipSelfTestNode;
-            }
             
             return response;
         }
         
-        private static List<ParticipantResponse> MapParticipants(IList<ParticipantBase> participants,
-            List<ParticipantRoom> interpreterRooms)
+        private static List<ParticipantResponse> MapParticipants(IList<ParticipantBase> participants, List<ParticipantRoom> interpreterRooms)
         {
             return participants.Select(x =>
             {
