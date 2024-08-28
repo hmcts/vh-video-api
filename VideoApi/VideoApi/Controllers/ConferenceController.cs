@@ -483,17 +483,14 @@ public class ConferenceController(
         }
     }
     
-    
     /// <summary>
     /// Get today's conferences by HearingVenueName
     /// </summary>
     /// <returns>Conference details</returns>
     [HttpGet("today/vho")]
     [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
-    [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int)HttpStatusCode.OK)]
-    [Obsolete("Used in acceptance api tests", false)]
-    public async Task<IActionResult> GetConferencesTodayForAdminByHearingVenueNameAsync(
-        [FromQuery] ConferenceForAdminRequest request)
+    [ProducesResponseType(typeof(List<ConferenceCoreResponse>), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetConferencesToday([FromQuery] ConferenceForAdminRequest request)
     {
         logger.LogDebug("GetConferencesTodayForAdmin");
         
@@ -502,18 +499,8 @@ public class ConferenceController(
             HearingVenueNames = request.HearingVenueNames
         };
         
-        var conferences =
-            await queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-        var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
-        var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferences);
-        
-        var response = conferences.Select(c =>
-        {
-            var supplierConfig = supplierConfigs.Find(sc => sc.Supplier == c.Supplier);
-            return ConferenceToDetailsResponseMapper.Map(c, supplierConfig.Configuration);
-        });
-        
-        return Ok(response);
+        var conferences = await queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
+        return Ok(conferences.Select(ConferenceCoreResponseMapper.Map));
     }
     
     private async Task<bool> BookMeetingRoomWithRetriesAsync(Guid conferenceId,
