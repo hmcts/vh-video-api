@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Extensions;
@@ -17,7 +19,20 @@ public static class ConferenceCoreResponseMapper
         response.ScheduledDuration = conference.ScheduledDuration;
         response.CurrentStatus = conference.GetCurrentStatus().MapToContractEnum();
         response.IsWaitingRoomOpen = conference.IsConferenceAccessible();
+        response.Participants = MapParticipants(conference.Participants);
         response.CaseName = conference.CaseName;
         return response;
+    }
+    
+    private static List<ParticipantCoreResponse> MapParticipants(IList<ParticipantBase> conferenceParticipants)
+    {
+        return conferenceParticipants.Select(p => 
+            new ParticipantCoreResponse
+            {
+                Id = p.Id,
+                RefId = p.ParticipantRefId,
+                UserRole = p.UserRole.MapToContractEnum(),
+                DisplayName = p.DisplayName
+            }).ToList();
     }
 }

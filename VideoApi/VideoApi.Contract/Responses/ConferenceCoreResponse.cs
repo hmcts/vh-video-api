@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses;
@@ -47,6 +48,11 @@ public class ConferenceCoreResponse
     /// Is the waiting room still accessible for the conference
     /// </summary>
     public bool IsWaitingRoomOpen { get; set; }
+    
+    /// <summary>
+    /// List of participants in conference
+    /// </summary>
+    public List<ParticipantCoreResponse> Participants { get; set; }
     
     /// <summary>
     /// FOR TESTING ONLY: The case name of the conference

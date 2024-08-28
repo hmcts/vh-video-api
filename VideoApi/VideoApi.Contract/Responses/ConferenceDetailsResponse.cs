@@ -11,7 +11,7 @@ public class ConferenceDetailsResponse : ConferenceCoreResponse
     /// <summary>
     /// List of participants in conference
     /// </summary>
-    public List<ParticipantResponse> Participants { get; set; }
+    public new List<ParticipantResponse> Participants { get; set; }
     
     /// <summary>
     /// List of endpoints in conference
@@ -37,6 +37,5 @@ public class ConferenceDetailsResponse : ConferenceCoreResponse
     
     public string TelephoneConferenceId { get; set; }
     public string TelephoneConferenceNumbers { get; set; }
-    
     public Supplier Supplier { get; set; }
 }
