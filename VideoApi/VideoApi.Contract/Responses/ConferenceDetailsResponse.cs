@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses;
 
@@ -36,4 +37,6 @@ public class ConferenceDetailsResponse : ConferenceCoreResponse
     
     public string TelephoneConferenceId { get; set; }
     public string TelephoneConferenceNumbers { get; set; }
+    
+    public Supplier Supplier { get; set; }
 }

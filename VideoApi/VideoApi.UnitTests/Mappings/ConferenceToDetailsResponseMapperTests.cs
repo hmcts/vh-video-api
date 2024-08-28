@@ -48,6 +48,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CaseNumber)
                 .Excluding(x => x.CaseType)
                 .Excluding(x => x.HearingVenueName)
+                .Excluding(x => x.Supplier)
             );
             
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
@@ -55,6 +56,7 @@ namespace VideoApi.UnitTests.Mappings
             response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.CurrentStatus.Should().Be((Contract.Enums.ConferenceState)conference.GetCurrentStatus());
+            response.Supplier.Should().Be((Contract.Enums.Supplier)conference.Supplier);
             
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options
@@ -81,6 +83,7 @@ namespace VideoApi.UnitTests.Mappings
             civilianRoom.Label.Should().Be(room.Label);
             civilianRoom.Participants.Select(x => x).Should()
                 .BeEquivalentTo(room.RoomParticipants.Select(x => x.ParticipantId));
+            
         }
     }
 }

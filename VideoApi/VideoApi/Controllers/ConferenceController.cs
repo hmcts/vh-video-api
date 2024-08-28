@@ -254,8 +254,7 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferencesByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request)
     {
-        if (request.HearingRefIds == null || !request.HearingRefIds.Any() ||
-            request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
+        if (request.HearingRefIds == null || !request.HearingRefIds.Any() || request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
         {
             ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
             return ValidationProblem(ModelState);

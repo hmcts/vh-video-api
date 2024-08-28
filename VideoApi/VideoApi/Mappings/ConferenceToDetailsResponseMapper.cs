@@ -34,7 +34,8 @@ namespace VideoApi.Mappings
                 IsWaitingRoomOpen = conference.IsConferenceAccessible(),
                 TelephoneConferenceId = conference.MeetingRoom.TelephoneConferenceId,
                 TelephoneConferenceNumbers = phoneNumbers,
-                CaseName = conference.CaseName
+                CaseName = conference.CaseName,
+                Supplier = (Contract.Enums.Supplier)conference.Supplier
             };
             
             if (response.MeetingRoom != null)
