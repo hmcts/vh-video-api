@@ -144,6 +144,7 @@ stages:
   displayName: Docker Build & Push Image
   dependsOn: 
     - Run_Entity_Framework_Staging
+    - Run_Entity_Framework_ITHC
   variables:
   - template: variables/staging.yaml
   - template: variables/shared.yaml
