@@ -20,6 +20,7 @@ parameters:
   - Dev
   - Test
   - Demo
+  - ITHC
 
 pool: 
   vmImage: ubuntu-22.04
