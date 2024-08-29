@@ -1,0 +1,7 @@
+variables:
+  - name: env
+    value: ithc 
+  - name: ithcTagName
+    value: "ithc-#{SHORTCOMMITID}#-#{DATETIME}#"
+  - name: subDirectory
+    value: "/ithc"
