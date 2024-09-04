@@ -26,8 +26,8 @@ using VideoApi.Extensions;
 using VideoApi.Health;
 using VideoApi.Middleware.Logging;
 using VideoApi.Middleware.Validation;
-using VideoApi.Telemetry;
 using VideoApi.Services;
+using VideoApi.Telemetry;
 
 namespace VideoApi
 {
@@ -39,11 +39,11 @@ namespace VideoApi
             Configuration = configuration;
             Environment = environment;
         }
-
+        
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment Environment { get; }
-        public SettingsConfiguration SettingsConfiguration { get; private set; }
-
+        private SettingsConfiguration SettingsConfiguration { get; set; }
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -62,21 +62,21 @@ namespace VideoApi
             
             var envName = Configuration["Services:VideoApiUrl"];
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["LaunchDarkly:SdkKey"], envName));
-
+            
             services.AddApplicationInsightsTelemetry();
             services.AddApplicationInsightsTelemetryProcessor<SuccessfulDependencyProcessor>();
-
+            
             services.AddJsonOptions();
             RegisterSettings(services);
             bool useStub = !bool.TryParse(Configuration["UseStub"], out useStub) || useStub;
-
+            
             services.AddCustomTypes(Environment, useStub);
             RegisterAuth(services);
-
-
+            
+            
             services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware)));
             services.AddTransient<IRequestModelValidatorService, RequestModelValidatorService>();
-
+            
             services.AddMvc(opt =>
             {
                 opt.Filters.Add(typeof(LoggingMiddleware));
@@ -84,7 +84,7 @@ namespace VideoApi
                 opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(string), 500));
             });
             services.AddValidatorsFromAssemblyContaining<IRequestModelValidatorService>();
-
+            
             services.AddVhHealthChecks();
             services.AddDbContextPool<VideoApiDbContext>(options =>
             {
@@ -92,7 +92,7 @@ namespace VideoApi
                     builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null));
             });
         }
-
+        
         private void RegisterSettings(IServiceCollection services)
         {
             SettingsConfiguration = Configuration.Get<SettingsConfiguration>();
@@ -112,12 +112,12 @@ namespace VideoApi
             services.AddHostedService<LongRunningService>();
             services.AddSingleton<IBackgroundWorkerQueue, BackgroundWorkerQueue>();
         }
-
+        
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
             var serviceSettings = Configuration.GetSection("Services").Get<ServicesConfiguration>();
-
+            
             serviceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -133,11 +133,11 @@ namespace VideoApi
                         ValidAudience = serviceSettings.VideoApiResourceId
                     };
                 });
-
+            
             serviceCollection.AddAuthorization(AddPolicies);
             serviceCollection.AddMvc(AddMvcPolicies);
         }
-
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseOpenApi();
@@ -151,27 +151,27 @@ namespace VideoApi
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
-
+            
             app.UseRouting();
-
+            
             app.UseAuthorization();
-
+            
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
-
+            
             app.UseMiddleware<RequestBodyLoggingMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
-
+            
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute(); 
+                endpoints.MapDefaultControllerRoute();
                 
                 endpoints.MapHealthChecks("/health/liveness", new HealthCheckOptions()
                 {
                     Predicate = check => check.Tags.Contains("self"),
                     ResponseWriter = HealthCheckResponseWriter
                 });
-
+                
                 endpoints.MapHealthChecks("/health/startup", new HealthCheckOptions()
                 {
                     Predicate = check => check.Tags.Contains("startup"),
@@ -185,14 +185,14 @@ namespace VideoApi
                 });
             });
         }
-
+        
         private static void AddPolicies(AuthorizationOptions options)
         {
             options.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
         }
-
+        
         private static void AddMvcPolicies(MvcOptions options)
         {
             options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()

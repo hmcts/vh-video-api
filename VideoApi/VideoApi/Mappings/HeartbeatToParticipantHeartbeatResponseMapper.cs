@@ -7,7 +7,8 @@ namespace VideoApi.Mappings
 {
     public static class HeartbeatToParticipantHeartbeatResponseMapper
     {
-        public static IEnumerable<ParticipantHeartbeatResponse> MapHeartbeatToParticipantHeartbeatResponse(IEnumerable<Heartbeat> heartbeat)
+        public static IEnumerable<ParticipantHeartbeatResponse> MapHeartbeatToParticipantHeartbeatResponse(
+            IEnumerable<Heartbeat> heartbeat)
         {
             return heartbeat.Select(x => new ParticipantHeartbeatResponse
             {
@@ -19,7 +20,7 @@ namespace VideoApi.Mappings
                 Timestamp = x.Timestamp
             });
         }
-
+        
         private static decimal GetMaxPercentageLostRecent(Heartbeat heartbeat)
         {
             return new[]

@@ -9,32 +9,36 @@ using VideoApi.DAL.Queries;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
-namespace VideoApi.UnitTests.Controllers.Conference
+namespace VideoApi.UnitTests.Controllers.Participant
 {
-    public class GetJudgesInHearingsTodayTests : ConferenceControllerTestBase
+    public class GetHostsInHearingsTodayTests : ParticipantsControllerTestBase
     {
         [Test]
-        public async Task Should_return_ok_result_and_many_judges_only_from_multiple_conferences()
+        public async Task Should_return_ok_result_and_many_hosts_from_multiple_conferences()
         {
             var conferences = new List<VideoApi.Domain.Conference>();
-            conferences.AddRange(Enumerable.Range(1, 5).Select(x => BuildDefaultConference()));
+            conferences.AddRange(Enumerable.Range(1, 5).Select(x => BuildDefaultConference(x % 2 == 0
+                ? UserRole.Judge
+                : UserRole.StaffMember)));
             
-            QueryHandlerMock
-                .Setup(x => x.Handle<GetHostsInHearingsTodayQuery, List<VideoApi.Domain.Conference>>(It.IsAny<GetHostsInHearingsTodayQuery>()))
+            MockQueryHandler
+                .Setup(x =>
+                    x.Handle<GetHostsInHearingsTodayQuery, List<VideoApi.Domain.Conference>>(
+                        It.IsAny<GetHostsInHearingsTodayQuery>()))
                 .ReturnsAsync(conferences);
-
-            var result = (OkObjectResult)await Controller.GetJudgesInHearingsTodayAsync();
+            
+            var result = (OkObjectResult)await Controller.GetHostsInHearingsTodayAsync();
             result.StatusCode.Should().Be((int)HttpStatusCode.OK);
             result.Value.Should().NotBeNull();
             var results = result.Value as IEnumerable<ParticipantInHearingResponse>;
             results.Should().NotBeNull();
             results.Count().Should().Be(5);
         }
-
-        private static VideoApi.Domain.Conference BuildDefaultConference()
+        
+        private static VideoApi.Domain.Conference BuildDefaultConference(UserRole role)
         {
             return new ConferenceBuilder()
-                .WithParticipant(UserRole.Judge, null)
+                .WithParticipant(role, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.Services.Mappers
 {

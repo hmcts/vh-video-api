@@ -33,15 +33,15 @@ namespace VideoApi.IntegrationTests.Hooks
         private const string KinlyCallbackSecretConfigKeyName = "KinlyConfiguration:CallbackSecret";
         private const string VodafoneApiSecretConfigKeyName = "VodafoneConfiguration:ApiSecret";
         private const string VodafoneCallbackSecretConfigKeyName = "VodafoneConfiguration:CallbackSecret";
-
+        
         private static IConfigurationRoot _configRoot;
-
+        
         public ConfigHooks(TestContext context)
         {
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
         }
-
+        
         /// <summary>
         /// This will insert a random callback secret per test run
         /// </summary>
@@ -53,7 +53,7 @@ namespace VideoApi.IntegrationTests.Hooks
             Environment.SetEnvironmentVariable(VodafoneApiSecretConfigKeyName, secret);
             Environment.SetEnvironmentVariable(VodafoneCallbackSecretConfigKeyName, secret);
         }
-
+        
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
         public void RegisterSecrets(TestContext context)
         {
@@ -69,7 +69,7 @@ namespace VideoApi.IntegrationTests.Hooks
             RegisterServer(context);
             RegisterApiSettings(context);
         }
-
+        
         private static void RegisterDefaultData(TestContext context)
         {
             context.Test = new Test()
@@ -80,17 +80,18 @@ namespace VideoApi.IntegrationTests.Hooks
                 Conferences = new List<Conference>(),
                 TodaysConferences = new List<Conference>()
             };
-            context.Test.CaseName.Should().NotBeNullOrWhiteSpace();
         }
-
+        
         private static void RegisterHearingServices(TestContext context)
         {
-            context.Config.Services = Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
+            context.Config.Services =
+                Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
         }
-
+        
         private static void RegisterKinlySettings(TestContext context)
         {
-            context.Config.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
+            context.Config.KinlyConfiguration =
+                Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
             context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.KinlyConfiguration.CallbackUri.Should().NotBeEmpty();
             context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
@@ -98,60 +99,64 @@ namespace VideoApi.IntegrationTests.Hooks
         
         private static void RegisterVodafoneSettings(TestContext context)
         {
-            context.Config.VodafoneConfiguration = Options.Create(_configRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>()).Value;
+            context.Config.VodafoneConfiguration = Options
+                .Create(_configRoot.GetSection("VodafoneConfiguration").Get<VodafoneConfiguration>()).Value;
             context.Config.VodafoneConfiguration.CallbackUri = context.Config.Services.CallbackUri;
             context.Config.VodafoneConfiguration.CallbackUri.Should().NotBeEmpty();
             context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
         }
-
+        
         private static void RegisterWowzaSettings(TestContext context)
         {
-            context.Config.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
+            context.Config.Wowza =
+                Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
             context.Config.Wowza.StorageAccountKey.Should().NotBeNullOrEmpty();
             context.Config.Wowza.StorageAccountName.Should().NotBeNullOrEmpty();
             context.Config.Wowza.StorageContainerName.Should().NotBeNullOrEmpty();
         }
-
+        
         private static void RegisterCvpSettings(TestContext context)
         {
-            context.Config.Cvp = Options.Create(_configRoot.GetSection("CvpConfiguration").Get<CvpConfiguration>()).Value;
+            context.Config.Cvp = Options.Create(_configRoot.GetSection("CvpConfiguration").Get<CvpConfiguration>())
+                .Value;
             context.Config.Cvp.StorageAccountKey.Should().NotBeNullOrEmpty();
             context.Config.Cvp.StorageAccountName.Should().NotBeNullOrEmpty();
             context.Config.Cvp.StorageContainerName.Should().NotBeNullOrEmpty();
         }
-
+        
         private static void RegisterDatabaseSettings(TestContext context)
         {
-            context.Config.DbConnection = Options.Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
+            context.Config.DbConnection = Options
+                .Create(_configRoot.GetSection("ConnectionStrings").Get<ConnectionStringsConfig>()).Value;
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VideoApiDbContext>();
             dbContextOptionsBuilder.UseSqlServer(context.Config.DbConnection.VideoApi);
             context.VideoBookingsDbContextOptions = dbContextOptionsBuilder.Options;
-            context.TestDataManager = new TestDataManager(context.Config.KinlyConfiguration, 
+            context.TestDataManager = new TestDataManager(context.Config.KinlyConfiguration,
                 context.VideoBookingsDbContextOptions, context.Config.VodafoneConfiguration);
         }
-
+        
         private static void RegisterServer(TestContext context)
         {
             var webHostBuilder = WebHost.CreateDefaultBuilder()
-                    .UseKestrel(c => c.AddServerHeader = false)
-                    .UseEnvironment("Development")
-                    .UseStartup<Startup>()
-                    .ConfigureTestServices(services =>
+                .UseKestrel(c => c.AddServerHeader = false)
+                .UseEnvironment("Development")
+                .UseStartup<Startup>()
+                .ConfigureTestServices(services =>
+                {
+                    services.AddAuthentication(options =>
                     {
-                        services.AddAuthentication(options =>
-                        {
-                            options.DefaultScheme = FakeJwtBearerDefaults.AuthenticationScheme;
-                            options.DefaultAuthenticateScheme = FakeJwtBearerDefaults.AuthenticationScheme;
-                            options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
-                        }).AddFakeJwtBearer();
-
-                        RegisterAzuriteStorageService(context, services);
-
-                        RegisterStubs(services);
-                    });
+                        options.DefaultScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultAuthenticateScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+                    }).AddFakeJwtBearer();
+                    
+                    RegisterAzuriteStorageService(context, services);
+                    
+                    RegisterStubs(services);
+                });
             context.Server = new TestServer(webHostBuilder);
         }
-
+        
         private static void RegisterStubs(IServiceCollection services)
         {
             var serviceProvider = services.BuildServiceProvider();
@@ -162,10 +167,10 @@ namespace VideoApi.IntegrationTests.Hooks
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
             services.AddSingleton<IFeatureToggles, FeatureTogglesStub>();
-            services.AddScoped<ISupplierPlatformServiceFactory>(_ => 
+            services.AddScoped<ISupplierPlatformServiceFactory>(_ =>
                 new TestSupplierPlatformServiceFactory(kinlyConfigOptions.Value, vodafoneConfigOptions.Value));
         }
-
+        
         private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)
         {
             // Remove application IEmailProvider service
@@ -174,7 +179,7 @@ namespace VideoApi.IntegrationTests.Hooks
             {
                 services.Remove(azStorageService);
             }
-
+            
             var blobConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
 #pragma warning disable
             // This the default test secret available in public MS documentation
@@ -182,20 +187,19 @@ namespace VideoApi.IntegrationTests.Hooks
                 "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
 #pragma warning restore
             var serviceClient = new BlobServiceClient(connectionString);
-
+            
             NUnit.Framework.TestContext.WriteLine($"Blob connectionstring is {blobConnectionString}");
             var blobClientExtension = new BlobClientExtension();
-
+            
             services.AddSingleton<IAzureStorageService>(x =>
                 new VhAzureStorageService(serviceClient, context.Config.Wowza, false, blobClientExtension));
             services.AddSingleton<IAzureStorageService>(x =>
                 new CvpAzureStorageService(serviceClient, context.Config.Cvp, false, blobClientExtension));
         }
-
+        
         private static void RegisterApiSettings(TestContext context)
         {
             context.Response = new HttpResponseMessage();
         }
     }
 }
-

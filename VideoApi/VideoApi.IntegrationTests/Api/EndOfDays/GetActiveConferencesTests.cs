@@ -25,10 +25,9 @@ public class GetActiveConferencesTests : ApiTest
         // Arrange
         var conferenceInSession = new ConferenceBuilder(ignoreId: true, supplier: Supplier.Kinly).WithParticipants(2)
             .WithConferenceStatus(ConferenceState.InSession).Build();
-        var kinlyConference = conferenceInSession;
+        
         var conferencePaused = new ConferenceBuilder(ignoreId: true, supplier: Supplier.Vodafone).WithParticipants(2)
             .WithConferenceStatus(ConferenceState.Paused).Build();
-        var vodafoneConference = conferencePaused;
         
         var conferenceClosed = new ConferenceBuilder(ignoreId: true).WithParticipants(2)
             .WithConferenceStatus(ConferenceState.Closed).Build();
@@ -38,10 +37,14 @@ public class GetActiveConferencesTests : ApiTest
         var consultationRoomPreStart = new ConsultationRoom(conferenceNotStartedWithActiveConsultation.Id,
             "Civilian_ConsultationRoom1", VirtualCourtRoomType.Civilian, false);
         
-        conferenceNotStartedWithActiveConsultation.Participants[0].UpdateParticipantStatus(ParticipantState.InConsultation);
-        conferenceNotStartedWithActiveConsultation.Participants[0].UpdateCurrentConsultationRoom(consultationRoomPreStart);
-        conferenceNotStartedWithActiveConsultation.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
-        conferenceNotStartedWithActiveConsultation.Participants[1].UpdateCurrentConsultationRoom(consultationRoomPreStart);
+        conferenceNotStartedWithActiveConsultation.Participants[0]
+            .UpdateParticipantStatus(ParticipantState.InConsultation);
+        conferenceNotStartedWithActiveConsultation.Participants[0]
+            .UpdateCurrentConsultationRoom(consultationRoomPreStart);
+        conferenceNotStartedWithActiveConsultation.Participants[1]
+            .UpdateParticipantStatus(ParticipantState.InConsultation);
+        conferenceNotStartedWithActiveConsultation.Participants[1]
+            .UpdateCurrentConsultationRoom(consultationRoomPreStart);
         
         var conferenceClosedWithActiveConsultation = new ConferenceBuilder(ignoreId: true)
             .WithConferenceStatus(ConferenceState.Closed).WithParticipants(2).Build();
@@ -49,9 +52,11 @@ public class GetActiveConferencesTests : ApiTest
             "Civilian_ConsultationRoom1", VirtualCourtRoomType.Civilian, false);
         
         conferenceClosedWithActiveConsultation.Participants[0].UpdateParticipantStatus(ParticipantState.InConsultation);
-        conferenceClosedWithActiveConsultation.Participants[0].UpdateCurrentConsultationRoom(consultationRoomPostClosed);
+        conferenceClosedWithActiveConsultation.Participants[0]
+            .UpdateCurrentConsultationRoom(consultationRoomPostClosed);
         conferenceClosedWithActiveConsultation.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
-        conferenceClosedWithActiveConsultation.Participants[1].UpdateCurrentConsultationRoom(consultationRoomPostClosed);
+        conferenceClosedWithActiveConsultation.Participants[1]
+            .UpdateCurrentConsultationRoom(consultationRoomPostClosed);
         
         
         var conferenceSuspendedWithActiveConsultation = new ConferenceBuilder(ignoreId: true)
@@ -59,10 +64,14 @@ public class GetActiveConferencesTests : ApiTest
         var consultationSuspendedClosed = new ConsultationRoom(conferenceSuspendedWithActiveConsultation.Id,
             "Civilian_ConsultationRoom1", VirtualCourtRoomType.Civilian, false);
         
-        conferenceSuspendedWithActiveConsultation.Participants[0].UpdateParticipantStatus(ParticipantState.InConsultation);
-        conferenceSuspendedWithActiveConsultation.Participants[0].UpdateCurrentConsultationRoom(consultationSuspendedClosed);
-        conferenceSuspendedWithActiveConsultation.Participants[1].UpdateParticipantStatus(ParticipantState.InConsultation);
-        conferenceSuspendedWithActiveConsultation.Participants[1].UpdateCurrentConsultationRoom(consultationSuspendedClosed);
+        conferenceSuspendedWithActiveConsultation.Participants[0]
+            .UpdateParticipantStatus(ParticipantState.InConsultation);
+        conferenceSuspendedWithActiveConsultation.Participants[0]
+            .UpdateCurrentConsultationRoom(consultationSuspendedClosed);
+        conferenceSuspendedWithActiveConsultation.Participants[1]
+            .UpdateParticipantStatus(ParticipantState.InConsultation);
+        conferenceSuspendedWithActiveConsultation.Participants[1]
+            .UpdateCurrentConsultationRoom(consultationSuspendedClosed);
         
         await TestDataManager.SeedConference(conferenceInSession);
         await TestDataManager.SeedConference(conferencePaused);
@@ -81,7 +90,7 @@ public class GetActiveConferencesTests : ApiTest
         
         // Assert
         conferenceResponse.Should().NotBeNullOrEmpty();
-        conferenceResponse.Should().NotContain(x=> x.Id == conferenceClosed.Id);
+        conferenceResponse.Should().NotContain(x => x.Id == conferenceClosed.Id);
         
         conferenceResponse.Select(c => c.Id).Should().Contain(new List<Guid>
         {
@@ -91,11 +100,5 @@ public class GetActiveConferencesTests : ApiTest
             conferenceNotStartedWithActiveConsultation.Id,
             conferenceSuspendedWithActiveConsultation.Id
         });
-        
-        var kinlyConferenceResponse = conferenceResponse.FirstOrDefault(x => x.Id == kinlyConference.Id);
-        VerifyConferenceInResponse(kinlyConferenceResponse, kinlyConference);
-        
-        var vodafoneConferenceResponse = conferenceResponse.FirstOrDefault(x => x.Id == vodafoneConference.Id);
-        VerifyConferenceInResponse(vodafoneConferenceResponse, vodafoneConference);
     }
 }

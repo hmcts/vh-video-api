@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
-using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
@@ -27,13 +26,13 @@ namespace VideoApi.Controllers
     [ApiController]
     public class EndpointsController : ControllerBase
     {
-        private readonly IQueryHandler _queryHandler;
         private readonly ICommandHandler _commandHandler;
-        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
         private readonly ILogger<EndpointsController> _logger;
-
-        public EndpointsController(IQueryHandler queryHandler, 
-            ICommandHandler commandHandler, 
+        private readonly IQueryHandler _queryHandler;
+        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
+        
+        public EndpointsController(IQueryHandler queryHandler,
+            ICommandHandler commandHandler,
             ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
             ILogger<EndpointsController> logger)
         {
@@ -42,7 +41,7 @@ namespace VideoApi.Controllers
             _commandHandler = commandHandler;
             _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
         }
-
+        
         /// <summary>
         /// Get all endpoints for a conference
         /// </summary>
@@ -50,7 +49,7 @@ namespace VideoApi.Controllers
         /// <returns>List of endpoints</returns>
         [HttpGet("{conferenceId}/endpoints")]
         [OpenApiOperation("GetEndpointsForConference")]
-        [ProducesResponseType(typeof(IList<EndpointResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<EndpointResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetEndpointsForConference(Guid conferenceId)
         {
             _logger.LogDebug("Retrieving endpoints for conference {conferenceId}", conferenceId);
@@ -59,7 +58,7 @@ namespace VideoApi.Controllers
             var response = endpoints.Select(EndpointToResponseMapper.MapEndpointResponse).ToList();
             return Ok(response);
         }
-
+        
         /// <summary>
         /// Add an endpoint to a conference
         /// </summary>
@@ -67,23 +66,28 @@ namespace VideoApi.Controllers
         /// <param name="request">Endpoint details</param>
         [HttpPost("{conferenceId}/endpoints")]
         [OpenApiOperation("AddEndpointToConference")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId, [FromBody] AddEndpointRequest request)
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId,
+            [FromBody] AddEndpointRequest request)
         {
             _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
             
-            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin, request.DefenceAdvocate);
+            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin,
+                request.DefenceAdvocate);
             await _commandHandler.Handle(command);
-
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
-            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired,
+                endpointDtos);
             
             _logger.LogDebug("Successfully added endpoint {DisplayName} to conference", request.DisplayName);
             return NoContent();
         }
-
+        
         /// <summary>
         /// Remove an endpoint from a conference
         /// </summary>
@@ -92,23 +96,26 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpDelete("{conferenceId}/endpoints/{sipAddress}")]
         [OpenApiOperation("RemoveEndpointFromConference")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, string sipAddress)
         {
             _logger.LogDebug("Attempting to remove endpoint {sipAddress} from conference", sipAddress);
-
+            
             var command = new RemoveEndpointCommand(conferenceId, sipAddress);
             await _commandHandler.Handle(command);
-
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
-            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired,
+                endpointDtos);
             
             _logger.LogDebug("Successfully removed endpoint {sipAddress} from conference", sipAddress);
             return NoContent();
         }
-
+        
         /// <summary>
         /// Update an endpoint's display name or assign the defence advocate
         /// </summary>
@@ -118,31 +125,38 @@ namespace VideoApi.Controllers
         /// <returns>an OK status</returns>
         [HttpPatch("{conferenceId}/endpoints/{sipAddress}")]
         [OpenApiOperation("UpdateEndpointInConference")]
-        [ProducesResponseType((int) HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateEndpointInConference(Guid conferenceId, string sipAddress, [FromBody] UpdateEndpointRequest request)
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateEndpointInConference(Guid conferenceId, string sipAddress,
+            [FromBody] UpdateEndpointRequest request)
         {
             _logger.LogDebug(
-                "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
-
-            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate);
+                "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress,
+                request.DisplayName);
+            
+            var command =
+                new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate);
             await _commandHandler.Handle(command);
-
+            
             if (!string.IsNullOrWhiteSpace(request.DisplayName))
             {
                 await UpdateDisplayNameWithSupplier(conferenceId);
             }
-
+            
             _logger.LogDebug(
-                "Successfully updated endpoint {sipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
+                "Successfully updated endpoint {sipAddress} with display name {DisplayName}", sipAddress,
+                request.DisplayName);
             return Ok();
         }
-
+        
         private async Task UpdateDisplayNameWithSupplier(Guid conferenceId)
         {
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var conference =
+                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                    new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
-            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired, endpointDtos);
+            await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired,
+                endpointDtos);
         }
     }
 }
