@@ -10,8 +10,6 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Mappings;
-using VideoApi.Services;
-using VideoApi.Services.Mappers;
 
 namespace VideoApi.Controllers;
 
@@ -21,8 +19,7 @@ namespace VideoApi.Controllers;
 [ApiController]
 public class EndOfDayController(
     IQueryHandler queryHandler,
-    ILogger<EndOfDayController> logger,
-    ISupplierPlatformServiceFactory supplierPlatformServiceFactory)
+    ILogger<EndOfDayController> logger)
     : ControllerBase
 {
     /// <summary>
@@ -33,22 +30,12 @@ public class EndOfDayController(
     /// <returns></returns>
     [HttpGet("active-sessions")]
     [OpenApiOperation("GetActiveConferences")]
-    [ProducesResponseType(typeof(List<ConferenceForAdminResponse>), (int) HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<ConferenceCoreResponse>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetActiveConferences()
     {
         logger.LogDebug("Getting all active conferences");
         var query = new GetActiveConferencesQuery();
         var conferences = await queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
-        
-        var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
-        var supplierConfigs = supplierConfigMapper.ExtractSupplierConfigurations(conferences);
-
-        var response = conferences.Select(c =>
-        {
-            var supplierConfig = supplierConfigs.Find(sc => sc.Supplier == c.Supplier);
-            return ConferenceForAdminResponseMapper.MapConferenceToAdminResponse(c, supplierConfig.Configuration);
-        });
-        
-        return Ok(response);
+        return Ok(conferences.Select(ConferenceCoreResponseMapper.Map));
     }
 }

@@ -3,7 +3,6 @@ Feature: Audio Recording
   As an api service
 	I want to enable CRUD processes for audio recordings
 
-@VIH-5868
 Scenario: Get Audio Recording Link - Ok
 	Given I have a conference
 	And the conference has an audio recording
@@ -12,7 +11,6 @@ Scenario: Get Audio Recording Link - Ok
 	Then the response should have the status Ok and success status True
 	And the audio recording link is retrieved
 
-@VIH-5868
 Scenario: Get Audio Recording Link - Not Found
 	Given I have a conference
 	And I have a valid get audio recording link request for non existing hearing

@@ -14,13 +14,9 @@ namespace Testing.Common.Assertions
         public static void ForConference(ConferenceDetailsResponse conference)
         {
             conference.Should().NotBeNull();
-            conference.CaseType.Should().NotBeNullOrEmpty();
-            conference.CaseNumber.Should().NotBeNullOrEmpty();
-            conference.CaseName.Should().NotBeNullOrEmpty();
             conference.ScheduledDuration.Should().BeGreaterThan(0);
             conference.ScheduledDateTime.Should().NotBe(DateTime.MinValue);
             conference.CurrentStatus.Should().Be(conference.CurrentStatus);
-            conference.HearingVenueName.Should().NotBeNull();
 
             conference.IsWaitingRoomOpen.Should().BeTrue();
 

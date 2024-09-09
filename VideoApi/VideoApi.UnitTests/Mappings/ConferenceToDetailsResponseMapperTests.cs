@@ -1,6 +1,7 @@
 using System.Linq;
+using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Consts;
+using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 
@@ -20,9 +21,16 @@ namespace VideoApi.UnitTests.Mappings
                 .WithMessages(5)
                 .WithInterpreterRoom()
                 .Build();
-
-            var pexipSelfTestNode = "selttest@pexip.node";
-            var response = ConferenceToDetailsResponseMapper.MapConferenceToResponse(conference, pexipSelfTestNode);
+            string conferencePhoneNumber = "+441234567890";
+            string conferencePhoneNumberWelsh = "+449876543210";
+            string pexipSelfTestNode = "selttest@pexip.node";
+            
+            var configuration = Builder<KinlyConfiguration>.CreateNew()
+                .With(x => x.ConferencePhoneNumber = conferencePhoneNumber)
+                .With(x => x.ConferencePhoneNumberWelsh = conferencePhoneNumberWelsh)
+                .With(x => x.PexipSelfTestNode = pexipSelfTestNode).Build();
+            
+            var response = ConferenceToDetailsResponseMapper.Map(conference, configuration);
             response.Should().BeEquivalentTo(conference, options => options
                 .Excluding(x => x.HearingRefId)
                 .Excluding(x => x.Participants)
@@ -36,12 +44,20 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.Rooms)
                 .Excluding(x => x.UpdatedAt)
                 .Excluding(x => x.Supplier)
-             );
-
+                .Excluding(x => x.CaseName)
+                .Excluding(x => x.CaseNumber)
+                .Excluding(x => x.CaseType)
+                .Excluding(x => x.HearingVenueName)
+                .Excluding(x => x.Supplier)
+            );
+            
+            response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
+            response.TelephoneConferenceNumbers.Should().Be($"{conferencePhoneNumber},{conferencePhoneNumberWelsh}");
             response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.CurrentStatus.Should().Be((Contract.Enums.ConferenceState)conference.GetCurrentStatus());
-
+            response.Supplier.Should().Be((Contract.Enums.Supplier)conference.Supplier);
+            
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options
                 .Excluding(x => x.ParticipantRefId)
@@ -60,13 +76,14 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.HearingRole)
                 .Excluding(x => x.HearingRole)
             );
-
+            
             var civilianRoom = response.CivilianRooms[0];
             var room = conference.Rooms.First();
             civilianRoom.Id.Should().Be(room.Id);
             civilianRoom.Label.Should().Be(room.Label);
             civilianRoom.Participants.Select(x => x).Should()
                 .BeEquivalentTo(room.RoomParticipants.Select(x => x.ParticipantId));
+            
         }
     }
 }
