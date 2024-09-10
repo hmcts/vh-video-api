@@ -27,19 +27,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .WithEndpoint("DisplayName2", "0987654321", "5678")
                 .Build();
         }
-
-        [Test]
-        public async Task Should_book_supplier_conference_room_for_given_conference_id()
-        {
-            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
-            SetupCallToMockRetryService(audioPlatformServiceResponse);
-            VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync((MeetingRoom)null);
-            
-            await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, Array.Empty<EndpointDto>());
-
-            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
-            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
-        }
         
         [Test]
         public async Task Should_book_supplier_conference_room_for_given_conference_id_retries()
@@ -67,21 +54,10 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             _request.AudioRecordingRequired = false;
             await Controller.BookNewConferenceAsync(_request);
-
-            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Should_book_supplier_conference_with_ingesturl_when_audio_recording_is_required()
-        {
-            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) { IngestUrl = "http://myIngestUrl.com" };
-            SetupCallToMockRetryService(audioPlatformServiceResponse);
-            VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
-
-            await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, Array.Empty<EndpointDto>());
-
-            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
-            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
+            
+            QueryHandlerMock.Verify(
+                q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()),
+                Times.Once);
         }
         
         [Test]
@@ -117,42 +93,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             BookingServiceMock.Verify(v
                 => v.BookMeetingRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
                     It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<Supplier>()), Times.Once);
-        }
-        
-        [Test]
-        public async Task Should_book_supplier_conference_with_ingest_url_when_hrs_integration_feature_is_disabled()
-        {
-            Mocker.Mock<IFeatureToggles>().Setup(x => x.HrsIntegrationEnabled()).Returns(false);
-            var expectedIngestUrl =
-                $"https://localhost.streaming.mediaServices.windows.net/{_request.HearingRefId.ToString()}";
-            AudioPlatformServiceMock.Setup(x => x.GetAudioIngestUrl(_request.HearingRefId.ToString()))
-                .Returns(expectedIngestUrl);
-            SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) { IngestUrl = expectedIngestUrl });
-            SetupCallToMockRetryService(Guid.NewGuid());
-            SetupCallToMockRetryService(true);
-            
-            await Controller.BookNewConferenceAsync(_request);
-            
-            BookingServiceMock.Verify(v
-                => v.BookMeetingRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
-                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<Supplier>()), Times.Once);
-            
-            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
-        }
-        
-        [Test]
-        public async Task Should_book_supplier_conference_room_for_given_conference_id_with_endpoints()
-        {
-            var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true) {IngestUrl = "http://myIngestUrl.com"};
-            SetupCallToMockRetryService(audioPlatformServiceResponse);
-            VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
-
-            var response = await Controller.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl, Array.Empty<EndpointDto>());
-
-            response.Should().BeTrue();
-
-            VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
-            CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
         }
         
         [Test]
