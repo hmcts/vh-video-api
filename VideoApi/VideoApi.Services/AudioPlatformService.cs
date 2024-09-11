@@ -123,7 +123,9 @@ namespace VideoApi.Services
         {
             if (ex.StatusCode != HttpStatusCode.NotFound)
             {
+#pragma warning disable CA2254 // Template should be a static expression
                 _logger.LogError(ex, errorMessageTemplate, args);
+#pragma warning restore CA2254 // Template should be a static expression
             }
         }
         
