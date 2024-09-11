@@ -197,11 +197,11 @@ namespace VideoApi.Services
         
         private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
         {
-            while (tasks.Any())
+            while (tasks.Count != 0)
             {
                 var task = await Task.WhenAny(tasks);
 
-                if (task != null && !task.IsCanceled && !task.IsFaulted)
+                if (!task.IsCanceled && !task.IsFaulted)
                 {
                     return await task;
                 }

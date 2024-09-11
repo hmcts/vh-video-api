@@ -40,7 +40,6 @@ public class ConferenceController(
     IAudioPlatformService audioPlatformService,
     IAzureStorageServiceFactory azureStorageServiceFactory,
     IPollyRetryService pollyRetryService,
-    IFeatureToggles featureToggles,
     IBookingService bookingService)
     : ControllerBase
 {
@@ -82,7 +81,9 @@ public class ConferenceController(
         if (!roomBookedSuccess)
         {
             var message = $"Could not book and find meeting room for conferenceId: {conferenceId}";
+#pragma warning disable CA2254 // Template should be a static expression
             logger.LogError(message);
+#pragma warning restore CA2254 // Template should be a static expression
             return StatusCode((int)HttpStatusCode.InternalServerError, message);
         }
         
@@ -237,12 +238,11 @@ public class ConferenceController(
             await queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
         return Ok(conferences.Select(ConferenceCoreResponseMapper.Map));
     }
-    
+
     /// <summary>
     /// Get conferences by hearing ref ids
     /// </summary>
     /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
-    /// <param name="includeClosed">Include closed conferences in search</param>
     /// <returns>List of Base conference core objects</returns>
     [HttpPost("hearings")]
     [OpenApiOperation("GetConferencesByHearingRefIds")]
@@ -251,7 +251,7 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferencesByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request)
     {
-        if (request.HearingRefIds == null || !request.HearingRefIds.Any() || request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
+        if (request.HearingRefIds == null || request.HearingRefIds.Length == 0 || request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
         {
             ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
             return ValidationProblem(ModelState);
@@ -262,19 +262,17 @@ public class ConferenceController(
         var conferencesList =
             await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
         
-        if (conferencesList == null || !conferencesList.Any())
+        if (conferencesList == null || conferencesList.Count == 0)
             return NotFound();
         
         return Ok(conferencesList.Select(ConferenceCoreResponseMapper.Map));
     }
-    
-    
+
+
     /// <summary>
     /// Get full conference details by hearing ref ids
     /// </summary>
     /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
-    /// <param name="includeClosed">Include closed conferences in search</param>
-    /// <param name="verbose">Include full conference details in response</param>
     /// <returns>List of conferences with full details including participants and statuses of a conference</returns>
     [HttpPost("hearings/details")]
     [OpenApiOperation("GetConferenceDetailsByHearingRefIds")]
@@ -283,7 +281,7 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferenceDetailsByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request)
     {
-        if (request.HearingRefIds == null || !request.HearingRefIds.Any() || request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
+        if (request.HearingRefIds == null || request.HearingRefIds.Length == 0 || request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
         {
             ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
             return ValidationProblem(ModelState);
@@ -294,7 +292,7 @@ public class ConferenceController(
         var conferencesList =
             await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
         
-        if (conferencesList == null || !conferencesList.Any())
+        if (conferencesList == null || conferencesList.Count == 0)
             return NotFound();
         
         var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
@@ -408,7 +406,9 @@ public class ConferenceController(
         }
         catch (Exception e)
         {
+#pragma warning disable CA2254 // Template should be a static expression
             logger.LogError(e, e.Message);
+#pragma warning restore CA2254 // Template should be a static expression
             return NoContent();
         }
     }
@@ -544,7 +544,9 @@ public class ConferenceController(
             }
             catch (AudioPlatformFileNotFoundException ex)
             {
+#pragma warning disable CA2254 // Template should be a static expression
                 logger.LogError(ex, ex.Message);
+#pragma warning restore CA2254 // Template should be a static expression
             }
         }
     }
