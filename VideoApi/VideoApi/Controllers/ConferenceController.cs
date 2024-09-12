@@ -40,7 +40,6 @@ public class ConferenceController(
     IAudioPlatformService audioPlatformService,
     IAzureStorageServiceFactory azureStorageServiceFactory,
     IPollyRetryService pollyRetryService,
-    IFeatureToggles featureToggles,
     IBookingService bookingService)
     : ControllerBase
 {
@@ -66,10 +65,7 @@ public class ConferenceController(
             participant.DisplayName = participant.DisplayName.Trim();
         }
         
-        var audioIngestUrl = featureToggles.HrsIntegrationEnabled()
-            ? audioPlatformService.GetAudioIngestUrl(request.CaseTypeServiceId, request.CaseNumber,
-                request.HearingRefId.ToString())
-            : audioPlatformService.GetAudioIngestUrl(request.HearingRefId.ToString());
+        var audioIngestUrl = audioPlatformService.GetAudioIngestUrl(request.CaseTypeServiceId, request.CaseNumber, request.HearingRefId.ToString());
         
         var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
         logger.LogDebug("Conference Created");
@@ -85,7 +81,9 @@ public class ConferenceController(
         if (!roomBookedSuccess)
         {
             var message = $"Could not book and find meeting room for conferenceId: {conferenceId}";
+#pragma warning disable CA2254 // Template should be a static expression
             logger.LogError(message);
+#pragma warning restore CA2254 // Template should be a static expression
             return StatusCode((int)HttpStatusCode.InternalServerError, message);
         }
         
@@ -245,7 +243,6 @@ public class ConferenceController(
     /// Get conferences by hearing ref ids
     /// </summary>
     /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
-    /// <param name="includeClosed">Include closed conferences in search</param>
     /// <returns>List of Base conference core objects</returns>
     [HttpPost("hearings")]
     [OpenApiOperation("GetConferencesByHearingRefIds")]
@@ -254,18 +251,15 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferencesByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request)
     {
-        if (request.HearingRefIds == null || !request.HearingRefIds.Any() || request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
-        {
-            ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
+        if(!ValidateGetConferencesByHearingIdsRequest(request))
             return ValidationProblem(ModelState);
-        }
         
         var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, request.IncludeClosed);
         
         var conferencesList =
             await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
         
-        if (conferencesList == null || !conferencesList.Any())
+        if (conferencesList == null || conferencesList.Count == 0)
             return NotFound();
         
         return Ok(conferencesList.Select(ConferenceCoreResponseMapper.Map));
@@ -276,8 +270,6 @@ public class ConferenceController(
     /// Get full conference details by hearing ref ids
     /// </summary>
     /// <param name="request">Hearing IDs within GetConferencesByHearingIdsRequest</param>
-    /// <param name="includeClosed">Include closed conferences in search</param>
-    /// <param name="verbose">Include full conference details in response</param>
     /// <returns>List of conferences with full details including participants and statuses of a conference</returns>
     [HttpPost("hearings/details")]
     [OpenApiOperation("GetConferenceDetailsByHearingRefIds")]
@@ -286,18 +278,15 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferenceDetailsByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request)
     {
-        if (request.HearingRefIds == null || !request.HearingRefIds.Any() || request.HearingRefIds.Any(x => x.Equals(Guid.Empty)))
-        {
-            ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
+        if(!ValidateGetConferencesByHearingIdsRequest(request))
             return ValidationProblem(ModelState);
-        }
-        
+            
         var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, request.IncludeClosed);
         
         var conferencesList =
             await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
         
-        if (conferencesList == null || !conferencesList.Any())
+        if (conferencesList == null || conferencesList.Count == 0)
             return NotFound();
         
         var supplierConfigMapper = new SupplierConfigurationMapper(supplierPlatformServiceFactory);
@@ -309,6 +298,16 @@ public class ConferenceController(
             return ConferenceToDetailsResponseMapper.Map(c, supplierConfig.Configuration);
         });
         return Ok(response);
+    }
+    
+    private bool ValidateGetConferencesByHearingIdsRequest(GetConferencesByHearingIdsRequest request)
+    {
+        if (request.HearingRefIds == null || request.HearingRefIds.Length == 0 || Array.Exists(request.HearingRefIds,x => x.Equals(Guid.Empty)))
+        {
+            ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
+            return false;
+        }
+        return true;
     }
     
     /// <summary>
@@ -411,7 +410,9 @@ public class ConferenceController(
         }
         catch (Exception e)
         {
+#pragma warning disable CA2254 // Template should be a static expression
             logger.LogError(e, e.Message);
+#pragma warning restore CA2254 // Template should be a static expression
             return NoContent();
         }
     }
@@ -547,7 +548,9 @@ public class ConferenceController(
             }
             catch (AudioPlatformFileNotFoundException ex)
             {
+#pragma warning disable CA2254 // Template should be a static expression
                 logger.LogError(ex, ex.Message);
+#pragma warning restore CA2254 // Template should be a static expression
             }
         }
     }
