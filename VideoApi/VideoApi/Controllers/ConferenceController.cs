@@ -238,7 +238,7 @@ public class ConferenceController(
             await queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
         return Ok(conferences.Select(ConferenceCoreResponseMapper.Map));
     }
-
+    
     /// <summary>
     /// Get conferences by hearing ref ids
     /// </summary>
@@ -251,11 +251,8 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferencesByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request)
     {
-        if (request.HearingRefIds == null || request.HearingRefIds.Length == 0 || Array.Exists(request.HearingRefIds,x => x.Equals(Guid.Empty)))
-        {
-            ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
+        if(!ValidateGetConferencesByHearingIdsRequest(request))
             return ValidationProblem(ModelState);
-        }
         
         var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, request.IncludeClosed);
         
@@ -267,8 +264,8 @@ public class ConferenceController(
         
         return Ok(conferencesList.Select(ConferenceCoreResponseMapper.Map));
     }
-
-
+    
+    
     /// <summary>
     /// Get full conference details by hearing ref ids
     /// </summary>
@@ -281,12 +278,9 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferenceDetailsByHearingRefIdsAsync(GetConferencesByHearingIdsRequest request)
     {
-        if (request.HearingRefIds == null || request.HearingRefIds.Length == 0 || Array.Exists(request.HearingRefIds,x => x.Equals(Guid.Empty)))
-        {
-            ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
+        if(!ValidateGetConferencesByHearingIdsRequest(request))
             return ValidationProblem(ModelState);
-        }
-        
+            
         var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefIds, request.IncludeClosed);
         
         var conferencesList =
@@ -304,6 +298,16 @@ public class ConferenceController(
             return ConferenceToDetailsResponseMapper.Map(c, supplierConfig.Configuration);
         });
         return Ok(response);
+    }
+    
+    private bool ValidateGetConferencesByHearingIdsRequest(GetConferencesByHearingIdsRequest request)
+    {
+        if (request.HearingRefIds == null || request.HearingRefIds.Length == 0 || Array.Exists(request.HearingRefIds,x => x.Equals(Guid.Empty)))
+        {
+            ModelState.AddModelError(nameof(request.HearingRefIds), "Please provide at least one hearing id");
+            return false;
+        }
+        return true;
     }
     
     /// <summary>
