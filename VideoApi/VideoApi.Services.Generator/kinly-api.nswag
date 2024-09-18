@@ -10,6 +10,8 @@
   },
   "codeGenerators": {
     "openApiToCSharpClient": {
+      "jsonLibrary": "SystemTextJson",
+      "jsonSerializerSettingsTransformationMethod": null,
       "clientBaseClass": null,
       "configurationClass": null,
       "generateClientClasses": true,
@@ -73,7 +75,6 @@
       "handleReferences": false,
       "generateImmutableArrayProperties": false,
       "generateImmutableDictionaryProperties": false,
-      "jsonSerializerSettingsTransformationMethod": null,
       "inlineNamedArrays": false,
       "inlineNamedDictionaries": false,
       "inlineNamedTuples": true,

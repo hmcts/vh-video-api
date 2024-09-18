@@ -1,46 +1,50 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Xml;
 
 namespace VideoApi.Common.Helpers
 {
     public static class ApiRequestHelper
     {
-        private static JsonSerializerSettings DefaultNewtonsoftSerializerSettings()
-        {
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()},
-                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-                Formatting = Formatting.Indented
-            };
-            
-            settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-            settings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
-            
-            return settings;
-        }
         
         public static T Deserialise<T>(string response)
         {
-            return JsonConvert.DeserializeObject<T>(response, DefaultNewtonsoftSerializerSettings());
+            return JsonSerializer.Deserialize<T>(response, DefaultSystemTextJsonSerializerSettings());
         }
         
         public static string Serialise(object request)
         {
-            return JsonConvert.SerializeObject(request, DefaultNewtonsoftSerializerSettings());
+            return JsonSerializer.Serialize(request, DefaultSystemTextJsonSerializerSettings());
         }
         
         public static string SerialiseRequestToCamelCaseJson(object request)
         {
-            return JsonConvert.SerializeObject(request, new JsonSerializerSettings
+            return JsonSerializer.Serialize(request, new JsonSerializerOptions
             {
-                ContractResolver = new DefaultContractResolver
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Converters =
                 {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                },
-                Formatting = Formatting.Indented
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                }
             });
+        }
+        
+        public static JsonSerializerOptions DefaultSystemTextJsonSerializerSettings()
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Converters =
+                {
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                }
+            };
+
+            return options;
         }
     }
 }

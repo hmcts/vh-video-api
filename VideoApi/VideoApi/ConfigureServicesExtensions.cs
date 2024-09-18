@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
@@ -13,7 +15,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NSwag;
 using NSwag.Generation.Processors.Security;
@@ -268,19 +269,15 @@ namespace VideoApi
         
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)
         {
-            var contractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            };
-            
-            serviceCollection.AddMvc()
-                .AddNewtonsoftJson(options =>
+            serviceCollection.AddControllers()
+                .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ContractResolver = contractResolver;
-                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 });
-            
+
             return serviceCollection;
         }
     }
