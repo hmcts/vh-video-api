@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
 using VideoApi.Services.Contracts;
@@ -57,7 +57,7 @@ namespace VideoApi.Services
                     if (response.IsSuccessStatusCode)
                     {
                         _logger.LogInformation("Got Wowza stream recorder for application: {recorder}", recorder);
-                        return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
+                        return JsonSerializer.Deserialize<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
                     }
                     responses.Add(response);
                 }
