@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Services
         private readonly WowzaConfiguration _wowzaConfiguration;
         private readonly Mock<ILogger<AudioPlatformService>> _logger;
         private readonly AudioPlatformService _audioPlatformService;
-
+        
         public AudioPlatformServiceTest()
         {
             _wowzaClient1            = new Mock<IWowzaHttpClient>();
@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Services
             
             _audioPlatformService = new AudioPlatformService(new []{_wowzaClient1.Object,_wowzaClient2.Object, _wowzaClientLoadBalancer.Object}, _wowzaConfiguration, _logger.Object);
         }
-
+        
         [Test]
         public async Task GetAudioApplicationInfoAsync_Returns_Null_When_AudioPlatformException_Thrown()
         {
@@ -45,7 +45,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().BeNull();
         }
-
+        
         [Test]
         public async Task GetAudioApplicationInfoAsync_Returns_Null_When_AudioPlatformException_Thrown_which_is_NotFound()
         {
@@ -57,7 +57,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().BeNull();
         }
-
+        
         [Test]
         public async Task GetAudioApplicationInfoAsync_Returns_Result_Even_When_One_Node_Returns_Null_When_AudioPlatformException_Thrown_which_is_NotFound()
         {
@@ -100,7 +100,7 @@ namespace VideoApi.UnitTests.Services
             result.Message.Should().Contain("SomeError");
             result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
-
+        
         [Test]
         public async Task DeleteAudioApplicationAsync_Returns_False_Even_When_One_Node_Success_AudioPlatformServiceResponse_When_AudioPlatformException_Thrown()
         {
@@ -158,7 +158,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().NotBeNull();
         }
-
+        
         [Test]
         public async Task GetAudioStreamMonitoringInfoAsync_Returns_Response__Even_When_One_Node_Errors()
         {
@@ -181,29 +181,29 @@ namespace VideoApi.UnitTests.Services
         {
             _wowzaClient2
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{\"RecorderName\": \"Something\"}") });
 
             var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
-
+        
         [Test]
         public async Task GetAudioStreamInfoAsync_Returns_Response_Using_Two_Nodes()
         {
             _wowzaClient1
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{\"RecorderName\": \"Something\"}") });
 
             _wowzaClient2
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{\"RecorderName\": \"Something\"}") });
 
             var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
-
+        
         [Test]
         public async Task GetAudioStreamInfoAsync_Throws_Exception_when_using_Two_Nodes_That_Both_return_not_found()
         {
@@ -244,13 +244,13 @@ namespace VideoApi.UnitTests.Services
            
             _wowzaClient1
                 .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{\"RecorderName\": \"Something\"}") });
 
             var result = await audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
         }
-
+        
         [Test]
         public async Task GetAudioStreamInfoAsync_Returns_Response_Even_When_One_Node_Errors()
         {
@@ -260,7 +260,7 @@ namespace VideoApi.UnitTests.Services
 
             _wowzaClient2
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-               .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+               .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{\"RecorderName\": \"Something\"}") });
 
             var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
@@ -276,7 +276,7 @@ namespace VideoApi.UnitTests.Services
             
             _wowzaClient2
                .Setup(x => x.GetStreamRecorderAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-               .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{RecorderName: 'Something'}") });
+               .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) {Content = new StringContent("{\"RecorderName\": \"Something\"}") });
 
             var result = await _audioPlatformService.GetAudioStreamInfoAsync(It.IsAny<string>());
 
@@ -312,7 +312,7 @@ namespace VideoApi.UnitTests.Services
             result.Message.Should().Contain("SomeError");
             result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
-
+        
         [Test]
         public async Task DeleteAudioStreamAsync_Returns_False_Even_When_One_Node_Success_AudioPlatformServiceResponse_When_AudioPlatformException_Thrown()
         {
@@ -346,7 +346,7 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
             result.Success.Should().BeTrue();
         }
-
+        
         [Test]
         public async Task GetApplicationDiagnosticsAsync_Returns_False_When_AudioPlatformException_Thrown()
         {
@@ -358,7 +358,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().BeFalse();
         }
-
+        
         [Test]
         public async Task GetApplicationDiagnosticsAsync_Returns_Response()
         {
@@ -393,7 +393,7 @@ namespace VideoApi.UnitTests.Services
             url.Should().Contain(_wowzaConfiguration.ApplicationName);
             url.Should().Contain(_wowzaConfiguration.StreamingEndpoint);
         }
-
+        
         [TestCase(" Name with spaces", "Namewithspaces")]
         [TestCase("Name!@#$%^&*()_+=[{]}|;:'\\\",<>/~`?", "Name")]
         [TestCase("-Name-", "Name")]
