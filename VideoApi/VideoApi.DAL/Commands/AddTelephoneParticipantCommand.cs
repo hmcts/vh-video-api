@@ -38,7 +38,6 @@ public class AddTelephoneParticipantCommandHandler(VideoApiDbContext context)
 
         var telephoneParticipant = new TelephoneParticipant(command.TelephoneParticipantId, command.TelephoneNumber);
         conference.AddTelephoneParticipant(telephoneParticipant);
-        context.Entry(telephoneParticipant).State = EntityState.Added;
         await context.SaveChangesAsync();
     }
 }
