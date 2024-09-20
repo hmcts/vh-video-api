@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -6,6 +7,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.IntegrationTests.Database.Commands;
 
@@ -69,6 +71,10 @@ public class RemoveTelephoneParticipantCommandTests : DatabaseTestsBase
         var updatedConference = await db.Conferences.Include(x => x.TelephoneParticipants)
             .SingleOrDefaultAsync(x => x.Id == _newConferenceId);
 
-        updatedConference.GetTelephoneParticipants().Should().NotContain(x => x.Id == telephoneParticipant.Id);
+        updatedConference.GetTelephoneParticipants().Should().Contain(x => x.Id == telephoneParticipant.Id);
+        var updatedParticipant = updatedConference.GetTelephoneParticipants()
+            .Single(x => x.Id == telephoneParticipant.Id);
+        updatedParticipant.CurrentRoom.Should().BeNull();
+        updatedParticipant.State.Should().Be(TelephoneState.Disconnected);
     }
 }

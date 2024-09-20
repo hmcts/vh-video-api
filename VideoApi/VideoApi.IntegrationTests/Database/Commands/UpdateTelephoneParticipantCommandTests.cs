@@ -68,8 +68,8 @@ public class UpdateTelephoneParticipantCommandTests : DatabaseTestsBase
 
         // act
         var telephoneParticipant = seededConference.GetTelephoneParticipants().First(x=> x.TelephoneNumber == phoneNumber);
-        var command = new UpdateTelephoneParticipantCommand(_newConferenceId, telephoneParticipant.Id, null,
-            TelephoneState.Disconnected);
+        var command = new UpdateTelephoneParticipantCommand(_newConferenceId, telephoneParticipant.Id, RoomType.HearingRoom,
+            TelephoneState.Connected);
         await _handler.Handle(command);
 
         // assert
@@ -80,7 +80,7 @@ public class UpdateTelephoneParticipantCommandTests : DatabaseTestsBase
         updatedConference.GetTelephoneParticipants().Should().Contain(x => x.Id == telephoneParticipant.Id);
         var updatedParticipant = updatedConference.GetTelephoneParticipants()
             .Single(x => x.Id == telephoneParticipant.Id);
-        updatedParticipant.CurrentRoom.Should().BeNull();
-        updatedParticipant.State.Should().Be(TelephoneState.Disconnected);
+        updatedParticipant.CurrentRoom.Should().Be(RoomType.HearingRoom);
+        updatedParticipant.State.Should().Be(TelephoneState.Connected);
     }
 }

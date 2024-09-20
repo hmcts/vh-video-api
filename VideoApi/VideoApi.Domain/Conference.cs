@@ -317,7 +317,8 @@ namespace VideoApi.Domain
                 throw new DomainRuleException(nameof(telephoneParticipant), "Telephone participant does not exist in conference");
             }
             var existingParticipant = TelephoneParticipants.Single(x => x.Id == telephoneParticipant.Id);
-            TelephoneParticipants.Remove(existingParticipant);
+            existingParticipant.UpdateCurrentRoom(null);
+            existingParticipant.UpdateStatus(TelephoneState.Disconnected);
         }
 
         private bool DoesTelephoneParticipantExist(Guid telephoneParticipantId)
