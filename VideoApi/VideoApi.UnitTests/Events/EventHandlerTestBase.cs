@@ -44,6 +44,7 @@ namespace VideoApi.UnitTests.Events
                 .WithParticipant(UserRole.Representative, "Respondent", "DA1@test.com")
                 .WithLinkedParticipant(UserRole.Individual, "Applicant")
                 .WithInterpreterRoom()
+                .WithTelephoneParticipant("+44123456789")
                 .Build();
 
             QueryHandlerMock

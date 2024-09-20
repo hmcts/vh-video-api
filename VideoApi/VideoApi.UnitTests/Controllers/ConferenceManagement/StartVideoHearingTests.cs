@@ -131,6 +131,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         public async Task should_contain_correct_participants_when_start_hearing_has_been_requested()
         {
             var conferenceId = TestConference.Id;
+            AddTelephoneParticipantToTestConference();
             AddWitnessToTestConference();
             AddQuicklinkToTestConference();
 
@@ -138,8 +139,16 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var hostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id;
             var participantIds = TestConference.Participants
                 .Where(x => x.CanAutoTransferToHearingRoom() &&
-                            !x.IsHost()).Select(x => x.Id.ToString());
-            participantIds = participantIds.Append(hostId.ToString());
+                            !x.IsHost()).Select(x => x.Id.ToString()).ToList();
+            
+            var endpoints = TestConference.Endpoints
+                .Where(x => x.State is EndpointState.Connected or EndpointState.InConsultation)
+                .Select(x => x.Id.ToString());
+
+            participantIds.AddRange(endpoints);
+            participantIds.Add(TestConference.TelephoneParticipants[0].Id.ToString());
+            participantIds.Add(hostId.ToString());
+            
             var request = new Contract.Requests.StartHearingRequest
             {
                 Layout = layout,
