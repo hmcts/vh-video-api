@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using VideoApi.Common.Helpers;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
 using VideoApi.Services.Clients;
@@ -46,9 +45,9 @@ namespace VideoApi.Services
         public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints)
+            IEnumerable<EndpointDto> endpoints, 
+            string telephoneId)
         {
-            var telephoneId = ConferenceHelper.GenerateGlobalRareNumber();
             _logger.LogInformation(
                 "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
                 _supplierConfigOptions.CallbackUri, _supplierConfigOptions.ApiUrl);

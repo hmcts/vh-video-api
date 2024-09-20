@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Services;
 using VideoApi.Services.Dtos;
@@ -23,6 +24,12 @@ public class BookingServiceTests : ConferenceControllerTestBase
     {
         _service = new BookingService(SupplierPlatformServiceFactoryMock.Object, CommandHandlerMock.Object,
             QueryHandlerMock.Object, _logger.Object);
+        
+        QueryHandlerMock.
+            Setup(x =>
+                x.Handle<GetConferencesByTelephoneIdQuery, List<Conference>>(
+                    It.IsAny<GetConferencesByTelephoneIdQuery>()))
+            .ReturnsAsync(new List<Conference>());
     }
     
     [Test]
@@ -33,14 +40,14 @@ public class BookingServiceTests : ConferenceControllerTestBase
         SetupCallToMockRetryService(audioPlatformServiceResponse);
         VideoPlatformServiceMock
             .Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(),
-                It.IsAny<IEnumerable<EndpointDto>>())).Throws(new DoubleBookingException(Guid.NewGuid()));
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>())).Throws(new DoubleBookingException(Guid.NewGuid()));
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
             new EndpointDto[] { });
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>()), Times.Once);
         VideoPlatformServiceMock.Verify(v => v.GetVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Once);
         CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
     }
@@ -52,14 +59,14 @@ public class BookingServiceTests : ConferenceControllerTestBase
             { IngestUrl = "http://myIngestUrl.com" };
         SetupCallToMockRetryService(audioPlatformServiceResponse);
         VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(),
-            audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
+            audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>())).ReturnsAsync(MeetingRoom);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
             new EndpointDto[] { });
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>()), Times.Once);
         CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
     }
     
@@ -70,14 +77,14 @@ public class BookingServiceTests : ConferenceControllerTestBase
             { IngestUrl = "http://myIngestUrl.com" };
         SetupCallToMockRetryService(audioPlatformServiceResponse);
         VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), false,
-            audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
+            audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>())).ReturnsAsync(MeetingRoom);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), false, audioPlatformServiceResponse.IngestUrl,
             new EndpointDto[] { });
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), false, audioPlatformServiceResponse.IngestUrl,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>()), Times.Once);
         CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
     }
     
@@ -89,14 +96,14 @@ public class BookingServiceTests : ConferenceControllerTestBase
         SetupCallToMockRetryService(audioPlatformServiceResponse);
         VideoPlatformServiceMock
             .Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(),
-                It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync((MeetingRoom)null);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>())).ReturnsAsync((MeetingRoom)null);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
             new EndpointDto[] { });
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>()), Times.Once);
         CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
     }
     
@@ -107,14 +114,14 @@ public class BookingServiceTests : ConferenceControllerTestBase
             { IngestUrl = "http://myIngestUrl.com" };
         SetupCallToMockRetryService(audioPlatformServiceResponse);
         VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true,
-            audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
+            audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>())).ReturnsAsync(MeetingRoom);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
             new EndpointDto[] { });
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>()), Times.Once);
         CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
     }
     
@@ -125,7 +132,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
             { IngestUrl = "http://myIngestUrl.com" };
         SetupCallToMockRetryService(audioPlatformServiceResponse);
         VideoPlatformServiceMock.Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(),
-            It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>())).ReturnsAsync(MeetingRoom);
+            It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>())).ReturnsAsync(MeetingRoom);
         
         var response = await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
             new EndpointDto[] { });
@@ -134,7 +141,37 @@ public class BookingServiceTests : ConferenceControllerTestBase
         
         VideoPlatformServiceMock.Verify(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(),
             audioPlatformServiceResponse.IngestUrl,
-            It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+            It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>()), Times.Once);
         CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Once);
+    }
+    
+    [Test]
+    public async Task Should_book_supplier_conference_room_but_regenerate_telephone_id_that_already_exists()
+    {
+        //Conference returned from query handler then no conference on second query
+        QueryHandlerMock.
+            SetupSequence(x =>
+                x.Handle<GetConferencesByTelephoneIdQuery, List<Conference>>(
+                    It.IsAny<GetConferencesByTelephoneIdQuery>()))
+            .ReturnsAsync(new List<Conference>(){It.IsAny<Conference>()})
+            .ReturnsAsync(new List<Conference>());
+        
+        var audioPlatformServiceResponse = new AudioPlatformServiceResponse(true)
+            { IngestUrl = "http://myIngestUrl.com" };
+        SetupCallToMockRetryService(audioPlatformServiceResponse);
+        VideoPlatformServiceMock
+            .Setup(v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<string>(),
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>())).ReturnsAsync((MeetingRoom)null);
+        
+        await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
+            new EndpointDto[] { });
+        
+        VideoPlatformServiceMock.Verify(
+            v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>()), Times.Once);
+        CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateMeetingRoomCommand>()), Times.Never);
+        QueryHandlerMock.Verify(
+            x => x.Handle<GetConferencesByTelephoneIdQuery, List<Conference>>(
+                It.IsAny<GetConferencesByTelephoneIdQuery>()), Times.Exactly(2));
     }
 }
