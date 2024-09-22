@@ -50,7 +50,7 @@ namespace VideoApi.Domain
         public ConferenceState State { get; set; }
         public virtual IList<ParticipantBase> Participants { get; }
         public virtual IList<Endpoint> Endpoints { get; }
-        public virtual IList<TelephoneParticipant> TelephoneParticipants { get; }
+        protected virtual IList<TelephoneParticipant> TelephoneParticipants { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
         public virtual IList<InstantMessage> InstantMessageHistory { get; }
         public string HearingVenueName { get; private set; }
@@ -301,6 +301,11 @@ namespace VideoApi.Domain
             _rooms.Add(room);
         }
         
+        /// <summary>
+        /// Add a telephone participant to the conference.
+        /// </summary>
+        /// <param name="telephoneParticipant">The telephone participant to add.</param>
+        /// <exception cref="DomainRuleException">Thrown when the telephone participant already exists in the conference.</exception>
         public void AddTelephoneParticipant(TelephoneParticipant telephoneParticipant)
         {
             if(DoesTelephoneParticipantExist(telephoneParticipant.Id))
@@ -310,6 +315,11 @@ namespace VideoApi.Domain
             TelephoneParticipants.Add(telephoneParticipant);
         }
         
+        /// <summary>
+        /// Remove a telephone participant from the conference. Marks the participant as disconnected.
+        /// </summary>
+        /// <param name="telephoneParticipant">The telephone participant to remove.</param>
+        /// <exception cref="DomainRuleException">Thrown when the telephone participant does not exist in the conference.</exception>
         public void RemoveTelephoneParticipant(TelephoneParticipant telephoneParticipant)
         {
             if(!DoesTelephoneParticipantExist(telephoneParticipant.Id))
@@ -326,9 +336,13 @@ namespace VideoApi.Domain
             return TelephoneParticipants.Any(x => x.Id == telephoneParticipantId);
         }
 
+        /// <summary>
+        /// Get all telephone participants in the conference who are not disconnected
+        /// </summary>
+        /// <returns>A read-only list of telephone participants who are not disconnected.</returns>
         public IList<TelephoneParticipant> GetTelephoneParticipants()
         {
-            return TelephoneParticipants;
+            return TelephoneParticipants.Where(x => x.State != TelephoneState.Disconnected).ToList().AsReadOnly();
         }
     }
 }

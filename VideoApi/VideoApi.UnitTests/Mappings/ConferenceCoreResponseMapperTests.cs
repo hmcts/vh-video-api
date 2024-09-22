@@ -43,7 +43,7 @@ public class ConferenceCoreResponseMapperTests
             .Excluding(x => x.Supplier)
             .Excluding(x => x.AudioRecordingRequired)
             .Excluding(x => x.MeetingRoom)
-            .Excluding(x=> x.TelephoneParticipants)
+            // .Excluding(x=> x.TelephoneParticipants)
         );
         
         response.StartedDateTime.Should().HaveValue().And.Be(conference.ActualStartTime);

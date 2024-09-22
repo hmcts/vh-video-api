@@ -24,15 +24,14 @@ public class RemoveTelephoneParticipantCommandHandler(VideoApiDbContext context)
 {
     public async Task Handle(RemoveTelephoneParticipantCommand command)
     {
-        var conference = await context.Conferences.Include(x => x.TelephoneParticipants)
-            .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
+        var conference = await context.Conferences.SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
         if (conference == null)
         {
             throw new ConferenceNotFoundException(command.ConferenceId);
         }
 
-        var telephoneParticipant = conference.TelephoneParticipants.SingleOrDefault(x => x.Id == command.TelephoneParticipantId);
+        var telephoneParticipant = conference.GetTelephoneParticipants().SingleOrDefault(x => x.Id == command.TelephoneParticipantId);
         if (telephoneParticipant == null)
         {
             throw new TelephoneParticipantNotFoundException(command.TelephoneParticipantId);

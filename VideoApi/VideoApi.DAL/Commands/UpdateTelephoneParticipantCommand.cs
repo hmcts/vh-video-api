@@ -28,8 +28,7 @@ public class UpdateTelephoneParticipantCommandHandler(VideoApiDbContext context)
 {
     public async Task Handle(UpdateTelephoneParticipantCommand command)
     {
-        var conference = await context.Conferences.Include(x => x.TelephoneParticipants)
-            .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
+        var conference = await context.Conferences.SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
         if (conference == null)
         {

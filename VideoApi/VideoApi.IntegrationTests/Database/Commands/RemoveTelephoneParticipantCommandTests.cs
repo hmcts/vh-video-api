@@ -68,13 +68,8 @@ public class RemoveTelephoneParticipantCommandTests : DatabaseTestsBase
         await _handler.Handle(command);
 
         await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-        var updatedConference = await db.Conferences.Include(x => x.TelephoneParticipants)
-            .SingleOrDefaultAsync(x => x.Id == _newConferenceId);
+        var updatedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _newConferenceId);
 
-        updatedConference.GetTelephoneParticipants().Should().Contain(x => x.Id == telephoneParticipant.Id);
-        var updatedParticipant = updatedConference.GetTelephoneParticipants()
-            .Single(x => x.Id == telephoneParticipant.Id);
-        updatedParticipant.CurrentRoom.Should().BeNull();
-        updatedParticipant.State.Should().Be(TelephoneState.Disconnected);
+        updatedConference.GetTelephoneParticipants().Should().NotContain(x => x.Id == telephoneParticipant.Id);
     }
 }

@@ -146,7 +146,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 .Select(x => x.Id.ToString());
 
             participantIds.AddRange(endpoints);
-            participantIds.Add(TestConference.TelephoneParticipants[0].Id.ToString());
+            participantIds.Add(TestConference.GetTelephoneParticipants()[0].Id.ToString());
             participantIds.Add(hostId.ToString());
             
             var request = new Contract.Requests.StartHearingRequest

@@ -74,8 +74,7 @@ public class UpdateTelephoneParticipantCommandTests : DatabaseTestsBase
 
         // assert
         await using var db = new VideoApiDbContext(VideoBookingsDbContextOptions);
-        var updatedConference = await db.Conferences.Include(x => x.TelephoneParticipants)
-            .SingleOrDefaultAsync(x => x.Id == _newConferenceId);
+        var updatedConference = await db.Conferences.SingleOrDefaultAsync(x => x.Id == _newConferenceId);
 
         updatedConference.GetTelephoneParticipants().Should().Contain(x => x.Id == telephoneParticipant.Id);
         var updatedParticipant = updatedConference.GetTelephoneParticipants()

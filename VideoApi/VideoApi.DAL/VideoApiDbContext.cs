@@ -58,6 +58,9 @@ namespace VideoApi.DAL
             }
             modelBuilder.Entity<InstantMessage>()
                 .HasIndex(m => m.TimeStamp);
+
+            modelBuilder.Entity<Conference>()
+                .Navigation("TelephoneParticipants").AutoInclude();
         }
         public override int SaveChanges()
         {
