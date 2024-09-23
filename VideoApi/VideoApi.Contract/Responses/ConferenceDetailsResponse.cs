@@ -14,6 +14,11 @@ public class ConferenceDetailsResponse : ConferenceCoreResponse
     public new List<ParticipantResponse> Participants { get; set; }
     
     /// <summary>
+    /// List of connected telephone participants in conference
+    /// </summary>
+    public List<TelephoneParticipantResponse> TelephoneParticipants { get; set; }
+    
+    /// <summary>
     /// List of endpoints in conference
     /// </summary>
     public List<EndpointResponse> Endpoints { get; set; }

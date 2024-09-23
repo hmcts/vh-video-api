@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
@@ -34,5 +35,17 @@ namespace VideoApi.Contract.Responses
         /// Linked Participants - example interpreter and "interpretee"
         /// </summary>
         public IList<LinkedParticipantResponse> LinkedParticipants { get; set; }
+    }
+
+    public class TelephoneParticipantResponse
+    {
+        /// <summary>
+        /// The participant's UUID
+        /// </summary>
+        public Guid Id { get; set; }
+        
+        public string PhoneNumber { get; set; }
+        
+        public RoomType Room { get; set; }
     }
 }
