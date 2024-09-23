@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace VideoApi.DAL.Exceptions
 {
     [Serializable]
-    public class ParticipantNotFoundException : VideoDalException
+    public class ParticipantNotFoundException : EntityNotFoundException
     {
         public Guid ParticipantId { get; set; }
         public ParticipantNotFoundException(Guid participantId) : base($"Participant {participantId} does not exist")

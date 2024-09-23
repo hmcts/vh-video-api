@@ -44,6 +44,11 @@ namespace VideoApi.Extensions
                 var problemDetails = new ValidationProblemDetails(modelState);
                 await HandleBadRequestAsync(httpContext, problemDetails);
             }
+            catch (EntityNotFoundException ex)
+            {
+                ApplicationLogger.TraceException(TraceCategory.APIException.ToString(), "Entity Not Found", ex, null, null);
+                await HandleExceptionAsync(httpContext, HttpStatusCode.NotFound, ex);
+            }
             catch (VideoDalException ex)
             {
                 var modelState = new ModelStateDictionary();

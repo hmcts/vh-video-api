@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace VideoApi.DAL.Exceptions
 {
     [Serializable]
-    public class RoomParticipantNotFoundException : VideoDalException
+    public class RoomParticipantNotFoundException : EntityNotFoundException
     {
         public RoomParticipantNotFoundException(Guid participantId, long roomId) : base(
           $"Room participant '{participantId}' not found in room '{roomId}")
