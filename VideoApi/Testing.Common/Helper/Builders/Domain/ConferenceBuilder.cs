@@ -42,7 +42,7 @@ namespace Testing.Common.Helper.Builders.Domain
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
                 scheduledDuration, venueName, false, "ingesturl", supplier);
         }
-        
+
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
         {
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
@@ -124,6 +124,14 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
         
+        public ConferenceBuilder WithTelephoneParticipant(string phoneNumber)
+        {
+            var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), phoneNumber);
+            _conference.AddTelephoneParticipant(telephoneParticipant);
+
+            return this;
+        }
+
         public ConferenceBuilder WithEndpoints(List<Endpoint> endpoints)
         {
             endpoints.ForEach(x => _conference.AddEndpoint(x));
@@ -163,7 +171,7 @@ namespace Testing.Common.Helper.Builders.Domain
             _conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState, timeStamp));
             return this;
         }
-        
+
         public ConferenceBuilder WithMessages(int numberOfMessages)
         {
             var messages = new Builder(_builderSettings).CreateListOfSize<InstantMessage>(numberOfMessages).All()
@@ -218,7 +226,6 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-        
         
         public ConferenceBuilder WithLinkedParticipant(UserRole userRole, string caseTypeGroup,
             string username = null, string firstName = null, RoomType? roomType = null,
@@ -285,7 +292,6 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-        
         
         public ConferenceBuilder WithInterpreterLinkedParticipant(UserRole userRole, string caseTypeGroup,
             string username = null, string firstName = null, RoomType? roomType = null,

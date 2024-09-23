@@ -28,6 +28,7 @@ namespace VideoApi.Events.Handlers.Core
         protected Conference SourceConference { get; set; }
         protected ParticipantBase SourceParticipant { get; set; }
         protected Endpoint SourceEndpoint { get; set; }
+        protected TelephoneParticipant SourceTelephoneParticipant { get; set; }
         protected ParticipantRoom SourceParticipantRoom { get; set; }
 
         public abstract EventType EventType { get; }
@@ -46,6 +47,7 @@ namespace VideoApi.Events.Handlers.Core
                 .SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
 
             SourceEndpoint = SourceConference.GetEndpoints().SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
+            SourceTelephoneParticipant = SourceConference.GetTelephoneParticipants().SingleOrDefault(x => x.Id == callbackEvent.ParticipantId);
             SourceParticipantRoom = SourceConference.Rooms.OfType<ParticipantRoom>().SingleOrDefault(x =>x.Id == callbackEvent.ParticipantRoomId);
             
             await PublishStatusAsync(callbackEvent);
