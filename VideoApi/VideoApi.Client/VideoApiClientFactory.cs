@@ -12,13 +12,7 @@ namespace VideoApi.Client
         {
             var apiClient = new VideoApiClient(httpClient)
             {
-                ReadResponseAsString = true,
-                JsonSerializerSettings =
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-                }
+                ReadResponseAsString = true
             };
             return apiClient;
         }
