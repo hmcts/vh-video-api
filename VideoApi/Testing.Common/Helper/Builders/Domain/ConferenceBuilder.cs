@@ -123,6 +123,14 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
+        
+        public ConferenceBuilder WithTelephoneParticipant(string phoneNumber)
+        {
+            var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), phoneNumber);
+            _conference.AddTelephoneParticipant(telephoneParticipant);
+
+            return this;
+        }
 
         public ConferenceBuilder WithEndpoints(List<Endpoint> endpoints)
         {

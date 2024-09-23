@@ -7,6 +7,7 @@ using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
@@ -66,6 +67,11 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         {
             TestConference.AddParticipant(new VideoApi.Domain.Participant(Guid.NewGuid(), "contactEmail", 
                 "telephone", "displayName", "firstName", "lastName", "name", "userName") { HearingRole = "Witness", UserRole = UserRole.Individual, State = ParticipantState.Available });
+        }
+
+        protected void AddTelephoneParticipantToTestConference()
+        {
+            TestConference.AddTelephoneParticipant(new TelephoneParticipant(Guid.NewGuid(), "Anonymous"));
         }
 
         protected void AddQuicklinkToTestConference()

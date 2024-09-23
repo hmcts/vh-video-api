@@ -9,6 +9,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
@@ -68,7 +69,11 @@ namespace VideoApi.Controllers
                     .Where(x => x.State is EndpointState.Connected or EndpointState.InConsultation)
                     .Select(x => x.Id.ToString()).ToList();
                 
-                var allIdsToTransfer = participants.Concat(endpoints).ToList();
+                var telephoneParticipants = conference.GetTelephoneParticipants()
+                    .Where(x => x.State is TelephoneState.Connected)
+                    .Select(x => x.Id.ToString()).ToList();
+                
+                var allIdsToTransfer = participants.Concat(endpoints).Concat(telephoneParticipants).ToList();
                 // if only hosts are connected and no participants the supplier will not start the hearing, so provide the host id to force the hearing to start
                 allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
 
