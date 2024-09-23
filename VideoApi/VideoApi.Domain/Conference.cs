@@ -20,6 +20,7 @@ namespace VideoApi.Domain
             InstantMessageHistory = new List<InstantMessage>();
             MeetingRoom = new MeetingRoom();
             Endpoints = new List<Endpoint>();
+            TelephoneParticipants = new List<TelephoneParticipant>();
             _rooms = new List<Room>();
 
             HearingRefId = hearingRefId;
@@ -49,6 +50,7 @@ namespace VideoApi.Domain
         public ConferenceState State { get; set; }
         public virtual IList<ParticipantBase> Participants { get; }
         public virtual IList<Endpoint> Endpoints { get; }
+        public virtual IList<TelephoneParticipant> TelephoneParticipants { get; }
         public virtual IList<ConferenceStatus> ConferenceStatuses { get; }
         public virtual IList<InstantMessage> InstantMessageHistory { get; }
         public string HearingVenueName { get; private set; }
@@ -297,6 +299,35 @@ namespace VideoApi.Domain
                 throw new DomainRuleException(nameof(room), $"Room {room.Label} already exists in conference and is still open");
             }
             _rooms.Add(room);
+        }
+        
+        public void AddTelephoneParticipant(TelephoneParticipant telephoneParticipant)
+        {
+            if(DoesTelephoneParticipantExist(telephoneParticipant.Id))
+            {
+                throw new DomainRuleException(nameof(telephoneParticipant), "Telephone participant already exists in conference");
+            }
+            TelephoneParticipants.Add(telephoneParticipant);
+        }
+        
+        public void RemoveTelephoneParticipant(TelephoneParticipant telephoneParticipant)
+        {
+            if(!DoesTelephoneParticipantExist(telephoneParticipant.Id))
+            {
+                throw new DomainRuleException(nameof(telephoneParticipant), "Telephone participant does not exist in conference");
+            }
+            var existingParticipant = TelephoneParticipants.Single(x => x.Id == telephoneParticipant.Id);
+            TelephoneParticipants.Remove(existingParticipant);
+        }
+
+        private bool DoesTelephoneParticipantExist(Guid telephoneParticipantId)
+        {
+            return TelephoneParticipants.Any(x => x.Id == telephoneParticipantId);
+        }
+
+        public IList<TelephoneParticipant> GetTelephoneParticipants()
+        {
+            return TelephoneParticipants;
         }
     }
 }

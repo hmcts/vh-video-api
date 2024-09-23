@@ -49,6 +49,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CaseType)
                 .Excluding(x => x.HearingVenueName)
                 .Excluding(x => x.Supplier)
+                .Excluding(x=> x.TelephoneParticipants)
             );
             
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
