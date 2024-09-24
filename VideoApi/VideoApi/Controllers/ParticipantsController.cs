@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -166,12 +167,13 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId,
-            UpdateParticipantRequest request)
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
         {
             _logger.LogDebug("UpdateParticipantDetails");
             try
             {
+                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
                 var linkedParticipants = request.LinkedParticipants.Select(x => new LinkedParticipantDto()
                 {
                     ParticipantRefId = x.ParticipantRefId,
@@ -197,7 +199,8 @@ namespace VideoApi.Controllers
                 {
                     updateParticipantDetailsCommand.Username = request.Username;
                 }
-                
+                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+                await videoPlatformService.UpdateParticipantName(conferenceId, participantId, request.DisplayName);
                 await _commandHandler.Handle(updateParticipantDetailsCommand);
                 
                 return NoContent();
