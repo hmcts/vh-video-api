@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -167,7 +166,6 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [AllowAnonymous]
         public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
         {
             _logger.LogDebug("UpdateParticipantDetails");
