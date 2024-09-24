@@ -35,7 +35,10 @@ namespace VideoApi.UnitTests.Events
                     _mocker.Create<SelfTestFailedEventHandler>(),
                     _mocker.Create<RoomParticipantJoinedEventHandler>(),
                     _mocker.Create<RoomParticipantDisconnectedEventHandler>(),
-                    _mocker.Create<RoomParticipantTransferredEventHandler>()
+                    _mocker.Create<RoomParticipantTransferredEventHandler>(),
+                    _mocker.Create<TelephoneJoinedEventHandler>(),
+                    _mocker.Create<TelephoneTransferredEventHandler>(),
+                    _mocker.Create<TelephoneDisconnectedEventHandler>()
                 };
             _sut = _mocker.Create<EventHandlerFactory>(new TypedParameter(typeof(IEnumerable<IEventHandler>), eventHandlers));
         }
@@ -55,6 +58,9 @@ namespace VideoApi.UnitTests.Events
         [TestCase(EventType.RoomParticipantJoined, typeof(RoomParticipantJoinedEventHandler))]
         [TestCase(EventType.RoomParticipantDisconnected, typeof(RoomParticipantDisconnectedEventHandler))]
         [TestCase(EventType.RoomParticipantTransfer, typeof(RoomParticipantTransferredEventHandler))]
+        [TestCase(EventType.TelephoneJoined, typeof(TelephoneJoinedEventHandler))]
+        [TestCase(EventType.TelephoneDisconnected, typeof(TelephoneDisconnectedEventHandler))]
+        [TestCase(EventType.TelephoneTransfer, typeof(TelephoneTransferredEventHandler))]
         public void Should_return_instance_of_event_handler_when_factory_get_is_called_with_valid_request(
             EventType eventType, Type typeOfEventHandler)
         {

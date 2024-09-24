@@ -5,15 +5,18 @@ namespace VideoApi.Domain;
 
 public class TelephoneParticipant: TrackableEntity<Guid>
 {
-    public TelephoneState State { get; private set; }
-    public RoomType? CurrentRoom { get; private set; }
+    public Guid ConferenceId { get; set; }
+    public Conference Conference { get; set; }
+    
+    public TelephoneState State { get; set; }
+    public RoomType? CurrentRoom { get; set; }
     public string TelephoneNumber { get; private set; }
     
-    public TelephoneParticipant(string telephoneNumber)
+    public TelephoneParticipant(Guid id, string telephoneNumber)
     {
-        Id = Guid.NewGuid();
+        Id = id;
         State = TelephoneState.Connected;
-        CurrentRoom = RoomType.HearingRoom;
+        CurrentRoom = RoomType.WaitingRoom;
         TelephoneNumber = telephoneNumber;
     }
     

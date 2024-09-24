@@ -60,9 +60,9 @@ namespace VideoApi.Extensions
             return Enum.Parse<Domain.Enums.VirtualCourtRoomType>(roomType.ToString());
         }
         
-        public static Domain.Enums.RoomType MapToDomainEnum(this Contract.Enums.RoomType roomType)
+        public static Contract.Enums.RoomType MapToContractEnum(this Domain.Enums.RoomType roomType)
         {
-            return Enum.Parse<Domain.Enums.RoomType>(roomType.ToString());
+            return Enum.Parse<Contract.Enums.RoomType>(roomType.ToString());
         }
         
         public static Domain.Enums.TaskType MapToDomainEnum(this Contract.Enums.TaskType taskType)
