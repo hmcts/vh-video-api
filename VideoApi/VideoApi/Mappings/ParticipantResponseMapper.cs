@@ -27,4 +27,17 @@ namespace VideoApi.Mappings
             return participantDetailsResponse;
         }
     }
+    
+    public static class TelephoneParticipantMapper
+    {
+        public static TelephoneParticipantResponse Map(TelephoneParticipant telephoneParticipant)
+        {
+            return new TelephoneParticipantResponse
+            {
+                Id = telephoneParticipant.Id,
+                PhoneNumber = telephoneParticipant.TelephoneNumber,
+                Room = telephoneParticipant.CurrentRoom.GetValueOrDefault().MapToContractEnum()
+            };
+        }
+    }
 }
