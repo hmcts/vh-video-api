@@ -25,6 +25,7 @@ namespace VideoApi.Mappings
             response.ScheduledDuration = conference.ScheduledDuration;
             response.CurrentStatus = conference.GetCurrentStatus().MapToContractEnum();
             response.Participants = MapParticipants(conference.Participants, allInterpreterRooms);
+            response.TelephoneParticipants = conference.GetTelephoneParticipants().Select(TelephoneParticipantMapper.Map).ToList();
             response.MeetingRoom = MeetingRoomToResponseMapper.MapVirtualCourtToResponse(conference.GetMeetingRoom());
             response.Endpoints = conference.GetEndpoints().Select(EndpointToResponseMapper.MapEndpointResponse).ToList();
             response.AudioRecordingRequired = conference.AudioRecordingRequired;
