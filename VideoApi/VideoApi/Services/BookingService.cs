@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using VideoApi.Common.Helpers;
 using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
@@ -39,13 +40,15 @@ public class BookingService(
         Supplier supplier = Supplier.Kinly)
     {
         MeetingRoom meetingRoom;
+        var telephoneId = await CreateUniqueTelephoneId();
         var videoPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)supplier);
         try
         {
             meetingRoom = await videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints);
+                endpoints,
+                telephoneId);
         }
         catch (DoubleBookingException ex)
         {
@@ -106,5 +109,17 @@ public class BookingService(
         await _commandHandler.Handle(createConferenceCommand);
         
         return createConferenceCommand.NewConferenceId;
+    }
+    
+    private async Task<string> CreateUniqueTelephoneId()
+    {
+        var telephoneId = ConferenceHelper.GenerateGlobalRareNumber();
+        var conferences = await _queryHandler.Handle<GetConferencesByTelephoneIdQuery, List<Conference>>(
+            new GetConferencesByTelephoneIdQuery(telephoneId));
+        
+        if(conferences.Any())
+            return await CreateUniqueTelephoneId();
+        
+        return telephoneId;
     }
 }
