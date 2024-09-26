@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration.KeyPerFile;
 using Microsoft.Extensions.FileProviders;
@@ -28,13 +29,10 @@ namespace VideoApi
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((configBuilder) =>
                 {
-                    foreach (var keyVault in keyVaults)
+                    foreach (var keyVault in keyVaults.Where(Directory.Exists))
                     {
-                        var filePath = $"/mnt/secrets/{keyVault}";
-                        if (Directory.Exists(filePath))
-                        {
-                            configBuilder.Add(GetKeyPerFileSource(filePath));    
-                        }
+                        configBuilder.Add(GetKeyPerFileSource(keyVault));
+
                     }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
