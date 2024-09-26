@@ -39,4 +39,14 @@ public class GetConferenceByTelephoneIdQueryTests : DatabaseTestsBase
         conference.Should().NotBeNull();
         conference.Count.Should().Be(0);
     }
+    
+    [TearDown]
+    public async Task TearDown()
+    {
+        if (_newConferenceId != Guid.Empty)
+        {
+            TestContext.WriteLine($"Removing test conference {_newConferenceId}");
+            await TestDataManager.RemoveConference(_newConferenceId);
+        }
+    }
 }

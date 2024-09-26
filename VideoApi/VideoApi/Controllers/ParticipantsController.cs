@@ -172,6 +172,10 @@ namespace VideoApi.Controllers
             try
             {
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                
+                if(conference == null)
+                    throw new ConferenceNotFoundException(conferenceId);
+                
                 var linkedParticipants = request.LinkedParticipants.Select(x => new LinkedParticipantDto()
                 {
                     ParticipantRefId = x.ParticipantRefId,
@@ -197,9 +201,9 @@ namespace VideoApi.Controllers
                 {
                     updateParticipantDetailsCommand.Username = request.Username;
                 }
+                await _commandHandler.Handle(updateParticipantDetailsCommand);
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
                 await videoPlatformService.UpdateParticipantName(conferenceId, participantId, request.DisplayName);
-                await _commandHandler.Handle(updateParticipantDetailsCommand);
                 
                 return NoContent();
             }
