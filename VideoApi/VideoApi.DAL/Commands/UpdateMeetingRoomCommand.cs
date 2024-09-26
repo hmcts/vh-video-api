@@ -18,7 +18,7 @@ namespace VideoApi.DAL.Commands
             PexipNode = pexipNode;
             TelephoneConferenceId = telephoneConferenceId;
         }
-
+        
         public Guid ConferenceId { get; }
         public string AdminUri { get; }
         public string JudgeUri { get; }
@@ -30,12 +30,12 @@ namespace VideoApi.DAL.Commands
     public class UpdateMeetingRoomHandler : ICommandHandler<UpdateMeetingRoomCommand>
     {
         private readonly VideoApiDbContext _context;
-
+        
         public UpdateMeetingRoomHandler(VideoApiDbContext context)
         {
             _context = context;
         }
-
+        
         public async Task Handle(UpdateMeetingRoomCommand command)
         {
             var conference = await _context.Conferences.SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
@@ -45,8 +45,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri, command.PexipNode,
-                command.TelephoneConferenceId);
+            conference.UpdateMeetingRoom(command.AdminUri, command.JudgeUri, command.ParticipantUri, command.PexipNode, command.TelephoneConferenceId);
             
             await _context.SaveChangesAsync();
         }

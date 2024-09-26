@@ -1790,13 +1790,19 @@ namespace VideoApi.Services.Clients
         /// </summary>
         [Newtonsoft.Json.JsonProperty("streaming_enabled", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? Streaming_enabled { get; set; }
-
+        
         /// <summary>
         /// Streaming url
         /// </summary>
         [Newtonsoft.Json.JsonProperty("streaming_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Streaming_url { get; set; }
-
+        
+        /// <summary>
+        /// Telephone Id
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("telephone_conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_Conference_id { get; set; }
+        
         [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; }
         

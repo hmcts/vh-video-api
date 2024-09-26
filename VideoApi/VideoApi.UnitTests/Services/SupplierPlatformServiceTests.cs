@@ -10,10 +10,10 @@ using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain;
 using VideoApi.Services;
+using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
-using VideoApi.Services.Clients;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 using TestScore = VideoApi.Domain.Enums.TestScore;
@@ -24,15 +24,15 @@ namespace VideoApi.UnitTests.Services
 {
     public class SupplierPlatformServiceTests
     {
-        private Mock<ISupplierApiClient> _supplierApiClientMock;
-        private Mock<ILogger<SupplierPlatformService>> _loggerMock;
-        private SupplierConfiguration _supplierConfig;
-        private Mock<ISupplierSelfTestHttpClient> _supplierSelfTestHttpClient;
-        private Mock<IPollyRetryService> _pollyRetryService;
-        private SupplierPlatformService _SupplierPlatformService;
-        private Conference _testConference;
         private Mock<IFeatureToggles> _featureToggles;
-
+        private Mock<ILogger<SupplierPlatformService>> _loggerMock;
+        private Mock<IPollyRetryService> _pollyRetryService;
+        private Mock<ISupplierApiClient> _supplierApiClientMock;
+        private SupplierConfiguration _supplierConfig;
+        private SupplierPlatformService _SupplierPlatformService;
+        private Mock<ISupplierSelfTestHttpClient> _supplierSelfTestHttpClient;
+        private Conference _testConference;
+        
         [SetUp]
         public void Setup()
         {
@@ -67,7 +67,7 @@ namespace VideoApi.UnitTests.Services
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .Build();
         }
-
+        
         [Test]
         public void Should_throw_double_booking_exception_on_conflict_return_status_code_when_booking_courtroom()
         {
@@ -76,11 +76,10 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "",
-                        new List<EndpointDto>()))
+                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>()))
                 .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
-
+        
         [Test]
         public void Should_throw_supplier_api_exception_when_booking_courtroom()
         {
@@ -89,7 +88,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<SupplierApiException>(() =>
-                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>()));
+                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>()));
         }
         
         [Test]
@@ -138,7 +137,7 @@ namespace VideoApi.UnitTests.Services
             var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints);
+                endpoints, It.IsAny<string>());
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);
@@ -156,7 +155,7 @@ namespace VideoApi.UnitTests.Services
                 param.Jvs_endpoint != null && param.Jvs_endpoint.Count == hearingParams.Jvs_endpoint.Count
             )), Times.Once);
         }
-
+        
         [Test]
         public async Task Should_update_virtual_court_room()
         {
@@ -167,7 +166,7 @@ namespace VideoApi.UnitTests.Services
             
             _supplierApiClientMock.Verify(x => x.UpdateHearingAsync(conferenceId.ToString(), It.Is<UpdateHearingParams>(p => p.Recording_enabled)), Times.Once);
         }
-
+        
         [Test]
         public async Task Should_get_supplier_virtual_court_room()
         {
@@ -191,7 +190,7 @@ namespace VideoApi.UnitTests.Services
             result.JudgeUri.Should().Be(hearing.Uris.Participant);
             result.ParticipantUri.Should().Be(hearing.Uris.Participant);
         }
-
+        
         [Test]
         public async Task Should_return_null_for_supplier_virtual_court_room_when_not_found()
         {
@@ -202,7 +201,7 @@ namespace VideoApi.UnitTests.Services
 
             result.Should().BeNull();
         }
-
+        
         [Test]
         public void Should_throw_for_supplier_virtual_court_room_when_other_status()
         {
@@ -211,7 +210,7 @@ namespace VideoApi.UnitTests.Services
 
             Assert.ThrowsAsync<SupplierApiException>(() => _SupplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>()));
         }
-
+        
         [Test]
         public async Task Should_return_result_from_get_test_call_score()
         {
@@ -236,7 +235,7 @@ namespace VideoApi.UnitTests.Services
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(expectedTestCallResult);
         }
-
+        
         [Test]
         public async Task Should_delete_virtual_court_room()
         {
@@ -247,7 +246,7 @@ namespace VideoApi.UnitTests.Services
             
             _supplierApiClientMock.Verify(x => x.DeleteHearingAsync(conferenceId.ToString()), Times.Once);
         }
-
+        
         [Test]
         public async Task should_start_hearing_with_automatic_layout_as_default()
         {

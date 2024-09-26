@@ -26,7 +26,7 @@ namespace VideoApi.Services
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints)
+            IEnumerable<EndpointDto> endpoints, string telephoneId)
         {
             if (_bookedGuids.Contains(conferenceId))
                 throw new DoubleBookingException(conferenceId);

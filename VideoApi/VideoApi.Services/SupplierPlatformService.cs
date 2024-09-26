@@ -45,12 +45,12 @@ namespace VideoApi.Services
         public async Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints)
+            IEnumerable<EndpointDto> endpoints, 
+            string telephoneId)
         {
             _logger.LogInformation(
                 "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
                 _supplierConfigOptions.CallbackUri, _supplierConfigOptions.ApiUrl);
-
             try
             {
                 var response = await _supplierApiClient.CreateHearingAsync(new CreateHearingParams
@@ -61,12 +61,12 @@ namespace VideoApi.Services
                     Recording_url = ingestUrl,
                     Streaming_enabled = false,
                     Streaming_url = null,
-                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
+                    Telephone_Conference_id = telephoneId
                 });
-                // vodafone telephone conference id not yet implemented so a made up value is in place to avoid null reference exception
-                // TODO: remove the temp value at the next milestone
+
                 return _supplier == Supplier.Vodafone 
-                    ? new MeetingRoom(response.Uris.Admin ?? response.Uris.Participant, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id ?? "99173907")
+                    ? new MeetingRoom(response.Uris.Admin ?? response.Uris.Participant, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, telephoneId)
                     : new MeetingRoom(response.Uris.Admin, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id);
             }
             catch (SupplierApiException e)
