@@ -11,19 +11,18 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers
 {
-    public class RecordingConnectionEventHandler : EventHandlerBase<CountdownFinishedEventHandler>
+    public class RecordingConnectionEventHandler : EventHandlerBase<RecordingConnectionEventHandler>
     {
-        private readonly IConsultationService _consultationService;
-        public RecordingConnectionEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<CountdownFinishedEventHandler> logger, IConsultationService consultationService) : base(queryHandler, commandHandler, logger)
+        public RecordingConnectionEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<RecordingConnectionEventHandler> logger) : base(queryHandler, commandHandler, logger)
         {
-            _consultationService = consultationService;
         }
 
         public override EventType EventType => EventType.RecordingConnectionFailed;
         
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            
+            _logger.LogInformation("Start callback received - {ConferenceId}",
+                SourceConference.Id);
         }
     }
 }
