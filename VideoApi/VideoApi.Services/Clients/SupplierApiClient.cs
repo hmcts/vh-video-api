@@ -1996,6 +1996,14 @@ namespace VideoApi.Services.Clients
         [System.Runtime.Serialization.EnumMember(Value = @"TWO_PLUS_TWENTYONE")]
         TWO_PLUS_TWENTYONE = 4,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"NINE_EQUAL")]
+        NINE_EQUAL = 5,
+        
+        [System.Runtime.Serialization.EnumMember(Value = @"SIXTEEN_EQUAL")]
+        SIXTEEN_EQUAL = 6,
+        
+        [System.Runtime.Serialization.EnumMember(Value = @"TWENTY_FIVE_EQUAL")]
+        TWENTY_FIVE_EQUAL = 7
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
