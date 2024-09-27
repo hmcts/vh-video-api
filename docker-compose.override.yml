@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   videoapi:
-    image: ${DOCKER_REGISTRY-}videoapi:latest
+    image: ${DOCKER_REGISTRY-}videoapi:local
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
