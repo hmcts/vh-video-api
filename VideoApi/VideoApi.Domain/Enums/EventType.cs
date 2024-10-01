@@ -31,5 +31,6 @@ namespace VideoApi.Domain.Enums
         TelephoneJoined = 28,
         TelephoneDisconnected = 29,
         TelephoneTransfer = 30,
+        RecordingConnectionFailed = 31
     }
 }
