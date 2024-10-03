@@ -6,13 +6,15 @@ namespace VideoApi.Health;
 
 public static class HealthCheckExtensions
 {
+    private static readonly string[] HealthCheckTags = ["startup", "readiness"];
+    
     public static IServiceCollection AddVhHealthChecks(this IServiceCollection services)
     {
         services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddDbContextCheck<VideoApiDbContext>(name: "Database VhBookings", tags: new[] {"startup", "readiness"})
-            .AddCheck<SupplierApiHealthCheck>(name: "Supplier API", tags: new[] {"startup", "readiness"})
-            .AddCheck<WowzaHealthCheck>(name: "Wowza VM", tags: new[] {"startup", "readiness"});
+            .AddDbContextCheck<VideoApiDbContext>(name: "Database VhBookings", tags: HealthCheckTags)
+            .AddCheck<SupplierApiHealthCheck>(name: "Supplier API", tags: HealthCheckTags)
+            .AddCheck<WowzaHealthCheck>(name: "Wowza VM", tags: HealthCheckTags, failureStatus: HealthStatus.Degraded);
             
         return services;
     }
