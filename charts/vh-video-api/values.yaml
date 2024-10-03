@@ -87,7 +87,6 @@ java:
           alias: vodafoneconfiguration--conferencephonenumber
         - name: vodafoneconfiguration--telephoneconferencenumberwelsh
           alias: vodafoneconfiguration--conferencephonenumberwelsh
-        - vodafoneconfiguration--telephoneconferencenumberwelsh
         - QuickLinks--Issuer
         - QuickLinks--RsaPrivateKey
         - QuickLinks--ValidAudience
