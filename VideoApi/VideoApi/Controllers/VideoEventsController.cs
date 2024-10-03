@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -40,7 +39,6 @@ namespace VideoApi.Controllers
         [OpenApiOperation("RaiseVideoEvent")]
         [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        [AllowAnonymous]
         public async Task<IActionResult> PostEventAsync(ConferenceEventRequest request)
         {
             Guid.TryParse(request.ConferenceId, out var conferenceId);
