@@ -24,6 +24,7 @@ public class TelephoneJoinedEventHandler(
     {
         var command =
             new AddTelephoneParticipantCommand(SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.Phone);
+        await CommandHandler.Handle(command);
 
         _logger.LogInformation("TelephoneJoined callback - {ConferenceId}/{TelephoneParticipantId}",
             SourceConference.Id, callbackEvent.ParticipantId);
