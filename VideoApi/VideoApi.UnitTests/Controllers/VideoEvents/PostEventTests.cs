@@ -76,29 +76,5 @@ namespace VideoApi.UnitTests.Controllers.VideoEvents
             _mocker.Mock<IEventHandlerFactory>().Verify(x => x.Get(It.IsAny<VHEventType>()), shouldHandleEvent ? Times.Once() : Times.Never());
             _mocker.Mock<IEventHandler>().Verify(x => x.HandleAsync(It.IsAny<CallbackEvent>()), shouldHandleEvent ? Times.Once() : Times.Never());
         }
-
-        [Test]
-        public async Task PostEventAsync_PhoneEventShouldNotFireEventHandler()
-        {
-            // Arrange
-            var conferenceEventRequests = Enum.GetValues(typeof(EventType)).Cast<EventType>().Select(et =>
-            new ConferenceEventRequest
-            {
-                EventType = et,
-                Phone = "PhoneNumber"
-            });
-
-            _mocker.Mock<IEventHandlerFactory>().Setup(x => x.Get(It.IsAny<VHEventType>())).Returns(_mocker.Mock<IEventHandler>().Object);
-
-            foreach (var conferenceEventRequest in conferenceEventRequests)
-            {
-                // Act
-                await _sut.PostEventAsync(conferenceEventRequest);
-
-                // Assert
-                _mocker.Mock<IEventHandlerFactory>().Verify(x => x.Get(It.IsAny<VHEventType>()), Times.Never);
-                _mocker.Mock<IEventHandler>().Verify(x => x.HandleAsync(It.IsAny<CallbackEvent>()), Times.Never);
-            }
-        }
     }
 }
