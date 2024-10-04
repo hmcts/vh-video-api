@@ -6,10 +6,7 @@ namespace VideoApi.Extensions
     public static class ConferenceEventRequestExtensions
     {
         public static bool ShouldSkipEventHandler(this ConferenceEventRequest conferenceEvent) =>
-            !string.IsNullOrEmpty(conferenceEvent.Phone)
-                || conferenceEvent.EventType == EventType.ConnectingToConference
-                || conferenceEvent.EventType == EventType.ConnectingToEventHub
-                || conferenceEvent.EventType == EventType.Help
-                || conferenceEvent.EventType == EventType.SelectingMedia;
+            conferenceEvent.EventType is EventType.ConnectingToConference or EventType.ConnectingToEventHub ||
+            conferenceEvent.EventType == EventType.Help || conferenceEvent.EventType == EventType.SelectingMedia;
     }
 }
