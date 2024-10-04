@@ -1,7 +1,7 @@
 variables:
   - name: env
     value: "dev"
-  - name: devTagName
+  - name: imageTagName
     value: "dev-#{SHORTCOMMITID}#-#{DATETIME}#"
   - name: subDirectory
     value: "/non-prod"

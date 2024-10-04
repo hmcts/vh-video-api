@@ -7,7 +7,6 @@ using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Queries;
-using VideoApi.Services;
 using VideoApi.Services.Dtos;
 using Task = System.Threading.Tasks.Task;
 
@@ -80,31 +79,11 @@ namespace VideoApi.UnitTests.Controllers.Conference
         [Test]
         public async Task Should_book_supplier_conference_with_ingest_url_when_hrs_integration_feature_is_enabled()
         {
-            Mocker.Mock<IFeatureToggles>().Setup(x => x.HrsIntegrationEnabled()).Returns(true);
             var expectedIngestUrl =
                 $"https://localhost.streaming.mediaServices.windows.net/{_request.CaseTypeServiceId}-{_request.CaseNumber}-{_request.HearingRefId.ToString()}";
             AudioPlatformServiceMock
                 .Setup(x => x.GetAudioIngestUrl(_request.CaseTypeServiceId, _request.CaseNumber,
                     _request.HearingRefId.ToString())).Returns(expectedIngestUrl);
-            SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) { IngestUrl = expectedIngestUrl });
-            SetupCallToMockRetryService(Guid.NewGuid());
-            SetupCallToMockRetryService(true);
-            
-            await Controller.BookNewConferenceAsync(_request);
-            
-            BookingServiceMock.Verify(v
-                => v.BookMeetingRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
-                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<Supplier>()), Times.Once);
-        }
-        
-        [Test]
-        public async Task Should_book_supplier_conference_with_ingest_url_when_hrs_integration_feature_is_disabled()
-        {
-            Mocker.Mock<IFeatureToggles>().Setup(x => x.HrsIntegrationEnabled()).Returns(false);
-            var expectedIngestUrl =
-                $"https://localhost.streaming.mediaServices.windows.net/{_request.HearingRefId.ToString()}";
-            AudioPlatformServiceMock.Setup(x => x.GetAudioIngestUrl(_request.HearingRefId.ToString()))
-                .Returns(expectedIngestUrl);
             SetupCallToMockRetryService(new AudioPlatformServiceResponse(true) { IngestUrl = expectedIngestUrl });
             SetupCallToMockRetryService(Guid.NewGuid());
             SetupCallToMockRetryService(true);

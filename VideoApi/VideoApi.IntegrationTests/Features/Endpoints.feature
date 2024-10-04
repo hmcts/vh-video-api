@@ -63,7 +63,7 @@ Feature: Endpoints
     Given I have a conference with no endpoints
     And I have remove non-existent endpoint from a conference request
     When I send the request to the endpoint
-    Then the response should have the status BadRequest and success status False
+    Then the response should have the status NotFound and success status False
     
   Scenario: Remove an endpoint from a conference
     Given I have a conference with endpoints
@@ -75,7 +75,7 @@ Scenario: Update non-existent endpoint
     Given I have a conference with no endpoints
     And I have update to a non-existent endpoint for a conference request
     When I send the request to the endpoint
-    Then the response should have the status BadRequest and success status False
+    Then the response should have the status NotFound and success status False
 
 Scenario: Update an endpoint from a conference
     Given I have a conference with endpoints

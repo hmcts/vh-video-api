@@ -4,6 +4,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
+using RoomType = VideoApi.Contract.Enums.RoomType;
 
 namespace VideoApi.UnitTests.Mappings
 {
@@ -19,6 +20,7 @@ namespace VideoApi.UnitTests.Mappings
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithParticipants(3)
                 .WithMessages(5)
+                .WithTelephoneParticipant("Anonymous")
                 .WithInterpreterRoom()
                 .Build();
             string conferencePhoneNumber = "+441234567890";
@@ -76,6 +78,13 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.HearingRole)
                 .Excluding(x => x.HearingRole)
             );
+            
+            var telephoneParticipants = conference.GetTelephoneParticipants();
+            response.TelephoneParticipants.Count.Should().Be(telephoneParticipants.Count);
+            var telParticipant = response.TelephoneParticipants[0];
+            telParticipant.Id.Should().Be(telephoneParticipants[0].Id);
+            telParticipant.PhoneNumber.Should().Be(telephoneParticipants[0].TelephoneNumber);
+            telParticipant.Room.Should().Be(RoomType.WaitingRoom);
             
             var civilianRoom = response.CivilianRooms[0];
             var room = conference.Rooms.First();

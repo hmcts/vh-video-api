@@ -27,6 +27,10 @@ namespace VideoApi.Contract.Enums
         ConnectingToConference = 24,
         RoomParticipantJoined = 25,
         RoomParticipantDisconnected = 26,
-        RoomParticipantTransfer = 27
+        RoomParticipantTransfer = 27,
+        TelephoneJoined = 28,
+        TelephoneDisconnected = 29,
+        TelephoneTransfer = 30,
+        RecordingConnectionFailed = 31
     }
 }

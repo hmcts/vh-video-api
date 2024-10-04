@@ -1,4 +1,3 @@
-using System;
 using Autofac.Extras.Moq;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
@@ -44,6 +43,7 @@ namespace VideoApi.UnitTests.Events
                 .WithParticipant(UserRole.Representative, "Respondent", "DA1@test.com")
                 .WithLinkedParticipant(UserRole.Individual, "Applicant")
                 .WithInterpreterRoom()
+                .WithTelephoneParticipant("+44123456789")
                 .Build();
 
             QueryHandlerMock
@@ -52,7 +52,7 @@ namespace VideoApi.UnitTests.Events
             
             VideoPlatformServiceMock = _mocker.Mock<IVideoPlatformService>();
             _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(VideoPlatformServiceMock.Object);
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(It.IsAny<Supplier>())).Returns(VideoPlatformServiceMock.Object);    
         }
         
         protected void VerifySupplierUsed(Supplier supplier, Times times)

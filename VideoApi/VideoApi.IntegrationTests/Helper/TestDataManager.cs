@@ -19,11 +19,11 @@ namespace VideoApi.IntegrationTests.Helper
 {
     public class TestDataManager
     {
-        private readonly KinlyConfiguration _kinlyConfiguration;
-        private readonly VodafoneConfiguration _vodafoneConfiguration;
         private readonly DbContextOptions<VideoApiDbContext> _dbContextOptions;
+        private readonly KinlyConfiguration _kinlyConfiguration;
         private readonly List<Guid> _seedeConferences = new();
-
+        private readonly VodafoneConfiguration _vodafoneConfiguration;
+        
         public TestDataManager(KinlyConfiguration kinlyConfiguration, 
             DbContextOptions<VideoApiDbContext> dbContextOptions,
             VodafoneConfiguration vodafoneConfiguration)
@@ -32,8 +32,8 @@ namespace VideoApi.IntegrationTests.Helper
             _vodafoneConfiguration = vodafoneConfiguration;
             _dbContextOptions = dbContextOptions;
         }
-
-        public async Task<Conference> SeedConference(Supplier supplier = Supplier.Vodafone)
+        
+        public async Task<Conference> SeedConference(Supplier supplier = Supplier.Vodafone, string newTelephoneId = null)
         {
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Applicant")
@@ -43,7 +43,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Judge, "Judge")
                 .WithParticipant(UserRole.JudicialOfficeHolder, "PanelMember")
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername)
+                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername, true, newTelephoneId)
                 .WithAudioRecordingRequired(false)
                 .Build();
             var conferenceType = typeof(Conference);
@@ -82,7 +82,7 @@ namespace VideoApi.IntegrationTests.Helper
             
             return await SeedConference(conference);
         }
-
+        
         public async Task<Conference> SeedConference(bool AudioRecording)
         {
             var conference = new ConferenceBuilder(true)
@@ -107,7 +107,7 @@ namespace VideoApi.IntegrationTests.Helper
 
             return await SeedConference(conference);
         }
-
+        
         public async Task<Conference> SeedConference(Conference conference)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -116,7 +116,7 @@ namespace VideoApi.IntegrationTests.Helper
             _seedeConferences.Add(conference.Id);
             return conference;
         }
-
+        
         public async Task<Conference> SeedConferenceWithLinkedParticipant()
         {
             var TestConference = new ConferenceBuilder()
@@ -127,9 +127,8 @@ namespace VideoApi.IntegrationTests.Helper
 
             return await SeedConference(TestConference);
         }
-
         
-
+        
         public async Task<List<Alert>> SeedAlerts(IEnumerable<Alert> alerts)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -215,7 +214,7 @@ namespace VideoApi.IntegrationTests.Helper
             db.Heartbeats.RemoveRange(toDelete);
             await db.SaveChangesAsync();
         }
-
+        
         public async Task RemoveAlerts(Guid conferenceId)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -223,7 +222,7 @@ namespace VideoApi.IntegrationTests.Helper
             db.Tasks.RemoveRange(toDelete);
             await db.SaveChangesAsync();
         }
-
+        
         public async Task RemoveRooms(Guid conferenceId)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -232,7 +231,7 @@ namespace VideoApi.IntegrationTests.Helper
             db.Rooms.RemoveRange(roomsToDelete);
             await db.SaveChangesAsync();
         }
-
+        
         
         public async Task<List<Room>> SeedRooms(IEnumerable<Room> _rooms)
         {
@@ -243,7 +242,7 @@ namespace VideoApi.IntegrationTests.Helper
 
             return _seedRooms;
         }
-
+        
         public async Task<ConsultationRoom> SeedRoom(ConsultationRoom consultationRoom)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -252,7 +251,7 @@ namespace VideoApi.IntegrationTests.Helper
 
             return consultationRoom;
         }
-
+        
         public async Task<Room> SeedRoom(Room room)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -261,7 +260,7 @@ namespace VideoApi.IntegrationTests.Helper
 
             return room;
         }
-
+        
         public async Task<List<Event>> SeedEvents(IEnumerable<Event> events)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -271,7 +270,7 @@ namespace VideoApi.IntegrationTests.Helper
 
             return seedEvents;
         }
-
+        
         public async Task RemoveEvents(Guid conferenceId, EventType eventType)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -280,7 +279,7 @@ namespace VideoApi.IntegrationTests.Helper
             db.Events.RemoveRange(eventsToDelete);
             await db.SaveChangesAsync();
         }
-
+        
         public async Task RemoveEvents()
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -288,7 +287,7 @@ namespace VideoApi.IntegrationTests.Helper
             db.Events.RemoveRange(eventsToDelete);
             await db.SaveChangesAsync();
         }
-
+        
         public async Task SeedRoomWithRoomParticipant(long roomId, RoomParticipant roomParticipant)
         {
             await using var db = new VideoApiDbContext(_dbContextOptions);
@@ -300,9 +299,9 @@ namespace VideoApi.IntegrationTests.Helper
             
             await db.SaveChangesAsync();
         }
-
+        
         public KinlyConfiguration GetKinlyConfiguration() => _kinlyConfiguration;
-
+        
         public VodafoneConfiguration GetVodafoneConfiguration() => _vodafoneConfiguration;
     }
 }

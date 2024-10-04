@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration.KeyPerFile;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using VH.Core.Configuration;
 
 namespace VideoApi
 {
@@ -22,12 +24,16 @@ namespace VideoApi
         {
             const string vhInfraCore = "/mnt/secrets/vh-infra-core";
             const string vhVideoApi = "/mnt/secrets/vh-video-api";
+            var keyVaults = new[] { vhInfraCore, vhVideoApi };
 
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((configBuilder) =>
                 {
-                    configBuilder.AddAksKeyVaultSecretProvider(vhInfraCore);
-                    configBuilder.AddAksKeyVaultSecretProvider(vhVideoApi);
+                    foreach (var keyVault in keyVaults.Where(Directory.Exists))
+                    {
+                        configBuilder.Add(GetKeyPerFileSource(keyVault));
+
+                    }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -35,6 +41,17 @@ namespace VideoApi
                     webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
                 });
+        }
+        
+        private static KeyPerFileConfigurationSource GetKeyPerFileSource(string filePath)
+        {
+            return new KeyPerFileConfigurationSource
+            {
+                FileProvider = new PhysicalFileProvider(filePath),
+                Optional = true,
+                ReloadOnChange = true,
+                SectionDelimiter = "--" // Set your custom delimiter here
+            };
         }
     }
 }

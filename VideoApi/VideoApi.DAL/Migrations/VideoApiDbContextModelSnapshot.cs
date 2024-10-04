@@ -649,6 +649,42 @@ namespace VideoApi.DAL.Migrations
                     b.ToTable("Task", (string)null);
                 });
 
+            modelBuilder.Entity("VideoApi.Domain.TelephoneParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentRoom")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("State")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("TelephoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.ToTable("TelephoneParticipant", (string)null);
+                });
+
             modelBuilder.Entity("VideoApi.Domain.TestCallResult", b =>
                 {
                     b.Property<long>("Id")
@@ -728,7 +764,7 @@ namespace VideoApi.DAL.Migrations
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
-                    b.OwnsOne("VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
+                    b.OwnsOne("VideoApi.Domain.Conference.MeetingRoom#VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
                         {
                             b1.Property<Guid>("ConferenceId")
                                 .HasColumnType("uniqueidentifier");
@@ -755,7 +791,7 @@ namespace VideoApi.DAL.Migrations
 
                             b1.HasKey("ConferenceId");
 
-                            b1.ToTable("Conference");
+                            b1.ToTable("Conference", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ConferenceId");
@@ -894,6 +930,14 @@ namespace VideoApi.DAL.Migrations
                     b.Navigation("Room");
                 });
 
+            modelBuilder.Entity("VideoApi.Domain.TelephoneParticipant", b =>
+                {
+                    b.HasOne("VideoApi.Domain.Conference", null)
+                        .WithMany("TelephoneParticipants")
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
                     b.Navigation("ConferenceStatuses");
@@ -905,6 +949,8 @@ namespace VideoApi.DAL.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("Rooms");
+
+                    b.Navigation("TelephoneParticipants");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.ParticipantBase", b =>

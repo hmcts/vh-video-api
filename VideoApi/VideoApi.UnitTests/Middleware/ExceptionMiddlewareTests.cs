@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using VideoApi.Common;
+using VideoApi.DAL.Exceptions;
+using VideoApi.Domain.Enums;
+using VideoApi.Domain.Validations;
 using VideoApi.Extensions;
 using VideoApi.Services.Clients;
 
@@ -40,6 +43,19 @@ namespace VideoApi.UnitTests.Middleware
         }
 
         [Test]
+        public async Task should_return_bad_request_when_DomainRuleException_is_thrown()
+        {
+            RequestDelegateMock
+                .Setup(x => x.RequestDelegate(It.IsAny<HttpContext>()))
+                .Returns(Task.FromException(new DomainRuleException("Error", "Error Test message")));
+            ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
+
+            await ExceptionMiddleware.InvokeAsync(HttpContext);
+            ClassicAssert.AreEqual("application/json; charset=utf-8", HttpContext.Response.ContentType);
+            ClassicAssert.AreEqual((int) HttpStatusCode.BadRequest, HttpContext.Response.StatusCode);
+        }
+        
+        [Test]
         public async Task Should_return_bad_request_message()
         {
             RequestDelegateMock
@@ -64,6 +80,32 @@ namespace VideoApi.UnitTests.Middleware
             await ExceptionMiddleware.InvokeAsync(HttpContext);
             ClassicAssert.AreEqual("application/json; charset=utf-8", HttpContext.Response.ContentType);
             ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, HttpContext.Response.StatusCode);
+        }
+
+        [Test]
+        public async Task should_return_bad_request_when_dal_exception_is_thrown()
+        {
+            RequestDelegateMock
+                .Setup(x => x.RequestDelegate(It.IsAny<HttpContext>()))
+                .Returns(Task.FromException(new InvalidVirtualCourtRoomTypeException(VirtualCourtRoomType.JudgeJOH, "Wrong one")));
+            ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
+
+            await ExceptionMiddleware.InvokeAsync(HttpContext);
+            ClassicAssert.AreEqual("application/json; charset=utf-8", HttpContext.Response.ContentType);
+            ClassicAssert.AreEqual((int) HttpStatusCode.BadRequest, HttpContext.Response.StatusCode);
+        }
+        
+        [Test]
+        public async Task should_return_not_found_when_EntityNotFoundException_is_thrown()
+        {
+            RequestDelegateMock
+                .Setup(x => x.RequestDelegate(It.IsAny<HttpContext>()))
+                .Returns(Task.FromException(new ConferenceNotFoundException(Guid.NewGuid())));
+            ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
+
+            await ExceptionMiddleware.InvokeAsync(HttpContext);
+            ClassicAssert.AreEqual("application/json; charset=utf-8", HttpContext.Response.ContentType);
+            ClassicAssert.AreEqual((int) HttpStatusCode.NotFound, HttpContext.Response.StatusCode);
         }
 
         [Test]

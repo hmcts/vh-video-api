@@ -31,8 +31,6 @@ namespace VideoApi.Services
             ApplicationName     = configuration.ApplicationName;
         }
 
-        public string GetAudioIngestUrl(string hearingId) => $"{_configuration.StreamingEndpoint}{ApplicationName}/{hearingId}";
-
         public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId)
         {
             const string regex = "[^a-zA-Z0-9]";
@@ -125,7 +123,9 @@ namespace VideoApi.Services
         {
             if (ex.StatusCode != HttpStatusCode.NotFound)
             {
+#pragma warning disable CA2254 // Template should be a static expression
                 _logger.LogError(ex, errorMessageTemplate, args);
+#pragma warning restore CA2254 // Template should be a static expression
             }
         }
         
@@ -199,11 +199,11 @@ namespace VideoApi.Services
         
         private static async Task<T> WaitAnyFirstValidResult<T>(List<Task<T>> tasks)
         {
-            while (tasks.Any())
+            while (tasks.Count != 0)
             {
                 var task = await Task.WhenAny(tasks);
 
-                if (task != null && !task.IsCanceled && !task.IsFaulted)
+                if (!task.IsCanceled && !task.IsFaulted)
                 {
                     return await task;
                 }

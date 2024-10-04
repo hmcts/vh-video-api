@@ -48,11 +48,11 @@ public class ConferenceCoreResponse
     /// Is the waiting room still accessible for the conference
     /// </summary>
     public bool IsWaitingRoomOpen { get; set; }
-    
+
     /// <summary>
     /// List of participants in conference
     /// </summary>
-    public List<ParticipantCoreResponse> Participants { get; set; }
+    public List<ParticipantCoreResponse> Participants { get; set; } = new();
     
     /// <summary>
     /// FOR TESTING ONLY: The case name of the conference
