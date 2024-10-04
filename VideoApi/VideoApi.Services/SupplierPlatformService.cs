@@ -184,5 +184,15 @@ namespace VideoApi.Services
         public ISupplierApiClient GetHttpClient() => _supplierApiClient;
         
         public SupplierConfiguration GetSupplierConfiguration() => _supplierConfigOptions;
+        
+        public Task UpdateParticipantName(Guid conferenceId, Guid participantId, string name)
+        {
+            var request = new UpdateParticipantNameParams()
+            {
+                Participant_Id = participantId.ToString(),
+                Participant_Name = name
+            };
+            return _supplierApiClient.UpdateParticipanNameAsync(conferenceId.ToString(), request);
+        }
     }
 }
