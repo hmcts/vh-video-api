@@ -67,6 +67,7 @@ stages:
   #####################################################
   # CI Build Tasks. ###################################
   - stage: CI_Build
+    dependsOn: []
     variables:
       - template: variables/shared.yaml
     displayName: Test & Sonar
