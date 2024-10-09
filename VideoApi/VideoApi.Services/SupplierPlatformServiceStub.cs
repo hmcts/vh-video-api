@@ -97,6 +97,11 @@ namespace VideoApi.Services
         
         public SupplierConfiguration GetSupplierConfiguration() => _supplierConfiguration;
         
+        public Task UpdateParticipantName(Guid conferenceId, Guid participantId, string name)
+        {
+            return Task.CompletedTask;
+        }
+        
         private static MeetingRoom Create()
         {
             const string URL_CONFERENCE = "https://ext-node02.com/webapp/#/?conference=user@hmcts.net";

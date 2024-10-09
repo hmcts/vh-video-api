@@ -293,5 +293,17 @@ namespace VideoApi.UnitTests.Services
             await _SupplierPlatformService.SuspendHearingAsync(conferenceId);	
             _supplierApiClientMock.Verify(x => x.TechnicalAssistanceAsync(conferenceId.ToString()), Times.Once);	
         }
+        
+        [Test]
+        public async Task should_update_participant_display_name()
+        {
+            var conferenceId = Guid.NewGuid();
+            var participantId = Guid.NewGuid();
+            var name = "New Name";
+            await _SupplierPlatformService.UpdateParticipantName(conferenceId, participantId, name);
+            _supplierApiClientMock.Verify(x => x.UpdateParticipanNameAsync(conferenceId.ToString(),
+                It.Is<UpdateParticipantNameParams>(p
+                    => p.Participant_Id == participantId.ToString() && p.Participant_Name == name)), Times.Once);
+        }
     }
 }

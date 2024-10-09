@@ -4,6 +4,9 @@
 // </auto-generated>
 //----------------------
 
+using System.Threading;
+using System.Threading.Tasks;
+
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
 #pragma warning disable 472 // Disable "CS0472 The result of the expression is always 'false' since a value of type 'Int32' is never equal to 'null' of type 'Int32?'
@@ -238,14 +241,31 @@ namespace VideoApi.Services.Clients
         /// <returns>All participant rooms</returns>
         /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ListParticipantRoomResponse> GetParticipantRoomsAsync(string virtual_courtroom_id, System.Threading.CancellationToken cancellationToken);
-
+        
+        /// <remarks>
+        /// Update participant name
+        /// </remarks>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>All participant rooms</returns>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task UpdateParticipanNameAsync(string virtual_courtroom_id, UpdateParticipantNameParams updateParticipantNameParams);
+        
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <remarks>
+        /// Updates a participant name
+        /// </remarks>
+        /// <param name="virtual_courtroom_id">Hearing ID</param>
+        /// <returns>All participant rooms</returns>
+        /// <exception cref="SupplierApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task UpdateParticipanNameAsync(string virtual_courtroom_id, UpdateParticipantNameParams updateParticipantNameParams, System.Threading.CancellationToken cancellationToken);
+        
         /// <remarks>
         /// Check API health
         /// </remarks>
         /// <returns>Health Check</returns>
         /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync();
-
+        
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <remarks>
         /// Check API health
@@ -253,7 +273,6 @@ namespace VideoApi.Services.Clients
         /// <returns>Health Check</returns>
         /// <exception cref="SupplierApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<HealthCheckResponse> HealthCheckAsync(System.Threading.CancellationToken cancellationToken);
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1471,7 +1490,91 @@ namespace VideoApi.Services.Clients
                     client_.Dispose();
             }
         }
+        
+        public async Task UpdateParticipanNameAsync(string virtual_courtroom_id, UpdateParticipantNameParams updateParticipantNameParams)
+        {
+            await UpdateParticipanNameAsync(virtual_courtroom_id, updateParticipantNameParams, System.Threading.CancellationToken.None);
+        }
+        
+        public Task UpdateParticipanNameAsync(string virtual_courtroom_id, UpdateHearingParams updateHearingParams,
+            CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+        
+        public async Task UpdateParticipanNameAsync(string virtual_courtroom_id, UpdateParticipantNameParams updateParticipantNameParams, CancellationToken cancellationToken)
+        {
+             if (virtual_courtroom_id == null)
+                throw new System.ArgumentNullException("virtual_courtroom_id");
 
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearing/{virtual_courtroom_id}/participant-name");
+            urlBuilder_.Replace("{virtual_courtroom_id}", System.Uri.EscapeDataString(ConvertToString(virtual_courtroom_id, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(updateParticipantNameParams, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ >= 200 && status_ <= 202)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SupplierApiException("Data is malformed", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SupplierApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+        
         /// <remarks>
         /// Check API health
         /// </remarks>
@@ -2063,7 +2166,33 @@ namespace VideoApi.Services.Clients
         }
 
     }
-
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema",
+        "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateParticipantNameParams
+    {
+        [Newtonsoft.Json.JsonProperty("participant_id", Required = Newtonsoft.Json.Required.Always)]
+        public string Participant_Id { get; set; }
+        
+        [Newtonsoft.Json.JsonProperty("participant_name", Required = Newtonsoft.Json.Required.Always)]
+        public string Participant_Name { get; set; }
+        
+        public string ToJson()
+        {
+            
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
+            
+        }
+        
+        public static CreateParticipantRoomParams FromJson(string data)
+        {
+            
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<CreateParticipantRoomParams>(data,
+                new Newtonsoft.Json.JsonSerializerSettings());
+            
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CreateParticipantRoomParams
     {
