@@ -12,9 +12,9 @@ namespace Testing.Common.Helper.Builders.Domain
     public class ConferenceBuilder
     {
         private const string CaseName = "Video Api Integration Test";
-        private readonly Conference _conference;
         private readonly BuilderSettings _builderSettings;
-
+        private readonly Conference _conference;
+        
         public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null,
             DateTime? scheduledDateTime = null, string venueName = "MyVenue", Supplier supplier = Supplier.Vodafone)
         {
@@ -60,7 +60,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
+        
         public ConferenceBuilder WithParticipants(IEnumerable<Participant> participants)
         {
             foreach (var participant in participants)
@@ -70,7 +70,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
+        
         public ConferenceBuilder WithParticipant(UserRole userRole, string caseTypeGroup,
             string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
@@ -115,7 +115,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
+        
         public ConferenceBuilder WithEndpoint(string displayName, string sipAddress, string defenceAdvocate = null)
         {
             var endpoint = new Endpoint(displayName, sipAddress, "1234", defenceAdvocate);
@@ -138,23 +138,23 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
-        public ConferenceBuilder WithMeetingRoom(string pexipNode, string conferenceUsername, bool setTelephoneConferenceId = true)
+        
+        public ConferenceBuilder WithMeetingRoom(string pexipNode, string conferenceUsername, bool setTelephoneConferenceId = true, string newTelephoneConferenceId = null)
         {
             var adminUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var judgeUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var participantUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var ticks = DateTime.UtcNow.Ticks.ToString();
-            var telephoneConferenceId = setTelephoneConferenceId ? ticks[^8..] : null;
+            var telephoneConferenceId = newTelephoneConferenceId ?? (setTelephoneConferenceId ? ticks[^8..] : null);
             _conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
             return this;
         }
-
+        
         public Conference Build()
         {
             return _conference;
         }
-
+        
         public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState, DateTime? timeStamp = null)
         {
             if (conferenceState == ConferenceState.InSession && !_conference.ActualStartTime.HasValue)
@@ -185,13 +185,13 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
+        
         public ConferenceBuilder WithAudioRecordingRequired(bool required)
         {
             _conference.AudioRecordingRequired = required;
             return this;
         }
-
+        
         public ConferenceBuilder WithInterpreterRoom()
         {
             if (_conference.Participants.Count < 2)
@@ -226,9 +226,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
-       
-
+        
         public ConferenceBuilder WithLinkedParticipant(UserRole userRole, string caseTypeGroup,
             string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
@@ -294,8 +292,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
-
+        
         public ConferenceBuilder WithInterpreterLinkedParticipant(UserRole userRole, string caseTypeGroup,
             string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)

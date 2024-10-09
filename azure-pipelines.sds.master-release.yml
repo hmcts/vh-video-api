@@ -22,7 +22,6 @@ parameters:
     publishNuget: true
     pushHelmChart: true
   - env: 'demo'
-    requireApproval: true
     buildPushImage: false
     publishNuget: false
     pushHelmChart: false
@@ -64,6 +63,30 @@ stages:
           nugetProjectPath: '${{ variables.appName }}/${{ variables.nuget_package_name }}'
           vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
           gitVersionConfigPath: ${{ variables.git_version_config_path }}
+
+#####################################################
+# CI Build Tasks. ###################################
+- stage: CI_Build
+  dependsOn: []
+  variables:
+    - template: variables/shared.yaml
+  displayName: Test & Sonar
+  jobs:
+    - job: UnitAndIntegrationTests
+      displayName: 'Unit and Integration Tests'
+      steps:
+        - checkout: self
+
+        - template: templates/dotnet/build-test-analyse.yml@azTemplates
+          parameters:
+            dotnetVersion: ${{ variables.dotnetVersion }}
+            nugetConfigPath: nuget.config
+            appName: ${{ variables.appName }}
+            dockerComposeTestFile: docker-compose.tests.yml
+            sonarExtraProperties: |
+              sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
+              sonar.exclusions=**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi/Swagger/**/*, VideoApi/VideoApi.DAL/Migrations/*, **/EventType.cs
+              sonar.coverage.exclusions=**/VideoApi/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi.Common/**/*, **/VideoApi.IntegrationTests/**/*, **/VideoApi.UnitTests/**/*, **/VideoApi/Extensions/*
 
 #####################################################
 # Manual Approval ###################################
