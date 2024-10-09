@@ -42,6 +42,18 @@ namespace VideoApi
     [ExcludeFromCodeCoverage]
     public static class ConfigureServicesExtensions
     {
+        /// <summary>
+        /// The AddSwagger function configures Swagger documentation and security settings for a C#
+        /// application.
+        /// </summary>
+        /// <param name="IServiceCollection">The `IServiceCollection` interface in ASP.NET Core is used
+        /// to register application services. In the provided code snippet, the `AddSwagger` method
+        /// extends the functionality of `IServiceCollection` by adding Swagger documentation and
+        /// security definitions to the service collection.</param>
+        /// <returns>
+        /// The `AddSwagger` method is returning the `IServiceCollection` after configuring Swagger
+        /// documentation and security settings for the Video API.
+        /// </returns>
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
             services.AddScoped(provider =>
@@ -74,6 +86,28 @@ namespace VideoApi
             return services;
         }
         
+        /// <summary>
+        /// The AddCustomTypes function configures and registers various services and dependencies based
+        /// on the provided environment and configuration settings.
+        /// </summary>
+        /// <param name="IServiceCollection">IServiceCollection is a built-in interface in ASP.NET Core
+        /// that defines a contract for a collection of service descriptors. It is used to register
+        /// application services with the built-in dependency injection container. The AddCustomTypes
+        /// method you provided is an extension method for IServiceCollection that registers various
+        /// custom types and services within the</param>
+        /// <param name="IWebHostEnvironment">The `IWebHostEnvironment` parameter in the
+        /// `AddCustomTypes` method is used to provide information about the web hosting environment in
+        /// which the application is running. It provides access to the application's content root path,
+        /// environment name, and other environment-related information. This parameter is typically
+        /// used to determine the</param>
+        /// <param name="useStub">The `useStub` parameter in the `AddCustomTypes` method is a boolean
+        /// flag that determines whether to register stub implementations of certain services or the
+        /// actual implementations. If `useStub` is `true`, stub implementations will be registered for
+        /// services like `IAudioPlatformService`, `IConsultation</param>
+        /// <returns>
+        /// The method `AddCustomTypes` is returning an `IServiceCollection` after configuring various
+        /// services and dependencies within the method.
+        /// </returns>
         public static IServiceCollection AddCustomTypes(this IServiceCollection services,
             IWebHostEnvironment environment, bool useStub)
         {
