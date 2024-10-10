@@ -164,19 +164,6 @@
           "System.Text.Encodings.Web": "8.0.0"
         }
       },
-      "VH.Core.Configuration": {
-        "type": "Direct",
-        "requested": "[0.1.13, )",
-        "resolved": "0.1.13",
-        "contentHash": "fEtq8dy7GbJ8eUDc5kmwg3Ze+6C7JEPSHlmvz22W8UPX/x7ujBTr5MqUdpKNQganaHalt/6DHfHi+gxlPSUjiw==",
-        "dependencies": {
-          "Microsoft.AspNetCore.Http.Connections.Common": "3.1.10",
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Microsoft.Extensions.Configuration.KeyPerFile": "3.1.11",
-          "Microsoft.Extensions.DependencyModel": "3.1.6",
-          "SonarAnalyzer.CSharp": "8.2.0.14119"
-        }
-      },
       "ZymLabs.NSwag.FluentValidation": {
         "type": "Direct",
         "requested": "[0.6.3, )",

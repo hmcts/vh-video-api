@@ -2266,7 +2266,6 @@
           "NSwag.AspNetCore": "[14.0.7, )",
           "Scrutor": "[4.2.2, )",
           "System.Text.Json": "[8.0.4, )",
-          "VH.Core.Configuration": "[0.1.13, )",
           "VideoApi.Common": "[1.0.0, )",
           "VideoApi.Contract": "[1.0.0, )",
           "VideoApi.DAL": "[1.0.0, )",
