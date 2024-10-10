@@ -7,7 +7,10 @@ namespace VideoApi.Contract.Requests
     {
         Dynamic,
         OnePlus7,
-        TwoPlus21
+        TwoPlus21,
+        NineEqual,
+        SixteenEqual,
+        TwentyFiveEqual
     }
     public class StartHearingRequest
     {
