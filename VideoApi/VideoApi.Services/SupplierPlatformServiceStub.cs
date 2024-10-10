@@ -26,7 +26,7 @@ namespace VideoApi.Services
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints, string telephoneId)
+            IEnumerable<EndpointDto> endpoints, string telephoneId, string roomType)
         {
             if (_bookedGuids.Contains(conferenceId))
                 throw new DoubleBookingException(conferenceId);
@@ -62,7 +62,7 @@ namespace VideoApi.Services
         }
         
         public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId, IEnumerable<string> participantsToForceTransfer = null,
-            Layout layout = Layout.AUTOMATIC, bool muteGuests = false)
+            IEnumerable<string> hosts = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = false)
         {
             return Task.CompletedTask;
         }

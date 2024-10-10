@@ -76,7 +76,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>()))
+                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
         
@@ -88,7 +88,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<SupplierApiException>(() =>
-                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>()));
+                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<string>()));
         }
         
         [Test]
@@ -98,8 +98,8 @@ namespace VideoApi.UnitTests.Services
             const string ingestUrl = null;
             var endpoints = new List<EndpointDto>
             {
-                new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919"},
-                new () {Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832"}
+                new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919", HasScreeningRequirement = false},
+                new () {Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832", HasScreeningRequirement = false}
             };
             
             var hearingParams = new CreateHearingParams
@@ -137,7 +137,7 @@ namespace VideoApi.UnitTests.Services
             var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints, It.IsAny<string>());
+                endpoints, It.IsAny<string>(), It.IsAny<string>());
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);
@@ -263,11 +263,16 @@ namespace VideoApi.UnitTests.Services
             var conferenceId = Guid.NewGuid();
             var layout = Layout.ONE_PLUS_SEVEN;
             var participantsToForceTransfer = new[] {"participant-one", "participant-two"};
+            var hostIds = new[] {"host-one", "host-two"};
             var muteGuests = false;
-            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(), participantsToForceTransfer, layout, muteGuests);
+            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(),
+                participantsToForceTransfer, hostIds, layout, muteGuests);
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
-                    It.Is<StartHearingRequest>(l => l.Hearing_layout == layout && l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) && l.Mute_guests == muteGuests)), Times.Once);
+                    It.Is<StartHearingRequest>(l =>
+                        l.Hearing_layout == layout &&
+                        l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) &&
+                        l.Hosts.SequenceEqual(hostIds) && l.Mute_guests == muteGuests)), Times.Once);
         }
         
         [Test]

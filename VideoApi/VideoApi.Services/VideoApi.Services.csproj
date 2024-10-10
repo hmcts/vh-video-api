@@ -6,7 +6,7 @@
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="Polly" Version="8.3.1" />
-      <PackageReference Include="SonarAnalyzer.CSharp" Version="9.26.0.92422">
+      <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
