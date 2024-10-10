@@ -18,6 +18,6 @@ namespace VideoApi.Contract.Requests
         public HearingLayout? Layout { get; set; }
         public bool? MuteGuests { get; set; }
         public Guid TriggeredByHostId { get; set; }
-        public List<Guid> HostParticipants { get; set; }
+        public List<Guid> Hosts { get; set; } = [];
     }
 }

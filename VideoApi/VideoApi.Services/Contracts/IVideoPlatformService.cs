@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Dtos;
@@ -12,7 +13,7 @@ namespace VideoApi.Services.Contracts
     public interface IVideoPlatformService
     {
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
-            IEnumerable<EndpointDto> endpoints, string telephoneId, string roomType);
+            IEnumerable<EndpointDto> endpoints, string telephoneId, ScreeningRoomType roomType);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
         Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom);

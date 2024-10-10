@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
@@ -46,7 +47,7 @@ namespace VideoApi.Services
             bool audioRecordingRequired,
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints, 
-            string telephoneId, string roomType)
+            string telephoneId, ScreeningRoomType roomType)
         {
             _logger.LogInformation(
                 "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
@@ -56,7 +57,7 @@ namespace VideoApi.Services
                 var response = await _supplierApiClient.CreateHearingAsync(new CreateHearingParams
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
-                    RoomType = roomType,
+                    RoomType = roomType.ToString(),
                     Callback_uri = _supplierConfigOptions.CallbackUri,
                     Recording_enabled = audioRecordingRequired,
                     Recording_url = ingestUrl,

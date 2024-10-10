@@ -77,14 +77,16 @@ namespace VideoApi.Controllers
                 // if only hosts are connected and no participants the supplier will not start the hearing, so provide the host id to force the hearing to start
                 allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
 
+                var hosts = request.Hosts.Select(h => h.ToString()).ToList();
+
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
                 if (conference.Supplier == Supplier.Vodafone)
                 {
-                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? true);    
+                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hosts, hearingLayout, request.MuteGuests ?? true);    
                 }
                 else
                 {
-                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hearingLayout, request.MuteGuests ?? false);
+                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hosts, hearingLayout, request.MuteGuests ?? false);
                 }
                 
            

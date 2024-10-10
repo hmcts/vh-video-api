@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
@@ -26,7 +27,7 @@ namespace VideoApi.Services
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints, string telephoneId, string roomType)
+            IEnumerable<EndpointDto> endpoints, string telephoneId, ScreeningRoomType roomType)
         {
             if (_bookedGuids.Contains(conferenceId))
                 throw new DoubleBookingException(conferenceId);

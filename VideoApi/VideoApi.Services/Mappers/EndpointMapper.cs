@@ -1,3 +1,4 @@
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services.Dtos;
 
@@ -24,7 +25,8 @@ namespace VideoApi.Services.Mappers
             {
                 Address = source.SipAddress,
                 Display_name = kinlyDisplayName,
-                Pin = source.Pin
+                Pin = source.Pin,
+                Role = source.HasScreeningRequirement ? Role.Guest.ToString() : Role.Host.ToString()
             };
         }
     }

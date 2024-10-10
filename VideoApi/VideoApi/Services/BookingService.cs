@@ -42,13 +42,18 @@ public class BookingService(
         MeetingRoom meetingRoom;
         var telephoneId = await CreateUniqueTelephoneId();
         var videoPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)supplier);
+        var endpointDtos = endpoints.ToList();
+        var roomType = endpointDtos.Exists(e => e.HasScreeningRequirement) ? 
+            ScreeningRoomType.VA : 
+            ScreeningRoomType.VMR;
         try
         {
             meetingRoom = await videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints,
-                telephoneId);
+                endpointDtos,
+                telephoneId,
+                roomType);
         }
         catch (DoubleBookingException ex)
         {
