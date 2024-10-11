@@ -47,7 +47,7 @@ namespace VideoApi.Services
             bool audioRecordingRequired,
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints, 
-            string telephoneId, ScreeningRoomType roomType)
+            string telephoneId, ConferenceRoomType roomType)
         {
             _logger.LogInformation(
                 "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,

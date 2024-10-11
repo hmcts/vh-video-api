@@ -23,5 +23,6 @@ namespace VideoApi.Contract.Requests
         public bool AudioRecordingRequired { get; set; }
         public List<AddEndpointRequest> Endpoints { get; set; }
         public Supplier Supplier { get; set; }
+        public ConferenceRoomType ConferenceRoomType { get; set; }
     }
 }

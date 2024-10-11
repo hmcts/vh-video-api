@@ -13,7 +13,7 @@ namespace VideoApi.Services.Contracts
     public interface IVideoPlatformService
     {
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
-            IEnumerable<EndpointDto> endpoints, string telephoneId, ScreeningRoomType roomType);
+            IEnumerable<EndpointDto> endpoints, string telephoneId, ConferenceRoomType roomType);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
         Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom);

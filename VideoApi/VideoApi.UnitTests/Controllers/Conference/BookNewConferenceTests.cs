@@ -92,7 +92,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             BookingServiceMock.Verify(v
                 => v.BookMeetingRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
-                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<Supplier>()), Times.Once);
+                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<ConferenceRoomType>(), It.IsAny<Supplier>()), Times.Once);
         }
         
         [Test]

@@ -6,6 +6,6 @@ namespace VideoApi.Contract.Requests
     {
         public string DisplayName { get; set; }
         public string DefenceAdvocate { get; set; }
-        public Role Role { get; set; }
+        public ConferenceRole ConferenceRole { get; set; }
     }
 }

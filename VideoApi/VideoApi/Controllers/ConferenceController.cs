@@ -76,7 +76,7 @@ public class ConferenceController(
         var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
         
         var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,
-            audioIngestUrl, endpointDtos, request.Supplier);
+            audioIngestUrl, endpointDtos, request.ConferenceRoomType, request.Supplier);
         
         if (!roomBookedSuccess)
         {
@@ -508,6 +508,7 @@ public class ConferenceController(
         bool audioRecordingRequired,
         string ingestUrl,
         IEnumerable<EndpointDto> endpoints,
+        ConferenceRoomType roomType,
         Supplier supplier = Supplier.Kinly) => await pollyRetryService.WaitAndRetryAsync<Exception, bool>
     (
         3,
@@ -516,7 +517,7 @@ public class ConferenceController(
             logger.LogWarning("Failed to BookMeetingRoomAsync. Retrying attempt {RetryAttempt}", retryAttempt),
         callResult => !callResult,
         async () => await bookingService.BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl,
-            endpoints, supplier)
+            endpoints, roomType, supplier)
     );
     
     

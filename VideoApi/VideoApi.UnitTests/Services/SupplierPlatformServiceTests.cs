@@ -77,7 +77,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ScreeningRoomType>()))
+                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>()))
                 .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
         
@@ -89,7 +89,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<SupplierApiException>(() =>
-                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ScreeningRoomType>()));
+                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>()));
         }
         
         [Test]
@@ -138,7 +138,7 @@ namespace VideoApi.UnitTests.Services
             var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints, It.IsAny<string>(), It.IsAny<ScreeningRoomType>());
+                endpoints, It.IsAny<string>(), It.IsAny<ConferenceRoomType>());
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);

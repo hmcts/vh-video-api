@@ -27,6 +27,6 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Role of the endpoint
         /// </summary>
-        public Role Role { get; set; }
+        public ConferenceRole ConferenceRole { get; set; }
     }
 }
