@@ -39,5 +39,10 @@ namespace VideoApi.Contract.Responses
         /// Current consultation room details
         /// </summary>
         public RoomResponse CurrentRoom { get; set; }
+
+        /// <summary>
+        /// The role in the conference
+        /// </summary>
+        public ConferenceRole ConferenceRole { get; set; }
     }
 }

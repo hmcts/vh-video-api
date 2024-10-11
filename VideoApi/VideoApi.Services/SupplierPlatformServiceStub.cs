@@ -10,6 +10,7 @@ using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services
 {

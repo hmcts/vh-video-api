@@ -25,6 +25,7 @@ using VideoApi.Services.Factories;
 using VideoApi.Services.Mappers;
 using VideoApi.Validations;
 using Task = System.Threading.Tasks.Task;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Controllers;
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Controllers;
@@ -22,6 +23,7 @@ using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
 using UserRole = VideoApi.Domain.Enums.UserRole;
 using Supplier = VideoApi.Contract.Enums.Supplier;
+using ConferenceRole = VideoApi.Domain.Enums.ConferenceRole;
 
 namespace VideoApi.UnitTests.Controllers.Endpoints
 {
@@ -77,10 +79,11 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
         public async Task Should_add_endpoint_to_conference()
         {
             var conferenceId = Guid.NewGuid();
+            const ConferenceRole conferenceRole = ConferenceRole.Guest;
             var testEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234","Defence Sol"),
-                new Endpoint("two", "867744", "5678", "Defence Bol")
+                new Endpoint("one", "44564", "1234","Defence Sol", conferenceRole),
+                new Endpoint("two", "867744", "5678", "Defence Bol", conferenceRole)
             };
 
             var testConference = new ConferenceBuilder()
@@ -176,8 +179,10 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             const string newDisplayName = "new display name";
             var testEndpoints = new List<Endpoint>
             {
-                new Endpoint("one", "44564", "1234", "Defence Sol"),
-                new Endpoint("two", "867744", "5678", "Defence Bol")
+                new Endpoint("one", "44564", "1234", "Defence Sol",
+                    ConferenceRole.Guest),
+                new Endpoint("two", "867744", "5678", "Defence Bol",
+                    ConferenceRole.Guest)
             };
 
             var testConference = new ConferenceBuilder()

@@ -15,6 +15,7 @@ using VideoApi.Domain;
 using VideoApi.Extensions;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services;
 
@@ -90,7 +91,9 @@ public class BookingService(
             .ToList();
         
         var endpoints = request.Endpoints
-            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate)).ToList();
+            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate, 
+                (Domain.Enums.ConferenceRole)x.ConferenceRole))
+            .ToList();
         
         var linkedParticipants = request.Participants
             .SelectMany(x => x.LinkedParticipants)
@@ -106,7 +109,8 @@ public class BookingService(
             request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
             request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
             request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-            (Domain.Enums.Supplier)request.Supplier
+            (Domain.Enums.Supplier)request.Supplier,
+            (Domain.Enums.ConferenceRoomType)request.ConferenceRoomType
         );
         
         await _commandHandler.Handle(createConferenceCommand);

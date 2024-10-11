@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Moq;
-using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
@@ -12,6 +11,7 @@ using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using VideoApi.UnitTests.Controllers.Conference;
 using Task = System.Threading.Tasks.Task;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.UnitTests.Services;
 

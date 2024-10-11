@@ -14,6 +14,7 @@ namespace VideoApi.Services.Mappers
                 SipAddress = source.SipAddress,
                 DisplayName = source.DisplayName,
                 Pin = source.Pin,
+                ConferenceRole = (ConferenceRole)source.ConferenceRole
             };
         }
 
@@ -26,7 +27,7 @@ namespace VideoApi.Services.Mappers
                 Address = source.SipAddress,
                 Display_name = kinlyDisplayName,
                 Pin = source.Pin,
-                Role = source.HasScreeningRequirement ? ConferenceRole.Guest.ToString() : ConferenceRole.Host.ToString()
+                Role = source.ConferenceRole.ToString()
             };
         }
     }

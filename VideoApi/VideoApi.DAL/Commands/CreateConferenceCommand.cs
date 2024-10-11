@@ -5,6 +5,7 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 using Supplier = VideoApi.Domain.Enums.Supplier;
 
@@ -27,11 +28,12 @@ namespace VideoApi.DAL.Commands
         public List<Endpoint> Endpoints { get; set; }
         public List<LinkedParticipantDto> LinkedParticipants { get; set; }
         public Supplier Supplier { get; set; }
+        public ConferenceRoomType ConferenceRoomType { get; set; }
 
         public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
             string caseNumber, string caseName, int scheduledDuration, List<Participant> participants,
             string hearingVenueName, bool audioRecordingRequired, string ingestUrl, List<Endpoint> endpoints,
-            List<LinkedParticipantDto> linkedParticipants, Supplier supplier)
+            List<LinkedParticipantDto> linkedParticipants, Supplier supplier, ConferenceRoomType conferenceRoomType)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
@@ -46,6 +48,7 @@ namespace VideoApi.DAL.Commands
             Endpoints = endpoints;
             LinkedParticipants = linkedParticipants;
             Supplier = supplier;
+            ConferenceRoomType = conferenceRoomType;
         }
     }
 
@@ -62,7 +65,7 @@ namespace VideoApi.DAL.Commands
         {
             var conference = new Conference(command.HearingRefId, command.CaseType, command.ScheduledDateTime,
                 command.CaseNumber,command.CaseName, command.ScheduledDuration, command.HearingVenueName, command.AudioRecordingRequired, command.IngestUrl,
-                command.Supplier);
+                command.Supplier, command.ConferenceRoomType);
             
             foreach (var participant in command.Participants)
             {

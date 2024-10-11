@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Dtos;
 using Task = System.Threading.Tasks.Task;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services.Contracts
 {

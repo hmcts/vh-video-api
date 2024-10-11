@@ -1,4 +1,5 @@
 using System;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Services.Dtos
 {
@@ -9,5 +10,6 @@ namespace VideoApi.Services.Dtos
         public string SipAddress { get; set; }
         public string Pin { get; set; }
         public bool HasScreeningRequirement { get; set; }
+        public ConferenceRole ConferenceRole { get; set; }
     }
 }

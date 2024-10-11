@@ -20,6 +20,7 @@ using Task = System.Threading.Tasks.Task;
 using TestScore = VideoApi.Domain.Enums.TestScore;
 using UserRole = VideoApi.Domain.Enums.UserRole;
 using Supplier = VideoApi.Domain.Enums.Supplier;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.UnitTests.Services
 {

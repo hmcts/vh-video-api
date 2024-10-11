@@ -14,6 +14,7 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 using Supplier = VideoApi.Domain.Enums.Supplier;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services
 {
