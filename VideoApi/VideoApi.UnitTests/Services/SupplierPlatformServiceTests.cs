@@ -98,10 +98,14 @@ namespace VideoApi.UnitTests.Services
         {
             const bool audioRecordingRequired = false;
             const string ingestUrl = null;
+            const string conferenceRoleAsString = "Guest";
+            var conferenceRole = (ConferenceRole)Enum.Parse(typeof(ConferenceRole), conferenceRoleAsString);
+            const string conferenceRoomTypeAsString = "VA";
+            var conferenceRoomType = (ConferenceRoomType)Enum.Parse(typeof(ConferenceRoomType), conferenceRoomTypeAsString);
             var endpoints = new List<EndpointDto>
             {
-                new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919", HasScreeningRequirement = false},
-                new () {Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832", HasScreeningRequirement = false}
+                new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919", ConferenceRole = conferenceRole },
+                new () {Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832", ConferenceRole = conferenceRole }
             };
             
             var hearingParams = new CreateHearingParams
@@ -112,7 +116,8 @@ namespace VideoApi.UnitTests.Services
                 Recording_url = ingestUrl,
                 Streaming_enabled = false,
                 Streaming_url = null,
-                Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+                Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
+                RoomType = conferenceRoomTypeAsString
             };
 
             var uris = new Uris
@@ -127,7 +132,8 @@ namespace VideoApi.UnitTests.Services
                     param.Recording_enabled == hearingParams.Recording_enabled &&
                     param.Recording_url == hearingParams.Recording_url &&
                     param.Streaming_enabled == hearingParams.Streaming_enabled &&
-                    param.Streaming_url == hearingParams.Streaming_url
+                    param.Streaming_url == hearingParams.Streaming_url &&
+                    param.RoomType == hearingParams.RoomType
                 )))
                 .ReturnsAsync(() => new Hearing
                 {
@@ -139,7 +145,7 @@ namespace VideoApi.UnitTests.Services
             var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints, It.IsAny<string>(), It.IsAny<ConferenceRoomType>());
+                endpoints, It.IsAny<string>(), conferenceRoomType);
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);
@@ -154,7 +160,9 @@ namespace VideoApi.UnitTests.Services
                 param.Recording_url == hearingParams.Recording_url &&
                 param.Streaming_enabled == hearingParams.Streaming_enabled &&
                 param.Streaming_url == hearingParams.Streaming_url &&
-                param.Jvs_endpoint != null && param.Jvs_endpoint.Count == hearingParams.Jvs_endpoint.Count
+                param.RoomType == hearingParams.RoomType &&
+                param.Jvs_endpoint != null && param.Jvs_endpoint.Count == hearingParams.Jvs_endpoint.Count &&
+                param.Jvs_endpoint.TrueForAll(e => e.Role == conferenceRoleAsString)
             )), Times.Once);
         }
         
