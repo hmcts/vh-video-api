@@ -44,7 +44,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
                 It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>())).Throws(new DoubleBookingException(Guid.NewGuid()));
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
-            new EndpointDto[] { }, It.IsAny<ConferenceRoomType>());
+            [], It.IsAny<ConferenceRoomType>());
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
@@ -63,7 +63,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
             audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>())).ReturnsAsync(MeetingRoom);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
-            new EndpointDto[] { }, It.IsAny<ConferenceRoomType>());
+            [], It.IsAny<ConferenceRoomType>());
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
@@ -81,7 +81,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
             audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>())).ReturnsAsync(MeetingRoom);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), false, audioPlatformServiceResponse.IngestUrl,
-            new EndpointDto[] { }, It.IsAny<ConferenceRoomType>());
+            [], It.IsAny<ConferenceRoomType>());
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), false, audioPlatformServiceResponse.IngestUrl,
@@ -100,7 +100,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
                 It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>())).ReturnsAsync((MeetingRoom)null);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
-            new EndpointDto[] { }, It.IsAny<ConferenceRoomType>());
+            [], It.IsAny<ConferenceRoomType>());
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
@@ -118,7 +118,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
             audioPlatformServiceResponse.IngestUrl, It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>())).ReturnsAsync(MeetingRoom);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
-            new EndpointDto[] { }, It.IsAny<ConferenceRoomType>());
+            [], It.IsAny<ConferenceRoomType>());
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), true, audioPlatformServiceResponse.IngestUrl,
@@ -136,7 +136,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
             It.IsAny<string>(), It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>())).ReturnsAsync(MeetingRoom);
         
         var response = await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
-            new EndpointDto[] { }, It.IsAny<ConferenceRoomType>());
+            [], It.IsAny<ConferenceRoomType>());
         
         response.Should().BeTrue();
         
@@ -165,7 +165,7 @@ public class BookingServiceTests : ConferenceControllerTestBase
                 It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>())).ReturnsAsync((MeetingRoom)null);
         
         await _service.BookMeetingRoomAsync(Guid.NewGuid(), true, audioPlatformServiceResponse.IngestUrl,
-            new EndpointDto[] { }, It.IsAny<ConferenceRoomType>());
+            [], It.IsAny<ConferenceRoomType>());
         
         VideoPlatformServiceMock.Verify(
             v => v.BookVirtualCourtroomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), audioPlatformServiceResponse.IngestUrl,
