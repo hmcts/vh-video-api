@@ -1941,12 +1941,6 @@ namespace VideoApi.Services.Clients
         /// </summary>
         [Newtonsoft.Json.JsonProperty("participant", Required = Newtonsoft.Json.Required.Always)]
         public string Participant { get; set; }
-        
-        /// <summary>
-        /// Webrtc URI for participants hearing room.
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_room", Required = Newtonsoft.Json.Required.Always)]
-        public string HearingRoom { get; set; }
 
         public string ToJson()
         {
