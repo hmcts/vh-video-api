@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using VideoApi.Common.Configuration;
 using VideoApi.Contract.Responses;
 using VideoApi.Services.Contracts;
@@ -31,6 +31,24 @@ namespace VideoApi.Services
             ApplicationName     = configuration.ApplicationName;
         }
 
+        /// <summary>
+        /// The function `GetAudioIngestUrl` generates a URL based on input parameters after sanitizing
+        /// them by removing special characters.
+        /// </summary>
+        /// <param name="serviceId">The `serviceId` parameter is a unique identifier for a
+        /// service.</param>
+        /// <param name="caseNumber">The `caseNumber` parameter is a string that represents the case
+        /// number associated with a particular legal case. It is used as part of the URL construction
+        /// in the `GetAudioIngestUrl` method to uniquely identify the case for which the audio ingest
+        /// URL is being generated.</param>
+        /// <param name="hearingId">The `hearingId` parameter in the `GetAudioIngestUrl` method
+        /// represents the unique identifier for a specific hearing. It is used to identify and retrieve
+        /// the audio associated with that particular hearing.</param>
+        /// <returns>
+        /// The method `GetAudioIngestUrl` returns a string that concatenates the
+        /// `_configuration.StreamingEndpoint`, `ApplicationName`, `sanitisedServiceId`,
+        /// `sanitisedCaseNumber`, and `hearingId` with hyphens in between.
+        /// </returns>
         public string GetAudioIngestUrl(string serviceId, string caseNumber, string hearingId)
         {
             const string regex = "[^a-zA-Z0-9]";
@@ -45,6 +63,17 @@ namespace VideoApi.Services
         
         public string ApplicationName { get; }
         
+        /// <summary>
+        /// This C# async function retrieves audio stream information from Wowza stream recorders using
+        /// multiple clients and handles exceptions.
+        /// </summary>
+        /// <param name="recorder">The `recorder` parameter in the `GetAudioStreamInfoAsync` method is
+        /// used to specify the name of the stream recorder for which you want to retrieve information.
+        /// This method iterates through a list of Wowza clients to make a request to get stream
+        /// recorder information for the specified `recorder</param>
+        /// <returns>
+        /// A `WowzaGetStreamRecorderResponse` object is being returned asynchronously.
+        /// </returns>
         public async Task<WowzaGetStreamRecorderResponse> GetAudioStreamInfoAsync(string recorder)
         {
             var responses = new List<HttpResponseMessage>();
@@ -57,7 +86,7 @@ namespace VideoApi.Services
                     if (response.IsSuccessStatusCode)
                     {
                         _logger.LogInformation("Got Wowza stream recorder for application: {recorder}", recorder);
-                        return JsonConvert.DeserializeObject<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
+                        return JsonSerializer.Deserialize<WowzaGetStreamRecorderResponse>(await response.Content.ReadAsStringAsync());
                     }
                     responses.Add(response);
                 }
@@ -84,6 +113,17 @@ namespace VideoApi.Services
             return new AggregateException(innerExceptions: innerExceptions);
         }
 
+        /// <summary>
+        /// The function `GetDiagnosticsAsync` asynchronously retrieves diagnostics from a server and
+        /// logs any errors that occur.
+        /// </summary>
+        /// <returns>
+        /// The method `GetDiagnosticsAsync` returns a `Task<bool>`. The method makes an asynchronous
+        /// call to `_loadBalancerClient.GetDiagnosticsAsync` to get diagnostics for a server specified
+        /// by `_configuration.ServerName`. If the call is successful (response has
+        /// `IsSuccessStatusCode`), it returns `true`. If an `AudioPlatformException` is caught during
+        /// the process, it logs an error
+        /// </returns>
         public async Task<bool> GetDiagnosticsAsync()
         {
             try
@@ -99,6 +139,21 @@ namespace VideoApi.Services
             }
         }
 
+        /// <summary>
+        /// This C# function asynchronously deletes a Wowza application using multiple clients and logs
+        /// any errors that occur.
+        /// </summary>
+        /// <param name="Guid">A `Guid` is a globally unique identifier, which is a 128-bit integer
+        /// often used in software development to uniquely identify resources or entities. In the
+        /// context of the `DeleteAudioApplicationAsync` method you provided, the `Guid hearingId`
+        /// parameter represents the unique identifier of a specific audio application</param>
+        /// <returns>
+        /// The method `DeleteAudioApplicationAsync` returns an `AudioPlatformServiceResponse` object.
+        /// If the deletion of the Wowza application is successful, it returns a new
+        /// `AudioPlatformServiceResponse` object with a `true` status. If an `AudioPlatformException`
+        /// is caught during the deletion process, it returns a new `AudioPlatformServiceResponse`
+        /// object with a `false` status, along
+        /// </returns>
         public async Task<AudioPlatformServiceResponse> DeleteAudioApplicationAsync(Guid hearingId)
         {
             try

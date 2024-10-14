@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Principal;
+using System.Text.Json;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
-using Newtonsoft.Json;
 
 namespace VideoApi.Common
 {
@@ -64,7 +64,7 @@ namespace VideoApi.Common
 
             if (valueToSerialized != null)
             {
-                telematryTrace.Properties.Add(valueToSerialized.GetType().Name, JsonConvert.SerializeObject(valueToSerialized, Formatting.None));
+                telematryTrace.Properties.Add(valueToSerialized.GetType().Name, JsonSerializer.Serialize(valueToSerialized));
             }
 
             TelemetryClient.TrackTrace(telematryTrace);
