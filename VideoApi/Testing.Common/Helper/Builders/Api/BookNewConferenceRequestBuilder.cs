@@ -28,6 +28,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Participants = new List<ParticipantRequest>())
                 .With(x => x.AudioRecordingRequired = false)
                 .With(x => x.Endpoints = new List<AddEndpointRequest>())
+                .With(x => x.ConferenceRoomType = ConferenceRoomType.VMR)
                 .Build();
         }
 
@@ -172,6 +173,12 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithEndpoints(List<AddEndpointRequest> endpoints)
         {
             _bookNewConferenceRequest.Endpoints.AddRange(endpoints);
+            return this;
+        }
+
+        public BookNewConferenceRequestBuilder WithConferenceRoomType(ConferenceRoomType roomType)
+        {
+            _bookNewConferenceRequest.ConferenceRoomType = roomType;
             return this;
         }
     }

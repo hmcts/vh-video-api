@@ -62,12 +62,12 @@ namespace VideoApi.AcceptanceTests.Steps
                 new()
                 {
                     DisplayName = "one", SipAddress = $"1234567890{sipStem}", Pin = "1234",
-                    DefenceAdvocate = "Defence Sol"
+                    DefenceAdvocate = "Defence Sol", ConferenceRole = ConferenceRole.Host
                 },
                 new()
                 {
                     DisplayName = "two", SipAddress = $"2345678901{sipStem}", Pin = "5678",
-                    DefenceAdvocate = "Defence Bol"
+                    DefenceAdvocate = "Defence Bol", ConferenceRole = ConferenceRole.Host
                 }
             };
             

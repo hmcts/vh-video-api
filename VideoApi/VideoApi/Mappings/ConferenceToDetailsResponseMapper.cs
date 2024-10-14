@@ -36,6 +36,7 @@ namespace VideoApi.Mappings
             response.TelephoneConferenceNumbers = phoneNumbers;
             response.CaseName = conference.CaseName;
             response.Supplier = (Contract.Enums.Supplier)conference.Supplier;
+            response.ConferenceRoomType = (Contract.Enums.ConferenceRoomType)conference.ConferenceRoomType;
             
             if (response.MeetingRoom != null)
                 response.MeetingRoom.PexipSelfTestNode = pexipSelfTestNode;

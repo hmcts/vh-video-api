@@ -58,4 +58,9 @@ public class ConferenceCoreResponse
     /// FOR TESTING ONLY: The case name of the conference
     /// </summary>
     public string CaseName { get; set; }
+
+    /// <summary>
+    /// The room type of the conference
+    /// </summary>
+    public ConferenceRoomType ConferenceRoomType { get; set; }
 }

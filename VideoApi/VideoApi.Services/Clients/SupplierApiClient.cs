@@ -1803,6 +1803,12 @@ namespace VideoApi.Services.Clients
         [Newtonsoft.Json.JsonProperty("telephone_conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Telephone_Conference_id { get; set; }
         
+        /// <summary>
+        /// room type (either VMR or VA)
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("room_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RoomType { get; set; }
+        
         [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; }
         
@@ -1860,6 +1866,9 @@ namespace VideoApi.Services.Clients
 
         [Newtonsoft.Json.JsonProperty("force_transfer_participant_ids", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<string> Force_transfer_participant_ids { get; set; }
+        
+        [Newtonsoft.Json.JsonProperty("hosts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<string> Hosts { get; set; }
 
         [Newtonsoft.Json.JsonProperty("triggered_by_host_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Triggered_by_host_id { get; set; }
@@ -2064,6 +2073,12 @@ namespace VideoApi.Services.Clients
         /// </summary>
         [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Always)]
         public string Pin { get; set; }
+        
+        /// <summary>
+        /// The role (Host or Guest)
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.Always)]
+        public string Role { get; set; }
 
         public string ToJson()
         {

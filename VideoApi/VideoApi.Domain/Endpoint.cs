@@ -15,19 +15,22 @@ namespace VideoApi.Domain
         public RoomType? CurrentRoom { get; private set; }
         public long? CurrentConsultationRoomId { get; set; }
         public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
+        public ConferenceRole ConferenceRole { get; private set; }
 
         private Endpoint()
         {
             Id = Guid.NewGuid();
             State = EndpointState.NotYetJoined;
+            ConferenceRole = ConferenceRole.Host;
         }
 
-        public Endpoint(string displayName, string sipAddress, string pin, string defenceAdvocate) : this()
+        public Endpoint(string displayName, string sipAddress, string pin, string defenceAdvocate, ConferenceRole conferenceRole = ConferenceRole.Host) : this()
         {
             DisplayName = displayName;
             SipAddress = sipAddress;
             Pin = pin;
             DefenceAdvocate = defenceAdvocate;
+            ConferenceRole = conferenceRole;
         }
 
         public void UpdateDisplayName(string displayName)
@@ -38,6 +41,11 @@ namespace VideoApi.Domain
         public void UpdateStatus(EndpointState status)
         {
             State = status;
+        }
+
+        public void UpdateConferenceRole(ConferenceRole newConferenceRole)
+        {
+            ConferenceRole = newConferenceRole;
         }
 
         public void AssignDefenceAdvocate(string username)

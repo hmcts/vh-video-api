@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common.Security.Supplier.Base;
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
@@ -13,6 +14,7 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 using Supplier = VideoApi.Domain.Enums.Supplier;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services
 {
@@ -46,7 +48,7 @@ namespace VideoApi.Services
             bool audioRecordingRequired,
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints, 
-            string telephoneId)
+            string telephoneId, ConferenceRoomType roomType)
         {
             _logger.LogInformation(
                 "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
@@ -56,6 +58,7 @@ namespace VideoApi.Services
                 var response = await _supplierApiClient.CreateHearingAsync(new CreateHearingParams
                 {
                     Virtual_courtroom_id = conferenceId.ToString(),
+                    RoomType = roomType.ToString(),
                     Callback_uri = _supplierConfigOptions.CallbackUri,
                     Recording_enabled = audioRecordingRequired,
                     Recording_url = ingestUrl,
@@ -152,15 +155,23 @@ namespace VideoApi.Services
                     Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
                 });
         }
-        
-        public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId, IEnumerable<string> participantsToForceTransfer = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = false)
+
+        public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
+            IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
+            Layout layout = Layout.AUTOMATIC, bool muteGuests = false)
         {
-            if(_supplier != Supplier.Vodafone)
+            if (_supplier != Supplier.Vodafone)
                 triggeredByHostId = null;
             return _supplierApiClient.StartAsync(conferenceId.ToString(),
-                new StartHearingRequest { Hearing_layout = layout, Mute_guests = muteGuests, Force_transfer_participant_ids = participantsToForceTransfer?.ToList(), Triggered_by_host_id = triggeredByHostId});
+                new StartHearingRequest
+                {
+                    Hearing_layout = layout, Mute_guests = muteGuests,
+                    Force_transfer_participant_ids = participantsToForceTransfer?.ToList(),
+                    Hosts = hosts?.ToList(),
+                    Triggered_by_host_id = triggeredByHostId
+                });
         }
-        
+
         public Task PauseHearingAsync(Guid conferenceId)
         {
             return _supplierApiClient.PauseHearingAsync(conferenceId.ToString());

@@ -39,7 +39,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var command = new AddEndpointCommand(conferenceId, "display", "sip@hmcts.net", "pin", "Defence Sol");
+            var command = new AddEndpointCommand(conferenceId, "display", "sip@hmcts.net", "pin", "Defence Sol",
+                ConferenceRole.Host);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -54,8 +55,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var sip = "123@sip.com";
             var pin = "123";
             var defenceAdvocate = "Defence Sol";
+            const ConferenceRole conferenceRole = ConferenceRole.Guest;
             
-            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin, defenceAdvocate);
+            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin, defenceAdvocate, conferenceRole);
             await _handler.Handle(command);
             
             Conference updatedConference;

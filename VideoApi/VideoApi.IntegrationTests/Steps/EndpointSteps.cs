@@ -15,6 +15,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using static Testing.Common.Helper.ApiUriFactory.EPEndpoints;
+using ConferenceRole = VideoApi.Contract.Enums.ConferenceRole;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Steps
@@ -101,6 +102,23 @@ namespace VideoApi.IntegrationTests.Steps
                 DisplayName = "Automated Add EP test", 
                 DefenceAdvocate = "Defence Sol"
             };
+            SetupAddEndpointRequest(conferenceId, request);
+        }
+        
+        [Given(@"I have an add endpoint to conference request for screening")]
+        [Then(@"I have an add endpoint to conference request for screening")]
+        public void GivenIHaveAValidAddEndpointRequestForScreening()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var request = new AddEndpointRequest
+            {
+                Pin = "1234",
+                SipAddress = $"{GenerateRandomDigits()}@sip.com",
+                DisplayName = "Automated Add EP test", 
+                DefenceAdvocate = "Defence Sol",
+                ConferenceRole = ConferenceRole.Guest
+            };
+            _context.Test.EndpointSipAddress = request.SipAddress;
             SetupAddEndpointRequest(conferenceId, request);
         }
         
@@ -201,6 +219,21 @@ namespace VideoApi.IntegrationTests.Steps
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
+        
+        [Given(@"I have update endpoint for a conference request for screening")]
+        public void GivenIHaveUpdateEndpointForAConferenceRequestForScreening()
+        {
+            var conferenceId = _context.Test.Conference.Id;
+            var sipAddress = _context.Test.Conference.Endpoints.First().SipAddress;
+            var request = new UpdateEndpointRequest
+            {
+                DisplayName = "Automated Add EP test",
+                DefenceAdvocate = "Sol One",
+                ConferenceRole = ConferenceRole.Guest
+            };
+            _context.Test.EndpointSipAddress = sipAddress;
+            SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
+        }
 
         [Then(@"the endpoint status should be (.*)")]
         public async Task ThenTheEndpointsStateShouldBe(EndpointState state)
@@ -210,6 +243,23 @@ namespace VideoApi.IntegrationTests.Steps
                 .SingleAsync(x => x.Id == _context.Test.Conference.Id);
             var endpoint = conf.GetEndpoints().First(x => x.Id == _context.Test.ParticipantId);
             endpoint.State.Should().Be(state);
+        }
+        
+        [Then(@"the endpoint conference role should be (.*)")]
+        public async Task ThenTheEndpointsStateShouldBe(string conferenceRoleString)
+        {
+            if (Enum.TryParse(conferenceRoleString, out ConferenceRole conferenceRole))
+            {
+                await using var db = new VideoApiDbContext(_context.VideoBookingsDbContextOptions);
+                var conf = await db.Conferences.Include(x => x.Endpoints)
+                    .SingleAsync(x => x.Id == _context.Test.Conference.Id);
+                var endpoint = conf.GetEndpoints().First(x => x.SipAddress == _context.Test.EndpointSipAddress);
+                endpoint.ConferenceRole.Should().Be((Domain.Enums.ConferenceRole)conferenceRole);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid conference role: {conferenceRoleString}");
+            }
         }
         
         private async Task AssertEndpointLength(int length)

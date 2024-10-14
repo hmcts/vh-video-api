@@ -15,13 +15,14 @@ using VideoApi.Domain;
 using VideoApi.Extensions;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services;
 
 public interface IBookingService
 {
     public Task<bool> BookMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
-        IEnumerable<EndpointDto> endpoints, Supplier supplier = Supplier.Kinly);
+        IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType, Supplier supplier = Supplier.Kinly);
     
     public Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl);
 }
@@ -37,18 +38,21 @@ public class BookingService(
         bool audioRecordingRequired,
         string ingestUrl,
         IEnumerable<EndpointDto> endpoints,
+        ConferenceRoomType roomType,
         Supplier supplier = Supplier.Kinly)
     {
         MeetingRoom meetingRoom;
         var telephoneId = await CreateUniqueTelephoneId();
         var videoPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)supplier);
+        var endpointDtos = endpoints.ToList();
         try
         {
             meetingRoom = await videoPlatformService.BookVirtualCourtroomAsync(conferenceId,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints,
-                telephoneId);
+                endpointDtos,
+                telephoneId,
+                roomType);
         }
         catch (DoubleBookingException ex)
         {
@@ -87,7 +91,9 @@ public class BookingService(
             .ToList();
         
         var endpoints = request.Endpoints
-            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate)).ToList();
+            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate, 
+                (Domain.Enums.ConferenceRole)x.ConferenceRole))
+            .ToList();
         
         var linkedParticipants = request.Participants
             .SelectMany(x => x.LinkedParticipants)
@@ -103,7 +109,8 @@ public class BookingService(
             request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
             request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
             request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-            (Domain.Enums.Supplier)request.Supplier
+            (Domain.Enums.Supplier)request.Supplier,
+            (Domain.Enums.ConferenceRoomType)request.ConferenceRoomType
         );
         
         await _commandHandler.Handle(createConferenceCommand);

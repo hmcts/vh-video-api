@@ -18,6 +18,8 @@ using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
+using ConferenceRole = VideoApi.Contract.Enums.ConferenceRole;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 using ConferenceState = VideoApi.Contract.Enums.ConferenceState;
 
 namespace VideoApi.IntegrationTests.Steps
@@ -191,14 +193,43 @@ namespace VideoApi.IntegrationTests.Steps
                     new()
                     {
                         DisplayName = "one", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "1234",
-                        DefenceAdvocate = "Defence Sol"
+                        DefenceAdvocate = "Defence Sol", ConferenceRole = ConferenceRole.Host
                     },
                     new()
                     {
                         DisplayName = "two", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "5678",
-                        DefenceAdvocate = "Defence Bol"
+                        DefenceAdvocate = "Defence Bol", ConferenceRole = ConferenceRole.Host
                     }
                 })
+                .Build();
+            
+            _context.Uri = BookNewConference;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = ApiRequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        [Given(@"I have a valid book a new conference request with jvs endpoints for screening")]
+        public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpointsForScreening()
+        {
+            var request = new BookNewConferenceRequestBuilder(_context.Test.CaseName)
+                .WithJudge()
+                .WithRepresentative("Applicant").WithIndividual("Applicant")
+                .WithRepresentative("Respondent").WithIndividual("Respondent")
+                .WithEndpoints(new List<AddEndpointRequest>
+                {
+                    new()
+                    {
+                        DisplayName = "one", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "1234",
+                        DefenceAdvocate = "Defence Sol", ConferenceRole = ConferenceRole.Guest
+                    },
+                    new()
+                    {
+                        DisplayName = "two", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "5678",
+                        DefenceAdvocate = "Defence Bol", ConferenceRole = ConferenceRole.Guest
+                    }
+                })
+                .WithConferenceRoomType(ConferenceRoomType.VA)
                 .Build();
             
             _context.Uri = BookNewConference;
@@ -257,8 +288,7 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceCoreResponse.ForConference(_conferenceDetails);
         }
-        
-        
+
         [Then(@"the conferences should be retrieved")]
         public async Task ThenAConferencesShouldBeRetrieved()
         {
@@ -277,6 +307,16 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
             AssertConferenceDetailsResponse.ForConferenceEndpoints(_conferenceDetails);
+        }
+        
+        [Then("the conference should be retrieved with jvs endpoints for screening")]
+        public async Task ThenAConferenceShouldBeRetrievedWithJvsEndpointsForScreening()
+        {
+            _conferenceDetails =
+                await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails.Should().NotBeNull();
+            AssertConferenceCoreResponse.ForConference(_conferenceDetails, ConferenceRoomType.VA);
+            AssertConferenceDetailsResponse.ForConferenceEndpoints(_conferenceDetails, ConferenceRole.Guest);
         }
         
         [Then(@"the conference should be closed")]

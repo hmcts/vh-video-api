@@ -8,6 +8,7 @@ using Moq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
@@ -19,6 +20,7 @@ using Task = System.Threading.Tasks.Task;
 using TestScore = VideoApi.Domain.Enums.TestScore;
 using UserRole = VideoApi.Domain.Enums.UserRole;
 using Supplier = VideoApi.Domain.Enums.Supplier;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.UnitTests.Services
 {
@@ -76,7 +78,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>()))
+                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>()))
                 .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
         
@@ -88,7 +90,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<SupplierApiException>(() =>
-                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>()));
+                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>()));
         }
         
         [Test]
@@ -96,10 +98,14 @@ namespace VideoApi.UnitTests.Services
         {
             const bool audioRecordingRequired = false;
             const string ingestUrl = null;
+            const string conferenceRoleAsString = "Guest";
+            var conferenceRole = (ConferenceRole)Enum.Parse(typeof(ConferenceRole), conferenceRoleAsString);
+            const string conferenceRoomTypeAsString = "VA";
+            var conferenceRoomType = (ConferenceRoomType)Enum.Parse(typeof(ConferenceRoomType), conferenceRoomTypeAsString);
             var endpoints = new List<EndpointDto>
             {
-                new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919"},
-                new () {Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832"}
+                new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919", ConferenceRole = conferenceRole },
+                new () {Id = Guid.NewGuid(), Pin = "5678", DisplayName = "two", SipAddress = "5385983832", ConferenceRole = conferenceRole }
             };
             
             var hearingParams = new CreateHearingParams
@@ -110,7 +116,8 @@ namespace VideoApi.UnitTests.Services
                 Recording_url = ingestUrl,
                 Streaming_enabled = false,
                 Streaming_url = null,
-                Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+                Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
+                RoomType = conferenceRoomTypeAsString
             };
 
             var uris = new Uris
@@ -125,7 +132,8 @@ namespace VideoApi.UnitTests.Services
                     param.Recording_enabled == hearingParams.Recording_enabled &&
                     param.Recording_url == hearingParams.Recording_url &&
                     param.Streaming_enabled == hearingParams.Streaming_enabled &&
-                    param.Streaming_url == hearingParams.Streaming_url
+                    param.Streaming_url == hearingParams.Streaming_url &&
+                    param.RoomType == hearingParams.RoomType
                 )))
                 .ReturnsAsync(() => new Hearing
                 {
@@ -137,7 +145,7 @@ namespace VideoApi.UnitTests.Services
             var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints, It.IsAny<string>());
+                endpoints, It.IsAny<string>(), conferenceRoomType);
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);
@@ -152,7 +160,9 @@ namespace VideoApi.UnitTests.Services
                 param.Recording_url == hearingParams.Recording_url &&
                 param.Streaming_enabled == hearingParams.Streaming_enabled &&
                 param.Streaming_url == hearingParams.Streaming_url &&
-                param.Jvs_endpoint != null && param.Jvs_endpoint.Count == hearingParams.Jvs_endpoint.Count
+                param.RoomType == hearingParams.RoomType &&
+                param.Jvs_endpoint != null && param.Jvs_endpoint.Count == hearingParams.Jvs_endpoint.Count &&
+                param.Jvs_endpoint.TrueForAll(e => e.Role == conferenceRoleAsString)
             )), Times.Once);
         }
         
@@ -263,11 +273,16 @@ namespace VideoApi.UnitTests.Services
             var conferenceId = Guid.NewGuid();
             var layout = Layout.ONE_PLUS_SEVEN;
             var participantsToForceTransfer = new[] {"participant-one", "participant-two"};
+            var hostIds = new[] {"host-one", "host-two"};
             var muteGuests = false;
-            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(), participantsToForceTransfer, layout, muteGuests);
+            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(),
+                participantsToForceTransfer, hostIds, layout, muteGuests);
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
-                    It.Is<StartHearingRequest>(l => l.Hearing_layout == layout && l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) && l.Mute_guests == muteGuests)), Times.Once);
+                    It.Is<StartHearingRequest>(l =>
+                        l.Hearing_layout == layout &&
+                        l.Force_transfer_participant_ids.SequenceEqual(participantsToForceTransfer) &&
+                        l.Hosts.SequenceEqual(hostIds) && l.Mute_guests == muteGuests)), Times.Once);
         }
         
         [Test]

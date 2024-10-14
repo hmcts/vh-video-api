@@ -73,7 +73,7 @@ namespace VideoApi.Controllers
             _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
             
             var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin,
-                request.DefenceAdvocate);
+                request.DefenceAdvocate, (Domain.Enums.ConferenceRole)request.ConferenceRole);
             await _commandHandler.Handle(command);
             
             var conference =
@@ -134,7 +134,8 @@ namespace VideoApi.Controllers
                 request.DisplayName);
             
             var command =
-                new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate);
+                new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate, 
+                    (Domain.Enums.ConferenceRole)request.ConferenceRole);
             await _commandHandler.Handle(command);
             
             if (!string.IsNullOrWhiteSpace(request.DisplayName))

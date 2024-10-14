@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
+using VideoApi.Domain.Enums;
 
 namespace VideoApi.DAL.Commands
 {
@@ -13,13 +14,16 @@ namespace VideoApi.DAL.Commands
         public string SipAddress { get; }
         public string DisplayName { get; }
         public string DefenceAdvocate { get; }
+        public ConferenceRole ConferenceRole { get; }
 
-        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName, string defenceAdvocate)
+        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName, string defenceAdvocate,
+            ConferenceRole conferenceRole)
         {
             ConferenceId = conferenceId;
             SipAddress = sipAddress;
             DisplayName = displayName;
             DefenceAdvocate = defenceAdvocate;
+            ConferenceRole = conferenceRole;
         }
     }
 
@@ -46,6 +50,7 @@ namespace VideoApi.DAL.Commands
                 endpoint.UpdateDisplayName(command.DisplayName);
             
             endpoint.AssignDefenceAdvocate(command.DefenceAdvocate);
+            endpoint.UpdateConferenceRole(command.ConferenceRole);
             await _context.SaveChangesAsync();
         }
     }

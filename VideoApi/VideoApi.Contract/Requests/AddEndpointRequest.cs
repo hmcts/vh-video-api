@@ -1,3 +1,5 @@
+using VideoApi.Contract.Enums;
+
 namespace VideoApi.Contract.Requests
 {
     public class AddEndpointRequest
@@ -21,5 +23,10 @@ namespace VideoApi.Contract.Requests
         /// Username of a defence advocate
         /// </summary>
         public string DefenceAdvocate { get; set; }
+
+        /// <summary>
+        /// Role of the endpoint
+        /// </summary>
+        public ConferenceRole ConferenceRole { get; set; }
     }
 }

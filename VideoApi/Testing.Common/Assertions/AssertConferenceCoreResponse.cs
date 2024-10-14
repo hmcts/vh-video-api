@@ -11,7 +11,8 @@ namespace Testing.Common.Assertions
         {
         }
         
-        public static void ForConference(ConferenceCoreResponse conference)
+        public static void ForConference(ConferenceCoreResponse conference, 
+            ConferenceRoomType conferenceRoomType = ConferenceRoomType.VMR)
         {
             conference.Should().NotBeNull();
             conference.ScheduledDuration.Should().BeGreaterThan(0);
@@ -30,6 +31,8 @@ namespace Testing.Common.Assertions
             {
                 conference.ClosedDateTime.Should().HaveValue().And.NotBe(DateTime.MinValue);
             }
+
+            conference.ConferenceRoomType.Should().Be(conferenceRoomType);
         }
     }
 }

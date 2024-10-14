@@ -32,6 +32,17 @@ Feature: Endpoints
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
     And the endpoint response should be 1
+    
+  Scenario: Add an endpoint to an existing conference for screening
+    Given I have a conference with no endpoints
+    And I have an add endpoint to conference request for screening
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    Given I have get endpoints for conference request
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the endpoint response should be 1
+    And the endpoint conference role should be Guest
 
   Scenario: Add multiple endpoints to an existing conference
     Given I have a conference with no endpoints
@@ -82,3 +93,10 @@ Scenario: Update an endpoint from a conference
     And I have update endpoint for a conference request
     When I send the request to the endpoint
     Then the response should have the status OK and success status True
+
+Scenario: Update an endpoint from a conference for screening
+    Given I have a conference with endpoints
+    And I have update endpoint for a conference request for screening
+    When I send the request to the endpoint
+    Then the response should have the status OK and success status True
+    And the endpoint conference role should be Guest

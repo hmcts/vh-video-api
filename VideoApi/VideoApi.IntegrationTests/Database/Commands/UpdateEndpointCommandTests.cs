@@ -8,6 +8,7 @@ using VideoApi.DAL;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Commands
@@ -40,7 +41,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             var conferenceId = Guid.NewGuid();
             var displayName = "new endpoint";
-            var command = new UpdateEndpointCommand(conferenceId, "sip@sip.com", displayName, null);
+            var command = new UpdateEndpointCommand(conferenceId, "sip@sip.com", displayName, null,
+                ConferenceRole.Host);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -51,7 +53,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var displayName = "new endpoint";
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
-            var command = new UpdateEndpointCommand(_newConferenceId, "sip@sip.com", displayName, null);
+            var command = new UpdateEndpointCommand(_newConferenceId, "sip@sip.com", displayName, null,
+                ConferenceRole.Host);
 
             Assert.ThrowsAsync<EndpointNotFoundException>(async () => await _handler.Handle(command));
         }
@@ -65,10 +68,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var ep = conference1.Endpoints.First();
             var sipAddress = ep.SipAddress;
             var newDisplayName = "Alternate Display Name";
+            const ConferenceRole newConferenceRole = ConferenceRole.Guest;
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, newDisplayName, null);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, newDisplayName, null,
+                newConferenceRole);
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -81,6 +86,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
             updatedEndpoint.DisplayName.Should().Be(newDisplayName);
             updatedEndpoint.DefenceAdvocate.Should().Be(ep.DefenceAdvocate);
+            updatedEndpoint.ConferenceRole.Should().Be(newConferenceRole);
             
             ep.CreatedAt.Should().Be(updatedEndpoint.CreatedAt);
             updatedEndpoint.UpdatedAt.Should().BeAfter(updatedEndpoint.CreatedAt.Value);
@@ -95,10 +101,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var ep = conference1.Endpoints.First();
             var sipAddress = ep.SipAddress;
             var defenceAdvocate = "Sol Defence";
+            const ConferenceRole newConferenceRole = ConferenceRole.Guest;
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, null, defenceAdvocate);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, null, defenceAdvocate,
+                newConferenceRole);
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -111,6 +119,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedEndpoint = updatedConference.GetEndpoints().Single(x => x.SipAddress == sipAddress);
             updatedEndpoint.DisplayName.Should().Be(ep.DisplayName);
             updatedEndpoint.DefenceAdvocate.Should().Be(defenceAdvocate);
+            updatedEndpoint.ConferenceRole.Should().Be(newConferenceRole);
         }
     }
 }

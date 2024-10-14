@@ -6,12 +6,14 @@ using VideoApi.Domain;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Dtos;
 using Task = System.Threading.Tasks.Task;
+using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services.Contracts
 {
     public interface IVideoPlatformService
     {
-        Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl, IEnumerable<EndpointDto> endpoints, string telephoneId);
+        Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
+            IEnumerable<EndpointDto> endpoints, string telephoneId, ConferenceRoomType roomType);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
         Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom);
@@ -28,7 +30,10 @@ namespace VideoApi.Services.Contracts
         /// <param name="audioRecordingRequired"></param>
         /// <returns></returns>
         Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints);
-        Task StartHearingAsync(Guid conferenceId, string triggeredByHostId, IEnumerable<string> participantsToForceTransfer = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = true);
+
+        Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
+            IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
+            Layout layout = Layout.AUTOMATIC, bool muteGuests = true);
         Task PauseHearingAsync(Guid conferenceId);
         Task EndHearingAsync(Guid conferenceId);
         Task SuspendHearingAsync(Guid conferenceId);

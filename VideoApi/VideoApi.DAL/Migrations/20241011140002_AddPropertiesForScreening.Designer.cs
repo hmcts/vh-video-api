@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideoApi.DAL;
 
@@ -11,9 +12,11 @@ using VideoApi.DAL;
 namespace VideoApi.DAL.Migrations
 {
     [DbContext(typeof(VideoApiDbContext))]
-    partial class VideoApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241011140002_AddPropertiesForScreening")]
+    partial class AddPropertiesForScreening
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -658,24 +661,19 @@ namespace VideoApi.DAL.Migrations
             modelBuilder.Entity("VideoApi.Domain.TelephoneParticipant", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ConferenceId")
+                    b.Property<Guid>("ConferenceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CurrentRoom")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<int>("State")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.Property<string>("TelephoneNumber")
                         .IsRequired()
@@ -770,7 +768,7 @@ namespace VideoApi.DAL.Migrations
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
                 {
-                    b.OwnsOne("VideoApi.Domain.Conference.MeetingRoom#VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
+                    b.OwnsOne("VideoApi.Domain.MeetingRoom", "MeetingRoom", b1 =>
                         {
                             b1.Property<Guid>("ConferenceId")
                                 .HasColumnType("uniqueidentifier");
@@ -797,7 +795,7 @@ namespace VideoApi.DAL.Migrations
 
                             b1.HasKey("ConferenceId");
 
-                            b1.ToTable("Conference", (string)null);
+                            b1.ToTable("Conference");
 
                             b1.WithOwner()
                                 .HasForeignKey("ConferenceId");
@@ -938,10 +936,13 @@ namespace VideoApi.DAL.Migrations
 
             modelBuilder.Entity("VideoApi.Domain.TelephoneParticipant", b =>
                 {
-                    b.HasOne("VideoApi.Domain.Conference", null)
+                    b.HasOne("VideoApi.Domain.Conference", "Conference")
                         .WithMany("TelephoneParticipants")
                         .HasForeignKey("ConferenceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conference");
                 });
 
             modelBuilder.Entity("VideoApi.Domain.Conference", b =>
