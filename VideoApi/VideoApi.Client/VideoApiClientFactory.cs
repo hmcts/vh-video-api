@@ -1,8 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace VideoApi.Client
 {
@@ -13,15 +12,17 @@ namespace VideoApi.Client
         {
             var apiClient = new VideoApiClient(httpClient)
             {
-                ReadResponseAsString = true,
-                JsonSerializerSettings =
-                {
-                    ContractResolver = new DefaultContractResolver {NamingStrategy = new SnakeCaseNamingStrategy()},
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                }
+                ReadResponseAsString = true
             };
-            apiClient.JsonSerializerSettings.Converters.Add(new StringEnumConverter());
             return apiClient;
+        }
+        
+        static partial void UpdateJsonSerializerSettings(JsonSerializerOptions settings)
+        {
+            settings.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+            settings.WriteIndented = true;
+            settings.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            settings.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
         
         public static VideoApiClient GetClient(string baseUrl, HttpClient httpClient)
