@@ -12,7 +12,7 @@ public class RemoveTelephoneParticipantTests
     public void should_remove_a_telephone_participant()
     {
         var conference = new ConferenceBuilder().Build();
-        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous");
+        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous", conference);
         
         conference.AddTelephoneParticipant(telephoneParticipant);
         
@@ -28,7 +28,7 @@ public class RemoveTelephoneParticipantTests
     public void should_not_remove_a_telephone_participant_that_does_not_exist()
     {
         var conference = new ConferenceBuilder().Build();
-        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous");
+        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous", conference);
         
         var action = () => conference.RemoveTelephoneParticipant(telephoneParticipant);
         

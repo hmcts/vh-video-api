@@ -29,6 +29,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.AudioRecordingRequired = false)
                 .With(x => x.Endpoints = new List<AddEndpointRequest>())
                 .With(x => x.ConferenceRoomType = ConferenceRoomType.VMR)
+                .With(x => x.AudioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
                 .Build();
         }
 
@@ -179,6 +180,12 @@ namespace Testing.Common.Helper.Builders.Api
         public BookNewConferenceRequestBuilder WithConferenceRoomType(ConferenceRoomType roomType)
         {
             _bookNewConferenceRequest.ConferenceRoomType = roomType;
+            return this;
+        }
+        
+        public BookNewConferenceRequestBuilder WithAudioPlaybackLanguage(AudioPlaybackLanguage audioPlaybackLanguage)
+        {
+            _bookNewConferenceRequest.AudioPlaybackLanguage = audioPlaybackLanguage;
             return this;
         }
     }

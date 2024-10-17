@@ -16,6 +16,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
@@ -75,9 +76,10 @@ public class ConferenceController(
             await queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
                 new GetEndpointsForConferenceQuery(conferenceId));
         var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
-        
+
         var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,
-            audioIngestUrl, endpointDtos, request.ConferenceRoomType, request.Supplier);
+            audioIngestUrl, endpointDtos, request.ConferenceRoomType, request.AudioPlaybackLanguage,
+            request.Supplier);
         
         if (!roomBookedSuccess)
         {
@@ -131,7 +133,7 @@ public class ConferenceController(
         var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
         var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
         await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
-            endpointDtos);
+            endpointDtos, request.RoomType.MapToDomainEnum(), request.AudoAudioPlaybackLanguage.MapToDomainEnum());
         
         try
         {
@@ -509,8 +511,7 @@ public class ConferenceController(
         bool audioRecordingRequired,
         string ingestUrl,
         IEnumerable<EndpointDto> endpoints,
-        ConferenceRoomType roomType,
-        Supplier supplier = Supplier.Kinly) => await pollyRetryService.WaitAndRetryAsync<Exception, bool>
+        ConferenceRoomType roomType, AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh, Supplier supplier = Supplier.Kinly) => await pollyRetryService.WaitAndRetryAsync<Exception, bool>
     (
         3,
         _ => TimeSpan.FromSeconds(10),
@@ -518,7 +519,7 @@ public class ConferenceController(
             logger.LogWarning("Failed to BookMeetingRoomAsync. Retrying attempt {RetryAttempt}", retryAttempt),
         callResult => !callResult,
         async () => await bookingService.BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl,
-            endpoints, roomType, supplier)
+            endpoints, roomType.MapToDomainEnum(), audioPlaybackLanguage.MapToDomainEnum(), supplier.MapToDomainEnum())
     );
     
     

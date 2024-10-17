@@ -11,6 +11,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Extensions;
+using AudioPlaybackLanguage = VideoApi.Domain.Enums.AudioPlaybackLanguage;
 using ConferenceRoomType = VideoApi.Domain.Enums.ConferenceRoomType;
 using Supplier = VideoApi.Domain.Enums.Supplier;
 using Task = System.Threading.Tasks.Task;
@@ -53,11 +54,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
             };
             const Supplier supplier = Supplier.Vodafone;
             const ConferenceRoomType conferenceRoomType = ConferenceRoomType.VA;
+            const AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.English;
 
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
                     scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl, endpoints, new List<LinkedParticipantDto>(),
-                    supplier, conferenceRoomType);
+                    supplier, conferenceRoomType, audioPlaybackLanguage);
             
             await _handler.Handle(command);
 
@@ -76,11 +78,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
             command.Participants[0].Should().BeEquivalentTo(participant);
             command.Supplier.Should().Be(supplier);
             command.ConferenceRoomType.Should().Be(conferenceRoomType);
+            command.AudioPlaybackLanguage.Should().Be(audioPlaybackLanguage);
             _newConferenceId = command.NewConferenceId;
             
             var conference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             conference.Should().NotBeNull();
             conference.Supplier.Should().Be(supplier);
+            conference.AudioPlaybackLanguage.Should().Be(AudioPlaybackLanguage.English);
         }
 
         [Test]
@@ -117,7 +121,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
                     scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-                    Supplier.Kinly, ConferenceRoomType.VMR);
+                    Supplier.Kinly, ConferenceRoomType.VMR, AudioPlaybackLanguage.EnglishAndWelsh);
             
             await _handler.Handle(command);
             
@@ -175,7 +179,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
                     scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-                    Supplier.Kinly, ConferenceRoomType.VMR);
+                    Supplier.Kinly, ConferenceRoomType.VMR, AudioPlaybackLanguage.EnglishAndWelsh);
             
             var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
             exception.LinkRefId.Should().Be(participantB.ParticipantRefId);

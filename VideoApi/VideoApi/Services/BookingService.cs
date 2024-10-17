@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common.Helpers;
-using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -12,17 +11,18 @@ using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
-using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services;
 
 public interface IBookingService
 {
     public Task<bool> BookMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
-        IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType, Supplier supplier = Supplier.Kinly);
+        IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
+        AudioPlaybackLanguage audioPlaybackLanguage, Supplier supplier = Supplier.Kinly);
     
     public Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl);
 }
@@ -39,11 +39,12 @@ public class BookingService(
         string ingestUrl,
         IEnumerable<EndpointDto> endpoints,
         ConferenceRoomType roomType,
+        AudioPlaybackLanguage audioPlaybackLanguage,
         Supplier supplier = Supplier.Kinly)
     {
         MeetingRoom meetingRoom;
         var telephoneId = await CreateUniqueTelephoneId();
-        var videoPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)supplier);
+        var videoPlatformService = _supplierPlatformServiceFactory.Create(supplier);
         var endpointDtos = endpoints.ToList();
         try
         {
@@ -52,7 +53,9 @@ public class BookingService(
                 ingestUrl,
                 endpointDtos,
                 telephoneId,
-                roomType);
+                roomType,
+                audioPlaybackLanguage
+                );
         }
         catch (DoubleBookingException ex)
         {
@@ -92,25 +95,26 @@ public class BookingService(
         
         var endpoints = request.Endpoints
             .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate, 
-                (Domain.Enums.ConferenceRole)x.ConferenceRole))
+                (ConferenceRole)x.ConferenceRole))
             .ToList();
         
         var linkedParticipants = request.Participants
             .SelectMany(x => x.LinkedParticipants)
-            .Select(x => new LinkedParticipantDto()
+            .Select(x => new LinkedParticipantDto
             {
                 ParticipantRefId = x.ParticipantRefId,
                 LinkedRefId = x.LinkedRefId,
                 Type = x.Type.MapToDomainEnum()
             }).ToList();
-        
+
         var createConferenceCommand = new CreateConferenceCommand
         (
             request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
             request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
             request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-            (Domain.Enums.Supplier)request.Supplier,
-            (Domain.Enums.ConferenceRoomType)request.ConferenceRoomType
+            (Supplier)request.Supplier,
+            (ConferenceRoomType)request.ConferenceRoomType,
+            (AudioPlaybackLanguage)request.AudioPlaybackLanguage
         );
         
         await _commandHandler.Handle(createConferenceCommand);

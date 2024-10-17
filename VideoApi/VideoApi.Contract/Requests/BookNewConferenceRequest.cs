@@ -24,5 +24,6 @@ namespace VideoApi.Contract.Requests
         public List<AddEndpointRequest> Endpoints { get; set; }
         public Supplier Supplier { get; set; }
         public ConferenceRoomType ConferenceRoomType { get; set; }
+        public AudioPlaybackLanguage AudioPlaybackLanguage { get; set; } = AudioPlaybackLanguage.EnglishAndWelsh;
     }
 }

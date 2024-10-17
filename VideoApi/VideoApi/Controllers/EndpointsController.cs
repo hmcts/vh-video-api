@@ -82,7 +82,7 @@ namespace VideoApi.Controllers
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired,
-                endpointDtos);
+                endpointDtos, conference.ConferenceRoomType, conference.AudioPlaybackLanguage);
             
             _logger.LogDebug("Successfully added endpoint {DisplayName} to conference", request.DisplayName);
             return NoContent();
@@ -99,7 +99,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveEndpointFromConference(Guid conferenceId, string sipAddress)
         {
-            _logger.LogDebug("Attempting to remove endpoint {sipAddress} from conference", sipAddress);
+            _logger.LogDebug("Attempting to remove endpoint {SipAddress} from conference", sipAddress);
             
             var command = new RemoveEndpointCommand(conferenceId, sipAddress);
             await _commandHandler.Handle(command);
@@ -110,9 +110,9 @@ namespace VideoApi.Controllers
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
             await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired,
-                endpointDtos);
+                endpointDtos, conference.ConferenceRoomType, conference.AudioPlaybackLanguage);
             
-            _logger.LogDebug("Successfully removed endpoint {sipAddress} from conference", sipAddress);
+            _logger.LogDebug("Successfully removed endpoint {SipAddress} from conference", sipAddress);
             return NoContent();
         }
         
@@ -130,12 +130,13 @@ namespace VideoApi.Controllers
             [FromBody] UpdateEndpointRequest request)
         {
             _logger.LogDebug(
-                "Attempting to update endpoint {sipAddress} with display name {DisplayName}", sipAddress,
+                "Attempting to update endpoint {SipAddress} with display name {DisplayName}", sipAddress,
                 request.DisplayName);
             
             var command =
                 new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate, 
                     (Domain.Enums.ConferenceRole)request.ConferenceRole);
+            // update the conference with the new role and new theme language
             await _commandHandler.Handle(command);
             
             if (!string.IsNullOrWhiteSpace(request.DisplayName))
@@ -144,7 +145,7 @@ namespace VideoApi.Controllers
             }
             
             _logger.LogDebug(
-                "Successfully updated endpoint {sipAddress} with display name {DisplayName}", sipAddress,
+                "Successfully updated endpoint {SipAddress} with display name {DisplayName}", sipAddress,
                 request.DisplayName);
             return Ok();
         }
@@ -156,8 +157,10 @@ namespace VideoApi.Controllers
                     new GetConferenceByIdQuery(conferenceId));
             var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
             var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+
             await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, conference.AudioRecordingRequired,
-                endpointDtos);
+                endpointDtos, conference.ConferenceRoomType,
+                conference.AudioPlaybackLanguage);
         }
     }
 }

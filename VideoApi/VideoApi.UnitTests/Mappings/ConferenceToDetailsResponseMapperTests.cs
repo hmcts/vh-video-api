@@ -4,6 +4,7 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
+using AudioPlaybackLanguage = VideoApi.Contract.Enums.AudioPlaybackLanguage;
 using RoomType = VideoApi.Contract.Enums.RoomType;
 
 namespace VideoApi.UnitTests.Mappings
@@ -51,6 +52,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.CaseType)
                 .Excluding(x => x.HearingVenueName)
                 .Excluding(x => x.Supplier)
+                .Excluding(x=> x.AudioPlaybackLanguage)
             );
             
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
@@ -59,6 +61,7 @@ namespace VideoApi.UnitTests.Mappings
             response.ClosedDateTime.Should().HaveValue().And.Be(conference.ClosedDateTime);
             response.CurrentStatus.Should().Be((Contract.Enums.ConferenceState)conference.GetCurrentStatus());
             response.Supplier.Should().Be((Contract.Enums.Supplier)conference.Supplier);
+            response.AudioPlaybackLanguage.Should().Be((AudioPlaybackLanguage)conference.AudioPlaybackLanguage);
             
             var participants = conference.GetParticipants();
             response.Participants.Should().BeEquivalentTo(participants, options => options

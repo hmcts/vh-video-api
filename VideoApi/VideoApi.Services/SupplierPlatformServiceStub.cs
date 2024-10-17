@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Contract.Enums;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
 using Task = System.Threading.Tasks.Task;
-using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services
 {
@@ -28,7 +27,8 @@ namespace VideoApi.Services
         public Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId,
             bool audioRecordingRequired,
             string ingestUrl,
-            IEnumerable<EndpointDto> endpoints, string telephoneId, ConferenceRoomType roomType)
+            IEnumerable<EndpointDto> endpoints, string telephoneId, ConferenceRoomType roomType,
+            AudioPlaybackLanguage audioPlaybackLanguage)
         {
             if (_bookedGuids.Contains(conferenceId))
                 throw new DoubleBookingException(conferenceId);
@@ -58,7 +58,9 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
         
-        public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, IEnumerable<EndpointDto> endpoints)
+        public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired, 
+            IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
+            AudioPlaybackLanguage audioPlaybackLanguage)
         {
             return Task.CompletedTask;
         }

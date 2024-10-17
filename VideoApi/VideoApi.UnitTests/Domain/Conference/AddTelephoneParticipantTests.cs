@@ -13,7 +13,7 @@ public class AddTelephoneParticipantTests
     {
         var conference = new ConferenceBuilder().Build();
         var beforeCount = conference.GetTelephoneParticipants().Count;
-        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous");
+        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous", conference);
         
         conference.AddTelephoneParticipant(telephoneParticipant);
         
@@ -25,7 +25,7 @@ public class AddTelephoneParticipantTests
     public void should_not_add_same_telephone_participant_twice()
     {
         var conference = new ConferenceBuilder().Build();
-        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous");
+        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous", conference);
         
         conference.AddTelephoneParticipant(telephoneParticipant);
         

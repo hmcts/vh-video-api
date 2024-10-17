@@ -71,7 +71,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
         protected void AddTelephoneParticipantToTestConference()
         {
-            TestConference.AddTelephoneParticipant(new TelephoneParticipant(Guid.NewGuid(), "Anonymous"));
+            TestConference.AddTelephoneParticipant(new TelephoneParticipant(Guid.NewGuid(), "Anonymous", TestConference));
         }
 
         protected void AddQuicklinkToTestConference()

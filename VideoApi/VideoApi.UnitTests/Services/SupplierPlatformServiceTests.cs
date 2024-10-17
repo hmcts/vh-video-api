@@ -20,7 +20,8 @@ using Task = System.Threading.Tasks.Task;
 using TestScore = VideoApi.Domain.Enums.TestScore;
 using UserRole = VideoApi.Domain.Enums.UserRole;
 using Supplier = VideoApi.Domain.Enums.Supplier;
-using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
+using ConferenceRoomType = VideoApi.Domain.Enums.ConferenceRoomType;
+using AudioPlaybackLanguage = VideoApi.Domain.Enums.AudioPlaybackLanguage;
 
 namespace VideoApi.UnitTests.Services
 {
@@ -78,7 +79,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>()))
+                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()))
                 .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
         
@@ -90,7 +91,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<SupplierApiException>(() =>
-                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>()));
+                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()));
         }
         
         [Test]
@@ -101,7 +102,9 @@ namespace VideoApi.UnitTests.Services
             const string conferenceRoleAsString = "Guest";
             var conferenceRole = (ConferenceRole)Enum.Parse(typeof(ConferenceRole), conferenceRoleAsString);
             const string conferenceRoomTypeAsString = "VA";
+            const string audioPlaybackLanguage = "English";
             var conferenceRoomType = (ConferenceRoomType)Enum.Parse(typeof(ConferenceRoomType), conferenceRoomTypeAsString);
+            var playbackLanguage = (AudioPlaybackLanguage)Enum.Parse(typeof(AudioPlaybackLanguage), audioPlaybackLanguage);
             var endpoints = new List<EndpointDto>
             {
                 new () {Id = Guid.NewGuid(), Pin = "1234", DisplayName = "one", SipAddress = "99191919", ConferenceRole = conferenceRole },
@@ -117,7 +120,8 @@ namespace VideoApi.UnitTests.Services
                 Streaming_enabled = false,
                 Streaming_url = null,
                 Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
-                RoomType = conferenceRoomTypeAsString
+                RoomType = conferenceRoomTypeAsString,
+                AudioPlaybackLanguage = audioPlaybackLanguage
             };
 
             var uris = new Uris
@@ -145,7 +149,7 @@ namespace VideoApi.UnitTests.Services
             var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
-                endpoints, It.IsAny<string>(), conferenceRoomType);
+                endpoints, It.IsAny<string>(), conferenceRoomType, playbackLanguage);
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(uris.Admin);
@@ -172,7 +176,7 @@ namespace VideoApi.UnitTests.Services
             _supplierApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
 
             var conferenceId = Guid.NewGuid();
-            await _SupplierPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>());
+            await _SupplierPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>());
             
             _supplierApiClientMock.Verify(x => x.UpdateHearingAsync(conferenceId.ToString(), It.Is<UpdateHearingParams>(p => p.Recording_enabled)), Times.Once);
         }

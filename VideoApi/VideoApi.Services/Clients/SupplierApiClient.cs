@@ -1809,6 +1809,12 @@ namespace VideoApi.Services.Clients
         [Newtonsoft.Json.JsonProperty("room_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string RoomType { get; set; }
         
+        /// <summary>
+        /// The audio play back language
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("audio_playback_language", Required = Newtonsoft.Json.Required.Default)]
+        public string AudioPlaybackLanguage { get; set; }
+        
         [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; }
         
@@ -1835,6 +1841,24 @@ namespace VideoApi.Services.Clients
         /// </summary>
         [Newtonsoft.Json.JsonProperty("recording_enabled", Required = Newtonsoft.Json.Required.Always)]
         public bool Recording_enabled { get; set; }
+        
+        /// <summary>
+        /// Should stream conference
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("streaming_enabled", Required = Newtonsoft.Json.Required.Default)]
+        public bool Streaming_enabled { get; set; }
+        
+        /// <summary>
+        /// The audio play back language
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("audio_playback_language", Required = Newtonsoft.Json.Required.Default)]
+        public string AudioPlaybackLanguage { get; set; }
+        
+        /// <summary>
+        /// Room type (either VMR or VA)
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("room_type", Required = Newtonsoft.Json.Required.Always)]
+        public string RoomType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("jvs_endpoint", Required = Newtonsoft.Json.Required.Always)]
         public System.Collections.Generic.List<Endpoint> Jvs_endpoint { get; set; } = new System.Collections.Generic.List<Endpoint>();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Exceptions;
@@ -31,11 +32,13 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(query))
                 .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
 
-            VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
+            VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(),
+                It.IsAny<List<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()));
 
             await Controller.UpdateConferenceAsync(request);
-            
-            VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<List<EndpointDto>>()));
+
+            VideoPlatformServiceMock.Setup(v => v.UpdateVirtualCourtRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(),
+                It.IsAny<List<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()));
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<UpdateConferenceDetailsCommand>()), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }

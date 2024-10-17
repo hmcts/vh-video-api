@@ -22,6 +22,7 @@ public static class ConferenceCoreResponseMapper
         response.Participants = MapParticipants(conference.Participants);
         response.CaseName = conference.CaseName;
         response.ConferenceRoomType = (Contract.Enums.ConferenceRoomType)conference.ConferenceRoomType;
+        response.AudioPlaybackLanguage = (Contract.Enums.AudioPlaybackLanguage)conference.AudioPlaybackLanguage;
         return response;
     }
     

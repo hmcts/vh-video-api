@@ -63,4 +63,9 @@ public class ConferenceCoreResponse
     /// The room type of the conference
     /// </summary>
     public ConferenceRoomType ConferenceRoomType { get; set; }
+
+    /// <summary>
+    /// The language for the conference used to determine the audio of the countdown language and waiting room message
+    /// </summary>
+    public AudioPlaybackLanguage AudioPlaybackLanguage { get; set; }
 }
