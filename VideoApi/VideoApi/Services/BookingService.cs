@@ -44,7 +44,7 @@ public class BookingService(
     {
         MeetingRoom meetingRoom;
         var telephoneId = await CreateUniqueTelephoneId();
-        var videoPlatformService = _supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)supplier);
+        var videoPlatformService = _supplierPlatformServiceFactory.Create(supplier);
         var endpointDtos = endpoints.ToList();
         try
         {
@@ -95,12 +95,12 @@ public class BookingService(
         
         var endpoints = request.Endpoints
             .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate, 
-                (Domain.Enums.ConferenceRole)x.ConferenceRole))
+                (ConferenceRole)x.ConferenceRole))
             .ToList();
         
         var linkedParticipants = request.Participants
             .SelectMany(x => x.LinkedParticipants)
-            .Select(x => new LinkedParticipantDto()
+            .Select(x => new LinkedParticipantDto
             {
                 ParticipantRefId = x.ParticipantRefId,
                 LinkedRefId = x.LinkedRefId,
@@ -112,9 +112,9 @@ public class BookingService(
             request.HearingRefId, request.CaseType, request.ScheduledDateTime, request.CaseNumber,
             request.CaseName, request.ScheduledDuration, participants, request.HearingVenueName,
             request.AudioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-            (Domain.Enums.Supplier)request.Supplier,
-            (Domain.Enums.ConferenceRoomType)request.ConferenceRoomType,
-            (Domain.Enums.AudioPlaybackLanguage)request.AudioPlaybackLanguage
+            (Supplier)request.Supplier,
+            (ConferenceRoomType)request.ConferenceRoomType,
+            (AudioPlaybackLanguage)request.AudioPlaybackLanguage
         );
         
         await _commandHandler.Handle(createConferenceCommand);

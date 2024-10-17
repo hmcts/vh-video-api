@@ -147,7 +147,7 @@ namespace VideoApi.Services
         
         public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
             IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
-            AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
+            AudioPlaybackLanguage audioPlaybackLanguage)
         {
             return _supplierApiClient.UpdateHearingAsync(conferenceId.ToString(),
                 new UpdateHearingParams
