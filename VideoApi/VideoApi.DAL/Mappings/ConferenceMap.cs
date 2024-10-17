@@ -25,11 +25,11 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.ActualStartTime);
             builder.Property(x => x.CreatedDateTime);
             builder.Property<Supplier>("Supplier").HasDefaultValue(Supplier.Kinly);
+            builder.Property(x=> x.AudioPlaybackLanguage).HasDefaultValue(AudioPlaybackLanguage.EnglishAndWelsh);
 
             builder.HasMany<Participant>("Participants").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.Endpoints).WithOne().OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany<TelephoneParticipant>("TelephoneParticipants").WithOne(x => x.Conference).HasForeignKey(x => x.ConferenceId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany<TelephoneParticipant>("TelephoneParticipants").WithOne(x => x.Conference).HasForeignKey(x => x.ConferenceId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<ConferenceStatus>("ConferenceStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.InstantMessageHistory).WithOne().OnDelete(DeleteBehavior.Cascade).IsRequired();
             builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.AdminUri).HasColumnName("AdminUri");

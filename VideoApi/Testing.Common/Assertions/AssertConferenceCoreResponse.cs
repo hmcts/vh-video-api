@@ -33,6 +33,7 @@ namespace Testing.Common.Assertions
             }
 
             conference.ConferenceRoomType.Should().Be(conferenceRoomType);
+            conference.AudioPlaybackLanguage.Should().Be(conference.AudioPlaybackLanguage);
         }
     }
 }

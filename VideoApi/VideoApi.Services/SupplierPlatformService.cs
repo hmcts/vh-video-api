@@ -5,8 +5,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Contract.Enums;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
@@ -14,7 +14,6 @@ using VideoApi.Services.Exceptions;
 using VideoApi.Services.Mappers;
 using Task = System.Threading.Tasks.Task;
 using Supplier = VideoApi.Domain.Enums.Supplier;
-using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 
 namespace VideoApi.Services
 {
@@ -48,7 +47,7 @@ namespace VideoApi.Services
             bool audioRecordingRequired,
             string ingestUrl,
             IEnumerable<EndpointDto> endpoints, 
-            string telephoneId, ConferenceRoomType roomType)
+            string telephoneId, ConferenceRoomType roomType, AudioPlaybackLanguage audioPlaybackLanguage)
         {
             _logger.LogInformation(
                 "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
@@ -65,7 +64,8 @@ namespace VideoApi.Services
                     Streaming_enabled = false,
                     Streaming_url = null,
                     Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
-                    Telephone_Conference_id = telephoneId
+                    Telephone_Conference_id = telephoneId,
+                    AudioPlaybackLanguage = audioPlaybackLanguage.ToString()
                 });
 
                 return _supplier == Supplier.Vodafone 
@@ -146,13 +146,16 @@ namespace VideoApi.Services
         }
         
         public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
-            IEnumerable<EndpointDto> endpoints)
+            IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
+            AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
         {
             return _supplierApiClient.UpdateHearingAsync(conferenceId.ToString(),
                 new UpdateHearingParams
                 {
                     Recording_enabled = audioRecordingRequired,
-                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList()
+                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
+                    RoomType = roomType.ToString(),
+                    AudioPlaybackLanguage = audioPlaybackLanguage.ToString()
                 });
         }
 

@@ -29,11 +29,13 @@ namespace VideoApi.DAL.Commands
         public List<LinkedParticipantDto> LinkedParticipants { get; set; }
         public Supplier Supplier { get; set; }
         public ConferenceRoomType ConferenceRoomType { get; set; }
+        public AudioPlaybackLanguage AudioPlaybackLanguage { get; }
 
         public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
             string caseNumber, string caseName, int scheduledDuration, List<Participant> participants,
             string hearingVenueName, bool audioRecordingRequired, string ingestUrl, List<Endpoint> endpoints,
-            List<LinkedParticipantDto> linkedParticipants, Supplier supplier, ConferenceRoomType conferenceRoomType)
+            List<LinkedParticipantDto> linkedParticipants, Supplier supplier, ConferenceRoomType conferenceRoomType,
+            AudioPlaybackLanguage audioPlaybackLanguage)
         {
             HearingRefId = hearingRefId;
             CaseType = caseType;
@@ -49,6 +51,7 @@ namespace VideoApi.DAL.Commands
             LinkedParticipants = linkedParticipants;
             Supplier = supplier;
             ConferenceRoomType = conferenceRoomType;
+            AudioPlaybackLanguage = audioPlaybackLanguage;
         }
     }
 
@@ -64,8 +67,9 @@ namespace VideoApi.DAL.Commands
         public async Task Handle(CreateConferenceCommand command)
         {
             var conference = new Conference(command.HearingRefId, command.CaseType, command.ScheduledDateTime,
-                command.CaseNumber,command.CaseName, command.ScheduledDuration, command.HearingVenueName, command.AudioRecordingRequired, command.IngestUrl,
-                command.Supplier, command.ConferenceRoomType);
+                command.CaseNumber, command.CaseName, command.ScheduledDuration, command.HearingVenueName,
+                command.AudioRecordingRequired, command.IngestUrl, command.Supplier, command.ConferenceRoomType,
+                command.AudioPlaybackLanguage);
             
             foreach (var participant in command.Participants)
             {

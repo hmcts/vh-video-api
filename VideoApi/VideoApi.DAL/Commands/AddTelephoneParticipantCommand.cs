@@ -35,7 +35,7 @@ public class AddTelephoneParticipantCommandHandler(VideoApiDbContext context)
             throw new ConferenceNotFoundException(command.ConferenceId);
         }
 
-        var telephoneParticipant = new TelephoneParticipant(command.TelephoneParticipantId, command.TelephoneNumber);
+        var telephoneParticipant = new TelephoneParticipant(command.TelephoneParticipantId, command.TelephoneNumber, conference);
         conference.AddTelephoneParticipant(telephoneParticipant);
         await context.SaveChangesAsync();
     }
