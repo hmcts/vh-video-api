@@ -126,7 +126,7 @@ namespace Testing.Common.Helper.Builders.Domain
         
         public ConferenceBuilder WithTelephoneParticipant(string phoneNumber)
         {
-            var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), phoneNumber);
+            var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), phoneNumber, _conference);
             _conference.AddTelephoneParticipant(telephoneParticipant);
 
             return this;

@@ -33,4 +33,8 @@
     <ProjectReference Include="..\VideoApi.Domain\VideoApi.Domain.csproj" />
     <ProjectReference Include="..\VideoApi.Services\VideoApi.Services.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\20241017152205_AddAudioPlaybackLanguageToConference.cs" />
+    <Compile Remove="Migrations\20241017152205_AddAudioPlaybackLanguageToConference.Designer.cs" />
+  </ItemGroup>
 </Project>

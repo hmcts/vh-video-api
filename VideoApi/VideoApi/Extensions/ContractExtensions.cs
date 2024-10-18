@@ -55,6 +55,21 @@ namespace VideoApi.Extensions
             return Enum.Parse<Domain.Enums.EventType>(eventType.ToString());
         }
         
+        public static Domain.Enums.ConferenceRoomType MapToDomainEnum(this Contract.Enums.ConferenceRoomType roomType)
+        {
+            return Enum.Parse<Domain.Enums.ConferenceRoomType>(roomType.ToString());
+        }
+        
+        public static Domain.Enums.AudioPlaybackLanguage MapToDomainEnum(this Contract.Enums.AudioPlaybackLanguage audioRecordingStatus)
+        {
+            return Enum.Parse<Domain.Enums.AudioPlaybackLanguage>(audioRecordingStatus.ToString());
+        }
+        
+        public static Domain.Enums.Supplier MapToDomainEnum(this Contract.Enums.Supplier supplier)
+        {
+            return Enum.Parse<Domain.Enums.Supplier>(supplier.ToString());
+        }
+        
         public static Domain.Enums.VirtualCourtRoomType MapToDomainEnum(this Contract.Enums.VirtualCourtRoomType roomType)
         {
             return Enum.Parse<Domain.Enums.VirtualCourtRoomType>(roomType.ToString());
