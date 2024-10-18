@@ -89,10 +89,11 @@ namespace VideoApi.UnitTests.Controllers.Conference
             SetupCallToMockRetryService(true);
             
             await Controller.BookNewConferenceAsync(_request);
-            
+
             BookingServiceMock.Verify(v
                 => v.BookMeetingRoomAsync(It.IsAny<Guid>(), It.IsAny<bool>(), expectedIngestUrl,
-                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<ConferenceRoomType>(), It.IsAny<Supplier>()), Times.Once);
+                    It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(),
+                    It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>(), It.IsAny<VideoApi.Domain.Enums.Supplier>()), Times.Once);
         }
         
         [Test]

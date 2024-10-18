@@ -1,4 +1,5 @@
 using System;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
@@ -9,7 +10,8 @@ public class UpdateCurrentRoomTests
     [Test]
     public void should_update_current_room()
     {
-        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous");
+        var conference = new ConferenceBuilder().Build();
+        var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), "Anonymous", conference);
         var room = RoomType.WaitingRoom;
         telephoneParticipant.UpdateCurrentRoom(room);
         telephoneParticipant.CurrentRoom.Should().Be(room);

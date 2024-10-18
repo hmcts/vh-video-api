@@ -12,7 +12,7 @@ namespace VideoApi.Domain
     {
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
             string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl,
-            Supplier supplier = Supplier.Kinly, ConferenceRoomType conferenceRoomType = ConferenceRoomType.VMR)
+            Supplier supplier = Supplier.Kinly, ConferenceRoomType conferenceRoomType = ConferenceRoomType.VMR, AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
         {
             Id = Guid.NewGuid();
             Participants = new List<ParticipantBase>();
@@ -37,6 +37,7 @@ namespace VideoApi.Domain
             UpdatedAt = CreatedDateTime;
             Supplier = supplier;
             ConferenceRoomType = conferenceRoomType;
+            AudioPlaybackLanguage = audioPlaybackLanguage;
         }
 
         public Guid HearingRefId { get; private set; }
@@ -64,6 +65,7 @@ namespace VideoApi.Domain
         public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
         public Supplier Supplier { get; private set; }
         public ConferenceRoomType ConferenceRoomType { get; private set; }
+        public AudioPlaybackLanguage AudioPlaybackLanguage { get; private set; }
         
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode,
             string telephoneConferenceId)

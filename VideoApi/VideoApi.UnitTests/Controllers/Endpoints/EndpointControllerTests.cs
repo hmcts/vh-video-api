@@ -106,7 +106,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .Setup(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                     testConference.AudioRecordingRequired,
                     testConference.GetEndpoints()
-                        .Select(EndpointMapper.MapToEndpoint)))
+                        .Select(EndpointMapper.MapToEndpoint), testConference.ConferenceRoomType, testConference.AudioPlaybackLanguage))
                 .Returns(Task.CompletedTask);
 
             var response = await _controller.AddEndpointToConference(conferenceId, new AddEndpointRequest());
@@ -119,7 +119,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
 
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()), Times.Once);
             VerifySupplierUsed(testConference.Supplier, Times.Exactly(1));
         }
 
@@ -153,7 +153,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .Setup(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                     testConference.AudioRecordingRequired,
                     testConference.GetEndpoints()
-                        .Select(EndpointMapper.MapToEndpoint)))
+                        .Select(EndpointMapper.MapToEndpoint), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()))
                 .Returns(Task.CompletedTask);
 
             var response = await _controller.RemoveEndpointFromConference(conferenceId, "sip@sip.com");
@@ -169,7 +169,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
 
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()), Times.Once);
             VerifySupplierUsed(testConference.Supplier, Times.Exactly(2));
         }
 
@@ -205,7 +205,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .Setup(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                     testConference.AudioRecordingRequired,
                     testConference.GetEndpoints()
-                        .Select(EndpointMapper.MapToEndpoint)))
+                        .Select(EndpointMapper.MapToEndpoint), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()))
                 .Returns(Task.CompletedTask);
 
             var response = await _controller.UpdateEndpointInConference(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
@@ -224,7 +224,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
 
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Once);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()), Times.Once);
             VerifySupplierUsed(testConference.Supplier, Times.Exactly(3));
         }
 
@@ -258,7 +258,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .Setup(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                     testConference.AudioRecordingRequired,
                     testConference.GetEndpoints()
-                        .Select(EndpointMapper.MapToEndpoint)))
+                        .Select(EndpointMapper.MapToEndpoint), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()))
                 .Returns(Task.CompletedTask);
 
             var response = await _controller.UpdateEndpointInConference(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
@@ -277,7 +277,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
 
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,
                 testConference.AudioRecordingRequired,
-                It.IsAny<IEnumerable<EndpointDto>>()), Times.Never);
+                It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()), Times.Never);
         }
         
         protected void VerifySupplierUsed(Supplier supplier, Times times)
