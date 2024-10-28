@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Moq;
-using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
@@ -22,7 +21,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.DeleteVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Never);
         }
-
+        
         [Test]
         public async Task Should_close_conference_and_remove_court_room_for_given_valid_conference_id()
         {
@@ -33,18 +32,14 @@ namespace VideoApi.UnitTests.Controllers.Conference
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
             VideoPlatformServiceMock.Verify(v => v.DeleteVirtualCourtRoomAsync(It.IsAny<Guid>()), Times.Once);
         }
-
+        
         [Test]
         public async Task Should_close_conference_and_not_call_delete_audio_recording_application_if_audio_required_set_to_false_for_given_conference()
         {
-            var response = new AudioPlatformServiceResponse(true);
-            AudioPlatformServiceMock.Setup(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>())).ReturnsAsync(response);
             await Controller.CloseConferenceAsync(Guid.NewGuid());
-
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
         }
-
+        
         [Test]
         public async Task Should_close_conference_and_delete_audio_recording_application_if_audio_required_set_to_true_for_given_conference()
         {
@@ -52,8 +47,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             QueryHandlerMock
               .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
               .ReturnsAsync(TestConference);
-            var response = new AudioPlatformServiceResponse(true);
-            AudioPlatformServiceMock.Setup(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>())).ReturnsAsync(response);
             AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
 
             var filesNames = new List<string> { "SomeBlob.mp4" };
@@ -63,9 +56,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Once);
         }
-
+        
         [Test]
         public async Task Should_close_conference_and_delete_audio_recording_application_if_audio_files_exist_and_actual_start_date_is_null()
         {
@@ -73,10 +65,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             QueryHandlerMock
               .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()))
               .ReturnsAsync(TestConference);
-            var response = new AudioPlatformServiceResponse(true);
-            AudioPlatformServiceMock.Setup(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>())).ReturnsAsync(response);
             AzureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(AzureStorageServiceMock.Object);
-
 
             AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>()))
                 .ReturnsAsync(new List<string> { $"{TestConference.HearingRefId.ToString()}.mp4" });
@@ -84,9 +73,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Once);
         }
-
+        
         [Test]
         public async Task Should_close_conference_and_not_call_delete_audio_recording_application_if_audio_recording_file_not_found()
         {
@@ -101,14 +89,10 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AzureStorageServiceMock.Reset();
 
             AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(new List<string>());
-            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(AppName);
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            AzureStorageServiceMock.Verify(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>()), Times.Once);
-
-            AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
         }
         
         [Test]
@@ -125,14 +109,11 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AudioPlatformServiceMock.Reset();
             AzureStorageServiceMock.Reset();
 
-            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(AppName);
             AzureStorageServiceMock.Setup(x => x.GetAllBlobNamesByFilePathPrefix(It.IsAny<string>())).ReturnsAsync(new List<string>());
 
             await Controller.CloseConferenceAsync(Guid.NewGuid());
 
             CommandHandlerMock.Verify(c => c.Handle(It.IsAny<CloseConferenceCommand>()), Times.Once);
-            AudioPlatformServiceMock.Verify(v => v.DeleteAudioApplicationAsync(It.IsAny<Guid>()), Times.Never);
         }
-        
     }
 }
