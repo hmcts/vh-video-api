@@ -51,7 +51,7 @@ namespace VideoApi.Services.Contracts
 
         Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
             IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
-            Layout layout = Layout.AUTOMATIC, bool muteGuests = true);
+            Layout layout = Layout.AUTOMATIC, bool muteGuests = true, IEnumerable<string> hostsForScreening = null);
         Task PauseHearingAsync(Guid conferenceId);
         Task EndHearingAsync(Guid conferenceId);
         Task SuspendHearingAsync(Guid conferenceId);

@@ -35,7 +35,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 Layout = layout,
                 TriggeredByHostId = hostId,
                 MuteGuests = true,
-                Hosts = hostIds
+                Hosts = hostIds,
+                HostsForScreening = new List<Guid>(),
             };
             TestConference.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Kinly);
             Mocker.Mock<IQueryHandler>()
@@ -50,7 +51,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIdsAsStrings,
-                    hostIdsAsStrings, Layout.ONE_PLUS_SEVEN, muteGuests), Times.Once);
+                    hostIdsAsStrings, Layout.ONE_PLUS_SEVEN, muteGuests, new List<string>()), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
         
@@ -86,7 +87,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIdsAsStrings, hostIdsAsStrings,
-                    Layout.ONE_PLUS_SEVEN, true), Times.Once);
+                    Layout.ONE_PLUS_SEVEN, true, new List<string>()), Times.Once);
         }
 
         [Test] public async Task should_return_supplier_status_code_on_error()
@@ -100,7 +101,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))
                 .ReturnsAsync(TestConference);
             var exception = new SupplierApiException(message, statusCode, response, null, null);
-            VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<Layout>(), It.IsAny<bool>()))
+            VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<string>>(), 
+                It.IsAny<Layout>(), It.IsAny<bool>(), It.IsAny<IEnumerable<string>>()))
                 .ThrowsAsync(exception);
             
             var result = await Controller.StartVideoHearingAsync(conferenceId, new Contract.Requests.StartHearingRequest());
@@ -125,7 +127,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 .ReturnsAsync(TestConference);
 
             VideoPlatformServiceMock.Setup(x => x.StartHearingAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>(),
-                    It.IsAny<IEnumerable<string>>(), It.IsAny<Layout>(), It.IsAny<bool>()))
+                    It.IsAny<IEnumerable<string>>(), It.IsAny<Layout>(), It.IsAny<bool>(), It.IsAny<IEnumerable<string>>()))
                 .ThrowsAsync(exception);
 
             var result =
@@ -178,7 +180,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds,
-                    It.IsAny<IEnumerable<string>>(), Layout.ONE_PLUS_SEVEN, true), Times.Once);
+                    It.IsAny<IEnumerable<string>>(), Layout.ONE_PLUS_SEVEN, true, It.IsAny<IEnumerable<string>>()), Times.Once);
         }
     }
 }

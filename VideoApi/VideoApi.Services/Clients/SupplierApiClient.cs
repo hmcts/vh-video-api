@@ -1896,7 +1896,10 @@ namespace VideoApi.Services.Clients
 
         [Newtonsoft.Json.JsonProperty("triggered_by_host_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Triggered_by_host_id { get; set; }
-        
+
+        [Newtonsoft.Json.JsonProperty("hosts_for_screening", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<string> HostsForScreening { get; set; }
+
         public string ToJson()
         {
 
