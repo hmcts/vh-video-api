@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -169,13 +168,6 @@ namespace VideoApi
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
-                ;
-                
-                AddWowzaHttpClient(services, wowzaConfiguration.LoadBalancer, wowzaConfiguration, true);
-                foreach (var restApiEndpoint in wowzaConfiguration.RestApiEndpoints)
-                {
-                    AddWowzaHttpClient(services, restApiEndpoint, wowzaConfiguration, false);
-                }
                 
                 services
                     .AddHttpClient<ISupplierSelfTestHttpClient, SupplierSelfTestHttpClient>()
@@ -236,29 +228,6 @@ namespace VideoApi
             services.AddSingleton<IAzureStorageServiceFactory, AzureStorageServiceFactory>();
             
             return services;
-        }
-        
-        private static void AddWowzaHttpClient(IServiceCollection services, string restApiEndpoint,
-            WowzaConfiguration wowzaConfiguration, bool isLoadBalancer)
-        {
-            var handler = new HttpClientHandler
-            {
-                Credentials = new CredentialCache
-                {
-                    {
-                        new Uri(restApiEndpoint), "Digest",
-                        new NetworkCredential(wowzaConfiguration.Username, wowzaConfiguration.Password)
-                    }
-                }
-            };
-            
-            var client = new WowzaHttpClient(new HttpClient(handler)
-            {
-                BaseAddress = new Uri(restApiEndpoint),
-                DefaultRequestHeaders = { { "Accept", "application/json" }, { "ContentType", "application/json" } }
-            });
-            client.IsLoadBalancer = isLoadBalancer;
-            services.AddSingleton<IWowzaHttpClient>(client);
         }
         
         private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient)

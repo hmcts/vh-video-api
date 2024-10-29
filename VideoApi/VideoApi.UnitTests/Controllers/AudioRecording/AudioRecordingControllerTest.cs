@@ -13,39 +13,25 @@ using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
-using VideoApi.Services.Factories;
 using VideoApi.Services.Contracts;
-using VideoApi.Services.Responses;
+using VideoApi.Services.Factories;
 
 namespace VideoApi.UnitTests.Controllers.AudioRecording
 {
     [TestFixture]
     public class AudioRecordingControllerTest
     {
-        private Mock<IAudioPlatformService> _audioPlatformService;
-        private Mock<IAzureStorageServiceFactory> _storageServiceFactory;
-        private Mock<IAzureStorageService> _storageService;
-        private Mock<IQueryHandler> _queryHandler;
-        private VideoApi.Domain.Conference _testConference;
-
-        private AudioRecordingController _controller;
-        private Mock<BlobClient> _blobClientMock;
-
-        private const string ApplicationName = "vh-recording-app";
-
         [SetUp]
         public void Setup()
         {
             _queryHandler         = new Mock<IQueryHandler>();
-            _audioPlatformService = new Mock<IAudioPlatformService>();
-            _audioPlatformService.Setup(x => x.ApplicationName).Returns(ApplicationName);
             _storageServiceFactory = new Mock<IAzureStorageServiceFactory>();
             _storageService        = new Mock<IAzureStorageService>();
 
             _controller = new AudioRecordingController
                 (
-                 _storageServiceFactory.Object, _audioPlatformService.Object,
-                 new Mock<ILogger<AudioRecordingController>>().Object, _queryHandler.Object
+                 _storageServiceFactory.Object,
+                 new Mock<ILogger<AudioRecordingController>>().Object
                 );
 
             _testConference = new ConferenceBuilder()
@@ -63,54 +49,14 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                            It.IsAny<GetConferenceByHearingRefIdQuery>()))
                .ReturnsAsync(_testConference);
         }
-
-        [Test]
-        public async Task GetAudioStreamInfoAsync_Returns_NotFound()
-        {
-            _audioPlatformService
-               .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>()))
-               .Throws<AggregateException>();
-
-            var result = await _controller.GetAudioStreamInfoAsync(It.IsAny<Guid>()) as NotFoundObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
-        }
-
-        [TestCase]
-        public async Task GetAudioStreamInfoAsync_Returns_AudioStreamInfoResponse()
-        {
-            var hearingId = Guid.NewGuid();
-            var wowzaResponse = new WowzaGetStreamRecorderResponse
-            {
-                Option              = "Option",
-                ApplicationName     = "ApplicationName",
-                BaseFile            = "BaseFile",
-                CurrentDuration     = 1,
-                CurrentFile         = "CurrentFile",
-                CurrentSize         = 1,
-                FileFormat          = "FileFormat",
-                InstanceName        = "InstanceName",
-                OutputPath          = "OutputPath",
-                RecorderName        = "RecorderName",
-                RecorderState       = "RecorderState",
-                SegmentDuration     = 1,
-                ServerName          = "ServerName",
-                RecorderErrorString = "RecorderErrorString",
-                RecordingStartTime  = "RecordingStartTime"
-            };
-
-            _audioPlatformService
-               .Setup(x => x.GetAudioStreamInfoAsync(It.IsAny<string>()))
-               .ReturnsAsync(wowzaResponse);
-
-            var result = await _controller.GetAudioStreamInfoAsync(hearingId) as OkObjectResult;
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            var response = result.Value as AudioStreamInfoResponse;
-            response.Should().NotBeNull();
-            response.Should().BeEquivalentTo(wowzaResponse, options => options.ExcludingMissingMembers());
-            _audioPlatformService.Verify(e => e.GetAudioStreamInfoAsync(hearingId.ToString()), Times.Once);
-        }
+        
+        private Mock<IAzureStorageServiceFactory> _storageServiceFactory;
+        private Mock<IAzureStorageService> _storageService;
+        private Mock<IQueryHandler> _queryHandler;
+        private VideoApi.Domain.Conference _testConference;
+        
+        private AudioRecordingController _controller;
+        private Mock<BlobClient> _blobClientMock;
         
         [Test]
         public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
@@ -136,7 +82,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             item.AudioFileLinks.First().Should().Be("fileLink");
             _storageService.Verify(c=>c.CreateSharedAccessSignature(filePath, It.IsAny<TimeSpan>()));
         }
-
+        
         [Test]
         public async Task GetAudioRecordingLinkCvpAllWithCaseReferenceAsync_returns_ok_with_results()
         {
@@ -165,7 +111,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Once);
         }
-
+        
         [Test]
         public async Task GetAudioRecordingLinkCvpAllWithCaseReferenceAsync_returns_ok_with_no_results()
         {
@@ -190,7 +136,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
         }
-
+        
         [Test]
         public async Task GetAudioRecordingLinkCvpAllWithCaseReferenceAsync_returns_not_found_when_exception_thrown()
         {
@@ -240,7 +186,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Once);
         }
-
+        
         [Test]
         public async Task GetAudioRecordingLinkCvpByCloudRoomAsync_returns_ok_with_no_results()
         {
@@ -264,7 +210,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
         }
-
+        
         [Test]
         public async Task GetAudioRecordingLinkCvpByCloudRoomAsync_returns_not_found_when_exception_thrown()
         {
@@ -312,7 +258,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Once);
         }
-
+        
         [Test]
         public async Task GetAudioRecordingLinkCvpByDateAsync_returns_ok_with_no_results()
         {
@@ -336,7 +282,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
         }
-
+        
         [Test]
         public async Task GetAudioRecordingLinkCvpByDateAsync_returns_not_found_when_exception_thrown()
         {
@@ -357,7 +303,7 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
         }
-
+        
         private async IAsyncEnumerable<BlobClient> GetMockBlobClients()
         {
             yield return _blobClientMock.Object;
