@@ -25,6 +25,9 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var hostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id;
             var participantIds = TestConference.Participants
                 .Where(x => x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id);
+            var hostsForScreening = new List<Guid> { participantIds.First() };
+            var hostsForScreeningAsStrings = hostsForScreening.Select(x => x.ToString()).ToList();
+
             participantIds = participantIds.Append(hostId).ToList();
             var participantIdsAsStrings = participantIds.Select(x => x.ToString()).ToList();
             var hostIds = new List<Guid>(participantIds);
@@ -36,7 +39,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 TriggeredByHostId = hostId,
                 MuteGuests = true,
                 Hosts = hostIds,
-                HostsForScreening = new List<Guid>(),
+                HostsForScreening = hostsForScreening
             };
             TestConference.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Kinly);
             Mocker.Mock<IQueryHandler>()
@@ -51,7 +54,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIdsAsStrings,
-                    hostIdsAsStrings, Layout.ONE_PLUS_SEVEN, muteGuests, new List<string>()), Times.Once);
+                    hostIdsAsStrings, Layout.ONE_PLUS_SEVEN, muteGuests, hostsForScreeningAsStrings), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
         
@@ -63,6 +66,9 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var hostId = TestConference.Participants.Single(x => x.UserRole == VideoApi.Domain.Enums.UserRole.Judge).Id;
             var participantIds = TestConference.Participants
                 .Where(x => x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id);
+            var hostsForScreening = new List<Guid> { participantIds.First() };
+            var hostsForScreeningAsStrings = hostsForScreening.Select(x => x.ToString()).ToList();
+
             participantIds = participantIds.Append(hostId).ToList();
             var participantIdsAsStrings = participantIds.Select(x => x.ToString()).ToList();
             var hostIds = new List<Guid>(participantIds);
@@ -72,7 +78,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 Layout = layout,
                 TriggeredByHostId = hostId,
                 MuteGuests = true,
-                Hosts = hostIds
+                Hosts = hostIds,
+                HostsForScreening = hostsForScreening
             };
             Mocker.Mock<IQueryHandler>()
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
@@ -87,7 +94,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIdsAsStrings, hostIdsAsStrings,
-                    Layout.ONE_PLUS_SEVEN, true, new List<string>()), Times.Once);
+                    Layout.ONE_PLUS_SEVEN, true, hostsForScreeningAsStrings), Times.Once);
         }
 
         [Test] public async Task should_return_supplier_status_code_on_error()
