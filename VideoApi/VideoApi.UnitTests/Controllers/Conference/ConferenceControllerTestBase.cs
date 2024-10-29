@@ -76,7 +76,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             ServicesConfiguration = Mocker.Mock<IOptions<ServicesConfiguration>>();
             SupplierConfiguration = Mocker.Mock<SupplierConfiguration>();
             AudioPlatformServiceMock = Mocker.Mock<IAudioPlatformService>();
-            AudioPlatformServiceMock.Setup(e => e.ApplicationName).Returns(AppName);
             AzureStorageServiceFactoryMock = Mocker.Mock<IAzureStorageServiceFactory>();
             AzureStorageServiceMock = Mocker.Mock<IAzureStorageService>();
             PollyRetryServiceMock = Mocker.Mock<IPollyRetryService>();

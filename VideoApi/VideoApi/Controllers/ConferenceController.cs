@@ -369,7 +369,6 @@ public class ConferenceController(
                     new GetConferenceByIdQuery(conferenceId));
             await commandHandler.Handle(command);
             await SafelyRemoveCourtRoomAsync(conferenceId, conference.Supplier);
-            await DeleteAudioRecordingApplication(conferenceId);
             
             return NoContent();
         }
@@ -533,43 +532,6 @@ public class ConferenceController(
             callResult => callResult == Guid.Empty,
             async () => await bookingService.CreateConferenceAsync(request, ingestUrl)
         );
-    
-    private async Task DeleteAudioRecordingApplication(Guid conferenceId)
-    {
-        var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-        var queriedConference =
-            await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-        
-        if (queriedConference is { AudioRecordingRequired: true } &&
-            !queriedConference.IngestUrl.Contains(audioPlatformService
-                .ApplicationName)) //should not delete application, if on single instance version
-        {
-            try
-            {
-                await EnsureAudioFileExists(queriedConference);
-                await audioPlatformService.DeleteAudioApplicationAsync(queriedConference.HearingRefId);
-            }
-            catch (AudioPlatformFileNotFoundException ex)
-            {
-#pragma warning disable CA2254 // Template should be a static expression
-                logger.LogError(ex, ex.Message);
-#pragma warning restore CA2254 // Template should be a static expression
-            }
-        }
-    }
-    
-    private async Task EnsureAudioFileExists(Conference conference)
-    {
-        var azureStorageService = azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-        var allBlobs =
-            await azureStorageService.GetAllBlobNamesByFilePathPrefix(conference.HearingRefId.ToString());
-        
-        if (!allBlobs.Any() && conference.ActualStartTime.HasValue)
-        {
-            var msg = $"Audio recording file not found for hearing: {conference.HearingRefId}";
-            throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
-        }
-    }
     
     private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId, VideoApi.Domain.Enums.Supplier supplier)
     {

@@ -13,8 +13,7 @@ public static class HealthCheckExtensions
         services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddDbContextCheck<VideoApiDbContext>(name: "Database VhBookings", tags: HealthCheckTags)
-            .AddCheck<SupplierApiHealthCheck>(name: "Supplier API", tags: HealthCheckTags)
-            .AddCheck<WowzaHealthCheck>(name: "Wowza VM", tags: HealthCheckTags, failureStatus: HealthStatus.Degraded);
+            .AddCheck<SupplierApiHealthCheck>(name: "Supplier API", tags: HealthCheckTags);
             
         return services;
     }
