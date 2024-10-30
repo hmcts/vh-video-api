@@ -22,5 +22,6 @@ namespace VideoApi.Contract.Requests
         public bool? MuteGuests { get; set; }
         public Guid TriggeredByHostId { get; set; }
         public List<Guid> Hosts { get; set; } = [];
+        public List<Guid> HostsForScreening { get; set; } = [];
     }
 }

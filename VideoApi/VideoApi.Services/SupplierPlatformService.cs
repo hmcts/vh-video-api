@@ -161,7 +161,7 @@ namespace VideoApi.Services
 
         public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
             IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
-            Layout layout = Layout.AUTOMATIC, bool muteGuests = false)
+            Layout layout = Layout.AUTOMATIC, bool muteGuests = false, IEnumerable<string> hostsForScreening =null)
         {
             if (_supplier != Supplier.Vodafone)
                 triggeredByHostId = null;
@@ -171,7 +171,8 @@ namespace VideoApi.Services
                     Hearing_layout = layout, Mute_guests = muteGuests,
                     Force_transfer_participant_ids = participantsToForceTransfer?.ToList(),
                     Hosts = hosts?.ToList(),
-                    Triggered_by_host_id = triggeredByHostId
+                    Triggered_by_host_id = triggeredByHostId,
+                    HostsForScreening = hostsForScreening?.ToList()
                 });
         }
 
