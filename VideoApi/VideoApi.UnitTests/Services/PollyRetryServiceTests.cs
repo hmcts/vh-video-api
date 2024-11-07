@@ -9,11 +9,11 @@ namespace VideoApi.UnitTests.Services
         private readonly PollyRetryService _pollyRetryService = new();
 
         [Test]
-        public async Task WaitAndRetryAsync_Retries_On_Exception()
+        public void WaitAndRetryAsync_Retries_On_Exception()
         {
             var retryInvoked = false;
 
-            await _pollyRetryService.WaitAndRetryAsync<Exception, object>
+            _pollyRetryService.WaitAndRetryAsync<Exception, object>
             (
                 3, i => TimeSpan.FromMilliseconds(1), retryAttempt => retryInvoked = true,
                 executeFunction: () => throw new Exception("What"));
@@ -37,11 +37,11 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task WaitAndRetryAsync_With_Result_Retries_On_Exception()
+        public void WaitAndRetryAsync_With_Result_Retries_On_Exception()
         {
             var retryInvoked = false;
 
-            await _pollyRetryService.WaitAndRetryAsync<Exception, TestResult>
+            _pollyRetryService.WaitAndRetryAsync<Exception, TestResult>
             (
                 3, i => TimeSpan.FromMilliseconds(1), retryAttempt => retryInvoked = true,
                 x => !x.Success,
@@ -52,11 +52,11 @@ namespace VideoApi.UnitTests.Services
         }
 
         [Test]
-        public async Task WaitAndRetryAsync_With_Result_Retries_On_Failed_Result()
+        public void WaitAndRetryAsync_With_Result_Retries_On_Failed_Result()
         {
             var retryInvoked = false;
 
-            await _pollyRetryService.WaitAndRetryAsync<Exception, TestResult>
+            _pollyRetryService.WaitAndRetryAsync<Exception, TestResult>
             (
                 3, i => TimeSpan.FromMilliseconds(1), retryAttempt => retryInvoked = true,
                 x => !x.Success,
