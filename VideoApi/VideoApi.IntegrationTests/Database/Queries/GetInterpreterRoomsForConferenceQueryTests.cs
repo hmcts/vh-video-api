@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using NUnit.Framework;
 using VideoApi.DAL;
 using VideoApi.DAL.Queries;
@@ -66,15 +65,15 @@ namespace VideoApi.IntegrationTests.Database.Queries
             }
         }
 
-        private List<Room> CreateRoomsForConference(Guid conferenceId)
+        private static List<Room> CreateRoomsForConference(Guid conferenceId)
         {
-            return new List<Room>()
-            {
+            return
+            [
                 new ConsultationRoom(conferenceId, "ConsultationRoom1", VirtualCourtRoomType.Participant, false),
                 new ConsultationRoom(conferenceId, "JudgeJOHConsultationRoom1", VirtualCourtRoomType.JudgeJOH, false),
                 new ParticipantRoom(conferenceId, "InterpreterRoom1", VirtualCourtRoomType.Witness),
                 new ParticipantRoom(conferenceId, VirtualCourtRoomType.Civilian)
-            };
+            ];
         }
     }
 }

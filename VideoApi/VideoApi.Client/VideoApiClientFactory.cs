@@ -17,19 +17,19 @@ namespace VideoApi.Client
             return apiClient;
         }
         
+        public static VideoApiClient GetClient(string baseUrl, HttpClient httpClient)
+        {
+            var apiClient = GetClient(httpClient);
+            apiClient.BaseUrl = baseUrl;
+            return apiClient;
+        }
+        
         static partial void UpdateJsonSerializerSettings(JsonSerializerOptions settings)
         {
             settings.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
             settings.WriteIndented = true;
             settings.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             settings.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-        }
-        
-        public static VideoApiClient GetClient(string baseUrl, HttpClient httpClient)
-        {
-            var apiClient = GetClient(httpClient);
-            apiClient.BaseUrl = baseUrl;
-            return apiClient;
         }
     }
 }

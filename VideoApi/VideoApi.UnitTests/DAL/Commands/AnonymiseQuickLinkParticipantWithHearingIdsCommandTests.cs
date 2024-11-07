@@ -134,7 +134,7 @@ namespace VideoApi.UnitTests.DAL.Commands
             quickLinkParticipantBeforeAnonymisation.Name.Should().Be(quickLinkParticipantFromContext.Name);
         }
 
-        private void AssertParticipantFields(ParticipantBase processedParticipant,
+        private static void AssertParticipantFields(ParticipantBase processedParticipant,
             ParticipantBase participantBeforeAnonymisation)
         {
             processedParticipant.DisplayName.Should().NotContain(participantBeforeAnonymisation.DisplayName);

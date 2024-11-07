@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Faker;
 using FizzWare.NBuilder;
@@ -39,7 +38,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoParticipantRefIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoParticipantRefIdErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -53,7 +52,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoNameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoNameErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -67,7 +66,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoFirstNameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoFirstNameErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -81,7 +80,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoLastNameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoLastNameErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -95,7 +94,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoDisplayNameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoDisplayNameErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -109,7 +108,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoUsernameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoUsernameErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -123,7 +122,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoCaseTypeGroupErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoCaseTypeGroupErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -137,7 +136,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoContactEmailErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoContactEmailErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -151,7 +150,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoUserRoleErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoUserRoleErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -165,11 +164,11 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoHearingRoleErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoHearingRoleErrorMessage)
                 .Should().BeTrue();
         }
 
-        private ParticipantRequest BuildRequest()
+        private static ParticipantRequest BuildRequest()
         {
             return Builder<ParticipantRequest>.CreateNew()
                 .With(x => x.CaseTypeGroup = "Applicant")

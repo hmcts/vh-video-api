@@ -32,13 +32,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get audio stream request")]
         public void GivenIHaveAValidGetAudioStreamRequest()
         {
-            _context.Request = _context.Get(GetAudioStream(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = TestContext.Get(GetAudioStream(_context.Test.ConferenceResponse.HearingId));
         }
         
         [Given(@"I have a valid get audio stream request that has no stream")]
         public void GivenIHaveAValidGetAudioStreamRequestThatHasNoStream()
         {
-            _context.Request = _context.Get(GetAudioStream(Guid.NewGuid()));
+            _context.Request = TestContext.Get(GetAudioStream(Guid.NewGuid()));
         }
         
         [Given(@"the conference has an audio recording")]
@@ -60,13 +60,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get audio recording link request")]
         public void GivenIHaveAValidGetAudioRecordingLinkRequest()
         {
-            _context.Request = _context.Get(GetAudioRecordingLink(_context.Test.ConferenceResponse.HearingId));
+            _context.Request = TestContext.Get(GetAudioRecordingLink(_context.Test.ConferenceResponse.HearingId));
         }
         
         [Given(@"I have a valid get audio recording link request for non existing hearing")]
         public void GivenIHaveAValidGetAudioRecordingLinkRequestForNonExistingHearing()
         {
-            _context.Request = _context.Get(GetAudioRecordingLink(_context.Config.AudioRecordingTestIds.NonExistent));
+            _context.Request = TestContext.Get(GetAudioRecordingLink(_context.Config.AudioRecordingTestIds.NonExistent));
         }
         
         [Given(@"I have a conference with an audio application and audio recording file")]

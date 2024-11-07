@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace VideoApi.Common.Helpers
 {
@@ -28,7 +27,7 @@ namespace VideoApi.Common.Helpers
             var type = input.GetType();
             if (!IsCustomType(type))
             {
-                result.Add(path, input);
+                result.Add(path!, input);
                 return result;
             }
 
@@ -57,7 +56,7 @@ namespace VideoApi.Common.Helpers
             return result;
         }
 
-        private string GetPath(string path, string property) => $"{path}{(string.IsNullOrEmpty(path) ? string.Empty : ".")}{property}";
+        private static string GetPath(string path, string property) => $"{path}{(string.IsNullOrEmpty(path) ? string.Empty : ".")}{property}";
 
         /// <summary>
         /// Pass in type to see if we should recuse deeper
@@ -65,6 +64,6 @@ namespace VideoApi.Common.Helpers
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private bool IsCustomType(Type type) => !type.IsEnum && type.AssemblyQualifiedName.StartsWith(this.GetType().AssemblyQualifiedName.Split('.')[0]);
+        private bool IsCustomType(Type type) => !type.IsEnum && type.AssemblyQualifiedName!.StartsWith(GetType().AssemblyQualifiedName!.Split('.')[0]);
     }
 }

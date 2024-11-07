@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Requests;
@@ -37,12 +36,12 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(2);
-            result.Errors.Any(x => x.PropertyName == "FirstName").Should().BeTrue();
-            result.Errors.Any(x => x.PropertyName == "ContactEmail").Should().BeTrue();
+            result.Errors.Exists(x => x.PropertyName == "FirstName").Should().BeTrue();
+            result.Errors.Exists(x => x.PropertyName == "ContactEmail").Should().BeTrue();
         }
-        private AddStaffMemberRequest BuildRequest()
+        private static AddStaffMemberRequest BuildRequest()
         {
-            return new AddStaffMemberRequest()
+            return new AddStaffMemberRequest
             {
                 FirstName = "FirstName",
                 LastName = "LastName",

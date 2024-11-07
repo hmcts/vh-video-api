@@ -10,13 +10,12 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers
 {
-    public class RoomParticipantTransferredEventHandler : EventHandlerBase<RoomParticipantTransferredEventHandler>
+    public class RoomParticipantTransferredEventHandler(
+        IQueryHandler queryHandler,
+        ICommandHandler commandHandler,
+        ILogger<RoomParticipantTransferredEventHandler> logger)
+        : EventHandlerBase<RoomParticipantTransferredEventHandler>(queryHandler, commandHandler, logger)
     {
-        public RoomParticipantTransferredEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            ILogger<RoomParticipantTransferredEventHandler> logger) : base(queryHandler, commandHandler, logger)
-        {
-        }
-
         public override EventType EventType => EventType.RoomParticipantTransfer;
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
@@ -36,7 +35,7 @@ namespace VideoApi.Events.Handlers
             }
         }
         
-        private ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
+        private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
             if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
             {

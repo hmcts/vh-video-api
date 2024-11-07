@@ -243,7 +243,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             };
         }
 
-        private List<ConsultationRoom> CreateTestRooms(StartConsultationRequest request)
+        private static List<ConsultationRoom> CreateTestRooms(StartConsultationRequest request)
         {
             var rooms = new List<ConsultationRoom>();
             var room1 = new ConsultationRoom(request.ConferenceId, "Judge", request.RoomType.MapToDomainEnum(), false);
@@ -344,7 +344,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             VerifySupplierUsed(TestConference.Supplier, Times.Once());
         }
 
-        protected void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
+        private void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
         {
             _supplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), times);
         }

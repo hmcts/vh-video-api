@@ -7,22 +7,15 @@ namespace VideoApi.DAL.Commands
     public class AnonymiseConferencesCommand : ICommand
     {
         public int RecordsUpdated { get; set; }
-        public AnonymiseConferencesCommand()
-        {
-        }
     }
 
-    public class AnonymiseConferencesCommandHandler : ICommandHandler<AnonymiseConferencesCommand>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("csharpsquid", "S1192:String literals should not be duplicated")]
+    public class AnonymiseConferencesCommandHandler(VideoApiDbContext context)
+        : ICommandHandler<AnonymiseConferencesCommand>
     {
-        private readonly VideoApiDbContext _context;
-        public AnonymiseConferencesCommandHandler(VideoApiDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task Handle(AnonymiseConferencesCommand command)
         {
-            var query = "DECLARE " +
+            const string query = "DECLARE " +
                 "@randomString AS VARCHAR(64), " +
                 "@months AS INT, " +
                 "@anonymiseBeforeDate AS DATETIME, " +
@@ -99,7 +92,7 @@ namespace VideoApi.DAL.Commands
 
                 "CLOSE participant_cursor; " +
                 "DEALLOCATE participant_cursor;";            
-            command.RecordsUpdated = await _context.Database.ExecuteSqlRawAsync(query);
+            command.RecordsUpdated = await context.Database.ExecuteSqlRawAsync(query);
         }
     }
 }

@@ -1,5 +1,4 @@
 using Faker;
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -114,10 +113,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
             }
         }
         
-        private string CreateUniqueName()
+        private static string CreateUniqueName()
         {
             //This is done to create an unique first name to avoid the test from failing because of any existing data
-            return $"Automation_{Name.First()}{Faker.RandomNumber.Next()}";
+            return $"Automation_{Name.First()}{RandomNumber.Next()}";
         }
     }
 }

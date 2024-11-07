@@ -87,6 +87,9 @@ stages:
               sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
               sonar.exclusions=**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi/Swagger/**/*, VideoApi/VideoApi.DAL/Migrations/*, **/EventType.cs
               sonar.coverage.exclusions=**/VideoApi/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi.Common/**/*, **/VideoApi.IntegrationTests/**/*, **/VideoApi.UnitTests/**/*, **/VideoApi/Extensions/*
+              sonar.issue.ignore.multicriteria=e1
+              sonar.issue.ignore.multicriteria.e1.ruleKey=csharpsquid:S107
+              sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.cs
 
 #####################################################
 # Manual Approval ###################################

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -54,7 +53,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             savedAlert.ConferenceId.Should().Be(command.ConferenceId);
         }
 
-        private AddTaskCommand CreateTaskCommand(Conference conference, string body, TaskType taskType)
+        private static AddTaskCommand CreateTaskCommand(Conference conference, string body, TaskType taskType)
         {
             if (taskType == TaskType.Hearing)
             {

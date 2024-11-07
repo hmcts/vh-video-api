@@ -26,20 +26,12 @@ namespace VideoApi.Controllers
     [OpenApiTag("Conference Management")]
     [Route("conferences")]
     [ApiController]
-    public class ConferenceManagementController : ControllerBase
+    public class ConferenceManagementController(
+        ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
+        ILogger<ConferenceManagementController> logger,
+        IQueryHandler queryHandler)
+        : ControllerBase
     {
-        private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
-        private readonly IQueryHandler _queryHandler;
-        private readonly ILogger<ConferenceManagementController> _logger;
-
-        public ConferenceManagementController(ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
-            ILogger<ConferenceManagementController> logger, IQueryHandler queryHandler)
-        {
-            _supplierPlatformServiceFactory = supplierPlatformServiceFactory;
-            _logger = logger;
-            _queryHandler = queryHandler;
-        }
-
         /// <summary>
         /// Start or resume a video hearing
         /// </summary>
@@ -54,12 +46,12 @@ namespace VideoApi.Controllers
         {
             try
             {
-                _logger.LogDebug("Attempting to start hearing");
+                logger.LogDebug("Attempting to start hearing");
                 var hearingLayout =
                     HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                         request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
 
-                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
 
                 var participants = conference.Participants.Where(x =>
                     x.State is ParticipantState.Available or ParticipantState.InConsultation
@@ -80,7 +72,7 @@ namespace VideoApi.Controllers
                 var hosts = request.Hosts.Select(h => h.ToString()).ToList();
                 var hostsForScreening = request.HostsForScreening.Select(h => h.ToString()).ToList();
 
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
                 if (conference.Supplier == Supplier.Vodafone)
                 {
                     await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hosts, hearingLayout, request.MuteGuests ?? true, hostsForScreening);    
@@ -95,7 +87,7 @@ namespace VideoApi.Controllers
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex, "Error from supplier API. Unable to start video hearing");
+                logger.LogError(ex, "Error from supplier API. Unable to start video hearing");
                 if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(
@@ -117,15 +109,15 @@ namespace VideoApi.Controllers
         {
             try
             {
-                _logger.LogDebug("Attempting to pause hearing");
-                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+                logger.LogDebug("Attempting to pause hearing");
+                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
                 await videoPlatformService.PauseHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex, "Error from supplier API. Unable to pause video hearing");
+                logger.LogError(ex, "Error from supplier API. Unable to pause video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -142,15 +134,15 @@ namespace VideoApi.Controllers
         {
             try
             {
-                _logger.LogDebug("Attempting to end hearing");
-                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+                logger.LogDebug("Attempting to end hearing");
+                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
                 await videoPlatformService.EndHearingAsync(conferenceId);
                 return Accepted();
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex, "Error from supplier API. Unable to end video hearing");
+                logger.LogError(ex, "Error from supplier API. Unable to end video hearing");
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
@@ -166,14 +158,14 @@ namespace VideoApi.Controllers
         {	
             try	
             {	
-                var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
                 await videoPlatformService.SuspendHearingAsync(conferenceId);	
                 return Accepted();	
             }	
             catch (SupplierApiException ex)	
             {	
-                _logger.LogError(ex, "Unable to request technical assistance for video hearing");	
+                logger.LogError(ex, "Unable to request technical assistance for video hearing");	
                 return StatusCode(ex.StatusCode, ex.Response);	
             }	
         }
@@ -190,30 +182,30 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId, TransferParticipantRequest transferRequest)
         {
             var conference =
-                await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
+                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
             var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
             var transferType = transferRequest.TransferType;
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
             try
             {
                 switch (transferType)
                 {
                     case TransferType.Call:
-                        _logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
+                        logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
                             supplierParticipantId, conferenceId);
                         await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                            TransferFromRoomType(participant), RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
-                        _logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
+                        logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
                             supplierParticipantId, conferenceId);
                         await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                             RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
                         break;
                     default:
-                        _logger.LogWarning("Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
+                        logger.LogWarning("Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
                             supplierParticipantId, conferenceId, transferType);
                         throw new InvalidOperationException($"Unsupported transfer type: {transferType}");
                 }
@@ -222,14 +214,14 @@ namespace VideoApi.Controllers
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                     "Error from supplier API. Unable to {TransferType} Participant {Participant} in/from {Conference}",
                     transferType, supplierParticipantId, conferenceId);
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
 
-        private string TransferFromRoomType(ParticipantBase participant)
+        private static string TransferFromRoomType(ParticipantBase participant)
         {
             return string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom?.Label) ? RoomType.WaitingRoom.ToString() : participant.CurrentConsultationRoom.Label;
         }

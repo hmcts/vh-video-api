@@ -18,7 +18,7 @@ namespace VideoApi.UnitTests.Validation
             _validator = new BookNewConferenceRequestValidation();
         }
 
-        private BookNewConferenceRequest BuildRequest()
+        private static BookNewConferenceRequest BuildRequest()
         {
             var participants = Builder<ParticipantRequest>.CreateListOfSize(4)
                 .All().With(x => x.UserRole = UserRole.Individual).Build().ToList();
@@ -49,7 +49,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoHearingRefIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoHearingRefIdErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -63,7 +63,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseTypeErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseTypeErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -77,7 +77,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseNumberErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseNumberErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -91,7 +91,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x =>
+            result.Errors.Exists(x =>
                     x.ErrorMessage == BookNewConferenceRequestValidation.ScheduleDateTimeInPastErrorMessage)
                 .Should().BeTrue();
         }
@@ -107,7 +107,7 @@ namespace VideoApi.UnitTests.Validation
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(2);
             result.Errors
-                .Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoParticipantsErrorMessage)
+                .Exists(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoParticipantsErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -121,7 +121,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoUsernameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoUsernameErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -135,7 +135,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseTypeServiceIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoCaseTypeServiceIdErrorMessage)
                 .Should().BeTrue();
         }
     }

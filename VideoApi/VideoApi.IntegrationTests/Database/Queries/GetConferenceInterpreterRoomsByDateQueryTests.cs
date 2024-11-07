@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -45,7 +44,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             var interpreter = GetInterpreter(conference.Participants);
             
-            _events = CreateEventsForConverence(conference.Id, interpreter);
+            _events = CreateEventsForConference(conference.Id, interpreter);
             await TestDataManager.SeedEvents(_events);
 
             var query = new GetConferenceInterpreterRoomsByDateQuery(DateTime.Today);
@@ -54,17 +53,19 @@ namespace VideoApi.IntegrationTests.Database.Queries
             result.Should().NotBeEmpty();
         }
 
-        private Guid GetInterpreter(IList<ParticipantBase> participants)
+        private static Guid GetInterpreter(IList<ParticipantBase> participants)
         {
             return participants.Single(x => x.HearingRole == "Interpreter").Id;
         }
 
-        private List<Event> CreateEventsForConverence(Guid conferenceId, Guid participantId)
+        private static List<Event> CreateEventsForConference(Guid conferenceId, Guid participantId)
         {
-            var even1 = new Event(conferenceId, conferenceId.ToString(), EventType.RoomParticipantTransfer, DateTime.UtcNow, RoomType.WaitingRoom, RoomType.HearingRoom, "", "");
-            even1.ParticipantId = participantId;
+            var @event = new Event(conferenceId, conferenceId.ToString(), EventType.RoomParticipantTransfer, DateTime.UtcNow, RoomType.WaitingRoom, RoomType.HearingRoom, "", "")
+                {
+                    ParticipantId = participantId
+                };
 
-            return new List<Event>(){even1};
+            return [@event];
         }
 
         [TearDown]
@@ -83,11 +84,11 @@ namespace VideoApi.IntegrationTests.Database.Queries
             }
         }
 
-        private List<Room> CreateRoomsForConference(Conference conference)
+        private static List<Room> CreateRoomsForConference(Conference conference)
         {
             var room = new ParticipantRoom(conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian);
             
-            return new List<Room>(){room};
+            return [room];
         }
 
         

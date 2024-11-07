@@ -31,7 +31,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 RequestedFor = representative,
                 Answer = ConsultationAnswer.Accepted
             };
-            _context.Request = _context.Post(HandleConsultationRequest, request);
+            _context.Request = TestContext.Post(HandleConsultationRequest, request);
         }
     }
 }

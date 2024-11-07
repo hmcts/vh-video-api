@@ -17,7 +17,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a self test request")]
         public void GivenIHaveASelfTestRequest()
         {
-            _context.Request = _context.Get(SelfTest);
+            _context.Request = TestContext.Get(SelfTest);
         }
 
         [Then(@"the pexip service configuration should be retrieved")]

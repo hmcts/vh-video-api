@@ -38,7 +38,7 @@ namespace VideoApi.UnitTests.Validation
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(2);
             result.Errors
-                .Any(x => x.ErrorMessage == AddParticipantsToConferenceRequestValidation.NoParticipantsErrorMessage)
+                .Exists(x => x.ErrorMessage == AddParticipantsToConferenceRequestValidation.NoParticipantsErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -52,11 +52,11 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ParticipantRequestValidation.NoNameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoNameErrorMessage)
                 .Should().BeTrue();
         }
 
-        private AddParticipantsToConferenceRequest BuildRequest()
+        private static AddParticipantsToConferenceRequest BuildRequest()
         {
             var participants = Builder<ParticipantRequest>.CreateListOfSize(4)
                 .All().With(x => x.UserRole = UserRole.Individual).Build().ToList();

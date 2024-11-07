@@ -28,10 +28,10 @@ public interface IBookingService
 }
 
 public class BookingService(
-    ISupplierPlatformServiceFactory _supplierPlatformServiceFactory,
-    ICommandHandler _commandHandler,
-    IQueryHandler _queryHandler,
-    ILogger<BookingService> _logger)
+    ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
+    ICommandHandler commandHandler,
+    IQueryHandler queryHandler,
+    ILogger<BookingService> logger)
     : IBookingService
 {
     public async Task<bool> BookMeetingRoomAsync(Guid conferenceId,
@@ -44,7 +44,7 @@ public class BookingService(
     {
         MeetingRoom meetingRoom;
         var telephoneId = await CreateUniqueTelephoneId();
-        var videoPlatformService = _supplierPlatformServiceFactory.Create(supplier);
+        var videoPlatformService = supplierPlatformServiceFactory.Create(supplier);
         var endpointDtos = endpoints.ToList();
         try
         {
@@ -59,7 +59,7 @@ public class BookingService(
         }
         catch (DoubleBookingException ex)
         {
-            _logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
+            logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
             
             meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
         }
@@ -72,14 +72,14 @@ public class BookingService(
             meetingRoom.PexipNode, meetingRoom.TelephoneConferenceId
         );
         
-        await _commandHandler.Handle(command);
+        await commandHandler.Handle(command);
         
         return true;
     }
     
     public async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
     {
-        var existingConference = await _queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
+        var existingConference = await queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
             new CheckConferenceOpenQuery(request.ScheduledDateTime, request.CaseNumber, request.CaseName,
                 request.HearingRefId));
         
@@ -117,7 +117,7 @@ public class BookingService(
             (AudioPlaybackLanguage)request.AudioPlaybackLanguage
         );
         
-        await _commandHandler.Handle(createConferenceCommand);
+        await commandHandler.Handle(createConferenceCommand);
         
         return createConferenceCommand.NewConferenceId;
     }
@@ -125,10 +125,10 @@ public class BookingService(
     private async Task<string> CreateUniqueTelephoneId()
     {
         var telephoneId = ConferenceHelper.GenerateGlobalRareNumber();
-        var conferences = await _queryHandler.Handle<GetConferencesByTelephoneIdQuery, List<Conference>>(
+        var conferences = await queryHandler.Handle<GetConferencesByTelephoneIdQuery, List<Conference>>(
             new GetConferencesByTelephoneIdQuery(telephoneId));
         
-        if(conferences.Any())
+        if(conferences.Count != 0)
             return await CreateUniqueTelephoneId();
         
         return telephoneId;

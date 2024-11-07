@@ -55,7 +55,7 @@ namespace VideoApi.Services
             return GetAllBlobNamesByFileExtension(allBlobsAsync);
         }
 
-        private async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
+        private static async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
         {
             var blobFullNames = new List<string>();
             await foreach (var blob in allBlobs)

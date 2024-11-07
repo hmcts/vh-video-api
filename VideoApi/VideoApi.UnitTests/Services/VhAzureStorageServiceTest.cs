@@ -15,38 +15,38 @@ namespace VideoApi.UnitTests.Services
 {
     public class VhAzureStorageServiceTest
     {
-        private Mock<BlobContainerClient> blobContainerClient;
-        private Mock<BlobClient>  blobClientMock ;
-        private Mock<BlobServiceClient> blobServiceClient ;
-        private Mock<IBlobClientExtension> blobClientExtensionMock;
-        private VhAzureStorageService service;
-        private WowzaConfiguration config;
-        private string filePathPrefix;
-        private Mock<BlobContainerClient> blobContainerClientMock ;
-        private BlobProperties emptyBlobClientProperties;
-        private BlobProperties notEmptyBlobClientProperties;
-        private Mock<AsyncPageable<BlobItem>> pageable;
+        private Mock<BlobContainerClient> _blobContainerClient;
+        private Mock<BlobClient>  _blobClientMock ;
+        private Mock<BlobServiceClient> _blobServiceClient ;
+        private Mock<IBlobClientExtension> _blobClientExtensionMock;
+        private VhAzureStorageService _service;
+        private WowzaConfiguration _config;
+        private string _filePathPrefix;
+        private Mock<BlobContainerClient> _blobContainerClientMock ;
+        private BlobProperties _emptyBlobClientProperties;
+        private BlobProperties _notEmptyBlobClientProperties;
+        private Mock<AsyncPageable<BlobItem>> _pageable;
 
         [SetUp]
         public void Setup()
         {
-            blobContainerClient = new Mock<BlobContainerClient>();
-            blobClientMock = new Mock<BlobClient>();
-            blobServiceClient = new Mock<BlobServiceClient>();
-            blobClientExtensionMock = new Mock<IBlobClientExtension>();
-            blobContainerClientMock = new Mock<BlobContainerClient>();
-            pageable = new Mock<AsyncPageable<BlobItem>>();
-            filePathPrefix = "myFilePath";
+            _blobContainerClient = new Mock<BlobContainerClient>();
+            _blobClientMock = new Mock<BlobClient>();
+            _blobServiceClient = new Mock<BlobServiceClient>();
+            _blobClientExtensionMock = new Mock<IBlobClientExtension>();
+            _blobContainerClientMock = new Mock<BlobContainerClient>();
+            _pageable = new Mock<AsyncPageable<BlobItem>>();
+            _filePathPrefix = "myFilePath";
 
-            config = new WowzaConfiguration
+            _config = new WowzaConfiguration
             {
                 StorageEndpoint = "https://container.blob.core.windows.net/", StorageContainerName = "container",
                 StorageAccountName = "accountName", StorageAccountKey = "YWNjb3VudEtleQ=="
             };
 
-            service = new VhAzureStorageService(blobServiceClient.Object,config, true, blobClientExtensionMock.Object);
+            _service = new VhAzureStorageService(_blobServiceClient.Object,_config, true, _blobClientExtensionMock.Object);
 
-            emptyBlobClientProperties = BlobsModelFactory.BlobProperties(DateTimeOffset.UtcNow,
+            _emptyBlobClientProperties = BlobsModelFactory.BlobProperties(DateTimeOffset.UtcNow,
                 leaseState: LeaseState.Available,
                 leaseStatus: LeaseStatus.Unlocked,
                 contentLength: 0,
@@ -55,7 +55,7 @@ namespace VideoApi.UnitTests.Services
                 DateTimeOffset.UtcNow, "", BlobType.Block, false, new Dictionary<string, 
                 string>(), "", DateTimeOffset.UtcNow, DateTime.UtcNow, "");
 
-             notEmptyBlobClientProperties = BlobsModelFactory.BlobProperties(DateTimeOffset.UtcNow,
+             _notEmptyBlobClientProperties = BlobsModelFactory.BlobProperties(DateTimeOffset.UtcNow,
                 leaseState: LeaseState.Available,
                 leaseStatus: LeaseStatus.Unlocked,
                 contentLength: 64355,
@@ -69,11 +69,11 @@ namespace VideoApi.UnitTests.Services
         public async Task FileExistsAsync_returns_true()
         {
             
-            blobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>())).Returns(blobContainerClient.Object);
-            blobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
-            blobClientMock.Setup(x => x.ExistsAsync(CancellationToken.None)).ReturnsAsync(Response.FromValue<bool>(true, null));
+            _blobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>())).Returns(_blobContainerClient.Object);
+            _blobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(_blobClientMock.Object);
+            _blobClientMock.Setup(x => x.ExistsAsync(CancellationToken.None)).ReturnsAsync(Response.FromValue<bool>(true, null));
                         
-            var result = await service.FileExistsAsync(It.IsAny<string>());
+            var result = await _service.FileExistsAsync(It.IsAny<string>());
 
             result.Should().BeTrue();
         }
@@ -81,14 +81,14 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task CreateSharedAccessSignature_returns_token_created_using_StorageSharedKeyCredential()
         {
-            var s_service = new VhAzureStorageService(blobServiceClient.Object, config, false, blobClientExtensionMock.Object);
+            var service = new VhAzureStorageService(_blobServiceClient.Object, _config, false, _blobClientExtensionMock.Object);
 
-            var result = await s_service.CreateSharedAccessSignature("myFilePath", It.IsAny<TimeSpan>());
+            var result = await service.CreateSharedAccessSignature("myFilePath", It.IsAny<TimeSpan>());
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().StartWith($"{config.StorageEndpoint}{config.StorageContainerName}/myFilePath?");
+            result.Should().StartWith($"{_config.StorageEndpoint}{_config.StorageContainerName}/myFilePath?");
 
-            blobServiceClient
+            _blobServiceClient
                 .Verify(x => x.GetUserDelegationKeyAsync(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()), Times.Never);
         }
         
@@ -96,30 +96,30 @@ namespace VideoApi.UnitTests.Services
         public async Task CreateSharedAccessSignature_returns_token_created_using_DelegationKey()
         {
             
-            blobServiceClient
+            _blobServiceClient
                 .Setup(x => x.GetUserDelegationKeyAsync(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Response.FromValue(BlobsModelFactory.UserDelegationKey("","","","","", DateTimeOffset.Now, DateTimeOffset.Now), null));
             
-            var result = await service.CreateSharedAccessSignature("myFilePath", TimeSpan.FromDays(7));
+            var result = await _service.CreateSharedAccessSignature("myFilePath", TimeSpan.FromDays(7));
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().StartWith($"{config.StorageEndpoint}{config.StorageContainerName}/myFilePath?");
+            result.Should().StartWith($"{_config.StorageEndpoint}{_config.StorageContainerName}/myFilePath?");
 
-            blobServiceClient
+            _blobServiceClient
                 .Verify(x => x.GetUserDelegationKeyAsync(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
         public async Task GetAllBlobsAsync_returns_blob_clients()
         {
-            blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
+            _blobServiceClient.Setup(x => x.GetBlobContainerClient(_config.StorageContainerName)).Returns(_blobContainerClientMock.Object);
             
-            blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, filePathPrefix, default))
-                .Returns(pageable.Object);
-            pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
-            blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, _filePathPrefix, default))
+                .Returns(_pageable.Object);
+            _pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
+            _blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(_blobClientMock.Object);
             
-            await foreach (var item in service.GetAllBlobsAsync(filePathPrefix))
+            await foreach (var item in _service.GetAllBlobsAsync(_filePathPrefix))
             {
                 item.Should().NotBeNull();
             }
@@ -128,16 +128,16 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task GetAllBlobNamesByFilePathPrefix_returns_blob_file_names()
         {
-            blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
 
-            blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
+            _blobServiceClient.Setup(x => x.GetBlobContainerClient(_config.StorageContainerName)).Returns(_blobContainerClientMock.Object);
             
-            blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, filePathPrefix, default))
-                .Returns(pageable.Object);
-            pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
-            blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, _filePathPrefix, default))
+                .Returns(_pageable.Object);
+            _pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
+            _blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(_blobClientMock.Object);
             
-            var list = await service.GetAllBlobNamesByFilePathPrefix(filePathPrefix);
+            var list = await _service.GetAllBlobNamesByFilePathPrefix(_filePathPrefix);
             list.Should().NotBeNull();
             list.Count().Should().Be(1);
         }
@@ -145,17 +145,17 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task GetEmptyBlobNamesByFilePathPrefix_returns_blob_file_names_if_blob_content_length_is_zero()
         {
-            pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
+            _pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
 
-            blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, filePathPrefix, default)).Returns(pageable.Object);
-            blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, _filePathPrefix, default)).Returns(_pageable.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(_blobClientMock.Object);
 
-            blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
+            _blobServiceClient.Setup(x => x.GetBlobContainerClient(_config.StorageContainerName)).Returns(_blobContainerClientMock.Object);
             
-            blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(emptyBlobClientProperties);
-            blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
+            _blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(_emptyBlobClientProperties);
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
             
-            var list = await service.GetAllEmptyBlobsByFilePathPrefix(filePathPrefix);
+            var list = await _service.GetAllEmptyBlobsByFilePathPrefix(_filePathPrefix);
 
             list.Should().NotBeNull();
             list.Count().Should().Be(1);
@@ -164,17 +164,17 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task GetEmptyBlobNamesByFilePathPrefix_returns_empty_blob_file_names_if_blob_content_length_is__not_zero()
         {
-            pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
+            _pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
 
-            blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, filePathPrefix, default)).Returns(pageable.Object);
-            blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, _filePathPrefix, default)).Returns(_pageable.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(_blobClientMock.Object);
 
-            blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
+            _blobServiceClient.Setup(x => x.GetBlobContainerClient(_config.StorageContainerName)).Returns(_blobContainerClientMock.Object);
 
-            blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(notEmptyBlobClientProperties);
-            blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
+            _blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(_notEmptyBlobClientProperties);
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
 
-            var result = await service.GetAllEmptyBlobsByFilePathPrefix(filePathPrefix);
+            var result = await _service.GetAllEmptyBlobsByFilePathPrefix(_filePathPrefix);
 
             result.Should().BeEmpty();
             result.Count().Should().Be(0);
@@ -184,18 +184,18 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public async Task Should_Check_Storage_For_Files_With_Prefix_And_Match_Count()
         {           
-            pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
+            _pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetMockBlobItems());
 
-            blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, filePathPrefix, default)).Returns(pageable.Object);
-            blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, _filePathPrefix, default)).Returns(_pageable.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(_blobClientMock.Object);
 
-            blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(notEmptyBlobClientProperties);
+            _blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(_notEmptyBlobClientProperties);
 
-            blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
+            _blobServiceClient.Setup(x => x.GetBlobContainerClient(_config.StorageContainerName)).Returns(_blobContainerClientMock.Object);
 
-            blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
+            _blobClientMock.Setup(x => x.Name).Returns("SomeBlob.mp4");
                         
-            var result = await service.ReconcileFilesInStorage("myFilePath", 1);
+            var result = await _service.ReconcileFilesInStorage("myFilePath", 1);
 
             result.Should().Be(true);
         }
@@ -203,25 +203,25 @@ namespace VideoApi.UnitTests.Services
         [Test]
         public void Should_Throw_AudioPlatformFileNotFoundException_If_Storage_Returns_Less_Files_With_Parameter_FileCount()
         {
-            pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetEmptyMockBlobItems());
+            _pageable.Setup(x => x.GetAsyncEnumerator(default)).Returns(GetEmptyMockBlobItems());
 
-            blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, filePathPrefix, default)).Returns(pageable.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobsAsync(BlobTraits.None, BlobStates.None, _filePathPrefix, default)).Returns(_pageable.Object);
 
-            blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(blobClientMock.Object);
+            _blobContainerClientMock.Setup(x => x.GetBlobClient(It.IsAny<string>())).Returns(_blobClientMock.Object);
 
-            blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(notEmptyBlobClientProperties);
+            _blobClientExtensionMock.Setup(x => x.GetPropertiesAsync(It.IsAny<BlobClient>())).ReturnsAsync(_notEmptyBlobClientProperties);
 
-            blobServiceClient.Setup(x => x.GetBlobContainerClient(config.StorageContainerName)).Returns(blobContainerClientMock.Object);
+            _blobServiceClient.Setup(x => x.GetBlobContainerClient(_config.StorageContainerName)).Returns(_blobContainerClientMock.Object);
 
-            blobClientMock.Setup(x => x.Name).Returns(filePathPrefix+ ".mp4");
+            _blobClientMock.Setup(x => x.Name).Returns(_filePathPrefix+ ".mp4");
 
-            var msg = $"ReconcileFilesInStorage - File name prefix :" + filePathPrefix + "  Expected: " + "1" + " Actual:" + "0";
+            var msg = $"ReconcileFilesInStorage - File name prefix :" + _filePathPrefix + "  Expected: " + "1" + " Actual:" + "0";
 
-            Assert.That(async () => await service.ReconcileFilesInStorage("myFilePath", 1), Throws.TypeOf<AudioPlatformFileNotFoundException>().With.Message.EqualTo(msg));
+            Assert.That(async () => await _service.ReconcileFilesInStorage("myFilePath", 1), Throws.TypeOf<AudioPlatformFileNotFoundException>().With.Message.EqualTo(msg));
 
         }
 
-        private async IAsyncEnumerator<BlobItem> GetMockBlobItems()
+        private static async IAsyncEnumerator<BlobItem> GetMockBlobItems()
         {
             var blobItem = new Mock<BlobItem>();
 
@@ -230,7 +230,7 @@ namespace VideoApi.UnitTests.Services
             await Task.CompletedTask;
         }
        
-        private async IAsyncEnumerator<BlobItem> GetEmptyMockBlobItems()
+        private static async IAsyncEnumerator<BlobItem> GetEmptyMockBlobItems()
         {
             await Task.CompletedTask;
             yield break;

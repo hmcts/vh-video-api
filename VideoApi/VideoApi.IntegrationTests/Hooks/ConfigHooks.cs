@@ -36,7 +36,7 @@ namespace VideoApi.IntegrationTests.Hooks
         
         private static IConfigurationRoot _configRoot;
         
-        public ConfigHooks(TestContext context)
+        protected ConfigHooks(TestContext context)
         {
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
@@ -55,7 +55,7 @@ namespace VideoApi.IntegrationTests.Hooks
         }
         
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
-        public void RegisterSecrets(TestContext context)
+        public static void RegisterSecrets(TestContext context)
         {
             AddRandomAccountKey();
             _configRoot = ConfigRootBuilder.Build();

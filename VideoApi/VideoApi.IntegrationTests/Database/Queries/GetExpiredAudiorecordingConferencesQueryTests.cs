@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
@@ -84,7 +83,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         }
 
 
-        private Domain.Conference GetTestDataConference(DateTime startTime, bool audioRecording, ConferenceState conferenceStatus)
+        private static Domain.Conference GetTestDataConference(DateTime startTime, bool audioRecording, ConferenceState conferenceStatus)
         {
             var conference = new ConferenceBuilder(true, scheduledDateTime: startTime)
                 .WithParticipant(UserRole.Representative, "Respondent")

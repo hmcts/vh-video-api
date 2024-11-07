@@ -23,7 +23,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = _context.Test.ConferenceResponse;
             var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
             
-            _context.Request = _context.Get(GetInterpreterRoomForParticipant(conference.Id, participant.Id));
+            _context.Request = TestContext.Get(GetInterpreterRoomForParticipant(conference.Id, participant.Id));
         }
         
         [Given(@"I have a get witness room request")]
@@ -32,7 +32,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = _context.Test.ConferenceResponse;
             var participant = conference.Participants.First(x => x.UserRole == UserRole.Individual);
             
-            _context.Request = _context.Get(GetWitnessRoomForParticipant(conference.Id, participant.Id));
+            _context.Request = TestContext.Get(GetWitnessRoomForParticipant(conference.Id, participant.Id));
         }
         
         [Given(@"I have a get judicial room request")]
@@ -41,7 +41,7 @@ namespace VideoApi.AcceptanceTests.Steps
             var conference = _context.Test.ConferenceResponse;
             var participant = conference.Participants.First(x => x.UserRole == UserRole.JudicialOfficeHolder);
             
-            _context.Request = _context.Get(GetJudicialRoomForParticipant(conference.Id, participant.Id));
+            _context.Request = TestContext.Get(GetJudicialRoomForParticipant(conference.Id, participant.Id));
         }
         
         [Then(@"the response should have connection details for the room")]

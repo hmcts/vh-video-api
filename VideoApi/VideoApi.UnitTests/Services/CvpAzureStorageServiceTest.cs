@@ -145,7 +145,7 @@ namespace VideoApi.UnitTests.Services
             list.Count().Should().Be(1);
         }
 
-        private async IAsyncEnumerator<BlobItem> GetMockBlobItems()
+        private static async IAsyncEnumerator<BlobItem> GetMockBlobItems()
         {
             var blobItem = new Mock<BlobItem>();
             

@@ -25,25 +25,13 @@ namespace VideoApi.Controllers
     [Produces("application/json")]
     [Route("consultations")]
     [ApiController]
-    public class ConsultationController : ControllerBase
+    public class ConsultationController(
+        IQueryHandler queryHandler,
+        ILogger<ConsultationController> logger,
+        IConsultationService consultationService,
+        ICommandHandler commandHandler)
+        : ControllerBase
     {
-        private readonly IQueryHandler _queryHandler;
-        private readonly ICommandHandler _commandHandler;
-        private readonly ILogger<ConsultationController> _logger;
-        private readonly IConsultationService _consultationService;
-
-        public ConsultationController(
-            IQueryHandler queryHandler,
-            ILogger<ConsultationController> logger,
-            IConsultationService consultationService,
-            ICommandHandler commandHandler)
-        {
-            _queryHandler = queryHandler;
-            _logger = logger;
-            _consultationService = consultationService;
-            _commandHandler = commandHandler;
-        }
-
         /// <summary>
         /// Raise or answer to a private consultation request with another participant
         /// </summary>
@@ -56,36 +44,36 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> RespondToConsultationRequestAsync(ConsultationRequestResponse request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             if (conference == null)
             {
-                _logger.LogWarning("Unable to find conference");
+                logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
             if (request.RequestedBy != Guid.Empty && requestedBy == null)
             {
-                _logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
+                logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
                 return NotFound();
             }
             
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
             if (requestedFor == null)
             {
-                _logger.LogWarning("Unable to find participant request for with id {RequestedFor}", request.RequestedFor);
+                logger.LogWarning("Unable to find participant request for with id {RequestedFor}", request.RequestedFor);
                 return NotFound();
             }
 
             if (string.IsNullOrEmpty(request.RoomLabel))
             {
-                _logger.LogWarning("Please provide a room label");
+                logger.LogWarning("Please provide a room label");
                 return NotFound();
             }
 
             if (request.Answer != ConsultationAnswer.Accepted)
             {
-                _logger.LogWarning($"Answered {request.Answer}");
+                logger.LogWarning($"Answered {request.Answer}");
                 return NoContent();
             }
 
@@ -95,8 +83,8 @@ namespace VideoApi.Controllers
             {
                 ParticipantId = request.RequestedBy
             };
-            await _commandHandler.Handle(command);
-            await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, requestedFor.Id, request.RoomLabel);
+            await commandHandler.Handle(command);
+            await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, requestedFor.Id, request.RoomLabel);
 
             return NoContent();
         }
@@ -115,18 +103,18 @@ namespace VideoApi.Controllers
         {
             var isVhoRequest = request.RequestedById == Guid.Empty;
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (conference == null)
             {
-                _logger.LogWarning("Unable to find conference");
+                logger.LogWarning("Unable to find conference");
                 return NotFound($"Unable to find conference {request.ConferenceId}");
             }
 
             var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == request.EndpointId);
             if (endpoint == null)
             {
-                _logger.LogWarning("Unable to find endpoint");
+                logger.LogWarning("Unable to find endpoint");
                 return NotFound($"Unable to find endpoint {request.EndpointId}");
             }
 
@@ -136,45 +124,45 @@ namespace VideoApi.Controllers
                 || requestedBy?.UserRole == UserRole.StaffMember
                 || requestedBy?.UserRole == UserRole.JudicialOfficeHolder)
             {
-                await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
+                await consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
                 return Ok();
             }
             
             if (requestedBy == null)
             {
-                _logger.LogWarning("Unable to find defence advocate");
+                logger.LogWarning("Unable to find defence advocate");
                 return NotFound($"Unable to find defence advocate {request.RequestedById}");
             }
 
             if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
             {
                 const string message = "Endpoint does not have a defence advocate linked";
-                _logger.LogWarning(message);
+                logger.LogWarning(message);
                 return Unauthorized(message);
             }
 
             if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 const string message = "Defence advocate is not allowed to speak to requested endpoint";
-                _logger.LogWarning(message);
+                logger.LogWarning(message);
                 return Unauthorized(message);
             }
 
             var roomQuery = new GetConsultationRoomByIdQuery(request.ConferenceId, request.RoomLabel);
-            var room = await _queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
+            var room = await queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
-                _logger.LogWarning("Unable to find room {RoomLabel}", request.RoomLabel);
+                logger.LogWarning("Unable to find room {RoomLabel}", request.RoomLabel);
                 return NotFound($"Unable to find room {request.RoomLabel}");
             }
 
-            if (room.RoomEndpoints.Any())
+            if (room.RoomEndpoints.Count != 0)
             {
-                _logger.LogWarning("Unable to join endpoint {endpointId} to {RoomLabel}", endpoint.Id, request.RoomLabel);
+                logger.LogWarning("Unable to join endpoint {endpointId} to {RoomLabel}", endpoint.Id, request.RoomLabel);
                 return BadRequest("Room already has an active endpoint");
             }
 
-            await _consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
+            await consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
             return Ok();
         }
 
@@ -189,12 +177,12 @@ namespace VideoApi.Controllers
             try
             {
                 var lockRoomCommand = new LockRoomCommand(request.ConferenceId, request.RoomLabel, request.Lock);
-                await _commandHandler.Handle(lockRoomCommand);
+                await commandHandler.Handle(lockRoomCommand);
                 return Ok();
             }
             catch (RoomNotFoundException ex)
             {
-                _logger.LogError(ex, "Room doest not exist in conference {conferenceId} with label {label}", request.ConferenceId, request.RoomLabel);
+                logger.LogError(ex, "Room doest not exist in conference {conferenceId} with label {label}", request.ConferenceId, request.RoomLabel);
                 return NotFound("Room does not exist");
             }
         }
@@ -209,29 +197,29 @@ namespace VideoApi.Controllers
         {
             try
             {
-                var room = await _consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
-                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+                var room = await consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
+                await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
                 var response = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room);
                 return Ok(response);
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                     "Cannot create consultation for conference: {conferenceId} as the conference does not exist",
                     request.ConferenceId);
                 return NotFound("Conference does not exist");
             }
             catch (ParticipantNotFoundException ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                     "Cannot create consultation with participant: {participantId} as the participant does not exist",
                     request.RequestedBy);
                 return NotFound("Participant doesn't exist");
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                     "Unable to create a consultation room for ConferenceId: {conferenceId}",
                     request.ConferenceId);
                 return BadRequest("Consultation room creation failed");
@@ -248,29 +236,29 @@ namespace VideoApi.Controllers
         {
             try
             {
-                var room = await _consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
+                var room = await consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
                     request.RoomType.MapToDomainEnum());
-                await _consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+                await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
 
                 return Accepted();
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                     "Cannot create consultation for conference: {ConferenceId} as the conference does not exist",
                     request.ConferenceId);
                 return NotFound("Conference does not exist");
             }
             catch (ParticipantNotFoundException ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                     "Cannot create consultation with participant: {ParticipantId} as the participant does not exist",
                     request.RequestedBy);
                 return NotFound("Participant doesn't exist");
             }
             catch (SupplierApiException ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                     "Unable to create a consultation room for ConferenceId: {ConferenceId}",
                     request.ConferenceId);
                 return BadRequest("Consultation room creation failed");
@@ -290,18 +278,18 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
-            var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+            var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
             if (conference == null)
             {
-                _logger.LogWarning("Unable to find conference");
+                logger.LogWarning("Unable to find conference");
                 return NotFound();
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
             if (participant == null)
             {
-                _logger.LogWarning("Unable to find participant request by id");
+                logger.LogWarning("Unable to find participant request by id");
                 return NotFound();
             }
 
@@ -310,7 +298,7 @@ namespace VideoApi.Controllers
                 return BadRequest("Participant is not in a consultation");
             }
 
-            await _consultationService.LeaveConsultationAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());
+            await consultationService.LeaveConsultationAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());
             return Ok();
         }
     }

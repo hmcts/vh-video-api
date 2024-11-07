@@ -22,17 +22,12 @@ namespace VideoApi.AcceptanceTests.Contexts
             return client;
         }
 
-        public RestRequest Get(string path)
+        public static RestRequest Get(string path)
         {
             return new RestRequest(path, Method.GET);
         }
 
-        public RestRequest Post(string path)
-        {
-            return new RestRequest(path, Method.POST);
-        }
-
-        public RestRequest Post(string path, object requestBody)
+        public static RestRequest Post(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.POST);            
             request.AddParameter("Application/json", ApiRequestHelper.Serialise(requestBody),
@@ -40,12 +35,12 @@ namespace VideoApi.AcceptanceTests.Contexts
             return request;
         }
 
-        public RestRequest Delete(string path)
+        public static RestRequest Delete(string path)
         {
             return new RestRequest(path, Method.DELETE);
         }
 
-        public RestRequest Put(string path, object requestBody)
+        public static RestRequest Put(string path, object requestBody)
         {
             var request = new RestRequest(path, Method.PUT);
             request.AddParameter("Application/json", ApiRequestHelper.Serialise(requestBody),
@@ -53,7 +48,7 @@ namespace VideoApi.AcceptanceTests.Contexts
             return request;
         }
 
-        public RestRequest Patch(string path, object requestBody = null)
+        public static RestRequest Patch(string path, object requestBody = null)
         {
             var request = new RestRequest(path, Method.PATCH);
             request.AddParameter("Application/json", ApiRequestHelper.Serialise(requestBody),

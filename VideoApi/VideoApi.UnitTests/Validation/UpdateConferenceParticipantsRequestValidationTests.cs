@@ -9,8 +9,7 @@ namespace VideoApi.UnitTests.Validation
 {
     public class UpdateConferenceParticipantsRequestValidationTests
     {
-        private readonly UpdateConferenceParticipantsRequestValidation _validator = 
-            new UpdateConferenceParticipantsRequestValidation();
+        private readonly UpdateConferenceParticipantsRequestValidation _validator = new();
 
         [Test]
         public async Task Should_pass_validation()
@@ -44,16 +43,17 @@ namespace VideoApi.UnitTests.Validation
             //Assert
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == UpdateConferenceParticipantsRequestValidation.NoParticipantsErrorMessage);
+            var containsErrorMessage = result.Errors.Exists(x => x.ErrorMessage == UpdateConferenceParticipantsRequestValidation.NoParticipantsErrorMessage);
+            containsErrorMessage.Should().BeTrue();
         }
 
-        private UpdateConferenceParticipantsRequest BuildRequest()
+        private static UpdateConferenceParticipantsRequest BuildRequest()
         {
             return new UpdateConferenceParticipantsRequest
             {
-                ExistingParticipants = new List<UpdateParticipantRequest> { new UpdateParticipantRequest() },
-                LinkedParticipants = new List<LinkedParticipantRequest> { new LinkedParticipantRequest() },
-                NewParticipants = new List<ParticipantRequest> { new ParticipantRequest() },
+                ExistingParticipants = new List<UpdateParticipantRequest> { new() },
+                LinkedParticipants = new List<LinkedParticipantRequest> { new() },
+                NewParticipants = new List<ParticipantRequest> { new() },
                 RemovedParticipants = new List<Guid> { Guid.NewGuid() }
             };
         }

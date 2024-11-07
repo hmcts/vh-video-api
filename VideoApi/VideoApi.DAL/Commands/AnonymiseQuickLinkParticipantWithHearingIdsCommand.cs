@@ -13,29 +13,22 @@ namespace VideoApi.DAL.Commands
     }
 
     public class
-        AnonymiseQuickLinkParticipantWithHearingIdsCommandHandler : ICommandHandler<
-            AnonymiseQuickLinkParticipantWithHearingIdsCommand>
+        AnonymiseQuickLinkParticipantWithHearingIdsCommandHandler(VideoApiDbContext context) : ICommandHandler<
+        AnonymiseQuickLinkParticipantWithHearingIdsCommand>
     {
-        private readonly VideoApiDbContext _context;
-
-        public AnonymiseQuickLinkParticipantWithHearingIdsCommandHandler(VideoApiDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task Handle(AnonymiseQuickLinkParticipantWithHearingIdsCommand command)
         {
-            var conferences = await _context.Conferences
+            var conferences = await context.Conferences
                 .Include(c => c.Participants)
                 .Where(c => command.HearingIds.Contains(c.HearingRefId))
                 .Distinct()
                 .ToListAsync();
 
-            if (!conferences.Any()) return;
+            if (conferences.Count == 0) return;
 
             foreach (var conference in conferences) conference.AnonymiseQuickLinkParticipants();
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

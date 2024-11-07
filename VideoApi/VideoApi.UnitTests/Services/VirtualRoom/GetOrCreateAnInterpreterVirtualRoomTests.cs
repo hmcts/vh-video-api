@@ -139,7 +139,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                 )), Times.Once);
         }
 
-        private Conference InitConference()
+        private static Conference InitConference()
         {
             var conference = new ConferenceBuilder().WithParticipants(3).Build();
             var participantA = conference.Participants[0];

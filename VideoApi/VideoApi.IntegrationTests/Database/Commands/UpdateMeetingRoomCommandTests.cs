@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
@@ -74,7 +73,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedRoom.PexipNode.Should().Be(command.PexipNode);
         }
 
-        private UpdateMeetingRoomCommand BuildCommand(Guid conferenceId)
+        private static UpdateMeetingRoomCommand BuildCommand(Guid conferenceId)
         {
             const string adminUri = "https://testpoc.node.com/viju/#/?conference=user@hmcts.net&output=embed";
             const string judgeUri = "https://testpoc.node.com/viju/#/?conference=user@hmcts.net&output=embed";

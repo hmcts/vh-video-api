@@ -7,30 +7,18 @@ using VideoApi.DAL.Exceptions;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateParticipantUsernameCommand : ICommand
+    public class UpdateParticipantUsernameCommand(Guid participantId, string username) : ICommand
     {
-        public Guid ParticipantId { get; set; }
-        public string Username { get; set; }
-        
-        public UpdateParticipantUsernameCommand(Guid participantId, string username)
-        {
-            ParticipantId = participantId;
-            Username = username;
-        }
+        public Guid ParticipantId { get; set; } = participantId;
+        public string Username { get; set; } = username;
     }
 
-    public class UpdateParticipantUsernameCommandHandler : ICommandHandler<UpdateParticipantUsernameCommand>
+    public class UpdateParticipantUsernameCommandHandler(VideoApiDbContext context)
+        : ICommandHandler<UpdateParticipantUsernameCommand>
     {
-        private readonly VideoApiDbContext _context;
-
-        public UpdateParticipantUsernameCommandHandler(VideoApiDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task Handle(UpdateParticipantUsernameCommand command)
         {
-            var conference = await _context.Conferences
+            var conference = await context.Conferences
                 .Include(x => x.Participants)
                 .Include(x => x.Endpoints)
                 .SingleOrDefaultAsync(x => x.Participants.Any(p => p.Id == command.ParticipantId));
@@ -48,11 +36,11 @@ namespace VideoApi.DAL.Commands
             //Update username and endpoint defence advocates with that username
             participant.UpdateUsername(command.Username);
             
-            if(endpoints != null && endpoints.Any())
+            if(endpoints != null && endpoints.Count != 0)
                 foreach (var endpoint in endpoints)
                     endpoint.AssignDefenceAdvocate(command.Username);
             
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

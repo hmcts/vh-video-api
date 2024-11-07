@@ -1,6 +1,5 @@
 using Faker;
 using FizzWare.NBuilder;
-using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
@@ -41,14 +40,14 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.NoNameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.NoNameErrorMessage)
                 .Should().BeTrue();
         }
 
         [Test]
         public async Task Should_return_special_chars_not_allowed_name_error()
         {
-            foreach (char specialCase in AddQuickLinkParticipantRequestValidation.invalidSpecialCases)
+            foreach (var specialCase in AddQuickLinkParticipantRequestValidation.invalidSpecialCases)
             {
                 var request = BuildRequest();
                 request.Name = $"Peter Co{specialCase}tello";
@@ -57,7 +56,7 @@ namespace VideoApi.UnitTests.Validation
 
                 result.IsValid.Should().BeFalse();
                 result.Errors.Count.Should().Be(1);
-                result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.SpecialCharNameErrorMessage)
+                result.Errors.Exists(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.SpecialCharNameErrorMessage)
                     .Should().BeTrue();
             }
         }
@@ -73,11 +72,11 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.NoUserRoleErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == AddQuickLinkParticipantRequestValidation.NoUserRoleErrorMessage)
                 .Should().BeTrue();
         }
         
-        private AddQuickLinkParticipantRequest BuildRequest()
+        private static AddQuickLinkParticipantRequest BuildRequest()
         {
             return Builder<AddQuickLinkParticipantRequest>.CreateNew()
                 .With(x => x.UserRole = UserRole.Representative)

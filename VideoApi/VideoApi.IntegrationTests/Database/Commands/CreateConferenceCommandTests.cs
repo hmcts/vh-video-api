@@ -196,7 +196,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             }
         }
         
-        private string GetSipAddress()
+        private static string GetSipAddress()
         {
             var random = new Random();
             var address = "";

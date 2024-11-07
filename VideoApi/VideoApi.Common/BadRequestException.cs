@@ -9,7 +9,9 @@ namespace VideoApi.Common
     [Serializable]
     public class BadRequestException : Exception
     {
+#pragma warning disable SYSLIB0051
         protected BadRequestException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+#pragma warning restore SYSLIB0051
 
         public BadRequestException(string message) : base(message) { }
     }
