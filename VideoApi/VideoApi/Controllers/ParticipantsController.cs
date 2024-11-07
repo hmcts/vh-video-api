@@ -31,6 +31,11 @@ namespace VideoApi.Controllers
         private readonly ILogger<ParticipantsController> _logger;
         private readonly IQueryHandler _queryHandler;
         private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
+
+        private static class Constants
+        {
+            public const string UnableToFindConference = "Unable to find conference";
+        }
         
         public ParticipantsController(ICommandHandler commandHandler, IQueryHandler queryHandler,
             ISupplierPlatformServiceFactory supplierPlatformServiceFactory, ILogger<ParticipantsController> logger)
@@ -85,7 +90,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference");
+                _logger.LogError(ex, Constants.UnableToFindConference);
                 return NotFound();
             }
         }
@@ -144,7 +149,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference");
+                _logger.LogError(ex, Constants.UnableToFindConference);
                 return NotFound($"Unable to find conference {conferenceId}");
             }
             catch (ParticipantNotFoundException ex)
@@ -209,7 +214,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference");
+                _logger.LogError(ex, Constants.UnableToFindConference);
                 return NotFound();
             }
             catch (ParticipantNotFoundException ex)
@@ -239,7 +244,7 @@ namespace VideoApi.Controllers
             
             if (queriedConference == null)
             {
-                _logger.LogWarning("Unable to find conference");
+                _logger.LogWarning(Constants.UnableToFindConference);
                 return NotFound();
             }
             
@@ -410,7 +415,7 @@ namespace VideoApi.Controllers
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
             if (conference == null)
             {
-                _logger.LogWarning("Unable to find conference");
+                _logger.LogWarning(Constants.UnableToFindConference);
                 return NotFound();
             }
             
@@ -460,7 +465,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find conference");
+                _logger.LogError(ex, Constants.UnableToFindConference);
                 return NotFound();
             }
         }

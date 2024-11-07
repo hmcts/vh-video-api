@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -22,10 +21,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
         private Conference _conference;
 
-        private IList<ParticipantBase> _existingParticipants { get; set; }
-        private IList<ParticipantBase> _newParticipants { get; set; }
-        private IList<Guid> _removedParticipantIds { get; set; }
-        private IList<LinkedParticipantDto> _linkedParticipants { get; set; }
+        private List<ParticipantBase> ExistingParticipants { get; set; }
+        private List<ParticipantBase> NewParticipants { get; set; }
+        private List<Guid> RemovedParticipantIds { get; set; }
+        private List<LinkedParticipantDto> LinkedParticipants { get; set; }
 
         [SetUp]
         public async Task Setup()
@@ -34,10 +33,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _handler = new UpdateConferencParticipantsCommandHandler(context);
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
 
-            _existingParticipants = new List<ParticipantBase>();
-            _newParticipants = new List<ParticipantBase>();
-            _removedParticipantIds = new List<Guid>();
-            _linkedParticipants = new List<LinkedParticipantDto>();
+            ExistingParticipants = [];
+            NewParticipants = [];
+            RemovedParticipantIds = [];
+            LinkedParticipants = [];
 
             _conference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {_conference.Id}");
@@ -64,7 +63,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantTwo = new ParticipantBuilder(true).Build();
             participantTwo.Username = "participantTwoUsername@participant.com";
 
-            _newParticipants = new List<ParticipantBase>() { participantOne, participantTwo };
+            NewParticipants = new List<ParticipantBase>() { participantOne, participantTwo };
 
             var command = BuildCommand();
 
@@ -94,7 +93,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var participantOne = new ParticipantBuilder(true).Build();
 
-            _existingParticipants.Add(participantOne);
+            ExistingParticipants.Add(participantOne);
 
             var command = BuildCommand();
 
@@ -128,8 +127,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 participantOneCasted.Representee = "UpdatedRepresentee";
             }
 
-            _existingParticipants.Add(participantOne);
-            _existingParticipants.Add(participantOnesLinkedParticipant);
+            ExistingParticipants.Add(participantOne);
+            ExistingParticipants.Add(participantOnesLinkedParticipant);
             var command = BuildCommand();
 
             //Act
@@ -168,7 +167,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var participantOne = new ParticipantBuilder(true).Build();
 
-            _removedParticipantIds.Add(participantOne.Id);
+            RemovedParticipantIds.Add(participantOne.Id);
 
             var command = BuildCommand();
 
@@ -190,7 +189,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantOne = new ParticipantBuilder(true).Build();
             var participantTwo = new ParticipantBuilder(true).Build();
 
-            _linkedParticipants.Add(new LinkedParticipantDto
+            LinkedParticipants.Add(new LinkedParticipantDto
             {
                 ParticipantRefId = participantOne.ParticipantRefId,
                 LinkedRefId = participantTwo.ParticipantRefId,
@@ -208,7 +207,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         {
             //Arrange
             var removedParticipantId = _conference.Participants[0].ParticipantRefId;
-            _removedParticipantIds = new List<Guid>() { removedParticipantId };
+            RemovedParticipantIds = new List<Guid>() { removedParticipantId };
             var command = BuildCommand();
 
             //Act
@@ -228,7 +227,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantOne = _conference.Participants[0];
             var participantTwo = _conference.Participants[1];
 
-            _linkedParticipants.Add(new LinkedParticipantDto
+            LinkedParticipants.Add(new LinkedParticipantDto
             {
                 ParticipantRefId = participantOne.ParticipantRefId,
                 LinkedRefId = participantTwo.ParticipantRefId,
@@ -263,18 +262,18 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantOne = _conference.Participants[0];
             var participantTwo = _conference.Participants[1];
 
-            _existingParticipants.Add(participantOne);
-            _existingParticipants.Add(participantTwo);
+            ExistingParticipants.Add(participantOne);
+            ExistingParticipants.Add(participantTwo);
 
             var removedParticipantId = participantOne.ParticipantRefId;
-            _removedParticipantIds = new List<Guid>() { removedParticipantId };
+            RemovedParticipantIds = new List<Guid>() { removedParticipantId };
 
             var updatedParticipant = new ParticipantBuilder(true).Build();
             updatedParticipant.ParticipantRefId = participantOne.ParticipantRefId;
             updatedParticipant.Username = participantOne.Username;
             updatedParticipant.UserRole = UserRole.Representative;
 
-            _newParticipants.Add(updatedParticipant);
+            NewParticipants.Add(updatedParticipant);
 
             var command = BuildCommand();
 
@@ -296,10 +295,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantOne = _conference.Participants[0];
             var participantTwo = _conference.Participants[1];
 
-            _existingParticipants.Add(participantOne);
-            _existingParticipants.Add(participantTwo);
+            ExistingParticipants.Add(participantOne);
+            ExistingParticipants.Add(participantTwo);
 
-            _removedParticipantIds = new List<Guid>() { participantOne.ParticipantRefId, participantTwo.ParticipantRefId };
+            RemovedParticipantIds = new List<Guid>() { participantOne.ParticipantRefId, participantTwo.ParticipantRefId };
 
             var updatedParticipant1 = new ParticipantBuilder(true).Build();
             var updatedParticipant2 = new ParticipantBuilder(true).Build();
@@ -312,8 +311,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             updatedParticipant2.Username = participantTwo.Username;
             updatedParticipant2.UserRole = UserRole.Representative;
 
-            _newParticipants.Add(updatedParticipant1);
-            _newParticipants.Add(updatedParticipant2);
+            NewParticipants.Add(updatedParticipant1);
+            NewParticipants.Add(updatedParticipant2);
 
             var command = BuildCommand();
 
@@ -331,7 +330,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
         private UpdateConferenceParticipantsCommand BuildCommand()
         {
-            return new UpdateConferenceParticipantsCommand(_conference.Id, _existingParticipants, _newParticipants, _removedParticipantIds, _linkedParticipants);
+            return new UpdateConferenceParticipantsCommand(_conference.Id, ExistingParticipants, NewParticipants, RemovedParticipantIds, LinkedParticipants);
         }
 
         [TearDown]

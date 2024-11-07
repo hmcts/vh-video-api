@@ -1,14 +1,13 @@
 
 using System.Linq;
-using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Common.Security.Supplier.Kinly;
 
 namespace VideoApi.UnitTests.CustomJwtToken
 {
     public class CustomJwtTokenProviderTests
     {
-        private ICustomJwtTokenProvider _customJwtTokenProvider;
-        private ICustomJwtTokenHandler _customJwtTokenHandler;
+        private KinlyJwtProvider _customJwtTokenProvider;
+        private KinlyJwtHandler _customJwtTokenHandler;
         private const string Issuer = "hmcts.video.service";
         private const string Audience = "test.video.supplier.endpoint";
 

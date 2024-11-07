@@ -14,8 +14,8 @@ namespace VideoApi
 
     public class BackgroundWorkerQueue : IBackgroundWorkerQueue
     {
-        private readonly ConcurrentQueue<ICommand> _workItems = new ConcurrentQueue<ICommand>();
-        private readonly SemaphoreSlim _signal = new SemaphoreSlim(0);
+        private readonly ConcurrentQueue<ICommand> _workItems = new();
+        private readonly SemaphoreSlim _signal = new(0);
         
         public async Task<ICommand> DequeueAsync(CancellationToken cancellationToken)
         {
@@ -27,10 +27,7 @@ namespace VideoApi
 
         public Task QueueBackgroundWorkItem(ICommand workItem)
         {
-            if (workItem == null)
-            {
-                throw new ArgumentNullException(nameof(workItem));
-            }
+            ArgumentNullException.ThrowIfNull(workItem);
 
             _workItems.Enqueue(workItem);
             _signal.Release();

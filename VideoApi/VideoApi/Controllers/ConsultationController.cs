@@ -73,7 +73,7 @@ namespace VideoApi.Controllers
 
             if (request.Answer != ConsultationAnswer.Accepted)
             {
-                logger.LogWarning($"Answered {request.Answer}");
+                logger.LogWarning("Answered {Answer}", request.Answer);
                 return NoContent();
             }
 

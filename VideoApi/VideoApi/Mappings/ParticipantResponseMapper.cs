@@ -20,7 +20,7 @@ namespace VideoApi.Mappings
             participantDetailsResponse.CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participant.CurrentConsultationRoom);
             participantDetailsResponse.CurrentInterpreterRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(participantRoom);
             
-            //TODO: Remove in future iteration, once endpoint BQS added/updated events do not rely on defence advocate contact email
+            // Remove in future iteration, once endpoint BQS added/updated events do not rely on defence advocate contact email
             if (participant is Participant participantCasted)
                 participantDetailsResponse.ContactEmail = participantCasted.ContactEmail;
                     

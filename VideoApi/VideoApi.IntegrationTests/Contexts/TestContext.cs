@@ -22,11 +22,13 @@ namespace VideoApi.IntegrationTests.Contexts
         public string Uri { get; set; }
         public DbContextOptions<VideoApiDbContext> VideoBookingsDbContextOptions { get; set; }
         public AzureStorageManager AzureStorage { get; set; }
-        
+
+        private static readonly string[] Roles = ["ROLE_ADMIN", "ROLE_GENTLEMAN"];
+
         public HttpClient CreateClient()
         {
             var client = Server.CreateClient();
-            client.SetFakeBearerToken("admin", new[] { "ROLE_ADMIN", "ROLE_GENTLEMAN" });
+            client.SetFakeBearerToken("admin", Roles);
             return client;
         }
     }

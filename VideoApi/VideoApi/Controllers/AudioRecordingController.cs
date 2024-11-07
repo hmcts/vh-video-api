@@ -52,7 +52,7 @@ public class AudioRecordingController(
         }
         catch (ConferenceNotFoundException ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Not found: {Message}", ex.Message);
             return NotFound();
         }
     }
@@ -82,7 +82,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Error: {Message}", ex.Message);
             return NotFound();
         }
     }
@@ -109,7 +109,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Error: {Message}", ex.Message);
             return NotFound();
         }
     }
@@ -136,7 +136,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Error: {Message}", ex.Message);
             return NotFound();
         }
     }
@@ -156,7 +156,7 @@ public class AudioRecordingController(
             
             responses.Add(new CvpAudioFileResponse
             {
-                FileName = blob.Name.Substring(blob.Name.LastIndexOf("/") + 1),
+                FileName = blob.Name.Substring(blob.Name.LastIndexOf('/') + 1),
                 SasTokenUrl = await azureStorageService.CreateSharedAccessSignature(blob.Name, TimeSpan.FromDays(3))
             });
         }

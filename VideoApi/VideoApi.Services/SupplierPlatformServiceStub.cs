@@ -108,10 +108,10 @@ namespace VideoApi.Services
         
         private static MeetingRoom Create()
         {
-            const string URL_CONFERENCE = "https://ext-node02.com/webapp/#/?conference=user@hmcts.net";
-            var adminUri = URL_CONFERENCE;
-            var judgeUri = URL_CONFERENCE;
-            var participantUri = URL_CONFERENCE;
+            const string urlConference = "test-url";
+            var adminUri = urlConference;
+            var judgeUri = urlConference;
+            var participantUri = urlConference;
             var pexipNode = "join.node.com";
             var telephoneConferenceId = "12345678";
             return new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);

@@ -14,14 +14,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
     public class GetDistinctJudgeListByFirstNameQueryTests : DatabaseTestsBase
     {
         private GetDistinctJudgeListByFirstNameQueryHandler _handler;
-        private IList<Guid> _conferenceIds;
+        private List<Guid> _conferenceIds;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new GetDistinctJudgeListByFirstNameQueryHandler(context);
-            _conferenceIds = new List<Guid>();
+            _conferenceIds = [];
         }
 
         [Test]

@@ -66,7 +66,7 @@ namespace VideoApi.Domain.Ddd
                         (current, value) => current * multiplier + value.GetHashCode());
         }
 
-        private static IEnumerable<FieldInfo> GetFields(object obj)
+        private static List<FieldInfo> GetFields(object obj)
         {
             var t = obj.GetType();
 

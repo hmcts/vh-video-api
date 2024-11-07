@@ -43,6 +43,11 @@ namespace VideoApi.Extensions
         {
             return Enum.Parse<Contract.Enums.LinkedParticipantType>(taskType.ToString());
         }
+        
+        public static Contract.Enums.RoomType MapToContractEnum(this Domain.Enums.RoomType roomType)
+        {
+            return Enum.Parse<Contract.Enums.RoomType>(roomType.ToString());
+        }
 
         public static Domain.Enums.UserRole MapToDomainEnum(this Contract.Enums.UserRole role)
         {
@@ -74,12 +79,7 @@ namespace VideoApi.Extensions
         {
             return Enum.Parse<Domain.Enums.VirtualCourtRoomType>(roomType.ToString());
         }
-        
-        public static Contract.Enums.RoomType MapToContractEnum(this Domain.Enums.RoomType roomType)
-        {
-            return Enum.Parse<Contract.Enums.RoomType>(roomType.ToString());
-        }
-        
+
         public static Domain.Enums.TaskType MapToDomainEnum(this Contract.Enums.TaskType taskType)
         {
             return Enum.Parse<Domain.Enums.TaskType>(taskType.ToString());

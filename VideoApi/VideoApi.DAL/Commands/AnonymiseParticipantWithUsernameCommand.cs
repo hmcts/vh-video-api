@@ -27,7 +27,7 @@ namespace VideoApi.DAL.Commands
             var processedParticipants = (
                     from participant
                         in participantsToAnonymise
-                    where !participant.Username.Contains(Constants.AnonymisedUsernameSuffix)
+                    where !participant.Username.Contains(Domain.Constants.AnonymisedUsernameSuffix)
                     select AnonymiseParticipant(participant))
                 .ToList();
 
@@ -46,7 +46,7 @@ namespace VideoApi.DAL.Commands
             participant.LastName = randomString;
             participant.ContactEmail = randomString;
             participant.ContactTelephone = randomString;
-            participant.Username = $"{randomString}{Constants.AnonymisedUsernameSuffix}";
+            participant.Username = $"{randomString}{Domain.Constants.AnonymisedUsernameSuffix}";
 
             if (!string.IsNullOrWhiteSpace(participant.Representee)) participant.Representee = randomString;
 

@@ -15,14 +15,9 @@ using VideoApi.Services.Contracts;
 
 namespace VideoApi.IntegrationTests.Api.Setup
 {
-    public class VhApiWebApplicationFactory : WebApplicationFactory<Program>
+    public class VhApiWebApplicationFactory(IConfigurationRoot configRoot) : WebApplicationFactory<Program>
     {
-        private readonly IConfigurationRoot _configRoot;
-
-        public VhApiWebApplicationFactory(IConfigurationRoot configRoot)
-        {
-            _configRoot = configRoot;
-        }
+        private static readonly string[] Roles = ["ROLE_ADMIN", "ROLE_GENTLEMAN"];
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -49,12 +44,12 @@ namespace VideoApi.IntegrationTests.Api.Setup
             {
                 services.Remove(azStorageService);
             }
-            var azureStorageConnectionString = _configRoot.GetValue<string>("Azure:StorageConnectionString");
+            var azureStorageConnectionString = configRoot.GetValue<string>("Azure:StorageConnectionString");
             var serviceClient = AzureStorageManager.CreateAzuriteBlobServiceClient(azureStorageConnectionString);
             var blobClientExtension = new BlobClientExtension();
 
-            var wowzaConfiguration = _configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>();
-            var cvpConfiguration = _configRoot.GetSection("CvpConfiguration").Get<CvpConfiguration>();
+            var wowzaConfiguration = configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>();
+            var cvpConfiguration = configRoot.GetSection("CvpConfiguration").Get<CvpConfiguration>();
             
             services.AddSingleton<IAzureStorageService>(_ =>
                 new VhAzureStorageService(serviceClient, wowzaConfiguration, false, blobClientExtension));
@@ -77,7 +72,7 @@ namespace VideoApi.IntegrationTests.Api.Setup
         protected override void ConfigureClient(HttpClient client)
         {
             base.ConfigureClient(client);
-            client.SetFakeBearerToken("admin", new[] { "ROLE_ADMIN", "ROLE_GENTLEMAN" });
+            client.SetFakeBearerToken("admin", Roles);
         }
         
     }
