@@ -1,9 +1,7 @@
 using System;
-using System.Runtime.Serialization;
 
 namespace VideoApi.DAL.Exceptions
 {
-    [Serializable]
     public class EndpointNotFoundException : EntityNotFoundException
     {
         public EndpointNotFoundException(Guid endpointId) : base($"Endpoint {endpointId} does not exist")
@@ -11,11 +9,6 @@ namespace VideoApi.DAL.Exceptions
         }
 
         public EndpointNotFoundException(string sipAddress) : base($"Endpoint {sipAddress} does not exist")
-        {
-        }
-        
-        protected EndpointNotFoundException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

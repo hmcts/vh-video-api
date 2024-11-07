@@ -1,9 +1,7 @@
 using System;
-using System.Runtime.Serialization;
 
 namespace VideoApi.DAL.Exceptions
 {
-    [Serializable]
     public class RoomNotFoundException : EntityNotFoundException
     {
         public RoomNotFoundException(long roomId) : base(
@@ -19,12 +17,5 @@ namespace VideoApi.DAL.Exceptions
             $"Room '{roomLabel}' not found in conference {conferenceId}")
         {
         }
-
-        protected RoomNotFoundException(SerializationInfo info, StreamingContext context)
-            : base(info,context)
-        {
-
-        }
-
     }
 }
