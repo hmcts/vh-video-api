@@ -33,7 +33,7 @@ namespace VideoApi.Events.Handlers
             var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
                 participantState, room, null);
             
-            _logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId}",
+            Logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId}",
                 SourceConference.Id, SourceParticipant.Id);
             
             if (SourceConference.Supplier == Supplier.Vodafone)

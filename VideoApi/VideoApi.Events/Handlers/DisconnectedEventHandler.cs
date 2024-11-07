@@ -22,7 +22,7 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            _logger.LogInformation("Disconnected callback - {ConferenceId}/{ParticipantId}",
+            Logger.LogInformation("Disconnected callback - {ConferenceId}/{ParticipantId}",
                 SourceConference.Id, SourceParticipant.Id);
             await PublishParticipantDisconnectMessage();
         }

@@ -25,7 +25,7 @@ namespace VideoApi.Events.Handlers
 
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
             
-            _logger.LogInformation("Close callback - {ConferenceId} {Tags}",
+            Logger.LogInformation("Close callback - {ConferenceId} {Tags}",
                 SourceConference.Id, Args);
             return CommandHandler.Handle(command);
         }

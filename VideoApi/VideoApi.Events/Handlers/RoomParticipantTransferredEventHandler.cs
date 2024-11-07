@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -25,7 +26,7 @@ namespace VideoApi.Events.Handlers
             {
                 i++;
                 var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
-                _logger.LogInformation("Room Participant Transferred ({Iteration}) callback received - {ConferenceId}/{ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus}",
+                Logger.LogInformation("Room Participant Transferred ({Iteration}) callback received - {ConferenceId}/{ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus}",
                      i, SourceConference.Id, participant.Id, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel, participantStatus);
 
                 var command =
@@ -37,7 +38,8 @@ namespace VideoApi.Events.Handlers
         
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
+            if (!callbackEvent.TransferTo.HasValue 
+                && string.Equals(callbackEvent.TransferredToRoomLabel, "consultation", StringComparison.CurrentCultureIgnoreCase))
             {
                 return ParticipantState.InConsultation;
             }

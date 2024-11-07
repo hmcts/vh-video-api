@@ -39,7 +39,8 @@ namespace VideoApi.DAL.Queries
             if(query.ParticipantName != null)
             {
                 instantMessages = (IOrderedQueryable<InstantMessage>) instantMessages
-                    .Where(x => x.From.ToUpper() == query.ParticipantName.ToUpper() || x.To.ToUpper() == query.ParticipantName.ToUpper());
+                    .Where(x => x.From.Equals(query.ParticipantName, StringComparison.CurrentCultureIgnoreCase)
+                                || x.To.Equals(query.ParticipantName, StringComparison.CurrentCultureIgnoreCase));
             }
 
             return await instantMessages.ToListAsync();

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
@@ -12,18 +13,16 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers.Core
 {
-    public abstract class EventHandlerBase<THandler> : IEventHandler
+    [SuppressMessage("csharpsquid", "S6672:Generic logger injection should match enclosing type")]
+    public abstract class EventHandlerBase<THandler>(
+        IQueryHandler queryHandler,
+        ICommandHandler commandHandler,
+        ILogger<THandler> logger)
+        : IEventHandler
     {
-        protected readonly ICommandHandler CommandHandler;
-        protected readonly IQueryHandler QueryHandler;
-        protected readonly ILogger<THandler> _logger;
-
-        protected EventHandlerBase(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<THandler> logger)
-        {
-            QueryHandler = queryHandler;
-            CommandHandler = commandHandler;
-            _logger = logger;
-        }
+        protected readonly ICommandHandler CommandHandler = commandHandler;
+        protected readonly IQueryHandler QueryHandler = queryHandler;
+        protected readonly ILogger<THandler> Logger = logger;
 
         protected Conference SourceConference { get; set; }
         protected ParticipantBase SourceParticipant { get; set; }
@@ -35,7 +34,7 @@ namespace VideoApi.Events.Handlers.Core
 
         public virtual async Task HandleAsync(CallbackEvent callbackEvent)
         {
-            _logger.LogDebug("Handling callback");
+            Logger.LogDebug("Handling callback");
             var sw = Stopwatch.StartNew();
             SourceConference =
                 await QueryHandler.Handle<GetConferenceByIdForEventQuery, Conference>(
@@ -51,7 +50,7 @@ namespace VideoApi.Events.Handlers.Core
             SourceParticipantRoom = SourceConference.Rooms.OfType<ParticipantRoom>().SingleOrDefault(x =>x.Id == callbackEvent.ParticipantRoomId);
             
             await PublishStatusAsync(callbackEvent);
-            _logger.LogDebug("Handled callback in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+            Logger.LogDebug("Handled callback in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
         }
 
         protected abstract Task PublishStatusAsync(CallbackEvent callbackEvent);

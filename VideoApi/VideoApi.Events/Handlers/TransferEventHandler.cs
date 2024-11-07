@@ -25,7 +25,7 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            _logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
+            Logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
                 SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.ParticipantRoomId, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
             
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
@@ -36,7 +36,8 @@ namespace VideoApi.Events.Handlers
 
             await CommandHandler.Handle(command);
 
-            if (!callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation") || callbackEvent.TransferTo == RoomType.HearingRoom)
+            if (!callbackEvent.TransferredFromRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase) 
+                || callbackEvent.TransferTo == RoomType.HearingRoom)
             {
                 return;
             }
@@ -45,7 +46,7 @@ namespace VideoApi.Events.Handlers
             var room = await QueryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
-                _logger.LogError("Unable to find room {roomLabel} in conference {conferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
+                Logger.LogError("Unable to find room {roomLabel} in conference {conferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
             }
             else if (room.Status == RoomStatus.Live && room.RoomParticipants.Count == 0)
             {
@@ -66,7 +67,8 @@ namespace VideoApi.Events.Handlers
 
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
+            if (!callbackEvent.TransferTo.HasValue 
+                && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
             {
                 return ParticipantState.InConsultation;
             }

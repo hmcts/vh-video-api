@@ -21,7 +21,7 @@ namespace VideoApi.Events.Handlers
         
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            _logger.LogInformation("Start callback received - {ConferenceId}",
+            Logger.LogInformation("Start callback received - {ConferenceId}",
                 SourceConference.Id);
         }
     }

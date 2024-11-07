@@ -149,7 +149,7 @@ public class AudioRecordingController(
         await foreach (var blob in allBlobsAsync)
         {
             var blobName = blob.Name.ToLower();
-            if (!blobName.Contains(date.ToLower()) || !blobName.Contains(caseReference != null ? caseReference.ToLower() : ""))
+            if (!blobName.Contains(date, StringComparison.CurrentCultureIgnoreCase) || !blobName.Contains(caseReference != null ? caseReference.ToLower() : ""))
             {
                 continue;
             }
