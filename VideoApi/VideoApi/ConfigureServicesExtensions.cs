@@ -173,7 +173,6 @@ namespace VideoApi
                     .AddHttpClient<ISupplierSelfTestHttpClient, SupplierSelfTestHttpClient>()
                     .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
                 
-                services.AddScoped<IVideoPlatformService, SupplierPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
