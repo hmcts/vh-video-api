@@ -21,8 +21,8 @@ public abstract class CustomSelfTestApiDelegatingHandler : DelegatingHandler
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
 #pragma warning disable CS0618 // For compatibility with the supplier
-        var participantId = request.Properties.ContainsKey(ParticipantIdName) 
-            ? request.Properties[ParticipantIdName] 
+        var participantId = request.Properties.TryGetValue(ParticipantIdName, out var property) 
+            ? property 
             : throw new KeyNotFoundException($"Could not find the field {ParticipantIdName} in the request properties dictionary");
 #pragma warning restore CS0618 // For compatibility with the supplier
             
