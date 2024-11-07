@@ -20,9 +20,11 @@ public abstract class CustomSelfTestApiDelegatingHandler : DelegatingHandler
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
+#pragma warning disable CS0618 // For compatibility with the supplier
         var participantId = request.Properties.ContainsKey(ParticipantIdName) 
             ? request.Properties[ParticipantIdName] 
             : throw new KeyNotFoundException($"Could not find the field {ParticipantIdName} in the request properties dictionary");
+#pragma warning restore CS0618 // For compatibility with the supplier
             
         var token = _tokenProvider.GenerateSelfTestApiToken(participantId.ToString(), 2);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
