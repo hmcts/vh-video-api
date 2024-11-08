@@ -37,7 +37,7 @@ namespace VideoApi.Services.Clients
                 Method = HttpMethod.Get,
                 Properties = {{"participantId", participantId}}
             };
-#pragma warning restore CS0618 For compatibility with the supplier
+#pragma warning restore CS0618 // For compatibility with the supplier
 
             var responseMessage = await _httpClient.SendAsync(request);
 
