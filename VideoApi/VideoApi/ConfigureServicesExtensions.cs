@@ -188,6 +188,7 @@ namespace VideoApi
             services.AddScoped<IQuickLinksJwtTokenProvider, QuickLinksJwtTokenProvider>();
             
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IInstantMessageService, InstantMessageService>();
             
             var blobClientExtension = new BlobClientExtension();
             
