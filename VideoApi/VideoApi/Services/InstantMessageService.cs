@@ -38,7 +38,7 @@ public class InstantMessageService(
 
     public async Task<List<InstantMessage>> GetInstantMessagesForConferenceAsync(Guid conferenceId, string participantName)
     {
-        var query = new GetInstantMessagesForConferenceQuery(conferenceId, null);
+        var query = new GetInstantMessagesForConferenceQuery(conferenceId, participantName);
         var messages =
             await queryHandler.Handle<GetInstantMessagesForConferenceQuery, List<InstantMessage>>(query);
         return messages;
