@@ -2,16 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Entities = VideoApi.DAL.Constants.Entities;
 
 namespace VideoApi.DAL.Mappings
 {
     public class ConferenceMap : IEntityTypeConfiguration<Conference>
     {
-        private static class Constants
-        {
-            public const string MeetingRoom = "MeetingRoom";
-        }
-        
         public void Configure(EntityTypeBuilder<Conference> builder)
         {
             builder.ToTable(nameof(Conference));
@@ -37,11 +33,11 @@ namespace VideoApi.DAL.Mappings
             builder.HasMany<TelephoneParticipant>("TelephoneParticipants").WithOne(x => x.Conference).HasForeignKey(x => x.ConferenceId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<ConferenceStatus>("ConferenceStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.InstantMessageHistory).WithOne().OnDelete(DeleteBehavior.Cascade).IsRequired();
-            builder.OwnsOne<MeetingRoom>(Constants.MeetingRoom).Property(x => x.AdminUri).HasColumnName("AdminUri");
-            builder.OwnsOne<MeetingRoom>(Constants.MeetingRoom).Property(x => x.JudgeUri).HasColumnName("JudgeUri");
-            builder.OwnsOne<MeetingRoom>(Constants.MeetingRoom).Property(x => x.ParticipantUri).HasColumnName("ParticipantUri");
-            builder.OwnsOne<MeetingRoom>(Constants.MeetingRoom).Property(x => x.PexipNode).HasColumnName("PexipNode");
-            builder.OwnsOne<MeetingRoom>(Constants.MeetingRoom).Property(x => x.TelephoneConferenceId).HasColumnName("TelephoneConferenceId");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.AdminUri).HasColumnName("AdminUri");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.JudgeUri).HasColumnName("JudgeUri");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.ParticipantUri).HasColumnName("ParticipantUri");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.PexipNode).HasColumnName("PexipNode");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.TelephoneConferenceId).HasColumnName("TelephoneConferenceId");
 
             var roomNavigation = builder.Metadata.FindNavigation(nameof(Conference.Rooms));
             roomNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);
