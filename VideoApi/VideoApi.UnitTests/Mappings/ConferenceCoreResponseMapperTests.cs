@@ -18,10 +18,7 @@ public class ConferenceCoreResponseMapperTests
             .WithMessages(5)
             .WithInterpreterRoom()
             .Build();
-        string conferencePhoneNumber = "+441234567890";
-        string conferencePhoneNumberWelsh = "+449876543210";
-        string pexipSelfTestNode = "selttest@pexip.node";
-        
+
         var response = ConferenceCoreResponseMapper.Map(conference);
         response.Should().BeEquivalentTo(conference, options => options
             .Excluding(x => x.HearingRefId)

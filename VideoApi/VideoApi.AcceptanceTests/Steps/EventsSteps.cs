@@ -44,13 +44,13 @@ namespace VideoApi.AcceptanceTests.Steps
                 .With(x => x.ParticipantRoomId = null)
                 .Build();
 
-            _context.Request = _context.Post(EventsEndpoints.Event, request);
+            _context.Request = TestContext.Post(EventsEndpoints.Event, request);
         }
 
         [Then(@"the status is updated")]
         public void ThenTheStatusIsUpdated()
         {
-            _context.Request = _context.Get(ConferenceEndpoints.GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Get(ConferenceEndpoints.GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details retrieved");
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);

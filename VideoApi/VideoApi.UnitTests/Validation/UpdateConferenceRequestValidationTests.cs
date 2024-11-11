@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using VideoApi.Contract.Requests;
@@ -17,7 +16,7 @@ namespace VideoApi.UnitTests.Validation
             _validator = new UpdateConferenceRequestValidation();
         }
         
-        private UpdateConferenceRequest BuildRequest()
+        private static UpdateConferenceRequest BuildRequest()
         {
             return Builder<UpdateConferenceRequest>.CreateNew()
                 .With(x => x.ScheduledDateTime = DateTime.Now.AddDays(5))
@@ -45,7 +44,7 @@ namespace VideoApi.UnitTests.Validation
             
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoHearingRefIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == BookNewConferenceRequestValidation.NoHearingRefIdErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -59,7 +58,7 @@ namespace VideoApi.UnitTests.Validation
             
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x =>
+            result.Errors.Exists(x =>
                     x.ErrorMessage == BookNewConferenceRequestValidation.ScheduleDateTimeInPastErrorMessage)
                 .Should().BeTrue();
         }

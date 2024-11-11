@@ -41,8 +41,10 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostEventAsync(ConferenceEventRequest request)
         {
+#pragma warning disable CA1806
             Guid.TryParse(request.ConferenceId, out var conferenceId);
             Guid.TryParse(request.ParticipantId, out var participantId);
+#pragma warning restore CA1806
 
             var command = EventRequestMapper.MapEventRequestToEventCommand(conferenceId, request);
             

@@ -9,14 +9,15 @@ using VideoApi.Events.Models;
 
 namespace VideoApi.Events.Handlers
 {
-    public class CloseEventHandler : EventHandlerBase<CloseEventHandler>
+    public class CloseEventHandler(
+        IQueryHandler queryHandler,
+        ICommandHandler commandHandler,
+        ILogger<CloseEventHandler> logger)
+        : EventHandlerBase<CloseEventHandler>(queryHandler, commandHandler, logger)
     {
-        public CloseEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<CloseEventHandler> logger) : base(
-            queryHandler, commandHandler, logger)
-        {
-        }
-
         public override EventType EventType => EventType.Close;
+
+        private static readonly string[] Args = ["VIH-7730", "HearingEvent"];
 
         protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
@@ -24,8 +25,8 @@ namespace VideoApi.Events.Handlers
 
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
             
-            _logger.LogInformation("Close callback - {ConferenceId} {Tags}",
-                SourceConference.Id, new [] {"VIH-7730", "HearingEvent"});
+            Logger.LogInformation("Close callback - {ConferenceId} {Tags}",
+                SourceConference.Id, Args);
             return CommandHandler.Handle(command);
         }
     }

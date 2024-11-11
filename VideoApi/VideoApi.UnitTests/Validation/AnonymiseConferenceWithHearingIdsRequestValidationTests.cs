@@ -20,16 +20,17 @@ namespace VideoApi.UnitTests.Validation
         
         
         [Test]
-        public async Task Fails_Validation_For_Empty_List_Of_Hearingds()
+        public async Task Fails_Validation_For_Empty_List_Of_HearingIds()
         {
             var request = new AnonymiseConferenceWithHearingIdsRequest();
 
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x =>
+            var containsErrorMessage = result.Errors.Exists(x =>
                 x.ErrorMessage == AnonymiseConferenceWithHearingIdsRequestValidation
                     .NoHearingIdsErrorMessage);
+            containsErrorMessage.Should().BeTrue();
         }
 
         [Test]

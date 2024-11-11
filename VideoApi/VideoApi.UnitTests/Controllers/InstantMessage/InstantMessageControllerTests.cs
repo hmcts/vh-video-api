@@ -11,6 +11,7 @@ using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Services;
 using VideoApi.UnitTests.Controllers.Conference;
 using Task = System.Threading.Tasks.Task;
 
@@ -32,7 +33,8 @@ namespace VideoApi.UnitTests.Controllers.InstantMessage
             _commandHandler = new Mock<ICommandHandler>();
             _backgroundWorkerQueue = new Mock<IBackgroundWorkerQueue>();
             _logger = new Mock<ILogger<InstantMessageController>>();
-            _instantMessageController = new InstantMessageController(_queryHandler.Object,_commandHandler.Object,_logger.Object, _backgroundWorkerQueue.Object);
+            var instantMessageService = new InstantMessageService(_commandHandler.Object, _backgroundWorkerQueue.Object, _queryHandler.Object);
+            _instantMessageController = new InstantMessageController(_logger.Object, instantMessageService);
         }
 
         [Test]

@@ -1,18 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using VideoApi.Services;
-using VideoApi.Services.Contracts;
 
 namespace VideoApi.UnitTests.Services
 {
     public class PollyRetryServiceTests
     {
-        private readonly IPollyRetryService _pollyRetryService;
-
-        public PollyRetryServiceTests()
-        {
-            _pollyRetryService = new PollyRetryService();
-        }
+        private readonly PollyRetryService _pollyRetryService = new();
 
         [Test]
         public void WaitAndRetryAsync_Retries_On_Exception()
@@ -90,7 +84,7 @@ namespace VideoApi.UnitTests.Services
 
         private class TestResult
         {
-            public bool Success { get; set; }
+            public bool Success { get; init; }
         }
     }
 }

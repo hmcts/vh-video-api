@@ -22,7 +22,7 @@ namespace VideoApi.Events.Handlers
         {
             var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, ParticipantState.Disconnected);
             
-            _logger.LogInformation("Leave callback received - {ConferenceId}/{ParticipantId}",
+            Logger.LogInformation("Leave callback received - {ConferenceId}/{ParticipantId}",
                 SourceConference.Id, SourceParticipant.Id);
             return CommandHandler.Handle(command);
         }

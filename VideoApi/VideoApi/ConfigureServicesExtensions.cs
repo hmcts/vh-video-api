@@ -45,7 +45,7 @@ namespace VideoApi
         /// The AddSwagger function configures Swagger documentation and security settings for a C#
         /// application.
         /// </summary>
-        /// <param name="IServiceCollection">The `IServiceCollection` interface in ASP.NET Core is used
+        /// <param name="services">The `IServiceCollection` interface in ASP.NET Core is used
         /// to register application services. In the provided code snippet, the `AddSwagger` method
         /// extends the functionality of `IServiceCollection` by adding Swagger documentation and
         /// security definitions to the service collection.</param>
@@ -89,12 +89,12 @@ namespace VideoApi
         /// The AddCustomTypes function configures and registers various services and dependencies based
         /// on the provided environment and configuration settings.
         /// </summary>
-        /// <param name="IServiceCollection">IServiceCollection is a built-in interface in ASP.NET Core
+        /// <param name="services">IServiceCollection is a built-in interface in ASP.NET Core
         /// that defines a contract for a collection of service descriptors. It is used to register
         /// application services with the built-in dependency injection container. The AddCustomTypes
         /// method you provided is an extension method for IServiceCollection that registers various
         /// custom types and services within the</param>
-        /// <param name="IWebHostEnvironment">The `IWebHostEnvironment` parameter in the
+        /// <param name="environment">The `IWebHostEnvironment` parameter in the
         /// `AddCustomTypes` method is used to provide information about the web hosting environment in
         /// which the application is running. It provides access to the application's content root path,
         /// environment name, and other environment-related information. This parameter is typically
@@ -173,7 +173,6 @@ namespace VideoApi
                     .AddHttpClient<ISupplierSelfTestHttpClient, SupplierSelfTestHttpClient>()
                     .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
                 
-                services.AddScoped<IVideoPlatformService, SupplierPlatformService>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
@@ -189,6 +188,7 @@ namespace VideoApi
             services.AddScoped<IQuickLinksJwtTokenProvider, QuickLinksJwtTokenProvider>();
             
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IInstantMessageService, InstantMessageService>();
             
             var blobClientExtension = new BlobClientExtension();
             

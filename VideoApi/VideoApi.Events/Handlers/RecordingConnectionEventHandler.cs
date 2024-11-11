@@ -1,12 +1,9 @@
-using System.Linq;
 using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
-using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers
@@ -19,10 +16,9 @@ namespace VideoApi.Events.Handlers
 
         public override EventType EventType => EventType.RecordingConnectionFailed;
         
-        protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
+        protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            _logger.LogInformation("Start callback received - {ConferenceId}",
-                SourceConference.Id);
+            return Task.CompletedTask;
         }
     }
 }

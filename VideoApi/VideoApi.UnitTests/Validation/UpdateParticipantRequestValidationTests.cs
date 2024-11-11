@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Contract.Requests;
 using VideoApi.Validations;
@@ -33,10 +32,10 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == UpdateParticipantRequestValidation.NoDisplayNameErrorMessage).Should().BeTrue();
+            result.Errors.Exists(x => x.ErrorMessage == UpdateParticipantRequestValidation.NoDisplayNameErrorMessage).Should().BeTrue();
         }
 
-        private UpdateParticipantRequest BuildRequest()
+        private static UpdateParticipantRequest BuildRequest()
         {
             return new UpdateParticipantRequest {
                 DisplayName = "displayname", 

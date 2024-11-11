@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
@@ -10,13 +11,12 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers
 {
-    public class RoomParticipantTransferredEventHandler : EventHandlerBase<RoomParticipantTransferredEventHandler>
+    public class RoomParticipantTransferredEventHandler(
+        IQueryHandler queryHandler,
+        ICommandHandler commandHandler,
+        ILogger<RoomParticipantTransferredEventHandler> logger)
+        : EventHandlerBase<RoomParticipantTransferredEventHandler>(queryHandler, commandHandler, logger)
     {
-        public RoomParticipantTransferredEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler,
-            ILogger<RoomParticipantTransferredEventHandler> logger) : base(queryHandler, commandHandler, logger)
-        {
-        }
-
         public override EventType EventType => EventType.RoomParticipantTransfer;
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
@@ -26,7 +26,7 @@ namespace VideoApi.Events.Handlers
             {
                 i++;
                 var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
-                _logger.LogInformation("Room Participant Transferred ({Iteration}) callback received - {ConferenceId}/{ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus}",
+                Logger.LogInformation("Room Participant Transferred ({Iteration}) callback received - {ConferenceId}/{ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus}",
                      i, SourceConference.Id, participant.Id, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel, participantStatus);
 
                 var command =
@@ -36,9 +36,10 @@ namespace VideoApi.Events.Handlers
             }
         }
         
-        private ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
+        private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
+            if (!callbackEvent.TransferTo.HasValue 
+                && string.Equals(callbackEvent.TransferredToRoomLabel, "consultation", StringComparison.CurrentCultureIgnoreCase))
             {
                 return ParticipantState.InConsultation;
             }

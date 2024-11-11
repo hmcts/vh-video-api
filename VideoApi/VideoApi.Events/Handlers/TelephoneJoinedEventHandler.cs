@@ -25,7 +25,7 @@ public class TelephoneJoinedEventHandler(
         var command =
             new AddTelephoneParticipantCommand(SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.Phone);
 
-        _logger.LogInformation("TelephoneJoined callback - {ConferenceId}/{TelephoneParticipantId}",
+        Logger.LogInformation("TelephoneJoined callback - {ConferenceId}/{TelephoneParticipantId}",
             SourceConference.Id, callbackEvent.ParticipantId);
 
         TransferToHearingRoomIfHearingIsAlreadyInSession(callbackEvent.ParticipantId);
@@ -35,11 +35,11 @@ public class TelephoneJoinedEventHandler(
 
     private void TransferToHearingRoomIfHearingIsAlreadyInSession(Guid telephoneParticipantId)
     {
-        _logger.LogInformation("Conference {ConferenceId} state is {ConferenceState}", SourceConference.Id,
+        Logger.LogInformation("Conference {ConferenceId} state is {ConferenceState}", SourceConference.Id,
             SourceConference.State.ToString());
         if (SourceConference.State != ConferenceState.InSession) return;
             
-        _logger.LogInformation("Conference {ConferenceId} already in session, transferring telephone participant {TelephoneParticipantId} to hearing room",
+        Logger.LogInformation("Conference {ConferenceId} already in session, transferring telephone participant {TelephoneParticipantId} to hearing room",
             SourceConference.Id, telephoneParticipantId);
         var videoPlatformService = supplierPlatformServiceFactory.Create(SourceConference.Supplier);
         videoPlatformService.TransferParticipantAsync(SourceConference.Id, telephoneParticipantId.ToString(),

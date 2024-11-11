@@ -1,5 +1,4 @@
 using Faker;
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,14 +14,14 @@ namespace VideoApi.IntegrationTests.Database.Queries
     public class GetDistinctJudgeListByFirstNameQueryTests : DatabaseTestsBase
     {
         private GetDistinctJudgeListByFirstNameQueryHandler _handler;
-        private IList<Guid> _conferenceIds;
+        private List<Guid> _conferenceIds;
 
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
             _handler = new GetDistinctJudgeListByFirstNameQueryHandler(context);
-            _conferenceIds = new List<Guid>();
+            _conferenceIds = [];
         }
 
         [Test]
@@ -114,10 +113,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
             }
         }
         
-        private string CreateUniqueName()
+        private static string CreateUniqueName()
         {
             //This is done to create an unique first name to avoid the test from failing because of any existing data
-            return $"Automation_{Name.First()}{Faker.RandomNumber.Next()}";
+            return $"Automation_{Name.First()}{RandomNumber.Next()}";
         }
     }
 }

@@ -55,16 +55,13 @@ namespace VideoApi.Services
             return GetAllBlobNamesByFileExtension(allBlobsAsync);
         }
 
-        private async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
+        private static async Task<IEnumerable<string>> GetAllBlobNamesByFileExtension(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
         {
-            var blobFullNames = new List<string>();
-            await foreach (var blob in allBlobs)
-            {
-                if (blob.Name.ToLower().EndsWith(fileExtension.ToLower()))
-                {
-                    blobFullNames.Add(blob.Name);
-                }
-            }
+            var blobFullNames = await allBlobs
+                .Where(blob => blob.Name.ToLower().EndsWith(fileExtension.ToLower()))
+                .Select(blob => blob.Name)
+                .ToListAsync();
+
             return blobFullNames;
         }
 
@@ -76,17 +73,15 @@ namespace VideoApi.Services
 
         private async Task<IEnumerable<string>> GetAllEmptyBlobs(IAsyncEnumerable<BlobClient> allBlobs, string fileExtension = ".mp4")
         {
-            var blobFullNames = new List<string>();
-
-            await foreach (var blob in allBlobs)
-            {
-                if (blob.Name.ToLower().EndsWith(fileExtension.ToLower()))
+            var blobFullNames = await allBlobs
+                .WhereAwait(async blob =>
                 {
+                    if (!blob.Name.ToLower().EndsWith(fileExtension.ToLower())) return false;
                     var properties = await _blobClientExtension.GetPropertiesAsync(blob);
-                    
-                    if (properties.ContentLength <= 0) blobFullNames.Add(blob.Name);
-                }
-            }
+                    return properties.ContentLength <= 0;
+                })
+                .Select(blob => blob.Name)
+                .ToListAsync();
 
             return blobFullNames;
         }

@@ -46,7 +46,7 @@ namespace VideoApi.Middleware.Validation
             if (!context.ModelState.IsValid)
             {
                 var errors = context.ModelState.Values.SelectMany(v => v.Errors.Select(b => b.ErrorMessage)).ToList();
-                _logger.LogWarning($"Request Validation Failed: {string.Join("; ", errors)}");
+                _logger.LogWarning("Request Validation Failed: {Errors}", string.Join("; ", errors));
                 
                 context.Result = new BadRequestObjectResult(new ValidationProblemDetails(context.ModelState));
             }

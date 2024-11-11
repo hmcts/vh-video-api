@@ -14,21 +14,18 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.Events.Handlers
 {
-    public class TransferEventHandler : EventHandlerBase<TransferEventHandler>
+    public class TransferEventHandler(
+        IQueryHandler queryHandler,
+        ICommandHandler commandHandler,
+        ILogger<TransferEventHandler> logger,
+        IConsultationService consultationService)
+        : EventHandlerBase<TransferEventHandler>(queryHandler, commandHandler, logger)
     {
-        private readonly IConsultationService _consultationService;
-
-        public TransferEventHandler(IQueryHandler queryHandler, ICommandHandler commandHandler, ILogger<TransferEventHandler> logger, IConsultationService consultationService) : base(
-            queryHandler, commandHandler, logger)
-        {
-            _consultationService = consultationService;
-        }
-
         public override EventType EventType => EventType.Transfer;
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            _logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
+            Logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
                 SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.ParticipantRoomId, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
             
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
@@ -39,7 +36,8 @@ namespace VideoApi.Events.Handlers
 
             await CommandHandler.Handle(command);
 
-            if (!callbackEvent.TransferredFromRoomLabel.ToLower().Contains("consultation") || callbackEvent.TransferTo == RoomType.HearingRoom)
+            if (!callbackEvent.TransferredFromRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase) 
+                || callbackEvent.TransferTo == RoomType.HearingRoom)
             {
                 return;
             }
@@ -48,28 +46,29 @@ namespace VideoApi.Events.Handlers
             var room = await QueryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
-                _logger.LogError("Unable to find room {roomLabel} in conference {conferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
+                Logger.LogError("Unable to find room {roomLabel} in conference {conferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
             }
-            else if (room.Status == RoomStatus.Live && !room.RoomParticipants.Any())
+            else if (room.Status == RoomStatus.Live && room.RoomParticipants.Count == 0)
             {
                 foreach (var endpoint in room.RoomEndpoints)
                 {
-                    await _consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
+                    await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
                 }
             }
-            else if (room.RoomEndpoints.Any())
+            else if (room.RoomEndpoints.Count != 0)
             {
                 var participantsEndpoints = SourceConference.GetEndpoints().Where(x => x.DefenceAdvocate?.Equals(SourceParticipant.Username, System.StringComparison.OrdinalIgnoreCase) ?? false).Select(x => x.Id).ToList();
                 foreach (var endpoint in room.RoomEndpoints.Where(roomEndpoint => participantsEndpoints.Contains(roomEndpoint.EndpointId)))
                 {
-                    await _consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
+                    await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
                 }
             }
         }
 
-        private ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
+        private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
+            if (!callbackEvent.TransferTo.HasValue 
+                && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
             {
                 return ParticipantState.InConsultation;
             }

@@ -19,9 +19,9 @@ namespace VideoApi.Validations
 
             try
             {
-#pragma warning disable S1848 // Objects should not be created to be dropped immediately without being used
-                new MailAddress(email);
-#pragma warning restore S1848 // Objects should not be created to be dropped immediately without being used
+#pragma warning disable S1481
+                var address = new MailAddress(email);
+#pragma warning restore S1481
                 return true;
             }
             catch (FormatException)

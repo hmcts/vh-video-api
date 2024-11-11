@@ -38,7 +38,7 @@ namespace VideoApi.DAL
                                                 BindingFlags.FlattenHierarchy);
             var applyGenericApplyConfigurationMethods = applyGenericMethods.Where(m =>
                 m.IsGenericMethod && m.Name.Equals("ApplyConfiguration", StringComparison.OrdinalIgnoreCase));
-            var applyGenericMethod = applyGenericApplyConfigurationMethods.FirstOrDefault(m =>
+            var applyGenericMethod = applyGenericApplyConfigurationMethods.First(m =>
                 m.GetParameters().FirstOrDefault()?.ParameterType.Name == "IEntityTypeConfiguration`1");
 
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes()

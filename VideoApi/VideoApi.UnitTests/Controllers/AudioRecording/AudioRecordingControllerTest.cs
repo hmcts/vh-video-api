@@ -1,19 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Autofac.Extras.Moq;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
+using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Controllers;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Exceptions;
 using VideoApi.Services.Factories;
 
 namespace VideoApi.UnitTests.Controllers.AudioRecording
@@ -24,15 +28,10 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         [SetUp]
         public void Setup()
         {
-            _queryHandler         = new Mock<IQueryHandler>();
-            _storageServiceFactory = new Mock<IAzureStorageServiceFactory>();
-            _storageService        = new Mock<IAzureStorageService>();
-
-            _controller = new AudioRecordingController
-                (
-                 _storageServiceFactory.Object,
-                 new Mock<ILogger<AudioRecordingController>>().Object
-                );
+            _mocker = AutoMock.GetLoose();
+            _queryHandler         = _mocker.Mock<IQueryHandler>();
+            _storageServiceFactory = _mocker.Mock<IAzureStorageServiceFactory>();
+            _storageService        = _mocker.Mock<IAzureStorageService>();
 
             _testConference = new ConferenceBuilder()
                              .WithParticipant(UserRole.Judge, null)
@@ -48,6 +47,12 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
                           x.Handle<GetConferenceByHearingRefIdQuery, VideoApi.Domain.Conference>(
                            It.IsAny<GetConferenceByHearingRefIdQuery>()))
                .ReturnsAsync(_testConference);
+            
+            _audioPlatformServiceMock = _mocker.Mock<IAudioPlatformService>();
+            _azureStorageServiceFactoryMock = _mocker.Mock<IAzureStorageServiceFactory>();
+            _azureStorageServiceMock = _mocker.Mock<IAzureStorageService>();
+            _mocker.Mock<ILogger<AudioRecordingController>>();
+            _controller = _mocker.Create<AudioRecordingController>();
         }
         
         private Mock<IAzureStorageServiceFactory> _storageServiceFactory;
@@ -57,6 +62,10 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
         
         private AudioRecordingController _controller;
         private Mock<BlobClient> _blobClientMock;
+        private AutoMock _mocker;
+        private Mock<IAzureStorageServiceFactory> _azureStorageServiceFactoryMock;
+        private Mock<IAzureStorageService> _azureStorageServiceMock;
+        private Mock<IAudioPlatformService> _audioPlatformServiceMock;
         
         [Test]
         public async Task GetAudioRecordingLinkAsync_returns_audio_file_link()
@@ -302,6 +311,84 @@ namespace VideoApi.UnitTests.Controllers.AudioRecording
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
 
             _storageService.Verify(x => x.CreateSharedAccessSignature(blobFullName, It.IsAny<TimeSpan>()), Times.Never);
+        }
+        
+        [Test]
+        public async Task ReconcileAudioFilesInStorage_Should_Check_Storage_For_Files_With_Prefix_And_Match_Count()
+        {
+            var guid1 = Guid.NewGuid();
+
+            _azureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_azureStorageServiceMock.Object);
+            _audioPlatformServiceMock.Reset();
+            _azureStorageServiceMock.Reset();
+
+            _azureStorageServiceMock.Setup(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+
+            AudioFilesInStorageRequest request = new AudioFilesInStorageRequest() { FileNamePrefix = guid1.ToString(), FilesCount = 1 };
+
+            var requestResponse = await _controller.ReconcileAudioFilesInStorage(request);
+
+            _azureStorageServiceMock.Verify(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+
+            var typedResult = (OkObjectResult)requestResponse;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
+        }
+
+        [Test]
+        public void ReconcileAudioFilesInStorage_Should_Throw_Exception_With_Null_Request()
+        {
+            _azureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_azureStorageServiceMock.Object);
+            _audioPlatformServiceMock.Reset();
+            _azureStorageServiceMock.Reset();
+
+            _azureStorageServiceMock.Setup(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+
+            AudioFilesInStorageRequest request = null;
+            var msg = $"ReconcileFilesInStorage - File Name prefix is required.";
+
+            Assert.That(async () => await _controller.ReconcileAudioFilesInStorage(request), Throws.TypeOf<AudioPlatformFileNotFoundException>().With.Message.EqualTo(msg));
+
+            _azureStorageServiceMock.Verify(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+
+        }
+
+        [Test]
+        public void ReconcileAudioFilesInStorage_Should_Throw_Exception_With_Request_File_Count_Is_Zero()
+        {
+            _azureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_azureStorageServiceMock.Object);
+            _audioPlatformServiceMock.Reset();
+            _azureStorageServiceMock.Reset();
+
+            _azureStorageServiceMock.Setup(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+
+            AudioFilesInStorageRequest request = new AudioFilesInStorageRequest() {FileNamePrefix="Prefilx", FilesCount = 0 };
+            var msg = $"ReconcileFilesInStorage - File count cannot be negative or zero.";
+
+            Assert.That(async () => await _controller.ReconcileAudioFilesInStorage(request), Throws.TypeOf<AudioPlatformFileNotFoundException>().With.Message.EqualTo(msg));
+
+            _azureStorageServiceMock.Verify(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+
+        }
+
+        [Test]
+        public void ReconcileAudioFilesInStorage_Should_Catch_Exception_When_Service_Throws_Exception()
+        {
+            var guid1 = Guid.NewGuid();
+
+            _azureStorageServiceFactoryMock.Setup(x => x.Create(AzureStorageServiceType.Vh)).Returns(_azureStorageServiceMock.Object);
+
+            _audioPlatformServiceMock.Reset();
+            _azureStorageServiceMock.Reset();
+
+            _azureStorageServiceMock.Setup(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>())).Throws(new AudioPlatformFileNotFoundException(It.IsAny<string>(), HttpStatusCode.NotFound));
+
+            AudioFilesInStorageRequest request = new AudioFilesInStorageRequest() { FileNamePrefix = guid1.ToString(), FilesCount = 1 };
+                            
+            Assert.That(async () => await _controller.ReconcileAudioFilesInStorage(request), Throws.TypeOf<AudioPlatformFileNotFoundException>());
+
+            _azureStorageServiceMock.Verify(x => x.ReconcileFilesInStorage(It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+
         }
         
         private async IAsyncEnumerable<BlobClient> GetMockBlobClients()

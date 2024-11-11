@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
@@ -91,7 +90,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             AssertConference(conference[0], conference1, true);
         }
 
-        private void AssertConference(Conference actual, Conference expected, bool ignoreParticipants = false)
+        private static void AssertConference(Conference actual, Conference expected, bool ignoreParticipants = false)
         {
             actual.Should().NotBeNull();
 

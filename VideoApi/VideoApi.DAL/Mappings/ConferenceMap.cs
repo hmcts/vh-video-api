@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Entities = VideoApi.DAL.Constants.Entities;
 
 namespace VideoApi.DAL.Mappings
 {
@@ -32,11 +33,11 @@ namespace VideoApi.DAL.Mappings
             builder.HasMany<TelephoneParticipant>("TelephoneParticipants").WithOne(x => x.Conference).HasForeignKey(x => x.ConferenceId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<ConferenceStatus>("ConferenceStatuses").WithOne().OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.InstantMessageHistory).WithOne().OnDelete(DeleteBehavior.Cascade).IsRequired();
-            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.AdminUri).HasColumnName("AdminUri");
-            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.JudgeUri).HasColumnName("JudgeUri");
-            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.ParticipantUri).HasColumnName("ParticipantUri");
-            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.PexipNode).HasColumnName("PexipNode");
-            builder.OwnsOne<MeetingRoom>("MeetingRoom").Property(x => x.TelephoneConferenceId).HasColumnName("TelephoneConferenceId");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.AdminUri).HasColumnName("AdminUri");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.JudgeUri).HasColumnName("JudgeUri");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.ParticipantUri).HasColumnName("ParticipantUri");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.PexipNode).HasColumnName("PexipNode");
+            builder.OwnsOne<MeetingRoom>(Entities.MeetingRoom).Property(x => x.TelephoneConferenceId).HasColumnName("TelephoneConferenceId");
 
             var roomNavigation = builder.Metadata.FindNavigation(nameof(Conference.Rooms));
             roomNavigation.SetPropertyAccessMode(PropertyAccessMode.Field);

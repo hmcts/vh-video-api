@@ -25,7 +25,7 @@ namespace Testing.Common.Helper
             randomStringBuilder.Append(GenerateRandomLetter(randomNumber));
             randomStringBuilder.Append(GenerateRandomLetter(randomNumber));
             randomStringBuilder.Append(randomNumber.Next(0, 99).ToString("D2"));
-            randomStringBuilder.Append("/");
+            randomStringBuilder.Append('/');
             randomStringBuilder.Append(GenerateRandomLetter(randomNumber));
             randomStringBuilder.Append(randomNumber.Next(0, 99999).ToString("D5"));
 

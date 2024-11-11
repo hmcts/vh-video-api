@@ -43,7 +43,7 @@ namespace VideoApi.AcceptanceTests.Steps
             };
             
             _scenarioContext.Add(UpdatedKey, request);
-            _context.Request = _context.Put(UpdateConference, request);
+            _context.Request = TestContext.Put(UpdateConference, request);
         }
         
         [Given(@"I have a valid book a new conference request")]
@@ -89,7 +89,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 .WithIndividualAndInterpreter()
                 .WithHearingRefId(Guid.NewGuid())
                 .Build();
-            _context.Request = _context.Post(BookNewConference, request);
+            _context.Request = TestContext.Post(BookNewConference, request);
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should()
                 .BeTrue(
@@ -179,19 +179,19 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get details for a conference request with a valid conference id")]
         public void GivenIHaveAGetDetailsForAConferenceRequestWithAValidConferenceId()
         {
-            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
         }
         
         [Given(@"I have a valid delete conference request")]
         public void GivenIHaveAValidDeleteConferenceRequest()
         {
-            _context.Request = _context.Delete(RemoveConference(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Delete(RemoveConference(_context.Test.ConferenceResponse.Id));
         }
         
         [Given(@"I have a get conferences today for a vho request")]
         public void GivenIHaveAValidGetTodaysConferencesRequest()
         {
-            _context.Request = _context.Get(GetConferencesTodayForAdmin);
+            _context.Request = TestContext.Get(GetConferencesTodayForAdmin);
         }
         
         
@@ -199,19 +199,19 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAGetConferenceTodayForAnIndividual()
         {
             var individual = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole != UserRole.Judge);
-            _context.Request = _context.Get(GetConferencesTodayForIndividual(individual.Username));
+            _context.Request = TestContext.Get(GetConferencesTodayForIndividual(individual.Username));
         }
         
         [Given(@"I have a get expired conferences request")]
         public void GivenIHaveAGetExpiredConferencesRequest()
         {
-            _context.Request = _context.Get(GetExpiredOpenConferences);
+            _context.Request = TestContext.Get(GetExpiredOpenConferences);
         }
         
         [Given(@"I have a get expired audiorecording conferences request")]
         public void GivenIHaveAGetExpiredAudiorecordingConferencesRequest()
         {
-            _context.Request = _context.Get(GetExpiredAudiorecordingConferences);
+            _context.Request = TestContext.Get(GetExpiredAudiorecordingConferences);
         }
         
         [Given(@"I have a get details for a conference request by hearing id with a valid Hearing Id")]
@@ -219,13 +219,13 @@ namespace VideoApi.AcceptanceTests.Steps
         {
             var requestBody = new GetConferencesByHearingIdsRequest
                 { HearingRefIds = [_context.Test.ConferenceResponse.HearingId] };
-            _context.Request = _context.Post(GetConferencesByHearingRefIds(), requestBody);
+            _context.Request = TestContext.Post(GetConferencesByHearingRefIds(), requestBody);
         }
         
         [Then(@"the conference details have been updated")]
         public void ThenICanSeeTheConferenceDetailsHaveBeenUpdated()
         {
-            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
@@ -310,7 +310,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the conference should be removed")]
         public void ThenTheConferenceShouldBeRemoved()
         {
-            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             _context.Test.ConferenceResponse.Id = Guid.Empty;
@@ -371,7 +371,7 @@ namespace VideoApi.AcceptanceTests.Steps
         
         private void UpdateConferenceStateToClosed(Guid conferenceId)
         {
-            _context.Request = _context.Put(CloseConference(conferenceId), new object());
+            _context.Request = TestContext.Put(CloseConference(conferenceId), new object());
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference is closed");
         }
@@ -390,13 +390,13 @@ namespace VideoApi.AcceptanceTests.Steps
                 .WithAudiorecordingRequired(audioRequired)
                 .WithEndpoints(endpoints ?? new List<AddEndpointRequest>())
                 .Build();
-            _context.Request = _context.Post(BookNewConference, request);
+            _context.Request = TestContext.Post(BookNewConference, request);
         }
         
         private void CloseAndCheckConferenceClosed(Guid conferenceId)
         {
             UpdateConferenceStateToClosed(conferenceId);
-            _context.Request = _context.Get(GetConferenceDetailsById(conferenceId));
+            _context.Request = TestContext.Get(GetConferenceDetailsById(conferenceId));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue("Conference details are retrieved");
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);

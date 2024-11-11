@@ -427,8 +427,8 @@
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
-        "resolved": "1.1.1",
-        "contentHash": "yuvf07qFWFqtK3P/MRkEKLhn5r2UbSpVueRziSqj0yJQIKFwG1pq9mOayK3zE5qZCTs0CbrwL9M6R8VwqyGy2w=="
+        "resolved": "6.0.0",
+        "contentHash": "UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
@@ -1249,6 +1249,14 @@
           "System.Runtime.Extensions": "4.3.0"
         }
       },
+      "System.Linq.Async": {
+        "type": "Transitive",
+        "resolved": "6.0.1",
+        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
+        }
+      },
       "System.Linq.Expressions": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1857,6 +1865,7 @@
           "Microsoft.Identity.Client": "[4.60.3, )",
           "Newtonsoft.Json": "[13.0.3, )",
           "System.IdentityModel.Tokens.Jwt": "[7.5.1, )",
+          "System.Linq.Async": "[6.0.1, )",
           "System.Text.Json": "[8.0.4, )",
           "VideoApi.Domain": "[1.0.0, )"
         }

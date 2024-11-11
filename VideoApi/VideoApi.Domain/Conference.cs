@@ -229,8 +229,11 @@ namespace VideoApi.Domain
         }
         public IList<InstantMessage> GetInstantMessageHistoryFor(string participantName)
         {
-            return InstantMessageHistory.Where(x => x.From.ToUpper() == participantName.ToUpper() || x.To.ToUpper() == participantName.ToUpper())
-                .OrderByDescending(x => x.TimeStamp).ToList();
+            return InstantMessageHistory
+                .Where(x => string.Equals(x.From, participantName, StringComparison.CurrentCultureIgnoreCase) 
+                            || string.Equals(x.To, participantName, StringComparison.CurrentCultureIgnoreCase))
+                .OrderByDescending(x => x.TimeStamp)
+                .ToList();
         }
         public void AddInstantMessage(string from, string messageText, string to)
         {

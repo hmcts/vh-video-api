@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Contract.Requests;
 using VideoApi.Validations;
@@ -18,16 +17,17 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task Fails_Validation_For_Empty_List_Of_Hearingds()
+        public async Task Fails_Validation_For_Empty_List_Of_HearingIds()
         {
             var request = new AnonymiseQuickLinkParticipantWithHearingIdsRequest();
 
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x =>
+            var containsErrorMessage = result.Errors.Exists(x =>
                 x.ErrorMessage == AnonymiseQuickLinkParticipantWithHearingIdsRequestValidation
                     .NoHearingIdsErrorMessage);
+            containsErrorMessage.Should().BeTrue();
         }
 
         [Test]

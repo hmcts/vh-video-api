@@ -29,7 +29,8 @@ namespace VideoApi.Events.Handlers
         
         private static EndpointState DeriveEndpointStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if ((!callbackEvent.TransferTo.HasValue || callbackEvent.TransferTo == RoomType.ConsultationRoom) && callbackEvent.TransferredToRoomLabel.ToLower().Contains("consultation"))
+            if (callbackEvent.TransferTo is null or RoomType.ConsultationRoom 
+                && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
             {
                 return EndpointState.InConsultation;
             }

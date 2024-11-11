@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
+using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Services.Contracts;
+using VideoApi.Services.Exceptions;
 using VideoApi.Services.Factories;
 
 namespace VideoApi.Controllers;
@@ -52,8 +54,41 @@ public class AudioRecordingController(
         }
         catch (ConferenceNotFoundException ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Not found: {Message}", ex.Message);
             return NotFound();
+        }
+    }
+    
+    [HttpGet("Wowza/ReconcileAudioFilesInStorage")]
+    [OpenApiOperation("ReconcileAudioFilesInStorage")]
+    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    public async Task<IActionResult> ReconcileAudioFilesInStorage([FromQuery] AudioFilesInStorageRequest request)
+    {
+        if (request == null || string.IsNullOrEmpty(request.FileNamePrefix))
+        {
+            var msg = $"ReconcileFilesInStorage - File Name prefix is required.";
+            throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+        }
+        
+        if (request.FilesCount <= 0)
+        {
+            var msg = $"ReconcileFilesInStorage - File count cannot be negative or zero.";
+            throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
+        }
+        
+        try
+        {
+            var azureStorageService = azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
+            
+            var result =
+                await azureStorageService.ReconcileFilesInStorage(request.FileNamePrefix, request.FilesCount);
+            
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            throw new AudioPlatformFileNotFoundException(e.Message, HttpStatusCode.InternalServerError);
         }
     }
     
@@ -82,7 +117,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Error: {Message}", ex.Message);
             return NotFound();
         }
     }
@@ -109,7 +144,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Error: {Message}", ex.Message);
             return NotFound();
         }
     }
@@ -136,7 +171,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.Message);
+            logger.LogError(ex, "Error: {Message}", ex.Message);
             return NotFound();
         }
     }
@@ -149,14 +184,14 @@ public class AudioRecordingController(
         await foreach (var blob in allBlobsAsync)
         {
             var blobName = blob.Name.ToLower();
-            if (!blobName.Contains(date.ToLower()) || !blobName.Contains(caseReference != null ? caseReference.ToLower() : ""))
+            if (!blobName.Contains(date, StringComparison.CurrentCultureIgnoreCase) || !blobName.Contains(caseReference != null ? caseReference.ToLower() : ""))
             {
                 continue;
             }
             
             responses.Add(new CvpAudioFileResponse
             {
-                FileName = blob.Name.Substring(blob.Name.LastIndexOf("/") + 1),
+                FileName = blob.Name.Substring(blob.Name.LastIndexOf('/') + 1),
                 SasTokenUrl = await azureStorageService.CreateSharedAccessSignature(blob.Name, TimeSpan.FromDays(3))
             });
         }

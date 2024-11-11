@@ -93,7 +93,7 @@ namespace VideoApi.AcceptanceTests.Hooks
             context.Config.Wowza.StorageContainerName.Should().NotBeNullOrEmpty();
         }
         
-        private void RegisterAudioRecordingTestIdConfiguration(TestContext context)
+        private static void RegisterAudioRecordingTestIdConfiguration(TestContext context)
         {
             context.Config.AudioRecordingTestIds = new AudioRecordingTestIdConfiguration();
             context.Config.AudioRecordingTestIds.NonExistent.Should().NotBeEmpty();

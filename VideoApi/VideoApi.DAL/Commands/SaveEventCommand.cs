@@ -7,54 +7,42 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class SaveEventCommand : ICommand
+    public class SaveEventCommand(
+        Guid conferenceId,
+        string externalEventId,
+        EventType eventType,
+        DateTime externalTimestamp,
+        RoomType? transferredFrom,
+        RoomType? transferredTo,
+        string reason,
+        string phone)
+        : ICommand
     {
-        public SaveEventCommand(Guid conferenceId, string externalEventId, EventType eventType,
-            DateTime externalTimestamp, RoomType? transferredFrom, RoomType? transferredTo, string reason, string phone)
-        {
-            ConferenceId = conferenceId;
-            ExternalEventId = externalEventId;
-            EventType = eventType;
-            ExternalTimestamp = externalTimestamp;
-            TransferredFrom = transferredFrom;
-            TransferredTo = transferredTo;
-            Reason = reason;
-            IsEndpoint = eventType.IsEndpointEvent();
-            Phone = phone;
-        }
-
-        public Guid ConferenceId { get; }
-        public string ExternalEventId { get; }
-        public EventType EventType { get; }
-        public DateTime ExternalTimestamp { get; }
+        public Guid ConferenceId { get; } = conferenceId;
+        public string ExternalEventId { get; } = externalEventId;
+        public EventType EventType { get; } = eventType;
+        public DateTime ExternalTimestamp { get; } = externalTimestamp;
         public Guid ParticipantId { get; set; }
-        public RoomType? TransferredFrom { get; }
-        public RoomType? TransferredTo { get; }
-        public string Reason { get; }
-        public bool IsEndpoint { get; }
-        public string Phone { get; }
+        public RoomType? TransferredFrom { get; } = transferredFrom;
+        public RoomType? TransferredTo { get; } = transferredTo;
+        public string Reason { get; } = reason;
+        public bool IsEndpoint { get; } = eventType.IsEndpointEvent();
+        public string Phone { get; } = phone;
         public string TransferredFromRoomLabel { get; set; }
         public string TransferredToRoomLabel { get; set; }
         public long? ParticipantRoomId { get; set; }
     }
 
-    public class SaveEventCommandHandler : ICommandHandler<SaveEventCommand>
+    public class SaveEventCommandHandler(VideoApiDbContext context) : ICommandHandler<SaveEventCommand>
     {
-        private readonly VideoApiDbContext _context;
-
-        public SaveEventCommandHandler(VideoApiDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task Handle(SaveEventCommand command)
         {
             var @event = MapCommandToEvent(command);
-            await _context.Events.AddAsync(@event);
-            await _context.SaveChangesAsync();
+            await context.Events.AddAsync(@event);
+            await context.SaveChangesAsync();
         }
 
-        private Event MapCommandToEvent(SaveEventCommand command)
+        private static Event MapCommandToEvent(SaveEventCommand command)
         {
             return new Event(command.ConferenceId, command.ExternalEventId, command.EventType,
                 command.ExternalTimestamp, command.TransferredFrom, command.TransferredTo, command.Reason, command.Phone)

@@ -22,7 +22,7 @@ namespace VideoApi.Events.Handlers
         {
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, ConferenceState.InSession);
             
-            _logger.LogInformation("Start callback received - {ConferenceId}",
+            Logger.LogInformation("Start callback received - {ConferenceId}",
                 SourceConference.Id);
             return CommandHandler.Handle(command);
         }

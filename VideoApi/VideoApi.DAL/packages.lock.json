@@ -901,6 +901,14 @@
         "resolved": "6.0.3",
         "contentHash": "ryTgF+iFkpGZY1vRQhfCzX0xTdlV3pyaTTqRu2ETbEv+HlV7O6y7hyQURnghNIXvctl5DuZ//Dpks6HdL/Txgw=="
       },
+      "System.Linq.Async": {
+        "type": "Transitive",
+        "resolved": "6.0.1",
+        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
+        }
+      },
       "System.Memory": {
         "type": "Transitive",
         "resolved": "4.5.4",
@@ -1025,6 +1033,7 @@
           "Microsoft.Identity.Client": "[4.60.3, )",
           "Newtonsoft.Json": "[13.0.3, )",
           "System.IdentityModel.Tokens.Jwt": "[7.5.1, )",
+          "System.Linq.Async": "[6.0.1, )",
           "System.Text.Json": "[8.0.4, )",
           "VideoApi.Domain": "[1.0.0, )"
         }

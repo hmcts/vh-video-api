@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -69,16 +68,16 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _handler.Invoking(x => x.Handle(query)).Should().ThrowAsync<ConferenceNotFoundException>();
         }
         
-        private List<ConsultationRoom> GetListRoom(Guid conferenceId)
+        private static List<ConsultationRoom> GetListRoom(Guid conferenceId)
         {
-            return new List<ConsultationRoom>
-            {
+            return
+            [
                 new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
                 new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
                 new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
                 new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.JudgeJOH, false),
-                new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.Participant, false),
-            };
+                new ConsultationRoom(conferenceId, "RoomTest", VirtualCourtRoomType.Participant, false)
+            ];
         }
         
         [TearDown]

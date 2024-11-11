@@ -3,7 +3,6 @@ using System.Linq;
 using Autofac.Extras.Moq;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Enums;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
@@ -98,7 +97,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
                 )), Times.Once);
         }
 
-        private Conference InitConference()
+        private static Conference InitConference()
         {
             var conference = new ConferenceBuilder().WithParticipants(3).Build();
             var participantA = conference.Participants[0];

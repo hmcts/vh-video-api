@@ -39,7 +39,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 Participants = new List<ParticipantRequest> {new ParticipantRequestBuilder(UserRole.Individual).Build()}
             };
             _scenarioContext.Add(ParticipantUsernameKey, request.Participants[0].Username);
-            _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
+            _context.Request = TestContext.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
         }
         
         [Given(@"I have a request to add two linked participants")]
@@ -73,13 +73,13 @@ namespace VideoApi.AcceptanceTests.Steps
             
             _scenarioContext.Add(ParticipantUsernameKey, request.Participants[0].Username);
             _scenarioContext.Add(RequestBodyKey, request);
-            _context.Request = _context.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
+            _context.Request = TestContext.Put(AddParticipantsToConference(_context.Test.ConferenceResponse.Id), request);
         }
         
         [Then(@"the linked participants are added")]
         public void ThenTheLinkedParticipantsAreAdded()
         {
-            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
 
@@ -105,7 +105,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GivenIHaveAnRemoveParticipantFromAValidConferenceRequest()
         {
             _scenarioContext.Add(ParticipantUsernameKey, _context.Test.ConferenceResponse.Participants[^1].DisplayName);
-            _context.Request = _context.Delete(RemoveParticipantFromConference(_context.Test.ConferenceResponse.Id, _context.Test.ConferenceResponse.Participants[^1].Id));
+            _context.Request = TestContext.Delete(RemoveParticipantFromConference(_context.Test.ConferenceResponse.Id, _context.Test.ConferenceResponse.Participants[^1].Id));
         }
 
         [Given(@"I have an update participant details request")]
@@ -117,7 +117,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 DisplayName = $"Updated {participant.DisplayName}"
             };
             _scenarioContext.Add(ParticipantUsernameKey, participant.Username);
-            _context.Request = _context.Patch(UpdateParticipantFromConference(_context.Test.ConferenceResponse.Id, participant.Id), request);
+            _context.Request = TestContext.Patch(UpdateParticipantFromConference(_context.Test.ConferenceResponse.Id, participant.Id), request);
         }
 
         [Given(@"I have a participant with heartbeat data")]
@@ -132,7 +132,7 @@ namespace VideoApi.AcceptanceTests.Steps
         public void GetHeartbeatDataRequest()
         {
             var participantId = _context.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Individual).Id;
-            _context.Request = _context.Get(GetHeartbeats(_context.Test.ConferenceResponse.Id, participantId));
+            _context.Request = TestContext.Get(GetHeartbeats(_context.Test.ConferenceResponse.Id, participantId));
         }
 
         [Given(@"I have a valid set heartbeat data request")]
@@ -155,7 +155,7 @@ namespace VideoApi.AcceptanceTests.Steps
                 OperatingSystemVersion = "10.15.7"
             };
             _context.Test.HeartbeatData = request;
-            _context.Request = _context.Post(SetHeartbeats(_context.Test.ConferenceResponse.Id, participantId), request);
+            _context.Request = TestContext.Post(SetHeartbeats(_context.Test.ConferenceResponse.Id, participantId), request);
         }
 
         [Then(@"the heartbeat data is retrieved")]
@@ -173,7 +173,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Then(@"the participant is (.*)")]
         public void ThenTheParticipantIsAdded(string state)
         {
-            _context.Request = _context.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Get(GetConferenceDetailsById(_context.Test.ConferenceResponse.Id));
             _context.Response = _context.Client().Execute(_context.Request);
             _context.Response.IsSuccessful.Should().BeTrue();
             var conference = ApiRequestHelper.Deserialise<ConferenceDetailsResponse>(_context.Response.Content);
@@ -200,13 +200,13 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a valid get judge names data request")]
         public void GetJudgeNamesDataRequest()
         {
-            _context.Request = _context.Get(GetDistinctJudgeNames());
+            _context.Request = TestContext.Get(GetDistinctJudgeNames());
         }
         
         [Given(@"I have a get participants for a participants request with a conference id")]
         public void GivenIHaveAGetParticipantsForConferenceRequest()
         {
-            _context.Request = _context.Get(GetParticipantsByConferenceId(_context.Test.ConferenceResponse.Id));
+            _context.Request = TestContext.Get(GetParticipantsByConferenceId(_context.Test.ConferenceResponse.Id));
         }
 
         [Then(@"the participants should be retrieved")]

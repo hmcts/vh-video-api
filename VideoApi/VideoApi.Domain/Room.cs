@@ -5,26 +5,16 @@ using VideoApi.Domain.Enums;
 
 namespace VideoApi.Domain
 {
-    public abstract class Room : TrackableEntity<long>
+    public abstract class Room(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
+        : TrackableEntity<long>
     { 
-        public Guid ConferenceId { get; private set; }
-        public string Label { get; protected set; }
-        public VirtualCourtRoomType Type { get; private set; }
-        public RoomStatus Status { get; private set; }
-        public virtual List<RoomParticipant> RoomParticipants { get; }
-        public virtual List<RoomEndpoint> RoomEndpoints { get; }
-        public bool Locked { get; private set; }
-        
-        protected Room(Guid conferenceId, string label, VirtualCourtRoomType type, bool locked)
-        {
-            ConferenceId = conferenceId;
-            Label = label;
-            Type = type;
-            Status = RoomStatus.Live;
-            RoomParticipants = new List<RoomParticipant>();
-            RoomEndpoints = new List<RoomEndpoint>();
-            Locked = locked;
-        }
+        public Guid ConferenceId { get; private set; } = conferenceId;
+        public string Label { get; protected set; } = label;
+        public VirtualCourtRoomType Type { get; } = type;
+        public RoomStatus Status { get; private set; } = RoomStatus.Live;
+        public virtual List<RoomParticipant> RoomParticipants { get; } = [];
+        public virtual List<RoomEndpoint> RoomEndpoints { get; } = [];
+        public bool Locked { get; private set; } = locked;
 
         protected Room(Guid conferenceId, VirtualCourtRoomType type, bool locked) : this(conferenceId, null, type, locked)
         {
@@ -37,7 +27,7 @@ namespace VideoApi.Domain
 
         private void UpdateStatus()
         {
-            if (Status != RoomStatus.Closed && !RoomParticipants.Any() && !RoomEndpoints.Any() && IsCloseableRoom())
+            if (Status != RoomStatus.Closed && RoomParticipants.Count == 0 && RoomEndpoints.Count == 0 && IsCloseableRoom())
             {
                 Status = RoomStatus.Closed;
             }

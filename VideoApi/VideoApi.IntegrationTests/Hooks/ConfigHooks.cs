@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -36,7 +37,7 @@ namespace VideoApi.IntegrationTests.Hooks
         
         private static IConfigurationRoot _configRoot;
         
-        public ConfigHooks(TestContext context)
+        protected ConfigHooks(TestContext context)
         {
             context.Config = new Config();
             context.Tokens = new VideoApiTokens();
@@ -54,6 +55,7 @@ namespace VideoApi.IntegrationTests.Hooks
             Environment.SetEnvironmentVariable(VodafoneCallbackSecretConfigKeyName, secret);
         }
         
+        [SuppressMessage("Design", "CA1822:Mark members as static", Justification = "Needs to be non-static for the test hooks")]
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
         public void RegisterSecrets(TestContext context)
         {

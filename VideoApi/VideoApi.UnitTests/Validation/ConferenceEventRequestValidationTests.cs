@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using VideoApi.Contract.Requests;
@@ -49,7 +48,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoConferenceIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ConferenceEventRequestValidation.NoConferenceIdErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -63,7 +62,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x =>
+            result.Errors.Exists(x =>
                     x.ErrorMessage == ConferenceEventRequestValidation.InvalidConferenceIdFormatErrorMessage)
                 .Should().BeTrue();
         }
@@ -78,7 +77,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoEventIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ConferenceEventRequestValidation.NoEventIdErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -91,7 +90,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoParticipantIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ConferenceEventRequestValidation.NoParticipantIdErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -104,7 +103,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x =>
+            result.Errors.Exists(x =>
                     x.ErrorMessage == ConferenceEventRequestValidation.InvalidParticipantIdFormatErrorMessage)
                 .Should().BeTrue();
         }
@@ -119,7 +118,7 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoEventTypeErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ConferenceEventRequestValidation.NoEventTypeErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -172,11 +171,11 @@ namespace VideoApi.UnitTests.Validation
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Any(x => x.ErrorMessage == ConferenceEventRequestValidation.NoParticipantRoomIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ConferenceEventRequestValidation.NoParticipantRoomIdErrorMessage)
                 .Should().BeTrue();
         }
 
-        private ConferenceEventRequest BuildRequest()
+        private static ConferenceEventRequest BuildRequest()
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = Guid.NewGuid().ToString())
@@ -191,7 +190,7 @@ namespace VideoApi.UnitTests.Validation
             return request;
         }
 
-        private ConferenceEventRequest BuildRoomParticipantRequest()
+        private static ConferenceEventRequest BuildRoomParticipantRequest()
         {
             var request = Builder<ConferenceEventRequest>.CreateNew()
                 .With(x => x.ConferenceId = Guid.NewGuid().ToString())

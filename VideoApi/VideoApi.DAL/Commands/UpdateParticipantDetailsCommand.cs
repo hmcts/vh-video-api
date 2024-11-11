@@ -101,7 +101,16 @@ namespace VideoApi.DAL.Commands
                 if (command.CaseTypeGroup != null)
                     participantCasted.CaseTypeGroup = command.CaseTypeGroup;
             }
-        
+
+            await UpdateLinkedParticipants(participant, conference, command);
+   
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task UpdateLinkedParticipants(ParticipantBase participant,
+            Conference conference,
+            UpdateParticipantDetailsCommand command)
+        {
             // remove all linked participants where the current participant is the secondary, i.e., LinkedId
             //
             // get the Ids of the participants the primary participant is linked to
@@ -138,8 +147,6 @@ namespace VideoApi.DAL.Commands
                     throw new ParticipantLinkException(linkedParticipant.ParticipantRefId, linkedParticipant.LinkedRefId);
                 }
             }
-            
-            await _context.SaveChangesAsync();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace VideoApi.Events.Handlers
             var participantState =  ParticipantState.Available;
             var room = RoomType.WaitingRoom;
 
-            _logger.LogInformation("Room Participant Joined callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom}",
+            Logger.LogInformation("Room Participant Joined callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom}",
                 SourceConference.Id, SourceParticipant.Id, participantState, room, null, SourceParticipantRoom.Id);
             
             var participantIds = new List<Guid>

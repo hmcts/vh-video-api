@@ -33,7 +33,7 @@ namespace VideoApi.Validations
             RuleFor(x => x.ParticipantRoomId).Must(x => long.TryParse(x, out _)).When(EventIsRoomEvent).WithMessage(NoParticipantRoomIdErrorMessage);
         }
 
-        private bool EventIsRoomEvent(ConferenceEventRequest request)
+        private static bool EventIsRoomEvent(ConferenceEventRequest request)
         {
             return request.EventType == EventType.RoomParticipantDisconnected ||
                    request.EventType == EventType.RoomParticipantJoined ||

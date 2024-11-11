@@ -21,8 +21,6 @@ using VideoApi.Mappings;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
-using VideoApi.Services.Exceptions;
-using VideoApi.Services.Factories;
 using VideoApi.Services.Mappers;
 using VideoApi.Validations;
 using Task = System.Threading.Tasks.Task;
@@ -40,7 +38,6 @@ public class ConferenceController(
     ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
     ILogger<ConferenceController> logger,
     IAudioPlatformService audioPlatformService,
-    IAzureStorageServiceFactory azureStorageServiceFactory,
     IPollyRetryService pollyRetryService,
     IBookingService bookingService)
     : ControllerBase
@@ -452,40 +449,7 @@ public class ConferenceController(
             { HearingIds = request.HearingIds });
         return Ok();
     }
-    
-    [HttpGet("Wowza/ReconcileAudioFilesInStorage")]
-    [OpenApiOperation("ReconcileAudioFilesInStorage")]
-    [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    public async Task<IActionResult> ReconcileAudioFilesInStorage([FromQuery] AudioFilesInStorageRequest request)
-    {
-        if (request == null || string.IsNullOrEmpty(request.FileNamePrefix))
-        {
-            var msg = $"ReconcileFilesInStorage - File Name prefix is required.";
-            throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
-        }
-        
-        if (request.FilesCount <= 0)
-        {
-            var msg = $"ReconcileFilesInStorage - File count cannot be negative or zero.";
-            throw new AudioPlatformFileNotFoundException(msg, HttpStatusCode.NotFound);
-        }
-        
-        try
-        {
-            var azureStorageService = azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
-            
-            var result =
-                await azureStorageService.ReconcileFilesInStorage(request.FileNamePrefix, request.FilesCount);
-            
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            throw new AudioPlatformFileNotFoundException(e.Message, HttpStatusCode.InternalServerError);
-        }
-    }
-    
+
     /// <summary>
     /// Get today's conferences by HearingVenueName
     /// </summary>

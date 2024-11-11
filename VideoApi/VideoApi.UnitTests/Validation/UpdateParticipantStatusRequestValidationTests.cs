@@ -26,7 +26,7 @@ namespace VideoApi.UnitTests.Validation
             result.IsValid.Should().BeTrue();
         }
 
-        private UpdateParticipantStatusRequest BuildRequest()
+        private static UpdateParticipantStatusRequest BuildRequest()
         {
             return Builder<UpdateParticipantStatusRequest>.CreateNew()
                 .With(x => x.State = ParticipantState.InHearing)

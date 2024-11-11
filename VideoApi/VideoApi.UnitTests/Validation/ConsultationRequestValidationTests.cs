@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Contract.Requests;
 using VideoApi.Validations;
@@ -35,7 +34,7 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoConferenceIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ConsultationRequestValidation.NoConferenceIdErrorMessage)
                 .Should().BeTrue();
         }
 
@@ -49,11 +48,11 @@ namespace VideoApi.UnitTests.Validation
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
-            result.Errors.Any(x => x.ErrorMessage == ConsultationRequestValidation.NoRequestedForIdErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ConsultationRequestValidation.NoRequestedForIdErrorMessage)
                 .Should().BeTrue();
         }
 
-        private ConsultationRequestResponse BuildRequest()
+        private static ConsultationRequestResponse BuildRequest()
         {
             return new ConsultationRequestResponse
             {
