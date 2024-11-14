@@ -22,7 +22,9 @@ namespace VideoApi.Services
         public IVideoPlatformService Create(Supplier supplier)
         {
             var logger = serviceProvider.GetRequiredService<ILogger<SupplierPlatformService>>();
-            var selfTestHttpClient = serviceProvider.GetRequiredService<ISupplierSelfTestHttpClient>();
+            ISupplierSelfTestHttpClient selfTestHttpClient = supplier == Supplier.Vodafone 
+                ? serviceProvider.GetRequiredService<IVodafoneSelfTestHttpClient>() 
+                : serviceProvider.GetRequiredService<IKinlySelfTestHttpClient>();
             var pollyRetryService = serviceProvider.GetRequiredService<IPollyRetryService>();
 
             var supplierApiClient = GetSupplierApiClient(supplier);
@@ -30,7 +32,7 @@ namespace VideoApi.Services
 
             return new SupplierPlatformService(logger, selfTestHttpClient, pollyRetryService, supplierApiClient, supplierConfig, supplier);
         }
-
+        
         public SupplierConfiguration GetSupplierConfiguration(Supplier supplier) =>
             supplier switch
             {

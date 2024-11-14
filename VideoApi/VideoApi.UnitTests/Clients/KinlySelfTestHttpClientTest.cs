@@ -12,33 +12,33 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Clients
 {
-    public class SupplierSelfTestHttpClientTest
+    public class KinlySelfTestHttpClientTest
     {
         private readonly IOptions<KinlyConfiguration> _kinlyConfigOptions;
-        private readonly Mock<ILogger<SupplierSelfTestHttpClient>> _loggerMock;
-
-        public SupplierSelfTestHttpClientTest()
+        private readonly Mock<ILogger<KinlySelfTestHttpClient>> _loggerMock;
+        
+        public KinlySelfTestHttpClientTest()
         {
             _kinlyConfigOptions = Options.Create(new KinlyConfiguration());
-            _loggerMock = new Mock<ILogger<SupplierSelfTestHttpClient>>();
+            _loggerMock = new Mock<ILogger<KinlySelfTestHttpClient>>();
         }
         
         [Test]
         public async Task GetTestCallScoreAsync_returns_null_on_not_found()
         {
             _kinlyConfigOptions.Value.SelfTestApiUrl = $"http://{HttpStatusCode.NotFound}.com/";
-            var client = new SupplierSelfTestHttpClient(new HttpClient(new FakeHttpMessageHandler()), _kinlyConfigOptions, _loggerMock.Object);
+            var client = new KinlySelfTestHttpClient(new HttpClient(new FakeHttpMessageHandler()), _kinlyConfigOptions, _loggerMock.Object);
 
             var result = await client.GetTestCallScoreAsync(It.IsAny<Guid>());
 
             result.Should().BeNull();
         }
-
+        
         [Test]
         public async Task GetTestCallScoreAsync_test_call_result_object_passed_good()
         {
             _kinlyConfigOptions.Value.SelfTestApiUrl = $"http://{HttpStatusCode.OK}.com/";
-            var client = new SupplierSelfTestHttpClient(new HttpClient(new FakeHttpMessageHandler
+            var client = new KinlySelfTestHttpClient(new HttpClient(new FakeHttpMessageHandler
             {
                 ReturnContent = JsonConvert.SerializeObject(new Testcall{ Passed = true, Score = (int)TestScore.Good, User_id = Guid.NewGuid().ToString() })
             }), _kinlyConfigOptions, _loggerMock.Object);
