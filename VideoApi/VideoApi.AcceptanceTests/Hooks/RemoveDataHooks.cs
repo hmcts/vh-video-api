@@ -39,7 +39,7 @@ namespace VideoApi.AcceptanceTests.Hooks
         [AfterScenario(Order = (int)HooksSequence.RemoveAllTodaysConferences)]
         public static void RemoveAllTodaysConferences(TestContext context)
         {
-            context.Request = TestContext.Get(GetConferencesTodayForAdmin);
+            context.Request = TestContext.Get(GetConferencesToday);
             context.Response = context.Client().Execute(context.Request);
             context.Response.IsSuccessful.Should()
                 .BeTrue(
