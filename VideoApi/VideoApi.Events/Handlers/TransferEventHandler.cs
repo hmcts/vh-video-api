@@ -82,7 +82,8 @@ namespace VideoApi.Events.Handlers
                 case RoomType.HearingRoom:
                     return ParticipantState.InHearing;
                 default:
-                    throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferredToRoomLabel);
+                    throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel,
+                        callbackEvent.TransferredToRoomLabel);
             }
         }
     }
