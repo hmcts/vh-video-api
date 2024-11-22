@@ -10,6 +10,8 @@ namespace VideoApi.Domain
 {
     public class Conference : Entity<Guid>
     {
+        private readonly List<Room> _rooms;
+        
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
             string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl,
             Supplier supplier = Supplier.Kinly, ConferenceRoomType conferenceRoomType = ConferenceRoomType.VMR, AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
@@ -39,7 +41,7 @@ namespace VideoApi.Domain
             ConferenceRoomType = conferenceRoomType;
             AudioPlaybackLanguage = audioPlaybackLanguage;
         }
-
+        
         public Guid HearingRefId { get; private set; }
         public string CaseType { get; private set; }
         public DateTime ScheduledDateTime { get; private set; }
@@ -60,24 +62,21 @@ namespace VideoApi.Domain
         public string IngestUrl { get; set; }
         public DateTime? CreatedDateTime { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-
-        private readonly List<Room> _rooms;
         public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
         public Supplier Supplier { get; private set; }
         public ConferenceRoomType ConferenceRoomType { get; private set; }
         public AudioPlaybackLanguage AudioPlaybackLanguage { get; private set; }
         
-        public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode,
-            string telephoneConferenceId)
+        public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode, string telephoneConferenceId)
         {
             MeetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
         }
-
+        
         public MeetingRoom GetMeetingRoom()
         {
             return MeetingRoom.IsSet() ? MeetingRoom : null;
         }
-
+        
         public void AddParticipant(ParticipantBase participant)
         {
             if (DoesParticipantExist(participant.Username))
@@ -87,7 +86,7 @@ namespace VideoApi.Domain
 
             Participants.Add(participant);
         }
-
+        
         public void RemoveParticipant(ParticipantBase participant)
         {
             if (!DoesParticipantExist(participant.Username))
@@ -98,12 +97,12 @@ namespace VideoApi.Domain
             var existingParticipant = Participants.Single(x => x.Username == participant.Username);
             Participants.Remove(existingParticipant);
         }
-
+        
         public bool DoesParticipantExist(string username)
         {
             return Participants.Any(x => x.Username == username);
         }
-
+        
         public IList<ParticipantBase> GetParticipants()
         {
             return Participants;
@@ -118,7 +117,7 @@ namespace VideoApi.Domain
 
             Endpoints.Add(endpoint);
         }
-
+        
         public void RemoveEndpoint(Endpoint endpoint)
         {
             if (!DoesEndpointExist(endpoint.SipAddress))
@@ -129,17 +128,17 @@ namespace VideoApi.Domain
             var existingEndpoint = Endpoints.Single(x => x.SipAddress == endpoint.SipAddress);
             Endpoints.Remove(existingEndpoint);
         }
-
+        
         private bool DoesEndpointExist(string sipAddress)
         {
             return Endpoints.Any(x => x.SipAddress == sipAddress);
         }
-
+        
         public IList<Endpoint> GetEndpoints()
         {
             return Endpoints;
         }
-
+        
         public void UpdateConferenceStatus(ConferenceState status)
         {
             if (status == ConferenceState.NotStarted)
@@ -160,7 +159,7 @@ namespace VideoApi.Domain
             State = status;
             ConferenceStatuses.Add(new ConferenceStatus(status));
         }
-
+        
         public void CloseConference()
         {
             ClosedDateTime = DateTime.UtcNow;
@@ -168,22 +167,22 @@ namespace VideoApi.Domain
             State = ConferenceState.Closed;
             ConferenceStatuses.Add(new ConferenceStatus(ConferenceState.Closed));
         }
-
+        
         public IList<ConferenceStatus> GetConferenceStatuses()
         {
             return ConferenceStatuses;
         }
-
+        
         public ConferenceState GetCurrentStatus()
         {
             return State;
         }
-
+        
         public bool IsClosed()
         {
             return State == ConferenceState.Closed;
         }
-
+        
         public bool IsConferenceAccessible()
         {
             if (State != ConferenceState.Closed)
@@ -212,21 +211,22 @@ namespace VideoApi.Domain
             HearingVenueName = hearingVenueName;
             AudioRecordingRequired = audioRecordingRequired;
         }
-
+        
         public ParticipantBase GetJudge()
         {
             return Participants.SingleOrDefault(x => x is Participant && ((Participant)x).IsJudge());
         }
-
+        
         public ParticipantBase GetVideoHearingOfficer()
         {
             return Participants.SingleOrDefault(x => x is Participant && ((Participant)x).IsVideoHearingOfficer());
         }
-
+        
         public IList<InstantMessage> GetInstantMessageHistory()
         {
             return InstantMessageHistory.OrderByDescending(x => x.TimeStamp).ToList();
         }
+        
         public IList<InstantMessage> GetInstantMessageHistoryFor(string participantName)
         {
             return InstantMessageHistory
@@ -235,17 +235,18 @@ namespace VideoApi.Domain
                 .OrderByDescending(x => x.TimeStamp)
                 .ToList();
         }
+        
         public void AddInstantMessage(string from, string messageText, string to)
         {
             var message = new InstantMessage(from, messageText, to);
             InstantMessageHistory.Add(message);
         }
-
+        
         public void ClearInstantMessageHistory()
         {
             InstantMessageHistory.Clear();
         }
-
+        
         public void AddLinkedParticipants(Guid primaryParticipantRefId, Guid secondaryParticipantRefId, LinkedParticipantType linkedParticipantType)
         {
             var primaryParticipant =
@@ -261,12 +262,12 @@ namespace VideoApi.Domain
                 ((Participant)secondaryParticipant).AddLink(primaryParticipant.Id, linkedParticipantType);
             }
         }
-
+        
         public void AnonymiseCaseName()
         {
             CaseName = new StringCreator().Get(9).ToUpperInvariant();
         }
-
+        
         public void AnonymiseQuickLinkParticipants()
         {
             var participants = Participants
@@ -284,7 +285,7 @@ namespace VideoApi.Domain
                 participant.DisplayName = randomString;
             }
         }
-
+        
         public void AddRooms(IList<Room> rooms)
         {
             _rooms.AddRange(rooms);
@@ -336,12 +337,12 @@ namespace VideoApi.Domain
             existingParticipant.UpdateCurrentRoom(null);
             existingParticipant.UpdateStatus(TelephoneState.Disconnected);
         }
-
+        
         private bool DoesTelephoneParticipantExist(Guid telephoneParticipantId)
         {
             return TelephoneParticipants.Any(x => x.Id == telephoneParticipantId);
         }
-
+        
         /// <summary>
         /// Get all telephone participants in the conference who are not disconnected
         /// </summary>
