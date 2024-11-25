@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -15,13 +14,14 @@ namespace VideoApi.UnitTests.Services
     public class SupplierPlatformServiceFactoryTests
     {
         private Mock<IServiceProvider> _serviceProvider;
-
+        
         [SetUp]
         public void SetUp()
         {
             _serviceProvider = new Mock<IServiceProvider>();
             var logger = new Mock<ILogger<SupplierPlatformService>>();
-            var supplierSelfTestHttpClient = new Mock<ISupplierSelfTestHttpClient>();
+            var kinlySelfTestHttpClient = new Mock<IKinlySelfTestHttpClient>();
+            var vodafoneSelfTestHttpClient = new Mock<IVodafoneSelfTestHttpClient>();
             var pollyRetryService = new Mock<IPollyRetryService>();
             var kinlyApiClient = new Mock<IKinlyApiClient>();
             var vodafoneApiClient = new Mock<IVodafoneApiClient>();
@@ -32,7 +32,8 @@ namespace VideoApi.UnitTests.Services
             kinlyConfigOptions.Setup(m => m.Value).Returns(kinlyConfig);
             vodafoneConfigOptions.Setup(m => m.Value).Returns(vodafoneConfig);
             _serviceProvider.Setup(x => x.GetService(typeof(ILogger<SupplierPlatformService>))).Returns(logger.Object);
-            _serviceProvider.Setup(x => x.GetService(typeof(ISupplierSelfTestHttpClient))).Returns(supplierSelfTestHttpClient.Object);
+            _serviceProvider.Setup(x => x.GetService(typeof(IVodafoneSelfTestHttpClient))).Returns(vodafoneSelfTestHttpClient.Object);
+            _serviceProvider.Setup(x => x.GetService(typeof(IKinlySelfTestHttpClient))).Returns(kinlySelfTestHttpClient.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IPollyRetryService))).Returns(pollyRetryService.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IKinlyApiClient))).Returns(kinlyApiClient.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IVodafoneApiClient))).Returns(vodafoneApiClient.Object);

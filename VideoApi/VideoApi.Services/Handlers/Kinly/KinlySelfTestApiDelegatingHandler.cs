@@ -3,8 +3,6 @@ using VideoApi.Services.Handlers.Base;
 
 namespace VideoApi.Services.Handlers.Kinly;
 
-public class KinlySelfTestApiDelegatingHandler : CustomSelfTestApiDelegatingHandler
-{
-    public KinlySelfTestApiDelegatingHandler(IKinlyJwtProvider tokenProvider) : base(tokenProvider){}
-}
+public class KinlySelfTestApiDelegatingHandler(IKinlyJwtProvider tokenProvider)
+    : CustomSelfTestApiDelegatingHandler(tokenProvider);
 

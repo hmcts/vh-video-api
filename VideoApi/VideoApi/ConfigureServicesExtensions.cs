@@ -170,8 +170,12 @@ namespace VideoApi
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
                 
                 services
-                    .AddHttpClient<ISupplierSelfTestHttpClient, SupplierSelfTestHttpClient>()
+                    .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()
                     .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
+                
+                services
+                    .AddHttpClient<IVodafoneSelfTestHttpClient, VodafoneSelfTestHttpClient>()
+                    .AddHttpMessageHandler<VodafoneSelfTestApiDelegatingHandler>();
                 
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
