@@ -3,8 +3,6 @@ using VideoApi.Services.Handlers.Base;
 
 namespace VideoApi.Services.Handlers.Vodafone;
 
-public class VodafoneSelfTestApiDelegatingHandler : CustomSelfTestApiDelegatingHandler
-{
-    public VodafoneSelfTestApiDelegatingHandler(IVodafoneJwtProvider tokenProvider) : base(tokenProvider){}
-}
+public class VodafoneSelfTestApiDelegatingHandler(IVodafoneJwtProvider tokenProvider)
+    : CustomSelfTestApiDelegatingHandler(tokenProvider);
 
