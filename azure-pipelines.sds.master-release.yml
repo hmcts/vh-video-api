@@ -22,7 +22,8 @@ parameters:
     publishNuget: true
     pushHelmChart: true
   - env: 'demo'
-    buildPushImage: false
+    requireApproval: true
+    buildPushImage: true
     publishNuget: false
     pushHelmChart: false
   - env: 'test'
