@@ -1,5 +1,5 @@
-using Microsoft.Extensions.Logging;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
@@ -22,7 +22,7 @@ namespace VideoApi.Events.Handlers
         : EventHandlerBase<TransferEventHandler>(queryHandler, commandHandler, logger)
     {
         public override EventType EventType => EventType.Transfer;
-
+        
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             Logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
@@ -64,11 +64,10 @@ namespace VideoApi.Events.Handlers
                 }
             }
         }
-
+        
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if (!callbackEvent.TransferTo.HasValue 
-                && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
+            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
             {
                 return ParticipantState.InConsultation;
             }
@@ -82,8 +81,7 @@ namespace VideoApi.Events.Handlers
                 case RoomType.HearingRoom:
                     return ParticipantState.InHearing;
                 default:
-                    throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel,
-                        callbackEvent.TransferredToRoomLabel);
+                    throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferredToRoomLabel, callbackEvent.TransferTo);
             }
         }
     }
