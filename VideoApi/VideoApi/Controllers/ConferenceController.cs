@@ -371,7 +371,7 @@ public class ConferenceController(
         }
         catch (ConferenceNotFoundException ex)
         {
-            logger.LogError(ex, "Unable to find conference {conferenceId}", conferenceId);
+            logger.LogError(ex, "Unable to find conference {ConferenceId}", conferenceId);
             
             return NotFound();
         }
@@ -449,25 +449,28 @@ public class ConferenceController(
             { HearingIds = request.HearingIds });
         return Ok();
     }
-
+    
     /// <summary>
-    /// Get today's conferences by HearingVenueName
+    /// Get today's conferences, optionally filtered by hearing venue names
     /// </summary>
     /// <returns>Conference details</returns>
-    [HttpGet("today/vho")]
-    [OpenApiOperation("GetConferencesTodayForAdminByHearingVenueName")]
-    [ProducesResponseType(typeof(List<ConferenceCoreResponse>), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> GetConferencesToday([FromQuery] ConferenceForAdminRequest request)
+    [HttpGet("today")]
+    [OpenApiOperation("GetConferencesToday")]
+    [ProducesResponseType(typeof(List<ConferenceDetailsResponse>), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetConferencesToday([FromQuery] ConferenceTodayRequest request)
     {
-        logger.LogDebug("GetConferencesTodayForAdmin");
-        
-        var query = new GetConferencesTodayForAdminByHearingVenueNameQuery
+        var conferences = await queryHandler.Handle<GetConferencesTodayQuery, List<Conference>>(new GetConferencesTodayQuery
         {
             HearingVenueNames = request.HearingVenueNames
-        };
-        
-        var conferences = await queryHandler.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<Conference>>(query);
-        return Ok(conferences.Select(ConferenceCoreResponseMapper.Map));
+        });
+        var conferencesForToday = new List<ConferenceDetailsResponse>();
+        foreach (var conference in conferences)
+        {
+            var supplierPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
+            var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
+            conferencesForToday.Add(ConferenceToDetailsResponseMapper.Map(conference, supplierConfiguration));
+        }
+        return Ok(conferencesForToday);
     }
     
     private async Task<bool> BookMeetingRoomWithRetriesAsync(Guid conferenceId,

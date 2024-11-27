@@ -1,25 +1,23 @@
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
 using VideoApi.DAL.Queries;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.IntegrationTests.Database.Queries
 {
-    public class GetConferencesTodayForAdminByHearingVenueNameQueryTests : DatabaseTestsBase
+    public class GetConferencesTodayQueryTests : DatabaseTestsBase
     {
-        private GetConferencesTodayForAdminByHearingVenueNameQueryHandler _handler;
+        private GetConferencesTodayQueryHandler _handler;
         
         [SetUp]
         public void Setup()
         {
             var context = new VideoApiDbContext(VideoBookingsDbContextOptions);
-            _handler = new GetConferencesTodayForAdminByHearingVenueNameQueryHandler(context);
+            _handler = new GetConferencesTodayQueryHandler(context);
         }
         
         [TearDown]
@@ -27,7 +25,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         {
             await TestDataManager.CleanUpSeededData();
         }
-
+        
         [Test]
         public async Task Should_get_conference_with_meeting_room_for_today()
         {
@@ -98,7 +96,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference7);
             await TestDataManager.SeedConference(conference8);
 
-            var conferences = await _handler.Handle(new GetConferencesTodayForAdminByHearingVenueNameQuery());
+            var conferences = await _handler.Handle(new GetConferencesTodayQuery());
 
             conferences.Should().NotBeEmpty();
             foreach (var conference in conferences)
@@ -107,7 +105,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 conference.MeetingRoom.IsSet().Should().BeTrue();
             }
         }
-
+        
         [Test]
         public async Task should_get_conferences_for_today_filtered_by_judge_firstname()
         {
@@ -146,7 +144,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             await TestDataManager.SeedConference(conference5);
             await TestDataManager.SeedConference(conference6);
 
-            var result = await _handler.Handle(new GetConferencesTodayForAdminByHearingVenueNameQuery
+            var result = await _handler.Handle(new GetConferencesTodayQuery
             {
                 HearingVenueNames = new List<string> { hearingVenueName1, hearingVenueName2 }
             });

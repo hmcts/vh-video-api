@@ -307,19 +307,19 @@ namespace VideoApi.Client
         System.Threading.Tasks.Task AnonymiseConferenceWithHearingIdsAsync(AnonymiseConferenceWithHearingIdsRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// Get today's conferences by HearingVenueName
+        /// Get today's conferences, optionally filtered by hearing venue names
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesTodayAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Get today's conferences by HearingVenueName
+        /// Get today's conferences, optionally filtered by hearing venue names
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesTodayAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Start or resume a video hearing
@@ -3015,22 +3015,22 @@ namespace VideoApi.Client
         }
 
         /// <summary>
-        /// Get today's conferences by HearingVenueName
+        /// Get today's conferences, optionally filtered by hearing venue names
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesTodayAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames)
         {
-            return GetConferencesTodayForAdminByHearingVenueNameAsync(hearingVenueNames, System.Threading.CancellationToken.None);
+            return GetConferencesTodayAsync(hearingVenueNames, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Get today's conferences by HearingVenueName
+        /// Get today's conferences, optionally filtered by hearing venue names
         /// </summary>
         /// <returns>Conference details</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceCoreResponse>> GetConferencesTodayForAdminByHearingVenueNameAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ConferenceDetailsResponse>> GetConferencesTodayAsync(System.Collections.Generic.IEnumerable<string> hearingVenueNames, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -3043,8 +3043,8 @@ namespace VideoApi.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "conferences/today/vho"
-                    urlBuilder_.Append("conferences/today/vho");
+                    // Operation Path: "conferences/today"
+                    urlBuilder_.Append("conferences/today");
                     urlBuilder_.Append('?');
                     if (hearingVenueNames != null)
                     {
@@ -3087,7 +3087,7 @@ namespace VideoApi.Client
                         else
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceCoreResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ConferenceDetailsResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
