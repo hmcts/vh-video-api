@@ -1,5 +1,5 @@
-using Microsoft.Extensions.Logging;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
@@ -22,7 +22,7 @@ namespace VideoApi.Events.Handlers
         : EventHandlerBase<TransferEventHandler>(queryHandler, commandHandler, logger)
     {
         public override EventType EventType => EventType.Transfer;
-
+        
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             Logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
@@ -64,7 +64,7 @@ namespace VideoApi.Events.Handlers
                 }
             }
         }
-
+        
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
             if (!callbackEvent.TransferTo.HasValue 

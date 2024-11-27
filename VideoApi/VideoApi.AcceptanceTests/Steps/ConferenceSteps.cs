@@ -191,7 +191,7 @@ namespace VideoApi.AcceptanceTests.Steps
         [Given(@"I have a get conferences today for a vho request")]
         public void GivenIHaveAValidGetTodaysConferencesRequest()
         {
-            _context.Request = TestContext.Get(GetConferencesTodayForAdmin);
+            _context.Request = TestContext.Get(GetConferencesToday);
         }
         
         

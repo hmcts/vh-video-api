@@ -156,8 +156,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             QueryHandlerMock
                 .Setup(x =>
-                    x.Handle<GetConferencesTodayForAdminByHearingVenueNameQuery, List<VideoApi.Domain.Conference>>(
-                        It.IsAny<GetConferencesTodayForAdminByHearingVenueNameQuery>()))
+                    x.Handle<GetConferencesTodayQuery, List<VideoApi.Domain.Conference>>(
+                        It.IsAny<GetConferencesTodayQuery>()))
                 .ReturnsAsync(new List<VideoApi.Domain.Conference> { TestConference });
             
             QueryHandlerMock
