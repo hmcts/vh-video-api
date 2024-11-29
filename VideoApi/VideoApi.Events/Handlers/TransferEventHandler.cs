@@ -67,8 +67,7 @@ namespace VideoApi.Events.Handlers
         
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if (!callbackEvent.TransferTo.HasValue 
-                && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
+            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
             {
                 return ParticipantState.InConsultation;
             }
@@ -82,8 +81,7 @@ namespace VideoApi.Events.Handlers
                 case RoomType.HearingRoom:
                     return ParticipantState.InHearing;
                 default:
-                    throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel,
-                        callbackEvent.TransferredToRoomLabel);
+                    throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferredToRoomLabel, callbackEvent.TransferTo);
             }
         }
     }

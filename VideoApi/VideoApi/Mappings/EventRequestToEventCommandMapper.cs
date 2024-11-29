@@ -29,7 +29,7 @@ namespace VideoApi.Mappings
 
             return command;
         }
-
+        
         public static CallbackEvent MapEventRequestToEventHandlerDto(Guid conferenceId, Guid participantId,
             ConferenceEventRequest request)
         {
@@ -52,15 +52,16 @@ namespace VideoApi.Mappings
                 ParticipantRoomId = isValidRoomId ? roomId : (long?) null
             };
         }
-
-        private static void GetRoomTypeEnums(ConferenceEventRequest request, out RoomType? transferTo,
-            out RoomType? transferFrom)
+        
+        private static void GetRoomTypeEnums(ConferenceEventRequest request, out RoomType? transferTo, out RoomType? transferFrom)
         {
-            var isTransferFromEnum = Enum.TryParse(request.TransferFrom, out RoomType transferFromEnum);
-            var isTransferToEnum = Enum.TryParse(request.TransferTo, out RoomType transferToEnum);
+            var isTransferFromEnum = Enum.TryParse(request.TransferFrom?.Sanitize(), out RoomType transferFromEnum);
+            var isTransferToEnum = Enum.TryParse(request.TransferTo?.Sanitize(), out RoomType transferToEnum);
 
             transferFrom = isTransferFromEnum ? transferFromEnum : (RoomType?) null;
             transferTo = isTransferToEnum ? transferToEnum : (RoomType?) null;
         }
+        
+        private static string Sanitize(this string room) => room.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase) ? "ConsultationRoom" : room;
     }
 }

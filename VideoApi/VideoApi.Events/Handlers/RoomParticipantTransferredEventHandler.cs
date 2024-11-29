@@ -18,7 +18,7 @@ namespace VideoApi.Events.Handlers
         : EventHandlerBase<RoomParticipantTransferredEventHandler>(queryHandler, commandHandler, logger)
     {
         public override EventType EventType => EventType.RoomParticipantTransfer;
-
+        
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             var i = 0;
@@ -54,7 +54,7 @@ namespace VideoApi.Events.Handlers
                     return ParticipantState.InHearing;
                 default:
                     throw new RoomTransferException(callbackEvent.TransferredFromRoomLabel,
-                        callbackEvent.TransferredToRoomLabel);
+                        callbackEvent.TransferredToRoomLabel, callbackEvent.TransferTo);
             }
         }
     }
