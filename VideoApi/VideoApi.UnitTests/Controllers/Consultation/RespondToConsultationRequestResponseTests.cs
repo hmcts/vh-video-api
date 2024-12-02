@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Threading.Tasks;
+using Testing.Common.Assertions;
 using VideoApi.Contract.Requests;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -69,7 +70,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             };
 
             var result = await Controller.RespondToConsultationRequestAsync(request);
-            var typedResult = (NotFoundResult)result;
+            var typedResult = (NotFoundObjectResult)result;
             typedResult.Should().NotBeNull();
         }
 
@@ -89,8 +90,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             };
 
             var result = await Controller.RespondToConsultationRequestAsync(request);
-            var typedResult = (NotFoundResult)result;
-            typedResult.Should().NotBeNull();
+            
+            result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result;
+            ((ValidationProblemDetails)objectResult.Value).ContainsKeyAndErrorMessage("RoomLabel", "Please provide a room label");
         }
     }
 }
