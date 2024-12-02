@@ -13,6 +13,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services;
 using Endpoint = VideoApi.Domain.Endpoint;
+using Endpoint = VideoApi.Domain.Endpoint;
 using EndpointState = VideoApi.Domain.Enums.EndpointState;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
@@ -218,6 +219,11 @@ namespace VideoApi.Controllers
             return string.IsNullOrWhiteSpace(endpoint.CurrentConsultationRoom?.Label)
                 ? RoomType.WaitingRoom.ToString()
                 : endpoint.CurrentConsultationRoom.Label;
+        }
+        
+        private static string TransferFromRoomType(Endpoint endpoint)
+        {
+            return string.IsNullOrWhiteSpace(endpoint.CurrentConsultationRoom?.Label) ? RoomType.WaitingRoom.ToString() : endpoint.CurrentConsultationRoom.Label;
         }
     }
 }
