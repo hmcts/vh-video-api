@@ -13,6 +13,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
+using Endpoint = VideoApi.Domain.Endpoint;
 using EndpointState = VideoApi.Domain.Enums.EndpointState;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
@@ -188,13 +189,16 @@ namespace VideoApi.Controllers
             var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == transferRequest.ParticipantId);
 
             string supplierParticipantId;
+            string transferFromRoom;
             if (participant != null)
             {
                 supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
+                transferFromRoom = TransferFromRoomType(participant);
             }
             else if (endpoint != null)
             {
                 supplierParticipantId = endpoint.Id.ToString();
+                transferFromRoom = TransferFromRoomType(endpoint);
             }
             else
             {
@@ -210,7 +214,7 @@ namespace VideoApi.Controllers
                         logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
                             supplierParticipantId, conferenceId);
                         await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
-                           TransferFromRoomType(participant), RoomType.HearingRoom.ToString());
+                           transferFromRoom, RoomType.HearingRoom.ToString());
                         break;
                     case TransferType.Dismiss:
                         logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
@@ -238,6 +242,11 @@ namespace VideoApi.Controllers
         private static string TransferFromRoomType(ParticipantBase participant)
         {
             return string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom?.Label) ? RoomType.WaitingRoom.ToString() : participant.CurrentConsultationRoom.Label;
+        }
+        
+        private static string TransferFromRoomType(Endpoint endpoint)
+        {
+            return string.IsNullOrWhiteSpace(endpoint.CurrentConsultationRoom?.Label) ? RoomType.WaitingRoom.ToString() : endpoint.CurrentConsultationRoom.Label;
         }
     }
 }
