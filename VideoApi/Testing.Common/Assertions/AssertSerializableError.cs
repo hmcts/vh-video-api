@@ -9,5 +9,12 @@ namespace Testing.Common.Assertions
         {
             ((ValidationProblemDetails)objectResult.Value).Errors.Should().NotBeEmpty();
         }
+        
+        public static void ContainsKeyAndErrorMessage(this ValidationProblemDetails error, string key, string errorMessage)
+        {
+            error.Should().NotBeNull();
+            error.Errors.ContainsKey(key).Should().BeTrue();
+            error.Errors[key][0].Should().Be(errorMessage);
+        }
     }
 }

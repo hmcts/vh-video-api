@@ -171,10 +171,10 @@ namespace VideoApi.Controllers
         }
         
         /// <summary>
-        /// Transfer a participant in or out of a hearing
+        /// Transfer a participant or endpoint in or out of a hearing
         /// </summary>
         /// <param name="conferenceId">Id for conference</param>
-        /// <param name="transferRequest">Participant and direction of transfer</param>
+        /// <param name="transferRequest">Participant or Endpoint ID and direction of transfer</param>
         /// <returns></returns>
         [HttpPost("{conferenceId}/transfer")]
         [OpenApiOperation("TransferParticipant")]
@@ -184,8 +184,22 @@ namespace VideoApi.Controllers
             var conference =
                 await queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
-            var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
-            var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == transferRequest.ParticipantId);
+            var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == transferRequest.ParticipantId);
+
+            string supplierParticipantId;
+            if (participant != null)
+            {
+                supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
+            }
+            else if (endpoint != null)
+            {
+                supplierParticipantId = endpoint.Id.ToString();
+            }
+            else
+            {
+                return BadRequest("Participant or Endpoint not found");
+            }
             var transferType = transferRequest.TransferType;
             var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
             try
