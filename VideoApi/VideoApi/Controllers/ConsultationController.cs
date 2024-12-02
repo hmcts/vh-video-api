@@ -9,14 +9,12 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
-using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Extensions;
-using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Controllers
@@ -40,7 +38,8 @@ namespace VideoApi.Controllers
         [HttpPost]
         [OpenApiOperation("RespondToConsultationRequestAsync")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RespondToConsultationRequestAsync(ConsultationRequestResponse request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
@@ -48,7 +47,7 @@ namespace VideoApi.Controllers
             if (conference == null)
             {
                 logger.LogWarning("Unable to find conference");
-                return NotFound();
+                return NotFound($"Unable to find conference {request.ConferenceId}");
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
@@ -62,18 +61,19 @@ namespace VideoApi.Controllers
             if (requestedFor == null)
             {
                 logger.LogWarning("Unable to find participant request for with id {RequestedFor}", request.RequestedFor);
-                return NotFound();
+                return NotFound($"Unable to find participant id request for {request.RequestedFor}");
             }
 
             if (string.IsNullOrEmpty(request.RoomLabel))
             {
                 logger.LogWarning("Please provide a room label");
-                return NotFound();
+                ModelState.AddModelError(nameof(request.RoomLabel), "Please provide a room label");
+                return ValidationProblem(ModelState);
             }
 
             if (request.Answer != ConsultationAnswer.Accepted)
             {
-                logger.LogWarning("Answered {Answer}", request.Answer);
+                logger.LogInformation("Answered {Answer}", request.Answer);
                 return NoContent();
             }
 
@@ -97,8 +97,9 @@ namespace VideoApi.Controllers
         [HttpPost("endpoint")]
         [OpenApiOperation("JoinEndpointToConsultation")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
             var isVhoRequest = request.RequestedById == Guid.Empty;
@@ -158,8 +159,9 @@ namespace VideoApi.Controllers
 
             if (room.RoomEndpoints.Count != 0)
             {
-                logger.LogWarning("Unable to join endpoint {endpointId} to {RoomLabel}", endpoint.Id, request.RoomLabel);
-                return BadRequest("Room already has an active endpoint");
+                logger.LogWarning("Unable to join endpoint {EndpointId} to {RoomLabel}", endpoint.Id, request.RoomLabel);
+                ModelState.AddModelError("RoomLabel", "Room already has an active endpoint");
+                return ValidationProblem(ModelState);
             }
 
             await consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
@@ -169,100 +171,43 @@ namespace VideoApi.Controllers
         [HttpPost("lockroom")]
         [OpenApiOperation("LockRoom")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LockRoomRequestAsync(LockRoomRequest request)
         {
-            try
-            {
-                var lockRoomCommand = new LockRoomCommand(request.ConferenceId, request.RoomLabel, request.Lock);
-                await commandHandler.Handle(lockRoomCommand);
-                return Ok();
-            }
-            catch (RoomNotFoundException ex)
-            {
-                logger.LogError(ex, "Room doest not exist in conference {conferenceId} with label {label}", request.ConferenceId, request.RoomLabel);
-                return NotFound("Room does not exist");
-            }
+            var lockRoomCommand = new LockRoomCommand(request.ConferenceId, request.RoomLabel, request.Lock);
+            await commandHandler.Handle(lockRoomCommand);
+            return Ok();
         }
 
         [HttpPost("createconsultation")]
         [OpenApiOperation("CreatePrivateConsultation")]
         [ProducesResponseType(typeof(RoomResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartNewConsultationRequestAsync(StartConsultationRequest request)
         {
-            try
-            {
-                var room = await consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
-                await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+            var room = await consultationService.CreateNewConsultationRoomAsync(request.ConferenceId);
+            await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy,
+                room.Label);
 
-                var response = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room);
-                return Ok(response);
-            }
-            catch (ConferenceNotFoundException ex)
-            {
-                logger.LogError(ex,
-                    "Cannot create consultation for conference: {conferenceId} as the conference does not exist",
-                    request.ConferenceId);
-                return NotFound("Conference does not exist");
-            }
-            catch (ParticipantNotFoundException ex)
-            {
-                logger.LogError(ex,
-                    "Cannot create consultation with participant: {participantId} as the participant does not exist",
-                    request.RequestedBy);
-                return NotFound("Participant doesn't exist");
-            }
-            catch (SupplierApiException ex)
-            {
-                logger.LogError(ex,
-                    "Unable to create a consultation room for ConferenceId: {conferenceId}",
-                    request.ConferenceId);
-                return BadRequest("Consultation room creation failed");
-            }
+            var response = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room);
+            return Ok(response);
         }
 
         [HttpPost("start")]
         [OpenApiOperation("StartPrivateConsultation")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
-            try
-            {
-                var room = await consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
-                    request.RoomType.MapToDomainEnum());
-                await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
+            var room = await consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
+                request.RoomType.MapToDomainEnum());
+            await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy,
+                room.Label);
 
-                return Accepted();
-            }
-            catch (ConferenceNotFoundException ex)
-            {
-                logger.LogError(ex,
-                    "Cannot create consultation for conference: {ConferenceId} as the conference does not exist",
-                    request.ConferenceId);
-                return NotFound("Conference does not exist");
-            }
-            catch (ParticipantNotFoundException ex)
-            {
-                logger.LogError(ex,
-                    "Cannot create consultation with participant: {ParticipantId} as the participant does not exist",
-                    request.RequestedBy);
-                return NotFound("Participant doesn't exist");
-            }
-            catch (SupplierApiException ex)
-            {
-                logger.LogError(ex,
-                    "Unable to create a consultation room for ConferenceId: {ConferenceId}",
-                    request.ConferenceId);
-                return BadRequest("Consultation room creation failed");
-            }
+            return Accepted();
         }
 
         /// <summary>
@@ -273,8 +218,8 @@ namespace VideoApi.Controllers
         [HttpPost("leave")]
         [OpenApiOperation("LeaveConsultation")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LeaveConsultationAsync(LeaveConsultationRequest request)
         {
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
@@ -295,7 +240,8 @@ namespace VideoApi.Controllers
 
             if (!participant.CurrentConsultationRoomId.HasValue)
             {
-                return BadRequest("Participant is not in a consultation");
+                ModelState.AddModelError("ParticipantId", "Participant is not in a consultation");
+                return ValidationProblem(ModelState);
             }
 
             await consultationService.LeaveConsultationAsync(conference.Id, participant.Id, participant.GetCurrentRoom(), RoomType.WaitingRoom.ToString());

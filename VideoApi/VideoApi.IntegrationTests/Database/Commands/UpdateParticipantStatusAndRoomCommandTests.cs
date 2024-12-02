@@ -56,7 +56,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
-        [Test] public async Task should_add_participant_into_a_room_when_static_room_label__provided_but_returns_null()
+        [Test] public async Task should_throw_exception_if_updating_to_consultaiton_room_not_created_first()
         {
             var seededConference = await TestDataManager.SeedConference();
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
@@ -66,17 +66,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const string staticRoomlabel = "ConsultationRoom1";
 
             var command = new UpdateParticipantStatusAndRoomCommand(seededConference.Id, participant.Id, state, null, staticRoomlabel);
-            await _handler.Handle(command);
-
-            var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(seededConference.Id));
-            var updatedParticipant = updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
-            var afterState = updatedParticipant.GetCurrentStatus();
-
-            afterState.ParticipantState.Should().Be(state);
-            updatedParticipant.CurrentRoom.Should().BeNull();
-            updatedParticipant.CurrentConsultationRoom.Label.Should().Be(staticRoomlabel);
-            updatedParticipant.UpdatedAt.Should().BeAfter(updatedParticipant.CreatedAt.Value);
-            updatedParticipant.CurrentConsultationRoom.UpdatedAt.Should().Be(updatedParticipant.CurrentConsultationRoom.CreatedAt.Value);
+            Assert.ThrowsAsync<RoomNotFoundException>(() => _handler.Handle(command));
         }
 
 

@@ -30,6 +30,8 @@ namespace VideoApi.Events.Handlers
             
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
 
+            
+            
             var command =
                 new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
                     callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
