@@ -6,5 +6,6 @@ namespace VideoApi.Domain.Enums
         Connected = 2,
         Disconnected = 3,
         InConsultation = 4,
+        InHearing = 5
     }
 }
