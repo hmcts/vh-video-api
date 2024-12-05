@@ -77,13 +77,16 @@ namespace VideoApi.DAL.Commands
                 return null;
             }
 
+            if (command.RoomLabel == null)
+            {
+                return null;
+            }
+
             var transferToRoom = await _context.Rooms.OfType<ConsultationRoom>().SingleOrDefaultAsync(x => x.Label == command.RoomLabel && x.ConferenceId == command.ConferenceId).ConfigureAwait(true);
             if (transferToRoom == null)
             {
-                // The only way for the room not to have been created by us (where it would already be in the table) is by kinly via a VHO consultation.
-                var vhoConsultation = new ConsultationRoom(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
-                _context.Rooms.Add(vhoConsultation);
-                transferToRoom = vhoConsultation;
+                // there is no longer an iframe for the supplier to trigger the creation of the room, so we don't need to create it here.
+                throw new RoomNotFoundException(command.RoomLabel);
             }
 
             return transferToRoom;

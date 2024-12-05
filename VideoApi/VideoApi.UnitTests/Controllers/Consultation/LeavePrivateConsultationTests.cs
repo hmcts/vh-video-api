@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
+using Testing.Common.Assertions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain.Enums;
@@ -69,7 +70,11 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             };
 
             var result = await Controller.LeaveConsultationAsync(leaveConsultationRequest);
-            result.Should().BeOfType<BadRequestObjectResult>();
+            
+            result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result;
+            ((ValidationProblemDetails)objectResult.Value).ContainsKeyAndErrorMessage("ParticipantId",
+                "Participant is not in a consultation");
         }
     }
 }
