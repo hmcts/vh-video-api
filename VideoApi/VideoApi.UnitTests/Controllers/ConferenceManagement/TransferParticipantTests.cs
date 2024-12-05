@@ -116,6 +116,25 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         }
 
         [Test]
+        public async Task should_move_endpoint_into_hearing_room()
+        {
+            var conferenceId = TestConference.Id;
+            var endpoint = TestConference.Endpoints[0];
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = endpoint.Id,
+                TransferType = TransferType.Call
+            };
+            
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
+                    RoomType.HearingRoom.ToString()), Times.Once);
+        }
+        
+        [Test]
         public async Task should_dismiss_participant_from_hearing_room()
         {
             var conferenceId = TestConference.Id;
