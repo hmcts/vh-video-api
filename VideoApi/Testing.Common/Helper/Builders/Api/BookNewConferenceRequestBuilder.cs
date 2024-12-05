@@ -30,6 +30,7 @@ namespace Testing.Common.Helper.Builders.Api
                 .With(x => x.Endpoints = new List<AddEndpointRequest>())
                 .With(x => x.ConferenceRoomType = ConferenceRoomType.VMR)
                 .With(x => x.AudioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
+                .With(x => x.Supplier = Supplier.Vodafone)
                 .Build();
         }
 

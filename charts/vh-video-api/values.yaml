@@ -77,7 +77,8 @@ java:
         - kinlyconfiguration--selftestapisecret
         #vodafoneconfiguration
         - vodafoneconfiguration--apisecret
-        - vodafoneconfiguration--selftestapikey
+        - name: vodafoneconfiguration--selftestapikey
+          alias: vodafoneconfiguration--selftestapisecret
         - vodafoneconfiguration--apiurl
         - vodafoneconfiguration--selftestapiurl
         - vodafoneconfiguration--pexipnode
