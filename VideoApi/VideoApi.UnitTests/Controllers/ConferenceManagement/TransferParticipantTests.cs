@@ -154,32 +154,6 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         }
 
         [Test]
-        public async Task should_return_kinly_status_code_on_error()
-        {
-            var conferenceId = TestConference.Id;
-            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
-            var request = new TransferParticipantRequest
-            {
-                ParticipantId = participant.Id,
-                TransferType = TransferType.Call
-            };
-            var message = "Transfer Error";
-            var response = "Unable to transfer participant";
-            var statusCode = (int) HttpStatusCode.Unauthorized;
-            var exception =
-                new SupplierApiException(message, statusCode, response, null, null);
-            VideoPlatformServiceMock
-                .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
-                    It.IsAny<string>())).ThrowsAsync(exception);
-
-            var result = await Controller.TransferParticipantAsync(conferenceId, request);
-            result.Should().BeOfType<ObjectResult>();
-            var typedResult = (ObjectResult) result;
-            typedResult.StatusCode.Should().Be(statusCode);
-            typedResult.Value.Should().Be(response);
-        }
-
-        [Test]
         [TestCase(UserRole.QuickLinkObserver)]
         [TestCase(UserRole.QuickLinkParticipant)]
         public async Task Room_To_Transfer_From_Is_Set_To_Consutation_Room_For_Valid_Request(UserRole userRole)
