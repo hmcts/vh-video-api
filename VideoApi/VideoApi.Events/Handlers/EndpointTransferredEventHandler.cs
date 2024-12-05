@@ -34,6 +34,11 @@ namespace VideoApi.Events.Handlers
             {
                 return EndpointState.InConsultation;
             }
+            
+            if(callbackEvent.TransferTo == RoomType.HearingRoom)
+            {
+                return EndpointState.InHearing;
+            }
 
             return EndpointState.Connected;
         }

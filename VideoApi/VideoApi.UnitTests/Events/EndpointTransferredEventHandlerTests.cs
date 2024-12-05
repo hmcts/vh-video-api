@@ -11,10 +11,10 @@ namespace VideoApi.UnitTests.Events
 {
     public class EndpointTransferredEventHandlerTests : EventHandlerTestBase<EndpointTransferredEventHandler>
     {        
-        [TestCase(RoomType.WaitingRoom, RoomType.HearingRoom, EndpointState.Connected)]
+        [TestCase(RoomType.WaitingRoom, RoomType.HearingRoom, EndpointState.InHearing)]
         [TestCase(RoomType.HearingRoom, RoomType.WaitingRoom, EndpointState.Connected)]
         [TestCase(RoomType.ConsultationRoom, RoomType.WaitingRoom, EndpointState.Connected)]
-        [TestCase(RoomType.ConsultationRoom, RoomType.HearingRoom, EndpointState.Connected)]
+        [TestCase(RoomType.ConsultationRoom, RoomType.HearingRoom, EndpointState.InHearing)]
         [TestCase(RoomType.WaitingRoom, RoomType.ConsultationRoom, EndpointState.InConsultation)]
         public async Task Should_send_participant_status_messages_to_clients_and_asb_when_transfer_occurs(RoomType from, RoomType to, EndpointState status)
         {
