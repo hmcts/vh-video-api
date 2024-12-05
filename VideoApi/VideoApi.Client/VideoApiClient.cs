@@ -979,6 +979,7 @@ namespace VideoApi.Client
         /// Get a civilian VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -986,12 +987,14 @@ namespace VideoApi.Client
         /// Get a civilian VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get a witness VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -999,12 +1002,14 @@ namespace VideoApi.Client
         /// Get a witness VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get a judicial office holder VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetJudicialRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1012,6 +1017,7 @@ namespace VideoApi.Client
         /// Get a judicial office holder VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetJudicialRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
 
     }
@@ -7880,6 +7886,7 @@ namespace VideoApi.Client
         /// Get a civilian VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
         {
             return GetInterpreterRoomForParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
@@ -7890,6 +7897,7 @@ namespace VideoApi.Client
         /// Get a civilian VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetInterpreterRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -7991,6 +7999,7 @@ namespace VideoApi.Client
         /// Get a witness VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
         {
             return GetWitnessRoomForParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
@@ -8001,6 +8010,7 @@ namespace VideoApi.Client
         /// Get a witness VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetWitnessRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -8102,6 +8112,7 @@ namespace VideoApi.Client
         /// Get a judicial office holder VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetJudicialRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
         {
             return GetJudicialRoomForParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
@@ -8112,6 +8123,7 @@ namespace VideoApi.Client
         /// Get a judicial office holder VMR or return an existing one for a participant
         /// </summary>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<SharedParticipantRoomResponse> GetJudicialRoomForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
