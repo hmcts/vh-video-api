@@ -12,7 +12,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services;
-using VideoApi.Services.Clients;
+using Endpoint = VideoApi.Domain.Endpoint;
 using EndpointState = VideoApi.Domain.Enums.EndpointState;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
@@ -44,59 +44,49 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartVideoHearingAsync(Guid conferenceId, StartHearingRequest request)
         {
-            try
+            logger.LogDebug("Attempting to start hearing");
+            var hearingLayout =
+                HearingLayoutMapper.MapLayoutToVideoHearingLayout(
+                    request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
+
+            var conference =
+                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+
+            var participants = conference.Participants.Where(x =>
+                x.State is ParticipantState.Available or ParticipantState.InConsultation
+                && x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id.ToString()).ToList();
+
+            var endpoints = conference.Endpoints
+                .Where(x => x.State is EndpointState.Connected or EndpointState.InConsultation)
+                .Select(x => x.Id.ToString()).ToList();
+
+            var telephoneParticipants = conference.GetTelephoneParticipants()
+                .Where(x => x.State is TelephoneState.Connected)
+                .Select(x => x.Id.ToString()).ToList();
+
+            var allIdsToTransfer = participants.Concat(endpoints).Concat(telephoneParticipants).ToList();
+            // if only hosts are connected and no participants the supplier will not start the hearing, so provide the host id to force the hearing to start
+            allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
+
+            var hosts = request.Hosts.Select(h => h.ToString()).ToList();
+            var hostsForScreening = request.HostsForScreening.Select(h => h.ToString()).ToList();
+
+            var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
+            if (conference.Supplier == Supplier.Vodafone)
             {
-                logger.LogDebug("Attempting to start hearing");
-                var hearingLayout =
-                    HearingLayoutMapper.MapLayoutToVideoHearingLayout(
-                        request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
-
-                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-
-                var participants = conference.Participants.Where(x =>
-                    x.State is ParticipantState.Available or ParticipantState.InConsultation
-                    && x.CanAutoTransferToHearingRoom() && !x.IsHost()).Select(x => x.Id.ToString()).ToList();
-
-                var endpoints = conference.Endpoints
-                    .Where(x => x.State is EndpointState.Connected or EndpointState.InConsultation)
-                    .Select(x => x.Id.ToString()).ToList();
-                
-                var telephoneParticipants = conference.GetTelephoneParticipants()
-                    .Where(x => x.State is TelephoneState.Connected)
-                    .Select(x => x.Id.ToString()).ToList();
-                
-                var allIdsToTransfer = participants.Concat(endpoints).Concat(telephoneParticipants).ToList();
-                // if only hosts are connected and no participants the supplier will not start the hearing, so provide the host id to force the hearing to start
-                allIdsToTransfer.Add(request.TriggeredByHostId.ToString());
-
-                var hosts = request.Hosts.Select(h => h.ToString()).ToList();
-                var hostsForScreening = request.HostsForScreening.Select(h => h.ToString()).ToList();
-
-                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
-                if (conference.Supplier == Supplier.Vodafone)
-                {
-                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hosts, hearingLayout, request.MuteGuests ?? true, hostsForScreening);    
-                }
-                else
-                {
-                    await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), allIdsToTransfer, hosts, hearingLayout, request.MuteGuests ?? false, hostsForScreening);
-                }
-                
-           
-                return Accepted();
+                await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(),
+                    allIdsToTransfer, hosts, hearingLayout, request.MuteGuests ?? true, hostsForScreening);
             }
-            catch (SupplierApiException ex)
+            else
             {
-                logger.LogError(ex, "Error from supplier API. Unable to start video hearing");
-                if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(
-                        $"Invalid list of participants provided for participantsToForceTransfer");
-                }
-                return StatusCode(ex.StatusCode, ex.Response);
+                await videoPlatformService.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(),
+                    allIdsToTransfer, hosts, hearingLayout, request.MuteGuests ?? false, hostsForScreening);
             }
+
+
+            return Accepted();
         }
-        
+
         /// <summary>
         /// Pause a video hearing
         /// </summary>
@@ -107,21 +97,14 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> PauseVideoHearingAsync(Guid conferenceId)
         {
-            try
-            {
-                logger.LogDebug("Attempting to pause hearing");
-                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
-                await videoPlatformService.PauseHearingAsync(conferenceId);
-                return Accepted();
-            }
-            catch (SupplierApiException ex)
-            {
-                logger.LogError(ex, "Error from supplier API. Unable to pause video hearing");
-                return StatusCode(ex.StatusCode, ex.Response);
-            }
+            logger.LogDebug("Attempting to pause hearing");
+            var conference =
+                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
+            await videoPlatformService.PauseHearingAsync(conferenceId);
+            return Accepted();
         }
-        
+
         /// <summary>
         /// End a video hearing
         /// </summary>
@@ -132,44 +115,31 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> EndVideoHearingAsync(Guid conferenceId)
         {
-            try
-            {
-                logger.LogDebug("Attempting to end hearing");
-                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
-                await videoPlatformService.EndHearingAsync(conferenceId);
-                return Accepted();
-            }
-            catch (SupplierApiException ex)
-            {
-                logger.LogError(ex, "Error from supplier API. Unable to end video hearing");
-                return StatusCode(ex.StatusCode, ex.Response);
-            }
+            logger.LogDebug("Attempting to end hearing");
+            var conference =
+                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
+            await videoPlatformService.EndHearingAsync(conferenceId);
+            return Accepted();
         }
+
         /// <summary>	
         /// Request technical assistance. This will suspend a hearing.	
         /// </summary>	
         /// <param name="conferenceId">conference id</param>	
         /// <returns>No Content status</returns>	
-        [HttpPost("{conferenceId}/suspend")]	
-        [OpenApiOperation("SuspendHearing")]	
-        [ProducesResponseType((int)HttpStatusCode.Accepted)]	
-        public async Task<IActionResult> SuspendHearingAsync(Guid conferenceId)	
-        {	
-            try	
-            {	
-                var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
-                var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
-                await videoPlatformService.SuspendHearingAsync(conferenceId);	
-                return Accepted();	
-            }	
-            catch (SupplierApiException ex)	
-            {	
-                logger.LogError(ex, "Unable to request technical assistance for video hearing");	
-                return StatusCode(ex.StatusCode, ex.Response);	
-            }	
+        [HttpPost("{conferenceId}/suspend")]
+        [OpenApiOperation("SuspendHearing")]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        public async Task<IActionResult> SuspendHearingAsync(Guid conferenceId)
+        {
+            var conference =
+                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
+            var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
+            await videoPlatformService.SuspendHearingAsync(conferenceId);
+            return Accepted();
         }
-        
+
         /// <summary>
         /// Transfer a participant in or out of a hearing
         /// </summary>
@@ -178,52 +148,76 @@ namespace VideoApi.Controllers
         /// <returns></returns>
         [HttpPost("{conferenceId}/transfer")]
         [OpenApiOperation("TransferParticipant")]
-        [ProducesResponseType((int) HttpStatusCode.Accepted)]
-        public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId, TransferParticipantRequest transferRequest)
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> TransferParticipantAsync(Guid conferenceId,
+            TransferParticipantRequest transferRequest)
         {
             var conference =
                 await queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
-            var participant = conference.GetParticipants().Single(x => x.Id == transferRequest.ParticipantId);
-            var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
+
+            string supplierParticipantId = null;
+            string transferFromRoomType = null;
+            var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == transferRequest.ParticipantId);
+            var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == transferRequest.ParticipantId);
+
+            if (participant == null && endpoint == null)
+            {
+                return NotFound($"Id {transferRequest.ParticipantId} does not belong to a participant or endpoint");
+            }
+            
+            if (participant != null)
+            {
+                supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
+                transferFromRoomType = TransferFromRoomType(participant);
+            }
+            
+            if(endpoint != null)
+            {
+                supplierParticipantId = endpoint.Id.ToString();
+                transferFromRoomType = TransferFromRoomType(endpoint);
+            }
+
             var transferType = transferRequest.TransferType;
             var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
-            try
-            {
-                switch (transferType)
-                {
-                    case TransferType.Call:
-                        logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
-                            supplierParticipantId, conferenceId);
-                        await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
-                           TransferFromRoomType(participant), RoomType.HearingRoom.ToString());
-                        break;
-                    case TransferType.Dismiss:
-                        logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
-                            supplierParticipantId, conferenceId);
-                        await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
-                            RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
-                        break;
-                    default:
-                        logger.LogWarning("Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
-                            supplierParticipantId, conferenceId, transferType);
-                        throw new InvalidOperationException($"Unsupported transfer type: {transferType}");
-                }
 
-                return Accepted();
-            }
-            catch (SupplierApiException ex)
+            switch (transferType)
             {
-                logger.LogError(ex,
-                    "Error from supplier API. Unable to {TransferType} Participant {Participant} in/from {Conference}",
-                    transferType, supplierParticipantId, conferenceId);
-                return StatusCode(ex.StatusCode, ex.Response);
+                case TransferType.Call:
+                    logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
+                        supplierParticipantId, conferenceId);
+                    await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
+                        transferFromRoomType, RoomType.HearingRoom.ToString());
+                    break;
+                case TransferType.Dismiss:
+                    logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
+                        supplierParticipantId, conferenceId);
+                    await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
+                        RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
+                    break;
+                default:
+                    logger.LogWarning(
+                        "Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
+                        supplierParticipantId, conferenceId, transferType);
+                    throw new InvalidOperationException($"Unsupported transfer type: {transferType}");
             }
+
+            return Accepted();
         }
 
         private static string TransferFromRoomType(ParticipantBase participant)
         {
-            return string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom?.Label) ? RoomType.WaitingRoom.ToString() : participant.CurrentConsultationRoom.Label;
+            return string.IsNullOrWhiteSpace(participant.CurrentConsultationRoom?.Label)
+                ? RoomType.WaitingRoom.ToString()
+                : participant.CurrentConsultationRoom.Label;
+        }
+
+        private static string TransferFromRoomType(Endpoint endpoint)
+        {
+            return string.IsNullOrWhiteSpace(endpoint.CurrentConsultationRoom?.Label)
+                ? RoomType.WaitingRoom.ToString()
+                : endpoint.CurrentConsultationRoom.Label;
         }
     }
 }

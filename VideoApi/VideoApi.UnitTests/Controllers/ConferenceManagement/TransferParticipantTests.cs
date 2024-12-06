@@ -116,6 +116,25 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         }
 
         [Test]
+        public async Task should_move_endpoint_into_hearing_room()
+        {
+            var conferenceId = TestConference.Id;
+            var endpoint = TestConference.Endpoints[0];
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = endpoint.Id,
+                TransferType = TransferType.Call
+            };
+            
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
+                    RoomType.HearingRoom.ToString()), Times.Once);
+        }
+        
+        [Test]
         public async Task should_dismiss_participant_from_hearing_room()
         {
             var conferenceId = TestConference.Id;
@@ -132,6 +151,43 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.HearingRoom.ToString(),
                     RoomType.WaitingRoom.ToString()), Times.Once);
+        }
+
+        [Test]
+        public async Task should_dismiss_endpoint_from_hearing_room()
+        {
+            var conferenceId = TestConference.Id;
+            var endpoint = TestConference.Endpoints[0];
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = endpoint.Id,
+                TransferType = TransferType.Dismiss
+            };
+            
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+            
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.HearingRoom.ToString(),
+                    RoomType.WaitingRoom.ToString()), Times.Once);
+        }
+
+        [Test]
+        public async Task should_return_NotFound_if_id_does_not_exist_for_endpoint_or_participant()
+        {
+            var conferenceId = TestConference.Id;
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = Guid.NewGuid(),
+                TransferType = TransferType.Dismiss
+            };
+            
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<NotFoundObjectResult>();
+            
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, It.IsAny<string>(), RoomType.HearingRoom.ToString(),
+                    RoomType.WaitingRoom.ToString()), Times.Never);
         }
         
         [Test]
@@ -151,32 +207,6 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), It.IsAny<string>(),
                     It.IsAny<string>()), Times.Never);
-        }
-
-        [Test]
-        public async Task should_return_kinly_status_code_on_error()
-        {
-            var conferenceId = TestConference.Id;
-            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Individual);
-            var request = new TransferParticipantRequest
-            {
-                ParticipantId = participant.Id,
-                TransferType = TransferType.Call
-            };
-            var message = "Transfer Error";
-            var response = "Unable to transfer participant";
-            var statusCode = (int) HttpStatusCode.Unauthorized;
-            var exception =
-                new SupplierApiException(message, statusCode, response, null, null);
-            VideoPlatformServiceMock
-                .Setup(x => x.TransferParticipantAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
-                    It.IsAny<string>())).ThrowsAsync(exception);
-
-            var result = await Controller.TransferParticipantAsync(conferenceId, request);
-            result.Should().BeOfType<ObjectResult>();
-            var typedResult = (ObjectResult) result;
-            typedResult.StatusCode.Should().Be(statusCode);
-            typedResult.Value.Should().Be(response);
         }
 
         [Test]
