@@ -34,6 +34,7 @@ namespace Testing.Common.Configuration
         public List<ParticipantInHearingResponse> JudgeInHearings { get; set; }
         public List<string> CvpFileNamesOnStorage { get; set; }
         public Room Room { get; set; }
+        public Room ConsultationRoom { get; set; }
         public string EndpointSipAddress { get; set; }
     }
 }

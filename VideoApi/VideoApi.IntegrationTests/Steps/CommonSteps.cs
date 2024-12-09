@@ -487,6 +487,15 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Test.Room =  await _context.TestDataManager.SeedRoom(consultationRoom);
         }
         
+        [Given(@"I have a participant consultation room")]
+        public async Task GivenIHaveAParticipantConsultationRoom()
+        {
+            var conference = _context.Test.Conference;
+            var consultationRoom = new ConsultationRoom(conference.Id, $"ParticipantConsultationRoom{DateTime.UtcNow.Ticks}",
+                VirtualCourtRoomType.Participant, false);
+            _context.Test.ConsultationRoom =  await _context.TestDataManager.SeedRoom(consultationRoom);
+        }
+        
         [Given(@"I have a civilian interpreter room")]
         public async Task GivenIHaveACivilianInterpreterRoom()
         {

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
-using VideoApi.DAL.Exceptions;
 using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.UnitTests.Controllers.Consultation
@@ -53,8 +52,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             };
 
             var result = await Controller.RespondToConsultationRequestAsync(request);
-            var typedResult = (NotFoundResult)result;
+            var typedResult = (NotFoundObjectResult)result;
             typedResult.Should().NotBeNull();
+            typedResult.Value.Should().Be($"Unable to find participant id request for {request.RequestedFor}");
         }
 
         [Test]
@@ -92,25 +92,6 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var result = await Controller.LockRoomRequestAsync(request);
             var typedResult = (OkResult)result;
-            typedResult.Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task Should_return_notfound_for_lock_room_request()
-        {
-            var conferenceId = TestConference.Id;
-
-            var request = new LockRoomRequest
-            {
-                ConferenceId = conferenceId,
-                RoomLabel = "ConsultationRoom",
-                Lock = true
-            };
-            CommandHandlerMock
-               .Setup(x => x.Handle(It.IsAny<LockRoomCommand>())).Throws(new RoomNotFoundException(12345));
-
-            var result = await Controller.LockRoomRequestAsync(request);
-            var typedResult = (NotFoundObjectResult)result;
             typedResult.Should().NotBeNull();
         }
     }

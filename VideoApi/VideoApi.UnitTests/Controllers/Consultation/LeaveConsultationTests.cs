@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Testing.Common.Assertions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
@@ -85,7 +86,10 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             ConsultationServiceMock.Verify(v => v.LeaveConsultationAsync
                     (leaveConsultationRequest.ConferenceId, leaveConsultationRequest.ParticipantId, fromRoom, toRoom),
                 Times.Never);
-            result.Should().BeOfType<BadRequestObjectResult>();
+            
+            result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result;
+            ((ValidationProblemDetails)objectResult.Value).ContainsKeyAndErrorMessage("ParticipantId", "Participant is not in a consultation");
         }
     }
 }
