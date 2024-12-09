@@ -44,6 +44,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetInterpreterRoomForParticipant")]
         [ProducesResponseType(typeof(SharedParticipantRoomResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        [Obsolete("Kinly specific operation. Remove when the Vodafone toggle is removed.")]
         public async Task<IActionResult> GetInterpreterRoomForParticipant(Guid conferenceId, Guid participantId)
         {
             var validation = await ValidateConferenceAndParticipant(conferenceId, participantId);
@@ -66,6 +67,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetWitnessRoomForParticipant")]
         [ProducesResponseType(typeof(SharedParticipantRoomResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        [Obsolete("Kinly specific operation. Remove when the Vodafone toggle is removed.")]
         public async Task<IActionResult> GetWitnessRoomForParticipant(Guid conferenceId, Guid participantId)
         {
             var validation = await ValidateConferenceAndParticipant(conferenceId, participantId);
@@ -88,6 +90,7 @@ namespace VideoApi.Controllers
         [OpenApiOperation("GetJudicialRoomForParticipant")]
         [ProducesResponseType(typeof(SharedParticipantRoomResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        [Obsolete("Kinly specific operation. Remove when the Vodafone toggle is removed.")]
         public async Task<IActionResult> GetJudicialRoomForParticipant(Guid conferenceId, Guid participantId)
         {
             var validation = await ValidateConferenceAndParticipant(conferenceId, participantId);
