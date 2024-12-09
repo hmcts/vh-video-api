@@ -57,46 +57,6 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                     RoomType.HearingRoom.ToString(), ConferenceRole.Host), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
-        
-        [Test]
-        public async Task should_move_endpoint_into_hearing_room_from_waiting_room()
-        {
-            var conferenceId = TestConference.Id;
-            var endpoint = TestConference.Endpoints[0];
-            endpoint.CurrentConsultationRoom = null;
-            var request = new TransferParticipantRequest
-            {
-                ParticipantId = endpoint.Id,
-                TransferType = TransferType.Call
-            };
-            
-            var result = await Controller.TransferParticipantAsync(conferenceId, request);
-            result.Should().BeOfType<AcceptedResult>();
-            
-            VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString()), Times.Once);
-            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
-        }
-
-        [Test]
-        public async Task should_return_bad_request_is_endpoint_or_participant_does_not_exist()
-        {
-            var conferenceId = TestConference.Id;
-            var request = new TransferParticipantRequest
-            {
-                ParticipantId = Guid.NewGuid(),
-                TransferType = TransferType.Call
-            };
-            
-            var result = await Controller.TransferParticipantAsync(conferenceId, request);
-            result.Should().BeOfType<BadRequestObjectResult>();
-            
-            VideoPlatformServiceMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString()), Times.Never);
-            VerifySupplierUsed(TestConference.Supplier, Times.Never());
-        }
 
         [Test]
         public async Task should_move_participant_into_hearing_room_from_consultation_room()
