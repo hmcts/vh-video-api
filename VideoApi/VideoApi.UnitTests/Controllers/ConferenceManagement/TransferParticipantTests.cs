@@ -31,7 +31,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString()), Times.Once);
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
@@ -51,7 +51,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), participant.CurrentConsultationRoom.Label,
-                    RoomType.HearingRoom.ToString()), Times.Once);
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, interpreterRoom.Id.ToString(),
-                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, interpreterRoom.Id.ToString(),
-                    participant.CurrentConsultationRoom.Label, RoomType.HearingRoom.ToString()), Times.Once);
+                    participant.CurrentConsultationRoom.Label, RoomType.HearingRoom.ToString(),ConferenceRole.Guest), Times.Once);
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString()), Times.Once);
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
         }
         
         [Test]
@@ -150,7 +150,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.HearingRoom.ToString(),
-                    RoomType.WaitingRoom.ToString()), Times.Once);
+                    RoomType.WaitingRoom.ToString(), ConferenceRole.Guest), Times.Once);
         }
 
         [Test]
@@ -169,7 +169,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.HearingRoom.ToString(),
-                    RoomType.WaitingRoom.ToString()), Times.Once);
+                    RoomType.WaitingRoom.ToString(), ConferenceRole.Guest), Times.Once);
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, It.IsAny<string>(), RoomType.HearingRoom.ToString(),
-                    RoomType.WaitingRoom.ToString()), Times.Never);
+                    RoomType.WaitingRoom.ToString(), ConferenceRole.Guest), Times.Never);
         }
         
         [Test]
@@ -206,7 +206,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), It.IsAny<string>(),
-                    It.IsAny<string>()), Times.Never);
+                    It.IsAny<string>(), ConferenceRole.Guest), Times.Never);
         }
 
         [Test]
@@ -230,7 +230,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), participant.CurrentConsultationRoom.Label,
-                    RoomType.HearingRoom.ToString()), Times.Once);
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
 
         }
 
@@ -255,7 +255,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString()), Times.Once);
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
 
         }
 
@@ -280,7 +280,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString()), Times.Once);
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
 
         }
     }

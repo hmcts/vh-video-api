@@ -50,7 +50,7 @@ namespace VideoApi.Events.Handlers
             {
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(SourceConference.Supplier);
                 videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceParticipant.Id.ToString(),
-                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), null);
             }
         }
     }

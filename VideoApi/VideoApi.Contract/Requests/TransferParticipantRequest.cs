@@ -1,4 +1,5 @@
 using System;
+using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
 {
@@ -25,5 +26,10 @@ namespace VideoApi.Contract.Requests
         /// Direction of transfer in regards to a conference
         /// </summary>
         public TransferType? TransferType { get; set; }
+
+        /// <summary>
+        /// The role of the participant
+        /// </summary>
+        public ConferenceRole ConferenceRole { get; set; } = ConferenceRole.Guest;
     }
 }

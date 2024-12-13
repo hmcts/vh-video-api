@@ -79,7 +79,7 @@ public class TelephoneJoinedHandlerTests : EventHandlerTestBase<TelephoneJoinedE
         
         _videoPlatformServiceMock.Verify(
             x => x.TransferParticipantAsync(conference.Id, telephoneId.ToString(), RoomType.WaitingRoom.ToString(),
-                RoomType.HearingRoom.ToString()), Times.Once);
+                RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
         VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
     }
 }

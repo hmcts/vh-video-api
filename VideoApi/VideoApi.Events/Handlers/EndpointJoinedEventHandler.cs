@@ -58,7 +58,7 @@ namespace VideoApi.Events.Handlers
                     SourceConference.Id, SourceEndpoint.Id);
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(SourceConference.Supplier);
                 videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceEndpoint.Id.ToString(),
-                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), SourceEndpoint.ConferenceRole);
             }
         }
     }

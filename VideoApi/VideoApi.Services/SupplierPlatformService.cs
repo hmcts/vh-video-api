@@ -114,7 +114,7 @@ namespace VideoApi.Services
                 _ => pauseBetweenFailures,
                 retryAttempt =>
                     _logger.LogWarning(
-                        "Failed to retrieve test score for participant {ParticipantId} at {KinlySelfTestApiUrl}. Retrying attempt {retryAttempt}",
+                        "Failed to retrieve test score for participant {ParticipantId} at {KinlySelfTestApiUrl}. Retrying attempt {RetryAttempt}",
                         participantId, _supplierConfigOptions.ApiUrl, retryAttempt),
                 callResult => callResult == null,
                 () => _supplierSelfTestHttpClient.GetTestCallScoreAsync(participantId)
@@ -124,17 +124,22 @@ namespace VideoApi.Services
         }
         
         public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
-            string toRoom)
+            string toRoom, ConferenceRole? role)
         {
             _logger.LogInformation(
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
                 participantId, fromRoom, toRoom, conferenceId);
-
+            string roleString = null;
+            if (role.HasValue)
+            {
+                roleString = role == ConferenceRole.Host ? "Host" : "Guest";
+            }
             var request = new TransferParticipantParams
             {
                 From = fromRoom,
                 To = toRoom,
-                Part_id = participantId
+                Part_id = participantId,
+                Role = roleString
             };
 
             return _supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
