@@ -324,5 +324,27 @@ namespace VideoApi.UnitTests.Services
                 It.Is<UpdateParticipantNameParams>(p
                     => p.Participant_Id == participantId.ToString() && p.Participant_Name == name)), Times.Once);
         }
+
+        [TestCase(null, null)]
+        [TestCase(VideoApi.Domain.Enums.ConferenceRole.Guest, "Guest")]
+        [TestCase(VideoApi.Domain.Enums.ConferenceRole.Host, "Host")]
+        public async Task should_transfer_with_with_role(VideoApi.Domain.Enums.ConferenceRole? role, string expectedRole)
+        {
+            // arrange
+            var conferenceId = Guid.NewGuid();
+            var participantId = Guid.NewGuid().ToString();
+            var fromRoom = "WaitingRoom";
+            var toRoom = "HearingRoom";
+            
+            // act
+            await _SupplierPlatformService.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom, role);
+            
+            // assert
+            _supplierApiClientMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId.ToString(),
+                    It.Is<TransferParticipantParams>(r =>
+                        r.Role == expectedRole && r.From == fromRoom && r.To == toRoom && r.Part_id == participantId)),
+                Times.Once);
+        }
     }
 }

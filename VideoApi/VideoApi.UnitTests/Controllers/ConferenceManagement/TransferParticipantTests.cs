@@ -23,7 +23,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var request = new TransferParticipantRequest
             {
                 ParticipantId = participant.Id,
-                TransferType = TransferType.Call
+                TransferType = TransferType.Call,
+                ConferenceRole = Contract.Enums.ConferenceRole.Guest
             };
             
             var result = await Controller.TransferParticipantAsync(conferenceId, request);
@@ -32,6 +33,28 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
                     RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
+            VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
+        }
+
+        [Test]
+        public async Task should_override_role_when_transferring_host_with_guest_role()
+        {
+            var conferenceId = TestConference.Id;
+            var participant = TestConference.Participants.First(x => x.UserRole == UserRole.Judge);
+            participant.CurrentConsultationRoom = null;
+            var request = new TransferParticipantRequest
+            {
+                ParticipantId = participant.Id,
+                TransferType = TransferType.Call,
+                ConferenceRole = Contract.Enums.ConferenceRole.Guest
+            };
+            
+            var result = await Controller.TransferParticipantAsync(conferenceId, request);
+            result.Should().BeOfType<AcceptedResult>();
+            
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Host), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
 
@@ -123,7 +146,8 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var request = new TransferParticipantRequest
             {
                 ParticipantId = endpoint.Id,
-                TransferType = TransferType.Call
+                TransferType = TransferType.Call,
+                ConferenceRole = Contract.Enums.ConferenceRole.Host
             };
             
             var result = await Controller.TransferParticipantAsync(conferenceId, request);
@@ -131,7 +155,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 
             VideoPlatformServiceMock.Verify(
                 x => x.TransferParticipantAsync(conferenceId, request.ParticipantId.ToString(), RoomType.WaitingRoom.ToString(),
-                    RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
+                    RoomType.HearingRoom.ToString(), ConferenceRole.Host), Times.Once);
         }
         
         [Test]

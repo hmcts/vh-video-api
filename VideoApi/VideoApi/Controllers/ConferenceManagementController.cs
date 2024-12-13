@@ -174,6 +174,11 @@ namespace VideoApi.Controllers
             {
                 supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
                 transferFromRoomType = TransferFromRoomType(participant);
+                // force role of host if participant role is judge or staff member to prevent accidental role change
+                if (participant.IsHost())
+                {
+                    role = Domain.Enums.ConferenceRole.Host;
+                }
             }
             
             if(endpoint != null)
