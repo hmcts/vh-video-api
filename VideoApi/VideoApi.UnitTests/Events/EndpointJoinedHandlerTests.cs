@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using VideoApi.DAL.Commands;
+using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 using VideoApi.Services;
@@ -82,7 +83,7 @@ namespace VideoApi.UnitTests.Events
                     command.ConferenceId == conference.Id && command.EndpointId == endpointForEvent.Id &&
                     command.Status == EndpointState.Connected && command.Room == RoomType.WaitingRoom)), Times.Once);
             
-            _videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, endpointForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString()), Times.Once);
+            _videoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, endpointForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), endpointForEvent.ConferenceRole), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
     }

@@ -43,6 +43,6 @@ public class TelephoneJoinedEventHandler(
             SourceConference.Id, telephoneParticipantId);
         var videoPlatformService = supplierPlatformServiceFactory.Create(SourceConference.Supplier);
         videoPlatformService.TransferParticipantAsync(SourceConference.Id, telephoneParticipantId.ToString(),
-            RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
+            RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), ConferenceRole.Guest);
     }
 }

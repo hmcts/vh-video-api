@@ -2040,6 +2040,12 @@ namespace VideoApi.Services.Clients
         /// </summary>
         [Newtonsoft.Json.JsonProperty("from", Required = Newtonsoft.Json.Required.Always)]
         public string From { get; set; }
+        
+        /// <summary>
+        /// Participant Role
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.Always)]
+        public string Role { get; set; }
 
         public string ToJson()
         {

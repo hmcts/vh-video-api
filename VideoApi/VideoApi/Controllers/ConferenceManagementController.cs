@@ -12,6 +12,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using VideoApi.Services;
+using ConferenceRole = VideoApi.Contract.Enums.ConferenceRole;
 using Endpoint = VideoApi.Domain.Endpoint;
 using EndpointState = VideoApi.Domain.Enums.EndpointState;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
@@ -161,7 +162,9 @@ namespace VideoApi.Controllers
             string transferFromRoomType = null;
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == transferRequest.ParticipantId);
             var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == transferRequest.ParticipantId);
-
+            var role = transferRequest.ConferenceRole == ConferenceRole.Guest
+                ? Domain.Enums.ConferenceRole.Guest
+                : Domain.Enums.ConferenceRole.Host;
             if (participant == null && endpoint == null)
             {
                 return NotFound($"Id {transferRequest.ParticipantId} does not belong to a participant or endpoint");
@@ -171,6 +174,11 @@ namespace VideoApi.Controllers
             {
                 supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participant.Id.ToString();
                 transferFromRoomType = TransferFromRoomType(participant);
+                // force role of host if participant role is judge or staff member to prevent accidental role change
+                if (participant.IsHost())
+                {
+                    role = Domain.Enums.ConferenceRole.Host;
+                }
             }
             
             if(endpoint != null)
@@ -188,13 +196,13 @@ namespace VideoApi.Controllers
                     logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
                         supplierParticipantId, conferenceId);
                     await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
-                        transferFromRoomType, RoomType.HearingRoom.ToString());
+                        transferFromRoomType, RoomType.HearingRoom.ToString(), role);
                     break;
                 case TransferType.Dismiss:
                     logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
                         supplierParticipantId, conferenceId);
                     await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
-                        RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString());
+                        RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString(), role);
                     break;
                 default:
                     logger.LogWarning(

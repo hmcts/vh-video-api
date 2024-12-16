@@ -28,7 +28,7 @@ namespace VideoApi.Services.Contracts
             AudioPlaybackLanguage audioPlaybackLanguage);
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
-        Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom);
+        Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role);
         /// <summary>
         /// Delete virtual court room
         /// </summary>
