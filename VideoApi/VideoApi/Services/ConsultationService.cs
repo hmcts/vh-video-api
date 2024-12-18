@@ -105,7 +105,7 @@ namespace VideoApi.Services
                 await RetrieveLastParticipantIfLinkedAndLeftAlone(conference, participant, fromRoom); 
             if (lastLinkedParticipant != null)
             {
-                await TransferParticipantAsync(conferenceId, lastLinkedParticipant.GetParticipantRoom()?.Id.ToString(), fromRoom, toRoom, participant.IsHost(), conference.Supplier);
+                await TransferParticipantAsync(conferenceId, lastLinkedParticipant.GetParticipantRoom()?.Id.ToString(), fromRoom, toRoom, lastLinkedParticipant.IsHost(), conference.Supplier);
             }
         }
         
