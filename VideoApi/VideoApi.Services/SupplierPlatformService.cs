@@ -123,8 +123,7 @@ namespace VideoApi.Services
             return result;
         }
         
-        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
-            string toRoom, ConferenceRole? role)
+        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role = null)
         {
             _logger.LogInformation(
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
@@ -163,7 +162,7 @@ namespace VideoApi.Services
                     AudioPlaybackLanguage = audioPlaybackLanguage.ToString()
                 });
         }
-
+        
         public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
             IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
             Layout layout = Layout.AUTOMATIC, bool muteGuests = false, IEnumerable<string> hostsForScreening =null)
@@ -180,7 +179,7 @@ namespace VideoApi.Services
                     HostsForScreening = hostsForScreening?.ToList()
                 });
         }
-
+        
         public Task PauseHearingAsync(Guid conferenceId)
         {
             return _supplierApiClient.PauseHearingAsync(conferenceId.ToString());

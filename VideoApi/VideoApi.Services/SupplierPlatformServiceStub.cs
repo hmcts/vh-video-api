@@ -47,13 +47,12 @@ namespace VideoApi.Services
         {
             return Task.FromResult<TestCallResult>(null);
         }
-
-        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom,
-            ConferenceRole? role)
+        
+        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role)
         {
             return Task.CompletedTask;
         }
-
+        
         public Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
         {
             return Task.CompletedTask;

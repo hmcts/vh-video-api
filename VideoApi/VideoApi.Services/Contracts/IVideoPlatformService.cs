@@ -26,16 +26,18 @@ namespace VideoApi.Services.Contracts
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
             IEnumerable<EndpointDto> endpoints, string telephoneId, ConferenceRoomType roomType,
             AudioPlaybackLanguage audioPlaybackLanguage);
+        
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
-        Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role);
+        Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role = null);
+        
         /// <summary>
         /// Delete virtual court room
         /// </summary>
         /// <param name="conferenceId">Conference Id</param>
         /// <returns></returns>
         Task DeleteVirtualCourtRoomAsync(Guid conferenceId);
-
+        
         /// <summary>
         /// Update virtual court room
         /// </summary>
@@ -48,10 +50,11 @@ namespace VideoApi.Services.Contracts
         Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
             IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
             AudioPlaybackLanguage audioPlaybackLanguage);
-
+        
         Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
             IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
             Layout layout = Layout.AUTOMATIC, bool muteGuests = false, IEnumerable<string> hostsForScreening = null);
+        
         Task PauseHearingAsync(Guid conferenceId);
         Task EndHearingAsync(Guid conferenceId);
         Task SuspendHearingAsync(Guid conferenceId);
