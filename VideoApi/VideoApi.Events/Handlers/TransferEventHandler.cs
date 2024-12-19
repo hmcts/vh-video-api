@@ -54,7 +54,6 @@ namespace VideoApi.Events.Handlers
                 Logger.LogError(new RoomNotFoundException(SourceConference.Id, callbackEvent.TransferredFromRoomLabel),
                     "Unable to find room {RoomLabel} in conference {ConferenceId}",
                     callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
-                Logger.LogError("Unable to find room {RoomLabel} in conference {ConferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
             }
             else if (room.Status == RoomStatus.Live && room.RoomParticipants.Count == 0)
             {
