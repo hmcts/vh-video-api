@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Moq;
 using VideoApi.DAL.Commands;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -48,6 +49,32 @@ namespace VideoApi.UnitTests.Events
                     command.Room == to)), Times.Once);
         }
 
+        [Test]
+        public async Task should_throw_exception_when_participant_is_not_found()
+        {
+            var conference = TestConference;
+            var participantForEventId = Guid.NewGuid();
+            
+            var callbackEvent = new CallbackEvent
+            {
+                EventType = EventType.Transfer,
+                EventId = Guid.NewGuid().ToString(),
+                ConferenceId = conference.Id,
+                ParticipantId = participantForEventId,
+                TransferFrom = RoomType.ConsultationRoom,
+                TransferTo = RoomType.WaitingRoom,
+                TransferredFromRoomLabel = "JudgeJOHConsultationRoom1",
+                TransferredToRoomLabel = "WaitingRoom",
+                TimeStampUtc = DateTime.UtcNow
+            };
+            
+            var action = async () => await _sut.HandleAsync(callbackEvent);
+
+            await action.Should().ThrowAsync<ParticipantNotFoundException>();
+            CommandHandlerMock.Verify(
+                x => x.Handle(It.IsAny<UpdateParticipantStatusAndRoomCommand>()), Times.Never);
+        }
+        
         [Test]
         public async Task Should_map_to_in_consultation_status_when_transfer_to_label_contains_consultation()
         {

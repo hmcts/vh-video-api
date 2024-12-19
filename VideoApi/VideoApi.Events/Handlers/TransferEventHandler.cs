@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using VideoApi.Common;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
+using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
@@ -26,6 +27,7 @@ namespace VideoApi.Events.Handlers
         
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
+            if(SourceParticipant == null) throw new ParticipantNotFoundException(callbackEvent.ParticipantId);
             BadRequestException.ThrowIfNull(callbackEvent.TransferredFromRoomLabel);
             BadRequestException.ThrowIfNull(callbackEvent.TransferredToRoomLabel);
             Logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
@@ -49,7 +51,9 @@ namespace VideoApi.Events.Handlers
             var room = await QueryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
-                Logger.LogError("Unable to find room {RoomLabel} in conference {ConferenceId}", callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
+                Logger.LogError(new RoomNotFoundException(SourceConference.Id, callbackEvent.TransferredFromRoomLabel),
+                    "Unable to find room {RoomLabel} in conference {ConferenceId}",
+                    callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
             }
             else if (room.Status == RoomStatus.Live && room.RoomParticipants.Count == 0)
             {
