@@ -7,14 +7,22 @@ namespace VideoApi.Services
     {
         public bool HrsIntegration { get; set; } = false;
         public bool Vodafone { get; set; } = false;
-
-        public bool HrsIntegrationEnabled()
-        {
-            return HrsIntegration;
-        }
+        public bool SendTransferRoles { get; set; } = false;
+        
         public bool VodafoneIntegrationEnabled()
         {
             return Vodafone;
+        }
+        
+        public bool SendTransferRolesEnabled()
+        {
+            return SendTransferRoles;
+        }
+        
+        
+        public bool HrsIntegrationEnabled()
+        {
+            return HrsIntegration;
         }
     }
 }

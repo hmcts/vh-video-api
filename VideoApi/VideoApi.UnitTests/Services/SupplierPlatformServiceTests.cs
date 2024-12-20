@@ -41,6 +41,7 @@ namespace VideoApi.UnitTests.Services
         {
             _featureToggles = new Mock<IFeatureToggles>();
             _featureToggles.Setup(x => x.VodafoneIntegrationEnabled()).Returns(false);
+            _featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(true);
             _supplierApiClientMock = new Mock<ISupplierApiClient>();
             _supplierConfig = new KinlyConfiguration()
             {
@@ -57,7 +58,8 @@ namespace VideoApi.UnitTests.Services
                 _pollyRetryService.Object,
                 _supplierApiClientMock.Object,
                 _supplierConfig,
-                Supplier.Kinly
+                Supplier.Kinly,
+                _featureToggles.Object
             );
             
             _testConference = new ConferenceBuilder()
@@ -324,7 +326,7 @@ namespace VideoApi.UnitTests.Services
                 It.Is<UpdateParticipantNameParams>(p
                     => p.Participant_Id == participantId.ToString() && p.Participant_Name == name)), Times.Once);
         }
-
+        
         [TestCase(null, null)]
         [TestCase(VideoApi.Domain.Enums.ConferenceRole.Guest, "Guest")]
         [TestCase(VideoApi.Domain.Enums.ConferenceRole.Host, "Host")]
@@ -344,6 +346,27 @@ namespace VideoApi.UnitTests.Services
                 x => x.TransferParticipantAsync(conferenceId.ToString(),
                     It.Is<TransferParticipantParams>(r =>
                         r.Role == expectedRole && r.From == fromRoom && r.To == toRoom && r.Part_id == participantId)),
+                Times.Once);
+        }
+        
+        [Test]
+        public async Task should_transfer_when_send_role_flag_off()
+        {
+            // arrange
+            _featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(false);
+            var conferenceId = Guid.NewGuid();
+            var participantId = Guid.NewGuid().ToString();
+            var fromRoom = "WaitingRoom";
+            var toRoom = "HearingRoom";
+            
+            // act
+            await _SupplierPlatformService.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom, VideoApi.Domain.Enums.ConferenceRole.Guest);
+            
+            // assert
+            _supplierApiClientMock.Verify(
+                x => x.TransferParticipantAsync(conferenceId.ToString(),
+                    It.Is<TransferParticipantParams>(r =>
+                        r.Role == null && r.From == fromRoom && r.To == toRoom && r.Part_id == participantId)),
                 Times.Once);
         }
     }
