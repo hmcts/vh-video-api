@@ -2044,7 +2044,7 @@ namespace VideoApi.Services.Clients
         /// <summary>
         /// Participant Role
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Role { get; set; }
 
         public string ToJson()

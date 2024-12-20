@@ -19,6 +19,7 @@ namespace VideoApi.UnitTests.Services
         public void SetUp()
         {
             _serviceProvider = new Mock<IServiceProvider>();
+            var featureToggles = new Mock<IFeatureToggles>();
             var logger = new Mock<ILogger<SupplierPlatformService>>();
             var kinlySelfTestHttpClient = new Mock<IKinlySelfTestHttpClient>();
             var vodafoneSelfTestHttpClient = new Mock<IVodafoneSelfTestHttpClient>();
@@ -31,6 +32,7 @@ namespace VideoApi.UnitTests.Services
             var vodafoneConfigOptions = new Mock<IOptions<VodafoneConfiguration>>();
             kinlyConfigOptions.Setup(m => m.Value).Returns(kinlyConfig);
             vodafoneConfigOptions.Setup(m => m.Value).Returns(vodafoneConfig);
+            featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(true);
             _serviceProvider.Setup(x => x.GetService(typeof(ILogger<SupplierPlatformService>))).Returns(logger.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IVodafoneSelfTestHttpClient))).Returns(vodafoneSelfTestHttpClient.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IKinlySelfTestHttpClient))).Returns(kinlySelfTestHttpClient.Object);
@@ -39,6 +41,7 @@ namespace VideoApi.UnitTests.Services
             _serviceProvider.Setup(x => x.GetService(typeof(IVodafoneApiClient))).Returns(vodafoneApiClient.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IOptions<KinlyConfiguration>))).Returns(kinlyConfigOptions.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IOptions<VodafoneConfiguration>))).Returns(vodafoneConfigOptions.Object);
+            _serviceProvider.Setup(x => x.GetService(typeof(IFeatureToggles))).Returns(featureToggles.Object);
         }
         
         [TestCase(Supplier.Kinly)]

@@ -19,6 +19,7 @@ namespace VideoApi.Services
 {
     public class SupplierPlatformService : IVideoPlatformService
     {
+        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<SupplierPlatformService> _logger;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly Supplier _supplier;
@@ -26,13 +27,15 @@ namespace VideoApi.Services
         private readonly SupplierConfiguration _supplierConfigOptions;
         private readonly ISupplierSelfTestHttpClient _supplierSelfTestHttpClient;
         
+        
         public SupplierPlatformService(
             ILogger<SupplierPlatformService> logger,
             ISupplierSelfTestHttpClient supplierSelfTestHttpClient,
             IPollyRetryService pollyRetryService,
             ISupplierApiClient supplierApiClient,
             SupplierConfiguration supplierConfiguration,
-            Supplier supplier)
+            Supplier supplier,
+            IFeatureToggles featureToggles)
         {
             _logger = logger;
             _supplierSelfTestHttpClient = supplierSelfTestHttpClient;
@@ -40,6 +43,7 @@ namespace VideoApi.Services
             _supplierApiClient = supplierApiClient;
             _supplierConfigOptions = supplierConfiguration;
             _supplier = supplier;
+            _featureToggles = featureToggles;
         }
         
         
@@ -134,13 +138,28 @@ namespace VideoApi.Services
             {
                 roleString = role == ConferenceRole.Host ? "Host" : "Guest";
             }
-            var request = new TransferParticipantParams
+            TransferParticipantParams request;
+            
+            if (_featureToggles.SendTransferRolesEnabled())
             {
-                From = fromRoom,
-                To = toRoom,
-                Part_id = participantId,
-                Role = roleString
-            };
+                request = new TransferParticipantParams
+                {
+                    From = fromRoom,
+                    To = toRoom,
+                    Part_id = participantId,
+                    Role = roleString
+                };
+            }
+            else
+            {
+                request = new TransferParticipantParams
+                {
+                    From = fromRoom,
+                    To = toRoom,
+                    Part_id = participantId
+                };
+            }
+      
 
             return _supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
@@ -163,7 +182,7 @@ namespace VideoApi.Services
                     AudioPlaybackLanguage = audioPlaybackLanguage.ToString()
                 });
         }
-
+        
         public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
             IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
             Layout layout = Layout.AUTOMATIC, bool muteGuests = false, IEnumerable<string> hostsForScreening =null)
@@ -180,7 +199,7 @@ namespace VideoApi.Services
                     HostsForScreening = hostsForScreening?.ToList()
                 });
         }
-
+        
         public Task PauseHearingAsync(Guid conferenceId)
         {
             return _supplierApiClient.PauseHearingAsync(conferenceId.ToString());
