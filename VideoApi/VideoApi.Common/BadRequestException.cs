@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace VideoApi.Common
 {
@@ -8,5 +10,14 @@ namespace VideoApi.Common
     public class BadRequestException : Exception
     {
         public BadRequestException(string message) : base(message) { }
+
+        public static void ThrowIfNull([NotNull] object argument,
+            [CallerArgumentExpression(nameof(argument))] string paramName = null)
+        {
+            if (argument is null)
+            {
+                throw new BadRequestException($"Value cannot be null {paramName}");
+            }
+        }
     }
 }

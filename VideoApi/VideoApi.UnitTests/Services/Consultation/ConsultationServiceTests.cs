@@ -1,8 +1,8 @@
-using Autofac.Extras.Moq;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac.Extras.Moq;
+using Moq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Commands;
@@ -10,6 +10,7 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
@@ -24,31 +25,33 @@ namespace VideoApi.UnitTests.Services.Consultation
     [TestFixture]
     public class ConsultationServiceTests : ConsultationServiceTestBase
     {
-        private AutoMock _mocker;
-        private ConsultationService _consultationService;
-        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
-        
-        private StartConsultationRequest _request;
-        private List<ConsultationRoom> _rooms;
-
         [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            var kinlyPlatformService = new Mock<IVideoPlatformService>();
-            kinlyPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
-            var vodafonePlatformService = new Mock<IVideoPlatformService>();
-            vodafonePlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            _kinlyPlatformService = new Mock<IVideoPlatformService>();
+            _kinlyPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            _vodafonePlatformService = new Mock<IVideoPlatformService>();
+            _vodafonePlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(kinlyPlatformService.Object);
-            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(vodafonePlatformService.Object);
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(_kinlyPlatformService.Object);
+            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(_vodafonePlatformService.Object);
             
             _consultationService = _mocker.Create<ConsultationService>();
             SetupTestConference();
             _request = InitConsultationRequestForJudge();
             _rooms = CreateTestRooms(_request);
         }
-
+        
+        private AutoMock _mocker;
+        private ConsultationService _consultationService;
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
+        
+        private StartConsultationRequest _request;
+        private List<ConsultationRoom> _rooms;
+        private Mock<IVideoPlatformService> _vodafonePlatformService;
+        private Mock<IVideoPlatformService> _kinlyPlatformService;
+        
         [Test]
         public async Task Should_Return_A_Valid_ConsultationRoom_With_A_Valid_Request()
         {
@@ -73,7 +76,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             returnedRoom.Should().BeOfType<ConsultationRoom>();
             returnedRoom.Should().NotBeNull();
         }
-
+        
         [Test]
         public async Task Should_close_empty_consultation_rooms_when_there_are_no_participants()
         {
@@ -135,7 +138,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             returnedRoom.Should().BeOfType<ConsultationRoom>();
             returnedRoom.Should().Be(_rooms[0]);
         }
-
+        
         [Test]
         public async Task Should_Create_ConsultationRoom_If_None_Are_Available()
         {
@@ -165,7 +168,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             returnedRoom.Should().BeOfType<ConsultationRoom>();
             returnedRoom.Should().NotBeNull();
         }
-
+        
         [Test]
         public async Task Should_Successfully_Transfer_Participant_To_ConsultationRoom()
         {
@@ -178,26 +181,23 @@ namespace VideoApi.UnitTests.Services.Consultation
             await _consultationService.ParticipantTransferToRoomAsync(_request.ConferenceId, _request.RequestedBy,
                 room.Label);
 
-            var request = new TransferParticipantParams
-            {
-                From = participant.GetCurrentRoom(),
-                To = room.Label,
-                Part_id = participant.Id.ToString()
-            };
+            _vodafonePlatformService.Verify(x =>
+                x.TransferParticipantAsync(TestConference.Id, 
+                    participant.Id.ToString(), 
+                    participant.GetCurrentRoom(), 
+                    room.Label,
+                    ConferenceRole.Host), Times.Exactly(1));
 
-            _mocker.Mock<ISupplierApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
-                    y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
-                    y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
-                Times.Once);
         }
-
+        
         [Test]
         public async Task should_use_interpreter_room_when_participant_is_in_an_interpreter_room_on_transfer()
         {
+            var roomId = 999;
             var participant =
                 TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
             var interpreterRoom = new ParticipantRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
-            interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
+            interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), roomId);
             var roomParticipant = new RoomParticipant(participant.Id)
             {
                 Room = interpreterRoom,
@@ -213,18 +213,8 @@ namespace VideoApi.UnitTests.Services.Consultation
             await _consultationService.ParticipantTransferToRoomAsync(_request.ConferenceId, _request.RequestedBy,
                 room.Label);
             
-            
-            var request = new TransferParticipantParams
-            {
-                From = participant.GetCurrentRoom(),
-                To = room.Label,
-                Part_id = interpreterRoom.Id.ToString()
-            };
-            
-            _mocker.Mock<ISupplierApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
-                    y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
-                    y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
-                Times.Once);
+            _vodafonePlatformService.Verify(x =>
+                x.TransferParticipantAsync(TestConference.Id, roomId.ToString(), participant.GetCurrentRoom(), room.Label, ConferenceRole.Host), Times.Exactly(1));
         }
         
         private StartConsultationRequest InitConsultationRequestForJudge()
@@ -242,7 +232,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 RoomType = Contract.Enums.VirtualCourtRoomType.JudgeJOH
             };
         }
-
+        
         private static List<ConsultationRoom> CreateTestRooms(StartConsultationRequest request)
         {
             var rooms = new List<ConsultationRoom>();
@@ -254,7 +244,7 @@ namespace VideoApi.UnitTests.Services.Consultation
 
             return rooms;
         }
-
+        
         [Test]
         public async Task should_remove_a_participant_in_room()
         {
@@ -269,15 +259,9 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .ReturnsAsync(TestConference);
             
             await _consultationService.LeaveConsultationAsync(TestConference.Id, participantId, fromRoom, toRoom);
-
-            _mocker.Mock<ISupplierApiClient>().Verify(x =>
-                    x.TransferParticipantAsync(TestConference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.From == fromRoom &&
-                            r.To == toRoom
-                        )
-                    )
-                , Times.Exactly(1));
+            
+            _vodafonePlatformService.Verify(x =>
+                    x.TransferParticipantAsync(TestConference.Id, participantId.ToString(), fromRoom, toRoom, ConferenceRole.Host), Times.Exactly(1));
         }
         
         [Test]
@@ -285,10 +269,11 @@ namespace VideoApi.UnitTests.Services.Consultation
         {
             var fromRoom = "ParticipantConsultationRoom1";
             var toRoom = RoomType.WaitingRoom.ToString();
+            var roomId = 999;
             var participant =
                 TestConference.Participants.First(x => x.Id.Equals(_request.RequestedBy));
             var interpreterRoom = new ParticipantRoom(TestConference.Id, "Interpreter1", VirtualCourtRoomType.Civilian);
-            interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), 999);
+            interpreterRoom.SetProtectedProperty(nameof(interpreterRoom.Id), roomId);
             var roomParticipant = new RoomParticipant(participant.Id)
             {
                 Room = interpreterRoom,
@@ -302,20 +287,10 @@ namespace VideoApi.UnitTests.Services.Consultation
 
             await _consultationService.LeaveConsultationAsync(_request.ConferenceId, participant.Id, fromRoom, toRoom);
             
-            
-            var request = new TransferParticipantParams
-            {
-                From = fromRoom,
-                To = toRoom,
-                Part_id = interpreterRoom.Id.ToString()
-            };
-            
-            _mocker.Mock<ISupplierApiClient>().Verify(x => x.TransferParticipantAsync(It.Is<string>(
-                    y => y.Equals(_request.ConferenceId.ToString())), It.Is<TransferParticipantParams>(
-                    y => y.From.Equals(request.From) && y.To.Equals(request.To) && y.Part_id.Equals(request.Part_id))),
-                Times.Once);
+            _vodafonePlatformService.Verify(x =>
+                x.TransferParticipantAsync(TestConference.Id, roomId.ToString(), fromRoom, toRoom, ConferenceRole.Host), Times.Exactly(1));
         }
-
+        
         [Test]
         public async Task Should_Create_New_ConsultationRoom()
         {
@@ -343,7 +318,7 @@ namespace VideoApi.UnitTests.Services.Consultation
             returnedRoom.Should().NotBeNull();
             VerifySupplierUsed(TestConference.Supplier, Times.Once());
         }
-
+        
         private void VerifySupplierUsed(VideoApi.Domain.Enums.Supplier supplier, Times times)
         {
             _supplierPlatformServiceFactoryMock.Verify(x => x.Create(supplier), times);

@@ -111,6 +111,7 @@ namespace VideoApi.IntegrationTests.Steps
             var room = _context.Test.Room;
             var participantId = room.RoomParticipants.First().ParticipantId;
             var request = BuildRequest(eventType, _context.Test.Conference, null, room.Id.ToString());
+            request.TransferTo = _context.Test.ConsultationRoom.Label;
             request.ParticipantId = participantId.ToString();
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
@@ -198,7 +199,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.EventId = Guid.NewGuid().ToString())
                 .With(x => x.EventType = eventType)
                 .With(x => x.TransferFrom = RoomType.WaitingRoom.ToString())
-                .With(x => x.TransferTo = RoomType.ConsultationRoom.ToString())
+                .With(x => x.TransferTo = _context.Test.ConsultationRoom?.Label ?? RoomType.ConsultationRoom.ToString())
                 .With(x => x.Reason = "Automated")
                 .With(x => x.Phone = phone)
                 .With(x => x.ParticipantRoomId = participantRoomId)

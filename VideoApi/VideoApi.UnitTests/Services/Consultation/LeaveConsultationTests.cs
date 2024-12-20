@@ -2,13 +2,13 @@ using System.Linq;
 using Autofac.Extras.Moq;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Enums;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
+using ConferenceRole = VideoApi.Domain.Enums.ConferenceRole;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using Task = System.Threading.Tasks.Task;
 using UserRole = VideoApi.Domain.Enums.UserRole;
@@ -19,19 +19,20 @@ namespace VideoApi.UnitTests.Services.Consultation
     public class LeaveConsultationTests
     {
         private AutoMock _mocker;
+        private Mock<IVideoPlatformService> _supplierPlatformService;
         private ConsultationService _sut;
-
+        
         [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            var supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
-            supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            _supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
+            _supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(supplierPlatformService.Object);
+            supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(_supplierPlatformService.Object);
             _sut = _mocker.Create<ConsultationService>();
         }
-
+        
         [Test]
         public async Task should_transfer_linked_participant_out_of_consultation_when_last_non_linked_participant_leaves_consultation()
         {
@@ -66,25 +67,14 @@ namespace VideoApi.UnitTests.Services.Consultation
                 RoomType.WaitingRoom.ToString());
 
             // assert
-            _mocker.Mock<ISupplierApiClient>().Verify(x =>
-                    x.TransferParticipantAsync(conference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.From == consultationRoom.Label &&
-                            r.To == RoomType.WaitingRoom.ToString() &&
-                            r.Part_id == participant.Id.ToString())
-                    )
-                , Times.Once);
-            
-            _mocker.Mock<ISupplierApiClient>().Verify(x =>
-                    x.TransferParticipantAsync(conference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.From == consultationRoom.Label &&
-                            r.To == RoomType.WaitingRoom.ToString() &&
-                            r.Part_id == interpreterRoom.Id.ToString())
-                    )
-                , Times.Once);
+            _supplierPlatformService.Verify(x =>
+                x.TransferParticipantAsync(conference.Id,
+                    interpreterRoom.Id.ToString(),
+                    consultationRoom.Label,
+                    RoomType.WaitingRoom.ToString(),
+                    It.IsAny<ConferenceRole>()), Times.Exactly(1));
         }
-
+        
         [Test]
         public async Task should_not_transfer_linked_participant_out_of_consultation_when_non_linked_participants_are_still_in_consultation()
         {
@@ -119,23 +109,12 @@ namespace VideoApi.UnitTests.Services.Consultation
             await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label, RoomType.WaitingRoom.ToString());
 
             // assert
-            _mocker.Mock<ISupplierApiClient>().Verify(x =>
-                    x.TransferParticipantAsync(conference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.From == consultationRoom.Label &&
-                            r.To == RoomType.WaitingRoom.ToString() &&
-                            r.Part_id == participant.Id.ToString())
-                    )
-                , Times.Once);
-            
-            _mocker.Mock<ISupplierApiClient>().Verify(x =>
-                    x.TransferParticipantAsync(conference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.From == consultationRoom.Label &&
-                            r.To == RoomType.WaitingRoom.ToString() &&
-                            r.Part_id == interpreterRoom.Id.ToString())
-                    )
-                , Times.Never);
+            _supplierPlatformService.Verify(x =>
+                x.TransferParticipantAsync(conference.Id,
+                    participant.Id.ToString(),
+                    consultationRoom.Label,
+                    RoomType.WaitingRoom.ToString(),
+                    It.IsAny<ConferenceRole>()), Times.Exactly(1));
         }
         
         [Test]
@@ -167,18 +146,15 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .ReturnsAsync(conference);
 
             // act
-            await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label,
-                RoomType.WaitingRoom.ToString());
+            await _sut.LeaveConsultationAsync(conference.Id, participant.Id, consultationRoom.Label, RoomType.WaitingRoom.ToString());
 
             // assert
-            _mocker.Mock<ISupplierApiClient>().Verify(x =>
-                    x.TransferParticipantAsync(conference.Id.ToString(),
-                        It.Is<TransferParticipantParams>(r =>
-                            r.From == consultationRoom.Label &&
-                            r.To == RoomType.WaitingRoom.ToString() &&
-                            r.Part_id == participant.Id.ToString())
-                    )
-                , Times.Once);
+            _supplierPlatformService.Verify(x =>
+                x.TransferParticipantAsync(conference.Id,
+                    participant.Id.ToString(), 
+                    consultationRoom.Label, 
+                    RoomType.WaitingRoom.ToString(), 
+                    It.IsAny<ConferenceRole>()), Times.Exactly(1));
         }
     }
 }

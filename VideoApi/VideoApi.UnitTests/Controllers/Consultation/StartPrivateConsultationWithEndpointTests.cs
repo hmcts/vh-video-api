@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Testing.Common.Assertions;
 using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.Domain;
@@ -132,9 +133,9 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             };
             var result = await Controller.StartConsultationWithEndpointAsync(request);
 
-            var actionResult = result.As<BadRequestObjectResult>();
-            actionResult.Should().NotBeNull();
-            actionResult.Value.Should().Be("Room already has an active endpoint");
+            result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result;
+            ((ValidationProblemDetails)objectResult.Value).ContainsKeyAndErrorMessage("RoomLabel", "Room already has an active endpoint");
         }
 
         [Test]
