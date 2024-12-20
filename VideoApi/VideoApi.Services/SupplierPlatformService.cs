@@ -127,8 +127,7 @@ namespace VideoApi.Services
             return result;
         }
         
-        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom,
-            string toRoom, ConferenceRole? role)
+        public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role)
         {
             _logger.LogInformation(
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
@@ -138,29 +137,16 @@ namespace VideoApi.Services
             {
                 roleString = role == ConferenceRole.Host ? "Host" : "Guest";
             }
-            TransferParticipantParams request;
+            var request = new TransferParticipantParams
+            {
+                From = fromRoom,
+                To = toRoom,
+                Part_id = participantId
+            };
             
             if (_featureToggles.SendTransferRolesEnabled())
-            {
-                request = new TransferParticipantParams
-                {
-                    From = fromRoom,
-                    To = toRoom,
-                    Part_id = participantId,
-                    Role = roleString
-                };
-            }
-            else
-            {
-                request = new TransferParticipantParams
-                {
-                    From = fromRoom,
-                    To = toRoom,
-                    Part_id = participantId
-                };
-            }
-      
-
+                request.Role = roleString;
+            
             return _supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
         
