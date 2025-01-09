@@ -3,13 +3,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Net;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Responses;
 using VideoApi.Controllers;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
-using Supplier = VideoApi.Contract.Enums.Supplier;
 
 namespace VideoApi.UnitTests.Controllers.SelfTest
 {
@@ -19,7 +17,6 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
         private Mock<ILogger<SelfTestController>> _mockLogger;
         private Mock<IVideoPlatformService> _supplierPlatformService;
         private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
-        private Mock<IFeatureToggles> _featureToggles;
 
         [SetUp]
         public void Setup()
@@ -27,33 +24,21 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
             _mockLogger = new Mock<ILogger<SelfTestController>>();
             _supplierPlatformService = new Mock<IVideoPlatformService>();
             _supplierPlatformServiceFactory = new Mock<ISupplierPlatformServiceFactory>();
-            _featureToggles = new Mock<IFeatureToggles>();
-            _featureToggles.Setup(x => x.VodafoneIntegrationEnabled()).Returns(true);
             _supplierPlatformServiceFactory.Setup(x => x.Create(It.IsAny<VideoApi.Domain.Enums.Supplier>())).Returns(_supplierPlatformService.Object);
         }
 
-        [TestCase(false)]
-        [TestCase(true)]
-        public void Should_return_okay_with_response(bool vodafoneEnabled)
+        [Test]
+        public void Should_return_okay_with_response()
         {
-            _featureToggles.Setup(x => x.VodafoneIntegrationEnabled()).Returns(vodafoneEnabled);
-            var supplier = VideoApi.Domain.Enums.Supplier.Kinly;
-            SupplierConfiguration supplierConfiguration = new KinlyConfiguration
+            const VideoApi.Domain.Enums.Supplier supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
+            var supplierConfiguration = new VodafoneConfiguration
             {
-                PexipSelfTestNode = "KinlyPexipSelfTestNode"
+                PexipSelfTestNode = "VodafonePexipSelfTestNode"
             };
-            if (vodafoneEnabled)
-            {
-                supplier = VideoApi.Domain.Enums.Supplier.Vodafone;
-                supplierConfiguration = new VodafoneConfiguration
-                {
-                    PexipSelfTestNode = "VodafonePexipSelfTestNode"
-                };
-            }
 
             _supplierPlatformService.Setup(x => x.GetSupplierConfiguration()).Returns(supplierConfiguration);
             _supplierPlatformServiceFactory.Setup(x => x.Create(supplier)).Returns(_supplierPlatformService.Object);
-            _controller = new SelfTestController(_supplierPlatformServiceFactory.Object, _mockLogger.Object, _featureToggles.Object);
+            _controller = new SelfTestController(_supplierPlatformServiceFactory.Object, _mockLogger.Object);
 
             var response = (OkObjectResult)_controller.GetPexipServicesConfiguration();
             response.Should().NotBeNull();
@@ -67,7 +52,7 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
         {
             _supplierPlatformService.Setup(x => x.GetSupplierConfiguration()).Returns((SupplierConfiguration)null);
             // _supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(_supplierPlatformService.Object);
-            _controller = new SelfTestController(_supplierPlatformServiceFactory.Object, _mockLogger.Object, _featureToggles.Object);
+            _controller = new SelfTestController(_supplierPlatformServiceFactory.Object, _mockLogger.Object);
 
             var response = (NotFoundResult)_controller.GetPexipServicesConfiguration();
             response.StatusCode.Should().Be((int)HttpStatusCode.NotFound);

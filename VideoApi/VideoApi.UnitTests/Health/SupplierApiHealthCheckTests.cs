@@ -2,7 +2,6 @@ using System;
 using Autofac.Extras.Moq;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Moq;
-using VideoApi.Contract.Enums;
 using VideoApi.Health;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
@@ -17,21 +16,17 @@ public class SupplierApiHealthCheckTests
     private AutoMock _mocker;
     private SupplierApiHealthCheck _sut;
     private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
-    private Mock<IFeatureToggles> _featureTogglesMock;
     
     [SetUp]
     public void Setup()
     {
         _mocker = AutoMock.GetLoose();
-        //_sut = _mocker.Create<SupplierApiHealthCheck>();
         _supplierPlatformServiceFactoryMock = new Mock<ISupplierPlatformServiceFactory>();
-        _featureTogglesMock = new Mock<IFeatureToggles>();
-        _sut = new SupplierApiHealthCheck(_supplierPlatformServiceFactoryMock.Object, _featureTogglesMock.Object);
+        _sut = new SupplierApiHealthCheck(_supplierPlatformServiceFactoryMock.Object);
     }
     
-    [TestCase(false)]
-    [TestCase(true)]
-    public async Task Should_return_healthy_if_supplier_api_is_healthy(bool vodafoneEnabled)
+    [Test]
+    public async Task Should_return_healthy_if_supplier_api_is_healthy()
     {
         var healthCheckResponse = new HealthCheckResponse
         {
@@ -49,8 +44,7 @@ public class SupplierApiHealthCheckTests
             .Setup(x => x.Create(Supplier.Kinly)).Returns(kinlyVideoPlatformServiceMock.Object);
         _supplierPlatformServiceFactoryMock
             .Setup(x => x.Create(Supplier.Vodafone)).Returns(vodafoneVideoPlatformServiceMock.Object);
-        _featureTogglesMock.Setup(x => x.VodafoneIntegrationEnabled()).Returns(vodafoneEnabled);
-        var supplier = vodafoneEnabled ? Supplier.Vodafone : Supplier.Kinly;
+        const Supplier supplier = Supplier.Vodafone;
         
         var result = await _sut.CheckHealthAsync(new HealthCheckContext());
         

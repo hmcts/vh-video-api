@@ -32,7 +32,7 @@ namespace VideoApi.UnitTests.Services
         private Mock<IPollyRetryService> _pollyRetryService;
         private Mock<ISupplierApiClient> _supplierApiClientMock;
         private SupplierConfiguration _supplierConfig;
-        private SupplierPlatformService _SupplierPlatformService;
+        private SupplierPlatformService _supplierPlatformService;
         private Mock<ISupplierSelfTestHttpClient> _supplierSelfTestHttpClient;
         private Conference _testConference;
         
@@ -40,7 +40,6 @@ namespace VideoApi.UnitTests.Services
         public void Setup()
         {
             _featureToggles = new Mock<IFeatureToggles>();
-            _featureToggles.Setup(x => x.VodafoneIntegrationEnabled()).Returns(false);
             _featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(true);
             _supplierApiClientMock = new Mock<ISupplierApiClient>();
             _supplierConfig = new KinlyConfiguration()
@@ -52,7 +51,7 @@ namespace VideoApi.UnitTests.Services
             _supplierSelfTestHttpClient = new Mock<ISupplierSelfTestHttpClient>();
             _pollyRetryService = new Mock<IPollyRetryService>();
             
-            _SupplierPlatformService = new SupplierPlatformService(
+            _supplierPlatformService = new SupplierPlatformService(
                 _loggerMock.Object,
                 _supplierSelfTestHttpClient.Object,
                 _pollyRetryService.Object,
@@ -81,7 +80,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()))
+                    _supplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()))
                 .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
         
@@ -93,7 +92,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<SupplierApiException>(() =>
-                _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()));
+                _supplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()));
         }
         
         [Test]
@@ -148,7 +147,7 @@ namespace VideoApi.UnitTests.Services
                     Virtual_courtroom_id = Guid.NewGuid()
                 });
 
-            var result = await _SupplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
+            var result = await _supplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id,
                 audioRecordingRequired,
                 ingestUrl,
                 endpoints, It.IsAny<string>(), conferenceRoomType, playbackLanguage);
@@ -178,7 +177,7 @@ namespace VideoApi.UnitTests.Services
             _supplierApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
 
             var conferenceId = Guid.NewGuid();
-            await _SupplierPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>());
+            await _supplierPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>());
             
             _supplierApiClientMock.Verify(x => x.UpdateHearingAsync(conferenceId.ToString(), It.Is<UpdateHearingParams>(p => p.Recording_enabled)), Times.Once);
         }
@@ -199,7 +198,7 @@ namespace VideoApi.UnitTests.Services
 
             _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).ReturnsAsync(hearing);
 
-            var result = await _SupplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
+            var result = await _supplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
 
             result.Should().NotBeNull();
             result.AdminUri.Should().Be(hearing.Uris.Admin);
@@ -213,7 +212,7 @@ namespace VideoApi.UnitTests.Services
             var exception = new SupplierApiException("notfound", StatusCodes.Status404NotFound, "", null, null);
             _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
 
-            var result = await _SupplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
+            var result = await _supplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>());
 
             result.Should().BeNull();
         }
@@ -224,7 +223,7 @@ namespace VideoApi.UnitTests.Services
             var exception = new SupplierApiException("BadGateway", StatusCodes.Status502BadGateway, "", null, null);
             _supplierApiClientMock.Setup(x => x.GetHearingAsync(It.IsAny<string>())).Throws(exception);
 
-            Assert.ThrowsAsync<SupplierApiException>(() => _SupplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>()));
+            Assert.ThrowsAsync<SupplierApiException>(() => _supplierPlatformService.GetVirtualCourtRoomAsync(It.IsAny<Guid>()));
         }
         
         [Test]
@@ -246,7 +245,7 @@ namespace VideoApi.UnitTests.Services
             })
             .ReturnsAsync(expectedTestCallResult);
 
-            var result = await _SupplierPlatformService.GetTestCallScoreAsync(participantId);
+            var result = await _supplierPlatformService.GetTestCallScoreAsync(participantId);
             
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(expectedTestCallResult);
@@ -258,7 +257,7 @@ namespace VideoApi.UnitTests.Services
             var conferenceId = Guid.NewGuid();
             _supplierApiClientMock.Setup(x => x.DeleteHearingAsync(conferenceId.ToString()));
 
-            await _SupplierPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
+            await _supplierPlatformService.DeleteVirtualCourtRoomAsync(conferenceId);
             
             _supplierApiClientMock.Verify(x => x.DeleteHearingAsync(conferenceId.ToString()), Times.Once);
         }
@@ -267,7 +266,7 @@ namespace VideoApi.UnitTests.Services
         public async Task should_start_hearing_with_automatic_layout_as_default()
         {
             var conferenceId = Guid.NewGuid();
-            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>());
+            await _supplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>());
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
                     It.Is<StartHearingRequest>(l => l.Hearing_layout == Layout.AUTOMATIC)), Times.Once);
@@ -281,7 +280,7 @@ namespace VideoApi.UnitTests.Services
             var participantsToForceTransfer = new[] {"participant-one", "participant-two"};
             var hostIds = new[] {"host-one", "host-two"};
             var muteGuests = false;
-            await _SupplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(),
+            await _supplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(),
                 participantsToForceTransfer, hostIds, layout, muteGuests);
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId.ToString(),
@@ -295,7 +294,7 @@ namespace VideoApi.UnitTests.Services
         public async Task should_pause_hearing()
         {
             var conferenceId = Guid.NewGuid();
-            await _SupplierPlatformService.PauseHearingAsync(conferenceId);
+            await _supplierPlatformService.PauseHearingAsync(conferenceId);
             _supplierApiClientMock.Verify(x => x.PauseHearingAsync(conferenceId.ToString()), Times.Once);
         }
         
@@ -303,7 +302,7 @@ namespace VideoApi.UnitTests.Services
         public async Task should_end_hearing()
         {
             var conferenceId = Guid.NewGuid();
-            await _SupplierPlatformService.EndHearingAsync(conferenceId);
+            await _supplierPlatformService.EndHearingAsync(conferenceId);
             _supplierApiClientMock.Verify(x => x.EndHearingAsync(conferenceId.ToString()), Times.Once);
         }
         
@@ -311,7 +310,7 @@ namespace VideoApi.UnitTests.Services
         public async Task should_suspend_hearing()	
         {	
             var conferenceId = Guid.NewGuid();	
-            await _SupplierPlatformService.SuspendHearingAsync(conferenceId);	
+            await _supplierPlatformService.SuspendHearingAsync(conferenceId);	
             _supplierApiClientMock.Verify(x => x.TechnicalAssistanceAsync(conferenceId.ToString()), Times.Once);	
         }
         
@@ -321,7 +320,7 @@ namespace VideoApi.UnitTests.Services
             var conferenceId = Guid.NewGuid();
             var participantId = Guid.NewGuid();
             var name = "New Name";
-            await _SupplierPlatformService.UpdateParticipantName(conferenceId, participantId, name);
+            await _supplierPlatformService.UpdateParticipantName(conferenceId, participantId, name);
             _supplierApiClientMock.Verify(x => x.UpdateParticipanNameAsync(conferenceId.ToString(),
                 It.Is<UpdateParticipantNameParams>(p
                     => p.Participant_Id == participantId.ToString() && p.Participant_Name == name)), Times.Once);
@@ -339,7 +338,7 @@ namespace VideoApi.UnitTests.Services
             var toRoom = "HearingRoom";
             
             // act
-            await _SupplierPlatformService.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom, role);
+            await _supplierPlatformService.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom, role);
             
             // assert
             _supplierApiClientMock.Verify(
@@ -360,7 +359,7 @@ namespace VideoApi.UnitTests.Services
             var toRoom = "HearingRoom";
             
             // act
-            await _SupplierPlatformService.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom, VideoApi.Domain.Enums.ConferenceRole.Guest);
+            await _supplierPlatformService.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom, VideoApi.Domain.Enums.ConferenceRole.Guest);
             
             // assert
             _supplierApiClientMock.Verify(
