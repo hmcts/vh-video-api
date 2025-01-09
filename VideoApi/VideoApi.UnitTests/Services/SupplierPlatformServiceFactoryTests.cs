@@ -44,7 +44,6 @@ namespace VideoApi.UnitTests.Services
             _serviceProvider.Setup(x => x.GetService(typeof(IFeatureToggles))).Returns(featureToggles.Object);
         }
         
-        [TestCase(Supplier.Kinly)]
         [TestCase(Supplier.Vodafone)]
         public void Should_create_supplier_platform_service(Supplier supplier)
         {
@@ -58,12 +57,7 @@ namespace VideoApi.UnitTests.Services
             service.Should().BeOfType<SupplierPlatformService>();
             service.Should().NotBeNull();
             
-            if (supplier == Supplier.Kinly)
-            {
-                service.GetHttpClient().Should().BeAssignableTo<IKinlyApiClient>();
-                service.GetSupplierConfiguration().Should().BeAssignableTo<KinlyConfiguration>();
-            }
-            else if (supplier == Supplier.Vodafone)
+            if (supplier == Supplier.Vodafone)
             {
                 service.GetHttpClient().Should().BeAssignableTo<IVodafoneApiClient>();
                 service.GetSupplierConfiguration().Should().BeAssignableTo<VodafoneConfiguration>();
