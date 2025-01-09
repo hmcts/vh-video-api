@@ -37,7 +37,6 @@ namespace VideoApi.Services
         public SupplierConfiguration GetSupplierConfiguration(Supplier supplier) =>
             supplier switch
             {
-                Supplier.Kinly => serviceProvider.GetRequiredService<IOptions<KinlyConfiguration>>().Value,
                 Supplier.Vodafone => serviceProvider.GetRequiredService<IOptions<VodafoneConfiguration>>().Value,
                 _ => throw new InvalidOperationException($"Unsupported supplier {supplier}")
             };
@@ -45,7 +44,6 @@ namespace VideoApi.Services
         private ISupplierApiClient GetSupplierApiClient(Supplier supplier) =>
             supplier switch
             {
-                Supplier.Kinly => serviceProvider.GetService<IKinlyApiClient>(),
                 Supplier.Vodafone => serviceProvider.GetService<IVodafoneApiClient>(),
                 _ => throw new InvalidOperationException($"Unsupported supplier {supplier}")
             };

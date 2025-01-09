@@ -57,7 +57,7 @@ namespace VideoApi.UnitTests.Services
                 _pollyRetryService.Object,
                 _supplierApiClientMock.Object,
                 _supplierConfig,
-                Supplier.Kinly,
+                Supplier.Vodafone,
                 _featureToggles.Object
             );
             

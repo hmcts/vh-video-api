@@ -32,16 +32,10 @@ public class SupplierApiHealthCheckTests
         {
             Health_status = PlatformHealth.HEALTHY
         };
-        var kinlyVideoPlatformServiceMock = new Mock<IVideoPlatformService>();
-        kinlyVideoPlatformServiceMock
-            .Setup(x => x.GetPlatformHealthAsync())
-            .ReturnsAsync(healthCheckResponse);
         var vodafoneVideoPlatformServiceMock = new Mock<IVideoPlatformService>();
         vodafoneVideoPlatformServiceMock
             .Setup(x => x.GetPlatformHealthAsync())
             .ReturnsAsync(healthCheckResponse);
-        _supplierPlatformServiceFactoryMock
-            .Setup(x => x.Create(Supplier.Kinly)).Returns(kinlyVideoPlatformServiceMock.Object);
         _supplierPlatformServiceFactoryMock
             .Setup(x => x.Create(Supplier.Vodafone)).Returns(vodafoneVideoPlatformServiceMock.Object);
         const Supplier supplier = Supplier.Vodafone;

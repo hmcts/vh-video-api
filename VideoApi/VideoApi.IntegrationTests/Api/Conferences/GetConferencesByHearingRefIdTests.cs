@@ -18,14 +18,12 @@ public class GetConferencesByHearingRefIdTests : ApiTest
     public async Task should_get_conferences_by_HearingRefIds()
     {
         //arrange
-        var kinlyConference = await TestDataManager.SeedConference(Supplier.Kinly);
         var vodafoneConference = await TestDataManager.SeedConference();
         using var client = Application.CreateClient();
         var payload = new GetConferencesByHearingIdsRequest
         {
             HearingRefIds =
             [
-                kinlyConference.HearingRefId,
                 vodafoneConference.HearingRefId
             ]
         };
@@ -38,7 +36,7 @@ public class GetConferencesByHearingRefIdTests : ApiTest
         // assert
         result.IsSuccessStatusCode.Should().BeTrue();
         var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceCoreResponse>>(result.Content);
-        conferenceResponse.Count.Should().Be(2);
+        conferenceResponse.Count.Should().Be(1);
     }
     
     [TestCase("default guid")]

@@ -213,9 +213,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected void UseSupplierPlatformServiceStub()
         {
             SupplierPlatformServiceFactoryMock
-                .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly))
-                .Returns(new SupplierPlatformServiceStub(KinlyConfig));
-            SupplierPlatformServiceFactoryMock
                 .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone))
                 .Returns(new SupplierPlatformServiceStub(VodafoneConfig));
         }

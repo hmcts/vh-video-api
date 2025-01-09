@@ -163,14 +163,13 @@ namespace VideoApi.IntegrationTests.Hooks
         {
             var serviceProvider = services.BuildServiceProvider();
             
-            var kinlyConfigOptions = serviceProvider.GetService<IOptions<KinlyConfiguration>>();
             var vodafoneConfigOptions = serviceProvider.GetService<IOptions<VodafoneConfiguration>>();
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
             services.AddSingleton<IFeatureToggles, FeatureTogglesStub>();
             services.AddScoped<ISupplierPlatformServiceFactory>(_ =>
-                new TestSupplierPlatformServiceFactory(kinlyConfigOptions.Value, vodafoneConfigOptions.Value));
+                new TestSupplierPlatformServiceFactory(vodafoneConfigOptions.Value));
         }
         
         private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)
