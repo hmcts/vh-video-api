@@ -8,7 +8,6 @@ namespace VideoApi.Services;
 
 public interface IFeatureToggles
 {
-    public bool VodafoneIntegrationEnabled();
     public bool SendTransferRolesEnabled();
 }
 
@@ -16,7 +15,6 @@ public interface IFeatureToggles
 public class FeatureToggles : IFeatureToggles
 {
     private const string LdUser = "vh-video-api";
-    private const string VodafoneToggleKey = "vodafone";
     private const string SendTransferRolesKey = "send-transfer-roles";
     private readonly Context _context;
     private readonly LdClient _ldClient;
@@ -28,17 +26,7 @@ public class FeatureToggles : IFeatureToggles
         _context = Context.Builder(LdUser).Name(environmentName).Build();
         _ldClient = new LdClient(config);
     }
-    
-    public bool VodafoneIntegrationEnabled()
-    {
-        if (!_ldClient.Initialized)
-        {
-            throw new InvalidOperationException("LaunchDarkly client not initialized");
-        }
-        
-        return _ldClient.BoolVariation(VodafoneToggleKey, _context);
-    }
-    
+
     public bool SendTransferRolesEnabled()
     {
         if (!_ldClient.Initialized)

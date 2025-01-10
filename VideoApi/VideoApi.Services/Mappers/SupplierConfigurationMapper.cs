@@ -11,12 +11,11 @@ namespace VideoApi.Services.Mappers
         {
             var supplierConfigurations = new List<SupplierConfigurationMapping>();
             
-            CheckAndAddConfiguration(Domain.Enums.Supplier.Kinly);
-            CheckAndAddConfiguration(Domain.Enums.Supplier.Vodafone);
+            CheckAndAddConfiguration(Supplier.Vodafone);
 
             return supplierConfigurations;
 
-            void CheckAndAddConfiguration(Domain.Enums.Supplier supplier)
+            void CheckAndAddConfiguration(Supplier supplier)
             {
                 if (!conferences.Exists(x => x.Supplier == supplier))
                 {
@@ -30,9 +29,9 @@ namespace VideoApi.Services.Mappers
         }
     }
     
-    public class SupplierConfigurationMapping(Domain.Enums.Supplier supplier, SupplierConfiguration configuration)
+    public class SupplierConfigurationMapping(Supplier supplier, SupplierConfiguration configuration)
     {
-        public Domain.Enums.Supplier Supplier { get; private set; } = supplier;
+        public Supplier Supplier { get; private set; } = supplier;
         public SupplierConfiguration Configuration { get; private set; } = configuration;
     }
 }

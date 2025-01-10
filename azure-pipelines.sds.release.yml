@@ -318,24 +318,6 @@ stages:
             keyVaultName: vh-infra-core-${{ variables.env }}
             secret: true
 
-          # Kinly Configuration
-          - name: KinlyConfiguration:ConferencePhoneNumber
-            value: $(ConferencePhoneNumber)
-          - name: KinlyConfiguration:ConferencePhoneNumberWelsh
-            value: $(ConferencePhoneNumberWelsh)
-          - name: KinlyConfiguration:ApiUrl
-            value: $(KinlyApiUrl)
-          - name: KinlyConfiguration:SelfTestApiUrl
-            value: $(KinlySelfTestApiUrl)
-          - name: KinlyConfiguration:ConferenceUsername
-            value: $(ConferenceUsername)
-          - name: KinlyConfiguration:CallbackUri
-            value: $(CallbackUri)
-          - name: KinlyConfiguration:SipAddressStem
-            value: KinlyConfiguration--SipAddressStem
-            keyVaultName: vh-video-api-${{ variables.env }}
-            secret: true
-            
           # Vodafone Configuration
           - name: VodafoneConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)

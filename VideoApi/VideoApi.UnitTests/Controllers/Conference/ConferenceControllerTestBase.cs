@@ -8,7 +8,6 @@ using Moq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Enums;
 using VideoApi.Controllers;
@@ -36,12 +35,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IBookingService> BookingServiceMock;
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected ConferenceController Controller;
-        
-        protected KinlyConfiguration KinlyConfig = new()
-        {
-            PexipSelfTestNode = "KinlyPexipSelfTestNode"
-        };
-        
+
         protected MeetingRoom MeetingRoom;
         protected AutoMock Mocker;
         protected Mock<ILogger<ConferenceController>> MockLogger;
@@ -212,9 +206,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         
         protected void UseSupplierPlatformServiceStub()
         {
-            SupplierPlatformServiceFactoryMock
-                .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly))
-                .Returns(new SupplierPlatformServiceStub(KinlyConfig));
             SupplierPlatformServiceFactoryMock
                 .Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone))
                 .Returns(new SupplierPlatformServiceStub(VodafoneConfig));

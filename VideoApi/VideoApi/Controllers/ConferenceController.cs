@@ -477,7 +477,7 @@ public class ConferenceController(
         bool audioRecordingRequired,
         string ingestUrl,
         IEnumerable<EndpointDto> endpoints,
-        ConferenceRoomType roomType, AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh, Supplier supplier = Supplier.Kinly) => await pollyRetryService.WaitAndRetryAsync<Exception, bool>
+        ConferenceRoomType roomType, AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh, Supplier supplier = Supplier.Vodafone) => await pollyRetryService.WaitAndRetryAsync<Exception, bool>
     (
         3,
         _ => TimeSpan.FromSeconds(10),

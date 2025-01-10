@@ -1,13 +1,13 @@
 
 using System.Linq;
-using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 
 namespace VideoApi.UnitTests.CustomJwtToken
 {
     public class CustomJwtTokenProviderTests
     {
-        private KinlyJwtProvider _customJwtTokenProvider;
-        private KinlyJwtHandler _customJwtTokenHandler;
+        private VodafoneJwtProvider _customJwtTokenProvider;
+        private VodafoneJwtHandler _customJwtTokenHandler;
         private const string Issuer = "hmcts.video.service";
         private const string Audience = "test.video.supplier.endpoint";
 
@@ -15,9 +15,9 @@ namespace VideoApi.UnitTests.CustomJwtToken
         public void Setup()
         {
             var secretKey = "6t8obpbl0iHOSvDpnUImSdZjYEpTcaEWC8SzLO4/X6iOHArHEm/3Ja6NnzaKS6JwE3U/Bjy1LE/bARMqNCN98w==";
-            var customTokenSettings = new KinlyConfiguration{ ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
-            _customJwtTokenProvider = new KinlyJwtProvider(customTokenSettings);
-            _customJwtTokenHandler = new KinlyJwtHandler(customTokenSettings);
+            var customTokenSettings = new VodafoneConfiguration{ ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
+            _customJwtTokenProvider = new VodafoneJwtProvider(customTokenSettings);
+            _customJwtTokenHandler = new VodafoneJwtHandler(customTokenSettings);
         }
 
         [Test]
@@ -68,8 +68,8 @@ namespace VideoApi.UnitTests.CustomJwtToken
         public void Should_be_invalid_token_when_token_generated_with_different_secret()
         {
             var secretKey = "F8pf/zwOgm/kASEFs+BKRDdyq+RhHCQ9i9tPjeaPjUebm6HvzXKIsr/nX28wpwAZoWRG0FQK9LVf6nrkW/vg4w==";
-            var customTokenSettings = new KinlyConfiguration { ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
-            _customJwtTokenProvider = new KinlyJwtProvider(customTokenSettings);
+            var customTokenSettings = new VodafoneConfiguration { ApiSecret = secretKey, Audience = Audience, Issuer = Issuer};
+            _customJwtTokenProvider = new VodafoneJwtProvider(customTokenSettings);
 
             var token = _customJwtTokenProvider.GenerateApiToken("Test User", 1);
 

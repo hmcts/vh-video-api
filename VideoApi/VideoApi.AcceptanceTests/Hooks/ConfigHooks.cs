@@ -8,7 +8,6 @@ using Testing.Common.Configuration;
 using VideoApi.AcceptanceTests.Contexts;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Responses;
 
@@ -32,7 +31,6 @@ namespace VideoApi.AcceptanceTests.Hooks
             RegisterAzureSecrets(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
-            RegisterKinlySettings(context);
             RegisterVodafoneSettings(context);
             RegisterWowzaSettings(context);
             RegisterAudioRecordingTestIdConfiguration(context);
@@ -65,16 +63,7 @@ namespace VideoApi.AcceptanceTests.Hooks
                 throw new InvalidOperationException(
                     $"Missing test secrets for running against: {GetTargetTestEnvironment()}");
         }
-        
-        private void RegisterKinlySettings(TestContext context)
-        {
-            context.Config.KinlyConfiguration =
-                Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
-            context.Config.KinlyConfiguration.CallbackUri = context.Config.Services.CallbackUri;
-            context.Config.KinlyConfiguration.CallbackUri.Should().NotBeEmpty();
-            context.Config.KinlyConfiguration.ApiUrl.Should().NotBeEmpty();
-        }
-        
+
         private void RegisterVodafoneSettings(TestContext context)
         {
             context.Config.VodafoneConfiguration = Options

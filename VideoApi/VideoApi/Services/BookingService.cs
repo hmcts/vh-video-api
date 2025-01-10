@@ -22,7 +22,7 @@ public interface IBookingService
 {
     public Task<bool> BookMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
         IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
-        AudioPlaybackLanguage audioPlaybackLanguage, Supplier supplier = Supplier.Kinly);
+        AudioPlaybackLanguage audioPlaybackLanguage, Supplier supplier = Supplier.Vodafone);
     
     public Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl);
 }
@@ -40,7 +40,7 @@ public class BookingService(
         IEnumerable<EndpointDto> endpoints,
         ConferenceRoomType roomType,
         AudioPlaybackLanguage audioPlaybackLanguage,
-        Supplier supplier = Supplier.Kinly)
+        Supplier supplier = Supplier.Vodafone)
     {
         MeetingRoom meetingRoom;
         var telephoneId = await CreateUniqueTelephoneId();

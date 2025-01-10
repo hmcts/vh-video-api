@@ -1,7 +1,7 @@
 using System.Linq;
 using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Domain.Enums;
 using VideoApi.Mappings;
 using AudioPlaybackLanguage = VideoApi.Contract.Enums.AudioPlaybackLanguage;
@@ -28,7 +28,7 @@ namespace VideoApi.UnitTests.Mappings
             string conferencePhoneNumberWelsh = "+449876543210";
             string pexipSelfTestNode = "selttest@pexip.node";
             
-            var configuration = Builder<KinlyConfiguration>.CreateNew()
+            var configuration = Builder<VodafoneConfiguration>.CreateNew()
                 .With(x => x.ConferencePhoneNumber = conferencePhoneNumber)
                 .With(x => x.ConferencePhoneNumberWelsh = conferencePhoneNumberWelsh)
                 .With(x => x.PexipSelfTestNode = pexipSelfTestNode).Build();

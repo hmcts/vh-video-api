@@ -29,12 +29,9 @@ namespace VideoApi.UnitTests.Services.Consultation
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _kinlyPlatformService = new Mock<IVideoPlatformService>();
-            _kinlyPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _vodafonePlatformService = new Mock<IVideoPlatformService>();
             _vodafonePlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
             _supplierPlatformServiceFactoryMock = _mocker.Mock<ISupplierPlatformServiceFactory>();
-            _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(_kinlyPlatformService.Object);
             _supplierPlatformServiceFactoryMock.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(_vodafonePlatformService.Object);
             
             _consultationService = _mocker.Create<ConsultationService>();
@@ -50,7 +47,6 @@ namespace VideoApi.UnitTests.Services.Consultation
         private StartConsultationRequest _request;
         private List<ConsultationRoom> _rooms;
         private Mock<IVideoPlatformService> _vodafonePlatformService;
-        private Mock<IVideoPlatformService> _kinlyPlatformService;
         
         [Test]
         public async Task Should_Return_A_Valid_ConsultationRoom_With_A_Valid_Request()
