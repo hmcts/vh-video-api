@@ -86,8 +86,8 @@ namespace VideoApi.Services
                 await queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
-            var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
-            await TransferParticipantAsync(conferenceId, kinlyParticipantId, participant.GetCurrentRoom(), room, participant.IsHost(), conference.Supplier);
+            var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
+            await TransferParticipantAsync(conferenceId, supplierParticipantId, participant.GetCurrentRoom(), room, participant.IsHost(), conference.Supplier);
         }
         
         public async Task LeaveConsultationAsync(Guid conferenceId, Guid participantId, string fromRoom, string toRoom)
@@ -98,8 +98,8 @@ namespace VideoApi.Services
             
             var participant = conference.GetParticipants().Single(x => x.Id == participantId);
 
-            var kinlyParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
-            await TransferParticipantAsync(conferenceId, kinlyParticipantId, fromRoom, toRoom, participant.IsHost(), conference.Supplier);
+            var supplierParticipantId = participant.GetParticipantRoom()?.Id.ToString() ?? participantId.ToString(); 
+            await TransferParticipantAsync(conferenceId, supplierParticipantId, fromRoom, toRoom, participant.IsHost(), conference.Supplier);
 
             var lastLinkedParticipant =
                 await RetrieveLastParticipantIfLinkedAndLeftAlone(conference, participant, fromRoom); 

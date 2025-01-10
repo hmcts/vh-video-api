@@ -81,7 +81,7 @@ namespace VideoApi.DAL.Commands
                 .ConfigureAwait(true);
             if (transferToRoom == null)
             {
-                // The only way for the room not to have been created by us (where it would already be in the table) is by kinly via a VHO consultation.
+                // The only way for the room not to have been created by us (where it would already be in the table) is by the supplier via a VHO consultation.
                 var vhoConsultation = new ConsultationRoom(command.ConferenceId, command.RoomLabel, VirtualCourtRoomType.Participant, false);
                 _context.Rooms.Add(vhoConsultation);
                 transferToRoom = vhoConsultation;

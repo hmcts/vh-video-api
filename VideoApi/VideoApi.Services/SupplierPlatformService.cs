@@ -54,7 +54,7 @@ namespace VideoApi.Services
             string telephoneId, ConferenceRoomType roomType, AudioPlaybackLanguage audioPlaybackLanguage)
         {
             _logger.LogInformation(
-                "Booking a conference for {ConferenceId} with callback {CallbackUri} at {KinlyApiUrl}", conferenceId,
+                "Booking a conference for {ConferenceId} with callback {CallbackUri} at {SupplierApiUrl}", conferenceId,
                 _supplierConfigOptions.CallbackUri, _supplierConfigOptions.ApiUrl);
             try
             {
@@ -118,7 +118,7 @@ namespace VideoApi.Services
                 _ => pauseBetweenFailures,
                 retryAttempt =>
                     _logger.LogWarning(
-                        "Failed to retrieve test score for participant {ParticipantId} at {KinlySelfTestApiUrl}. Retrying attempt {RetryAttempt}",
+                        "Failed to retrieve test score for participant {ParticipantId} at {SupplierSelfTestApiUrl}. Retrying attempt {RetryAttempt}",
                         participantId, _supplierConfigOptions.ApiUrl, retryAttempt),
                 callResult => callResult == null,
                 () => _supplierSelfTestHttpClient.GetTestCallScoreAsync(participantId)

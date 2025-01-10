@@ -2,8 +2,6 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
@@ -14,7 +12,6 @@ namespace VideoApi.Services
     public interface ISupplierPlatformServiceFactory
     {
         IVideoPlatformService Create(Supplier supplier);
-        SupplierConfiguration GetSupplierConfiguration(Supplier supplier);
     }
     
     public class SupplierPlatformServiceFactory(IServiceProvider serviceProvider) : ISupplierPlatformServiceFactory
@@ -23,9 +20,7 @@ namespace VideoApi.Services
         {
             var featureToggles = serviceProvider.GetRequiredService<IFeatureToggles>();
             var logger = serviceProvider.GetRequiredService<ILogger<SupplierPlatformService>>();
-            ISupplierSelfTestHttpClient selfTestHttpClient = supplier == Supplier.Vodafone 
-                ? serviceProvider.GetRequiredService<IVodafoneSelfTestHttpClient>() 
-                : serviceProvider.GetRequiredService<IKinlySelfTestHttpClient>();
+            ISupplierSelfTestHttpClient selfTestHttpClient = serviceProvider.GetRequiredService<IVodafoneSelfTestHttpClient>();
             var pollyRetryService = serviceProvider.GetRequiredService<IPollyRetryService>();
 
             var supplierApiClient = GetSupplierApiClient(supplier);
@@ -34,7 +29,7 @@ namespace VideoApi.Services
             return new SupplierPlatformService(logger, selfTestHttpClient, pollyRetryService, supplierApiClient, supplierConfig, supplier, featureToggles);
         }
         
-        public SupplierConfiguration GetSupplierConfiguration(Supplier supplier) =>
+        private VodafoneConfiguration GetSupplierConfiguration(Supplier supplier) =>
             supplier switch
             {
                 Supplier.Vodafone => serviceProvider.GetRequiredService<IOptions<VodafoneConfiguration>>().Value,

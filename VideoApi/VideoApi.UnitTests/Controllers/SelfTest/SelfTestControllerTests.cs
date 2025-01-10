@@ -51,7 +51,6 @@ namespace VideoApi.UnitTests.Controllers.SelfTest
         public void Should_return_not_found()
         {
             _supplierPlatformService.Setup(x => x.GetSupplierConfiguration()).Returns((SupplierConfiguration)null);
-            // _supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Kinly)).Returns(_supplierPlatformService.Object);
             _controller = new SelfTestController(_supplierPlatformServiceFactory.Object, _mockLogger.Object);
 
             var response = (NotFoundResult)_controller.GetPexipServicesConfiguration();

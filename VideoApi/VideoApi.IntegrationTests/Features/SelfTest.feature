@@ -1,5 +1,5 @@
 Feature: Self Test
-	In order to avoid setting old values for the Kinly self test
+	In order to avoid setting old values for the Supplier self test
 	As an api service
 	I want to be able to retrieve the pexip service configuration settings
 

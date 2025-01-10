@@ -47,7 +47,6 @@ namespace VideoApi.UnitTests.Services.Consultation
         private StartConsultationRequest _request;
         private List<ConsultationRoom> _rooms;
         private Mock<IVideoPlatformService> _vodafonePlatformService;
-        private Mock<IVideoPlatformService> _kinlyPlatformService;
         
         [Test]
         public async Task Should_Return_A_Valid_ConsultationRoom_With_A_Valid_Request()

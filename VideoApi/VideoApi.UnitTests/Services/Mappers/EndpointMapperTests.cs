@@ -7,7 +7,7 @@ namespace VideoApi.UnitTests.Services.Mappers
     public class EndpointMapperTests
     {
         [Test]
-        public void should_map_to_kinly_endpoint_dto()
+        public void should_map_to_supplier_endpoint_dto()
         {
             var ep = new Endpoint("Displayname", "sip", "pin", "defence_advocate@hmcts.net",
                 ConferenceRole.Guest);

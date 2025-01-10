@@ -21,7 +21,6 @@ using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -31,7 +30,6 @@ using VideoApi.Services.Clients;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Factories;
 using VideoApi.Services.Handlers;
-using VideoApi.Services.Handlers.Kinly;
 using VideoApi.Services.Handlers.Vodafone;
 using VideoApi.Swagger;
 using ZymLabs.NSwag.FluentValidation;
@@ -111,7 +109,6 @@ namespace VideoApi
             IWebHostEnvironment environment, bool useStub)
         {
             var container = services.BuildServiceProvider();
-            var kinlyConfiguration = container.GetService<IOptions<KinlyConfiguration>>().Value;
             var vodafoneConfiguration = container.GetService<IOptions<VodafoneConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
             var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
@@ -130,10 +127,8 @@ namespace VideoApi
             
             services.AddScoped<IEventHandlerFactory, EventHandlerFactory>();
             
-            services.AddTransient<KinlyApiTokenDelegatingHandler>();
             services.AddTransient<VodafoneApiTokenDelegatingHandler>();
             
-            services.AddTransient<KinlySelfTestApiDelegatingHandler>();
             services.AddTransient<VodafoneSelfTestApiDelegatingHandler>();
             
             services.AddSingleton<IPollyRetryService, PollyRetryService>();
@@ -154,24 +149,14 @@ namespace VideoApi
             else
             {
                 services.AddTransient<SupplierLoggingDelegatingHandler>();
-                services
-                    .AddHttpClient<IKinlyApiClient, SupplierApiClient>()
-                    .AddTypedClient<IKinlyApiClient>(httpClient =>
-                        BuildSupplierClient(kinlyConfiguration.ApiUrl, httpClient))
-                    .AddHttpMessageHandler<KinlyApiTokenDelegatingHandler>()
-                    .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
-                
+
                 services
                     .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
                     .AddTypedClient<IVodafoneApiClient>(httpClient =>
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
-                
-                services
-                    .AddHttpClient<IKinlySelfTestHttpClient, KinlySelfTestHttpClient>()
-                    .AddHttpMessageHandler<KinlySelfTestApiDelegatingHandler>();
-                
+
                 services
                     .AddHttpClient<IVodafoneSelfTestHttpClient, VodafoneSelfTestHttpClient>()
                     .AddHttpMessageHandler<VodafoneSelfTestApiDelegatingHandler>();
@@ -181,9 +166,6 @@ namespace VideoApi
                 services.AddScoped<IVirtualRoomService, VirtualRoomService>();
                 services.AddScoped<ISupplierPlatformServiceFactory, SupplierPlatformServiceFactory>();
             }
-            
-            services.AddScoped<IKinlyJwtTokenHandler, KinlyJwtHandler>();
-            services.AddScoped<IKinlyJwtProvider, KinlyJwtProvider>();
             
             services.AddScoped<IVodafoneJwtProvider, VodafoneJwtProvider>();
             services.AddScoped<IVodafoneJwtTokenHandler, VodafoneJwtHandler>();

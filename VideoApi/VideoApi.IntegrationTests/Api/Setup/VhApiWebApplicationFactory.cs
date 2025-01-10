@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Testing.Common;
 using VideoApi.Common.Configuration;
-using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Services;
 using VideoApi.Services.Contracts;
 
@@ -61,8 +61,8 @@ namespace VideoApi.IntegrationTests.Api.Setup
         {
             var serviceProvider = services.BuildServiceProvider();
             
-            var kinlyConfigOptions = serviceProvider.GetService<IOptions<KinlyConfiguration>>();
-            var supplierPlatformService = new SupplierPlatformServiceStub(kinlyConfigOptions.Value);
+            var vodafoneConfigOptions = serviceProvider.GetService<IOptions<VodafoneConfiguration>>();
+            var supplierPlatformService = new SupplierPlatformServiceStub(vodafoneConfigOptions.Value);
             services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();

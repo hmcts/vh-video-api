@@ -24,7 +24,7 @@ public class ConferenceDetailsResponse : ConferenceCoreResponse
     public List<EndpointResponse> Endpoints { get; set; } = new();
     
     /// <summary>
-    /// The Kinly meeting room details
+    /// The supplier meeting room details
     /// </summary>
     public MeetingRoomResponse MeetingRoom { get; set; }
     

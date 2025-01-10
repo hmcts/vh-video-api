@@ -8,9 +8,7 @@ using Testing.Common.Configuration;
 using VideoApi.Client;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
-using VideoApi.Services;
 
 namespace VideoApi.AcceptanceTests.ApiTests;
 

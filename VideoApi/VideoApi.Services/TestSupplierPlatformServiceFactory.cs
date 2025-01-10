@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Services.Contracts;
 using Supplier = VideoApi.Domain.Enums.Supplier;

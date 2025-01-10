@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Common.Security.Supplier.Base;
-using VideoApi.Common.Security.Supplier.Kinly;
+using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Services;
@@ -42,9 +42,9 @@ namespace VideoApi.UnitTests.Services
             _featureToggles = new Mock<IFeatureToggles>();
             _featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(true);
             _supplierApiClientMock = new Mock<ISupplierApiClient>();
-            _supplierConfig = new KinlyConfiguration()
+            _supplierConfig = new VodafoneConfiguration
             {
-                CallbackUri = "CallbackUri", ApiUrl = "KinlyApiUrl"
+                CallbackUri = "CallbackUri", ApiUrl = "VodafoneApiUrl"
             };
             _loggerMock = new Mock<ILogger<SupplierPlatformService>>();
 
