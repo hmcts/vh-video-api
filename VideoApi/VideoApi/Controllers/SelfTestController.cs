@@ -14,8 +14,7 @@ namespace VideoApi.Controllers
     [ApiController]
     public class SelfTestController(
         ISupplierPlatformServiceFactory supplierPlatformServiceFactory,
-        ILogger<SelfTestController> logger,
-        IFeatureToggles featureToggles)
+        ILogger<SelfTestController> logger)
         : ControllerBase
     {
         /// <summary>
@@ -29,9 +28,8 @@ namespace VideoApi.Controllers
         public IActionResult GetPexipServicesConfiguration()
         {
             logger.LogDebug($"GetPexipServicesConfiguration");
-
-            var supplier = featureToggles.VodafoneIntegrationEnabled() ? Supplier.Vodafone : Supplier.Kinly;
-            var supplierPlatformService = supplierPlatformServiceFactory.Create(supplier);
+            
+            var supplierPlatformService = supplierPlatformServiceFactory.Create(Supplier.Vodafone);
             var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
 
             if (supplierConfiguration == null)

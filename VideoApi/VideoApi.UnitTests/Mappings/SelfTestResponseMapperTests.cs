@@ -1,4 +1,4 @@
-﻿using VideoApi.Common.Security.Supplier.Kinly;
+﻿using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.Mappings;
 
 namespace VideoApi.UnitTests.Mappings
@@ -8,7 +8,7 @@ namespace VideoApi.UnitTests.Mappings
         [Test]
         public void Should_map_all_properties()
         {
-            var pexipConfig = new KinlyConfiguration
+            var pexipConfig = new VodafoneConfiguration
             {
                 PexipSelfTestNode = "self-test.node"
             };

@@ -121,7 +121,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
                     scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-                    Supplier.Kinly, ConferenceRoomType.VMR, AudioPlaybackLanguage.EnglishAndWelsh);
+                    Supplier.Vodafone, ConferenceRoomType.VMR, AudioPlaybackLanguage.EnglishAndWelsh);
             
             await _handler.Handle(command);
             
@@ -179,7 +179,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command =
                 new CreateConferenceCommand(hearingRefId, caseType, scheduledDateTime, caseNumber, caseName,
                     scheduledDuration, participants, hearingVenueName, audioRecordingRequired, ingestUrl, endpoints, linkedParticipants,
-                    Supplier.Kinly, ConferenceRoomType.VMR, AudioPlaybackLanguage.EnglishAndWelsh);
+                    Supplier.Vodafone, ConferenceRoomType.VMR, AudioPlaybackLanguage.EnglishAndWelsh);
             
             var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
             exception.LinkRefId.Should().Be(participantB.ParticipantRefId);

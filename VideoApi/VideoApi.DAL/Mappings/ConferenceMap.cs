@@ -25,7 +25,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.IngestUrl);
             builder.Property(x => x.ActualStartTime);
             builder.Property(x => x.CreatedDateTime);
-            builder.Property<Supplier>("Supplier").HasDefaultValue(Supplier.Kinly);
+            builder.Property<Supplier>("Supplier").HasDefaultValue(Supplier.Vodafone);
             builder.Property(x=> x.AudioPlaybackLanguage).HasDefaultValue(AudioPlaybackLanguage.EnglishAndWelsh);
 
             builder.HasMany<Participant>("Participants").WithOne().OnDelete(DeleteBehavior.Cascade);

@@ -23,7 +23,7 @@ public class GetActiveConferencesTests : ApiTest
     public async Task should_return_active_conferences()
     {
         // Arrange
-        var conferenceInSession = new ConferenceBuilder(ignoreId: true, supplier: Supplier.Kinly).WithParticipants(2)
+        var conferenceInSession = new ConferenceBuilder(ignoreId: true, supplier: Supplier.Vodafone).WithParticipants(2)
             .WithConferenceStatus(ConferenceState.InSession).Build();
         
         var conferencePaused = new ConferenceBuilder(ignoreId: true, supplier: Supplier.Vodafone).WithParticipants(2)

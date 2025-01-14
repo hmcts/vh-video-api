@@ -42,7 +42,7 @@ namespace VideoApi.UnitTests.Services.VirtualRoom
         }
 
         [Test]
-        public async Task should_create_vmr_with_kinly_if_room_is_not_available()
+        public async Task should_create_vmr_with_supplier_if_room_is_not_available()
         {
             var expectedRoomId = 2;
             var participant = _conference.Participants.First(x => x is Participant && !((Participant)x).IsJudge());

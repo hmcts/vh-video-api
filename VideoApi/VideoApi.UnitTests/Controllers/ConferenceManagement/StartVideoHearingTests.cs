@@ -41,7 +41,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 Hosts = hostIds,
                 HostsForScreening = hostsForScreening
             };
-            TestConference.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Kinly);
+            TestConference.SetProtectedProperty(nameof(TestConference.Supplier), Supplier.Vodafone);
             Mocker.Mock<IQueryHandler>()
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(
                     It.Is<GetConferenceByIdQuery>(q => q.ConferenceId == TestConference.Id)))

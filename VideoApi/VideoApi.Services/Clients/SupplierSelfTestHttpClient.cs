@@ -14,7 +14,7 @@ public class SupplierSelfTestHttpClient(
     HttpClient httpClient,
     SupplierConfiguration supplierConfigOptions,
     ILogger<SupplierSelfTestHttpClient> logger)
-    : IKinlySelfTestHttpClient, IVodafoneSelfTestHttpClient
+    : IVodafoneSelfTestHttpClient
 {
     public async Task<TestCallResult> GetTestCallScoreAsync(Guid participantId)
     {

@@ -59,22 +59,6 @@ java:
         - azuread--clientid
         - name: azuread--identifieruri
           alias: services--videoapiresourceid
-        #kinlyconfiguration
-        - kinlyconfiguration--apisecret
-        - kinlyconfiguration--callbacksecret
-        - kinlyconfiguration--selftestapisecret
-        - name: kinlyconfiguration--telephoneconferencenumber
-          alias: kinlyconfiguration--conferencephonenumber
-        - name: kinlyconfiguration--telephoneconferencenumberwelsh
-          alias: kinlyconfiguration--conferencephonenumberwelsh
-        - name: kinlyconfiguration--kinlyapiurl
-          alias: kinlyconfiguration--apiurl
-        - name: kinlyconfiguration--kinlyselftestapiurl
-          alias: kinlyconfiguration--selftestapiurl
-        - kinlyconfiguration--conferenceusername
-        - kinlyconfiguration--pexipnode
-        - kinlyconfiguration--pexipselftestnode
-        - kinlyconfiguration--selftestapisecret
         #vodafoneconfiguration
         - vodafoneconfiguration--apisecret
         - name: vodafoneconfiguration--selftestapikey
@@ -94,7 +78,6 @@ java:
         - launchdarkly--sdkkey
   environment:
     ASPNETCORE_URLS: http://+:8080
-    KINLYCONFIGURATION__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/callback
     VODAFONECONFIGURATION__CALLBACKURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/callback
     Logging__LogLevel__Default: warning
     Logging__LogLevel__Microsoft: warning

@@ -14,7 +14,7 @@ namespace VideoApi.Domain
         
         public Conference(Guid hearingRefId, string caseType, DateTime scheduledDateTime, string caseNumber,
             string caseName, int scheduledDuration, string hearingVenueName, bool audioRecordingRequired, string ingestUrl,
-            Supplier supplier = Supplier.Kinly, ConferenceRoomType conferenceRoomType = ConferenceRoomType.VMR, AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
+            Supplier supplier = Supplier.Vodafone, ConferenceRoomType conferenceRoomType = ConferenceRoomType.VMR, AudioPlaybackLanguage audioPlaybackLanguage = AudioPlaybackLanguage.EnglishAndWelsh)
         {
             Id = Guid.NewGuid();
             Participants = new List<ParticipantBase>();

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Security.Supplier.Kinly;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL;
 using VideoApi.DAL.Commands;
@@ -20,15 +19,12 @@ namespace VideoApi.IntegrationTests.Helper
     public class TestDataManager
     {
         private readonly DbContextOptions<VideoApiDbContext> _dbContextOptions;
-        private readonly KinlyConfiguration _kinlyConfiguration;
         private readonly List<Guid> _seedeConferences = new();
         private readonly VodafoneConfiguration _vodafoneConfiguration;
         
-        public TestDataManager(KinlyConfiguration kinlyConfiguration, 
-            DbContextOptions<VideoApiDbContext> dbContextOptions,
+        public TestDataManager(DbContextOptions<VideoApiDbContext> dbContextOptions,
             VodafoneConfiguration vodafoneConfiguration)
         {
-            _kinlyConfiguration = kinlyConfiguration;
             _vodafoneConfiguration = vodafoneConfiguration;
             _dbContextOptions = dbContextOptions;
         }
@@ -43,7 +39,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Judge, "Judge")
                 .WithParticipant(UserRole.JudicialOfficeHolder, "PanelMember")
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername, true, newTelephoneId)
+                .WithMeetingRoom(_vodafoneConfiguration.PexipNode, _vodafoneConfiguration.ConferenceUsername, true, newTelephoneId)
                 .WithAudioRecordingRequired(false)
                 .Build();
             var conferenceType = typeof(Conference);
@@ -69,7 +65,7 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.JudicialOfficeHolder, "PanelMember")
                 .WithEndpoint("Endpoint1", Guid.NewGuid().ToString(), "TestApplicant@email.com")
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername)
+                .WithMeetingRoom(_vodafoneConfiguration.PexipNode, _vodafoneConfiguration.ConferenceUsername)
                 .WithAudioRecordingRequired(false)
                 .Build();
             var conferenceType = typeof(Conference);
@@ -83,7 +79,7 @@ namespace VideoApi.IntegrationTests.Helper
             return await SeedConference(conference);
         }
         
-        public async Task<Conference> SeedConference(bool AudioRecording)
+        public async Task<Conference> SeedConference(bool audioRecording)
         {
             var conference = new ConferenceBuilder(true)
                 .WithParticipant(UserRole.Individual, "Applicant")
@@ -94,8 +90,8 @@ namespace VideoApi.IntegrationTests.Helper
                 .WithParticipant(UserRole.Judge, "Judge")
                 .WithParticipant(UserRole.JudicialOfficeHolder, "PanelMember")
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithMeetingRoom(_kinlyConfiguration.PexipNode, _kinlyConfiguration.ConferenceUsername)
-                .WithAudioRecordingRequired(AudioRecording)
+                .WithMeetingRoom(_vodafoneConfiguration.PexipNode, _vodafoneConfiguration.ConferenceUsername)
+                .WithAudioRecordingRequired(audioRecording)
                 .Build();
             var conferenceType = typeof(Conference);
             conferenceType.GetProperty("ActualStartTime")?.SetValue(conference, conference.ScheduledDateTime.AddMinutes(1));
@@ -299,8 +295,6 @@ namespace VideoApi.IntegrationTests.Helper
             
             await db.SaveChangesAsync();
         }
-        
-        public KinlyConfiguration GetKinlyConfiguration() => _kinlyConfiguration;
         
         public VodafoneConfiguration GetVodafoneConfiguration() => _vodafoneConfiguration;
     }

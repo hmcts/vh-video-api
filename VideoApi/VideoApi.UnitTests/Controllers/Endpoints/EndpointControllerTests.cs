@@ -229,7 +229,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
         }
 
         [Test]
-        public async Task should_not_update_kinly_when_endpoint_display_name_is_not_updated()
+        public async Task should_not_update_supplier_when_endpoint_display_name_is_not_updated()
         {
             const string defenceAdvocate = "Sol One";
             var testEndpoints = new List<Endpoint>

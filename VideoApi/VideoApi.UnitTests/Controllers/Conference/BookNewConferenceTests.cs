@@ -164,7 +164,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 Times.Once);
         }
         
-        [TestCase(Supplier.Kinly)]
         [TestCase(Supplier.Vodafone)]
         public async Task Should_book_supplier_conference_with_requested_supplier(Supplier supplier)
         {
@@ -187,9 +186,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             result.MeetingRoom.Should().NotBeNull();
             switch (supplier)
             {
-                case Supplier.Kinly:
-                    result.MeetingRoom.PexipSelfTestNode.Should().Be(KinlyConfig.PexipSelfTestNode);
-                    break;
                 case Supplier.Vodafone:
                     result.MeetingRoom.PexipSelfTestNode.Should().Be(VodafoneConfig.PexipSelfTestNode);
                     break;
