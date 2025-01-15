@@ -135,6 +135,11 @@
           "System.IO.Hashing": "6.0.0"
         }
       },
+      "Bogus": {
+        "type": "Transitive",
+        "resolved": "35.6.1",
+        "contentHash": "QPJ8zLL0ScEunEoUNhMDigD4ykA/n7vXCZUQdGCFGHBfP2mNYjiCzR9Cj12eaFaDlwkhIC1HKQZihWl8OgbLsw=="
+      },
       "Castle.Core": {
         "type": "Transitive",
         "resolved": "5.1.1",
@@ -147,14 +152,6 @@
         "type": "Transitive",
         "resolved": "5.0.0",
         "contentHash": "NfGq1iLJZ15XZPgBhjk4Ns1XZ+beaGk6cog6B4LxcROdGoSMdgCJqYXF70P6VTd3dz/vFRY4h1u1lAMqW/DC2w=="
-      },
-      "Faker.NETCore": {
-        "type": "Transitive",
-        "resolved": "1.0.2",
-        "contentHash": "teRWZFwtBSuMRo2jxB4/DfCo3nprjMtjb7tjBfhrnz+BPhQMivW9cVo06kLr4GAJjrCOvCNQ2sJckRwGvMmK0Q==",
-        "dependencies": {
-          "NETStandard.Library": "1.6.0"
-        }
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -2231,7 +2228,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Storage.Blobs": "[12.19.1, )",
-          "Faker.NETCore": "[1.0.2, )",
+          "Bogus": "[35.6.1, )",
           "FluentAssertions": "[6.12.0, )",
           "Microsoft.AspNetCore.Mvc.Core": "[2.2.5, )",
           "Microsoft.Extensions.Configuration": "[8.0.0, )",

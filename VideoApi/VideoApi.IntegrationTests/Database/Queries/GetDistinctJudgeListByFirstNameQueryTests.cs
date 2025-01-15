@@ -1,4 +1,4 @@
-using Faker;
+using Bogus;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
     {
         private GetDistinctJudgeListByFirstNameQueryHandler _handler;
         private List<Guid> _conferenceIds;
+        private static readonly Faker Faker = new();
 
         [SetUp]
         public void Setup()
@@ -116,7 +117,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private static string CreateUniqueName()
         {
             //This is done to create an unique first name to avoid the test from failing because of any existing data
-            return $"Automation_{Name.First()}{RandomNumber.Next()}";
+            return $"Automation_{Faker.Name.FirstName()}{Faker.Random.Number(0, 99999999)}";
         }
     }
 }

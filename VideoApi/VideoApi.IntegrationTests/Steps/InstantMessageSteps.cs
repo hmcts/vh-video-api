@@ -1,4 +1,3 @@
-using Faker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,7 @@ using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
 using static Testing.Common.Helper.ApiUriFactory.InstantMessageEndpoints;
+using Bogus;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -22,6 +22,7 @@ namespace VideoApi.IntegrationTests.Steps
     {
         private readonly TestContext _context;
         private readonly CommonSteps _commonSteps;
+        private static readonly Faker Faker = new();
         public InstantMessageSteps(TestContext context, CommonSteps commonSteps)
         {
             _context = context;
@@ -95,7 +96,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Test.Message = new AddInstantMessageRequest
             {
                 From = from,
-                MessageText = Internet.DomainWord(),
+                MessageText = Faker.Internet.DomainWord(),
                 To = to
             };
             var jsonBody = ApiRequestHelper.Serialise(_context.Test.Message);
@@ -110,7 +111,7 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new AddInstantMessageRequest
             {
                 From = "non-existent-participant",
-                MessageText = Internet.DomainWord()
+                MessageText = Faker.Internet.DomainWord()
             };
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");

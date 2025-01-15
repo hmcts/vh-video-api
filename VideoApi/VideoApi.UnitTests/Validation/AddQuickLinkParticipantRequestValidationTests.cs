@@ -1,4 +1,4 @@
-using Faker;
+using Bogus;
 using FizzWare.NBuilder;
 using System.Threading.Tasks;
 using VideoApi.Contract.Enums;
@@ -10,6 +10,7 @@ namespace VideoApi.UnitTests.Validation
     public class AddQuickLinkParticipantRequestValidationTests
     {
         private AddQuickLinkParticipantRequestValidation _validator;
+        private static readonly Faker Faker = new();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -80,7 +81,7 @@ namespace VideoApi.UnitTests.Validation
         {
             return Builder<AddQuickLinkParticipantRequest>.CreateNew()
                 .With(x => x.UserRole = UserRole.Representative)
-                .With(x => x.Name = Name.FullName())
+                .With(x => x.Name = Faker.Name.FullName())
                 .Build();
         }
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using Faker;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
@@ -21,6 +20,7 @@ using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 using ConferenceRole = VideoApi.Contract.Enums.ConferenceRole;
 using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 using ConferenceState = VideoApi.Contract.Enums.ConferenceState;
+using Bogus;
 
 namespace VideoApi.IntegrationTests.Steps
 {
@@ -30,6 +30,7 @@ namespace VideoApi.IntegrationTests.Steps
         private readonly CommonSteps _commonSteps;
         private readonly TestContext _context;
         private ConferenceDetailsResponse _conferenceDetails;
+        private static readonly Faker Faker = new();
         
         public ConferenceBaseSteps(TestContext context, CommonSteps commonSteps)
         {
@@ -51,7 +52,7 @@ namespace VideoApi.IntegrationTests.Steps
                 }
                 
                 case Scenario.Nonexistent:
-                    username = $"{RandomNumber.Next()}@hmcts.net";
+                    username = $"{Faker.Random.Number(0, 99999999)}@hmcts.net";
                     break;
                 case Scenario.Invalid:
                     username = "invalidemail";

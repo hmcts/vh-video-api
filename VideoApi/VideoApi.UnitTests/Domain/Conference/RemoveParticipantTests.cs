@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Faker;
+using Bogus;
 using FizzWare.NBuilder;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Domain;
@@ -11,6 +11,8 @@ namespace VideoApi.UnitTests.Domain.Conference
 {
     public class RemoveParticipantTests
     {
+        private static readonly Faker Faker = new();
+        
         [Test]
         public void Should_remove_participant_from_hearing()
         {
@@ -40,8 +42,8 @@ namespace VideoApi.UnitTests.Domain.Conference
             var caseGroup = "Applicant";
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseGroup);
             var participant = Builder<Participant>.CreateNew().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                    $"{RandomNumber.Next()}@hmcts.net", userRole, hearingRole,caseGroup, $"{RandomNumber.Next()}@hmcts.net", Phone.Number())).Build();
+                new Participant(Guid.NewGuid(), Faker.Name.FullName(), Faker.Name.FirstName(), Faker.Name.LastName(), Faker.Name.FullName(),
+                    $"{Faker.Random.Number(0, 99999999)}@hmcts.net", userRole, hearingRole,caseGroup, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", Faker.Phone.PhoneNumber())).Build();
 
             Action action = () => conference.RemoveParticipant(participant);
 

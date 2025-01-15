@@ -1,5 +1,5 @@
 ﻿using System;
-using Faker;
+using Bogus;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 
@@ -7,30 +7,31 @@ namespace VideoApi.UnitTests.DAL.Commands
 {
     public static class DomainModelFactoryForTests
     {
+        private static readonly Faker Faker = new();
         public static Conference CreateConference()
         {
-            return new Conference(Guid.NewGuid(), Name.First(), DateTime.UtcNow,
-                Name.First(),
-                Name.First(), 6, Lorem.GetFirstWord(), false, Name.First());
+            return new Conference(Guid.NewGuid(), Faker.Name.FirstName(), DateTime.UtcNow,
+                Faker.Name.FirstName(),
+                Faker.Name.FirstName(), 6, Faker.Lorem.Word(), false, Faker.Name.FirstName());
         }
 
         public static Participant CreateParticipant()
         {
-            return new Participant(Name.First(), Name.First(), Name.First(),
-                Name.First(),
-                Name.First(), UserRole.Individual, Name.First(), Name.First());
+            return new Participant(Faker.Name.FirstName(), Faker.Name.FirstName(), Faker.Name.FirstName(),
+                Faker.Name.FirstName(),
+                Faker.Name.FirstName(), UserRole.Individual, Faker.Name.FirstName(), Faker.Name.FirstName());
         }
 
         public static QuickLinkParticipant CreateQuickLinkParticipant(UserRole userRole)
         {
-            return new QuickLinkParticipant(Name.First(), userRole);
+            return new QuickLinkParticipant(Faker.Name.FirstName(), userRole);
         }
 
         public static Participant CreateParticipantWithUsername(string username)
         {
-            return new Participant(Name.First(), Name.First(), Name.First(),
-                Name.First(),
-                username, UserRole.Individual, Name.First(), Name.First());
+            return new Participant(Faker.Name.FirstName(), Faker.Name.FirstName(), Faker.Name.FirstName(),
+                Faker.Name.FirstName(),
+                username, UserRole.Individual, Faker.Name.FirstName(), Faker.Name.FirstName());
         }
 
         public static Participant CreateParticipantCopyForAssertion(Participant participant)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using Faker;
+using Bogus;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Helper.Builders.Domain;
@@ -25,6 +25,7 @@ namespace VideoApi.IntegrationTests.Steps
     {
         private readonly TestContext _context;
         private readonly CommonSteps _commonSteps;
+        private static readonly Faker Faker = new();
         
         public EndpointSteps(TestContext context, CommonSteps commonSteps)
         {
@@ -53,8 +54,8 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hmcts.net")
-                .WithEndpoint("Display2", Internet.FreeEmail())
+                .WithEndpoint("Display1", Faker.Internet.Email(), "rep@hmcts.net")
+                .WithEndpoint("Display2", Faker.Internet.Email())
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
 
@@ -75,8 +76,8 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Internet.FreeEmail(), "rep@hmcts.net")
-                .WithEndpoint("Display2", Internet.FreeEmail())
+                .WithEndpoint("Display1", Faker.Internet.Email(), "rep@hmcts.net")
+                .WithEndpoint("Display2", Faker.Internet.Email())
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
             _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);

@@ -1,5 +1,5 @@
 using System;
-using Faker;
+using Bogus;
 using FizzWare.NBuilder;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -9,6 +9,8 @@ namespace Testing.Common.Helper.Builders.Domain
     public class ParticipantBuilder
     {
         private readonly BuilderSettings _builderSettings;
+
+        private static readonly Faker Faker = new();
 
         private UserRole _userRole;
         private string _caseTypeGroup;
@@ -65,11 +67,11 @@ namespace Testing.Common.Helper.Builders.Domain
         public Participant Build()
         {
             _hearingRole ??= DetermineHearingRole(_userRole, _caseTypeGroup);
-            var name = Name.FullName();
+            var name = Faker.Name.FullName();
 
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                    new Participant(Guid.NewGuid(), name, Name.First(), Name.Last(), name, $"{RandomNumber.Next()}@hmcts.net", _userRole,
-                        _hearingRole, _caseTypeGroup, $"{RandomNumber.Next()}@hmcts.net", Phone.Number()))
+                    new Participant(Guid.NewGuid(), name, Faker.Name.FirstName(), Faker.Name.LastName(), name, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", _userRole,
+                        _hearingRole, _caseTypeGroup, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", Faker.Phone.PhoneNumber()))
                 .With(x => x.CurrentRoom = null)
                 .Build();
 

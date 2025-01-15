@@ -1,16 +1,17 @@
 using System;
 using System.Threading.Tasks;
-using Faker;
 using FizzWare.NBuilder;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Enums;
 using VideoApi.Validations;
+using Bogus;
 
 namespace VideoApi.UnitTests.Validation
 {
     public class ParticipantRequestValidationTests
     {
         private ParticipantRequestValidation _validator;
+        private static readonly Faker Faker = new();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -174,8 +175,8 @@ namespace VideoApi.UnitTests.Validation
                 .With(x => x.CaseTypeGroup = "Applicant")
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.HearingRole = "Litigant in person")
-                .With(x => x.Name = Name.FullName())
-                .With(x => x.Username = $"{RandomNumber.Next()}@hmcts.net")
+                .With(x => x.Name = Faker.Name.FullName())
+                .With(x => x.Username = $"{Faker.Random.Number(0, 99999999)}@hmcts.net")
                 .Build();
         }
     }

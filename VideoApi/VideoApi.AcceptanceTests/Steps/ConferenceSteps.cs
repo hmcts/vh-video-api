@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Faker;
+using Bogus;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
 using Testing.Common.Helper.Builders.Api;
@@ -22,6 +22,8 @@ namespace VideoApi.AcceptanceTests.Steps
         private readonly CallbackSteps _callbackSteps;
         private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
+
+        private static readonly Faker Faker = new();
         
         public ConferenceSteps(TestContext injectedContext, ScenarioContext scenarioContext,
             CallbackSteps callbackSteps)
@@ -341,8 +343,8 @@ namespace VideoApi.AcceptanceTests.Steps
         
         private void CreateMultipleConferences(bool addDuplicateFirstNames)
         {
-            var judge1 = $"Automation_{Name.First()}{RandomNumber.Next()}";
-            var judge2 = $"Automation_{Name.First()}{RandomNumber.Next()}";
+            var judge1 = $"Automation_{Faker.Name.FirstName()}{Faker.Random.Number(0, 99999999)}";
+            var judge2 = $"Automation_{Faker.Name.FirstName()}{Faker.Random.Number(0, 99999999)}";
             
             for (var i = 0; i < 2; i++)
             {
