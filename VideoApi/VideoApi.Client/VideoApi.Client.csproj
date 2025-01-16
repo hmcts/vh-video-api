@@ -9,15 +9,18 @@
         <License>https://github.com/hmcts/vh-video-api/blob/master/LICENSE</License>
         <RepositoryUrl>https://github.com/hmcts/vh-video-api</RepositoryUrl>
         <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-        <TargetFrameworks>net8.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
         <TargetFramework />
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
         <PackageReference Include="System.Text.Json" Version="8.0.5" />
     </ItemGroup>
 
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    
     <ItemGroup>
         <ProjectReference Include="..\VideoApi.Contract\VideoApi.Contract.csproj">
             <ReferenceOutputAssembly>true</ReferenceOutputAssembly>

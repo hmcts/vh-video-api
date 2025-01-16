@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
@@ -14,7 +13,6 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Type of an event
         /// </summary>
-        [EnumDataType(typeof(EventType))]
         public EventType EventType { get; set; }
 
         /// <summary>
