@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Faker;
+using Bogus;
 using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain;
@@ -13,6 +13,7 @@ namespace VideoApi.UnitTests.DAL.Commands
         private AnonymiseParticipantWithUsernameCommandHandler _commandHandler;
         private List<Participant> _participants = new List<Participant>();
         private Participant _participantToAnonymise, _anonymisedParticipant;
+        private static readonly Faker Faker = new();
 
         [SetUp]
         public async Task SetUp()
@@ -107,7 +108,7 @@ namespace VideoApi.UnitTests.DAL.Commands
         [Test]
         public async Task Anonymises_Representee()
         {
-            _participantToAnonymise.Representee = Name.First();
+            _participantToAnonymise.Representee = Faker.Name.FullName();
             videoApiDbContext.Participants.Update(_participantToAnonymise);
             await videoApiDbContext.SaveChangesAsync();
 

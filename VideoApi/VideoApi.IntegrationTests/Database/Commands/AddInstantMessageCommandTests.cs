@@ -1,4 +1,4 @@
-using Faker;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -18,6 +18,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
         private Guid _newConferenceId;
         private AddInstantMessageCommandHandler _handler;
 
+        private static readonly Faker Faker = new();
+
         [SetUp]
         public void Setup()
         {
@@ -34,7 +36,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var participants = seededConference.Participants;
             var from = participants.First(x => x.UserRole == UserRole.Judge).DisplayName;
-            var messageText = Internet.DomainWord();
+            var messageText = Faker.Internet.DomainWord();
             var to = "VH Officer";
 
             var command = new AddInstantMessageCommand(_newConferenceId, from, messageText, to);

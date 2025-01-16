@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using Faker;
+using Bogus;
 using FizzWare.NBuilder;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
@@ -14,6 +14,8 @@ namespace Testing.Common.Helper.Builders.Domain
         private const string CaseName = "Video Api Integration Test";
         private readonly BuilderSettings _builderSettings;
         private readonly Conference _conference;
+
+        private static readonly Faker Faker = new();
         
         public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null,
             DateTime? scheduledDateTime = null, string venueName = "MyVenue", Supplier supplier = Supplier.Vodafone)
@@ -47,9 +49,9 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
                 .WithFactory(() =>
-                    new Participant(Guid.NewGuid(), Name.FullName(), Name.First(), Name.Last(), Name.FullName(),
-                        $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com",
-                        Phone.Number()))
+                    new Participant(Guid.NewGuid(), Faker.Name.FullName(), Faker.Name.FirstName(), Faker.Name.LastName(), Faker.Name.FullName(),
+                        $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", UserRole.Individual, "Litigant in person", "Applicant", $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com",
+                        Faker.Phone.PhoneNumber()))
                 .All().With(x=> x.CurrentConsultationRoomId = null)
                 .Build();
 
@@ -77,18 +79,18 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                username = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
+                username = $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com";
             }
 
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                firstName = Name.First();
+                firstName = Faker.Name.FirstName();
             }
 
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username,
-                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                new Participant(Guid.NewGuid(), Faker.Name.FullName(), firstName, Faker.Name.LastName(), Faker.Name.FullName(), username,
+                    userRole,  hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", Faker.Phone.PhoneNumber()))
                 .And(x=> x.TestCallResultId = null)
                 .And(x=> x.CurrentConsultationRoomId = null)
                 .Build();
@@ -231,25 +233,25 @@ namespace Testing.Common.Helper.Builders.Domain
             string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
         {
-            var username1 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
-            var username2 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
+            var username1 = $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com";
+            var username2 = $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com";
 
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                firstName = Name.First();
+                firstName = Faker.Name.FirstName();
             }
 
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant1 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
-                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                new Participant(Guid.NewGuid(), Faker.Name.FullName(), firstName, Faker.Name.LastName(), Faker.Name.FullName(), username1,
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", Faker.Phone.PhoneNumber()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();
 
             var participant2 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                    new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username2,
-                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                    new Participant(Guid.NewGuid(), Faker.Name.FullName(), firstName, Faker.Name.LastName(), Faker.Name.FullName(), username2,
+                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", Faker.Phone.PhoneNumber()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();
@@ -257,8 +259,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var linkedParticipants1 = new List<LinkedParticipant>();
             var linked = participant2;
             var linkedParticipant1Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
-                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                new Participant(Guid.NewGuid(), Faker.Name.FullName(), firstName, Faker.Name.LastName(), Faker.Name.FullName(), username1,
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", Faker.Phone.PhoneNumber()))
                 .Build();
             linkedParticipants1.Add(new LinkedParticipant(linkedParticipant1Participant, linked, LinkedParticipantType.Interpreter));
             participant1.LinkedParticipants = linkedParticipants1;
@@ -270,8 +272,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var linkedParticipants2 = new List<LinkedParticipant>();
             linked = participant1;
             var linkedParticipant2Participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                    new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
-                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                    new Participant(Guid.NewGuid(), Faker.Name.FullName(), firstName, Faker.Name.LastName(), Faker.Name.FullName(), username1,
+                        userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", Faker.Phone.PhoneNumber()))
                 .Build();
             linkedParticipants2.Add(new LinkedParticipant(linkedParticipant2Participant, linked, LinkedParticipantType.Interpreter));
             participant2.LinkedParticipants = linkedParticipants2;
@@ -297,25 +299,25 @@ namespace Testing.Common.Helper.Builders.Domain
             string username = null, string firstName = null, RoomType? roomType = null,
             ParticipantState participantState = ParticipantState.None)
         {
-            var username1 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
-            var username2 = $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com";
+            var username1 = $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com";
+            var username2 = $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com";
 
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                firstName = Name.First();
+                firstName = Faker.Name.FirstName();
             }
 
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseTypeGroup);
             var participant1 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username1,
-                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                new Participant(Guid.NewGuid(), Faker.Name.FullName(), firstName, Faker.Name.LastName(), Faker.Name.FullName(), username1,
+                    userRole, hearingRole, caseTypeGroup, $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", Faker.Phone.PhoneNumber()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();
 
             var participant2 = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                    new Participant(Guid.NewGuid(), Name.FullName(), firstName, Name.Last(), Name.FullName(), username2,
-                        UserRole.Individual, "Interpreter", "Claimant", $"Video_Api_Integration_Test_{RandomNumber.Next()}@email.com", Phone.Number()))
+                    new Participant(Guid.NewGuid(), Faker.Name.FullName(), firstName, Faker.Name.LastName(), Faker.Name.FullName(), username2,
+                        UserRole.Individual, "Interpreter", "Claimant", $"Video_Api_Integration_Test_{Faker.Random.Number(0, 99999999 )}@email.com", Faker.Phone.PhoneNumber()))
                 .And(x => x.TestCallResultId = null)
                 .And(x => x.CurrentConsultationRoomId = null)
                 .Build();

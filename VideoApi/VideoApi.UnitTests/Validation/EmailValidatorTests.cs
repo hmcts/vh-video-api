@@ -1,14 +1,16 @@
-using Faker;
+using Bogus;
 using VideoApi.Validations;
 
 namespace VideoApi.UnitTests.Validation
 {
     public class EmailValidatorTests
     {
+        private static readonly Faker Faker = new();
+        
         [Test]
         public void Should_pass_validation_with_good_email()
         {
-            var email = $"{RandomNumber.Next()}@hmcts.net";
+            var email = $"{Faker.Random.Number(0, 99999999)}@hmcts.net";
             email.IsValidEmail().Should().BeTrue();
         }
 
