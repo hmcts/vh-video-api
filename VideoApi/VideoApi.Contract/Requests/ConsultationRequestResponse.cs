@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace VideoApi.Contract.Requests
 {
@@ -32,7 +31,6 @@ namespace VideoApi.Contract.Requests
         /// <summary>
         /// Response to a consultation request (i.e. 'Accepted or Rejected')
         /// </summary>
-        [EnumDataType(typeof(ConsultationAnswer))]
         public ConsultationAnswer Answer { get; set; }
     }
 

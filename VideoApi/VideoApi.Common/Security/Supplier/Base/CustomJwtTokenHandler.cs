@@ -42,7 +42,7 @@ namespace VideoApi.Common.Security.Supplier.Base
             ClaimsPrincipal principal;
             try
             {
-                principal = tokenHandler.ValidateToken(token, parameters, out var securityToken);
+                principal = tokenHandler.ValidateToken(token, parameters, out _);
             }
             catch (SecurityTokenInvalidSignatureException)
             {

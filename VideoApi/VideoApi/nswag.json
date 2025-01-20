@@ -1,11 +1,11 @@
 {
-  "runtime": "Net60",
+  "runtime": "Net80",
   "defaultVariables": "ProjectPath=VideoApi.csproj",
   "documentGenerator": {
     "aspNetCoreToOpenApi": {
       "project": "$(ProjectPath)",
       "msBuildProjectExtensionsPath": null,
-      "configuration": "Debug",
+      "configuration": null,
       "runtime": null,
       "targetFramework": null,
       "noBuild": true,
