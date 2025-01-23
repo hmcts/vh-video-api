@@ -1,5 +1,5 @@
-using System.Linq;
 using System.Threading.Tasks;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Validations;
 
@@ -24,7 +24,8 @@ namespace VideoApi.UnitTests.Validation
                 DisplayName = "Display name",
                 Pin = "1234",
                 SipAddress = _validSipAddress, 
-                DefenceAdvocate = "Defence Sol"
+                DefenceAdvocate = "Defence Sol",
+                ConferenceRole = ConferenceRole.Guest
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -40,7 +41,8 @@ namespace VideoApi.UnitTests.Validation
                 DisplayName = string.Empty,
                 Pin = "1234",
                 SipAddress = _validSipAddress, 
-                DefenceAdvocate = "Defence Sol"
+                DefenceAdvocate = "Defence Sol",
+                ConferenceRole = ConferenceRole.Guest
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -56,7 +58,8 @@ namespace VideoApi.UnitTests.Validation
                 DisplayName = "Display name",
                 Pin = string.Empty,
                 SipAddress = _validSipAddress, 
-                DefenceAdvocate = "Defence Sol"
+                DefenceAdvocate = "Defence Sol",
+                ConferenceRole = ConferenceRole.Guest
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -72,7 +75,8 @@ namespace VideoApi.UnitTests.Validation
                 DisplayName = "Display name",
                 Pin = "1234",
                 SipAddress = string.Empty, 
-                DefenceAdvocate = "Defence Sol"
+                DefenceAdvocate = "Defence Sol",
+                ConferenceRole = ConferenceRole.Guest
             };
 
             var result = await _validator.ValidateAsync(request);
@@ -88,11 +92,28 @@ namespace VideoApi.UnitTests.Validation
                 DisplayName = "Display name",
                 Pin = "1234",
                 SipAddress = "9f90f88-fc7f-4874-9837-669400385e49@test.net", 
-                DefenceAdvocate = "Defence Sol"
+                DefenceAdvocate = "Defence Sol",
+                ConferenceRole = ConferenceRole.Guest
             };
 
             var result = await _validator.ValidateAsync(request);
             result.Errors.Exists(x => x.ErrorMessage == AddEndpointRequestValidation.SipFormatError)
+                .Should().BeTrue();
+        }
+
+        [Test]
+        public async Task should_fail_when_conference_role_is_invalid()
+        {
+            var request = new AddEndpointRequest
+            {
+                DisplayName = "Display name",
+                Pin = "1234",
+                SipAddress = _validSipAddress, 
+                DefenceAdvocate = "Defence Sol"
+            };
+            
+            var result = await _validator.ValidateAsync(request);
+            result.Errors.Exists(x => x.ErrorMessage == AddEndpointRequestValidation.InvalidRoleError)
                 .Should().BeTrue();
         }
     }

@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Validations;
 
@@ -20,7 +21,8 @@ namespace VideoApi.UnitTests.Validation
         {
             var request = new UpdateEndpointRequest
             {
-                DisplayName = "Updated display name"
+                DisplayName = "Updated display name",
+                ConferenceRole = ConferenceRole.Guest
             };
             var result = await _validator.ValidateAsync(request);
             result.IsValid.Should().BeTrue();
@@ -31,11 +33,25 @@ namespace VideoApi.UnitTests.Validation
         {
             var request = new UpdateEndpointRequest
             {
-                DisplayName = string.Empty
+                DisplayName = string.Empty,
+                ConferenceRole = ConferenceRole.Guest
             };
 
             var result = await _validator.ValidateAsync(request);
             result.Errors.Any(x => x.ErrorMessage == UpdateEndpointRequestValidation.NoDisplayNameError)
+                .Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task Should_fail_validation_when_conference_role_is_empty()
+        {
+            var request = new UpdateEndpointRequest
+            {
+                DisplayName = "Updated display name",
+            };
+
+            var result = await _validator.ValidateAsync(request);
+            result.Errors.Any(x => x.ErrorMessage == UpdateEndpointRequestValidation.InvalidRoleError)
                 .Should().BeTrue();
         }
     }
