@@ -15,8 +15,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageReference Include="RestSharp" Version="106.12.0" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,5 +32,19 @@
     <None Update="TestAudioFiles\TestAudioFile.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Features\AudioRecording.feature" />
+    <UpToDateCheckInput Remove="Features\Conference.feature" />
+    <UpToDateCheckInput Remove="Features\Participants.feature" />
+    <UpToDateCheckInput Remove="Features\SelfTest.feature" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckBuild Remove="Features\AudioRecording.feature.cs" />
+    <UpToDateCheckBuild Remove="Features\Conference.feature.cs" />
+    <UpToDateCheckBuild Remove="Features\Participants.feature.cs" />
+    <UpToDateCheckBuild Remove="Features\SelfTest.feature.cs" />
   </ItemGroup>
 </Project>
