@@ -101,7 +101,8 @@ namespace VideoApi.IntegrationTests.Steps
                 Pin = "1234",
                 SipAddress = $"{GenerateRandomDigits()}@sip.com",
                 DisplayName = "Automated Add EP test", 
-                DefenceAdvocate = "Defence Sol"
+                DefenceAdvocate = "Defence Sol",
+                ConferenceRole = ConferenceRole.Guest
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -203,7 +204,8 @@ namespace VideoApi.IntegrationTests.Steps
             var sipAddress = "sip@sip.com";
             var request = new UpdateEndpointRequest
             {
-                DisplayName = "Automated Add EP test"
+                DisplayName = "Automated Add EP test",
+                ConferenceRole = ConferenceRole.Guest
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
@@ -216,7 +218,8 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Sol One"
+                DefenceAdvocate = "Sol One",
+                ConferenceRole = ConferenceRole.Guest
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
