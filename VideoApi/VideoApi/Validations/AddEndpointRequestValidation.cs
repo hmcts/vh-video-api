@@ -9,6 +9,7 @@ namespace VideoApi.Validations
         public const string NoSipError = "SipAddress is required";
         public const string SipFormatError = "SipAddress must start with 10 digits followed by an '@' symbol the supplier domain.";
         public const string NoPinError = "Pin is required";
+        public const string InvalidRoleError = "Coference role must be 'Host' or 'Guest'";
 
         public AddEndpointRequestValidation()
         {
@@ -16,6 +17,9 @@ namespace VideoApi.Validations
             RuleFor(x => x.SipAddress).NotEmpty().WithMessage(NoSipError);
             RuleFor(x => x.Pin).NotEmpty().WithMessage(NoPinError);
             RuleFor(x => x.SipAddress).Matches(@"^\d{10}@.*$").WithMessage(SipFormatError);
+            RuleFor(x=> x.ConferenceRole).IsInEnum().WithMessage(InvalidRoleError);
         }
+
+        
     }
 }

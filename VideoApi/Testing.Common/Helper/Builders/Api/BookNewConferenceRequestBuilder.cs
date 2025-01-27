@@ -163,14 +163,18 @@ namespace Testing.Common.Helper.Builders.Api
             return this;
         }
 
-        public BookNewConferenceRequestBuilder WithEndpoint(string displayName, string sip, string pin)
+        public BookNewConferenceRequestBuilder WithEndpoint(string displayName, string sip, string pin, ConferenceRole role = ConferenceRole.Guest)
         {
             if (_sipAddressStem != null)
             {
                 sip = $"{sip}{_sipAddressStem}";
             }
+
             _bookNewConferenceRequest.Endpoints.Add(new AddEndpointRequest
-                {DisplayName = displayName, SipAddress = sip, Pin = pin, DefenceAdvocate = "Defence Sol"});
+            {
+                DisplayName = displayName, SipAddress = sip, Pin = pin, DefenceAdvocate = "Defence Sol",
+                ConferenceRole = role
+            });
             return this;
         }
 
