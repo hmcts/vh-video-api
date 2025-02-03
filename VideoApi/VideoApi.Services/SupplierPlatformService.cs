@@ -130,22 +130,16 @@ namespace VideoApi.Services
         public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role = null)
         {
             _logger.LogInformation(
-                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} in conference: {ConferenceId}",
-                participantId, fromRoom, toRoom, conferenceId);
-            string roleString = null;
-            if (role.HasValue)
-            {
-                roleString = role == ConferenceRole.Host ? "Host" : "Guest";
-            }
+                "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} as {ConferenceRole} in conference: {ConferenceId}",
+                participantId, fromRoom, toRoom, role, conferenceId);
+            
             var request = new TransferParticipantParams
             {
                 From = fromRoom,
                 To = toRoom,
-                Part_id = participantId
+                Part_id = participantId,
+                Role = role?.ToString()
             };
-            
-            if (_featureToggles.SendTransferRolesEnabled())
-                request.Role = roleString;
             
             return _supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
         }
