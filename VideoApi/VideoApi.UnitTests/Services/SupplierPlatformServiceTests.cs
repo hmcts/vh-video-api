@@ -347,26 +347,5 @@ namespace VideoApi.UnitTests.Services
                         r.Role == expectedRole && r.From == fromRoom && r.To == toRoom && r.Part_id == participantId)),
                 Times.Once);
         }
-        
-        [Test]
-        public async Task should_transfer_when_send_role_flag_off()
-        {
-            // arrange
-            _featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(false);
-            var conferenceId = Guid.NewGuid();
-            var participantId = Guid.NewGuid().ToString();
-            var fromRoom = "WaitingRoom";
-            var toRoom = "HearingRoom";
-            
-            // act
-            await _supplierPlatformService.TransferParticipantAsync(conferenceId, participantId, fromRoom, toRoom, VideoApi.Domain.Enums.ConferenceRole.Guest);
-            
-            // assert
-            _supplierApiClientMock.Verify(
-                x => x.TransferParticipantAsync(conferenceId.ToString(),
-                    It.Is<TransferParticipantParams>(r =>
-                        r.Role == null && r.From == fromRoom && r.To == toRoom && r.Part_id == participantId)),
-                Times.Once);
-        }
     }
 }

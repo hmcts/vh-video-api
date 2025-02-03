@@ -111,15 +111,16 @@ namespace VideoApi.UnitTests.Events
             VideoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), ConferenceRole.Host), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
-        
+
         [Test]
-        public async Task Should_transfer_participant_to_hearing_room_when_conference_is_in_session_with_default_role_in_a_vmr()
+        public async Task
+            Should_transfer_participant_to_hearing_room_when_conference_is_in_session_with_default_role_in_a_vmr()
         {
             var conference = TestConference;
             conference.SetProtectedProperty(nameof(conference.ConferenceRoomType), ConferenceRoomType.VMR);
             conference.UpdateConferenceStatus(ConferenceState.InSession);
             var participantForEvent = conference.GetParticipants().First(x => x.UserRole == UserRole.Individual);
-            
+
             var callbackEvent = new CallbackEvent
             {
                 EventType = EventType.Joined,
@@ -141,9 +142,12 @@ namespace VideoApi.UnitTests.Events
                     command.ParticipantId == participantForEvent.Id &&
                     command.ParticipantState == ParticipantState.Available &&
                     command.Room == RoomType.WaitingRoom)), Times.Once);
-            
+
             // In a VMR, a civilian is still a guest because there is no screening requirement
-            VideoPlatformServiceMock.Verify(x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(), RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), ConferenceRole.Guest), Times.Once);
+            VideoPlatformServiceMock.Verify(
+                x => x.TransferParticipantAsync(conference.Id, participantForEvent.Id.ToString(),
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), ConferenceRole.Guest),
+                Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
     }
