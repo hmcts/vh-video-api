@@ -27,7 +27,6 @@ namespace VideoApi.UnitTests.Services
 {
     public class SupplierPlatformServiceTests
     {
-        private Mock<IFeatureToggles> _featureToggles;
         private Mock<ILogger<SupplierPlatformService>> _loggerMock;
         private Mock<IPollyRetryService> _pollyRetryService;
         private Mock<ISupplierApiClient> _supplierApiClientMock;
@@ -39,8 +38,6 @@ namespace VideoApi.UnitTests.Services
         [SetUp]
         public void Setup()
         {
-            _featureToggles = new Mock<IFeatureToggles>();
-            _featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(true);
             _supplierApiClientMock = new Mock<ISupplierApiClient>();
             _supplierConfig = new VodafoneConfiguration
             {
@@ -57,8 +54,7 @@ namespace VideoApi.UnitTests.Services
                 _pollyRetryService.Object,
                 _supplierApiClientMock.Object,
                 _supplierConfig,
-                Supplier.Vodafone,
-                _featureToggles.Object
+                Supplier.Vodafone
             );
             
             _testConference = new ConferenceBuilder()
@@ -80,8 +76,8 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status409Conflict, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<DoubleBookingException>(() =>
-                    _supplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()))
-                .ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
+                    _supplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>(), It.IsAny<AudioPlaybackLanguage>()))
+                ?.ErrorMessage.Should().Be($"Meeting room for conference {_testConference.Id} has already been booked");
         }
         
         [Test]
@@ -92,7 +88,7 @@ namespace VideoApi.UnitTests.Services
                 .ThrowsAsync(new SupplierApiException("", StatusCodes.Status500InternalServerError, "", null, It.IsAny<Exception>()));
 
             Assert.ThrowsAsync<SupplierApiException>(() =>
-                _supplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()));
+                _supplierPlatformService.BookVirtualCourtroomAsync(_testConference.Id, false, "", new List<EndpointDto>(), It.IsAny<string>(), It.IsAny<ConferenceRoomType>(), It.IsAny<AudioPlaybackLanguage>()));
         }
         
         [Test]
@@ -177,7 +173,7 @@ namespace VideoApi.UnitTests.Services
             _supplierApiClientMock.Setup(x => x.UpdateHearingAsync(It.IsAny<string>(), It.IsAny<UpdateHearingParams>()));
 
             var conferenceId = Guid.NewGuid();
-            await _supplierPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>());
+            await _supplierPlatformService.UpdateVirtualCourtRoomAsync(conferenceId, true, new List<EndpointDto>(), It.IsAny<ConferenceRoomType>(), It.IsAny<AudioPlaybackLanguage>());
             
             _supplierApiClientMock.Verify(x => x.UpdateHearingAsync(conferenceId.ToString(), It.Is<UpdateHearingParams>(p => p.Recording_enabled)), Times.Once);
         }
@@ -236,7 +232,7 @@ namespace VideoApi.UnitTests.Services
             (
                 It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(), It.IsAny<Func<TestCallResult, bool>>(), It.IsAny<Func<Task<TestCallResult>>>()
             ))
-            .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction, Func<TestCallResult, bool> handleResultCondition, Func<Task<TestCallResult>> executeFunction) =>
+            .Callback(async (int _, Func<int, TimeSpan> sleepDuration, Action<int> retryAction, Func<TestCallResult, bool> handleResultCondition, Func<Task<TestCallResult>> executeFunction) =>
             {
                 sleepDuration(1);
                 retryAction(1);

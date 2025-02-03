@@ -26,7 +26,7 @@ namespace VideoApi.Services
             var supplierApiClient = GetSupplierApiClient(supplier);
             var supplierConfig = GetSupplierConfiguration(supplier);
 
-            return new SupplierPlatformService(logger, selfTestHttpClient, pollyRetryService, supplierApiClient, supplierConfig, supplier, featureToggles);
+            return new SupplierPlatformService(logger, selfTestHttpClient, pollyRetryService, supplierApiClient, supplierConfig, supplier);
         }
         
         private VodafoneConfiguration GetSupplierConfiguration(Supplier supplier) =>
