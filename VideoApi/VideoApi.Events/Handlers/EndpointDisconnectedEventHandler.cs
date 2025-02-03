@@ -20,6 +20,8 @@ namespace VideoApi.Events.Handlers
 
         protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
+            Logger.LogInformation("EndpointDisconnected callback - {ConferenceId}/{EndpointId}",
+                SourceConference.Id, SourceEndpoint.Id);
             const EndpointState endpointState = EndpointState.Disconnected;
             var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, null, null);
             return CommandHandler.Handle(command);

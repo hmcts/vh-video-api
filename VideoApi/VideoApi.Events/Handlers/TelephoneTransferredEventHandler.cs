@@ -21,6 +21,8 @@ public class TelephoneTransferredEventHandler(
     protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
     {
         BadRequestException.ThrowIfNull(callbackEvent.TransferTo);
+        Logger.LogInformation("TelephoneTransferred callback - {ConferenceId}/{TelephoneParticipantId} from {FromRoomLabel} to {ToRoomLabel}",
+            SourceConference.Id, SourceTelephoneParticipant.Id, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferredToRoomLabel);
         var room = callbackEvent.TransferTo;
         var state =  room.HasValue ? TelephoneState.Connected : TelephoneState.Disconnected;
         var command = new UpdateTelephoneParticipantCommand(SourceConference.Id, SourceTelephoneParticipant.Id, room, state);
