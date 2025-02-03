@@ -18,6 +18,8 @@ namespace VideoApi.Events.Handlers
         
         protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
+            Logger.LogInformation("Recording connection failed callback - {ConferenceId}/{ParticipantId}",
+                SourceConference.Id, SourceParticipant.Id);
             return Task.CompletedTask;
         }
     }

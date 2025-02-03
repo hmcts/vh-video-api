@@ -20,6 +20,8 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
+            Logger.LogInformation("EndpointTransferred callback - {ConferenceId}/{EndpointId}",
+                SourceConference.Id, SourceEndpoint.Id);
             var endpointStatus = DeriveEndpointStatusForTransferEvent(callbackEvent);
 
             var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointStatus,

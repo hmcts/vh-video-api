@@ -46,11 +46,16 @@ namespace VideoApi.Events.Handlers
         
         private void TransferToHearingRoomIfHearingIsAlreadyInSession()
         {
+            Logger.LogInformation("Conference {ConferenceId} state is {ConferenceState}", SourceConference.Id,
+                SourceConference.State.ToString());
+            
             if (SourceConference.State == ConferenceState.InSession && SourceParticipant.CanAutoTransferToHearingRoom())
             {
+                Logger.LogInformation("Conference {ConferenceId} already in session, transferring participant {ParticipantId} to hearing room",
+                    SourceConference.Id, SourceParticipant.Id);
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(SourceConference.Supplier);
                 videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceParticipant.Id.ToString(),
-                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), null);
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
             }
         }
     }

@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
