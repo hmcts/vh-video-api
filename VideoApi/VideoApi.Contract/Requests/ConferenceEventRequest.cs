@@ -11,7 +11,7 @@ namespace VideoApi.Contract.Requests
         public string EventId { get; set; }
 
         /// <summary>
-        /// Type of an event
+        /// Type of event
         /// </summary>
         public EventType EventType { get; set; }
 
@@ -54,5 +54,10 @@ namespace VideoApi.Contract.Requests
         /// Can be either the phone number or "anonymous"
         /// </summary>
         public string Phone { get; set; }
+
+        /// <summary>
+        /// Optionally provided conference role. Defaults to Guest
+        /// </summary>
+        public ConferenceRole? ConferenceRole { get; set; } = Enums.ConferenceRole.Guest;
     }
 }
