@@ -18,7 +18,6 @@ namespace VideoApi.Services
     {
         public IVideoPlatformService Create(Supplier supplier)
         {
-            var featureToggles = serviceProvider.GetRequiredService<IFeatureToggles>();
             var logger = serviceProvider.GetRequiredService<ILogger<SupplierPlatformService>>();
             ISupplierSelfTestHttpClient selfTestHttpClient = serviceProvider.GetRequiredService<IVodafoneSelfTestHttpClient>();
             var pollyRetryService = serviceProvider.GetRequiredService<IPollyRetryService>();
