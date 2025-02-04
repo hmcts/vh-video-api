@@ -18,7 +18,6 @@ namespace VideoApi.Services
     {
         public IVideoPlatformService Create(Supplier supplier)
         {
-            var featureToggles = serviceProvider.GetRequiredService<IFeatureToggles>();
             var logger = serviceProvider.GetRequiredService<ILogger<SupplierPlatformService>>();
             ISupplierSelfTestHttpClient selfTestHttpClient = serviceProvider.GetRequiredService<IVodafoneSelfTestHttpClient>();
             var pollyRetryService = serviceProvider.GetRequiredService<IPollyRetryService>();
@@ -26,7 +25,7 @@ namespace VideoApi.Services
             var supplierApiClient = GetSupplierApiClient(supplier);
             var supplierConfig = GetSupplierConfiguration(supplier);
 
-            return new SupplierPlatformService(logger, selfTestHttpClient, pollyRetryService, supplierApiClient, supplierConfig, supplier, featureToggles);
+            return new SupplierPlatformService(logger, selfTestHttpClient, pollyRetryService, supplierApiClient, supplierConfig, supplier);
         }
         
         private VodafoneConfiguration GetSupplierConfiguration(Supplier supplier) =>

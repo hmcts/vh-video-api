@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using VideoApi.DAL.Commands;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
+using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using VideoApi.Services;
@@ -38,13 +39,13 @@ namespace VideoApi.Events.Handlers
             
             if (SourceConference.Supplier == Supplier.Vodafone)
             {
-                TransferToHearingRoomIfHearingIsAlreadyInSession();
+                TransferToHearingRoomIfHearingIsAlreadyInSession(callbackEvent);
             }
             
             return CommandHandler.Handle(command);
         }
         
-        private void TransferToHearingRoomIfHearingIsAlreadyInSession()
+        private void TransferToHearingRoomIfHearingIsAlreadyInSession(CallbackEvent callbackEvent)
         {
             Logger.LogInformation("Conference {ConferenceId} state is {ConferenceState}", SourceConference.Id,
                 SourceConference.State.ToString());
@@ -54,8 +55,22 @@ namespace VideoApi.Events.Handlers
                 Logger.LogInformation("Conference {ConferenceId} already in session, transferring participant {ParticipantId} to hearing room",
                     SourceConference.Id, SourceParticipant.Id);
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(SourceConference.Supplier);
+                // This flow is only triggered by Civilians
+                var role = callbackEvent.ConferenceRole ?? ConferenceRole.Guest;
+                if (SourceConference.ConferenceRoomType == ConferenceRoomType.VMR)
+                {
+                    role = SourceParticipant.IsHost()
+                        ? ConferenceRole.Host
+                        : ConferenceRole.Guest;
+                }
+
+                if (SourceConference.ConferenceRoomType == ConferenceRoomType.VA)
+                {
+                    role = callbackEvent.ConferenceRole.GetValueOrDefault(ConferenceRole.Guest);
+                }
+                
                 videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceParticipant.Id.ToString(),
-                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString());
+                    RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), role);
             }
         }
     }
