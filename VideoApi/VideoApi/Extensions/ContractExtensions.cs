@@ -54,6 +54,10 @@ namespace VideoApi.Extensions
             return Enum.Parse<Domain.Enums.UserRole>(role.ToString());
         }
         
+        public static Domain.Enums.ConferenceRole MapToDomainEnum(this Contract.Enums.ConferenceRole role)
+        {
+            return Enum.Parse<Domain.Enums.ConferenceRole>(role.ToString());
+        }
         
         public static Domain.Enums.EventType MapToDomainEnum(this Contract.Enums.EventType eventType)
         {
