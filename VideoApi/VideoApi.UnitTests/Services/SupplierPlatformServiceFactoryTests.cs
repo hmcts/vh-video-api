@@ -19,8 +19,7 @@ namespace VideoApi.UnitTests.Services
         {
             _serviceProvider = new Mock<IServiceProvider>();
             var featureToggles = new Mock<IFeatureToggles>();
-            var logger = new Mock<ILogger<SupplierPlatformService>>();
-            var vodafoneSelfTestHttpClient = new Mock<IVodafoneSelfTestHttpClient>();
+            var logger = new Mock<ILogger<SupplierPlatformService>>();;
             var pollyRetryService = new Mock<IPollyRetryService>();
             var vodafoneApiClient = new Mock<IVodafoneApiClient>();
             var vodafoneConfig = new VodafoneConfiguration();
@@ -28,7 +27,6 @@ namespace VideoApi.UnitTests.Services
             vodafoneConfigOptions.Setup(m => m.Value).Returns(vodafoneConfig);
             featureToggles.Setup(x => x.SendTransferRolesEnabled()).Returns(true);
             _serviceProvider.Setup(x => x.GetService(typeof(ILogger<SupplierPlatformService>))).Returns(logger.Object);
-            _serviceProvider.Setup(x => x.GetService(typeof(IVodafoneSelfTestHttpClient))).Returns(vodafoneSelfTestHttpClient.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IPollyRetryService))).Returns(pollyRetryService.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IVodafoneApiClient))).Returns(vodafoneApiClient.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IOptions<VodafoneConfiguration>))).Returns(vodafoneConfigOptions.Object);

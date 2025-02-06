@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common.Security.Supplier.Base;
@@ -26,19 +25,16 @@ namespace VideoApi.Services
         private readonly Supplier _supplier;
         private readonly ISupplierApiClient _supplierApiClient;
         private readonly SupplierConfiguration _supplierConfigOptions;
-        private readonly ISupplierSelfTestHttpClient _supplierSelfTestHttpClient;
         
         
         public SupplierPlatformService(
             ILogger<SupplierPlatformService> logger,
-            ISupplierSelfTestHttpClient supplierSelfTestHttpClient,
             IPollyRetryService pollyRetryService,
             ISupplierApiClient supplierApiClient,
             SupplierConfiguration supplierConfiguration,
             Supplier supplier)
         {
             _logger = logger;
-            _supplierSelfTestHttpClient = supplierSelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
             _supplierApiClient = supplierApiClient;
             _supplierConfigOptions = supplierConfiguration;
@@ -111,7 +107,7 @@ namespace VideoApi.Services
             var maxRetryAttempts = retryAttempts;
             var pauseBetweenFailures = TimeSpan.FromSeconds(5);
 
-            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, TestCallResult>
+            var testCall = await _pollyRetryService.WaitAndRetryAsync<Exception, SelfTestParticipantResponse>
             (
                 maxRetryAttempts,
                 _ => pauseBetweenFailures,
@@ -120,10 +116,10 @@ namespace VideoApi.Services
                         "Failed to retrieve test score for participant {ParticipantId} at {SupplierSelfTestApiUrl}. Retrying attempt {RetryAttempt}",
                         participantId, _supplierConfigOptions.ApiUrl, retryAttempt),
                 callResult => callResult == null,
-                () => _supplierSelfTestHttpClient.GetTestCallScoreAsync(participantId)
+                () => _supplierApiClient.RetrieveParticipantSelfTestScore(participantId)
             );
 
-            return result;
+            return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
         }
         
         public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role = null)

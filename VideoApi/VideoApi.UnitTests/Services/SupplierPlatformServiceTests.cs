@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
@@ -34,7 +33,6 @@ namespace VideoApi.UnitTests.Services
         private Mock<ISupplierApiClient> _supplierApiClientMock;
         private SupplierConfiguration _supplierConfig;
         private SupplierPlatformService _supplierPlatformService;
-        private Mock<ISupplierSelfTestHttpClient> _supplierSelfTestHttpClient;
         private Conference _testConference;
         
         [SetUp]
@@ -47,12 +45,10 @@ namespace VideoApi.UnitTests.Services
             };
             _loggerMock = new Mock<ILogger<SupplierPlatformService>>();
 
-            _supplierSelfTestHttpClient = new Mock<ISupplierSelfTestHttpClient>();
             _pollyRetryService = new Mock<IPollyRetryService>();
             
             _supplierPlatformService = new SupplierPlatformService(
                 _loggerMock.Object,
-                _supplierSelfTestHttpClient.Object,
                 _pollyRetryService.Object,
                 _supplierApiClientMock.Object,
                 _supplierConfig,
@@ -227,24 +223,35 @@ namespace VideoApi.UnitTests.Services
         {
             var participantId = Guid.NewGuid();
             var expectedTestCallResult = new TestCallResult(true, TestScore.Good);
+            var supplierTestScoreResponse = new SelfTestParticipantResponse
+            {
+                UserId = participantId,
+                Passed = true,
+                Score = (int)TestScore.Good
+            };
+            _supplierApiClientMock.Setup(x => x.RetrieveParticipantSelfTestScore(participantId))
+                .ReturnsAsync(supplierTestScoreResponse);
             
-            _pollyRetryService.Setup(x => x.WaitAndRetryAsync<Exception, TestCallResult>
+            _pollyRetryService.Setup(x => x.WaitAndRetryAsync<Exception, SelfTestParticipantResponse>
             (
-                It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(), It.IsAny<Func<TestCallResult, bool>>(), It.IsAny<Func<Task<TestCallResult>>>()
+                It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(), It.IsAny<Func<SelfTestParticipantResponse, bool>>(), It.IsAny<Func<Task<SelfTestParticipantResponse>>>()
             ))
-            .Callback(async (int _, Func<int, TimeSpan> sleepDuration, Action<int> retryAction, Func<TestCallResult, bool> handleResultCondition, Func<Task<TestCallResult>> executeFunction) =>
+            .Callback(async (int _, Func<int, TimeSpan> sleepDuration, Action<int> retryAction, Func<SelfTestParticipantResponse, bool> handleResultCondition, Func<Task<SelfTestParticipantResponse>> executeFunction) =>
             {
                 sleepDuration(1);
                 retryAction(1);
-                handleResultCondition(expectedTestCallResult);
+                handleResultCondition(supplierTestScoreResponse);
                 await executeFunction();
             })
-            .ReturnsAsync(expectedTestCallResult);
+            .ReturnsAsync(supplierTestScoreResponse);
 
             var result = await _supplierPlatformService.GetTestCallScoreAsync(participantId);
             
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(expectedTestCallResult);
+            result.Should().BeEquivalentTo(expectedTestCallResult, options => options
+                .Excluding(x => x.Timestamp)
+                .Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(5)))
+                .WhenTypeIs<DateTime>());// new testcall object created so timestamps do not match
         }
         
         [Test]

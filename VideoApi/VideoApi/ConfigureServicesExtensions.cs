@@ -127,8 +127,6 @@ namespace VideoApi
             
             services.AddTransient<VodafoneApiTokenDelegatingHandler>();
             
-            services.AddTransient<VodafoneSelfTestApiDelegatingHandler>();
-            
             services.AddSingleton<IPollyRetryService, PollyRetryService>();
             
             RegisterCommandHandlers(services);
@@ -153,10 +151,6 @@ namespace VideoApi
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
-
-                services
-                    .AddHttpClient<IVodafoneSelfTestHttpClient, VodafoneSelfTestHttpClient>()
-                    .AddHttpMessageHandler<VodafoneSelfTestApiDelegatingHandler>();
                 
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
