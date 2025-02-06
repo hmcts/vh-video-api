@@ -47,12 +47,14 @@ namespace VideoApi.Mappings
         
         private static List<ParticipantResponse> MapParticipants(IList<ParticipantBase> participants, List<ParticipantRoom> interpreterRooms)
         {
-            return participants.Select(x =>
-            {
-                var interpreterRoom =
-                    interpreterRooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(x.Id)));
-                return ParticipantResponseMapper.Map(x, interpreterRoom);
-            }).ToList();
+            return participants
+                .OrderBy(p=> p.Name)
+                .Select(x =>
+                {
+                    var interpreterRoom =
+                        interpreterRooms.SingleOrDefault(r => r.DoesParticipantExist(new RoomParticipant(x.Id)));
+                    return ParticipantResponseMapper.Map(x, interpreterRoom);
+                }).ToList();
         }
     }
 }
