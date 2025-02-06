@@ -60,7 +60,7 @@ namespace VideoApi.Extensions
             {
                 ApplicationLogger.TraceException(TraceCategory.SupplierApiException.ToString(),
                     "Supplier API Exception", ex, null, null);
-                if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
+                if (ex.StatusCode == HttpStatusCode.BadRequest)
                 {
                     var modelState = new ModelStateDictionary();
                     var jsonDoc = JsonDocument.Parse(ex.Response);
@@ -70,7 +70,7 @@ namespace VideoApi.Extensions
                 }
                 else
                 {
-                    await HandleExceptionAsync(httpContext, (HttpStatusCode)ex.StatusCode, ex);
+                    await HandleExceptionAsync(httpContext, ex.StatusCode, ex);
                 }
             }
             catch (Exception ex)

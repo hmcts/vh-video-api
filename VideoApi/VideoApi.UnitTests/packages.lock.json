@@ -2170,16 +2170,11 @@
           "Azure.Storage.Blobs": "[12.23.0, )",
           "LaunchDarkly.ServerSdk": "[8.6.0, )",
           "Microsoft.Extensions.Configuration": "[8.0.0, )",
-          "Newtonsoft.Json": "[13.0.3, )",
           "Polly": "[8.5.1, )",
           "VideoApi.Common": "[1.0.0, )",
           "VideoApi.Contract": "[1.0.0, )",
-          "VideoApi.Domain": "[1.0.0, )",
-          "VideoApi.Services.Generator": "[1.0.0, )"
+          "VideoApi.Domain": "[1.0.0, )"
         }
-      },
-      "videoapi.services.generator": {
-        "type": "Project"
       }
     }
   }

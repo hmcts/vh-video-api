@@ -73,8 +73,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var leaveConsultationRequest = new LeaveConsultationRequest
                 {ConferenceId = conferenceId, ParticipantId = participantId};
 
-            var supplierApiException = new SupplierApiException("", (int) HttpStatusCode.BadRequest, "payload",
-                new Dictionary<string, IEnumerable<string>>(), new Exception());
+            var supplierApiException = new SupplierApiException(HttpStatusCode.BadRequest, "payload", new Exception());
 
             ConsultationServiceMock.Setup(x => x.LeaveConsultationAsync(leaveConsultationRequest.ConferenceId,
                 leaveConsultationRequest.ParticipantId, fromRoom, toRoom)).ThrowsAsync(supplierApiException);

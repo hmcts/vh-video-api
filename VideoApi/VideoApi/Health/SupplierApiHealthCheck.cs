@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using VideoApi.Services;
-using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.Health;
 
@@ -22,7 +22,7 @@ public class SupplierApiHealthCheck : IHealthCheck
         {
             var videoPlatformService = _supplierPlatformServiceFactory.Create(Domain.Enums.Supplier.Vodafone);
             var result =  await videoPlatformService.GetPlatformHealthAsync();
-            return result.Health_status == PlatformHealth.HEALTHY ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
+            return result.HealthStatus == PlatformHealth.Healthy ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
         }
         catch (Exception exception)
         {

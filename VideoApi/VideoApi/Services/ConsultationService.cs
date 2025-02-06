@@ -9,7 +9,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 using VideoApi.Services.Contracts;
 using Supplier = VideoApi.Domain.Enums.Supplier;
 using Task = System.Threading.Tasks.Task;
@@ -26,17 +26,17 @@ namespace VideoApi.Services
     {
         public async Task<ConsultationRoom> CreateNewConsultationRoomAsync(Guid conferenceId, VirtualCourtRoomType roomType = VirtualCourtRoomType.Participant, bool locked = true)
         {
-            var consultationRoomParams = new CreateConsultationRoomParams
+            var consultationRoomParams = new ConsultationRoomRequest()
             {
-                Room_label_prefix = roomType.ToString()
+                RoomLabelPrefix = roomType.ToString()
             };
             var conference =
                 await queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                     new GetConferenceByIdQuery(conferenceId));
-            var createConsultationRoomResponse = await CreateConsultationRoomAsync(conferenceId.ToString(), consultationRoomParams, conference.Supplier);
-            var createRoomCommand = new CreateConsultationRoomCommand(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
+            var createConsultationRoomResponse = await CreateConsultationRoomAsync(conferenceId, consultationRoomParams, conference.Supplier);
+            var createRoomCommand = new CreateConsultationRoomCommand(conferenceId, createConsultationRoomResponse.RoomLabel, roomType, locked);
             await commandHandler.Handle(createRoomCommand);
-            var room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.Room_label, roomType, locked);
+            var room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.RoomLabel, roomType, locked);
             return room;
         }
         
@@ -48,22 +48,22 @@ namespace VideoApi.Services
             var room = liveRooms?.FirstOrDefault(x => x.Type.Equals(roomType));
             if (room == null)
             {
-                var consultationRoomParams = new CreateConsultationRoomParams
+                var consultationRoomParams = new ConsultationRoomRequest
                 {
-                    Room_label_prefix = roomType.ToString()
+                    RoomLabelPrefix = roomType.ToString()
                 };
                 var conference =
                     await queryHandler.Handle<GetConferenceByIdQuery, Conference>(
                         new GetConferenceByIdQuery(conferenceId));
                 var createConsultationRoomResponse =
-                    await CreateConsultationRoomAsync(conferenceId.ToString(),
+                    await CreateConsultationRoomAsync(conferenceId,
                         consultationRoomParams, conference.Supplier);
                 var createRoomCommand = new CreateConsultationRoomCommand(conferenceId,
-                    createConsultationRoomResponse.Room_label,
+                    createConsultationRoomResponse.RoomLabel,
                     roomType,
                     false);
                 await commandHandler.Handle(createRoomCommand);
-                room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.Room_label, roomType, false);
+                room = new ConsultationRoom(conferenceId, createConsultationRoomResponse.RoomLabel, roomType, false);
             }
 
             return room;
@@ -130,15 +130,15 @@ namespace VideoApi.Services
         }
         
         
-        private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(string virtualCourtRoomId,
-            CreateConsultationRoomParams createConsultationRoomParams, Supplier supplier)
+        private async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(Guid virtualCourtRoomId,
+            ConsultationRoomRequest createConsultationRoomParams, Supplier supplier)
         {
             var supplierPlatformService = supplierPlatformServiceFactory.Create(supplier);
             var supplierApiClient = supplierPlatformService.GetHttpClient();
             var response = await supplierApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             logger.LogInformation(
                 "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",
-                virtualCourtRoomId, createConsultationRoomParams.Room_label_prefix, response?.Room_label);
+                virtualCourtRoomId, createConsultationRoomParams.RoomLabelPrefix, response?.RoomLabel);
 
             return response;
         }

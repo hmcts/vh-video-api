@@ -5,6 +5,7 @@ using Moq;
 using VideoApi.Health;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 using VideoApi.Services.Contracts;
 using Supplier = VideoApi.Domain.Enums.Supplier;
 using Task = System.Threading.Tasks.Task;
@@ -30,7 +31,7 @@ public class SupplierApiHealthCheckTests
     {
         var healthCheckResponse = new HealthCheckResponse
         {
-            Health_status = PlatformHealth.HEALTHY
+            HealthStatus = PlatformHealth.Healthy
         };
         var vodafoneVideoPlatformServiceMock = new Mock<IVideoPlatformService>();
         vodafoneVideoPlatformServiceMock
@@ -53,7 +54,7 @@ public class SupplierApiHealthCheckTests
             .Setup(x => x.GetPlatformHealthAsync())
             .ReturnsAsync(new HealthCheckResponse
             {
-                Health_status = PlatformHealth.UNHEALTHY
+                HealthStatus = PlatformHealth.Unhealthy
             });
         
         var result = await _sut.CheckHealthAsync(new HealthCheckContext());

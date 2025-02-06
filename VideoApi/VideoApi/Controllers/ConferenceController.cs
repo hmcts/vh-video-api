@@ -392,16 +392,10 @@ public class ConferenceController(
         try
         {
             var requestedDate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            
-            var interpreterRooms =
-                await queryHandler.Handle<GetConferenceInterpreterRoomsByDateQuery, List<HearingAudioRoom>>(
-                    new GetConferenceInterpreterRoomsByDateQuery(requestedDate));
-            
+
             var conferences =
                 await queryHandler.Handle<GetConferenceHearingRoomsByDateQuery, List<HearingAudioRoom>>(
                     new GetConferenceHearingRoomsByDateQuery(requestedDate));
-            
-            conferences.AddRange(interpreterRooms);
             
             var response = ConferenceHearingRoomsResponseMapper.Map(conferences, requestedDate);
             

@@ -1,8 +1,7 @@
 using System.Net.Http;
 using System.Text;
-using VideoApi.Common.Helpers;
 
-namespace VideoApi.IntegrationTests.Helper
+namespace VideoApi.Common.Helpers
 {
     public static class RequestBody
     {

@@ -66,7 +66,6 @@ namespace VideoApi.IntegrationTests.Api.Setup
             services.AddScoped<IVideoPlatformService>(_ => supplierPlatformService);
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
-            services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
         }
 
         protected override void ConfigureClient(HttpClient client)

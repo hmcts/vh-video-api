@@ -150,7 +150,6 @@ namespace VideoApi.IntegrationTests.Hooks
             var vodafoneConfigOptions = serviceProvider.GetService<IOptions<VodafoneConfiguration>>();
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
-            services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
             services.AddSingleton<IFeatureToggles, FeatureTogglesStub>();
             services.AddScoped<ISupplierPlatformServiceFactory>(_ =>
                 new TestSupplierPlatformServiceFactory(vodafoneConfigOptions.Value));

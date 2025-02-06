@@ -5,6 +5,7 @@ using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 using VideoApi.Services.Dtos;
 using Task = System.Threading.Tasks.Task;
 
@@ -29,6 +30,16 @@ namespace VideoApi.Services.Contracts
         
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conferenceId"></param>
+        /// <param name="participantId">A string of a UUID (if a participant) or a long (if a Room)</param>
+        /// <param name="fromRoom"></param>
+        /// <param name="toRoom"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role = null);
         
         /// <summary>
@@ -53,7 +64,7 @@ namespace VideoApi.Services.Contracts
         
         Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
             IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
-            Layout layout = Layout.AUTOMATIC, bool muteGuests = false, IEnumerable<string> hostsForScreening = null);
+            Layout layout = Layout.Automatic, bool muteGuests = false, IEnumerable<string> hostsForScreening = null);
         
         Task PauseHearingAsync(Guid conferenceId);
         Task EndHearingAsync(Guid conferenceId);
