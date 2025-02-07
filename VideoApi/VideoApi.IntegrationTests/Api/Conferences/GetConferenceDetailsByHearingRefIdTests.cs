@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Testing.Common.Helper;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Api.Setup;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
