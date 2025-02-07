@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: run_git_version_for_image_tagging
+      ref: master
       endpoint: hmcts
 
 trigger: none
@@ -17,93 +17,93 @@ pool:
   vmImage: ubuntu-22.04
 
 stages:
-  # ####################################################
-  # # CI Build Checks. #################################
-  # - stage: CI_Build
-  #   displayName: CI Build
-  #   variables:
-  #     - template: variables/shared.yaml
-  #   jobs:
-  #     - job: CI_Helm
-  #       displayName: "Helm CI"
-  #       steps:
-  #         - checkout: self
+  ####################################################
+  # CI Build Checks. #################################
+  - stage: CI_Build
+    displayName: CI Build
+    variables:
+      - template: variables/shared.yaml
+    jobs:
+      - job: CI_Helm
+        displayName: "Helm CI"
+        steps:
+          - checkout: self
 
-  #         - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
-  #           parameters:
-  #             chartPath: ${{ variables.chartPath }}
-  #             chartValuesPath: ${{ variables.chartPath }}
+          - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
+            parameters:
+              chartPath: ${{ variables.chartPath }}
+              chartValuesPath: ${{ variables.chartPath }}
 
-  #     - job: UnitAndIntegrationTests
-  #       displayName: "Unit and Integration Tests"
-  #       steps:
-  #         - checkout: self
+      - job: UnitAndIntegrationTests
+        displayName: "Unit and Integration Tests"
+        steps:
+          - checkout: self
 
-  #         - template: templates/dotnet/build-test-analyse.yml@azTemplates
-  #           parameters:
-  #             dotnetVersion: ${{ variables.dotnetVersion }}
-  #             nugetConfigPath: nuget.config
-  #             appName: ${{ variables.appName }}
-  #             dockerComposeTestFile: docker-compose.tests.yml
-  #             sonarExtraProperties: |
-  #               sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
-  #               sonar.exclusions=**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi/Swagger/**/*, VideoApi/VideoApi.DAL/Migrations/*, **/EventType.cs
-  #               sonar.coverage.exclusions=**/VideoApi/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi.Common/**/*, **/VideoApi.IntegrationTests/**/*, **/VideoApi.UnitTests/**/*, **/VideoApi/Extensions/*
-  #               sonar.issue.ignore.multicriteria=e1
-  #               sonar.issue.ignore.multicriteria.e1.ruleKey=csharpsquid:S107
-  #               sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.cs
+          - template: templates/dotnet/build-test-analyse.yml@azTemplates
+            parameters:
+              dotnetVersion: ${{ variables.dotnetVersion }}
+              nugetConfigPath: nuget.config
+              appName: ${{ variables.appName }}
+              dockerComposeTestFile: docker-compose.tests.yml
+              sonarExtraProperties: |
+                sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
+                sonar.exclusions=**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi/Swagger/**/*, VideoApi/VideoApi.DAL/Migrations/*, **/EventType.cs
+                sonar.coverage.exclusions=**/VideoApi/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/VideoApi.Common/**/*, **/VideoApi.IntegrationTests/**/*, **/VideoApi.UnitTests/**/*, **/VideoApi/Extensions/*
+                sonar.issue.ignore.multicriteria=e1
+                sonar.issue.ignore.multicriteria.e1.ruleKey=csharpsquid:S107
+                sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.cs
 
-  # ####################################################
-  # # Pre Release Tasks. ###############################
-  # - stage: Pre_Release_Tasks
-  #   displayName: Pre-Release Tasks
-  #   variables:
-  #     - template: variables/shared.yaml
-  #   jobs:
-  #     - job: Generate_Entity_Framework_Script
-  #       displayName: "Generate Entity Framework Script"
-  #       steps:
-  #         - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
-  #           parameters:
-  #             efVersion: ${{ variables.efDotnetToolVersion }}
-  #             outputPath: $(Build.StagingDirectory)
-  #             contextName: ${{ variables.efContextName }}
-  #             workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
-  #             migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
-  #             projectName: ${{ variables.efProjectName }}
+  ####################################################
+  # Pre Release Tasks. ###############################
+  - stage: Pre_Release_Tasks
+    displayName: Pre-Release Tasks
+    variables:
+      - template: variables/shared.yaml
+    jobs:
+      - job: Generate_Entity_Framework_Script
+        displayName: "Generate Entity Framework Script"
+        steps:
+          - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+            parameters:
+              efVersion: ${{ variables.efDotnetToolVersion }}
+              outputPath: $(Build.StagingDirectory)
+              contextName: ${{ variables.efContextName }}
+              workingPath: $(System.DefaultWorkingDirectory)/${{ variables.appName }}/${{ variables.appName }}
+              migrationsPath: ${{ variables.appName }}/${{ variables.appName }}.DAL/Migrations
+              projectName: ${{ variables.efProjectName }}
     
-  #     - job: Generate_RefData_Entity_Framework_Script
-  #       displayName: "Generate RefData Entity Framework Script"
-  #       steps:
-  #         - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
-  #           parameters:
-  #             efVersion: ${{ variables.efDotnetToolVersion }}
-  #             outputPath: $(Build.StagingDirectory)
-  #             contextName: ${{ variables.efContextNameRefData }}
-  #             workingPath: $(System.DefaultWorkingDirectory)/RefData
-  #             migrationsPath: RefData/Migrations
-  #             projectName: ${{ variables.efProjectNameRefData }}
+      - job: Generate_RefData_Entity_Framework_Script
+        displayName: "Generate RefData Entity Framework Script"
+        steps:
+          - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+            parameters:
+              efVersion: ${{ variables.efDotnetToolVersion }}
+              outputPath: $(Build.StagingDirectory)
+              contextName: ${{ variables.efContextNameRefData }}
+              workingPath: $(System.DefaultWorkingDirectory)/RefData
+              migrationsPath: RefData/Migrations
+              projectName: ${{ variables.efProjectNameRefData }}
 
-  #     - job: package_nuget
-  #       displayName: "Package NuGet Packages"
-  #       steps:
-  #         - template: templates\dotnet\package-nuget-packages.yml@azTemplates
-  #           parameters:
-  #             nugetProjectPath: "${{ variables.appName }}/${{ variables.nuget_package_name }}"
-  #             vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-  #             gitVersionConfigPath: ${{ variables.git_version_config_path }}
+      - job: package_nuget
+        displayName: "Package NuGet Packages"
+        steps:
+          - template: templates\dotnet\package-nuget-packages.yml@azTemplates
+            parameters:
+              nugetProjectPath: "${{ variables.appName }}/${{ variables.nuget_package_name }}"
+              vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+              gitVersionConfigPath: ${{ variables.git_version_config_path }}
 
-  #     - job: PublishAcceptanceTests
-  #       dependsOn: package_nuget
-  #       displayName: Publish Acceptance Tests
-  #       variables:
-  #         projectPath: "${{ variables.appName }}/${{ variables.appName }}"
-  #       steps:
-  #         - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
-  #           parameters:
-  #             netVersion: ${{ variables.dotnetVersion }}
-  #             vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
-  #             coreProjectPath: $(projectPath)
+      - job: PublishAcceptanceTests
+        dependsOn: package_nuget
+        displayName: Publish Acceptance Tests
+        variables:
+          projectPath: "${{ variables.appName }}/${{ variables.appName }}"
+        steps:
+          - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
+            parameters:
+              netVersion: ${{ variables.dotnetVersion }}
+              vstsFeedId: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+              coreProjectPath: $(projectPath)
 
   #####################################################
   # Build Docker Image. ###############################
@@ -149,7 +149,6 @@ stages:
 
           - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
             parameters:
-              gitVersionConfigPath: ${{ variables.git_version_config_path }}
               azureSubscription: ${{ variables.acrSubscription }}
               acrName: ${{ variables.acrName }}
               repositoryName: ${{ variables.repositoryName }}
@@ -160,7 +159,7 @@ stages:
   ##################################################
   # Deploy Nuget Packages. #########################
   - stage: Push_Nuget
-    # dependsOn: Pre_Release_Tasks
+    dependsOn: Pre_Release_Tasks
     displayName: Deploy NuGet Packages
     variables:
       - template: variables/dev.yaml
