@@ -33,7 +33,7 @@ public class GetConferenceDetailsByHearingRefIdTests : ApiTest
                 RequestBody.Set(payload));
         
         // assert
-        result.IsSuccessStatusCode.Should().BeTrue();
+        result.IsSuccessStatusCode.Should().BeTrue(result.Content.ReadAsStringAsync().Result);
         var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceDetailsResponse>>(result.Content);
         conferenceResponse.Count.Should().Be(1);
     }
