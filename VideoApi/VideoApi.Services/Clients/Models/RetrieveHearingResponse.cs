@@ -20,6 +20,9 @@ namespace VideoApi.Services.Clients.Models
         /// </summary>
         [JsonPropertyName("virtual_courtroom_id")]
         public Guid? VirtualCourtroomId { get; set; }
+        
+        [JsonPropertyName("telephone_conference_id")]
+        public string TelephoneConferenceId { get; set; }
 
         /// <summary>
         /// Gets or Sets ConsultationRooms
