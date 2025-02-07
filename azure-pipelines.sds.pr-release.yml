@@ -149,6 +149,7 @@ stages:
 
           - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
             parameters:
+              gitVersionConfigPath: ${{ variables.git_version_config_path }}
               azureSubscription: ${{ variables.acrSubscription }}
               acrName: ${{ variables.acrName }}
               repositoryName: ${{ variables.repositoryName }}
