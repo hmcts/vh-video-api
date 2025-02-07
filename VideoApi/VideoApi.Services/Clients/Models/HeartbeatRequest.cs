@@ -57,27 +57,5 @@ namespace VideoApi.Services.Clients.Models
         /// </summary>
         [JsonPropertyName("media_statistics")]
         public Dictionary<string, Object> MediaStatistics { get; set; }
-
-
-        /// <summary>
-        /// Get the string presentation of the object
-        /// </summary>
-        /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.Append("class HeartbeatRequest {\n");
-            sb.Append("  HearingId: ").Append(HearingId).Append("\n");
-            sb.Append("  ParticipantId: ").Append(ParticipantId).Append("\n");
-            sb.Append("  UniqueId: ").Append(UniqueId).Append("\n");
-            sb.Append("  SequenceId: ").Append(SequenceId).Append("\n");
-            sb.Append("  Timestamp: ").Append(Timestamp).Append("\n");
-            sb.Append("  ElapsedTime: ").Append(ElapsedTime).Append("\n");
-            sb.Append("  SessionId: ").Append(SessionId).Append("\n");
-            sb.Append("  MediaStatistics: ").Append(MediaStatistics).Append("\n");
-            sb.Append("}\n");
-            return sb.ToString();
-        }
-
     }
 }

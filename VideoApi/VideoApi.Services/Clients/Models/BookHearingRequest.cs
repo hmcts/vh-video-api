@@ -68,26 +68,4 @@ public class BookHearingRequest
     /// </summary>
     [JsonPropertyName("telephone_conference_id")]
     public string TelephoneConferenceId { get; set; }
-
-    /// <summary>
-    /// Get the string presentation of the object
-    /// </summary>
-    /// <returns>String presentation of the object</returns>
-    public override string ToString()
-    {
-        var sb = new StringBuilder();
-        sb.Append("class BookHearingRequest {\n");
-        sb.Append("  RecordingEnabled: ").Append(RecordingEnabled).Append("\n");
-        sb.Append("  StreamingEnabled: ").Append(StreamingEnabled).Append("\n");
-        sb.Append("  RoomType: ").Append(RoomType).Append("\n");
-        sb.Append("  AudioPlaybackLanguage: ").Append(AudioPlaybackLanguage).Append("\n");
-        sb.Append("  VirtualCourtroomId: ").Append(VirtualCourtroomId).Append("\n");
-        sb.Append("  CallbackUri: ").Append(CallbackUri).Append("\n");
-        sb.Append("  RecordingUrl: ").Append(RecordingUrl).Append("\n");
-        sb.Append("  StreamingUrl: ").Append(StreamingUrl).Append("\n");
-        sb.Append("  JvsEndpoint: ").Append(JvsEndpoint).Append("\n");
-        sb.Append("  TelephoneConferenceId: ").Append(TelephoneConferenceId).Append("\n");
-        sb.Append("}\n");
-        return sb.ToString();
-    }
 }

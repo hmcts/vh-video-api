@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ public interface ISupplierApiClient
 /// C# implementation of the Supplier API client https://si.dev.vh-hmcts.co.uk/v3/api-docs
 /// </summary>
 /// <param name="httpClient"></param>
+[ExcludeFromCodeCoverage]
 public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 {
     public async Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body)

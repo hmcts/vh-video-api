@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: run_git_version_for_image_tagging
       endpoint: hmcts
 
 trigger: none

@@ -20,33 +20,4 @@ public class BookHearingResponse
     /// </summary>
     [JsonPropertyName("virtual_courtroom_id")]
     public Guid? VirtualCourtroomId { get; set; }
-        
-    /// <summary>
-    /// Get the string presentation of the object
-    /// </summary>
-    /// <returns>String presentation of the object</returns>
-    public override string ToString()
-    {
-        var sb = new StringBuilder();
-        sb.Append("class BookHearingResponse {\n");
-        sb.Append("  Uris: ").Append(Uris).Append("\n");
-        sb.Append("  VirtualCourtroomId: ").Append(VirtualCourtroomId).Append("\n");
-        sb.Append("}\n");
-        return sb.ToString();
-    }
-}
-
-public class MeetingUris
-{
-    [JsonPropertyName("pexip_node")]
-    public string PexipNode { get; set; }
-        
-    [JsonPropertyName("participant")]
-    public string Participant { get; set; }
-        
-    [JsonPropertyName("hearing_room_uri")]
-    public string HearingRoomUri { get; set; }
-    
-    [JsonPropertyName("telephone_conference_id")]
-    public string TelephoneConferenceId { get; set; }
 }

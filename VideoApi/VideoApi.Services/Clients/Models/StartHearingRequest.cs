@@ -44,25 +44,6 @@ public class StartHearingRequest
     /// </summary>
     [JsonPropertyName("hosts_for_screening")]
     public List<string> HostsForScreening { get; set; }
-
-
-    /// <summary>
-    /// Get the string presentation of the object
-    /// </summary>
-    /// <returns>String presentation of the object</returns>
-    public override string ToString()
-    {
-        var sb = new StringBuilder();
-        sb.Append("class StartHearingRequest {\n");
-        sb.Append("  Hosts: ").Append(Hosts).Append("\n");
-        sb.Append("  HearingLayout: ").Append(HearingLayout).Append("\n");
-        sb.Append("  MuteGuests: ").Append(MuteGuests).Append("\n");
-        sb.Append("  ForceTransferParticipantIds: ").Append(ForceTransferParticipantIds).Append("\n");
-        sb.Append("  TriggeredByHostId: ").Append(TriggeredByHostId).Append("\n");
-        sb.Append("  HostsForScreening: ").Append(HostsForScreening).Append("\n");
-        sb.Append("}\n");
-        return sb.ToString();
-    }
 }
 
 public enum Layout
