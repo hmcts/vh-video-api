@@ -11,15 +11,7 @@ services:
     build:
       context: ./
       dockerfile: tests/Dockerfile
-    entrypoint:
-      [
-        "/wait-for-it.sh",
-        "test-db:1433",
-        "-t",
-        "120",
-        "--",
-        "/run-tests.sh"
-      ]
+    entrypoint: [ "/wait-for-it.sh", "test-db:1433", "-t", "120", "--", "/run-tests.sh" ]
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__VideoApi=Data Source=test-db;Database=VideoApi;User Id=SA;Password=R4ndomP@assword;Trust Server Certificate=True;Encrypt=False
@@ -50,7 +42,7 @@ services:
 
   test-db:
     hostname: test-db
-    image: mcr.microsoft.com/azure-sql-edge
+    image: mcr.microsoft.com/mssql/server
     container_name: vh.videoapi.sql.testing
     expose:
       - 14330
