@@ -207,6 +207,10 @@ namespace VideoApi
         
         private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient)
         {
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                throw new InvalidOperationException($"Invalid Supplier API URL provided: {url}");
+            }
             httpClient.BaseAddress = new Uri(url);
             var client = new SupplierApiClient(httpClient);
             return client;
