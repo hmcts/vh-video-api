@@ -43,9 +43,10 @@ public interface ISupplierApiClient
 [ExcludeFromCodeCoverage]
 public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 {
+    public string BaseUrlAddress { get; set; }
     public async Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body)
     {
-        var requestUri = "/hearing";
+        var requestUri = GetRequestUrl("/hearing");
         var response = await httpClient.PostAsync(requestUri, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper.Deserialise<BookHearingResponse>(response.Content.ReadAsStringAsync().Result);
@@ -54,7 +55,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
     public async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(Guid hearingId,
         ConsultationRoomRequest body)
     {
-        var requestUri = $"/hearing/{hearingId}/consultation-room";
+        var requestUri = GetRequestUrl($"/hearing/{hearingId}/consultation-room");
         var response = await httpClient.PostAsync(requestUri, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper.Deserialise<CreateConsultationRoomResponse>(response.Content.ReadAsStringAsync()
@@ -63,7 +64,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<RetrieveHearingResponse> GetHearingAsync(Guid hearingId)
     {
-        var requestUri = $"/hearing/{hearingId}";
+        var requestUri = GetRequestUrl($"/hearing/{hearingId}");
         var response = await httpClient.GetAsync(requestUri);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper.Deserialise<RetrieveHearingResponse>(response.Content.ReadAsStringAsync().Result);
@@ -71,21 +72,21 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task DeleteHearingAsync(Guid hearingId)
     {
-        var requestUri = $"/hearing/{hearingId}";
+        var requestUri = GetRequestUrl($"/hearing/{hearingId}");
         var response = await httpClient.DeleteAsync(requestUri);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
     }
 
     public async Task UpdateHearingAsync(Guid hearingId, UpdateHearingRequest body)
     {
-        var requestUrl = $"/hearing/{hearingId}";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}");
         var response = await httpClient.PatchAsync(requestUrl, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
     }
 
     public async Task<string> TransferParticipantAsync(Guid hearingId, TransferRequest body)
     {
-        var requestUrl = $"/hearing/{hearingId}/transfer";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/transfer");
         var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
@@ -93,7 +94,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<string> StartAsync(Guid hearingId, StartHearingRequest body)
     {
-        var requestUrl = $"/hearing/{hearingId}/start";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/start");
         var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
@@ -101,7 +102,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<string> PauseHearingAsync(Guid hearingId)
     {
-        var requestUrl = $"/hearing/{hearingId}/pause";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/pause");
         var response = await httpClient.PostAsync(requestUrl, null);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
@@ -109,7 +110,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<string> UpdateParticipantDisplayNameAsync(Guid hearingId, DisplayNameRequest body)
     {
-        var requestUrl = $"/hearing/{hearingId}/participant-name";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/participant-name");
         var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
@@ -117,7 +118,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<string> EndHearingAsync(Guid hearingId)
     {
-        var requestUrl = $"/hearing/{hearingId}/end";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/end");
         var response = await httpClient.PostAsync(requestUrl, null);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
@@ -125,7 +126,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<string> TechnicalAssistanceAsync(Guid hearingId)
     {
-        var requestUrl = $"/hearing/{hearingId}/assistance";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/assistance");
         var response = await httpClient.PostAsync(requestUrl, null);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
@@ -133,7 +134,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<string> SendHeartbeat(Guid hearingId, HeartbeatRequest body)
     {
-        var requestUrl = $"/hearing/{hearingId}/heartbeat";
+        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/heartbeat");
         var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
@@ -141,7 +142,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<SelfTestParticipantResponse> RetrieveParticipantSelfTestScore(Guid participantId)
     {
-        var requestUrl = $"/selfTest/testCall/{participantId}";
+        var requestUrl = GetRequestUrl($"/selfTest/testCall/{participantId}");
         var response = await httpClient.GetAsync(requestUrl);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper.Deserialise<SelfTestParticipantResponse>(response.Content.ReadAsStringAsync().Result);
@@ -149,7 +150,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
 
     public async Task<HealthCheckResponse> GetHealth()
     {
-        var requestUrl = "/health";
+        var requestUrl = GetRequestUrl("/health");
         var response = await httpClient.GetAsync(requestUrl);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper.Deserialise<HealthCheckResponse>(response.Content.ReadAsStringAsync().Result);
@@ -165,6 +166,12 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
             var responseText = response.Content.ReadAsStringAsync().Result;
             throw new SupplierApiException(e.StatusCode, responseText, e);
         }
+    }
+    
+    private string GetRequestUrl(string requestUri)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(requestUri);
+        return $"{BaseUrlAddress.TrimEnd('/')}{requestUri}";
     }
 }
 
