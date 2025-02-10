@@ -86,7 +86,6 @@ namespace VideoApi.Services
             try
             {
                 var response = await _supplierApiClient.GetHearingAsync(conferenceId);
-                // TODO: the telephone id is not returned in the response, it is now managed by the API
                 var meetingRoom = new MeetingRoom(response.Uris.Participant, response.Uris.Participant,
                     response.Uris.Participant, response.Uris.PexipNode, null);
                 return meetingRoom;
