@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: set_fullsemver_as_build_number
       endpoint: hmcts
 
 trigger: none
