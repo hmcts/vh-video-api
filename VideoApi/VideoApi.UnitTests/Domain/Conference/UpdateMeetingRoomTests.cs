@@ -31,6 +31,26 @@ namespace VideoApi.UnitTests.Domain.Conference
             meetingRoom.ParticipantUri.Should().Be(participantUri);
             meetingRoom.PexipNode.Should().Be(pexipNode);
         }
+        
+        [Test]
+        public void Should_reuse_existing_tel_conference_id_if_null_provided()
+        {
+            var conference = new ConferenceBuilder().WithMeetingRoom("poc.node.com", "user@hmcts.net").Build();
+            conference.GetMeetingRoom().Should().NotBeNull();
+
+            const string adminUri = "https://testpoc.node.com/viju/#/?conference=user@hmcts.net&output=embed";
+            const string judgeUri = "https://testpoc.node.com/viju/#/?conference=user@hmcts.net&output=embed";
+            const string participantUri = "https://testpoc.node.com/viju/#/?conference=user@hmcts.net&output=embed";
+            const string pexipNode = "testpoc.node.com";
+            const string telephoneConferenceId = "12345678";
+            conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
+
+            conference.UpdateMeetingRoom($"{adminUri}-updated", $"{judgeUri}-updated", $"{participantUri}-updated", $"{pexipNode}-updated", null);
+            
+            conference.GetMeetingRoom().Should().NotBeNull();
+            var meetingRoom = conference.GetMeetingRoom();
+            meetingRoom.TelephoneConferenceId.Should().Be(telephoneConferenceId);
+        }
 
         [Test]
         public void Should_add_room_details()
