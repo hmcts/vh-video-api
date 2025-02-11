@@ -13,51 +13,14 @@ namespace VideoApi.Services.Contracts
 {
     public interface IVideoPlatformService
     {
-        /// <summary>
-        /// Book a virtual courtroom
-        /// </summary>
-        /// <param name="conferenceId">The conference id</param>
-        /// <param name="audioRecordingRequired">Is the audio recording enabled</param>
-        /// <param name="ingestUrl">The ingest url used by audio recording</param>
-        /// <param name="endpoints">The JVS endpoints for the conference which includes sip address, pin and role</param>
-        /// <param name="telephoneId">The pin used by telephone participants to join a conference</param>
-        /// <param name="roomType">The type of room, VA (Virtual Auditorium for screening) or VMR</param>
-        /// <param name="audioPlaybackLanguage">The language for the conference used to determine the audio of the countdown language and waiting room message</param>
-        /// <returns></returns>
         Task<MeetingRoom> BookVirtualCourtroomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
             IEnumerable<EndpointDto> endpoints, string telephoneId, ConferenceRoomType roomType,
             AudioPlaybackLanguage audioPlaybackLanguage);
         
         Task<MeetingRoom> GetVirtualCourtRoomAsync(Guid conferenceId);
         Task<TestCallResult> GetTestCallScoreAsync(Guid participantId, int retryAttempts = 2);
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="conferenceId"></param>
-        /// <param name="participantId">A string of a UUID (if a participant) or a long (if a Room)</param>
-        /// <param name="fromRoom"></param>
-        /// <param name="toRoom"></param>
-        /// <param name="role"></param>
-        /// <returns></returns>
         Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role = null);
-        
-        /// <summary>
-        /// Delete virtual court room
-        /// </summary>
-        /// <param name="conferenceId">Conference Id</param>
-        /// <returns></returns>
         Task DeleteVirtualCourtRoomAsync(Guid conferenceId);
-        
-        /// <summary>
-        /// Update virtual court room
-        /// </summary>
-        /// <param name="conferenceId">The conference id</param>
-        /// <param name="audioRecordingRequired">Is the audio recording enabled</param>
-        /// <param name="endpoints">The JVS endpoints for the conference which includes sip address, pin and role</param>
-        /// <param name="roomType">The type of room, VA (Virtual Auditorium for screening) or VMR</param>
-        /// <param name="audioPlaybackLanguage">The language for the conference used to determine the audio of the countdown language and waiting room message</param>
-        /// <returns></returns>
         Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
             IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
             AudioPlaybackLanguage audioPlaybackLanguage);

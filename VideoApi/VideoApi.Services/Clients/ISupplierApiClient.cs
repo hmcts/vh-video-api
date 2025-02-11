@@ -25,9 +25,6 @@ public interface ISupplierApiClient
     Task<string> EndHearingAsync(Guid hearingId);
     Task<string> TechnicalAssistanceAsync(Guid hearingId);
     
-    // heartbeat operations
-    Task<string> SendHeartbeat(Guid hearingId, HeartbeatRequest body);
-    
     // self-test operations
     Task<SelfTestParticipantResponse> RetrieveParticipantSelfTestScore(Guid participantId);
     
@@ -128,14 +125,6 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
     {
         var requestUrl = GetRequestUrl($"/hearing/{hearingId}/assistance");
         var response = await httpClient.PostAsync(requestUrl, null);
-        EnsureSuccessStatusCodeOrThrowSupplierException(response);
-        return await response.Content.ReadAsStringAsync();
-    }
-
-    public async Task<string> SendHeartbeat(Guid hearingId, HeartbeatRequest body)
-    {
-        var requestUrl = GetRequestUrl($"/hearing/{hearingId}/heartbeat");
-        var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
     }

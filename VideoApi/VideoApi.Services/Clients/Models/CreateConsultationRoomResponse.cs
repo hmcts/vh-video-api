@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace VideoApi.Services.Clients.Models;
 
 public class CreateConsultationRoomResponse

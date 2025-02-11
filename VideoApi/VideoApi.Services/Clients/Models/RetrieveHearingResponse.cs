@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace VideoApi.Services.Clients.Models;
 
-/// <summary>
-/// 
-/// </summary>
 public class RetrieveHearingResponse
 {
     /// <summary>
@@ -23,10 +19,4 @@ public class RetrieveHearingResponse
         
     [JsonPropertyName("telephone_conference_id")]
     public string TelephoneConferenceId { get; set; }
-
-    /// <summary>
-    /// Gets or Sets ConsultationRooms
-    /// </summary>
-    [JsonPropertyName("consultation_rooms")]
-    public List<string> ConsultationRooms { get; set; }
 }

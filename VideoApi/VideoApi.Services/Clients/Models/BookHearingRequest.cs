@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace VideoApi.Services.Clients.Models;
 
-/// <summary>
-/// 
-/// </summary>
 public class BookHearingRequest
 {
     /// <summary>
