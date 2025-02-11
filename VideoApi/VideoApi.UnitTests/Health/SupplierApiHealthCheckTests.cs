@@ -4,7 +4,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Moq;
 using VideoApi.Health;
 using VideoApi.Services;
-using VideoApi.Services.Clients;
 using VideoApi.Services.Clients.Models;
 using VideoApi.Services.Contracts;
 using Supplier = VideoApi.Domain.Enums.Supplier;
