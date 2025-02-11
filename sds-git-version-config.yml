@@ -9,5 +9,5 @@ commit-message-incrementing: Enabled
 branches:
   pull-request:
     regex: ^(pull|pull\-requests|pr)[/-]
-    label: pr-
-    label-number-pattern: '[/-](?<number>\d+)[-/]'
+    tag: pr-
+    tag-number-pattern: '[/-](?<number>\d+)[-/]'

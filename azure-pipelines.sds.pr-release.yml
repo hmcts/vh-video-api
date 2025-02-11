@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: update_obsolete_gitversion_task
       endpoint: hmcts
 
 trigger: none
