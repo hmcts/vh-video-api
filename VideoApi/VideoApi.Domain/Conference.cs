@@ -68,7 +68,7 @@ namespace VideoApi.Domain
         public AudioPlaybackLanguage AudioPlaybackLanguage { get; private set; }
 
         /// <summary>
-        /// Extracts the filename prefix from the ingest url - the portion of the filename before the datetime stamp is appended
+        /// Extracts the filename prefix from the ingest url - the filename portion before the datetime stamp is appended
         /// by wowza
         /// </summary>
         public string IngestUrlFilenamePrefix
