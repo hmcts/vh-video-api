@@ -66,7 +66,24 @@ namespace VideoApi.Domain
         public Supplier Supplier { get; private set; }
         public ConferenceRoomType ConferenceRoomType { get; private set; }
         public AudioPlaybackLanguage AudioPlaybackLanguage { get; private set; }
-        
+
+        /// <summary>
+        /// Extracts the filename prefix from the ingest url - the portion of the filename before the datetime stamp is appended
+        /// by wowza
+        /// </summary>
+        public string IngestUrlFilenamePrefix
+        {
+            get
+            {
+                if (IngestUrl == null) return null;
+                
+                var lastSlashIndex = IngestUrl.LastIndexOf('/');
+                var filenamePrefix = IngestUrl[(lastSlashIndex + 1)..];
+                
+                return filenamePrefix;
+            }
+        }
+
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode, string telephoneConferenceId)
         {
             telephoneConferenceId ??= MeetingRoom?.TelephoneConferenceId;

@@ -40,7 +40,7 @@ namespace VideoApi.DAL.Queries
                           {
                               HearingRefId = conference.HearingRefId,
                               Label = string.Empty,
-                              FileNamePrefix = "_" + query.DateStamp.Date.ToString("yyyy-MM-dd")
+                              FileNamePrefix = conference.IngestUrlFilenamePrefix + "_" + query.DateStamp.Date.ToString("yyyy-MM-dd")
                           };
 
             return await results.ToListAsync();

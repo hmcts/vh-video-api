@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -39,6 +38,9 @@ namespace VideoApi.IntegrationTests.Database.Queries
             var result = await _handler.Handle(query);
 
             result.Should().NotBeEmpty();
+            result[0].HearingRefId.Should().Be(conference.HearingRefId);
+            result[0].Label.Should().BeEmpty();
+            result[0].FileNamePrefix.Should().Be($"{conference.IngestUrlFilenamePrefix}_{DateTime.Today:yyyy-MM-dd}");
         }
 
         [TearDown]
