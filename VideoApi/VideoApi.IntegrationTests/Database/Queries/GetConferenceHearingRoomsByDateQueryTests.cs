@@ -40,7 +40,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             result.Should().NotBeEmpty();
             result[0].HearingRefId.Should().Be(conference.HearingRefId);
             result[0].Label.Should().BeEmpty();
-            result[0].FileNamePrefix.Should().Be($"{conference.IngestUrlFilenamePrefix}_{DateTime.Today:yyyy-MM-dd}");
+            result[0].FileNamePrefix.Should().Be(conference.IngestUrlFilenamePrefix);
         }
 
         [TearDown]
