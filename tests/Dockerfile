@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim
 
-RUN dotnet tool install --global dotnet-ef --version 8.0
+RUN dotnet tool install --global dotnet-ef --version 8.0.12
 ENV PATH $PATH:/root/.dotnet/tools
 
 WORKDIR /app

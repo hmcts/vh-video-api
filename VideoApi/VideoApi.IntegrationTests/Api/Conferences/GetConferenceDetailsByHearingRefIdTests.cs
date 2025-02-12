@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Testing.Common.Helper;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
-using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Api.Setup;
 using VideoApi.IntegrationTests.Helper;
 using Task = System.Threading.Tasks.Task;
@@ -34,7 +33,7 @@ public class GetConferenceDetailsByHearingRefIdTests : ApiTest
                 RequestBody.Set(payload));
         
         // assert
-        result.IsSuccessStatusCode.Should().BeTrue();
+        result.IsSuccessStatusCode.Should().BeTrue(result.Content.ReadAsStringAsync().Result);
         var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceDetailsResponse>>(result.Content);
         conferenceResponse.Count.Should().Be(1);
     }

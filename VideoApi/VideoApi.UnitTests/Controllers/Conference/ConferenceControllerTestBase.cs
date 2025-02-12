@@ -177,12 +177,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
                         It.IsAny<GetConferenceHearingRoomsByDateQuery>()))
                 .ReturnsAsync(hearingAudioRooms);
             
-            QueryHandlerMock
-                .Setup(x =>
-                    x.Handle<GetConferenceInterpreterRoomsByDateQuery, List<VideoApi.Domain.HearingAudioRoom>>(
-                        It.IsAny<GetConferenceInterpreterRoomsByDateQuery>()))
-                .ReturnsAsync(hearingAudioRooms);
-            
             Controller = Mocker.Create<ConferenceController>();
         }
         

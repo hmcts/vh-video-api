@@ -114,7 +114,7 @@ namespace VideoApi.UnitTests.Middleware
             var supplierResponseMessage = """
                                           {"timestamp":"2024-07-16T20:53:59.024+0000","errorCode":400,"httpStatus":"BAD_REQUEST","message":"Bad Request","detailedMessage":"Invalid JVS endpoint(s).","path":"/virtual-court/API/v1/hearing"}
                                           """;
-            var supplierException = new SupplierApiException("Error", 400, supplierResponseMessage, null, null);
+            var supplierException = new SupplierApiException(HttpStatusCode.BadRequest, supplierResponseMessage, null);
             RequestDelegateMock
                 .Setup(x => x.RequestDelegate(It.IsAny<HttpContext>()))
                 .Returns(Task.FromException(supplierException));
@@ -129,7 +129,7 @@ namespace VideoApi.UnitTests.Middleware
         public async Task should_return_bad_request_when_supplier_api_returns_other_error()
         {
            
-            var supplierException = new SupplierApiException("Error", 500, "random error message", null, null);
+            var supplierException = new SupplierApiException(HttpStatusCode.InternalServerError, "random error message", null);
             RequestDelegateMock
                 .Setup(x => x.RequestDelegate(It.IsAny<HttpContext>()))
                 .Returns(Task.FromException(supplierException));

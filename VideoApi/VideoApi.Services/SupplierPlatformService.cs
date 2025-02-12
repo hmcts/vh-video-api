@@ -8,6 +8,7 @@ using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
@@ -24,19 +25,16 @@ namespace VideoApi.Services
         private readonly Supplier _supplier;
         private readonly ISupplierApiClient _supplierApiClient;
         private readonly SupplierConfiguration _supplierConfigOptions;
-        private readonly ISupplierSelfTestHttpClient _supplierSelfTestHttpClient;
         
         
         public SupplierPlatformService(
             ILogger<SupplierPlatformService> logger,
-            ISupplierSelfTestHttpClient supplierSelfTestHttpClient,
             IPollyRetryService pollyRetryService,
             ISupplierApiClient supplierApiClient,
             SupplierConfiguration supplierConfiguration,
             Supplier supplier)
         {
             _logger = logger;
-            _supplierSelfTestHttpClient = supplierSelfTestHttpClient;
             _pollyRetryService = pollyRetryService;
             _supplierApiClient = supplierApiClient;
             _supplierConfigOptions = supplierConfiguration;
@@ -55,27 +53,26 @@ namespace VideoApi.Services
                 _supplierConfigOptions.CallbackUri, _supplierConfigOptions.ApiUrl);
             try
             {
-                var response = await _supplierApiClient.CreateHearingAsync(new CreateHearingParams
+                var response = await _supplierApiClient.CreateHearingAsync(new BookHearingRequest
                 {
-                    Virtual_courtroom_id = conferenceId.ToString(),
+                    VirtualCourtroomId = conferenceId,
                     RoomType = roomType.ToString(),
-                    Callback_uri = _supplierConfigOptions.CallbackUri,
-                    Recording_enabled = audioRecordingRequired,
-                    Recording_url = ingestUrl,
-                    Streaming_enabled = false,
-                    Streaming_url = null,
-                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
-                    Telephone_Conference_id = telephoneId,
+                    CallbackUri = _supplierConfigOptions.CallbackUri,
+                    RecordingEnabled = audioRecordingRequired,
+                    RecordingUrl = ingestUrl,
+                    StreamingEnabled = false,
+                    StreamingUrl = null,
+                    JvsEndpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
+                    TelephoneConferenceId = telephoneId,
                     AudioPlaybackLanguage = audioPlaybackLanguage.ToString()
                 });
 
-                return _supplier == Supplier.Vodafone 
-                    ? new MeetingRoom(response.Uris.Admin ?? response.Uris.Participant, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, telephoneId)
-                    : new MeetingRoom(response.Uris.Admin, response.Uris.Participant, response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id);
+                return new MeetingRoom(response.Uris.Participant, response.Uris.Participant, response.Uris.Participant,
+                    response.Uris.PexipNode, telephoneId);
             }
-            catch (SupplierApiException e)
+            catch (SupplierApiException  e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.Conflict)
+                if (e.StatusCode == HttpStatusCode.Conflict)
                 {
                     throw new DoubleBookingException(conferenceId);
                 }
@@ -88,14 +85,14 @@ namespace VideoApi.Services
         {
             try
             {
-                var response = await _supplierApiClient.GetHearingAsync(conferenceId.ToString());
-                var meetingRoom = new MeetingRoom(response.Uris.Admin, response.Uris.Participant,
-                    response.Uris.Participant, response.Uris.Pexip_node, response.Telephone_conference_id);
+                var response = await _supplierApiClient.GetHearingAsync(conferenceId);
+                var meetingRoom = new MeetingRoom(response.Uris.Participant, response.Uris.Participant,
+                    response.Uris.Participant, response.Uris.PexipNode, null);
                 return meetingRoom;
             }
             catch (SupplierApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -109,7 +106,7 @@ namespace VideoApi.Services
             var maxRetryAttempts = retryAttempts;
             var pauseBetweenFailures = TimeSpan.FromSeconds(5);
 
-            var result = await _pollyRetryService.WaitAndRetryAsync<Exception, TestCallResult>
+            var testCall = await _pollyRetryService.WaitAndRetryAsync<Exception, SelfTestParticipantResponse>
             (
                 maxRetryAttempts,
                 _ => pauseBetweenFailures,
@@ -118,10 +115,10 @@ namespace VideoApi.Services
                         "Failed to retrieve test score for participant {ParticipantId} at {SupplierSelfTestApiUrl}. Retrying attempt {RetryAttempt}",
                         participantId, _supplierConfigOptions.ApiUrl, retryAttempt),
                 callResult => callResult == null,
-                () => _supplierSelfTestHttpClient.GetTestCallScoreAsync(participantId)
+                () => _supplierApiClient.RetrieveParticipantSelfTestScore(participantId)
             );
 
-            return result;
+            return new TestCallResult(testCall.Passed, (TestScore)testCall.Score);
         }
         
         public Task TransferParticipantAsync(Guid conferenceId, string participantId, string fromRoom, string toRoom, ConferenceRole? role = null)
@@ -130,71 +127,71 @@ namespace VideoApi.Services
                 "Transferring participant {ParticipantId} from {FromRoom} to {ToRoom} as {ConferenceRole} in conference: {ConferenceId}",
                 participantId, fromRoom, toRoom, role, conferenceId);
             
-            var request = new TransferParticipantParams
+            var request = new TransferRequest
             {
                 From = fromRoom,
                 To = toRoom,
-                Part_id = participantId,
+                PartId = participantId,
                 Role = role?.ToString()
             };
             
-            return _supplierApiClient.TransferParticipantAsync(conferenceId.ToString(), request);
+            return _supplierApiClient.TransferParticipantAsync(conferenceId, request);
         }
         
         public Task DeleteVirtualCourtRoomAsync(Guid conferenceId)
         {
-            return _supplierApiClient.DeleteHearingAsync(conferenceId.ToString());
+            return _supplierApiClient.DeleteHearingAsync(conferenceId);
         }
         
         public Task UpdateVirtualCourtRoomAsync(Guid conferenceId, bool audioRecordingRequired,
             IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
             AudioPlaybackLanguage audioPlaybackLanguage)
         {
-            return _supplierApiClient.UpdateHearingAsync(conferenceId.ToString(),
-                new UpdateHearingParams
+            return _supplierApiClient.UpdateHearingAsync(conferenceId,
+                new UpdateHearingRequest
                 {
-                    Recording_enabled = audioRecordingRequired,
-                    Jvs_endpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
+                    RecordingEnabled = audioRecordingRequired,
+                    JvsEndpoint = endpoints.Select(EndpointMapper.MapToEndpoint).ToList(),
                     RoomType = roomType.ToString(),
                     AudioPlaybackLanguage = audioPlaybackLanguage.ToString()
                 });
         }
-        
-        public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
-            IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
-            Layout layout = Layout.AUTOMATIC, bool muteGuests = false, IEnumerable<string> hostsForScreening =null)
+
+        public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId, IEnumerable<string> participantsToForceTransfer = null,
+            IEnumerable<string> hosts = null, Layout layout = Layout.Automatic, bool muteGuests = false,
+            IEnumerable<string> hostsForScreening = null)
         {
             if (_supplier != Supplier.Vodafone)
                 triggeredByHostId = null;
-            return _supplierApiClient.StartAsync(conferenceId.ToString(),
+            return _supplierApiClient.StartAsync(conferenceId,
                 new StartHearingRequest
                 {
-                    Hearing_layout = layout, Mute_guests = muteGuests,
-                    Force_transfer_participant_ids = participantsToForceTransfer?.ToList(),
+                    HearingLayout = layout.ToString(), MuteGuests = muteGuests,
+                    ForceTransferParticipantIds = participantsToForceTransfer?.ToList(),
                     Hosts = hosts?.ToList(),
-                    Triggered_by_host_id = triggeredByHostId,
+                    TriggeredByHostId = triggeredByHostId,
                     HostsForScreening = hostsForScreening?.ToList()
                 });
         }
-        
+
         public Task PauseHearingAsync(Guid conferenceId)
         {
-            return _supplierApiClient.PauseHearingAsync(conferenceId.ToString());
+            return _supplierApiClient.PauseHearingAsync(conferenceId);
         }
         
         public Task EndHearingAsync(Guid conferenceId)
         {
-            return _supplierApiClient.EndHearingAsync(conferenceId.ToString());
+            return _supplierApiClient.EndHearingAsync(conferenceId);
         }
         
         public Task SuspendHearingAsync(Guid conferenceId)
         {
-            return _supplierApiClient.TechnicalAssistanceAsync(conferenceId.ToString());
+            return _supplierApiClient.TechnicalAssistanceAsync(conferenceId);
         }
         
         public Task<HealthCheckResponse> GetPlatformHealthAsync()
         {
-            return _supplierApiClient.HealthCheckAsync();
+            return _supplierApiClient.GetHealth();
         }
         
         public ISupplierApiClient GetHttpClient() => _supplierApiClient;
@@ -203,12 +200,12 @@ namespace VideoApi.Services
         
         public Task UpdateParticipantName(Guid conferenceId, Guid participantId, string name)
         {
-            var request = new UpdateParticipantNameParams()
+            var request = new DisplayNameRequest
             {
-                Participant_Id = participantId.ToString(),
-                Participant_Name = name
+                ParticipantId = participantId.ToString(),
+                ParticipantName = name
             };
-            return _supplierApiClient.UpdateParticipanNameAsync(conferenceId.ToString(), request);
+            return _supplierApiClient.UpdateParticipantDisplayNameAsync(conferenceId, request);
         }
     }
 }

@@ -6,6 +6,7 @@ using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
@@ -65,8 +66,9 @@ namespace VideoApi.Services
             return Task.CompletedTask;
         }
         
-        public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId, IEnumerable<string> participantsToForceTransfer = null,
-            IEnumerable<string> hosts = null, Layout layout = Layout.AUTOMATIC, bool muteGuests = false, IEnumerable<string> hostsForScreening = null)
+        public Task StartHearingAsync(Guid conferenceId, string triggeredByHostId,
+            IEnumerable<string> participantsToForceTransfer = null, IEnumerable<string> hosts = null,
+            Layout layout = Layout.Automatic, bool muteGuests = false, IEnumerable<string> hostsForScreening = null)
         {
             return Task.CompletedTask;
         }
@@ -90,7 +92,7 @@ namespace VideoApi.Services
         {
             return Task.FromResult(new HealthCheckResponse
             {
-                Health_status = PlatformHealth.HEALTHY
+                HealthStatus = PlatformHealth.Healthy
             });
         }
         

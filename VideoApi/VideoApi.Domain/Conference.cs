@@ -69,6 +69,7 @@ namespace VideoApi.Domain
         
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode, string telephoneConferenceId)
         {
+            telephoneConferenceId ??= MeetingRoom?.TelephoneConferenceId;
             MeetingRoom = new MeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
         }
         

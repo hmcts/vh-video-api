@@ -10,8 +10,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
-using VideoApi.Services;
-using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
@@ -54,7 +53,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIdsAsStrings,
-                    hostIdsAsStrings, Layout.ONE_PLUS_SEVEN, muteGuests, hostsForScreeningAsStrings), Times.Once);
+                    hostIdsAsStrings, Layout.OnePlusSeven, muteGuests, hostsForScreeningAsStrings), Times.Once);
             VerifySupplierUsed(TestConference.Supplier, Times.Exactly(1));
         }
         
@@ -94,7 +93,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIdsAsStrings, hostIdsAsStrings,
-                    Layout.ONE_PLUS_SEVEN, true, hostsForScreeningAsStrings), Times.Once);
+                    Layout.OnePlusSeven, true, hostsForScreeningAsStrings), Times.Once);
         }
 
         [Test]
@@ -138,7 +137,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             typedResult.StatusCode.Should().Be((int)HttpStatusCode.Accepted);
             VideoPlatformServiceMock.Verify(
                 x => x.StartHearingAsync(conferenceId, request.TriggeredByHostId.ToString(), participantIds,
-                    It.IsAny<IEnumerable<string>>(), Layout.ONE_PLUS_SEVEN, true, It.IsAny<IEnumerable<string>>()), Times.Once);
+                    It.IsAny<IEnumerable<string>>(), Layout.OnePlusSeven, true, It.IsAny<IEnumerable<string>>()), Times.Once);
         }
     }
 }

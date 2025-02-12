@@ -13,8 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using VideoApi.Common;
@@ -129,8 +127,6 @@ namespace VideoApi
             
             services.AddTransient<VodafoneApiTokenDelegatingHandler>();
             
-            services.AddTransient<VodafoneSelfTestApiDelegatingHandler>();
-            
             services.AddSingleton<IPollyRetryService, PollyRetryService>();
             
             RegisterCommandHandlers(services);
@@ -142,7 +138,6 @@ namespace VideoApi
                 var vodafoneConfigOptions = container.GetService<IOptions<VodafoneConfiguration>>();
                 services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
                 services.AddScoped<IConsultationService, ConsultationServiceStub>();
-                services.AddScoped<IVirtualRoomService, VirtualRoomServiceStub>();
                 services.AddScoped<ISupplierPlatformServiceFactory>(_ =>
                     new TestSupplierPlatformServiceFactory(vodafoneConfigOptions.Value));
             }
@@ -156,14 +151,9 @@ namespace VideoApi
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
-
-                services
-                    .AddHttpClient<IVodafoneSelfTestHttpClient, VodafoneSelfTestHttpClient>()
-                    .AddHttpMessageHandler<VodafoneSelfTestApiDelegatingHandler>();
                 
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
-                services.AddScoped<IVirtualRoomService, VirtualRoomService>();
                 services.AddScoped<ISupplierPlatformServiceFactory, SupplierPlatformServiceFactory>();
             }
             
@@ -217,12 +207,16 @@ namespace VideoApi
         
         private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient)
         {
-            var client = new SupplierApiClient(url, httpClient) { ReadResponseAsString = true };
-            var contractResolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() };
-            
-            client.JsonSerializerSettings.ContractResolver = contractResolver;
-            client.JsonSerializerSettings.Formatting = Formatting.Indented;
-            
+            if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+            {
+                throw new InvalidOperationException($"Invalid Supplier API URL provided: {url}");
+            }
+            Console.WriteLine("Using Supplier API URL: " + url);
+            httpClient.BaseAddress = new Uri(url.TrimEnd('/'), UriKind.RelativeOrAbsolute);
+            var client = new SupplierApiClient(httpClient)
+            {
+                BaseUrlAddress = url
+            };
             return client;
         }
         

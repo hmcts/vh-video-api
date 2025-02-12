@@ -1,5 +1,5 @@
 using VideoApi.Contract.Requests;
-using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.Mappings
 {
@@ -9,12 +9,12 @@ namespace VideoApi.Mappings
         {
             switch (layout)
             {
-                case HearingLayout.OnePlus7: return Layout.ONE_PLUS_SEVEN;
-                case HearingLayout.TwoPlus21: return Layout.TWO_PLUS_TWENTYONE;
-                case HearingLayout.NineEqual: return Layout.NINE_EQUAL; // aka 3x3
-                case HearingLayout.SixteenEqual: return Layout.SIXTEEN_EQUAL; // aka 4x4
-                case HearingLayout.TwentyFiveEqual: return Layout.TWENTY_FIVE_EQUAL; //aka 5x5
-                default: return Layout.AUTOMATIC;
+                case HearingLayout.OnePlus7: return Layout.OnePlusSeven;
+                case HearingLayout.TwoPlus21: return Layout.TwoPlusTwentyone;
+                case HearingLayout.NineEqual: return Layout.NineEqual; // aka 3x3
+                case HearingLayout.SixteenEqual: return Layout.SixteenEqual; // aka 4x4
+                case HearingLayout.TwentyFiveEqual: return Layout.TwentyFiveEqual; //aka 5x5
+                default: return Layout.Automatic;
             }
         }
     }
