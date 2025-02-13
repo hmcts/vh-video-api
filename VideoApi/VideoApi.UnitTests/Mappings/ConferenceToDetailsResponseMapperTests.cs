@@ -53,6 +53,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.HearingVenueName)
                 .Excluding(x => x.Supplier)
                 .Excluding(x=> x.AudioPlaybackLanguage)
+                .Excluding(x => x.IngestUrlFilenamePrefix)
             );
             
             response.TelephoneConferenceId.Should().Be(conference.MeetingRoom.TelephoneConferenceId);
