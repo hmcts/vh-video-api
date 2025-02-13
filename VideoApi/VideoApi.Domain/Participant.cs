@@ -108,6 +108,7 @@ namespace VideoApi.Domain
             if (existingLink == null)
             {
                 LinkedParticipants.Add(new LinkedParticipant(Id, linkedId, linkType));
+                UpdatedAt = DateTime.UtcNow;
             }
         }
 
@@ -121,11 +122,13 @@ namespace VideoApi.Domain
             }
 
             LinkedParticipants.Remove(linkedParticipant);
+            UpdatedAt = DateTime.UtcNow;
         }
         
         public override void RemoveAllLinks()
         {
             LinkedParticipants.Clear();
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }

@@ -22,6 +22,7 @@ namespace VideoApi.Events.Handlers
         {
             Logger.LogInformation("EndpointDisconnected callback - {ConferenceId}/{EndpointId}",
                 SourceConference.Id, SourceEndpoint.Id);
+            ValidateJvsEventReceivedAfterLastUpdate(callbackEvent);
             const EndpointState endpointState = EndpointState.Disconnected;
             var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, null, null);
             return CommandHandler.Handle(command);
