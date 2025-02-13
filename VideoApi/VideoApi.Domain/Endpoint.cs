@@ -36,21 +36,25 @@ namespace VideoApi.Domain
         public void UpdateDisplayName(string displayName)
         {
             DisplayName = displayName;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateStatus(EndpointState status)
         {
             State = status;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateConferenceRole(ConferenceRole newConferenceRole)
         {
             ConferenceRole = newConferenceRole;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void AssignDefenceAdvocate(string username)
         {
             DefenceAdvocate = username;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public string GetCurrentRoom()
@@ -61,12 +65,14 @@ namespace VideoApi.Domain
         public void UpdateCurrentRoom(RoomType? currentRoom)
         {
             CurrentRoom = currentRoom;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateCurrentVirtualRoom(ConsultationRoom consultationRoom)
         {
             CurrentConsultationRoom?.RemoveEndpoint(new RoomEndpoint(Id));
             CurrentConsultationRoom = consultationRoom;
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }
