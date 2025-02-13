@@ -1,9 +1,7 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using VideoApi.DAL.Commands;
-using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 using VideoApi.Services;
@@ -34,7 +32,7 @@ namespace VideoApi.UnitTests.Events
         public async Task Should_update_endpoint_status_to_connected()
         {
             var conference = TestConference;
-            var participantForEvent = conference.GetEndpoints().First();
+            var participantForEvent = conference.GetEndpoints()[0];
 
             var callbackEvent = new CallbackEvent
             {
