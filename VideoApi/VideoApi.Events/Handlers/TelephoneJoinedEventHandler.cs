@@ -22,11 +22,12 @@ public class TelephoneJoinedEventHandler(
 
     protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
     {
-        var command =
-            new AddTelephoneParticipantCommand(SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.Phone);
-
         Logger.LogInformation("TelephoneJoined callback - {ConferenceId}/{TelephoneParticipantId}",
             SourceConference.Id, callbackEvent.ParticipantId);
+        ValidateTelephoneParticipantEventReceivedAfterLastUpdate(callbackEvent);
+        
+        var command =
+            new AddTelephoneParticipantCommand(SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.Phone);
 
         TransferToHearingRoomIfHearingIsAlreadyInSession(callbackEvent.ParticipantId);
 

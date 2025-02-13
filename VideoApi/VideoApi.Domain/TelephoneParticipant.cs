@@ -30,10 +30,12 @@ public class TelephoneParticipant: TrackableEntity<Guid>
     public void UpdateStatus(TelephoneState status)
     {
         State = status;
+        UpdatedAt = DateTime.UtcNow;
     }
     
     public void UpdateCurrentRoom(RoomType? currentRoom)
     {
         CurrentRoom = currentRoom;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

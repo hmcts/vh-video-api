@@ -23,6 +23,7 @@ namespace VideoApi.Events.Handlers
         {
             Logger.LogInformation("Disconnected callback - {ConferenceId}/{ParticipantId}",
                 SourceConference.Id, SourceParticipant.Id);
+            ValidateParticipantEventReceivedAfterLastUpdate(callbackEvent);
             await PublishParticipantDisconnectMessage();
         }
 

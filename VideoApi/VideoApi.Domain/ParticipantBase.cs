@@ -49,6 +49,7 @@ namespace VideoApi.Domain
         {
             State = status;
             ParticipantStatuses.Add(new ParticipantStatus(status));
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateUsername(string username)
@@ -59,6 +60,7 @@ namespace VideoApi.Domain
             }
             
             Username = username;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public string GetCurrentRoom()
@@ -74,6 +76,7 @@ namespace VideoApi.Domain
         public void UpdateCurrentRoom(RoomType? currentRoom)
         {
             CurrentRoom = currentRoom;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateCurrentConsultationRoom(ConsultationRoom consultationRoom)
@@ -84,6 +87,7 @@ namespace VideoApi.Domain
             }
             CurrentConsultationRoom?.RemoveParticipant(new RoomParticipant(Id));
             CurrentConsultationRoom = consultationRoom;
+            UpdatedAt = DateTime.UtcNow;
         }
         
         public bool CanAutoTransferToHearingRoom()
