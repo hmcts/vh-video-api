@@ -542,7 +542,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then(@"the response should have the status (.*) and success status (.*)")]
         public void ThenTheResponseShouldHaveStatus(HttpStatusCode statusCode, bool isSuccess)
         {
-            _context.Response.StatusCode.Should().Be(statusCode);
+            _context.Response.StatusCode.Should().Be(statusCode, _context.Response.Content.ReadAsStringAsync().Result);
             _context.Response.IsSuccessStatusCode.Should().Be(isSuccess);
             NUnit.Framework.TestContext.WriteLine($"Status Code: {_context.Response.StatusCode}");
         }

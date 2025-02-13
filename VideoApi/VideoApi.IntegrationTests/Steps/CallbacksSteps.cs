@@ -202,6 +202,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .With(x => x.TransferTo = _context.Test.ConsultationRoom?.Label ?? RoomType.ConsultationRoom.ToString())
                 .With(x => x.Reason = "Automated")
                 .With(x => x.Phone = phone)
+                .With(x => x.TimeStampUtc = DateTime.UtcNow)
                 .With(x => x.ParticipantRoomId = participantRoomId)
                 .Build();
 
