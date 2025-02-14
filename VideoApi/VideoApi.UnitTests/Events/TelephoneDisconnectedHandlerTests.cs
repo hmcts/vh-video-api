@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Moq;
 using VideoApi.DAL.Commands;
 using VideoApi.Domain.Enums;
-using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers;
 using VideoApi.Events.Models;
 
@@ -38,7 +37,7 @@ public class TelephoneDisconnectedHandlerTests : EventHandlerTestBase<TelephoneD
     }
     
     [Test]
-    public void should_throw_exception_if_telephone_participant_has_been_updated_since_callback_received()
+    public async Task should_still_update_if_telephone_participant_has_been_updated_since_callback_received()
     {
         var conference = TestConference;
         var telephoneParticipant = TestConference.GetTelephoneParticipants()[0];
@@ -55,9 +54,10 @@ public class TelephoneDisconnectedHandlerTests : EventHandlerTestBase<TelephoneD
             Reason = "Telephone User Disconnected"
         };
         
-        var exception = Assert.ThrowsAsync<UnexpectedEventOrderException>(() => _sut.HandleAsync(callbackEvent));
-        Assert.That(exception!.CallbackEvent, Is.EqualTo(callbackEvent));
-        Assert.That(exception!.InnerException!.Message,
-            Is.EqualTo($"TelephoneParticipant {telephoneParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {telephoneParticipant.State}"));
+        await _sut.HandleAsync(callbackEvent);
+        
+        CommandHandlerMock.Verify(
+            x => x.Handle(It.Is<RemoveTelephoneParticipantCommand>(command =>
+                command.ConferenceId == conference.Id && command.TelephoneParticipantId == telephoneParticipant.Id)), Times.Once);
     }
 }

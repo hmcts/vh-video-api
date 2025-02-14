@@ -75,7 +75,7 @@ Feature: Callbacks
       | EndpointDisconnected  | Disconnected    |
       | EndpointTransfer      | InConsultation  |
 
-  Scenario Outline: Should accept and process an old endpoint event request but not update the status if timestamp is old
+  Scenario Outline: Should accept and process an old endpoint event request
     Given I have a conference with endpoints
     And I have a valid conference event request for event type <EventType1>
     When I send the request to the endpoint
@@ -87,7 +87,7 @@ Feature: Callbacks
     And the endpoint status should be <EndpointStatus>
     Examples:
       | EventType1      | EventType2      | EventType3            | EndpointStatus  |
-      | EndpointJoined  | EndpointJoined  | EndpointDisconnected  | Connected       |
+      | EndpointJoined  | EndpointJoined  | EndpointDisconnected  | Disconnected       |
 
    Scenario Outline: Should accept and process a phone event request
     Given I have a conference
