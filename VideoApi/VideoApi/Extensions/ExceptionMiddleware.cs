@@ -10,6 +10,7 @@ using VideoApi.Common;
 using VideoApi.Common.Helpers;
 using VideoApi.DAL.Exceptions;
 using VideoApi.Domain.Validations;
+using VideoApi.Events.Exceptions;
 using VideoApi.Services.Clients;
 
 namespace VideoApi.Extensions
@@ -46,7 +47,8 @@ namespace VideoApi.Extensions
             }
             catch (EntityNotFoundException ex)
             {
-                ApplicationLogger.TraceException(TraceCategory.APIException.ToString(), "Entity Not Found", ex, null, null);
+                ApplicationLogger.TraceException(TraceCategory.APIException.ToString(), "Entity Not Found", ex, null,
+                    null);
                 await HandleExceptionAsync(httpContext, HttpStatusCode.NotFound, ex);
             }
             catch (VideoDalException ex)
@@ -72,6 +74,13 @@ namespace VideoApi.Extensions
                 {
                     await HandleExceptionAsync(httpContext, (HttpStatusCode)ex.StatusCode, ex);
                 }
+            }
+            catch (UnexpectedEventOrderException ex)
+            {
+                ApplicationLogger.TraceException(TraceCategory.CallbackEventException.ToString(),
+                    "Unexpected Event Order Exception", ex, null, null);
+                httpContext.Response.ContentType = "application/json";
+                httpContext.Response.StatusCode = (int) HttpStatusCode.NoContent;
             }
             catch (Exception ex)
             {

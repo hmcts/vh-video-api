@@ -75,6 +75,20 @@ Feature: Callbacks
       | EndpointDisconnected  | Disconnected    |
       | EndpointTransfer      | InConsultation  |
 
+  Scenario Outline: Should accept and process an old endpoint event request
+    Given I have a conference with endpoints
+    And I have a valid conference event request for event type <EventType1>
+    When I send the request to the endpoint
+    And I have a valid conference event request for event type <EventType2>
+    When I send the request to the endpoint
+    And I have an old valid conference event request for event type <EventType3>
+    When I send the request to the endpoint
+    Then the response should have the status NoContent and success status True
+    And the endpoint status should be <EndpointStatus>
+    Examples:
+      | EventType1      | EventType2      | EventType3            | EndpointStatus  |
+      | EndpointJoined  | EndpointJoined  | EndpointDisconnected  | Disconnected       |
+
    Scenario Outline: Should accept and process a phone event request
     Given I have a conference
     And I have a participant consultation room

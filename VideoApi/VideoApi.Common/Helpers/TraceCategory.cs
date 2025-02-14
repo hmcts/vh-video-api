@@ -75,7 +75,12 @@ namespace VideoApi.Common.Helpers
         /// <summary>
         /// Supplier API Exception
         /// </summary>
-        SupplierApiException
+        SupplierApiException,
+        
+        /// <summary>
+        /// Callback Event Exception
+        /// </summary>
+        CallbackEventException
 
     }
 }
