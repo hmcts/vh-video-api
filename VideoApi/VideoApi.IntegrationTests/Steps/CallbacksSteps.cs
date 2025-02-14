@@ -30,10 +30,23 @@ namespace VideoApi.IntegrationTests.Steps
         }
 
         [Given(@"I have a valid conference event request for event type (.*)")]
+        [When(@"I have a valid conference event request for event type (.*)")]
         public void GivenIHaveAnConferenceEventRequestForAnEventType(EventType eventType)
         {
             var conference = _context.Test.Conference;
             var request = BuildRequest(eventType, conference);
+            _context.Uri = EventsEndpoints.Event;
+            _context.HttpMethod = HttpMethod.Post;
+            var jsonBody = ApiRequestHelper.Serialise(request);
+            _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+        
+        [When(@"I have an old valid conference event request for event type (.*)")]
+        public void GivenIHaveAnOldConferenceEventRequestForAnEventType(EventType eventType)
+        {
+            var conference = _context.Test.Conference;
+            var request = BuildRequest(eventType, conference);
+            request.TimeStampUtc = DateTime.UtcNow.AddMinutes(-1);
             _context.Uri = EventsEndpoints.Event;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.Serialise(request);

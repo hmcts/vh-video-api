@@ -63,7 +63,7 @@ namespace VideoApi.Events.Handlers.Core
             if (!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
                 $"Participant {SourceParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceParticipant.GetCurrentStatus()}");
-            throw new UnexpectedEventOrderException(callbackEvent, innerException);
+            Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for participant");
         }
 
         protected void ValidateJvsEventReceivedAfterLastUpdate(CallbackEvent callbackEvent)
@@ -72,7 +72,7 @@ namespace VideoApi.Events.Handlers.Core
             if(!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
                 $"Endpoint {SourceEndpoint.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceEndpoint.State}");
-            throw new UnexpectedEventOrderException(callbackEvent, innerException);
+            Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for endpoint");
         }
         
         protected void ValidateTelephoneParticipantEventReceivedAfterLastUpdate(CallbackEvent callbackEvent)
@@ -82,7 +82,7 @@ namespace VideoApi.Events.Handlers.Core
             if(!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
                 $"TelephoneParticipant {SourceTelephoneParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceTelephoneParticipant.State}");
-            throw new UnexpectedEventOrderException(callbackEvent, innerException);
+            Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for telephone participant");
         }
     }
 }
