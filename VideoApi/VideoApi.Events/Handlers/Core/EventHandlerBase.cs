@@ -62,7 +62,7 @@ namespace VideoApi.Events.Handlers.Core
             var eventReceivedAfterLastUpdate = SourceParticipant.UpdatedAt > callbackEvent.TimeStampUtc;
             if (!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
-                $"Participant {SourceParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceParticipant.GetCurrentStatus()}");
+                $"Participant {SourceParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceParticipant.GetCurrentStatus().ParticipantState} - Last Updated At: {SourceParticipant.UpdatedAt}");
             Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for participant");
         }
 
@@ -71,7 +71,7 @@ namespace VideoApi.Events.Handlers.Core
             var eventReceivedAfterLastUpdate = SourceEndpoint.UpdatedAt > callbackEvent.TimeStampUtc;
             if(!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
-                $"Endpoint {SourceEndpoint.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceEndpoint.State}");
+                $"Endpoint {SourceEndpoint.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceEndpoint.State} - Last Updated At: {SourceEndpoint.UpdatedAt}");
             Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for endpoint");
         }
         
@@ -81,7 +81,7 @@ namespace VideoApi.Events.Handlers.Core
             var eventReceivedAfterLastUpdate = SourceTelephoneParticipant?.UpdatedAt > callbackEvent.TimeStampUtc;
             if(!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
-                $"TelephoneParticipant {SourceTelephoneParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceTelephoneParticipant.State}");
+                $"TelephoneParticipant {SourceTelephoneParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc}. Current Status: {SourceTelephoneParticipant.State} - Last Updated At: {SourceTelephoneParticipant.UpdatedAt}");
             Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for telephone participant");
         }
     }
