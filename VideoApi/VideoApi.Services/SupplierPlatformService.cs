@@ -163,15 +163,17 @@ namespace VideoApi.Services
         {
             if (_supplier != Supplier.Vodafone)
                 triggeredByHostId = null;
+
+            var startHearingRequest = new StartHearingRequest
+            {
+                HearingLayout = layout, MuteGuests = muteGuests,
+                ForceTransferParticipantIds = participantsToForceTransfer?.ToList(),
+                Hosts = hosts?.ToList(),
+                TriggeredByHostId = triggeredByHostId,
+                HostsForScreening = hostsForScreening?.ToList()
+            };
             return _supplierApiClient.StartAsync(conferenceId,
-                new StartHearingRequest
-                {
-                    HearingLayout = layout.ToString(), MuteGuests = muteGuests,
-                    ForceTransferParticipantIds = participantsToForceTransfer?.ToList(),
-                    Hosts = hosts?.ToList(),
-                    TriggeredByHostId = triggeredByHostId,
-                    HostsForScreening = hostsForScreening?.ToList()
-                });
+                startHearingRequest);
         }
 
         public Task PauseHearingAsync(Guid conferenceId)

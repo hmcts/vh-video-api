@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using VideoApi.Common.Helpers;
 using VideoApi.Services.Clients.Models;
@@ -44,18 +45,18 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
     public async Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body)
     {
         var requestUri = GetRequestUrl("/hearing");
-        var response = await httpClient.PostAsync(requestUri, RequestBody.Set(body));
+        var response = await httpClient.PostAsync(requestUri, CreateRequestBodyContent(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
-        return ApiRequestHelper.Deserialise<BookHearingResponse>(response.Content.ReadAsStringAsync().Result);
+        return ApiRequestHelper.DeserialiseForSupplier<BookHearingResponse>(response.Content.ReadAsStringAsync().Result);
     }
 
     public async Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(Guid hearingId,
         ConsultationRoomRequest body)
     {
         var requestUri = GetRequestUrl($"/hearing/{hearingId}/consultation-room");
-        var response = await httpClient.PostAsync(requestUri, RequestBody.Set(body));
+        var response = await httpClient.PostAsync(requestUri, CreateRequestBodyContent(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
-        return ApiRequestHelper.Deserialise<CreateConsultationRoomResponse>(response.Content.ReadAsStringAsync()
+        return ApiRequestHelper.DeserialiseForSupplier<CreateConsultationRoomResponse>(response.Content.ReadAsStringAsync()
             .Result);
     }
 
@@ -64,7 +65,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
         var requestUri = GetRequestUrl($"/hearing/{hearingId}");
         var response = await httpClient.GetAsync(requestUri);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
-        return ApiRequestHelper.Deserialise<RetrieveHearingResponse>(response.Content.ReadAsStringAsync().Result);
+        return ApiRequestHelper.DeserialiseForSupplier<RetrieveHearingResponse>(response.Content.ReadAsStringAsync().Result);
     }
 
     public async Task DeleteHearingAsync(Guid hearingId)
@@ -77,14 +78,14 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
     public async Task UpdateHearingAsync(Guid hearingId, UpdateHearingRequest body)
     {
         var requestUrl = GetRequestUrl($"/hearing/{hearingId}");
-        var response = await httpClient.PatchAsync(requestUrl, RequestBody.Set(body));
+        var response = await httpClient.PatchAsync(requestUrl, CreateRequestBodyContent(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
     }
 
     public async Task<string> TransferParticipantAsync(Guid hearingId, TransferRequest body)
     {
         var requestUrl = GetRequestUrl($"/hearing/{hearingId}/transfer");
-        var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
+        var response = await httpClient.PostAsync(requestUrl, CreateRequestBodyContent(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
     }
@@ -92,7 +93,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
     public async Task<string> StartAsync(Guid hearingId, StartHearingRequest body)
     {
         var requestUrl = GetRequestUrl($"/hearing/{hearingId}/start");
-        var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
+        var response = await httpClient.PostAsync(requestUrl, CreateRequestBodyContent(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
     }
@@ -108,7 +109,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
     public async Task<string> UpdateParticipantDisplayNameAsync(Guid hearingId, DisplayNameRequest body)
     {
         var requestUrl = GetRequestUrl($"/hearing/{hearingId}/participant-name");
-        var response = await httpClient.PostAsync(requestUrl, RequestBody.Set(body));
+        var response = await httpClient.PostAsync(requestUrl, CreateRequestBodyContent(body));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return await response.Content.ReadAsStringAsync();
     }
@@ -134,7 +135,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
         var requestUrl = GetRequestUrl($"/selfTest/testCall/{participantId}");
         var response = await httpClient.GetAsync(requestUrl);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
-        return ApiRequestHelper.Deserialise<SelfTestParticipantResponse>(response.Content.ReadAsStringAsync().Result);
+        return ApiRequestHelper.DeserialiseForSupplier<SelfTestParticipantResponse>(response.Content.ReadAsStringAsync().Result);
     }
 
     public async Task<HealthCheckResponse> GetHealth()
@@ -142,7 +143,7 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
         var requestUrl = GetRequestUrl("/health");
         var response = await httpClient.GetAsync(requestUrl);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
-        return ApiRequestHelper.Deserialise<HealthCheckResponse>(response.Content.ReadAsStringAsync().Result);
+        return ApiRequestHelper.DeserialiseForSupplier<HealthCheckResponse>(response.Content.ReadAsStringAsync().Result);
     }
     
     private static void EnsureSuccessStatusCodeOrThrowSupplierException(HttpResponseMessage response)
@@ -161,6 +162,11 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(requestUri);
         return $"{BaseUrlAddress.TrimEnd('/')}{requestUri}";
+    }
+    
+    private static HttpContent CreateRequestBodyContent<T>(T request)
+    {
+        return new StringContent(ApiRequestHelper.SerialiseForSupplier(request), Encoding.UTF8, "application/json");
     }
 }
 

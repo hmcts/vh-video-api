@@ -17,7 +17,7 @@ public class StartHearingRequest
     /// Gets or Sets HearingLayout
     /// </summary>
     [JsonPropertyName("hearing_layout")]
-    public string HearingLayout { get; set; }
+    public Layout HearingLayout { get; set; }
 
     /// <summary>
     /// Gets or Sets MuteGuests

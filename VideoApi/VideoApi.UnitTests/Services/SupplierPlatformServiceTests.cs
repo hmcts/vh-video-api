@@ -269,10 +269,10 @@ namespace VideoApi.UnitTests.Services
         public async Task should_start_hearing_with_automatic_layout_as_default()
         {
             var conferenceId = Guid.NewGuid();
-            await _supplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>());
+            await _supplierPlatformService.StartHearingAsync(conferenceId, It.IsAny<string>(), layout:Layout.OnePlusSeven);
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId,
-                    It.Is<StartHearingRequest>(l => l.HearingLayout == Layout.Automatic.ToString())), Times.Once);
+                    It.Is<StartHearingRequest>(l => l.HearingLayout == Layout.OnePlusSeven)), Times.Once);
         }
         
         [Test]
@@ -288,7 +288,7 @@ namespace VideoApi.UnitTests.Services
             _supplierApiClientMock.Verify(
                 x => x.StartAsync(conferenceId,
                     It.Is<StartHearingRequest>(l =>
-                        l.HearingLayout == layout.ToString() &&
+                        l.HearingLayout == layout &&
                         l.ForceTransferParticipantIds.SequenceEqual(participantsToForceTransfer) &&
                         l.Hosts.SequenceEqual(hostIds) && l.MuteGuests == muteGuests)), Times.Once);
         }
