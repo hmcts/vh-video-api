@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using RichardSzalay.MockHttp;
+using VideoApi.Common.Helpers;
 using VideoApi.Services.Clients;
 using VideoApi.Services.Clients.Models;
 
@@ -93,5 +94,64 @@ public class SupplierApiClientTests
         Assert.That(result.Uris.PexipNode, Is.EqualTo("test.unit.vh.co.uk"));
         Assert.That(result.Uris.Participant, Is.EqualTo("hmcts-unittesting-bd5e5ec9-b90c-4f64-b74d-5cfc2664fbdf_b1c3d8f9-67cb-4f0a-8fd3-fa8f81b6893d_WAITING_ROOM"));
         Assert.That(result.Uris.HearingRoomUri, Is.EqualTo("hmcts-unittesting-bd5e5ec9-b90c-4f64-b74d-5cfc2664fbdf_b1c3d8f9-67cb-4f0a-8fd3-fa8f81b6893d_HEARING_ROOM"));
+    }
+    
+    [TestCase(Layout.Automatic, "AUTOMATIC")]
+    [TestCase(Layout.Single, "SINGLE")]
+    [TestCase(Layout.FourEqual, "FOUR_EQUAL")]
+    [TestCase(Layout.OnePlusSeven, "ONE_PLUS_SEVEN")]
+    [TestCase(Layout.TwoPlusTwentyone, "TWO_PLUS_TWENTYONE")]
+    [TestCase(Layout.NineEqual, "NINE_EQUAL")]
+    [TestCase(Layout.SixteenEqual, "SIXTEEN_EQUAL")]
+    [TestCase(Layout.TwentyFiveEqual, "TWENTY_FIVE_EQUAL")]
+    public async Task should_serialise_start_request_as_expected(Layout layout, string expectedString)
+    {
+        // Arrange
+        var conferenceId = Guid.Parse("b1c3d8f9-67cb-4f0a-8fd3-fa8f81b6893d");
+        var baseAddress = "http://supplier-api";
+        
+        var hostId = "643fade8-bf6c-4cad-bd6f-a5484b097c34";
+        var participantId = "3064a986-12ea-4385-9c70-8dd1ec46d61d";
+        var startHearingRequest = new StartHearingRequest
+        {
+            HearingLayout = layout,
+            MuteGuests = true,
+            TriggeredByHostId = "host123",
+            HostsForScreening = null,
+            Hosts = [hostId],
+            ForceTransferParticipantIds = [participantId]
+        };
+
+        var expectedRequestBody = $$"""
+                                  {
+                                    "hosts": [
+                                      "643fade8-bf6c-4cad-bd6f-a5484b097c34"
+                                    ],
+                                    "hearing_layout": "{{expectedString}}",
+                                    "mute_guests": true,
+                                    "force_transfer_participant_ids": [
+                                      "3064a986-12ea-4385-9c70-8dd1ec46d61d"
+                                    ],
+                                    "triggered_by_host_id": "host123"
+                                  }
+                                  """;
+
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When(HttpMethod.Post, $"{baseAddress}/hearing/{conferenceId}/start")
+            .WithContent(expectedRequestBody)
+            .Respond(HttpStatusCode.OK, "application/json", "response");
+
+        var httpClient = mockHttp.ToHttpClient();
+        var supplierApiClient = new SupplierApiClient(httpClient)
+        {
+            BaseUrlAddress = baseAddress
+        };
+
+        // Act
+        var result = await supplierApiClient.StartAsync(conferenceId, startHearingRequest);
+
+        // Assert
+        Assert.That(result, Is.EqualTo("response"));
+        mockHttp.VerifyNoOutstandingExpectation();
     }
 }
