@@ -46,13 +46,13 @@ namespace VideoApi.UnitTests.Validation
         public async Task Should_return_participants_error()
         {
             var request = BuildRequest();
-            request.Participants[0].Name = string.Empty;
+            request.Participants[0].DisplayName = string.Empty;
 
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
-            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoNameErrorMessage)
+            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoDisplayNameErrorMessage)
                 .Should().BeTrue();
         }
 

@@ -69,11 +69,7 @@ namespace VideoApi.IntegrationTests.Steps
                     participantId = _context.Test.Conference.Participants[0].Id;
                     request = new UpdateParticipantRequest
                     {
-                        Fullname = "Automation_Mr Test_Fullname",
-                        FirstName = "Automation_Mr Test_Firstname",
-                        LastName = "Automation_Mr Test_Lastname",
-                        DisplayName = "Automation_Test_Displayname",
-                        Representee = "Automation_Test_Representee"
+                        DisplayName = "Automation_Test_Displayname"
                     };
                     break;
                 }
@@ -83,22 +79,14 @@ namespace VideoApi.IntegrationTests.Steps
                     participantId = Guid.NewGuid();
                     request = new UpdateParticipantRequest
                     {
-                        Fullname = "Automation_Mr Test_Fullname",
-                        FirstName = "Automation_Mr Test_Firstname",
-                        LastName = "Automation_Mr Test_Lastname",
-                        DisplayName = "Automation_Test_Displayname",
-                        Representee = "Automation_Test_Representee"
+                        DisplayName = "Automation_Test_Displayname"
                     };
                     break;
                 case Scenario.Invalid:
                     conferenceId = Guid.Empty;
                     request = new UpdateParticipantRequest
                     {
-                        Fullname = "Automation_Mr Test_Fullname",
-                        FirstName = "Automation_Mr Test_Firstname",
-                        LastName = "Automation_Mr Test_Lastname",
-                        DisplayName = "Automation_Test_Displayname",
-                        Representee = "Automation_Test_Representee"
+                        DisplayName = "Automation_Test_Displayname"
                     };
                     break;
 

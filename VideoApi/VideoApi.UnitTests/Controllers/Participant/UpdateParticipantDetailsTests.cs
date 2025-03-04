@@ -18,9 +18,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
         {
             _updateParticipantRequest = new UpdateParticipantRequest
             {
-                Fullname = "Test Name",
-                DisplayName = "Test N",
-                Representee = "Represent"
+                DisplayName = "Test N"
             };
 
             MockQueryHandler

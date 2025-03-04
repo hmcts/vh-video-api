@@ -9,8 +9,6 @@ namespace VideoApi.Validations
         {
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.DisplayName).NotEmpty();
-            RuleFor(x => x.FirstName).NotEmpty();
-            RuleFor(x => x.LastName).NotEmpty();
             RuleFor(x => x.Username).NotEmpty();
             RuleFor(x => x.UserRole).NotEmpty();
             RuleFor(x => x.ContactEmail).NotEmpty();

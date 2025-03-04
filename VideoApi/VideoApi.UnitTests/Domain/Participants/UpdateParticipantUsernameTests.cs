@@ -13,7 +13,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         {
             // Arrange
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
             
             var oldUsername = participant.Username;
@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         {
             // Arrange
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
             
             var oldUsername = participant.Username;
