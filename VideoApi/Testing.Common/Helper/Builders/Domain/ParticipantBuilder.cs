@@ -14,7 +14,6 @@ namespace Testing.Common.Helper.Builders.Domain
 
         private UserRole _userRole;
         private string _hearingRole;
-        private TestCallResult _testCallResult;
 
         public ParticipantBuilder(bool ignoreId = false)
         {
@@ -60,11 +59,6 @@ namespace Testing.Common.Helper.Builders.Domain
                         _hearingRole, $"{Faker.Random.Number(0, 99999999)}@hmcts.net"))
                 .With(x => x.CurrentRoom = null)
                 .Build();
-
-            if (_testCallResult != null)
-            {
-                participant.UpdateTestCallResult(_testCallResult.Passed, _testCallResult.Score);
-            }
 
             return participant;
         }
