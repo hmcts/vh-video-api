@@ -21,7 +21,6 @@ public static class HostInHearingResponseMapper
                 ConferenceId = conferenceId,
                 Status = x.State.MapToContractEnum(),
                 Username = x.Username,
-                CaseGroup = ((Participant)x).CaseTypeGroup,
                 UserRole = x.UserRole.MapToContractEnum()
             });
     }

@@ -16,37 +16,25 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; }
         public Guid ParticipantId { get; }
         public string DisplayName { get; }
-        public string Representee { get; }
-        public string Fullname { get; }
-        public string FirstName { get; }
-        public string LastName { get; }
         public string ContactEmail { get; }
-        public string ContactTelephone { get; }
         public string Username { get; set; }
         public IList<LinkedParticipantDto> LinkedParticipants { get; set; }
 
         public UserRole UserRole { get; set; }
         public string HearingRole { get; set; }
-        public string CaseTypeGroup { get; set; }
 
         public UpdateParticipantDetailsCommand(Guid conferenceId,
-            Guid participantId, string fullname, string firstname,
-            string lastname, string displayName, string representee, string contactEmail, string contactTelephone, 
-            IList<LinkedParticipantDto> linkedParticipants, UserRole userRole, string hearingRole, string caseTypeGroup)
+            Guid participantId,
+            string displayName, string contactEmail, 
+            IList<LinkedParticipantDto> linkedParticipants, UserRole userRole, string hearingRole)
         {
             ConferenceId = conferenceId;
             ParticipantId = participantId;
-            Fullname = fullname;
             DisplayName = displayName;
-            Representee = representee;
-            FirstName = firstname;
-            LastName = lastname;
             ContactEmail = contactEmail;
-            ContactTelephone = contactTelephone;
             LinkedParticipants = linkedParticipants;
             UserRole = userRole;
             HearingRole = hearingRole;
-            CaseTypeGroup = caseTypeGroup;
         }
     }
 
@@ -72,34 +60,19 @@ namespace VideoApi.DAL.Commands
             {
                 throw new ParticipantNotFoundException(command.ParticipantId);
             }
-
-            if (command.Fullname != null)
-                participant.Name = command.Fullname;
             
             participant.DisplayName = command.DisplayName;
             participant.Username = command.Username ?? participant.Username;
 
             if (participant is Participant participantCasted)
             {
-                if(command.FirstName != null)
-                    participantCasted.FirstName = command.FirstName;
-                
-                if(command.LastName != null)
-                    participantCasted.LastName = command.LastName;
-                
-                
-                participantCasted.Representee = command.Representee;
                 participantCasted.ContactEmail = command.ContactEmail ?? participantCasted.ContactEmail;
-                participantCasted.ContactTelephone = command.ContactTelephone ?? participantCasted.ContactTelephone;
                 
                 if (command.UserRole != UserRole.None)
                     participantCasted.UserRole = command.UserRole;
 
                 if (command.HearingRole != null)
                     participantCasted.HearingRole = command.HearingRole;
-            
-                if (command.CaseTypeGroup != null)
-                    participantCasted.CaseTypeGroup = command.CaseTypeGroup;
             }
 
             await UpdateLinkedParticipants(participant, conference, command);

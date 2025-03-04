@@ -9,7 +9,6 @@ namespace VideoApi.Mappings
             return new Participant()
             {
                 ParticipantRefId = participantBase.Id,
-                Name = participantBase.Name,
                 DisplayName = participantBase.DisplayName,
                 Username = participantBase.Username,
                 UserRole = participantBase.UserRole,

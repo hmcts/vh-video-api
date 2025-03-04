@@ -36,9 +36,8 @@ namespace VideoApi.UnitTests.Domain
         [Test]
         public void Should_create_participant_without_id()
         {
-            var participant = new Participant(TestParticipantRefId, TestName, TestFirstName, TestLastName, TestDisplayName,
-            TestUsername, TestUserRole, TestHearingRole, TestCaseTypeGroup, TestContactEmail,
-             TestContactTelephone);
+            var participant = new Participant(TestParticipantRefId, TestDisplayName,
+            TestUsername, TestUserRole, TestHearingRole, TestContactEmail);
 
             ValidateCommonFields(participant);
             participant.Id.Should().NotBeEmpty();            
@@ -49,9 +48,9 @@ namespace VideoApi.UnitTests.Domain
         {
             var testId = Guid.NewGuid();
 
-            var participant = new Participant(TestParticipantRefId, TestName, TestFirstName, TestLastName, TestDisplayName,
-            TestUsername, TestUserRole, TestHearingRole, TestCaseTypeGroup, TestContactEmail,
-             TestContactTelephone, testId);
+            var participant = new Participant(TestParticipantRefId, TestDisplayName,
+            TestUsername, TestUserRole, TestHearingRole, TestContactEmail,
+             testId);
 
             ValidateCommonFields(participant);
             participant.Id.Should().Be(testId);
@@ -60,15 +59,11 @@ namespace VideoApi.UnitTests.Domain
         private void ValidateCommonFields(Participant participant)
         {
             participant.ParticipantRefId.Should().Be(TestParticipantRefId);
-            participant.FirstName.Should().Be(TestFirstName);
-            participant.LastName.Should().Be(TestLastName);
             participant.DisplayName.Should().Be(TestDisplayName);
             participant.Username.Should().Be(TestUsername);
             participant.UserRole.Should().Be(TestUserRole);
             participant.HearingRole.Should().Be(TestHearingRole);
-            participant.CaseTypeGroup.Should().Be(TestCaseTypeGroup);
             participant.ContactEmail.Should().Be(TestContactEmail);
-            participant.ContactTelephone.Should().Be(TestContactTelephone);
         }
     }
 }

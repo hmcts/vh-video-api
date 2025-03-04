@@ -115,16 +115,11 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var participantOnesLinkedParticipant = _conference.Participants[1];
 
             participantOne.DisplayName = "UpdatedDisplayName";
-            participantOne.Name = "UpdatedName";
             participantOne.Username = "UpdatedUsername@username.com";
 
             if (participantOne is Participant participantOneCasted)
             {
                 participantOneCasted.ContactEmail = "hi@dontcontactme.com";
-                participantOneCasted.ContactTelephone = "07123456789";
-                participantOneCasted.FirstName = "UpdatedFirstName";
-                participantOneCasted.LastName = "UpdatedLastName";
-                participantOneCasted.Representee = "UpdatedRepresentee";
             }
 
             ExistingParticipants.Add(participantOne);
@@ -139,7 +134,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             //Assert
             updatedParticipant.DisplayName.Should().Be(participantOne.DisplayName);
-            updatedParticipant.Name.Should().Be(participantOne.Name);
             updatedParticipant.Username.Should().Be(participantOne.Username);
             updatedParticipant.LinkedParticipants.Should().BeEmpty();
             updatedParticipantsLinkedParticipant.LinkedParticipants.Should().BeEmpty();
@@ -147,10 +141,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
             if (participantOne is Participant participantCasted)
             {
                 ((Participant)updatedParticipant).ContactEmail.Should().Be(participantCasted.ContactEmail);
-                ((Participant)updatedParticipant).ContactTelephone.Should().Be(participantCasted.ContactTelephone);
-                ((Participant)updatedParticipant).FirstName.Should().Be(participantCasted.FirstName);
-                ((Participant)updatedParticipant).LastName.Should().Be(participantCasted.LastName);
-                ((Participant)updatedParticipant).Representee.Should().Be(participantCasted.Representee);
             }
         }
 

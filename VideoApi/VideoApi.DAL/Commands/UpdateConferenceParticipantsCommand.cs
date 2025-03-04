@@ -79,16 +79,11 @@ namespace VideoApi.DAL.Commands
                 }
 
                 participant.DisplayName = existingParticipant.DisplayName;
-                participant.Name = existingParticipant.Name;
                 participant.Username = existingParticipant.Username ?? participant.Username;
 
                 if (participant is Participant participantCasted)
                 {
                     participantCasted.ContactEmail = ((Participant)existingParticipant).ContactEmail ?? participantCasted.ContactEmail;
-                    participantCasted.ContactTelephone = ((Participant)existingParticipant).ContactTelephone ?? participantCasted.ContactTelephone;
-                    participantCasted.FirstName = ((Participant)existingParticipant).FirstName;
-                    participantCasted.LastName = ((Participant)existingParticipant).LastName;
-                    participantCasted.Representee = ((Participant)existingParticipant).Representee;
                 }
 
                 participant.RemoveAllLinks();

@@ -40,15 +40,9 @@ namespace VideoApi.DAL.Commands
         {
             var randomString = new StringCreator().Get(9).ToUpperInvariant();
 
-            participant.Name = randomString;
             participant.DisplayName = $"{randomString} {randomString}";
-            participant.FirstName = randomString;
-            participant.LastName = randomString;
             participant.ContactEmail = randomString;
-            participant.ContactTelephone = randomString;
             participant.Username = $"{randomString}{Domain.Constants.AnonymisedUsernameSuffix}";
-
-            if (!string.IsNullOrWhiteSpace(participant.Representee)) participant.Representee = randomString;
 
             return participant;
         }

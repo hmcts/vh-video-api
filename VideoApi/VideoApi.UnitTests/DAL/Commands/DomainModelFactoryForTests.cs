@@ -17,9 +17,8 @@ namespace VideoApi.UnitTests.DAL.Commands
 
         public static Participant CreateParticipant()
         {
-            return new Participant(Faker.Name.FirstName(), Faker.Name.FirstName(), Faker.Name.FirstName(),
-                Faker.Name.FirstName(),
-                Faker.Name.FirstName(), UserRole.Individual, Faker.Name.FirstName(), Faker.Name.FirstName());
+            return new Participant(Faker.Name.FirstName(), Faker.Name.FirstName(),
+                UserRole.Individual, Faker.Name.FirstName(), Faker.Name.FirstName());
         }
 
         public static QuickLinkParticipant CreateQuickLinkParticipant(UserRole userRole)
@@ -29,8 +28,7 @@ namespace VideoApi.UnitTests.DAL.Commands
 
         public static Participant CreateParticipantWithUsername(string username)
         {
-            return new Participant(Faker.Name.FirstName(), Faker.Name.FirstName(), Faker.Name.FirstName(),
-                Faker.Name.FirstName(),
+            return new Participant(Faker.Name.FirstName(),
                 username, UserRole.Individual, Faker.Name.FirstName(), Faker.Name.FirstName());
         }
 
@@ -38,20 +36,15 @@ namespace VideoApi.UnitTests.DAL.Commands
         {
             return new Participant
             {
-                Name = participant.Name,
                 DisplayName = participant.DisplayName,
                 Username = participant.Username,
-                FirstName = participant.FirstName,
-                LastName = participant.LastName,
-                ContactEmail = participant.ContactEmail,
-                ContactTelephone = participant.ContactTelephone,
-                Representee = participant.Representee
+                ContactEmail = participant.ContactEmail
             };
         }
         
         public static QuickLinkParticipant CreateQuickLinkParticipantCopyForAssertion(ParticipantBase participant)
         {
-            var copyOfParticipant = new QuickLinkParticipant(participant.Name, participant.UserRole);
+            var copyOfParticipant = new QuickLinkParticipant(participant.DisplayName, participant.UserRole);
             copyOfParticipant.DisplayName = participant.DisplayName;
             copyOfParticipant.Username = participant.Username;
 

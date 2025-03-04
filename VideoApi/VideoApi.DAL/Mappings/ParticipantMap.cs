@@ -8,13 +8,15 @@ namespace VideoApi.DAL.Mappings
     {
         public void Configure(EntityTypeBuilder<Participant> builder)
         {
-            builder.Property(x => x.FirstName);
-            builder.Property(x => x.LastName);
             builder.Property(x => x.ContactEmail);
-            builder.Property(x => x.ContactTelephone);
-            builder.Property(x => x.CaseTypeGroup);
-            builder.Property(x => x.Representee);
             builder.Property(x => x.CurrentRoom);
+            
+            // Keep deleted properties as columns in the table
+            builder.Property<string>("FirstName").HasColumnName("FirstName");
+            builder.Property<string>("LastName").HasColumnName("LastName");
+            builder.Property<string>("ContactTelephone").HasColumnName("ContactTelephone");
+            builder.Property<string>("CaseTypeGroup").HasColumnName("CaseTypeGroup");
+            builder.Property<string>("Representee").HasColumnName("Representee");
         }
     }
 }

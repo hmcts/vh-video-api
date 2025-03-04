@@ -16,7 +16,6 @@ namespace VideoApi.Domain
             DisplayName = name;
             Username = $"{Id}{QuickLinkParticipantConst.Domain}";
             UserRole = userRole;
-            Name = name;
             HearingRole = ((QuickLinkHearingRole)Enum.Parse(typeof(UserRole), userRole.ToString())).AsString(EnumFormat.Description);
         }
     }

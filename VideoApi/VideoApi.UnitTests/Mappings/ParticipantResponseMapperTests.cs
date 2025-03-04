@@ -28,13 +28,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.RoomParticipants)
                 .Excluding(x => x.CreatedAt)
                 .Excluding(x => x.UpdatedAt)
-                .Excluding(x => x.FirstName)
-                .Excluding(x => x.LastName)
-                .Excluding(x => x.ContactTelephone)
-                .Excluding(x => x.CaseTypeGroup)
-                .Excluding(x => x.Representee)
-                .Excluding(x => x.HearingRole)
-                .Excluding(x => x.Name));
+                .Excluding(x => x.HearingRole));
         }
 
         [Test]
@@ -61,13 +55,7 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.RoomParticipants)
                 .Excluding(x => x.CreatedAt)
                 .Excluding(x => x.UpdatedAt)
-                .Excluding(x => x.FirstName)
-                .Excluding(x => x.LastName)
-                .Excluding(x => x.ContactTelephone)
-                .Excluding(x => x.CaseTypeGroup)
-                .Excluding(x => x.Representee)
-                .Excluding(x => x.HearingRole)
-                .Excluding(x => x.Name));
+                .Excluding(x => x.HearingRole));
 
             response.CurrentInterpreterRoom.Should().NotBeNull();
             response.CurrentInterpreterRoom.Id.Should().Be(interpreterRoom.Id);

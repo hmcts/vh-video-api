@@ -48,13 +48,9 @@ namespace VideoApi.UnitTests.DAL.Commands
 
             var processedParticipant =
                 await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
-
-            processedParticipant.Name.Should().NotBe(participantCopyBeforeAnonymisation.Name);
+            
             processedParticipant.DisplayName.Should().NotBe(participantCopyBeforeAnonymisation.DisplayName);
-            processedParticipant.FirstName.Should().NotBe(participantCopyBeforeAnonymisation.FirstName);
-            processedParticipant.LastName.Should().NotBe(participantCopyBeforeAnonymisation.LastName);
             processedParticipant.ContactEmail.Should().NotBe(participantCopyBeforeAnonymisation.ContactEmail);
-            processedParticipant.ContactTelephone.Should().NotBe(participantCopyBeforeAnonymisation.ContactTelephone);
             processedParticipant.Username.Should()
                 .Contain(Constants.AnonymisedUsernameSuffix);
         }
@@ -94,54 +90,10 @@ namespace VideoApi.UnitTests.DAL.Commands
 
             var processedParticipant =
                 await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _anonymisedParticipant.Id);
-
-            processedParticipant.Name.Should().Be(anonymisedParticipantBeforeAnonymisation.Name);
+            
             processedParticipant.DisplayName.Should().Be(anonymisedParticipantBeforeAnonymisation.DisplayName);
-            processedParticipant.FirstName.Should().Be(anonymisedParticipantBeforeAnonymisation.FirstName);
-            processedParticipant.LastName.Should().Be(anonymisedParticipantBeforeAnonymisation.LastName);
             processedParticipant.ContactEmail.Should().Be(anonymisedParticipantBeforeAnonymisation.ContactEmail);
-            processedParticipant.ContactTelephone.Should()
-                .Be(anonymisedParticipantBeforeAnonymisation.ContactTelephone);
             processedParticipant.Username.Should().Be(anonymisedParticipantBeforeAnonymisation.Username);
-        }
-
-        [Test]
-        public async Task Anonymises_Representee()
-        {
-            _participantToAnonymise.Representee = Faker.Name.FullName();
-            videoApiDbContext.Participants.Update(_participantToAnonymise);
-            await videoApiDbContext.SaveChangesAsync();
-
-            var participantCopyBeforeAnonymisation =
-                DomainModelFactoryForTests.CreateParticipantCopyForAssertion(_participantToAnonymise);
-
-            await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
-                { Username = usernameToAnonymise });
-
-            var processedParticipant =
-                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
-
-            processedParticipant.Representee.Should().NotBe(participantCopyBeforeAnonymisation.Representee);
-            processedParticipant.Name.Should().BeEquivalentTo(processedParticipant.Representee);
-        }
-
-        [Test]
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase(null)]
-        public async Task Does_Not_Anonymises_Representee(string representee)
-        {
-            _participantToAnonymise.Representee = representee;
-            videoApiDbContext.Participants.Update(_participantToAnonymise);
-            await videoApiDbContext.SaveChangesAsync();
-
-            await _commandHandler.Handle(new AnonymiseParticipantWithUsernameCommand
-                { Username = usernameToAnonymise });
-
-            var processedParticipant =
-                await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
-
-            processedParticipant.Representee.Should().Be(representee);
         }
 
         [Test]
@@ -153,13 +105,9 @@ namespace VideoApi.UnitTests.DAL.Commands
 
             var processedParticipant =
                 await videoApiDbContext.Participants.SingleOrDefaultAsync(p => p.Id == _participantToAnonymise.Id);
-
-            processedParticipant.Name.Should().Be(_participantToAnonymise.Name);
+            
             processedParticipant.DisplayName.Should().Be(_participantToAnonymise.DisplayName);
-            processedParticipant.FirstName.Should().Be(_participantToAnonymise.FirstName);
-            processedParticipant.LastName.Should().Be(_participantToAnonymise.LastName);
             processedParticipant.ContactEmail.Should().Be(_participantToAnonymise.ContactEmail);
-            processedParticipant.ContactTelephone.Should().Be(_participantToAnonymise.ContactTelephone);
             processedParticipant.Username.Should().Be(_participantToAnonymise.Username);
         }
     }

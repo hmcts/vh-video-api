@@ -75,7 +75,6 @@ namespace VideoApi.UnitTests.DAL.Commands
             individualParticipantBeforeAnonymisation.DisplayName.Should()
                 .Be(processedIndividualParticipant.DisplayName);
             individualParticipantBeforeAnonymisation.Username.Should().Be(processedIndividualParticipant.Username);
-            individualParticipantBeforeAnonymisation.Name.Should().Be(processedIndividualParticipant.Name);
             AssertParticipantFields(processedQuickLinkObserver, quickLinkObserverBeforeAnonymisation);
             AssertParticipantFields(processedQuickLinkParticipant, quickLinkParticipantBeforeAnonymisation);
         }
@@ -110,7 +109,6 @@ namespace VideoApi.UnitTests.DAL.Commands
             quickLinkParticipantBeforeAnonymisation.DisplayName.Should()
                 .Be(quickLinkParticipantFromContext.DisplayName);
             quickLinkParticipantBeforeAnonymisation.Username.Should().Be(quickLinkParticipantFromContext.Username);
-            quickLinkParticipantBeforeAnonymisation.Name.Should().Be(quickLinkParticipantFromContext.Name);
             AssertParticipantFields(processedQuickLinkObserver, quickLinkObserverBeforeAnonymisation);
         }
 
@@ -131,7 +129,6 @@ namespace VideoApi.UnitTests.DAL.Commands
             quickLinkParticipantBeforeAnonymisation.DisplayName.Should()
                 .Be(quickLinkParticipantFromContext.DisplayName);
             quickLinkParticipantBeforeAnonymisation.Username.Should().Be(quickLinkParticipantFromContext.Username);
-            quickLinkParticipantBeforeAnonymisation.Name.Should().Be(quickLinkParticipantFromContext.Name);
         }
 
         private static void AssertParticipantFields(ParticipantBase processedParticipant,
@@ -139,7 +136,6 @@ namespace VideoApi.UnitTests.DAL.Commands
         {
             processedParticipant.DisplayName.Should().NotContain(participantBeforeAnonymisation.DisplayName);
             processedParticipant.Username.Should().NotContain(participantBeforeAnonymisation.Username);
-            processedParticipant.Name.Should().NotContain(participantBeforeAnonymisation.Name);
             processedParticipant.Username.Should().Contain(Constants.AnonymisedUsernameSuffix);
         }
     }

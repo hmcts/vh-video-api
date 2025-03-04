@@ -70,8 +70,8 @@ namespace Testing.Common.Helper.Builders.Domain
             var name = Faker.Name.FullName();
 
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                    new Participant(Guid.NewGuid(), name, Faker.Name.FirstName(), Faker.Name.LastName(), name, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", _userRole,
-                        _hearingRole, _caseTypeGroup, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", Faker.Phone.PhoneNumber()))
+                    new Participant(Guid.NewGuid(), name, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", _userRole,
+                        $"{Faker.Random.Number(0, 99999999)}@hmcts.net", Faker.Phone.PhoneNumber()))
                 .With(x => x.CurrentRoom = null)
                 .Build();
 

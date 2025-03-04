@@ -299,7 +299,6 @@ namespace VideoApi.Domain
                 var randomString = new StringCreator().Get(9).ToUpperInvariant();
 
                 participant.Username = $"{randomString}{Constants.AnonymisedUsernameSuffix}";
-                participant.Name = $"{randomString} {randomString}";
                 participant.DisplayName = randomString;
             }
         }

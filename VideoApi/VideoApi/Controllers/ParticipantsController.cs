@@ -62,12 +62,9 @@ namespace VideoApi.Controllers
         {
             _logger.LogDebug("AddParticipantsToConference");
             var participants = request.Participants.Select(x =>
-                    new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
+                    new Participant(x.ParticipantRefId,
                         x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole.MapToDomainEnum(),
-                        x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
-                    {
-                        Representee = x.Representee
-                    })
+                        x.HearingRole, x.ContactEmail))
                 .ToList();
             
             var linkedParticipants = request.Participants
@@ -114,20 +111,14 @@ namespace VideoApi.Controllers
             try
             {
                 var existingParticipants = request.ExistingParticipants.Select(x =>
-                        new Participant(x.ParticipantRefId, x.ContactEmail, x.ContactTelephone, x.DisplayName,
-                            x.FirstName, x.LastName, x.Fullname, x.Username)
-                        {
-                            Representee = x.Representee
-                        })
+                        new Participant(x.ParticipantRefId, x.ContactEmail, x.DisplayName,
+                            x.Username))
                     .ToList();
                 
                 var newParticipants = request.NewParticipants.Select(x =>
-                        new Participant(x.ParticipantRefId, x.Name.Trim(), x.FirstName.Trim(), x.LastName.Trim(),
+                        new Participant(x.ParticipantRefId,
                             x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole.MapToDomainEnum(),
-                            x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone, x.Id)
-                        {
-                            Representee = x.Representee
-                        })
+                            x.HearingRole, x.ContactEmail, x.Id))
                     .ToList();
                 
                 var linkedParticipants = request.LinkedParticipants
@@ -190,17 +181,11 @@ namespace VideoApi.Controllers
                 
                 var updateParticipantDetailsCommand = new UpdateParticipantDetailsCommand(conferenceId,
                     participantId,
-                    request.Fullname,
-                    request.FirstName,
-                    request.LastName,
                     request.DisplayName,
-                    request.Representee,
                     request.ContactEmail,
-                    request.ContactTelephone,
                     linkedParticipants,
                     request.UserRole.MapToDomainEnum(),
-                    request.HearingRole,
-                    request.CaseTypeGroup);
+                    request.HearingRole);
                 
                 if (!string.IsNullOrEmpty(request.Username))
                 {
@@ -444,8 +429,7 @@ namespace VideoApi.Controllers
             AddStaffMemberRequest request)
         {
             _logger.LogDebug("AddStaffMemberToConference");
-            var participant = new Participant(request.Name.Trim(), request.FirstName.Trim(), request.LastName.Trim(),
-                request.DisplayName.Trim(), request.Username.ToLowerInvariant().Trim(),
+            var participant = new Participant(request.DisplayName.Trim(), request.Username.ToLowerInvariant().Trim(),
                 request.UserRole.MapToDomainEnum(),
                 request.HearingRole, request.ContactEmail);
             try

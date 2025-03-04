@@ -47,7 +47,6 @@ namespace VideoApi.UnitTests.Controllers.QuickLink
             //Assert
             CommandHandler.Verify(x => x.Handle(It.Is<AddParticipantsToConferenceCommand>(x =>
                 x.ConferenceId == Conference.Id &&
-                x.Participants[0].Name == AddQuickLinkParticipantRequest.Name &&
                 (int)x.Participants[0].UserRole == (int)AddQuickLinkParticipantRequest.UserRole &&
                 x.LinkedParticipants.Count == 0
             )), Times.Once);
