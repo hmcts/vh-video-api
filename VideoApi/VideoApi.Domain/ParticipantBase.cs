@@ -11,7 +11,6 @@ namespace VideoApi.Domain
 
         public Guid ConferenceId { get; set; }
         public Guid ParticipantRefId { get; set; }
-        public string Name { get; set; }
         public string DisplayName { get; set; }
         public UserRole UserRole { get; set; }
         public string HearingRole { get; set; }

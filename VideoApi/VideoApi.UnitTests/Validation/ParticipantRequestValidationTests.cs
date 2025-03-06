@@ -44,48 +44,6 @@ namespace VideoApi.UnitTests.Validation
         }
 
         [Test]
-        public async Task Should_return_missing_name_error()
-        {
-            var request = BuildRequest();
-            request.Name = string.Empty;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
-            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoNameErrorMessage)
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public async Task Should_return_missing_firstname_error()
-        {
-            var request = BuildRequest();
-            request.FirstName = string.Empty;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
-            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoFirstNameErrorMessage)
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public async Task Should_return_missing_lastname_error()
-        {
-            var request = BuildRequest();
-            request.LastName = string.Empty;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
-            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoLastNameErrorMessage)
-                .Should().BeTrue();
-        }
-
-        [Test]
         public async Task Should_return_missing_display_name_error()
         {
             var request = BuildRequest();
@@ -110,20 +68,6 @@ namespace VideoApi.UnitTests.Validation
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(1);
             result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoUsernameErrorMessage)
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public async Task Should_return_missing_case_type_group_error()
-        {
-            var request = BuildRequest();
-            request.CaseTypeGroup = string.Empty;
-
-            var result = await _validator.ValidateAsync(request);
-
-            result.IsValid.Should().BeFalse();
-            result.Errors.Count.Should().Be(1);
-            result.Errors.Exists(x => x.ErrorMessage == ParticipantRequestValidation.NoCaseTypeGroupErrorMessage)
                 .Should().BeTrue();
         }
         
@@ -172,10 +116,8 @@ namespace VideoApi.UnitTests.Validation
         private static ParticipantRequest BuildRequest()
         {
             return Builder<ParticipantRequest>.CreateNew()
-                .With(x => x.CaseTypeGroup = "Applicant")
                 .With(x => x.UserRole = UserRole.Representative)
                 .With(x => x.HearingRole = "Litigant in person")
-                .With(x => x.Name = Faker.Name.FullName())
                 .With(x => x.Username = $"{Faker.Random.Number(0, 99999999)}@hmcts.net")
                 .Build();
         }

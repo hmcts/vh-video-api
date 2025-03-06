@@ -16,8 +16,6 @@ namespace Testing.Common.Helper.Builders.Api
         {
             _addStaffMemberRequest = Builder<AddStaffMemberRequest>.CreateNew()
                 .With(x => x.Name = $"Automation_{Faker.Name.FullName()}")
-                .With(x => x.FirstName = Faker.Name.FirstName())
-                .With(x => x.LastName = Faker.Name.LastName())
                 .With(x => x.Username = $"Automation_{Faker.Random.Number(0, 99999999)}@hmcts.net")
                 .With(x => x.DisplayName = $"Automation_{Faker.Internet.UserName()}")
                 .With(x => x.UserRole = userRole)

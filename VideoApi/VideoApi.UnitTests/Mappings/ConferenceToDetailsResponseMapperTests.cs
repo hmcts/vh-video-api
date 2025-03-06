@@ -78,7 +78,6 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.RoomParticipants)
                 .Excluding(x => x.UpdatedAt)
                 .Excluding(x => x.CreatedAt)
-                .Excluding(x => x.Name)
                 .Excluding(x => x.HearingRole)
                 .Excluding(x => x.HearingRole)
             );

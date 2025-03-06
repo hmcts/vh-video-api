@@ -86,11 +86,8 @@ public class BookingService(
         if (existingConference != null) return existingConference.Id;
         
         var participants = request.Participants.Select(x =>
-                new Participant(x.ParticipantRefId, x.Name, x.FirstName, x.LastName, x.DisplayName, x.Username,
-                    x.UserRole.MapToDomainEnum(), x.HearingRole, x.CaseTypeGroup, x.ContactEmail, x.ContactTelephone)
-                {
-                    Representee = x.Representee
-                })
+                new Participant(x.ParticipantRefId, x.DisplayName, x.Username,
+                    x.UserRole.MapToDomainEnum(), x.HearingRole, x.ContactEmail))
             .ToList();
         
         var endpoints = request.Endpoints

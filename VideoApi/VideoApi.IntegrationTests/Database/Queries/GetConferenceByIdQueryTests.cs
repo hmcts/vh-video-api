@@ -55,20 +55,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
             participants.Should().NotBeNullOrEmpty();
             foreach (var participant in participants)
             {
-                participant.Name.Should().NotBeNullOrEmpty();
                 participant.Username.Should().NotBeNullOrEmpty();
                 participant.DisplayName.Should().NotBeNullOrEmpty();
                 participant.ParticipantRefId.Should().NotBeEmpty();
                 participant.UserRole.Should().NotBe(UserRole.None);
-
-                if (participant is Participant participantCasted)
-                {
-                    participantCasted.CaseTypeGroup.Should().NotBeNullOrEmpty();
-                    if (participant.UserRole == UserRole.Representative)
-                    {
-                        participantCasted.Representee.Should().NotBeNullOrEmpty();
-                    }
-                }
                 participant.GetCurrentRoom().Should().NotBeNullOrEmpty();
                 if (consultationRoomParticipant.Id == participant.Id)
                 {

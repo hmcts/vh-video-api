@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void should_return_null_when_participant_is_not_in_any_room()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
 
             participant.GetParticipantRoom().Should().BeNull();
@@ -21,7 +21,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void should_return_null_when_participant_is_not_in_an_interpreter_room()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
             var consultationRoom = new ConsultationRoom(Guid.NewGuid(), "ConsultationRoom1",
                 VirtualCourtRoomType.Participant, false);
@@ -43,7 +43,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         {
             var conferenceId = Guid.NewGuid();
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
             var consultationRoom = new ConsultationRoom(conferenceId, "ConsultationRoom1",
                 VirtualCourtRoomType.Participant, false);

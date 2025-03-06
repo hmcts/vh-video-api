@@ -6,39 +6,28 @@ namespace VideoApi.UnitTests.Domain
 {
     public class ParticipantTests
     {
-        private Guid TestParticipantRefId;
-        private string TestName;
-        private string TestFirstName;
-        private string TestLastName;
-        private string TestDisplayName;
-        private string TestUsername;
-        private UserRole TestUserRole;
-        private string TestHearingRole;
-        private string TestCaseTypeGroup;
-        private string TestContactEmail;
-        private string TestContactTelephone;
+        private Guid _testParticipantRefId;
+        private string _testDisplayName;
+        private string _testUsername;
+        private UserRole _testUserRole;
+        private string _testHearingRole;
+        private string _testContactEmail;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            TestParticipantRefId = Guid.NewGuid();
-            TestName = "name";
-            TestFirstName = "firstName";
-            TestLastName = "lastName";
-            TestDisplayName = "displayName";
-            TestUsername = "username";
-            TestUserRole = UserRole.Individual;
-            TestHearingRole = "hearingRole";
-            TestCaseTypeGroup = "caseTypeGroup";
-            TestContactEmail = "contactEmail";
-            TestContactTelephone = "contactTelephone";
+            _testParticipantRefId = Guid.NewGuid();
+            _testDisplayName = "displayName";
+            _testUsername = "username";
+            _testUserRole = UserRole.Individual;
+            _testHearingRole = "hearingRole";
+            _testContactEmail = "contactEmail";
         }
         [Test]
         public void Should_create_participant_without_id()
         {
-            var participant = new Participant(TestParticipantRefId, TestName, TestFirstName, TestLastName, TestDisplayName,
-            TestUsername, TestUserRole, TestHearingRole, TestCaseTypeGroup, TestContactEmail,
-             TestContactTelephone);
+            var participant = new Participant(_testParticipantRefId, _testDisplayName,
+            _testUsername, _testUserRole, _testHearingRole, _testContactEmail);
 
             ValidateCommonFields(participant);
             participant.Id.Should().NotBeEmpty();            
@@ -49,9 +38,9 @@ namespace VideoApi.UnitTests.Domain
         {
             var testId = Guid.NewGuid();
 
-            var participant = new Participant(TestParticipantRefId, TestName, TestFirstName, TestLastName, TestDisplayName,
-            TestUsername, TestUserRole, TestHearingRole, TestCaseTypeGroup, TestContactEmail,
-             TestContactTelephone, testId);
+            var participant = new Participant(_testParticipantRefId, _testDisplayName,
+            _testUsername, _testUserRole, _testHearingRole, _testContactEmail,
+             testId);
 
             ValidateCommonFields(participant);
             participant.Id.Should().Be(testId);
@@ -59,16 +48,12 @@ namespace VideoApi.UnitTests.Domain
 
         private void ValidateCommonFields(Participant participant)
         {
-            participant.ParticipantRefId.Should().Be(TestParticipantRefId);
-            participant.FirstName.Should().Be(TestFirstName);
-            participant.LastName.Should().Be(TestLastName);
-            participant.DisplayName.Should().Be(TestDisplayName);
-            participant.Username.Should().Be(TestUsername);
-            participant.UserRole.Should().Be(TestUserRole);
-            participant.HearingRole.Should().Be(TestHearingRole);
-            participant.CaseTypeGroup.Should().Be(TestCaseTypeGroup);
-            participant.ContactEmail.Should().Be(TestContactEmail);
-            participant.ContactTelephone.Should().Be(TestContactTelephone);
+            participant.ParticipantRefId.Should().Be(_testParticipantRefId);
+            participant.DisplayName.Should().Be(_testDisplayName);
+            participant.Username.Should().Be(_testUsername);
+            participant.UserRole.Should().Be(_testUserRole);
+            participant.HearingRole.Should().Be(_testHearingRole);
+            participant.ContactEmail.Should().Be(_testContactEmail);
         }
     }
 }

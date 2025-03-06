@@ -30,21 +30,19 @@ namespace VideoApi.UnitTests.Validation
         public async Task Should_return_missing_participants_error()
         {
             var request = BuildRequest();
-            request.FirstName = string.Empty;
+            request.DisplayName = string.Empty;
             request.ContactEmail = string.Empty;
             var result = await _validator.ValidateAsync(request);
 
             result.IsValid.Should().BeFalse();
             result.Errors.Count.Should().Be(2);
-            result.Errors.Exists(x => x.PropertyName == "FirstName").Should().BeTrue();
+            result.Errors.Exists(x => x.PropertyName == "DisplayName").Should().BeTrue();
             result.Errors.Exists(x => x.PropertyName == "ContactEmail").Should().BeTrue();
         }
         private static AddStaffMemberRequest BuildRequest()
         {
             return new AddStaffMemberRequest
             {
-                FirstName = "FirstName",
-                LastName = "LastName",
                 Username = "Staff_UserName",
                 HearingRole = HearingRoleName.StaffMember,
                 Name = "FullName",

@@ -59,12 +59,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             conference.CaseName.Should().NotBe(conference1.CaseName);
             var representative = (Participant)conference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
             representative.DisplayName.Should().NotBe(conference1Rep.DisplayName);
-            representative.FirstName.Should().NotBe(conference1Rep.FirstName);
-            representative.LastName.Should().NotBe(conference1Rep.LastName);
             representative.Username.Should().NotBe(conference1Rep.Username);
-            representative.Representee.Should().NotBe(conference1Rep.Representee);
             representative.ContactEmail.Should().NotBe(conference1Rep.ContactEmail);
-            representative.ContactTelephone.Should().NotBe(conference1Rep.ContactTelephone);
         }
 
         [Test]
@@ -165,12 +161,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             anonymisedConference.CaseName.Should().NotBe(conference1.CaseName);
             var anonymisedRepresentative = (Participant)anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
             anonymisedRepresentative.DisplayName.Should().NotBe(conference1Rep.DisplayName);
-            anonymisedRepresentative.FirstName.Should().NotBe(conference1Rep.FirstName);
-            anonymisedRepresentative.LastName.Should().NotBe(conference1Rep.LastName);
             anonymisedRepresentative.Username.Should().NotBe(conference1Rep.Username);
-            anonymisedRepresentative.Representee.Should().NotBe(conference1Rep.Representee);
             anonymisedRepresentative.ContactEmail.Should().NotBe(conference1Rep.ContactEmail);
-            anonymisedRepresentative.ContactTelephone.Should().NotBe(conference1Rep.ContactTelephone);
 
             command = new AnonymiseConferencesCommand();
             await _handler.Handle(command);
@@ -183,12 +175,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             notAnonymisedConference.CaseName.Should().Be(anonymisedConference.CaseName);
             var notAnonymisedRepresentative = (Participant)anonymisedConference.Participants.FirstOrDefault(p => p.UserRole == UserRole.Representative);
             notAnonymisedRepresentative.DisplayName.Should().Be(anonymisedRepresentative.DisplayName);
-            notAnonymisedRepresentative.FirstName.Should().Be(anonymisedRepresentative.FirstName);
-            notAnonymisedRepresentative.LastName.Should().Be(anonymisedRepresentative.LastName);
             notAnonymisedRepresentative.Username.Should().Be(anonymisedRepresentative.Username);
-            notAnonymisedRepresentative.Representee.Should().Be(anonymisedRepresentative.Representee);
             notAnonymisedRepresentative.ContactEmail.Should().Be(anonymisedRepresentative.ContactEmail);
-            notAnonymisedRepresentative.ContactTelephone.Should().Be(anonymisedRepresentative.ContactTelephone);
             
         }
 

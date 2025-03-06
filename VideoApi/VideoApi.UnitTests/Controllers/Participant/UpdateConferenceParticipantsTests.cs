@@ -23,33 +23,22 @@ namespace VideoApi.UnitTests.Controllers.Participant
         {
             _existingParticipants = new List<UpdateParticipantRequest>
             {
-                new UpdateParticipantRequest
+                new()
                 {
                     ContactEmail = "email@phoneNumber.com",
-                    ContactTelephone = "07123456789",
                     DisplayName = "Displayname",
-                    FirstName = "Firstname",
-                    Fullname = "Fullname",
-                    LastName = "Lastname",
-                    ParticipantRefId = Guid.NewGuid(),
-                    Representee = "Representee"
+                    ParticipantRefId = Guid.NewGuid()
                 }
             };
 
             _newParticipants = new List<ParticipantRequest>
             {
-                new ParticipantRequest
+                new()
                 {
-                    CaseTypeGroup = "Applicant",
                     ContactEmail = "email@phoneNumber.com",
-                    ContactTelephone = "07123456789",
                     DisplayName = "Displayname",
-                    FirstName = "Firstname",
                     HearingRole = "HearingRole",
-                    LastName = "Lastname",
-                    Name = "Fullname",
                     ParticipantRefId = Guid.NewGuid(),
-                    Representee = "Representee",
                     Username = "Username",
                     UserRole = UserRole.Individual
                 }
@@ -59,7 +48,7 @@ namespace VideoApi.UnitTests.Controllers.Participant
 
             _linkedParticipants = new List<LinkedParticipantRequest>
             {
-                new LinkedParticipantRequest
+                new()
                 {
                     LinkedRefId = Guid.NewGuid(),
                     ParticipantRefId = Guid.NewGuid(),

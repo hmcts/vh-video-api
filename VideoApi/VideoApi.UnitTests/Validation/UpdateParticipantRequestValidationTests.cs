@@ -39,11 +39,7 @@ namespace VideoApi.UnitTests.Validation
         {
             return new UpdateParticipantRequest {
                 DisplayName = "displayname", 
-                Fullname = "Fullname", 
-                FirstName = "FirstName", 
-                LastName = "LastName",
                 ContactEmail = "prson@hmcts.net",
-                ContactTelephone = "098765432",
                 Username = "username@hmcts.net"
             };
         }

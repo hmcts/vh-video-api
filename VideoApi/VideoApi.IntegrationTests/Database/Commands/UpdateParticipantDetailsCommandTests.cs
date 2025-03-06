@@ -36,9 +36,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var conferenceId = Guid.NewGuid();
             var participantId = Guid.NewGuid();
 
-            var command = new UpdateParticipantDetailsCommand(conferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>(),
-                UserRole.Individual, "Individual", "Applicant");
+            var command = new UpdateParticipantDetailsCommand(conferenceId, participantId,
+                "displayname", "failed@hmcts.net", new List<LinkedParticipantDto>(),
+                UserRole.Individual, "Individual");
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -50,9 +50,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participantId = Guid.NewGuid();
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "failed@hmcts.net", "1234", new List<LinkedParticipantDto>(),
-                UserRole.Individual, "Individual", "Applicant");
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participantId,
+                "displayname", "failed@hmcts.net", new List<LinkedParticipantDto>(),
+                UserRole.Individual, "Individual");
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
 
@@ -64,27 +64,22 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants().First();
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789",
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id,
+                "displayname", "new@hmcts.net",
                 new List<LinkedParticipantDto>(),
-                UserRole.Individual, "Litigant in person", "Applicant");
+                UserRole.Individual, "Litigant in person");
             await _handler.Handle(command);
 
             var updatedConference = await _conferenceByIdHandler.Handle(new GetConferenceByIdQuery(_newConferenceId));
             var updatedParticipant =
                 updatedConference.GetParticipants().Single(x => x.Username == participant.Username);
             updatedParticipant.DisplayName.Should().Be("displayname");
-            updatedParticipant.Name.Should().Be("fullname");
 
             if (updatedParticipant is Participant updatedParticipantCasted)
             {
-                updatedParticipantCasted.FirstName.Should().Be("firstName");
-                updatedParticipantCasted.LastName.Should().Be("lastName");
                 updatedParticipantCasted.ContactEmail.Should().Be("new@hmcts.net");
-                updatedParticipantCasted.ContactTelephone.Should().Be("0123456789");
                 updatedParticipantCasted.UserRole.Should().Be(UserRole.Individual);
                 updatedParticipantCasted.HearingRole.Should().Be("Litigant in person");
-                updatedParticipantCasted.CaseTypeGroup.Should().Be("Applicant");
             }
 
             updatedParticipant.UpdatedAt.Should().BeAfter(updatedParticipant.CreatedAt.Value);
@@ -131,9 +126,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 }
             };
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
-                UserRole.Individual, "Litigant in person", "Applicant");
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id,
+                "displayname", "new@hmcts.net", newLinkedParticipants,
+                UserRole.Individual, "Litigant in person");
 
             await _handler.Handle(command);
 
@@ -192,9 +187,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 }
             };
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
-                UserRole.Individual, "Litigant in person", "Applicant");
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id,
+                "displayname", "new@hmcts.net", newLinkedParticipants,
+                UserRole.Individual, "Litigant in person");
 
             await _handler.Handle(command);
 
@@ -263,9 +258,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 }
             };
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", newLinkedParticipants,
-                UserRole.Individual, "Litigant in person", "Applicant");
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id,
+                "displayname", "new@hmcts.net", newLinkedParticipants,
+                UserRole.Individual, "Litigant in person");
 
             var exception = Assert.ThrowsAsync<ParticipantLinkException>(() => _handler.Handle(command));
             exception.LinkRefId.Should().Be(participantA.ParticipantRefId);
@@ -280,10 +275,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var participant = seededConference.GetParticipants().First();
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789",
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, participant.Id,
+                "displayname", "new@hmcts.net",
                 new List<LinkedParticipantDto>(),
-                UserRole.Individual, "Litigant in person", "Applicant")
+                UserRole.Individual, "Litigant in person")
             {
                 Username = "newUser@hmcts.net"
             };
@@ -293,18 +288,13 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var updatedParticipant =
                 updatedConference.GetParticipants().Single(x => x.Id == participant.Id);
             updatedParticipant.DisplayName.Should().Be("displayname");
-            updatedParticipant.Name.Should().Be("fullname");
             updatedParticipant.Username.Should().Be(command.Username);
 
             if (updatedParticipant is Participant updatedParticipantCasted)
             {
-                updatedParticipantCasted.FirstName.Should().Be("firstName");
-                updatedParticipantCasted.LastName.Should().Be("lastName");
                 updatedParticipantCasted.ContactEmail.Should().Be("new@hmcts.net");
-                updatedParticipantCasted.ContactTelephone.Should().Be("0123456789");
                 updatedParticipantCasted.UserRole.Should().Be(UserRole.Individual);
                 updatedParticipantCasted.HearingRole.Should().Be("Litigant in person");
-                updatedParticipantCasted.CaseTypeGroup.Should().Be("Applicant");
             }
         }
 
@@ -317,9 +307,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = seededConference.Id;
             var judge = seededConference.GetParticipants().First(e => e.HearingRole == "Judge");
 
-            var command = new UpdateParticipantDetailsCommand(_newConferenceId, judge.Id, "fullname", "firstName",
-                "lastName", "displayname", String.Empty, "new@hmcts.net", "0123456789", new List<LinkedParticipantDto>(),
-                UserRole.None, null, null);
+            var command = new UpdateParticipantDetailsCommand(_newConferenceId, judge.Id,
+                "displayname", "new@hmcts.net", new List<LinkedParticipantDto>(),
+                UserRole.None, null);
             
             await _handler.Handle(command);
             
@@ -336,9 +326,6 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 //HearingRole assertion
                 updatedParticipantCasted.HearingRole.Should().NotBeNullOrEmpty();
                 updatedParticipantCasted.HearingRole.Should().Be(judge.HearingRole);
-
-                //HearingRole assertion
-                updatedParticipantCasted.CaseTypeGroup.Should().NotBeNullOrEmpty();
             }
             else
             {

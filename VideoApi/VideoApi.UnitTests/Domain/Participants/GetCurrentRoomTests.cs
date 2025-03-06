@@ -14,7 +14,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void should_get_current_room(RoomType newRoom)
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
             participant.UpdateCurrentRoom(newRoom);
             participant.GetCurrentRoom().Should().Be(newRoom.ToString());
@@ -24,7 +24,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void should_throw_exception_when_endpoint_is_not_in_a_room()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
             participant.UpdateCurrentRoom(null);
             Assert.Throws<DomainRuleException>(() => participant.GetCurrentRoom()).ValidationFailures

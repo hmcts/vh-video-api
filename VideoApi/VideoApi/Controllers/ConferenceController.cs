@@ -58,9 +58,6 @@ public class ConferenceController(
         foreach (var participant in request.Participants)
         {
             participant.Username = participant.Username.ToLower().Trim();
-            participant.Name = participant.Name.Trim();
-            participant.FirstName = participant.FirstName.Trim();
-            participant.LastName = participant.LastName.Trim();
             participant.DisplayName = participant.DisplayName.Trim();
         }
         

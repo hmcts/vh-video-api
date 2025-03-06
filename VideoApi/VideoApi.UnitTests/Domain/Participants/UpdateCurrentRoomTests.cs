@@ -11,7 +11,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void Should_update_current_room()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
 
             participant.CurrentConsultationRoom.Should().BeNull();
@@ -29,7 +29,7 @@ namespace VideoApi.UnitTests.Domain.Participants
         public void Should_update_current_room()
         {
             var participant = new ParticipantBuilder().WithUserRole(UserRole.Individual)
-                .WithCaseTypeGroup("Applicant")
+                .WithHearingRole("Applicant")
                 .Build();
 
             participant.CurrentRoom.Should().BeNull();

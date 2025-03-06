@@ -42,8 +42,8 @@ namespace VideoApi.UnitTests.Domain.Conference
             var caseGroup = "Applicant";
             var hearingRole = ParticipantBuilder.DetermineHearingRole(userRole, caseGroup);
             var participant = Builder<Participant>.CreateNew().WithFactory(() =>
-                new Participant(Guid.NewGuid(), Faker.Name.FullName(), Faker.Name.FirstName(), Faker.Name.LastName(), Faker.Name.FullName(),
-                    $"{Faker.Random.Number(0, 99999999)}@hmcts.net", userRole, hearingRole,caseGroup, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", Faker.Phone.PhoneNumber())).Build();
+                new Participant(Guid.NewGuid(), Faker.Name.FullName(),
+                    $"{Faker.Random.Number(0, 99999999)}@hmcts.net", userRole, hearingRole, $"{Faker.Random.Number(0, 99999999)}@hmcts.net")).Build();
 
             Action action = () => conference.RemoveParticipant(participant);
 

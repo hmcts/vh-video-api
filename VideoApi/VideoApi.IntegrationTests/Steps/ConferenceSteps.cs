@@ -348,12 +348,8 @@ namespace VideoApi.IntegrationTests.Steps
             var updatedParticipant =
                 (Participant)updatedConference.Participants.First(p => p.UserRole == UserRole.Representative);
             updatedParticipant.DisplayName.Should().NotBe(representative.DisplayName);
-            updatedParticipant.FirstName.Should().NotBe(representative.FirstName);
-            updatedParticipant.LastName.Should().NotBe(representative.LastName);
             updatedParticipant.Username.Should().NotBe(representative.Username);
-            updatedParticipant.Representee.Should().NotBe(representative.Representee);
             updatedParticipant.ContactEmail.Should().NotBe(representative.ContactEmail);
-            updatedParticipant.ContactTelephone.Should().NotBe(representative.ContactTelephone);
         }
         
         [Then(@"the summary of conference details should be retrieved for individuals")]

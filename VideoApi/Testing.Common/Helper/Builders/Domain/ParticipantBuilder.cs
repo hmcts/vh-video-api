@@ -13,14 +13,11 @@ namespace Testing.Common.Helper.Builders.Domain
         private static readonly Faker Faker = new();
 
         private UserRole _userRole;
-        private string _caseTypeGroup;
         private string _hearingRole;
-        private TestCallResult _testCallResult;
 
         public ParticipantBuilder(bool ignoreId = false)
         {
             _userRole = UserRole.Individual;
-            _caseTypeGroup = "Applicant";
             _builderSettings = new BuilderSettings();
             if (!ignoreId) return;
 
@@ -36,49 +33,32 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
 
-        public ParticipantBuilder WithCaseTypeGroup(string caseTypeGroup)
-        {
-            _caseTypeGroup = caseTypeGroup;
-            return this;
-        }
-        
         public ParticipantBuilder WithHearingRole(string hearingRole)
         {
             _hearingRole = hearingRole;
             return this;
         }
 
-        public static  string DetermineHearingRole(UserRole role, string caseTypeGroup)
+        public static  string DetermineHearingRole(UserRole role, string hearingRole)
         {
             return role switch
             {
                 UserRole.Judge => "Judge",
-                UserRole.Representative => $"{caseTypeGroup} LIP",
-                _ => caseTypeGroup
+                UserRole.Representative => $"{hearingRole} LIP",
+                _ => hearingRole
             };
-        }
-
-        public ParticipantBuilder WithSelfTestScore(bool passed, TestScore score)
-        {
-            _testCallResult = new TestCallResult(passed, score);
-            return this;
         }
 
         public Participant Build()
         {
-            _hearingRole ??= DetermineHearingRole(_userRole, _caseTypeGroup);
+            _hearingRole ??= DetermineHearingRole(_userRole, _hearingRole);
             var name = Faker.Name.FullName();
 
             var participant = new Builder(_builderSettings).CreateNew<Participant>().WithFactory(() =>
-                    new Participant(Guid.NewGuid(), name, Faker.Name.FirstName(), Faker.Name.LastName(), name, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", _userRole,
-                        _hearingRole, _caseTypeGroup, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", Faker.Phone.PhoneNumber()))
+                    new Participant(Guid.NewGuid(), name, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", _userRole,
+                        _hearingRole, $"{Faker.Random.Number(0, 99999999)}@hmcts.net"))
                 .With(x => x.CurrentRoom = null)
                 .Build();
-
-            if (_testCallResult != null)
-            {
-                participant.UpdateTestCallResult(_testCallResult.Passed, _testCallResult.Score);
-            }
 
             return participant;
         }

@@ -15,7 +15,6 @@ namespace VideoApi.DAL.Mappings
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.ParticipantRefId);
-            builder.Property(x => x.Name);
             builder.Property(x => x.DisplayName);
             builder.Property(x => x.Username).HasConversion(v =>
                 v.Replace(QuickLinkParticipantConst.Domain, "")
@@ -35,6 +34,9 @@ namespace VideoApi.DAL.Mappings
 
             builder.HasMany<RoomParticipant>(nameof(ParticipantBase.RoomParticipants)).WithOne(x => x.Participant)
                 .HasForeignKey(x => x.ParticipantId);
+            
+            // Keep deleted properties as columns in the table
+            builder.Property<string>("Name").HasColumnName("Name");
         }
     }
 }
