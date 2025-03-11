@@ -74,7 +74,7 @@ namespace VideoApi
                         r.AddService("vh-video-api")
                             .AddTelemetrySdk()
                             .AddAttributes(new Dictionary<string, object>
-                                { ["service.instance.id"] = Environment.ApplicationName });
+                                { ["service.instance.id"] = Environment.MachineName });
                     })
                     .UseAzureMonitor(options => options.ConnectionString = instrumentationKey)
                     .WithMetrics()
