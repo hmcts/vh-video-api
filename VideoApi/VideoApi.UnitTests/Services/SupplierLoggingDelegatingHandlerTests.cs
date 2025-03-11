@@ -13,14 +13,22 @@ namespace VideoApi.UnitTests.Services;
 
 public class SupplierLoggingDelegatingHandlerTests
 {
+    private ActivityListener _activityListener;
     private SupplierLoggingDelegatingHandler _handler;
     private Mock<ILogger<SupplierLoggingDelegatingHandler>> _loggerMock;
     private Mock<HttpMessageHandler> _mockInnerHandler;
     
     [SetUp]
     public void Setup()
-    {
-        _= new ActivitySource("SupplierLoggingDelegatingHandler");
+    { 
+        _activityListener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "SupplierLoggingDelegatingHandler",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            ActivityStarted = activity => { },
+            ActivityStopped = activity => { }
+        };
+        ActivitySource.AddActivityListener(_activityListener);
         _loggerMock = new Mock<ILogger<SupplierLoggingDelegatingHandler>>();
         _mockInnerHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _handler = new SupplierLoggingDelegatingHandler(_loggerMock.Object)
