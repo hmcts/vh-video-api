@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +20,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL;
@@ -26,7 +30,6 @@ using VideoApi.Health;
 using VideoApi.Middleware.Logging;
 using VideoApi.Middleware.Validation;
 using VideoApi.Services;
-using VideoApi.Telemetry;
 
 namespace VideoApi
 {
@@ -61,8 +64,28 @@ namespace VideoApi
             var envName = Configuration["Services:VideoApiUrl"];
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["LaunchDarkly:SdkKey"], envName));
             
-            services.AddApplicationInsightsTelemetry();
-            services.AddApplicationInsightsTelemetryProcessor<SuccessfulDependencyProcessor>();
+            var instrumentationKey = Configuration["ApplicationInsights:InstrumentationKey"];
+            if(String.IsNullOrWhiteSpace(instrumentationKey))
+                Console.WriteLine("Application Insights Instrumentation Key not found");
+            else
+                services.AddOpenTelemetry()
+                    .ConfigureResource(r =>
+                    {
+                        r.AddService("vh-video-api")
+                            .AddTelemetrySdk()
+                            .AddAttributes(new Dictionary<string, object>
+                                { ["service.instance.id"] = Environment.ApplicationName });
+                    })
+                    .UseAzureMonitor(options => options.ConnectionString = instrumentationKey)
+                    .WithMetrics()
+                    .WithTracing(tracerProvider =>
+                    {
+                        tracerProvider
+                            .AddSource("SupplierLoggingDelegatingHandler")
+                            .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+                            .AddHttpClientInstrumentation(options => options.RecordException = true);
+                    });
+
             
             services.AddJsonOptions();
             RegisterSettings(services);

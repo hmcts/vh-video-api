@@ -1,10 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
@@ -14,24 +13,22 @@ namespace VideoApi.UnitTests.Services;
 
 public class SupplierLoggingDelegatingHandlerTests
 {
-    private Mock<ILogger<SupplierLoggingDelegatingHandler>> _loggerMock;
-    private TelemetryClient _telemetryClient;
-    private Mock<HttpMessageHandler> _mockInnerHandler;
     private SupplierLoggingDelegatingHandler _handler;
+    private Mock<ILogger<SupplierLoggingDelegatingHandler>> _loggerMock;
+    private Mock<HttpMessageHandler> _mockInnerHandler;
     
     [SetUp]
     public void Setup()
     {
+        _= new ActivitySource("SupplierLoggingDelegatingHandler");
         _loggerMock = new Mock<ILogger<SupplierLoggingDelegatingHandler>>();
-        _telemetryClient = new TelemetryClient(new TelemetryConfiguration());
         _mockInnerHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-
-        _handler = new SupplierLoggingDelegatingHandler(_loggerMock.Object, _telemetryClient)
+        _handler = new SupplierLoggingDelegatingHandler(_loggerMock.Object)
         {
             InnerHandler = _mockInnerHandler.Object
         };
     }
-
+    
     [Test]
     public async Task SendAsync_LogsRequestAndResponseDetails()
     {
