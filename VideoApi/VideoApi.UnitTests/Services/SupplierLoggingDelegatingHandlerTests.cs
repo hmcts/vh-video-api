@@ -21,14 +21,6 @@ public class SupplierLoggingDelegatingHandlerTests
     [SetUp]
     public void Setup()
     { 
-        _activityListener = new ActivityListener
-        {
-            ShouldListenTo = source => source.Name == "SupplierLoggingDelegatingHandler",
-            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
-            ActivityStarted = activity => { },
-            ActivityStopped = activity => { }
-        };
-        ActivitySource.AddActivityListener(_activityListener);
         _loggerMock = new Mock<ILogger<SupplierLoggingDelegatingHandler>>();
         _mockInnerHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _handler = new SupplierLoggingDelegatingHandler(_loggerMock.Object)
@@ -69,5 +61,55 @@ public class SupplierLoggingDelegatingHandlerTests
 
 
         _mockInnerHandler.Protected().Verify("SendAsync", Times.Once(), requestMessage, ItExpr.IsAny<CancellationToken>());
+    }
+    
+    [Test]
+    public void verify_activity_tracing()
+    {
+        var capturedActivity = new Activity("SendToSupplier");
+        _activityListener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "SupplierLoggingDelegatingHandler",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            ActivityStarted = activity => capturedActivity = activity,
+            ActivityStopped = activity => { }
+        };
+        ActivitySource.AddActivityListener(_activityListener);
+        // Arrange
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "http://test.com")
+        {
+            Content = new StringContent("Request")
+        };
+        var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("Response")
+        };
+
+        _mockInnerHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync", requestMessage, ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(responseMessage)
+            .Verifiable();
+
+        // Act
+        var invoker = new HttpMessageInvoker(_handler);
+        invoker.SendAsync(requestMessage, new CancellationToken()).Wait();
+
+        // Assert
+        capturedActivity.Should().NotBeNull("an Activity should be created during request execution");
+        capturedActivity!.OperationName.Should().Be("SendToSupplier");
+        capturedActivity.Kind.Should().Be(ActivityKind.Client);
+        
+        capturedActivity.Tags.Should().Contain(t => t.Key == "http.method" && t.Value == "POST",
+            "Activity should capture the HTTP method as a tag");
+        
+        capturedActivity.Tags.Should().Contain(t => t.Key == "http.url" && t.Value == "http://test.com/",
+            "Activity should capture the request URL");
+        
+        _mockInnerHandler.Protected().Verify(
+            "SendAsync",
+            Times.Once(),
+            ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post),
+            ItExpr.IsAny<CancellationToken>()
+        );
     }
 }
