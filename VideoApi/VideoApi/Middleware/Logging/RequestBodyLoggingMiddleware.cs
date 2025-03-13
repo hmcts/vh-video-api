@@ -1,20 +1,13 @@
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Http;
 
 namespace VideoApi.Middleware.Logging;
 
-public class RequestBodyLoggingMiddleware
+public class RequestBodyLoggingMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public RequestBodyLoggingMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         var method = context.Request.Method;
@@ -38,11 +31,12 @@ public class RequestBodyLoggingMiddleware
             context.Request.Body.Position = 0;
 
             // Write request body to App Insights
-            var requestTelemetry = context.Features.Get<RequestTelemetry>();                              
-            requestTelemetry?.Properties.Add("RequestBody", requestBody);
+            var activity = Activity.Current;
+            if (activity != null)
+                activity.AddTag("RequestBody", requestBody);
         }
 
         // Call next middleware in the pipeline
-        await _next(context);
+        await next(context);
     }
 }
