@@ -66,7 +66,7 @@ namespace VideoApi
             var envName = Configuration["Services:VideoApiUrl"];
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["LaunchDarkly:SdkKey"], envName));
             
-            var instrumentationKey = Configuration["ApplicationInsights:InstrumentationKey"];
+            var instrumentationKey = Configuration["ApplicationInsights:ConnectionString"];
             if(String.IsNullOrWhiteSpace(instrumentationKey))
             {
                 Console.WriteLine("Application Insights Instrumentation Key not found");
@@ -92,6 +92,8 @@ namespace VideoApi
                     });
                 services.AddLogging(logging =>
                 {
+                    logging.AddConsole();
+                    logging.AddDebug();
                     logging.AddOpenTelemetry(options =>
                     {
                         options.AddAzureMonitorLogExporter(o => o.ConnectionString = instrumentationKey);
