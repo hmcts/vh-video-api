@@ -92,6 +92,9 @@ namespace VideoApi
                     });
                 services.AddLogging(logging =>
                 {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                    logging.AddDebug();
                     logging.AddOpenTelemetry(options =>
                     {
                         options.AddAzureMonitorLogExporter(o => o.ConnectionString = instrumentationKey);
