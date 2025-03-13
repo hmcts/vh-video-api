@@ -8,12 +8,10 @@ java:
   livenessPath: /health/liveness
   readinessPath: /health/readiness
   startupPath: /health/startup
-  aadIdentityName: vh-aad-identity
   keyVaults:
     vh-infra-core:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - azuread--tenantid
         - name: connectionstrings--applicationinsights
@@ -53,7 +51,6 @@ java:
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - azuread--clientsecret
         - azuread--clientid
