@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 using Azure.Identity;
 using Azure.Storage;
 using Azure.Storage.Blobs;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSwag;
 using NSwag.Generation.Processors.Security;
-using VideoApi.Common;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
@@ -115,7 +113,6 @@ namespace VideoApi
             services.AddScoped<ILoggingDataExtractor, LoggingDataExtractor>();
             
             services.AddScoped<ITokenProvider, AzureTokenProvider>();
-            services.AddSingleton<ITelemetryInitializer, BadRequestTelemetry>();
             
             services.AddScoped<IQueryHandlerFactory, QueryHandlerFactory>();
             services.AddScoped<IQueryHandler, QueryHandler>();
