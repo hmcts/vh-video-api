@@ -10,7 +10,6 @@ using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.DAL;
-using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.IntegrationTests.Contexts;
 using VideoApi.IntegrationTests.Helper;
@@ -23,9 +22,9 @@ namespace VideoApi.IntegrationTests.Steps
     [Binding]
     public class EndpointSteps : BaseSteps
     {
-        private readonly TestContext _context;
-        private readonly CommonSteps _commonSteps;
         private static readonly Faker Faker = new();
+        private readonly CommonSteps _commonSteps;
+        private readonly TestContext _context;
         
         public EndpointSteps(TestContext context, CommonSteps commonSteps)
         {
@@ -44,29 +43,7 @@ namespace VideoApi.IntegrationTests.Steps
         {
             await _commonSteps.GivenIHaveAConference();
         }
-
-        [Given(@"I have a conference with endpoints and endpoint defence advocate is in a consultation")]
-        public async Task GivenTheDefenceAdvocateIsInConsultationRoom()
-        {
-            var conference1 = new ConferenceBuilder()
-                .WithParticipant(UserRole.Individual, "Applicant")
-                .WithParticipant(UserRole.Representative, "Applicant", "rep@hmcts.net")
-                .WithParticipant(UserRole.Individual, "Respondent")
-                .WithParticipant(UserRole.Representative, "Respondent")
-                .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Faker.Internet.Email(), "rep@hmcts.net")
-                .WithEndpoint("Display2", Faker.Internet.Email())
-                .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
-                .WithAudioRecordingRequired(false).Build();
-
-            var consultationRoom = new ConsultationRoom(conference1.Id, "name", VirtualCourtRoomType.JudgeJOH, false);
-            var defenseAdvocate = conference1.Participants.Single(x => x.Username == "rep@hmcts.net");
-            defenseAdvocate.UpdateCurrentConsultationRoom(consultationRoom);
-
-            _context.Test.Conference = await _context.TestDataManager.SeedConference(conference1);
-            _context.Test.Conferences.Add(_context.Test.Conference);
-        }
-
+        
         [Given(@"I have a conference with endpoints")]
         public async Task GivenIHaveAConferenceWithEndpoints()
         {
@@ -76,7 +53,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Faker.Internet.Email(), "rep@hmcts.net")
+                .WithEndpoint("Display1", Faker.Internet.Email())
                 .WithEndpoint("Display2", Faker.Internet.Email())
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
@@ -101,7 +78,6 @@ namespace VideoApi.IntegrationTests.Steps
                 Pin = "1234",
                 SipAddress = $"{GenerateRandomDigits()}@sip.com",
                 DisplayName = "Automated Add EP test", 
-                DefenceAdvocate = "Defence Sol",
                 ConferenceRole = ConferenceRole.Guest
             };
             SetupAddEndpointRequest(conferenceId, request);
@@ -117,7 +93,6 @@ namespace VideoApi.IntegrationTests.Steps
                 Pin = "1234",
                 SipAddress = $"{GenerateRandomDigits()}@sip.com",
                 DisplayName = "Automated Add EP test", 
-                DefenceAdvocate = "Defence Sol",
                 ConferenceRole = ConferenceRole.Guest
             };
             _context.Test.EndpointSipAddress = request.SipAddress;
@@ -132,8 +107,7 @@ namespace VideoApi.IntegrationTests.Steps
             {
                 Pin = "1234",
                 SipAddress = "1234add_auto_test@sip.com",
-                DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Defence Sol"
+                DisplayName = "Automated Add EP test"
             };
             SetupAddEndpointRequest(conferenceId, request);
         }
@@ -196,7 +170,7 @@ namespace VideoApi.IntegrationTests.Steps
                 await AssertEndpointLength(_context.Test.Conference.Endpoints.Count);
             }
         }
-
+        
         [Given(@"I have update to a non-existent endpoint for a conference request")]
         public void GivenIHaveUpdateToANon_ExistentEndpointForAConferenceRequest()
         {
@@ -209,7 +183,7 @@ namespace VideoApi.IntegrationTests.Steps
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
-
+        
         [Given(@"I have update endpoint for a conference request")]
         public void GivenIHaveUpdateEndpointForAConferenceRequest()
         {
@@ -218,7 +192,6 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Sol One",
                 ConferenceRole = ConferenceRole.Guest
             };
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
@@ -232,13 +205,12 @@ namespace VideoApi.IntegrationTests.Steps
             var request = new UpdateEndpointRequest
             {
                 DisplayName = "Automated Add EP test",
-                DefenceAdvocate = "Sol One",
                 ConferenceRole = ConferenceRole.Guest
             };
             _context.Test.EndpointSipAddress = sipAddress;
             SetupUpdateEndpointRequest(conferenceId, sipAddress, request);
         }
-
+        
         [Then(@"the endpoint status should be (.*)")]
         public async Task ThenTheEndpointsStateShouldBe(EndpointState state)
         {
@@ -271,7 +243,7 @@ namespace VideoApi.IntegrationTests.Steps
             var result = await ApiClientResponse.GetResponses<IList<EndpointResponse>>(_context.Response.Content);
             result.Should().HaveCount(length);
         }
-
+        
         private void SetupGetEndpointRequest(Guid conferenceId)
         {
             _context.Uri = GetEndpointsForConference(conferenceId);
@@ -291,7 +263,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = RemoveEndpointsFromConference(conferenceId, sipAddress);
             _context.HttpMethod = HttpMethod.Delete;
         }
-
+        
         private void SetupUpdateEndpointRequest(Guid conferenceId, string sipAddress, UpdateEndpointRequest request)
         {
             var jsonBody = ApiRequestHelper.Serialise(request);

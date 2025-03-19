@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using Bogus;
 using Microsoft.EntityFrameworkCore;
 using TechTalk.SpecFlow;
 using Testing.Common.Assertions;
@@ -20,17 +21,16 @@ using static Testing.Common.Helper.ApiUriFactory.ConferenceEndpoints;
 using ConferenceRole = VideoApi.Contract.Enums.ConferenceRole;
 using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
 using ConferenceState = VideoApi.Contract.Enums.ConferenceState;
-using Bogus;
 
 namespace VideoApi.IntegrationTests.Steps
 {
     [Binding]
     public sealed class ConferenceBaseSteps : BaseSteps
     {
+        private static readonly Faker Faker = new();
         private readonly CommonSteps _commonSteps;
         private readonly TestContext _context;
         private ConferenceDetailsResponse _conferenceDetails;
-        private static readonly Faker Faker = new();
         
         public ConferenceBaseSteps(TestContext context, CommonSteps commonSteps)
         {
@@ -193,13 +193,11 @@ namespace VideoApi.IntegrationTests.Steps
                 {
                     new()
                     {
-                        DisplayName = "one", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "1234",
-                        DefenceAdvocate = "Defence Sol", ConferenceRole = ConferenceRole.Host
+                        DisplayName = "one", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "1234", ConferenceRole = ConferenceRole.Host
                     },
                     new()
                     {
-                        DisplayName = "two", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "5678",
-                        DefenceAdvocate = "Defence Bol", ConferenceRole = ConferenceRole.Host
+                        DisplayName = "two", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "5678", ConferenceRole = ConferenceRole.Host
                     }
                 })
                 .Build();
@@ -221,13 +219,11 @@ namespace VideoApi.IntegrationTests.Steps
                 {
                     new()
                     {
-                        DisplayName = "one", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "1234",
-                        DefenceAdvocate = "Defence Sol", ConferenceRole = ConferenceRole.Guest
+                        DisplayName = "one", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "1234", ConferenceRole = ConferenceRole.Guest
                     },
                     new()
                     {
-                        DisplayName = "two", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "5678",
-                        DefenceAdvocate = "Defence Bol", ConferenceRole = ConferenceRole.Guest
+                        DisplayName = "two", SipAddress = $"{GenerateRandomDigits()}@hmcts.net", Pin = "5678", ConferenceRole = ConferenceRole.Guest
                     }
                 })
                 .WithConferenceRoomType(ConferenceRoomType.VA)
@@ -289,7 +285,7 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceCoreResponse.ForConference(_conferenceDetails);
         }
-
+        
         [Then(@"the conferences should be retrieved")]
         public async Task ThenAConferencesShouldBeRetrieved()
         {

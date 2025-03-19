@@ -20,11 +20,6 @@ namespace VideoApi.Contract.Requests
         public string Pin { get; set; }
         
         /// <summary>
-        /// Username of a defence advocate
-        /// </summary>
-        public string DefenceAdvocate { get; set; }
-
-        /// <summary>
         /// Role of the endpoint
         /// </summary>
         public ConferenceRole ConferenceRole { get; set; }

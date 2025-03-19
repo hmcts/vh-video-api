@@ -8,36 +8,30 @@ using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class AddEndpointCommand : ICommand
+    public class AddEndpointCommand(
+        Guid conferenceId,
+        string displayName,
+        string sipAddress,
+        string pin,
+        ConferenceRole conferenceRole)
+        : ICommand
     {
-        public Guid ConferenceId { get; }
-        public string DisplayName { get; }
-        public string SipAddress { get; }
-        public string Pin { get; }
-        public string DefenceAdvocate { get; }
-        public ConferenceRole ConferenceRole { get; }
-
-        public AddEndpointCommand(Guid conferenceId, string displayName, string sipAddress, string pin,
-            string defenceAdvocate, ConferenceRole conferenceRole)
-        {
-            ConferenceId = conferenceId;
-            DisplayName = displayName;
-            SipAddress = sipAddress;
-            Pin = pin;
-            DefenceAdvocate = defenceAdvocate;
-            ConferenceRole = conferenceRole;
-        }
+        public Guid ConferenceId { get; } = conferenceId;
+        public string DisplayName { get; } = displayName;
+        public string SipAddress { get; } = sipAddress;
+        public string Pin { get; } = pin;
+        public ConferenceRole ConferenceRole { get; } = conferenceRole;
     }
 
     public class AddEndpointCommandHandler : ICommandHandler<AddEndpointCommand>
     {
         private readonly VideoApiDbContext _context;
-
+        
         public AddEndpointCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
-
+        
         public async Task Handle(AddEndpointCommand command)
         {
             var conference = await _context.Conferences.Include(x => x.Endpoints)
@@ -48,7 +42,7 @@ namespace VideoApi.DAL.Commands
                 throw new ConferenceNotFoundException(command.ConferenceId);
             }
 
-            var ep = new Endpoint(command.DisplayName, command.SipAddress, command.Pin, command.DefenceAdvocate, command.ConferenceRole);
+            var ep = new Endpoint(command.DisplayName, command.SipAddress, command.Pin, command.ConferenceRole);
             conference.AddEndpoint(ep);
             _context.Entry(ep).State = EntityState.Added;
             await _context.SaveChangesAsync();

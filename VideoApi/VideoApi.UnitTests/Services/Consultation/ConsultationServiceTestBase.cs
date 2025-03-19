@@ -1,13 +1,10 @@
 using System;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Common.Security.Supplier.Base;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
-using VideoApi.Services;
-using VideoApi.Services.Clients;
 
 namespace VideoApi.UnitTests.Services.Consultation
 {
@@ -16,7 +13,7 @@ namespace VideoApi.UnitTests.Services.Consultation
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected Mock<IQueryHandler> QueryHandlerMock;
         protected VideoApi.Domain.Conference TestConference;
-
+        
         protected void SetupTestConference()
         {
             QueryHandlerMock = new Mock<IQueryHandler>();
@@ -28,7 +25,7 @@ namespace VideoApi.UnitTests.Services.Consultation
                 .WithParticipant(UserRole.Representative, "Applicant", "rep1@hmcts.net")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
-                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net", "rep1@hmcts.net")
+                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .Build();
 

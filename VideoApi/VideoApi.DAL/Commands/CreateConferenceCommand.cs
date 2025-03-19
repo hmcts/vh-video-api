@@ -11,59 +11,44 @@ using Supplier = VideoApi.Domain.Enums.Supplier;
 
 namespace VideoApi.DAL.Commands
 {
-    public class CreateConferenceCommand : ICommand
+    public class CreateConferenceCommand(
+        Guid hearingRefId,
+        string caseType,
+        DateTime scheduledDateTime,
+        string caseNumber,
+        string caseName,
+        int scheduledDuration,
+        List<Participant> participants,
+        string hearingVenueName,
+        bool audioRecordingRequired,
+        string ingestUrl,
+        List<Endpoint> endpoints,
+        List<LinkedParticipantDto> linkedParticipants,
+        Supplier supplier,
+        ConferenceRoomType conferenceRoomType,
+        AudioPlaybackLanguage audioPlaybackLanguage)
+        : ICommand
     {
-
-        public Guid HearingRefId { get; }
-        public string CaseType { get; }
-        public DateTime ScheduledDateTime { get; }
-        public string CaseNumber { get; }
-        public string CaseName { get; }
-        public int ScheduledDuration { get; }
+        public Guid HearingRefId { get; } = hearingRefId;
+        public string CaseType { get; } = caseType;
+        public DateTime ScheduledDateTime { get; } = scheduledDateTime;
+        public string CaseNumber { get; } = caseNumber;
+        public string CaseName { get; } = caseName;
+        public int ScheduledDuration { get; } = scheduledDuration;
         public Guid NewConferenceId { get; set; }
-        public List<Participant> Participants { get; }
-        public string HearingVenueName { get; }
-        public bool AudioRecordingRequired { get; set; }
-        public string IngestUrl { get; set; }
-        public List<Endpoint> Endpoints { get; set; }
-        public List<LinkedParticipantDto> LinkedParticipants { get; set; }
-        public Supplier Supplier { get; set; }
-        public ConferenceRoomType ConferenceRoomType { get; set; }
-        public AudioPlaybackLanguage AudioPlaybackLanguage { get; }
-
-        public CreateConferenceCommand(Guid hearingRefId, string caseType, DateTime scheduledDateTime,
-            string caseNumber, string caseName, int scheduledDuration, List<Participant> participants,
-            string hearingVenueName, bool audioRecordingRequired, string ingestUrl, List<Endpoint> endpoints,
-            List<LinkedParticipantDto> linkedParticipants, Supplier supplier, ConferenceRoomType conferenceRoomType,
-            AudioPlaybackLanguage audioPlaybackLanguage)
-        {
-            HearingRefId = hearingRefId;
-            CaseType = caseType;
-            ScheduledDateTime = scheduledDateTime;
-            CaseNumber = caseNumber;
-            CaseName = caseName;
-            ScheduledDuration = scheduledDuration;
-            Participants = participants;
-            HearingVenueName = hearingVenueName;
-            AudioRecordingRequired = audioRecordingRequired;
-            IngestUrl = ingestUrl;
-            Endpoints = endpoints;
-            LinkedParticipants = linkedParticipants;
-            Supplier = supplier;
-            ConferenceRoomType = conferenceRoomType;
-            AudioPlaybackLanguage = audioPlaybackLanguage;
-        }
+        public List<Participant> Participants { get; } = participants;
+        public string HearingVenueName { get; } = hearingVenueName;
+        public bool AudioRecordingRequired { get; set; } = audioRecordingRequired;
+        public string IngestUrl { get; set; } = ingestUrl;
+        public List<Endpoint> Endpoints { get; set; } = endpoints;
+        public List<LinkedParticipantDto> LinkedParticipants { get; set; } = linkedParticipants;
+        public Supplier Supplier { get; set; } = supplier;
+        public ConferenceRoomType ConferenceRoomType { get; set; } = conferenceRoomType;
+        public AudioPlaybackLanguage AudioPlaybackLanguage { get; } = audioPlaybackLanguage;
     }
 
-    public class CreateConferenceCommandHandler : ICommandHandler<CreateConferenceCommand>
+    public class CreateConferenceCommandHandler(VideoApiDbContext context) : ICommandHandler<CreateConferenceCommand>
     {
-        private readonly VideoApiDbContext _context;
-
-        public CreateConferenceCommandHandler(VideoApiDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task Handle(CreateConferenceCommand command)
         {
             var conference = new Conference(command.HearingRefId, command.CaseType, command.ScheduledDateTime,
@@ -99,9 +84,9 @@ namespace VideoApi.DAL.Commands
                 conference.AddEndpoint(endpoint);
             }
             
-            _context.Conferences.Add(conference);
+            context.Conferences.Add(conference);
 
-            await _context.SaveChangesAsync();           
+            await context.SaveChangesAsync();           
             
             command.NewConferenceId = conference.Id;
         }
