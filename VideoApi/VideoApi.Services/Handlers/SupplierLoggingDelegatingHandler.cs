@@ -8,7 +8,7 @@ namespace VideoApi.Services.Handlers;
 
 public class SupplierLoggingDelegatingHandler(ILogger<SupplierLoggingDelegatingHandler> logger) : DelegatingHandler
 {
-    private static readonly ActivitySource ActivitySource = new("SupplierLoggingDelegatingHandler");
+    private static readonly ActivitySource ActivitySource = new("SupplierLoggingDelegateHandler");
     
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

@@ -171,11 +171,8 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationRequestAsync(StartConsultationRequest request)
         {
-            var room = await consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId,
-                request.RoomType.MapToDomainEnum());
-            await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy,
-                room.Label);
-
+            var room = await consultationService.GetAvailableConsultationRoomAsync(request.ConferenceId, request.RoomType.MapToDomainEnum());
+            await consultationService.ParticipantTransferToRoomAsync(request.ConferenceId, request.RequestedBy, room.Label);
             return Accepted();
         }
         
