@@ -13,8 +13,8 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Mappings;
 using VideoApi.Extensions;
+using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Controllers
@@ -88,7 +88,7 @@ namespace VideoApi.Controllers
 
             return NoContent();
         }
-
+        
         /// <summary>
         /// Add an endpoint to a private consultation
         /// </summary>
@@ -102,7 +102,6 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartConsultationWithEndpointAsync(EndpointConsultationRequest request)
         {
-            var isVhoRequest = request.RequestedById == Guid.Empty;
             var getConferenceByIdQuery = new GetConferenceByIdQuery(request.ConferenceId);
             var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
 
@@ -117,36 +116,6 @@ namespace VideoApi.Controllers
             {
                 logger.LogWarning("Unable to find endpoint");
                 return NotFound($"Unable to find endpoint {request.EndpointId}");
-            }
-
-            var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedById);
-            if (isVhoRequest 
-                || requestedBy?.UserRole == UserRole.Judge
-                || requestedBy?.UserRole == UserRole.StaffMember
-                || requestedBy?.UserRole == UserRole.JudicialOfficeHolder)
-            {
-                await consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
-                return Ok();
-            }
-            
-            if (requestedBy == null)
-            {
-                logger.LogWarning("Unable to find defence advocate");
-                return NotFound($"Unable to find defence advocate {request.RequestedById}");
-            }
-
-            if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
-            {
-                const string message = "Endpoint does not have a defence advocate linked";
-                logger.LogWarning(message);
-                return Unauthorized(message);
-            }
-
-            if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
-            {
-                const string message = "Defence advocate is not allowed to speak to requested endpoint";
-                logger.LogWarning(message);
-                return Unauthorized(message);
             }
 
             var roomQuery = new GetConsultationRoomByIdQuery(request.ConferenceId, request.RoomLabel);
@@ -167,7 +136,7 @@ namespace VideoApi.Controllers
             await consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
             return Ok();
         }
-
+        
         [HttpPost("lockroom")]
         [OpenApiOperation("LockRoom")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -179,7 +148,7 @@ namespace VideoApi.Controllers
             await commandHandler.Handle(lockRoomCommand);
             return Ok();
         }
-
+        
         [HttpPost("createconsultation")]
         [OpenApiOperation("CreatePrivateConsultation")]
         [ProducesResponseType(typeof(RoomResponse), (int)HttpStatusCode.OK)]
@@ -194,7 +163,7 @@ namespace VideoApi.Controllers
             var response = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room);
             return Ok(response);
         }
-
+        
         [HttpPost("start")]
         [OpenApiOperation("StartPrivateConsultation")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
@@ -209,7 +178,7 @@ namespace VideoApi.Controllers
 
             return Accepted();
         }
-
+        
         /// <summary>
         /// Leave a consultation
         /// </summary>

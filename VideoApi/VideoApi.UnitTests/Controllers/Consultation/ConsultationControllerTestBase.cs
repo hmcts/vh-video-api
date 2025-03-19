@@ -16,13 +16,13 @@ namespace VideoApi.UnitTests.Controllers.Consultation
     public abstract class ConsultationControllerTestBase
     {
         protected Mock<ICommandHandler> CommandHandlerMock;
-        protected ConsultationController Controller;
-        protected Mock<IQueryHandler> QueryHandlerMock;
-        protected Mock<ILogger<ConsultationController>> MockLogger;
         protected Mock<IConsultationService> ConsultationServiceMock;
-
+        protected ConsultationController Controller;
+        protected Mock<ILogger<ConsultationController>> MockLogger;
+        protected Mock<IQueryHandler> QueryHandlerMock;
+        
         protected VideoApi.Domain.Conference TestConference;
-
+        
         [SetUp]
         public void Setup()
         {
@@ -38,8 +38,8 @@ namespace VideoApi.UnitTests.Controllers.Consultation
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.StaffMember, null)
-                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net", "rep1@hmcts.net")
-                .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@hmcts.net")
+                .WithEndpoint("Endpoint 1", $"{Guid.NewGuid():N}@hmcts.net")
+                .WithEndpoint("Endpoint 2", $"{Guid.NewGuid():N}@hmcts.net")
                 .Build();
 
             QueryHandlerMock

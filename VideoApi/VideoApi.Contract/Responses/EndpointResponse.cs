@@ -31,15 +31,10 @@ namespace VideoApi.Contract.Responses
         public EndpointState Status { get; set; }
         
         /// <summary>
-        /// The defence advocate
-        /// </summary>
-        public string DefenceAdvocate { get; set; }
-
-        /// <summary>
         /// Current consultation room details
         /// </summary>
         public RoomResponse CurrentRoom { get; set; }
-
+        
         /// <summary>
         /// The role in the conference
         /// </summary>

@@ -67,13 +67,11 @@ namespace VideoApi.Controllers
         [HttpPost("{conferenceId}/endpoints")]
         [OpenApiOperation("AddEndpointToConference")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId,
-            [FromBody] AddEndpointRequest request)
+        public async Task<IActionResult> AddEndpointToConference([FromRoute] Guid conferenceId, [FromBody] AddEndpointRequest request)
         {
             _logger.LogDebug("Attempting to add endpoint {DisplayName} to conference", request.DisplayName);
             
-            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin,
-                request.DefenceAdvocate, (Domain.Enums.ConferenceRole)request.ConferenceRole);
+            var command = new AddEndpointCommand(conferenceId, request.DisplayName, request.SipAddress, request.Pin,(Domain.Enums.ConferenceRole)request.ConferenceRole);
             await _commandHandler.Handle(command);
             
             var conference =
@@ -129,13 +127,10 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> UpdateEndpointInConference(Guid conferenceId, string sipAddress,
             [FromBody] UpdateEndpointRequest request)
         {
-            _logger.LogDebug(
-                "Attempting to update endpoint {SipAddress} with display name {DisplayName}", sipAddress,
-                request.DisplayName);
+            _logger.LogDebug("Attempting to update endpoint {SipAddress} with display name {DisplayName}", sipAddress, request.DisplayName);
             
-            var command =
-                new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, request.DefenceAdvocate, 
-                    (Domain.Enums.ConferenceRole)request.ConferenceRole);
+            var command = new UpdateEndpointCommand(conferenceId, sipAddress, request.DisplayName, (Domain.Enums.ConferenceRole)request.ConferenceRole);
+            
             // update the conference with the new role and new theme language
             await _commandHandler.Handle(command);
             

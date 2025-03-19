@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common;
 using VideoApi.DAL.Commands;
@@ -62,14 +61,16 @@ namespace VideoApi.Events.Handlers
                     await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
                 }
             }
+            /* TODO: This business logic will need to be driven from video-web, and a separate event raised for transferring the endpoint alongside its linked participant recreate Should_transfer_endpoints_out_of_room_when_defense_advocate_participant_leaves_and_room_not_empty scenario
             else if (room.RoomEndpoints.Count != 0)
             {
+            
                 var participantsEndpoints = SourceConference.GetEndpoints().Where(x => x.DefenceAdvocate?.Equals(SourceParticipant.Username, System.StringComparison.OrdinalIgnoreCase) ?? false).Select(x => x.Id).ToList();
                 foreach (var endpoint in room.RoomEndpoints.Where(roomEndpoint => participantsEndpoints.Contains(roomEndpoint.EndpointId)))
                 {
                     await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
                 }
-            }
+            } */
         }
         
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
