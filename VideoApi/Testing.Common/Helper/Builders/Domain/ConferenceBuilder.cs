@@ -12,10 +12,9 @@ namespace Testing.Common.Helper.Builders.Domain
     public class ConferenceBuilder
     {
         private const string CaseName = "Video Api Integration Test";
+        private static readonly Faker Faker = new();
         private readonly BuilderSettings _builderSettings;
         private readonly Conference _conference;
-
-        private static readonly Faker Faker = new();
         
         public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null,
             DateTime? scheduledDateTime = null, string venueName = "MyVenue", Supplier supplier = Supplier.Vodafone)
@@ -44,7 +43,7 @@ namespace Testing.Common.Helper.Builders.Domain
             _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
                 scheduledDuration, venueName, false, "ingesturl", supplier);
         }
-
+        
         public ConferenceBuilder WithParticipants(int numberOfParticipants)
         {
             var participants = new Builder(_builderSettings).CreateListOfSize<Participant>(numberOfParticipants).All()
@@ -113,9 +112,14 @@ namespace Testing.Common.Helper.Builders.Domain
             return this;
         }
         
-        public ConferenceBuilder WithEndpoint(string displayName, string sipAddress, string defenceAdvocate = null)
+        public ConferenceBuilder WithEndpoint(string displayName, string sipAddress, params string[] linkedParticipants)
         {
-            var endpoint = new Endpoint(displayName, sipAddress, "1234", defenceAdvocate);
+            var endpoint = new Endpoint(displayName, sipAddress, "1234");
+            var participantsToLink = _conference.Participants.Where(x => linkedParticipants.Contains(x.Username)).ToList();
+            if (participantsToLink.Any())
+                foreach (var participant in participantsToLink)
+                    endpoint.AddParticipantLink(participant);
+            
             _conference.AddEndpoint(endpoint);
 
             return this;
@@ -128,7 +132,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             return this;
         }
-
+        
         public ConferenceBuilder WithEndpoints(List<Endpoint> endpoints)
         {
             endpoints.ForEach(x => _conference.AddEndpoint(x));
@@ -168,7 +172,7 @@ namespace Testing.Common.Helper.Builders.Domain
             _conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState, timeStamp));
             return this;
         }
-
+        
         public ConferenceBuilder WithMessages(int numberOfMessages)
         {
             var messages = new Builder(_builderSettings).CreateListOfSize<InstantMessage>(numberOfMessages).All()

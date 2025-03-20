@@ -15,7 +15,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
         private GetNonClosedConferenceByHearingRefIdQueryHandler _handler;
         private Guid _newConferenceId1;
         private Guid _newConferenceId2;
-
+        
         [SetUp]
         public void Setup()
         {
@@ -24,7 +24,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
             _newConferenceId1 = Guid.Empty;
             _newConferenceId2 = Guid.Empty;
         }
-
+        
         [Test]
         public async Task Should_get_conference_details_by_hearing_ref_id()
         {
@@ -35,8 +35,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithConferenceStatus(ConferenceState.InSession)
                 .WithEndpoints(new List<Endpoint>
                     {
-                        new Endpoint("one", "44564", "1234", "Defence Sol"),
-                        new Endpoint("two", "867744", "5678", "Defence Sol")
+                        new Endpoint("one", "44564", "1234"),
+                        new Endpoint("two", "867744", "5678")
                     })
                 .Build();
             _newConferenceId1 = seededConference.Id;
@@ -45,7 +45,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             AssertConference(conference[0], conference[0]);
         }
-
+        
         [Test]
         public async Task Should_get_non_closed_conference()
         {
@@ -89,7 +89,7 @@ namespace VideoApi.IntegrationTests.Database.Queries
 
             AssertConference(conference[0], conference1, true);
         }
-
+        
         private static void AssertConference(Conference actual, Conference expected, bool ignoreParticipants = false)
         {
             actual.Should().NotBeNull();
@@ -119,10 +119,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 endpoint.DisplayName.Should().NotBeNullOrEmpty();
                 endpoint.Pin.Should().NotBeNullOrEmpty();
                 endpoint.SipAddress.Should().NotBeNullOrEmpty();
-                endpoint.DefenceAdvocate.Should().NotBeEmpty();
+                endpoint.ParticipantsLinked.Should().NotBeEmpty();
             }
         }
-
+        
         [TearDown]
         public async Task TearDown()
         {

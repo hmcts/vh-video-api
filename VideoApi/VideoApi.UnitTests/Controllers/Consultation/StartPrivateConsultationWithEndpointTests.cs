@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Testing.Common.Assertions;
@@ -66,7 +65,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             var actionResult = result.As<NotFoundObjectResult>();
             actionResult.Should().NotBeNull();
-            actionResult.Value.Should().Be($"Unable to find defence advocate {request.RequestedById}");
+            actionResult.Value.Should().Be($"Unable to find linked  {request.RequestedById}");
         }
         
         [Test]
@@ -111,7 +110,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             actionResult.Should().NotBeNull();
             actionResult.Value.Should().Be("Defence advocate is not allowed to speak to requested endpoint");
         }
-
+        
         [Test]
         public async Task should_return_bad_request_when_endpoint_is_already_in_room()
         {
@@ -137,7 +136,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             var objectResult = (ObjectResult)result;
             ((ValidationProblemDetails)objectResult.Value).ContainsKeyAndErrorMessage("RoomLabel", "Room already has an active endpoint");
         }
-
+        
         [Test]
         public async Task should_return_not_found_when_endpoint_is_requested_to_not_found_room()
         {
@@ -161,7 +160,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             actionResult.Should().NotBeNull();
             actionResult.Value.Should().Be($"Unable to find room {request.RoomLabel}");
         }
-
+        
         [Test]
         public async Task should_return_ok_when_endpoint_is_linked_with_defence_advocate()
         {
@@ -184,7 +183,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
 
             result.Should().BeOfType<OkResult>();
         }
-
+        
         [Test]
         public async Task should_return_ok_when_vho_invites()
         {
@@ -204,7 +203,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             // Assert
             result.Should().BeOfType<OkResult>();
         }
-
+        
         [Test]
         public async Task should_return_ok_when_judge_invites()
         {
@@ -225,7 +224,7 @@ namespace VideoApi.UnitTests.Controllers.Consultation
             // Assert
             result.Should().BeOfType<OkResult>();
         }
-
+        
         [Test]
         public async Task should_return_ok_when_staff_member_invites()
         {

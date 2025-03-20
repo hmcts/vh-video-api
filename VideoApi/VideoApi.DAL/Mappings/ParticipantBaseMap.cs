@@ -37,6 +37,11 @@ namespace VideoApi.DAL.Mappings
             
             // Keep deleted properties as columns in the table
             builder.Property<string>("Name").HasColumnName("Name");
+            
+            builder.HasOne(participant => participant.Endpoint)
+                .WithMany(endpoint => endpoint.ParticipantsLinked)
+                .HasForeignKey(p => p.EndpointId)
+                .OnDelete(DeleteBehavior.NoAction); 
         }
     }
 }

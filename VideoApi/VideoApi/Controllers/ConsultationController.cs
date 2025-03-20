@@ -13,8 +13,8 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Mappings;
 using VideoApi.Extensions;
+using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
 
 namespace VideoApi.Controllers
@@ -88,7 +88,7 @@ namespace VideoApi.Controllers
 
             return NoContent();
         }
-
+        
         /// <summary>
         /// Add an endpoint to a private consultation
         /// </summary>
@@ -134,17 +134,17 @@ namespace VideoApi.Controllers
                 logger.LogWarning("Unable to find defence advocate");
                 return NotFound($"Unable to find defence advocate {request.RequestedById}");
             }
-
-            if (string.IsNullOrWhiteSpace(endpoint.DefenceAdvocate))
+            
+            if (endpoint.ParticipantsLinked == null || endpoint.ParticipantsLinked.Any())
             {
-                const string message = "Endpoint does not have a defence advocate linked";
+                const string message = "Endpoint does not have a linked participant";
                 logger.LogWarning(message);
                 return Unauthorized(message);
             }
 
-            if (!endpoint.DefenceAdvocate.Trim().Equals(requestedBy.Username.Trim(), StringComparison.CurrentCultureIgnoreCase))
+            if (endpoint.ParticipantsLinked.Select(p => p.Username.Trim()).Contains(requestedBy.Username.Trim()))
             {
-                const string message = "Defence advocate is not allowed to speak to requested endpoint";
+                const string message = "Participant is not linked to requested endpoint";
                 logger.LogWarning(message);
                 return Unauthorized(message);
             }
@@ -167,7 +167,7 @@ namespace VideoApi.Controllers
             await consultationService.EndpointTransferToRoomAsync(request.ConferenceId, endpoint.Id, request.RoomLabel);
             return Ok();
         }
-
+        
         [HttpPost("lockroom")]
         [OpenApiOperation("LockRoom")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -179,7 +179,7 @@ namespace VideoApi.Controllers
             await commandHandler.Handle(lockRoomCommand);
             return Ok();
         }
-
+        
         [HttpPost("createconsultation")]
         [OpenApiOperation("CreatePrivateConsultation")]
         [ProducesResponseType(typeof(RoomResponse), (int)HttpStatusCode.OK)]
@@ -194,7 +194,7 @@ namespace VideoApi.Controllers
             var response = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(room);
             return Ok(response);
         }
-
+        
         [HttpPost("start")]
         [OpenApiOperation("StartPrivateConsultation")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
@@ -209,7 +209,7 @@ namespace VideoApi.Controllers
 
             return Accepted();
         }
-
+        
         /// <summary>
         /// Leave a consultation
         /// </summary>

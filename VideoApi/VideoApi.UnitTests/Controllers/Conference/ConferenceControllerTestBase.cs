@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IBookingService> BookingServiceMock;
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected ConferenceController Controller;
-
+        
         protected MeetingRoom MeetingRoom;
         protected AutoMock Mocker;
         protected Mock<ILogger<ConferenceController>> MockLogger;
@@ -74,12 +74,11 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AzureStorageServiceMock = Mocker.Mock<IAzureStorageService>();
             PollyRetryServiceMock = Mocker.Mock<IPollyRetryService>();
             BookingServiceMock = Mocker.Mock<IBookingService>();
-            
-            TestEndpoints = new List<Endpoint>
-            {
-                new Endpoint("one", "44564", "1234", "Defence Sol"),
-                new Endpoint("two", "867744", "5678", "Defence Sol")
-            };
+            TestEndpoints =
+            [
+                new("one", "44564", "1234"),
+                new("two", "867744", "5678")
+            ];
             
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)

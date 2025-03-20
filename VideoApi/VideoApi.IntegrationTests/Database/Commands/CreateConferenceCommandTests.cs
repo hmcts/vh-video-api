@@ -20,9 +20,9 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class CreateConferenceCommandTests : DatabaseTestsBase
     {
+        private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         private CreateConferenceCommandHandler _handler;
         private Guid _newConferenceId;
-        private GetConferenceByIdQueryHandler _conferenceByIdHandler;
         
         [SetUp]
         public void Setup()
@@ -32,7 +32,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _newConferenceId = Guid.Empty;
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
         }
-
+        
         [Test]
         public async Task Should_save_new_conference()
         {
@@ -49,8 +49,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new Endpoint("name1", GetSipAddress(), "1234"),
+                new Endpoint("name2", GetSipAddress(), "5678")
             };
             const Supplier supplier = Supplier.Vodafone;
             const ConferenceRoomType conferenceRoomType = ConferenceRoomType.VA;
@@ -86,7 +86,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             conference.Supplier.Should().Be(supplier);
             conference.AudioPlaybackLanguage.Should().Be(AudioPlaybackLanguage.English);
         }
-
+        
         [Test]
         public async Task Should_save_new_conference_with_linked_participants()
         {
@@ -102,8 +102,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var linkedParticipants = new List<LinkedParticipantDto>()
             {
-                new LinkedParticipantDto() { ParticipantRefId = participantA.ParticipantRefId, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
-                new LinkedParticipantDto() { ParticipantRefId = participantB.ParticipantRefId, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
+                new () { ParticipantRefId = participantA.ParticipantRefId, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
+                new () { ParticipantRefId = participantB.ParticipantRefId, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
             };
 
             var participants = new List<Participant>() {participantA, participantB};
@@ -113,8 +113,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234"),
+                new ("name2", GetSipAddress(), "5678")
             };
             
             
@@ -142,7 +142,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             participantAFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantBFromContext.Id);
             participantBFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantAFromContext.Id);
         }
-                
+        
         [Test]
         public void Should_throw_participant_link_exception_when_id_doesnt_match()
         {
@@ -161,8 +161,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
             var linkedParticipants = new List<LinkedParticipantDto>()
             {
-                new LinkedParticipantDto() { ParticipantRefId = fakeIdA, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
-                new LinkedParticipantDto() { ParticipantRefId = fakeIdB, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
+                new () { ParticipantRefId = fakeIdA, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
+                new () { ParticipantRefId = fakeIdB, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
             };
 
             var participants = new List<Participant>() {participantA, participantB};
@@ -172,8 +172,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             const bool audioRecordingRequired = true;
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("name1", GetSipAddress(), "1234", "Defence Sol"),
-                new Endpoint("name2", GetSipAddress(), "5678", "Defence Old")
+                new ("name1", GetSipAddress(), "1234"),
+                new ("name2", GetSipAddress(), "5678")
             };
 
             var command =

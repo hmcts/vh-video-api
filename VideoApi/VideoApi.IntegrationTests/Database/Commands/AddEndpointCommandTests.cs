@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
@@ -16,7 +16,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
     {
         private AddEndpointCommandHandler _handler;
         private Guid _newConferenceId;
-
+        
         [SetUp]
         public void Setup()
         {
@@ -24,7 +24,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _handler = new AddEndpointCommandHandler(context);
             _newConferenceId = Guid.Empty;
         }
-
+        
         [TearDown]
         public async Task TearDown()
         {
@@ -34,16 +34,15 @@ namespace VideoApi.IntegrationTests.Database.Commands
                 await TestDataManager.RemoveConference(_newConferenceId);
             }
         }
-
+        
         [Test]
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
             var conferenceId = Guid.NewGuid();
-            var command = new AddEndpointCommand(conferenceId, "display", "sip@hmcts.net", "pin", "Defence Sol",
-                ConferenceRole.Host);
+            var command = new AddEndpointCommand(conferenceId, "display", "sip@hmcts.net", "pin", new List<string>() ,ConferenceRole.Host);
             Assert.ThrowsAsync<ConferenceNotFoundException>(() => _handler.Handle(command));
         }
-
+        
         [Test]
         public async Task should_add_endpoint_to_conference()
         {
@@ -54,10 +53,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var displayName = "display1";
             var sip = "123@sip.com";
             var pin = "123";
-            var defenceAdvocate = "Defence Sol";
+            var defenceAdvocate = seededConference.Participants[0];
             const ConferenceRole conferenceRole = ConferenceRole.Guest;
             
-            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin, defenceAdvocate, conferenceRole);
+            var command = new AddEndpointCommand(_newConferenceId, displayName, sip, pin, [defenceAdvocate.Username], conferenceRole);
             await _handler.Handle(command);
             
             Conference updatedConference;
@@ -72,7 +71,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             ep.SipAddress.Should().Be(sip);
             ep.DisplayName.Should().Be(displayName);
             ep.Id.Should().NotBeEmpty();
-            ep.DefenceAdvocate.Should().Be(defenceAdvocate);
+            ep.ParticipantsLinked.Should().Contain(defenceAdvocate);
             ep.State.Should().Be(EndpointState.NotYetJoined);
             ep.CreatedAt.Should().NotBeNull();
             ep.UpdatedAt.Should().NotBeNull();

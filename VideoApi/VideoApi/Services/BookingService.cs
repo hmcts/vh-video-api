@@ -91,8 +91,7 @@ public class BookingService(
             .ToList();
         
         var endpoints = request.Endpoints
-            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate, 
-                (ConferenceRole)x.ConferenceRole))
+            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, (ConferenceRole)x.ConferenceRole))
             .ToList();
         
         var linkedParticipants = request.Participants

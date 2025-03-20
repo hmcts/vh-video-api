@@ -15,7 +15,6 @@ namespace VideoApi.Mappings
                 Status = endpoint.State.MapToContractEnum(),
                 DisplayName = endpoint.DisplayName,
                 SipAddress = endpoint.SipAddress,
-                DefenceAdvocate = endpoint.DefenceAdvocate,
                 CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(endpoint.CurrentConsultationRoom),
                 ConferenceRole = (Contract.Enums.ConferenceRole)endpoint.ConferenceRole
             };
