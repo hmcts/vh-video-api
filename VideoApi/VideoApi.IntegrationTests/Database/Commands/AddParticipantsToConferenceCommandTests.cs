@@ -1,16 +1,15 @@
 using System;
-using FluentAssertions;
-using NUnit.Framework;
-using VideoApi.DAL;
-using VideoApi.DAL.Commands;
-using VideoApi.Domain;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Enums;
+using VideoApi.DAL;
+using VideoApi.DAL.Commands;
 using VideoApi.DAL.DTOs;
 using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
+using VideoApi.Domain;
 using VideoApi.Extensions;
 using Task = System.Threading.Tasks.Task;
 
@@ -18,10 +17,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class AddParticipantsToConferenceCommandTests : DatabaseTestsBase
     {
-        private AddParticipantsToConferenceCommandHandler _handler;
         private GetConferenceByIdQueryHandler _conferenceByIdHandler;
+        private AddParticipantsToConferenceCommandHandler _handler;
         private Guid _newConferenceId;
-
+        
         [SetUp]
         public void Setup()
         {
@@ -30,7 +29,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _conferenceByIdHandler = new GetConferenceByIdQueryHandler(context);
             _newConferenceId = Guid.Empty;
         }
-
+        
         [Test]
         public async Task Should_add_participant_to_conference()
         {
@@ -51,7 +50,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var afterCount = conference.GetParticipants().Count;
             afterCount.Should().BeGreaterThan(beforeCount);
         }
-
+        
         [Test]
         public void Should_throw_conference_not_found_exception_when_conference_does_not_exist()
         {
@@ -73,8 +72,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
 
             var linkedParticipants = new List<LinkedParticipantDto>()
             {
-                new LinkedParticipantDto() { ParticipantRefId = participantA.ParticipantRefId, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
-                new LinkedParticipantDto() { ParticipantRefId = participantB.ParticipantRefId, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
+                new () { ParticipantRefId = participantA.ParticipantRefId, LinkedRefId = participantB.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()},
+                new () { ParticipantRefId = participantB.ParticipantRefId, LinkedRefId = participantA.ParticipantRefId, Type = LinkedParticipantType.Interpreter.MapToDomainEnum()}
             };
 
             var participants = new List<ParticipantBase>() {participantA, participantB};
@@ -94,7 +93,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             participantAFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantBFromContext.Id);
             participantBFromContext.LinkedParticipants.Should().Contain(x => x.LinkedId == participantAFromContext.Id);
         }
-
+        
         [Test]
         public async Task Should_throw_participant_link_exception_when_id_doesnt_match()
         {
@@ -121,8 +120,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             exception.LinkRefId.Should().Be(participantB.ParticipantRefId);
             exception.ParticipantRefId.Should().Be(fakeIdA);
         }
-
-
+        
+        
         [TearDown]
         public async Task TearDown()
         {

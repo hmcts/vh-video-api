@@ -62,7 +62,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_update_existing_endpoint_with_new_display_name()
         {
             var conference1 = new ConferenceBuilder()
-                .WithEndpoint("DisplayName", "sip@123.com").Build();
+                .WithEndpoint("DisplayName", "sip@12356.com").Build();
             var seededConference = await TestDataManager.SeedConference(conference1);
             var ep = conference1.Endpoints.First();
             var sipAddress = ep.SipAddress;
@@ -71,8 +71,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
 
-            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, newDisplayName, null,
-                newConferenceRole);
+            var command = new UpdateEndpointCommand(_newConferenceId, sipAddress, newDisplayName, null, newConferenceRole);
             await _handler.Handle(command);
 
             Conference updatedConference;
@@ -94,11 +93,12 @@ namespace VideoApi.IntegrationTests.Database.Commands
         public async Task Should_update_existing_endpoint_with_linked_participant()
         {
             var conference1 = new ConferenceBuilder()
-                .WithEndpoint("DisplayName", "sip@123.com").Build();
+                .WithParticipant(UserRole.Representative, "CaseTypeGroupe")
+                .WithEndpoint("DisplayName", "sip@1236546.com").Build();
             var seededConference = await TestDataManager.SeedConference(conference1);
             var ep = conference1.Endpoints.First();
             var sipAddress = ep.SipAddress;
-            var defenceAdvocate = "Sol Defence";
+            var defenceAdvocate = conference1.Participants[0].Username;
             const ConferenceRole newConferenceRole = ConferenceRole.Guest;
             TestContext.WriteLine($"New seeded conference id: {seededConference.Id}");
             _newConferenceId = seededConference.Id;
@@ -109,7 +109,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Conference updatedConference;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                updatedConference = await db.Conferences.Include(x => x.Endpoints)
+                updatedConference = await db.Conferences
+                    .Include(x => x.Endpoints).ThenInclude(x => x.ParticipantsLinked)
                     .AsNoTracking().SingleAsync(x => x.Id == _newConferenceId);
             }
             

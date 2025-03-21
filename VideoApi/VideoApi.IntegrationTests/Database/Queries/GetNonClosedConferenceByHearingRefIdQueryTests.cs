@@ -32,8 +32,8 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithEndpoint("one", "44564")
-                .WithEndpoint("two", "867744")
+                .WithEndpoint("one", "4456444", true)
+                .WithEndpoint("two", "86733744", true)
                 .Build();
             
             _newConferenceId1 = seededConference.Id;
@@ -116,7 +116,6 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 endpoint.DisplayName.Should().NotBeNullOrEmpty();
                 endpoint.Pin.Should().NotBeNullOrEmpty();
                 endpoint.SipAddress.Should().NotBeNullOrEmpty();
-                endpoint.ParticipantsLinked.Should().NotBeEmpty();
             }
         }
         

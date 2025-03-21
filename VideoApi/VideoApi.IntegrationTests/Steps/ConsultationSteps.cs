@@ -234,8 +234,8 @@ namespace VideoApi.IntegrationTests.Steps
         public void GivenIHaveAStartEndpointConsultationWithoutALinkedDefenceAdvocate()
         {
             var conference = _context.Test.Conference;
-            var endpoint = _context.Test.Conference.Endpoints.First(x=> x.ParticipantsLinked.Any());
-            var defenceAdvocate = endpoint.ParticipantsLinked[0];
+            var endpoint = _context.Test.Conference.Endpoints.First(x=> !x.ParticipantsLinked.Any());
+            var defenceAdvocate = conference.Participants[0];
 
             var request = new EndpointConsultationRequest
             {
@@ -297,13 +297,13 @@ namespace VideoApi.IntegrationTests.Steps
         {
             var conference = _context.Test.Conference;
             var endpoint = _context.Test.Conference.Endpoints.First(x=> x.ParticipantsLinked.Any());
-            var defenceAdvocate = endpoint.ParticipantsLinked[0];
+            var defenceAdvocateNotLinked = conference.Participants.First(x => !endpoint.ParticipantsLinked.Contains(x));
 
             var request = new EndpointConsultationRequest
             {
                 ConferenceId = conference.Id,
                 EndpointId = endpoint.Id,
-                RequestedById = defenceAdvocate.Id
+                RequestedById = defenceAdvocateNotLinked.Id
             };
 
             SerialiseEndpointConsultationRequest(request);

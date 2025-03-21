@@ -21,7 +21,7 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; } = conferenceId;
         public string SipAddress { get; } = sipAddress;
         public string DisplayName { get; } = displayName;
-        public IList<string> ParticipantsLinked { get; } = participantsLinked;
+        public IList<string> ParticipantsLinked { get; } = participantsLinked ?? new List<string>();
         public ConferenceRole ConferenceRole { get; } = conferenceRole;
     }
 
@@ -29,7 +29,9 @@ namespace VideoApi.DAL.Commands
     {
         public async Task Handle(UpdateEndpointCommand command)
         {
-            var conference = await context.Conferences.Include(x => x.Endpoints)
+            var conference = await context.Conferences
+                .Include(x => x.Participants)
+                .Include(x => x.Endpoints).ThenInclude(x => x.ParticipantsLinked)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -42,7 +44,8 @@ namespace VideoApi.DAL.Commands
             if (!string.IsNullOrWhiteSpace(command.DisplayName)) 
                 endpoint.UpdateDisplayName(command.DisplayName);
             
-            UpdateParticipantsLinkedToEndpoint(command, conference, endpoint);
+            if(command.ParticipantsLinked.Any())
+                UpdateParticipantsLinkedToEndpoint(command, conference, endpoint);
             
             endpoint.UpdateConferenceRole(command.ConferenceRole);
             await context.SaveChangesAsync();

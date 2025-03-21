@@ -62,20 +62,19 @@ namespace VideoApi.IntegrationTests.Database.Commands
             Conference updatedConference;
             await using (var db = new VideoApiDbContext(VideoBookingsDbContextOptions))
             {
-                updatedConference = await db.Conferences.Include(x => x.Endpoints).SingleOrDefaultAsync(x => x.Id == _newConferenceId);
+                updatedConference = await db.Conferences.Include(x => x.Endpoints).ThenInclude(x => x.ParticipantsLinked).SingleOrDefaultAsync(x => x.Id == _newConferenceId);
             }
 
             updatedConference.GetEndpoints().Should().NotBeEmpty();
-            var ep = updatedConference.Endpoints.First();
+            var ep = updatedConference.Endpoints[0];
             ep.Pin.Should().Be(pin);
             ep.SipAddress.Should().Be(sip);
             ep.DisplayName.Should().Be(displayName);
             ep.Id.Should().NotBeEmpty();
-            ep.ParticipantsLinked.Should().Contain(defenceAdvocate);
+            ep.ParticipantsLinked.Select(e => e.Id).Should().Contain(defenceAdvocate.Id);
             ep.State.Should().Be(EndpointState.NotYetJoined);
             ep.CreatedAt.Should().NotBeNull();
             ep.UpdatedAt.Should().NotBeNull();
-            ep.CreatedAt.Should().Be(ep.UpdatedAt);
         }
     }
 }

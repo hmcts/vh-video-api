@@ -23,7 +23,7 @@ namespace VideoApi.Domain
         public virtual IList<RoomParticipant> RoomParticipants { get; } = new List<RoomParticipant>();
         public long? TestCallResultId { get; set; }
         public virtual TestCallResult TestCallResult { get; private set; }
-        public Guid? EndpointId { get; set; }
+        public Guid? EndpointId { get; set; } = null;
         public virtual Endpoint Endpoint { get; set; }
         
         public void UpdateTestCallResult(bool passed, TestScore score)

@@ -56,6 +56,8 @@ namespace VideoApi.Domain
         
         public void AddParticipantLink(ParticipantBase participant)
         {
+            participant.Endpoint = this;
+            participant.EndpointId = Id;
             ParticipantsLinked.Add(participant);
             UpdatedAt = DateTime.UtcNow;
         }
