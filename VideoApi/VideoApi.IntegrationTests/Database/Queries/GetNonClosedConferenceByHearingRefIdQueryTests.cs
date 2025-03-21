@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using NUnit.Framework;
 using Testing.Common.Helper.Builders.Domain;
 using VideoApi.DAL;
@@ -33,12 +32,10 @@ namespace VideoApi.IntegrationTests.Database.Queries
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
                 .WithConferenceStatus(ConferenceState.InSession)
-                .WithEndpoints(new List<Endpoint>
-                    {
-                        new Endpoint("one", "44564", "1234"),
-                        new Endpoint("two", "867744", "5678")
-                    })
+                .WithEndpoint("one", "44564")
+                .WithEndpoint("two", "867744")
                 .Build();
+            
             _newConferenceId1 = seededConference.Id;
             await TestDataManager.SeedConference(seededConference);
             var conference = await _handler.Handle(new GetNonClosedConferenceByHearingRefIdQuery(knownHearingRefId));

@@ -38,8 +38,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
             
             await Controller.BookNewConferenceAsync(_request);
             
-            QueryHandlerMock.Verify(
-                q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()),
+            QueryHandlerMock.Verify(q => q.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>(It.IsAny<GetConferenceByIdQuery>()),
                 Times.Once);
         }
         

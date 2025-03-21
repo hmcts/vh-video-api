@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using VideoApi.Common;
@@ -35,10 +37,7 @@ namespace VideoApi.Events.Handlers
             
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
 
-            var command =
-                new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus,
-                    callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
-
+            var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
             await CommandHandler.Handle(command);
 
             if (!callbackEvent.TransferredFromRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase) 
@@ -64,11 +63,29 @@ namespace VideoApi.Events.Handlers
             }
             else if (room.RoomEndpoints.Count != 0)
             {
-                var participantsEndpoints = SourceConference.GetEndpoints().Where(x => x.DefenceAdvocate?.Equals(SourceParticipant.Username, System.StringComparison.OrdinalIgnoreCase) ?? false).Select(x => x.Id).ToList();
-                foreach (var endpoint in room.RoomEndpoints.Where(roomEndpoint => participantsEndpoints.Contains(roomEndpoint.EndpointId)))
-                {
-                    await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
-                }
+                await HandleLinkedEndpoints(room);
+            }
+        }
+        
+        private async Task HandleLinkedEndpoints(ConsultationRoom room)
+        {
+            //Get all endpoints this participant is linked to
+            var endpointsLinked = SourceConference
+                .GetEndpoints()
+                .Where(x => x.ParticipantsLinked?.Contains(SourceParticipant) ?? false)
+                .ToList();
+            
+            foreach (var endpoint in endpointsLinked.Where(ep => room.RoomEndpoints.Any(e => e.EndpointId == ep.Id)))
+            {
+                // Check if this endpoint has any of other participants linked to it still in the room
+                var linkedParticipantsStillInRoom = room.RoomParticipants.Select(rp => rp.ParticipantId)
+                    .Intersect(endpoint.ParticipantsLinked?
+                        .Select(pl => pl.Id) ?? new List<Guid>())
+                    .ToList();
+                
+                // If no other participants linked to this endpoint are still in the room, transfer it to waiting room
+                if(linkedParticipantsStillInRoom.Count == 0)
+                    await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.Id, RoomType.WaitingRoom.ToString());
             }
         }
         

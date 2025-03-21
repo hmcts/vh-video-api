@@ -54,7 +54,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Faker.Internet.Email(), "rep@hmcts.net")
+                .WithEndpoint("Display1", Faker.Internet.Email(), true)
                 .WithEndpoint("Display2", Faker.Internet.Email())
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();
@@ -76,7 +76,7 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
                 .WithParticipant(UserRole.Judge, null)
-                .WithEndpoint("Display1", Faker.Internet.Email(), "rep@hmcts.net")
+                .WithEndpoint("Display1", Faker.Internet.Email(), true)
                 .WithEndpoint("Display2", Faker.Internet.Email())
                 .WithMeetingRoom("https://poc.node.com", "user@hmcts.net")
                 .WithAudioRecordingRequired(false).Build();

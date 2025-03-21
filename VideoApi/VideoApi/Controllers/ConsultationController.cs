@@ -120,6 +120,7 @@ namespace VideoApi.Controllers
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedById);
+            
             if (isVhoRequest 
                 || requestedBy?.UserRole == UserRole.Judge
                 || requestedBy?.UserRole == UserRole.StaffMember
@@ -131,18 +132,18 @@ namespace VideoApi.Controllers
             
             if (requestedBy == null)
             {
-                logger.LogWarning("Unable to find defence advocate");
-                return NotFound($"Unable to find defence advocate {request.RequestedById}");
+                logger.LogWarning("Unable to find requestedBy participant");
+                return NotFound($"Unable to find requestedBy participant {request.RequestedById}");
             }
             
-            if (endpoint.ParticipantsLinked == null || endpoint.ParticipantsLinked.Any())
+            if (endpoint.ParticipantsLinked == null || !endpoint.ParticipantsLinked.Any())
             {
                 const string message = "Endpoint does not have a linked participant";
                 logger.LogWarning(message);
                 return Unauthorized(message);
             }
 
-            if (endpoint.ParticipantsLinked.Select(p => p.Username.Trim()).Contains(requestedBy.Username.Trim()))
+            if (endpoint.ParticipantsLinked.All(p => p.Username != requestedBy.Username))
             {
                 const string message = "Participant is not linked to requested endpoint";
                 logger.LogWarning(message);

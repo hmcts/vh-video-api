@@ -66,9 +66,7 @@ public class ConferenceController(
         var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
         logger.LogDebug("Conference Created");
         
-        var conferenceEndpoints =
-            await queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
-                new GetEndpointsForConferenceQuery(conferenceId));
+        var conferenceEndpoints = await queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(new GetEndpointsForConferenceQuery(conferenceId));
         var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
         var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,

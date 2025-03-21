@@ -14,7 +14,7 @@ namespace Testing.Common.Helper.Builders.Domain
         private const string CaseName = "Video Api Integration Test";
         private static readonly Faker Faker = new();
         private readonly BuilderSettings _builderSettings;
-        private readonly Conference _conference;
+        public readonly Conference Conference;
         
         public ConferenceBuilder(bool ignoreId = false, Guid? knownHearingRefId = null,
             DateTime? scheduledDateTime = null, string venueName = "MyVenue", Supplier supplier = Supplier.Vodafone)
@@ -40,7 +40,7 @@ namespace Testing.Common.Helper.Builders.Domain
             var caseNumber = $"{BitConverter.ToString(data)}";
             const string caseName = CaseName;
             const int scheduledDuration = 120;
-            _conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
+            Conference = new Conference(hearingRefId, caseType, scheduleDateTime, caseNumber, caseName,
                 scheduledDuration, venueName, false, "ingesturl", supplier);
         }
         
@@ -56,7 +56,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             foreach (var participant in participants)
             {
-                _conference.AddParticipant(participant);
+                Conference.AddParticipant(participant);
             }
 
             return this;
@@ -66,7 +66,7 @@ namespace Testing.Common.Helper.Builders.Domain
         {
             foreach (var participant in participants)
             {
-                _conference.AddParticipant(participant);
+                Conference.AddParticipant(participant);
             }
 
             return this;
@@ -107,35 +107,46 @@ namespace Testing.Common.Helper.Builders.Domain
             participant.UpdateParticipantStatus(participantState == ParticipantState.None
                 ? ParticipantState.Available
                 : participantState);
-            _conference.AddParticipant(participant);
+            Conference.AddParticipant(participant);
 
             return this;
         }
         
-        public ConferenceBuilder WithEndpoint(string displayName, string sipAddress, params string[] linkedParticipants)
+        /// <summary>
+        /// Use after WithParticipant when using withLinkedParticipants parameter
+        /// </summary>
+        /// <param name="displayName"></param>
+        /// <param name="sipAddress"></param>
+        /// <param name="withLinkedParticipant"></param>
+        /// <returns></returns>
+        public ConferenceBuilder WithEndpoint(string displayName, string sipAddress, bool withLinkedParticipant = false)
         {
             var endpoint = new Endpoint(displayName, sipAddress, "1234");
-            var participantsToLink = _conference.Participants.Where(x => linkedParticipants.Contains(x.Username)).ToList();
-            if (participantsToLink.Any())
-                foreach (var participant in participantsToLink)
-                    endpoint.AddParticipantLink(participant);
+            if (withLinkedParticipant)
+            {
+                var participantsToLink = Conference.Participants.FirstOrDefault(x => x.UserRole == UserRole.Representative) ??
+                                         Conference.Participants.First(x => x.UserRole != UserRole.Judge);
+                endpoint.AddParticipantLink(participantsToLink);
+            }
+            Conference.AddEndpoint(endpoint);
+            return this;
+        }
+        
+        public ConferenceBuilder WithEndpointAndMultipleParticipants(string displayName, string sipAddress, int numberOfParticipants)
+        {
+            var endpoint = new Endpoint(displayName, sipAddress, "1234");
+            var participantsToLink = Conference.Participants.Where(x => x.UserRole != UserRole.Judge).Take(numberOfParticipants).ToList();
+            foreach (var participant in participantsToLink)
+                endpoint.AddParticipantLink(participant);
             
-            _conference.AddEndpoint(endpoint);
-
+            Conference.AddEndpoint(endpoint);
             return this;
         }
         
         public ConferenceBuilder WithTelephoneParticipant(string phoneNumber)
         {
-            var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), phoneNumber, _conference);
-            _conference.AddTelephoneParticipant(telephoneParticipant);
-
-            return this;
-        }
-        
-        public ConferenceBuilder WithEndpoints(List<Endpoint> endpoints)
-        {
-            endpoints.ForEach(x => _conference.AddEndpoint(x));
+            var telephoneParticipant = new TelephoneParticipant(Guid.NewGuid(), phoneNumber, Conference);
+            Conference.AddTelephoneParticipant(telephoneParticipant);
 
             return this;
         }
@@ -147,29 +158,29 @@ namespace Testing.Common.Helper.Builders.Domain
             var participantUri = $"{pexipNode}/viju/#/?conference={conferenceUsername}&output=embed";
             var ticks = DateTime.UtcNow.Ticks.ToString();
             var telephoneConferenceId = newTelephoneConferenceId ?? (setTelephoneConferenceId ? ticks[^8..] : null);
-            _conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
+            Conference.UpdateMeetingRoom(adminUri, judgeUri, participantUri, pexipNode, telephoneConferenceId);
             return this;
         }
         
         public Conference Build()
         {
-            return _conference;
+            return Conference;
         }
         
         public ConferenceBuilder WithConferenceStatus(ConferenceState conferenceState, DateTime? timeStamp = null)
         {
-            if (conferenceState == ConferenceState.InSession && !_conference.ActualStartTime.HasValue)
+            if (conferenceState == ConferenceState.InSession && !Conference.ActualStartTime.HasValue)
             {
-                _conference.ActualStartTime = DateTime.UtcNow;
+                Conference.ActualStartTime = DateTime.UtcNow;
             }
 
             if (conferenceState == ConferenceState.Closed)
             {
-                _conference.ClosedDateTime = DateTime.UtcNow;
+                Conference.ClosedDateTime = DateTime.UtcNow;
             }
             timeStamp ??= DateTime.UtcNow;
-            _conference.State = conferenceState;
-            _conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState, timeStamp));
+            Conference.State = conferenceState;
+            Conference.ConferenceStatuses.Add(new ConferenceStatus(conferenceState, timeStamp));
             return this;
         }
         
@@ -181,7 +192,7 @@ namespace Testing.Common.Helper.Builders.Domain
 
             foreach (var message in messages)
             {
-                _conference.AddInstantMessage(message.From, message.MessageText, message.To);
+                Conference.AddInstantMessage(message.From, message.MessageText, message.To);
             }
 
             return this;
@@ -189,24 +200,24 @@ namespace Testing.Common.Helper.Builders.Domain
         
         public ConferenceBuilder WithAudioRecordingRequired(bool required)
         {
-            _conference.AudioRecordingRequired = required;
+            Conference.AudioRecordingRequired = required;
             return this;
         }
         
         public ConferenceBuilder WithInterpreterRoom()
         {
-            if (_conference.Participants.Count < 2)
+            if (Conference.Participants.Count < 2)
             {
                 WithParticipants(2);
             }
             var room = new Builder(_builderSettings).CreateNew<ParticipantRoom>().WithFactory(() =>
-                new ParticipantRoom(_conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
+                new ParticipantRoom(Conference.Id, "InterpreterRoom1", VirtualCourtRoomType.Civilian)).Build();
 
-            var nonJudges = _conference.Participants.Where(x => x is Participant && !((Participant)x).IsJudge()).ToList();
+            var nonJudges = Conference.Participants.Where(x => x is Participant && !((Participant)x).IsJudge()).ToList();
 
-            if (_conference.Participants.Count(x => x.LinkedParticipants.Any()) >= 2)
+            if (Conference.Participants.Count(x => x.LinkedParticipants.Any()) >= 2)
             {
-                nonJudges = _conference.Participants.Where(x => x.LinkedParticipants.Any()).ToList();
+                nonJudges = Conference.Participants.Where(x => x.LinkedParticipants.Any()).ToList();
             }
 
             room.AddParticipant(new RoomParticipant(nonJudges[0].Id));
@@ -218,12 +229,12 @@ namespace Testing.Common.Helper.Builders.Domain
             {
                 roomParticipant.Room = room;
                 roomParticipant.RoomId = room.Id;
-                var participant = _conference.Participants.First(x => x.Id == roomParticipant.ParticipantId);
+                var participant = Conference.Participants.First(x => x.Id == roomParticipant.ParticipantId);
                 participant.RoomParticipants.Add(roomParticipant);
                 roomParticipant.Participant = participant;
             }
 
-            _conference.SetProtectedField("_rooms", new List<Room> {room});
+            Conference.SetProtectedField("_rooms", new List<Room> {room});
 
             return this;
         }
@@ -288,8 +299,8 @@ namespace Testing.Common.Helper.Builders.Domain
             participant2.UpdateParticipantStatus(participantState == ParticipantState.None
                 ? ParticipantState.Available
                 : participantState);
-            _conference.AddParticipant(participant1);
-            _conference.AddParticipant(participant2);
+            Conference.AddParticipant(participant1);
+            Conference.AddParticipant(participant2);
 
             return this;
         }
@@ -340,8 +351,8 @@ namespace Testing.Common.Helper.Builders.Domain
             participant2.UpdateParticipantStatus(participantState == ParticipantState.None
                 ? ParticipantState.Available
                 : participantState);
-            _conference.AddParticipant(participant1);
-            _conference.AddParticipant(participant2);
+            Conference.AddParticipant(participant1);
+            Conference.AddParticipant(participant2);
 
             return this;
         }
