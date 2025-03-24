@@ -16,7 +16,16 @@ namespace VideoApi.DAL.Migrations
                 table: "Participant",
                 type: "uniqueidentifier",
                 nullable: true);
-
+            
+            //Migrate existing data 
+            migrationBuilder.Sql(
+                @"UPDATE p
+                SET p.EndpointId = e.Id
+                FROM Participant p
+                INNER JOIN Endpoint e ON e.DefenceAdvocate = p.Username
+                WHERE e.DefenceAdvocate IS NOT NULL;
+                ");
+            
             migrationBuilder.CreateIndex(
                 name: "IX_Participant_EndpointId",
                 table: "Participant",
@@ -28,6 +37,7 @@ namespace VideoApi.DAL.Migrations
                 column: "EndpointId",
                 principalTable: "Endpoint",
                 principalColumn: "Id");
+            
         }
 
         /// <inheritdoc />
