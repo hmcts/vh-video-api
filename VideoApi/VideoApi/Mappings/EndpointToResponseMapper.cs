@@ -1,3 +1,4 @@
+using System.Linq;
 using VideoApi.Contract.Responses;
 using VideoApi.Domain;
 using VideoApi.Extensions;
@@ -16,7 +17,8 @@ namespace VideoApi.Mappings
                 DisplayName = endpoint.DisplayName,
                 SipAddress = endpoint.SipAddress,
                 CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(endpoint.CurrentConsultationRoom),
-                ConferenceRole = (Contract.Enums.ConferenceRole)endpoint.ConferenceRole
+                ConferenceRole = (Contract.Enums.ConferenceRole)endpoint.ConferenceRole,
+                LinkedParticipants = endpoint.ParticipantsLinked?.Select(x => ParticipantResponseMapper.Map(x)).ToList()
             };
         }
     }

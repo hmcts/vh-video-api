@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Responses
@@ -39,5 +40,10 @@ namespace VideoApi.Contract.Responses
         /// The role in the conference
         /// </summary>
         public ConferenceRole ConferenceRole { get; set; }
+        
+        /// <summary>
+        /// Participants Linked to the endpoint
+        /// </summary>
+        public IList<ParticipantResponse> LinkedParticipants { get; set; }
     }
 }

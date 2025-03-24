@@ -28,8 +28,9 @@ namespace VideoApi.Domain
         public string Pin { get; }
         public EndpointState State { get; private set; }
         
-        //[Obsolete("This property is not used and will be removed in the future")]
+        [Obsolete("This property is not used and will be removed in the future")]
         public string DefenceAdvocate { get; }
+        
         public RoomType? CurrentRoom { get; private set; }
         public long? CurrentConsultationRoomId { get; set; }
         public virtual ConsultationRoom CurrentConsultationRoom { get; set; }

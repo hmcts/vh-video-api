@@ -88,8 +88,7 @@ public class ConferenceController(
         var queriedConference =
             await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
         
-        var supplierPlatformService =
-            supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)request.Supplier);
+        var supplierPlatformService = supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)request.Supplier);
         var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
         var response = ConferenceToDetailsResponseMapper.Map(queriedConference, supplierConfiguration);
         

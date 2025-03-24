@@ -59,7 +59,7 @@ public class BookingService(
         }
         catch (DoubleBookingException ex)
         {
-            logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
+            logger.LogError(ex, "Room already booked for conference {ConferenceId}", conferenceId);
             
             meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
         }
@@ -90,10 +90,8 @@ public class BookingService(
                     x.UserRole.MapToDomainEnum(), x.HearingRole, x.ContactEmail))
             .ToList();
         
-        var endpoints = request.Endpoints
-            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, (ConferenceRole)x.ConferenceRole))
-            .ToList();
-        
+        var endpoints = GetEndpoints(request, participants);
+
         var linkedParticipants = request.Participants
             .SelectMany(x => x.LinkedParticipants)
             .Select(x => new LinkedParticipantDto
@@ -116,6 +114,22 @@ public class BookingService(
         await commandHandler.Handle(createConferenceCommand);
         
         return createConferenceCommand.NewConferenceId;
+    }
+    
+    private static List<Endpoint> GetEndpoints(BookNewConferenceRequest request, List<Participant> participants)
+    {
+        var endpoints = new List<Endpoint>();
+        foreach (var endpointRequest in request.Endpoints)
+        {
+            var endpointParticipants = participants
+                .Where(x => endpointRequest.ParticipantsLinked.Contains(x.ContactEmail))
+                .ToList();
+            
+            var endpoint = new Endpoint(endpointRequest.DisplayName, endpointRequest.SipAddress, endpointRequest.Pin);
+            endpointParticipants.ForEach(x => endpoint.AddParticipantLink(x));
+            endpoints.Add(endpoint);
+        }
+        return endpoints;
     }
     
     private async Task<string> CreateUniqueTelephoneId()
