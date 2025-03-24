@@ -130,7 +130,7 @@ public class EndpointSteps : BaseSteps
     public void GivenIHaveAnNonExistentAddEndpointRequest()
     {
         var conferenceId = Guid.NewGuid();
-        var defenceAdvocate = _context.Test.Conference.Endpoints[0].ParticipantsLinked[0].Username;
+        var defenceAdvocate = _context.Test.Conference?.Endpoints[0]?.ParticipantsLinked[0]?.Username ?? "random defence advocate";
         var request = new AddEndpointRequest
         {
             Pin = "1234",
