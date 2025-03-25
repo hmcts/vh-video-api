@@ -118,18 +118,17 @@ public class BookingService(
     
     private static List<Endpoint> GetEndpoints(BookNewConferenceRequest request, List<Participant> participants)
     {
-        var endpoints = new List<Endpoint>();
-        foreach (var endpointRequest in request.Endpoints)
+        var endpoints = request.Endpoints.Select(endpointRequest =>
         {
-            var endpointParticipants = participants
-                .Where(x => endpointRequest.ParticipantsLinked.Contains(x.ContactEmail))
-                .ToList();
+            var linkedParticipants = endpointRequest.ParticipantsLinked?.Any() == true
+                ? participants.Where(p => endpointRequest.ParticipantsLinked.Contains(p.ContactEmail)).ToList()
+                : new List<Participant>();
             
-            var endpoint = new Endpoint(endpointRequest.DisplayName, endpointRequest.SipAddress, endpointRequest.Pin);
-            endpointParticipants.ForEach(x => endpoint.AddParticipantLink(x));
-            endpoints.Add(endpoint);
-        }
-        return endpoints;
+            var endpoint = new Endpoint(endpointRequest.DisplayName, endpointRequest.SipAddress, endpointRequest.Pin, endpointRequest.ConferenceRole.MapToDomainEnum());
+            linkedParticipants.ForEach(endpoint.AddParticipantLink);
+            return endpoint;
+        });
+        return endpoints.ToList();
     }
     
     private async Task<string> CreateUniqueTelephoneId()

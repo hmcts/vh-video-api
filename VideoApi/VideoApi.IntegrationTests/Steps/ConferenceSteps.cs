@@ -309,8 +309,7 @@ namespace VideoApi.IntegrationTests.Steps
         [Then("the conference should be retrieved with jvs endpoints for screening")]
         public async Task ThenAConferenceShouldBeRetrievedWithJvsEndpointsForScreening()
         {
-            _conferenceDetails =
-                await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
+            _conferenceDetails = await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceCoreResponse.ForConference(_conferenceDetails, ConferenceRoomType.VA);
             AssertConferenceDetailsResponse.ForConferenceEndpoints(_conferenceDetails, ConferenceRole.Guest);
