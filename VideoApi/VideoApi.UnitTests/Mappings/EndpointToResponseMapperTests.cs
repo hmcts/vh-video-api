@@ -1,4 +1,4 @@
-using Moq;
+using Testing.Common.Helper.Builders.Domain;
 using VideoApi.Contract.Enums;
 using VideoApi.Domain;
 using VideoApi.Mappings;
@@ -12,7 +12,7 @@ namespace VideoApi.UnitTests.Mappings
         public void should_map_endpoint_to_response()
         {
             var endpoint = new Endpoint("Display", "sip123", "1245", ConferenceRole.Guest);
-            var linkedParticipant = Mock.Of<Participant>(m => m.Username == "DefenseAdvocate");
+            var linkedParticipant = new ParticipantBuilder().Build();
             endpoint.AddParticipantLink(linkedParticipant);
             var response = EndpointToResponseMapper.MapEndpointResponse(endpoint);
             

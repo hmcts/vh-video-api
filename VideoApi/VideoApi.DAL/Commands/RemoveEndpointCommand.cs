@@ -9,28 +9,29 @@ namespace VideoApi.DAL.Commands
 {
     public class RemoveEndpointCommand : ICommand
     {
-        public Guid ConferenceId { get; }
-        public string SipAddress { get; }
-        
         public RemoveEndpointCommand(Guid conferenceId, string sipAddress)
         {
             ConferenceId = conferenceId;
             SipAddress = sipAddress;
         }
+        
+        public Guid ConferenceId { get; }
+        public string SipAddress { get; }
     }
 
     public class RemoveEndpointCommandHandler : ICommandHandler<RemoveEndpointCommand>
     {
         private readonly VideoApiDbContext _context;
-
+        
         public RemoveEndpointCommandHandler(VideoApiDbContext context)
         {
             _context = context;
         }
-
+        
         public async Task Handle(RemoveEndpointCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Endpoints)
+            var conference = await _context.Conferences
+                .Include(x => x.Endpoints).ThenInclude(e => e.ParticipantsLinked)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
