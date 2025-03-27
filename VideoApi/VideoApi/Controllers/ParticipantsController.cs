@@ -15,6 +15,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
+using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services;
@@ -295,11 +296,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetIndependentTestCallResultAsync(Guid participantId)
         {
-            _logger.LogDebug("GetIndependentTestCallResult");
-            var conference =
-                await _queryHandler.Handle<GetConferenceForParticipantQuery, Conference>(
-                    new GetConferenceForParticipantQuery(participantId));
-            var videoPlatformService = _supplierPlatformServiceFactory.Create(conference.Supplier);
+            var videoPlatformService = _supplierPlatformServiceFactory.Create(Supplier.Vodafone);
             var testCallResult = await videoPlatformService.GetTestCallScoreAsync(participantId);
             if (testCallResult == null)
             {
