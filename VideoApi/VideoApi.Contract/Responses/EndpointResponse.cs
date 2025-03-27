@@ -44,6 +44,6 @@ namespace VideoApi.Contract.Responses
         /// <summary>
         /// Participants Linked to the endpoint
         /// </summary>
-        public IList<Guid> LinkedParticipantIds { get; set; }
+        public IList<string> ParticipantsLinked { get; set; }
     }
 }

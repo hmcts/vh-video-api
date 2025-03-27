@@ -18,7 +18,7 @@ namespace VideoApi.Mappings
                 SipAddress = endpoint.SipAddress,
                 CurrentRoom = RoomToDetailsResponseMapper.MapConsultationRoomToResponse(endpoint.CurrentConsultationRoom),
                 ConferenceRole = (Contract.Enums.ConferenceRole)endpoint.ConferenceRole,
-                LinkedParticipantIds = endpoint.ParticipantsLinked?.Select(x => x.Id).ToList()
+                ParticipantsLinked = endpoint.ParticipantsLinked?.Select(x => x.Username).ToList()
             };
         }
     }
