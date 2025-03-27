@@ -20,7 +20,7 @@ namespace VideoApi.UnitTests.Mappings
             response.Pin.Should().Be(endpoint.Pin);
             response.Status.Should().Be((EndpointState)endpoint.State);
             response.SipAddress.Should().Be(endpoint.SipAddress);
-            response.LinkedParticipants.Should().NotBeEmpty().And.Contain(e => e.Username == linkedParticipant.Username);
+            response.LinkedParticipantIds.Should().NotBeEmpty().And.Contain(linkedParticipant.Id);
             response.ConferenceRole.Should().Be((Contract.Enums.ConferenceRole)endpoint.ConferenceRole);
         }
     }

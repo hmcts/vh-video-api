@@ -10,40 +10,40 @@ namespace VideoApi.Contract.Responses
         /// The endpoint id
         /// </summary>
         public Guid Id { get; set; }
-        
+
         /// <summary>
         /// The endpoint display name
         /// </summary>
         public string DisplayName { get; set; }
-        
+
         /// <summary>
         /// The endpoint sip address
         /// </summary>
         public string SipAddress { get; set; }
-        
+
         /// <summary>
         /// The endpoint pin
         /// </summary>
         public string Pin { get; set; }
-        
+
         /// <summary>
         /// The current endpoint status
         /// </summary>
         public EndpointState Status { get; set; }
-        
+
         /// <summary>
         /// Current consultation room details
         /// </summary>
         public RoomResponse CurrentRoom { get; set; }
-        
+
         /// <summary>
         /// The role in the conference
         /// </summary>
         public ConferenceRole ConferenceRole { get; set; }
-        
+
         /// <summary>
         /// Participants Linked to the endpoint
         /// </summary>
-        public IList<ParticipantResponse> LinkedParticipants { get; set; }
+        public IList<Guid> LinkedParticipantIds { get; set; }
     }
 }
