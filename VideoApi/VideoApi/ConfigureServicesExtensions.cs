@@ -17,12 +17,14 @@ using NSwag.Generation.Processors.Security;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
+using VideoApi.Common.Security.Supplier.Stub;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.SupplierStub;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Factories;
 using VideoApi.Services.Handlers;
@@ -106,6 +108,7 @@ namespace VideoApi
         {
             var container = services.BuildServiceProvider();
             var vodafoneConfiguration = container.GetService<IOptions<VodafoneConfiguration>>().Value;
+            var supplierStubConfiguration = container.GetService<IOptions<SupplierStubConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
             var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
             
@@ -147,6 +150,12 @@ namespace VideoApi
                     .AddTypedClient<IVodafoneApiClient>(httpClient =>
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
+                    .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
+                
+                services
+                    .AddHttpClient<ISupplierStubApiClient, SupplierStubApiClient>()
+                    .AddTypedClient<ISupplierStubApiClient>(httpClient =>
+                        BuildSupplierStubClient(supplierStubConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
                 
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
@@ -204,17 +213,32 @@ namespace VideoApi
         
         private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient)
         {
-            if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-            {
-                throw new InvalidOperationException($"Invalid Supplier API URL provided: {url}");
-            }
-            Console.WriteLine("Using Supplier API URL: " + url);
-            httpClient.BaseAddress = new Uri(url.TrimEnd('/'), UriKind.RelativeOrAbsolute);
+            httpClient.BaseAddress = CreateSupplierApiBaseAddress(url);
             var client = new SupplierApiClient(httpClient)
             {
                 BaseUrlAddress = url
             };
             return client;
+        }
+        
+        private static SupplierStubApiClient BuildSupplierStubClient(string url, HttpClient httpClient)
+        {
+            httpClient.BaseAddress = CreateSupplierApiBaseAddress(url);
+            var client = new SupplierStubApiClient(httpClient)
+            {
+                BaseUrlAddress = url
+            };
+            return client;
+        }
+
+        private static Uri CreateSupplierApiBaseAddress(string url)
+        {
+            if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+            {
+                throw new InvalidOperationException($"Invalid Supplier API URL provided: {url}");
+            }
+            Console.WriteLine("Using Supplier API URL: " + url);
+            return new Uri(url.TrimEnd('/'), UriKind.RelativeOrAbsolute);
         }
         
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)
