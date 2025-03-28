@@ -25,6 +25,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using VideoApi.Common.Configuration;
+using VideoApi.Common.Security.Supplier.Stub;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL;
 using VideoApi.Extensions;
@@ -142,6 +143,7 @@ namespace VideoApi
             services.Configure<ServicesConfiguration>(options => Configuration.Bind("Services", options));
             services.Configure<WowzaConfiguration>(options => Configuration.Bind("WowzaConfiguration", options));
             services.Configure<VodafoneConfiguration>(options => Configuration.Bind("VodafoneConfiguration", options));
+            services.Configure<SupplierStubConfiguration>(options => Configuration.Bind("SupplierStubConfiguration", options));
             services.Configure<CvpConfiguration>(options => Configuration.Bind("CvpConfiguration", options));
             services.Configure<QuickLinksConfiguration>(options => Configuration.Bind("QuickLinks", options));
             
