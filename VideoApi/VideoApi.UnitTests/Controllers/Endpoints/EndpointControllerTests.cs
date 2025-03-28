@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Testing.Common.Helper.Builders.Domain;
-using VideoApi.Contract.Enums;
 using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Controllers;
@@ -30,12 +29,12 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
     public class EndpointControllerTests
     {
         private readonly Mock<ICommandHandler> _commandHandlerMock;
-        private readonly Mock<IQueryHandler> _queryHandlerMock;
-        private readonly Mock<IVideoPlatformService> _videoPlatformServiceMock;
-        private readonly Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
-
+        
         private readonly EndpointsController _controller;
-
+        private readonly Mock<IQueryHandler> _queryHandlerMock;
+        private readonly Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
+        private readonly Mock<IVideoPlatformService> _videoPlatformServiceMock;
+        
         public EndpointControllerTests()
         {
             _queryHandlerMock = new Mock<IQueryHandler>();
@@ -50,13 +49,13 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 _supplierPlatformServiceFactoryMock.Object,
                 mockLogger.Object);
         }
-
+        
         [Test]
         public async Task Should_get_endpoints_for_conference()
         {
             var endpoints = new List<Endpoint>
             {
-                new Endpoint("one", "sip@sip.com", "1234","Defence Sol")
+                new ("one", "sip@sip.com", "1234")
             };
 
             _queryHandlerMock
@@ -74,17 +73,12 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
             responseEndpoints.Should().HaveCount(endpoints.Count);
             responseEndpoints[0].DisplayName.Should().Be("one");
         }
-
+        
         [Test]
         public async Task Should_add_endpoint_to_conference()
         {
             var conferenceId = Guid.NewGuid();
             const ConferenceRole conferenceRole = ConferenceRole.Guest;
-            var testEndpoints = new List<Endpoint>
-            {
-                new Endpoint("one", "44564", "1234","Defence Sol", conferenceRole),
-                new Endpoint("two", "867744", "5678", "Defence Bol", conferenceRole)
-            };
 
             var testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -92,7 +86,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
-                .WithEndpoints(testEndpoints)
+                .WithEndpoint("two", "867744", true)
+                .WithEndpoint("one", "44564", true)
                 .Build();
 
             _queryHandlerMock
@@ -122,16 +117,11 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()), Times.Once);
             VerifySupplierUsed(testConference.Supplier, Times.Exactly(1));
         }
-
+        
         [Test]
         public async Task Should_remove_endpoint_from_conference()
         {
             var conferenceId = Guid.NewGuid();
-            var testEndpoints = new List<Endpoint>
-            {
-                new Endpoint("one", "44564", "1234", "Defence Sol"),
-                new Endpoint("two", "867744", "5678", "Defence Bol")
-            };
 
             var testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
@@ -139,7 +129,8 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
-                .WithEndpoints(testEndpoints)
+                .WithEndpoint("two", "867744", true)
+                .WithEndpoint("one", "44564", true)
                 .Build();
 
             _queryHandlerMock
@@ -172,26 +163,19 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()), Times.Once);
             VerifySupplierUsed(testConference.Supplier, Times.Exactly(2));
         }
-
+        
         [Test]
         public async Task Should_update_endpoint_in_conference()
         {
             const string newDisplayName = "new display name";
-            var testEndpoints = new List<Endpoint>
-            {
-                new Endpoint("one", "44564", "1234", "Defence Sol",
-                    ConferenceRole.Guest),
-                new Endpoint("two", "867744", "5678", "Defence Bol",
-                    ConferenceRole.Guest)
-            };
-
             var testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
-                .WithEndpoints(testEndpoints)
+                .WithEndpoint("two", "867744", true)
+                .WithEndpoint("one", "44564", true)
                 .Build();
 
             _queryHandlerMock
@@ -227,25 +211,21 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
                 It.IsAny<IEnumerable<EndpointDto>>(), It.IsAny<VideoApi.Domain.Enums.ConferenceRoomType>(), It.IsAny<VideoApi.Domain.Enums.AudioPlaybackLanguage>()), Times.Once);
             VerifySupplierUsed(testConference.Supplier, Times.Exactly(3));
         }
-
+        
         [Test]
         public async Task should_not_update_supplier_when_endpoint_display_name_is_not_updated()
         {
-            const string defenceAdvocate = "Sol One";
-            var testEndpoints = new List<Endpoint>
-            {
-                new Endpoint("one", "44564", "1234", "Defence Sol"),
-                new Endpoint("two", "867744", "5678", "Defence Bol")
-            };
-
             var testConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
-                .WithEndpoints(testEndpoints)
+                .WithEndpoint("two", "867744", true)
+                .WithEndpoint("one", "44564", true)
                 .Build();
+            
+            var defenceAdvocate = testConference.GetParticipants().First(x => x.UserRole == UserRole.Representative);
 
             _queryHandlerMock
                 .Setup(x => x.Handle<GetConferenceByIdQuery, VideoApi.Domain.Conference>
@@ -263,7 +243,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
 
             var response = await _controller.UpdateEndpointInConference(testConference.Id, "sip@sip.com", new UpdateEndpointRequest
             {
-                DefenceAdvocate = defenceAdvocate
+                ParticipantsLinked = [defenceAdvocate.Username]
             });
 
             response.Should().NotBeNull();
@@ -272,7 +252,7 @@ namespace VideoApi.UnitTests.Controllers.Endpoints
 
             _commandHandlerMock.Verify(x => x.Handle(It.Is<UpdateEndpointCommand>
             (
-                y => y.ConferenceId == testConference.Id && y.SipAddress == "sip@sip.com" && y.DefenceAdvocate == defenceAdvocate
+                y => y.ConferenceId == testConference.Id && y.SipAddress == "sip@sip.com" && y.ParticipantsLinked.Contains(defenceAdvocate.Username)
             )), Times.Once);
 
             _videoPlatformServiceMock.Verify(x => x.UpdateVirtualCourtRoomAsync(testConference.Id,

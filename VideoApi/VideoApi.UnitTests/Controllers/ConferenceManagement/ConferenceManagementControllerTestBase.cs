@@ -18,14 +18,14 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
 {
     public class ConferenceManagementControllerTestBase
     {
-        protected ConferenceManagementController Controller;
-        protected Mock<ILogger<ConferenceManagementController>> MockLogger;
-        protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
-        protected AutoMock Mocker;
-        protected VideoApi.Domain.Conference TestConference;
-        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
         private Mock<IQueryHandler> _queryHandlerMock;
-
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactory;
+        protected ConferenceManagementController Controller;
+        protected AutoMock Mocker;
+        protected Mock<ILogger<ConferenceManagementController>> MockLogger;
+        protected VideoApi.Domain.Conference TestConference;
+        protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
+        
         [SetUp]
         public void Setup()
         {
@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
                 .WithParticipant(UserRole.Representative, "Applicant", "rep1@hmcts.net")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent")
-                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net", "rep1@hmcts.net")
+                .WithEndpoint("Endpoint With DA", $"{Guid.NewGuid():N}@hmcts.net", true)
                 .WithEndpoint("Endpoint Without DA", $"{Guid.NewGuid():N}@hmcts.net")
                 .Build();
             Mocker = AutoMock.GetLoose();
@@ -54,7 +54,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             
             Controller = Mocker.Create<ConferenceManagementController>();
         }
-
+        
         protected void UpdateConferenceQueryMock()
         {
             Mocker.Mock<IQueryHandler>()
@@ -68,12 +68,12 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             TestConference.AddParticipant(new VideoApi.Domain.Participant(Guid.NewGuid(), "contactEmail", 
                 "displayName", "userName") { HearingRole = "Witness", UserRole = UserRole.Individual, State = ParticipantState.Available });
         }
-
+        
         protected void AddTelephoneParticipantToTestConference()
         {
             TestConference.AddTelephoneParticipant(new TelephoneParticipant(Guid.NewGuid(), "Anonymous", TestConference));
         }
-
+        
         protected void AddQuicklinkToTestConference()
         {
             TestConference.AddParticipant(new VideoApi.Domain.QuickLinkParticipant("QuciklinkName", UserRole.QuickLinkParticipant) {  State = ParticipantState.Available});

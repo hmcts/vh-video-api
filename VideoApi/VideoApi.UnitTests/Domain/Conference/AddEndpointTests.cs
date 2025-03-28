@@ -12,9 +12,16 @@ namespace VideoApi.UnitTests.Domain.Conference
         [Test]
         public void should_add_endpoint()
         {
-            var conference = new ConferenceBuilder().Build();
+            var conference = new ConferenceBuilder()
+                .WithParticipants(2)
+                .Build();
+            var participants = conference.GetParticipants();
             var beforeCount = conference.GetEndpoints().Count;
-            var endpoint = new Endpoint("Display", "test@sip.com", "1234", "Defence Sol");
+            var endpoint = new Endpoint("Display", "test@sip.com", "1234");
+            
+            endpoint.AddParticipantLink(participants[0]);
+            endpoint.AddParticipantLink(participants[1]);
+            
             conference.AddEndpoint(endpoint);
             var afterCount = conference.GetEndpoints().Count;
             afterCount.Should().BeGreaterThan(beforeCount);
@@ -23,14 +30,14 @@ namespace VideoApi.UnitTests.Domain.Conference
             endpoint.DisplayName.Should().Be("Display");
             endpoint.SipAddress.Should().Be("test@sip.com");
             endpoint.Pin.Should().Be("1234");
-            endpoint.DefenceAdvocate.Should().Be("Defence Sol");
+            endpoint.ParticipantsLinked.Should().BeEquivalentTo(participants);
         }
-
+        
         [Test]
         public void should_not_add_same_endpoint_twice()
         {
             var conference = new ConferenceBuilder().Build();
-            var endpoint = new Endpoint("Display", "test@sip.com", "1234", "Defence Sol");
+            var endpoint = new Endpoint("Display", "test@sip.com", "1234");
             conference.AddEndpoint(endpoint);
             
             Action action = () => conference.AddEndpoint(endpoint);

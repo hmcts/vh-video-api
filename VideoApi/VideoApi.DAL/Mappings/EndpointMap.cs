@@ -19,6 +19,9 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.DefenceAdvocate).HasMaxLength(450);
             builder.Property(x => x.CurrentRoom);
             builder.Property(x => x.CurrentConsultationRoomId).IsRequired(false);
+            builder.HasMany(x => x.ParticipantsLinked)
+                .WithOne(x => x.Endpoint)
+                .HasForeignKey(participant => participant.EndpointId);
         }
     }
 }

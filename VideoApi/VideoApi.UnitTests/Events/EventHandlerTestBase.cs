@@ -13,17 +13,17 @@ namespace VideoApi.UnitTests.Events
 {
     public abstract class EventHandlerTestBase<TSystemUnderTest>
     {
-        protected TSystemUnderTest _sut;
         protected AutoMock _mocker;
-
+        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
+        protected TSystemUnderTest _sut;
+        
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected Mock<IQueryHandler> QueryHandlerMock;
-
+        
         protected Conference TestConference;
         
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
-        private Mock<ISupplierPlatformServiceFactory> _supplierPlatformServiceFactoryMock;
-
+        
         [SetUp]
         public void Setup()
         {
@@ -34,13 +34,13 @@ namespace VideoApi.UnitTests.Events
             CommandHandlerMock = _mocker.Mock<ICommandHandler>();
 
             TestConference = new ConferenceBuilder()
-                .WithEndpoint("Endpoint1", "Endpoint1234@sip.com", "da1@test.com")
-                .WithEndpoint("Endpoint2", "Endpoint2345@sip.com")
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant")
                 .WithParticipant(UserRole.Representative, "Applicant")
                 .WithParticipant(UserRole.Individual, "Respondent")
                 .WithParticipant(UserRole.Representative, "Respondent", "DA1@test.com")
+                .WithEndpointAndMultipleParticipants("Endpoint1", "Endpoint1234@sip.com", 2)
+                .WithEndpoint("Endpoint2", "Endpoint2345@sip.com")
                 .WithLinkedParticipant(UserRole.Individual, "Applicant")
                 .WithInterpreterRoom()
                 .WithTelephoneParticipant("+44123456789")

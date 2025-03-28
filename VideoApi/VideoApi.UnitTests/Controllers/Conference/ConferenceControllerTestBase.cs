@@ -35,7 +35,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected Mock<IBookingService> BookingServiceMock;
         protected Mock<ICommandHandler> CommandHandlerMock;
         protected ConferenceController Controller;
-
+        
         protected MeetingRoom MeetingRoom;
         protected AutoMock Mocker;
         protected Mock<ILogger<ConferenceController>> MockLogger;
@@ -48,7 +48,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
         protected VideoApi.Domain.Conference TestConference2;
         protected VideoApi.Domain.Conference TestConference3;
         protected List<VideoApi.Domain.Conference> TestConferences;
-        protected List<Endpoint> TestEndpoints;
         protected Mock<IVideoPlatformService> VideoPlatformServiceMock;
         
         protected VodafoneConfiguration VodafoneConfig = new()
@@ -74,13 +73,6 @@ namespace VideoApi.UnitTests.Controllers.Conference
             AzureStorageServiceMock = Mocker.Mock<IAzureStorageService>();
             PollyRetryServiceMock = Mocker.Mock<IPollyRetryService>();
             BookingServiceMock = Mocker.Mock<IBookingService>();
-            
-            TestEndpoints = new List<Endpoint>
-            {
-                new Endpoint("one", "44564", "1234", "Defence Sol"),
-                new Endpoint("two", "867744", "5678", "Defence Sol")
-            };
-            
             TestConference = new ConferenceBuilder()
                 .WithParticipant(UserRole.Judge, null)
                 .WithParticipant(UserRole.Individual, "Applicant", null, null, RoomType.ConsultationRoom)
@@ -92,7 +84,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
-                .WithEndpoints(TestEndpoints)
+                .WithEndpoint("one", "44564", withLinkedParticipant: true )
+                .WithEndpoint("two", "867744")
                 .Build();
             
             TestConference2 = new ConferenceBuilder()
@@ -104,7 +97,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
-                .WithEndpoints(TestEndpoints)
+                .WithEndpoint("one", "44564", withLinkedParticipant: true )
+                .WithEndpoint("two", "867744")
                 .Build();
             
             TestConference3 = new ConferenceBuilder()
@@ -116,7 +110,8 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow.AddDays(3))
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
                 .WithConferenceStatus(ConferenceState.InSession, DateTime.UtcNow)
-                .WithEndpoints(TestEndpoints)
+                .WithEndpoint("one", "44564", withLinkedParticipant: true )
+                .WithEndpoint("two", "867744")
                 .Build();
             TestConferences = new List<VideoApi.Domain.Conference>();
             TestConferences.Add(TestConference);
@@ -141,7 +136,7 @@ namespace VideoApi.UnitTests.Controllers.Conference
                 .Setup(x =>
                     x.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
                         It.IsAny<GetEndpointsForConferenceQuery>()))
-                .ReturnsAsync(TestEndpoints);
+                .ReturnsAsync(TestConference.Endpoints);
             
             QueryHandlerMock
                 .Setup(x => x.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<VideoApi.Domain.Conference>>(

@@ -58,8 +58,7 @@ namespace Testing.Common.Assertions
             }
         }
 
-        public static void ForConferenceEndpoints(ConferenceDetailsResponse conference,
-            ConferenceRole conferenceRole = ConferenceRole.Host)
+        public static void ForConferenceEndpoints(ConferenceDetailsResponse conference, ConferenceRole conferenceRole = ConferenceRole.Host)
         {
             conference.Endpoints.Should().NotBeNullOrEmpty();
             foreach (var endpoint in conference.Endpoints)
@@ -69,6 +68,7 @@ namespace Testing.Common.Assertions
                 endpoint.SipAddress.Should().NotBeEmpty();
                 endpoint.Pin.Should().NotBeEmpty();
                 endpoint.ConferenceRole.Should().Be(conferenceRole);
+                endpoint.SipAddress.Should().NotBeEmpty();
             }
         }
     }

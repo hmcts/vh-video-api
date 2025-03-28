@@ -83,7 +83,7 @@ namespace VideoApi.IntegrationTests.Hooks
             context.Config.Services =
                 Options.Create(_configRoot.GetSection("Services").Get<ServicesConfiguration>()).Value;
         }
-
+        
         private static void RegisterVodafoneSettings(TestContext context)
         {
             context.Config.VodafoneConfiguration = Options
@@ -151,8 +151,7 @@ namespace VideoApi.IntegrationTests.Hooks
             services.AddScoped<IAudioPlatformService, AudioPlatformServiceStub>();
             services.AddScoped<IConsultationService, ConsultationServiceStub>();
             services.AddSingleton<IFeatureToggles, FeatureTogglesStub>();
-            services.AddScoped<ISupplierPlatformServiceFactory>(_ =>
-                new TestSupplierPlatformServiceFactory(vodafoneConfigOptions.Value));
+            services.AddScoped<ISupplierPlatformServiceFactory>(_ => new TestSupplierPlatformServiceFactory(vodafoneConfigOptions.Value));
         }
         
         private static void RegisterAzuriteStorageService(TestContext context, IServiceCollection services)

@@ -28,9 +28,11 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.RoomParticipants)
                 .Excluding(x => x.CreatedAt)
                 .Excluding(x => x.UpdatedAt)
-                .Excluding(x => x.HearingRole));
+                .Excluding(x => x.HearingRole)
+                .Excluding(x => x.Endpoint)
+                .Excluding(x => x.EndpointId));
         }
-
+        
         [Test]
         public void should_map_participant_to_response_wit_interpreter_room()
         {
@@ -55,7 +57,9 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.RoomParticipants)
                 .Excluding(x => x.CreatedAt)
                 .Excluding(x => x.UpdatedAt)
-                .Excluding(x => x.HearingRole));
+                .Excluding(x => x.HearingRole)
+                .Excluding(x => x.Endpoint)
+                .Excluding(x => x.EndpointId));
 
             response.CurrentInterpreterRoom.Should().NotBeNull();
             response.CurrentInterpreterRoom.Id.Should().Be(interpreterRoom.Id);
