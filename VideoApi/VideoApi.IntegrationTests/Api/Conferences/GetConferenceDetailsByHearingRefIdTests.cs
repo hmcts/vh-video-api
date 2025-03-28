@@ -37,7 +37,7 @@ public class GetConferenceDetailsByHearingRefIdTests : ApiTest
         var conferenceResponse = await ApiClientResponse.GetResponses<List<ConferenceDetailsResponse>>(result.Content);
         conferenceResponse.Count.Should().Be(1);
     }
-    
+
     [TestCase("default guid")]
     [TestCase("null parameter")]
     [TestCase("empty list")]
@@ -63,7 +63,7 @@ public class GetConferenceDetailsByHearingRefIdTests : ApiTest
         result.IsSuccessStatusCode.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
-    
+
     [Test]
     public async Task should_get_not_found_when_querying_conferences_details_by_HearingRefIds()
     {
