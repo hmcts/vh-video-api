@@ -23,7 +23,7 @@ public interface IBookingService
     public Task<bool> BookMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
         IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
         AudioPlaybackLanguage audioPlaybackLanguage, Supplier supplier = Supplier.Vodafone);
-    
+
     public Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl);
 }
 
@@ -76,7 +76,7 @@ public class BookingService(
         
         return true;
     }
-    
+
     public async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
     {
         var existingConference = await queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
@@ -115,22 +115,29 @@ public class BookingService(
         
         return createConferenceCommand.NewConferenceId;
     }
-    
+
     private static List<Endpoint> GetEndpoints(BookNewConferenceRequest request, List<Participant> participants)
     {
         var endpoints = request.Endpoints.Select(endpointRequest =>
         {
-            var linkedParticipants = endpointRequest.ParticipantsLinked?.Any() == true
-                ? participants.Where(p => endpointRequest.ParticipantsLinked.Contains(p.ContactEmail)).ToList()
-                : new List<Participant>();
+            // Get linked participants
+            var linkedParticipants = endpointRequest.ParticipantsLinked?
+                .Select(x =>
+                    participants.SingleOrDefault(p =>
+                        String.Equals(p.Username, x, StringComparison.CurrentCultureIgnoreCase)))
+                .Where(x => x != null)
+                .ToList();
             
             var endpoint = new Endpoint(endpointRequest.DisplayName, endpointRequest.SipAddress, endpointRequest.Pin, endpointRequest.ConferenceRole.MapToDomainEnum());
-            linkedParticipants.ForEach(endpoint.AddParticipantLink);
+            
+            if(linkedParticipants?.Count > 0)
+                linkedParticipants.ForEach(endpoint.AddParticipantLink);
+            
             return endpoint;
         });
         return endpoints.ToList();
     }
-    
+
     private async Task<string> CreateUniqueTelephoneId()
     {
         var telephoneId = ConferenceHelper.GenerateGlobalRareNumber();

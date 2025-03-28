@@ -31,13 +31,13 @@ namespace VideoApi.IntegrationTests.Steps
         private readonly CommonSteps _commonSteps;
         private readonly TestContext _context;
         private ConferenceDetailsResponse _conferenceDetails;
-        
+
         public ConferenceBaseSteps(TestContext context, CommonSteps commonSteps)
         {
             _context = context;
             _commonSteps = commonSteps;
         }
-        
+
         [Given(@"I have a get conferences for an individual by username request with a (.*) username")]
         [Given(@"I have a get conferences for an individual by username request with an (.*) username")]
         public void GivenIHaveAGetDetailsForAConferenceRequestByUsernameWithAValidUsername(Scenario scenario)
@@ -63,21 +63,21 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = GetConferencesTodayForIndividual(username);
             _context.HttpMethod = HttpMethod.Get;
         }
-        
+
         [Given(@"I have a valid close conference request")]
         public void GivenIHaveACloseConferenceRequest()
         {
             _context.Uri = CloseConference(_context.Test.Conference.Id);
             _context.HttpMethod = HttpMethod.Put;
         }
-        
+
         [Given(@"I have a close conference request for a nonexistent conference id")]
         public void GivenIHaveACloseConferenceRequestForANonexistentConferenceId()
         {
             _context.Uri = CloseConference(Guid.NewGuid());
             _context.HttpMethod = HttpMethod.Put;
         }
-        
+
         [Given(@"I have an invalid close conference request")]
         public void GivenIHaveAnInvalidCloseConferenceRequest()
         {
@@ -86,7 +86,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = uri.Replace(guid.ToString(), "nonexistent");
             _context.HttpMethod = HttpMethod.Put;
         }
-        
+
         [Given(@"I have a get details for a conference request with a (.*) conference id")]
         [Given(@"I have a get details for a conference request with an (.*) conference id")]
         public void GivenIHaveAGetConferenceDetailsRequest(Scenario scenario)
@@ -112,7 +112,7 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = GetConferenceDetailsById(conferenceId);
             _context.HttpMethod = HttpMethod.Get;
         }
-        
+
         [Given(@"I have a get details for a conference request with a (.*) hearing ref id")]
         [Given(@"I have a get details for a conference request with an (.*) hearing ref id")]
         public void GivenIHaveAGetConferenceDetailsByHearingRefIdRequest(Scenario scenario)
@@ -141,7 +141,7 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a (.*) book a new conference request")]
         [Given(@"I have an (.*) book a new conference request")]
         public void GivenIHaveABookANewConferenceRequest(Scenario scenario)
@@ -166,7 +166,7 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a valid book a new conference request with linked participants")]
         public void GivenIHaveABookANewConferenceRequestWithLinkedParticipants()
         {
@@ -181,7 +181,7 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a valid book a new conference request with jvs endpoints")]
         public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpoints()
         {
@@ -201,13 +201,14 @@ namespace VideoApi.IntegrationTests.Steps
                     }
                 })
                 .Build();
-            
+            request.Endpoints[0].ParticipantsLinked = new List<string> { request.Participants[0].Username, request.Participants[1].Username };
+            request.Endpoints[1].ParticipantsLinked = new List<string> { request.Participants[2].Username, request.Participants[3].Username };
             _context.Uri = BookNewConference;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a valid book a new conference request with jvs endpoints for screening")]
         public void GivenIHaveAValidBookANewConferenceRequestWithJvsEndpointsForScreening()
         {
@@ -229,12 +230,14 @@ namespace VideoApi.IntegrationTests.Steps
                 .WithConferenceRoomType(ConferenceRoomType.VA)
                 .Build();
             
+            request.Endpoints[0].ParticipantsLinked = new List<string> { request.Participants[0].Username, request.Participants[1].Username };
+            
             _context.Uri = BookNewConference;
             _context.HttpMethod = HttpMethod.Post;
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Given(@"I have a (.*) remove conference request")]
         [Given(@"I have an (.*) remove conference request")]
         public void GivenIHaveAValidRemoveHearingRequest(Scenario scenario)
@@ -260,14 +263,14 @@ namespace VideoApi.IntegrationTests.Steps
             _context.Uri = RemoveConference(conferenceId);
             _context.HttpMethod = HttpMethod.Delete;
         }
-        
+
         [Given(@"I have a valid get expired open conferences by scheduled date request")]
         public void GivenIHaveAValidGetOpenConferencesByScheduledDateRequest()
         {
             _context.Uri = GetExpiredOpenConferences;
             _context.HttpMethod = HttpMethod.Get;
         }
-        
+
         [Then(@"the conference details should be retrieved")]
         public async Task ThenAConferenceDetailsShouldBeRetrieved()
         {
@@ -276,7 +279,7 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
         }
-        
+
         [Then(@"the conference should be retrieved")]
         public async Task ThenAConferenceShouldBeRetrieved()
         {
@@ -285,7 +288,7 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceCoreResponse.ForConference(_conferenceDetails);
         }
-        
+
         [Then(@"the conferences should be retrieved")]
         public async Task ThenAConferencesShouldBeRetrieved()
         {
@@ -295,7 +298,7 @@ namespace VideoApi.IntegrationTests.Steps
             _conferenceDetails.Should().NotBeNull();
             AssertConferenceCoreResponse.ForConference(_conferenceDetails);
         }
-        
+
         [Then(@"the conference details should be retrieved with jvs endpoints")]
         public async Task ThenAConferenceDetailsShouldBeRetrievedWithJvsEndpoints()
         {
@@ -305,7 +308,7 @@ namespace VideoApi.IntegrationTests.Steps
             AssertConferenceDetailsResponse.ForConference(_conferenceDetails);
             AssertConferenceDetailsResponse.ForConferenceEndpoints(_conferenceDetails);
         }
-        
+
         [Then("the conference should be retrieved with jvs endpoints for screening")]
         public async Task ThenAConferenceShouldBeRetrievedWithJvsEndpointsForScreening()
         {
@@ -314,7 +317,7 @@ namespace VideoApi.IntegrationTests.Steps
             AssertConferenceCoreResponse.ForConference(_conferenceDetails, ConferenceRoomType.VA);
             AssertConferenceDetailsResponse.ForConferenceEndpoints(_conferenceDetails, ConferenceRole.Guest);
         }
-        
+
         [Then(@"the conference should be closed")]
         public async Task ThenTheConferenceShouldBeClosed()
         {
@@ -325,7 +328,7 @@ namespace VideoApi.IntegrationTests.Steps
                 await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.CurrentStatus.Should().Be((ConferenceState)Domain.Enums.ConferenceState.Closed);
         }
-        
+
         [Then(@"the conference data should be anonymised")]
         public async Task ThenTheConferenceDataShouldBeAnonymised()
         {
@@ -346,7 +349,7 @@ namespace VideoApi.IntegrationTests.Steps
             updatedParticipant.Username.Should().NotBe(representative.Username);
             updatedParticipant.ContactEmail.Should().NotBe(representative.ContactEmail);
         }
-        
+
         [Then(@"the summary of conference details should be retrieved for individuals")]
         public async Task ThenTheSummaryOfConferenceDetailsShouldBeRetrievedForIndividuals()
         {
@@ -359,7 +362,7 @@ namespace VideoApi.IntegrationTests.Steps
                 AssertConferenceCoreResponse.ForConference(conference);
             }
         }
-        
+
         [Then(@"the conference should be removed")]
         public async Task ThenTheHearingShouldBeRemoved()
         {
@@ -371,7 +374,7 @@ namespace VideoApi.IntegrationTests.Steps
             
             removedConference.Should().BeNull();
         }
-        
+
         [Then(@"the conference should be updated")]
         public async Task ThenTheHearingShouldBeUpdated()
         {
@@ -384,7 +387,7 @@ namespace VideoApi.IntegrationTests.Steps
             updatedConference.Should().NotBeNull();
             updatedConference.AudioRecordingRequired.Should().BeTrue();
         }
-        
+
         [Then(@"an empty list is retrieved")]
         public async Task ThenAnEmptyListIsRetrieved()
         {
@@ -392,7 +395,7 @@ namespace VideoApi.IntegrationTests.Steps
                 await ApiClientResponse.GetResponses<List<ExpiredConferencesResponse>>(_context.Response.Content);
             conferences.Should().BeEmpty();
         }
-        
+
         [Then(@"a list without closed conferences is retrieved")]
         public async Task ThenAListWithoutClosedConferencesIsRetrieved()
         {
@@ -401,7 +404,7 @@ namespace VideoApi.IntegrationTests.Steps
             conferences.Count.Should().BeGreaterThan(0);
             conferences.Any(x => x.Id.Equals(_context.Test.YesterdayClosedConference.Id)).Should().BeFalse();
         }
-        
+
         [When(@"I save the conference details")]
         public async Task WhenISaveTheConferenceDetails()
         {
@@ -409,7 +412,7 @@ namespace VideoApi.IntegrationTests.Steps
                 await ApiClientResponse.GetResponses<ConferenceDetailsResponse>(_context.Response.Content);
             _conferenceDetails.Should().NotBeNull();
         }
-        
+
         [Then(@"the response should be the same")]
         public async Task ThenTheResponseShouldBeTheSame()
         {
@@ -417,7 +420,7 @@ namespace VideoApi.IntegrationTests.Steps
             conference.Should().NotBeNull();
             conference.Should().BeEquivalentTo(_conferenceDetails);
         }
-        
+
         [Given(@"I have a (.*) update a conference request")]
         public void GivenIHaveAValidUpdateAConferenceRequest(Scenario scenario)
         {
@@ -463,7 +466,7 @@ namespace VideoApi.IntegrationTests.Steps
             var jsonBody = ApiRequestHelper.Serialise(request);
             _context.HttpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
-        
+
         [Then(@"I get (.*) hearing\(s\)")]
         public async Task ThenIGetXNumberOfHearings(int number)
         {
@@ -471,21 +474,21 @@ namespace VideoApi.IntegrationTests.Steps
                 await ApiClientResponse.GetResponses<List<ConferenceCoreResponse>>(_context.Response.Content);
             conferences.Count.Should().Be(number);
         }
-        
+
         [Given(@"I have a request to anonymise the data")]
         public void GivenIHaveARequestToAnonymiseTheData()
         {
             _context.Uri = AnonymiseConferences;
             _context.HttpMethod = HttpMethod.Patch;
         }
-        
+
         [Given(@"I have a request to remove heartbeats for conferences")]
         public void GivenIHaveARequestToRemoveHeartbeatsForConferences()
         {
             _context.Uri = RemoveHeartbeatsForconferences;
             _context.HttpMethod = HttpMethod.Delete;
         }
-        
+
         [Then(@"the heartbeats should not be deleted")]
         public async Task ThenTheHeartbeatsShouldNotBeDeleted()
         {

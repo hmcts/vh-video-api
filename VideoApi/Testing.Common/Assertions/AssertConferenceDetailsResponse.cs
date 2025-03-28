@@ -10,7 +10,7 @@ namespace Testing.Common.Assertions
         protected AssertConferenceDetailsResponse()
         {
         }
-        
+
         public static void ForConference(ConferenceDetailsResponse conference)
         {
             conference.Should().NotBeNull();
@@ -57,7 +57,7 @@ namespace Testing.Common.Assertions
                 endpoint.Pin.Should().NotBeNullOrWhiteSpace();
             }
         }
-        
+
         public static void ForConferenceEndpoints(ConferenceDetailsResponse conference, ConferenceRole conferenceRole = ConferenceRole.Host)
         {
             conference.Endpoints.Should().NotBeNullOrEmpty();
@@ -68,6 +68,7 @@ namespace Testing.Common.Assertions
                 endpoint.SipAddress.Should().NotBeEmpty();
                 endpoint.Pin.Should().NotBeEmpty();
                 endpoint.ConferenceRole.Should().Be(conferenceRole);
+                endpoint.SipAddress.Should().NotBeEmpty();
             }
         }
     }
