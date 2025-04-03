@@ -110,7 +110,6 @@ stages:
   - stage: Dock
     displayName: Docker Build & Push Image
     variables:
-      - group: aks-cluster-info
       - template: variables/dev.yaml
       - template: variables/shared.yaml
         parameters:
