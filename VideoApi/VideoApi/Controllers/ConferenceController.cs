@@ -66,9 +66,7 @@ public class ConferenceController(
         var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
         logger.LogDebug("Conference Created");
         
-        var conferenceEndpoints =
-            await queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(
-                new GetEndpointsForConferenceQuery(conferenceId));
+        var conferenceEndpoints = await queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(new GetEndpointsForConferenceQuery(conferenceId));
         var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
         var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,
@@ -90,8 +88,7 @@ public class ConferenceController(
         var queriedConference =
             await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
         
-        var supplierPlatformService =
-            supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)request.Supplier);
+        var supplierPlatformService = supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)request.Supplier);
         var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
         var response = ConferenceToDetailsResponseMapper.Map(queriedConference, supplierConfiguration);
         

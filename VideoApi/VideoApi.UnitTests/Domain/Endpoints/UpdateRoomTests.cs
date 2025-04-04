@@ -12,7 +12,7 @@ namespace VideoApi.UnitTests.Domain.Endpoints
         [TestCase(null)]
         public void should_update_room(RoomType? newRoom)
         {
-            var endpoint = new Endpoint("old name", "123@sip.com", "1234", "defence@sol.com");
+            var endpoint = new Endpoint("old name", "123@sip.com", "1234");
             
             endpoint.UpdateCurrentRoom(newRoom);
 

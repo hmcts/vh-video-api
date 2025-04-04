@@ -28,17 +28,8 @@ namespace VideoApi.DAL.Commands
             
             var participant = conference.GetParticipants().Single(x => x.Id == command.ParticipantId);
             
-            //Find any endpoints linked to this participant
-            var endpoints = conference.GetEndpoints()?
-                .Where(x => x.DefenceAdvocate == participant.Username)
-                .ToList();
-            
             //Update username and endpoint defence advocates with that username
             participant.UpdateUsername(command.Username);
-            
-            if(endpoints != null && endpoints.Count != 0)
-                foreach (var endpoint in endpoints)
-                    endpoint.AssignDefenceAdvocate(command.Username);
             
             await context.SaveChangesAsync();
         }

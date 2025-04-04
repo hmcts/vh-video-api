@@ -63,6 +63,8 @@ public class ConferenceCoreResponseMapperTests
             .Excluding(x => x.CreatedAt)
             .Excluding(x => x.HearingRole)
             .Excluding(x => x.Username)
+            .Excluding(x => x.Endpoint)
+            .Excluding(x => x.EndpointId)
         );
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace VideoApi.Contract.Requests
@@ -20,10 +21,10 @@ namespace VideoApi.Contract.Requests
         public string Pin { get; set; }
         
         /// <summary>
-        /// Username of a defence advocate
+        /// Usernames of participants linked to Endpoint
         /// </summary>
-        public string DefenceAdvocate { get; set; }
-
+        public List<string> ParticipantsLinked { get; set; }
+        
         /// <summary>
         /// Role of the endpoint
         /// </summary>

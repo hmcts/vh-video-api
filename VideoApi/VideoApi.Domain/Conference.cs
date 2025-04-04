@@ -66,7 +66,7 @@ namespace VideoApi.Domain
         public Supplier Supplier { get; private set; }
         public ConferenceRoomType ConferenceRoomType { get; private set; }
         public AudioPlaybackLanguage AudioPlaybackLanguage { get; private set; }
-
+        
         /// <summary>
         /// Extracts the filename prefix from the ingest url - the filename portion before the datetime stamp is appended
         /// by wowza
@@ -83,7 +83,7 @@ namespace VideoApi.Domain
                 return filenamePrefix;
             }
         }
-
+        
         public void UpdateMeetingRoom(string adminUri, string judgeUri, string participantUri, string pexipNode, string telephoneConferenceId)
         {
             telephoneConferenceId ??= MeetingRoom?.TelephoneConferenceId;
@@ -142,8 +142,14 @@ namespace VideoApi.Domain
             {
                 throw new DomainRuleException(nameof(endpoint), "Endpoint does not exist in conference");
             }
-
             var existingEndpoint = Endpoints.Single(x => x.SipAddress == endpoint.SipAddress);
+            foreach (var linkedParticipant in existingEndpoint.ParticipantsLinked)
+            {
+                var participant = Participants.Single(x => x.Id == linkedParticipant.Id);
+                participant.Endpoint = null;
+                participant.EndpointId = null;
+            }
+            
             Endpoints.Remove(existingEndpoint);
         }
         
