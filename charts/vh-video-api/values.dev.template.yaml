@@ -3,5 +3,3 @@ java:
   image: '${IMAGE_NAME}'
   ingressHost: ${SERVICE_FQDN}
   releaseNameOverride: ${RELEASE_NAME}
-  environment:
-    VODAFONECONFIGURATION__CALLBACKURI: https://vh-video-web-pr-2402.dev.platform.hmcts.net/callback

@@ -57,8 +57,7 @@ namespace VideoApi.Domain
 
         public void AddParticipantLink(ParticipantBase participant)
         {
-            if(participant == null)
-                throw new ArgumentNullException(nameof(participant));
+            ArgumentNullException.ThrowIfNull(participant);
             
             participant.Endpoint = this;
             participant.EndpointId = Id;
