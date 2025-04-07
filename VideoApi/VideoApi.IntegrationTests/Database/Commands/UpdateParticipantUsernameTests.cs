@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using VideoApi.DAL;
@@ -12,10 +11,10 @@ namespace VideoApi.IntegrationTests.Database.Commands
 {
     public class UpdateParticipantUsernameTests : DatabaseTestsBase
     {
-        private UpdateParticipantUsernameCommandHandler _handler;
         private VideoApiDbContext _context;
+        private UpdateParticipantUsernameCommandHandler _handler;
         private Guid _newConferenceId;
-
+        
         [SetUp]
         public void Setup()
         {
@@ -23,7 +22,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             _handler = new UpdateParticipantUsernameCommandHandler(_context);
             _newConferenceId = Guid.Empty;
         }
-
+        
         [Test]
         public async Task Should_throw_participant_not_found_exception_when_participant_does_not_exist()
         {
@@ -35,7 +34,7 @@ namespace VideoApi.IntegrationTests.Database.Commands
             var command = new UpdateParticipantUsernameCommand(participantId, newUsername);
             Assert.ThrowsAsync<ParticipantNotFoundException>(() => _handler.Handle(command));
         }
-
+        
         [Test]
         public async Task Should_update_participant_username_and_any_linked_endpoints()
         {
@@ -60,11 +59,8 @@ namespace VideoApi.IntegrationTests.Database.Commands
             
             updatedParticipant.Username.Should().NotBe(oldUsername);
             updatedParticipant.Username.Should().Be(newUsername);
-            
-            conference.Endpoints[0].DefenceAdvocate.Should().NotBe(oldUsername);
-            conference.Endpoints[0].DefenceAdvocate.Should().Be(newUsername);
         }
-
+        
         [TearDown]
         public async Task TearDown()
         {

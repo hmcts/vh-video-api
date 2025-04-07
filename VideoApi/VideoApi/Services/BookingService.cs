@@ -23,7 +23,7 @@ public interface IBookingService
     public Task<bool> BookMeetingRoomAsync(Guid conferenceId, bool audioRecordingRequired, string ingestUrl,
         IEnumerable<EndpointDto> endpoints, ConferenceRoomType roomType,
         AudioPlaybackLanguage audioPlaybackLanguage, Supplier supplier = Supplier.Vodafone);
-    
+
     public Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl);
 }
 
@@ -59,7 +59,7 @@ public class BookingService(
         }
         catch (DoubleBookingException ex)
         {
-            logger.LogError(ex, "Room already booked for conference {conferenceId}", conferenceId);
+            logger.LogError(ex, "Room already booked for conference {ConferenceId}", conferenceId);
             
             meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
         }
@@ -76,7 +76,7 @@ public class BookingService(
         
         return true;
     }
-    
+
     public async Task<Guid> CreateConferenceAsync(BookNewConferenceRequest request, string ingestUrl)
     {
         var existingConference = await queryHandler.Handle<CheckConferenceOpenQuery, Conference>(
@@ -90,11 +90,8 @@ public class BookingService(
                     x.UserRole.MapToDomainEnum(), x.HearingRole, x.ContactEmail))
             .ToList();
         
-        var endpoints = request.Endpoints
-            .Select(x => new Endpoint(x.DisplayName, x.SipAddress, x.Pin, x.DefenceAdvocate, 
-                (ConferenceRole)x.ConferenceRole))
-            .ToList();
-        
+        var endpoints = GetEndpoints(request, participants);
+
         var linkedParticipants = request.Participants
             .SelectMany(x => x.LinkedParticipants)
             .Select(x => new LinkedParticipantDto
@@ -118,7 +115,29 @@ public class BookingService(
         
         return createConferenceCommand.NewConferenceId;
     }
-    
+
+    private static List<Endpoint> GetEndpoints(BookNewConferenceRequest request, List<Participant> participants)
+    {
+        var endpoints = request.Endpoints.Select(endpointRequest =>
+        {
+            // Get linked participants
+            var linkedParticipants = endpointRequest.ParticipantsLinked?
+                .Select(x =>
+                    participants.SingleOrDefault(p =>
+                        String.Equals(p.Username, x, StringComparison.CurrentCultureIgnoreCase)))
+                .Where(x => x != null)
+                .ToList();
+            
+            var endpoint = new Endpoint(endpointRequest.DisplayName, endpointRequest.SipAddress, endpointRequest.Pin, endpointRequest.ConferenceRole.MapToDomainEnum());
+            
+            if(linkedParticipants?.Count > 0)
+                linkedParticipants.ForEach(endpoint.AddParticipantLink);
+            
+            return endpoint;
+        });
+        return endpoints.ToList();
+    }
+
     private async Task<string> CreateUniqueTelephoneId()
     {
         var telephoneId = ConferenceHelper.GenerateGlobalRareNumber();

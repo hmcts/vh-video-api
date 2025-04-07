@@ -79,7 +79,8 @@ namespace VideoApi.UnitTests.Mappings
                 .Excluding(x => x.UpdatedAt)
                 .Excluding(x => x.CreatedAt)
                 .Excluding(x => x.HearingRole)
-                .Excluding(x => x.HearingRole)
+                .Excluding(x => x.Endpoint)
+                .Excluding(x => x.EndpointId)
             );
             
             var telephoneParticipants = conference.GetTelephoneParticipants();

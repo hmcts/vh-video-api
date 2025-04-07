@@ -8,13 +8,12 @@ namespace Testing.Common.Helper.Builders.Domain
 {
     public class ParticipantBuilder
     {
-        private readonly BuilderSettings _builderSettings;
-
         private static readonly Faker Faker = new();
-
-        private UserRole _userRole;
+        private readonly BuilderSettings _builderSettings;
         private string _hearingRole;
-
+        
+        private UserRole _userRole;
+        
         public ParticipantBuilder(bool ignoreId = false)
         {
             _userRole = UserRole.Individual;
@@ -26,19 +25,19 @@ namespace Testing.Common.Helper.Builders.Domain
             _builderSettings.DisablePropertyNamingFor<ParticipantStatus, long>(x => x.Id);
             _builderSettings.DisablePropertyNamingFor<ConferenceStatus, long>(x => x.Id);
         }
-
+        
         public ParticipantBuilder WithUserRole(UserRole userRole)
         {
             _userRole = userRole;
             return this;
         }
-
+        
         public ParticipantBuilder WithHearingRole(string hearingRole)
         {
             _hearingRole = hearingRole;
             return this;
         }
-
+        
         public static  string DetermineHearingRole(UserRole role, string hearingRole)
         {
             return role switch
@@ -48,7 +47,7 @@ namespace Testing.Common.Helper.Builders.Domain
                 _ => hearingRole
             };
         }
-
+        
         public Participant Build()
         {
             _hearingRole ??= DetermineHearingRole(_userRole, _hearingRole);
@@ -58,6 +57,7 @@ namespace Testing.Common.Helper.Builders.Domain
                     new Participant(Guid.NewGuid(), name, $"{Faker.Random.Number(0, 99999999)}@hmcts.net", _userRole,
                         _hearingRole, $"{Faker.Random.Number(0, 99999999)}@hmcts.net"))
                 .With(x => x.CurrentRoom = null)
+                .With(x => x.EndpointId = null)
                 .Build();
 
             return participant;

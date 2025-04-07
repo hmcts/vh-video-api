@@ -1,5 +1,6 @@
 using System;
-using VideoApi.Domain.Ddd;
+using System.Collections.Generic;
+using System.Linq;
 using VideoApi.Domain.Enums;
 using VideoApi.Domain.Validations;
 
@@ -7,16 +8,6 @@ namespace VideoApi.Domain
 {
     public class Endpoint : TrackableEntity<Guid>
     {
-        public string DisplayName { get; private set; }
-        public string SipAddress { get; }
-        public string Pin { get; }
-        public EndpointState State { get; private set; }
-        public string DefenceAdvocate { get; private set; }
-        public RoomType? CurrentRoom { get; private set; }
-        public long? CurrentConsultationRoomId { get; set; }
-        public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
-        public ConferenceRole ConferenceRole { get; private set; }
-
         private Endpoint()
         {
             Id = Guid.NewGuid();
@@ -24,14 +15,27 @@ namespace VideoApi.Domain
             ConferenceRole = ConferenceRole.Host;
         }
 
-        public Endpoint(string displayName, string sipAddress, string pin, string defenceAdvocate, ConferenceRole conferenceRole = ConferenceRole.Host) : this()
+        public Endpoint(string displayName, string sipAddress, string pin, ConferenceRole conferenceRole = ConferenceRole.Host) : this()
         {
             DisplayName = displayName;
             SipAddress = sipAddress;
             Pin = pin;
-            DefenceAdvocate = defenceAdvocate;
             ConferenceRole = conferenceRole;
         }
+
+        public string DisplayName { get; private set; }
+        public string SipAddress { get; }
+        public string Pin { get; }
+        public EndpointState State { get; private set; }
+
+        [Obsolete("This property is not used and will be removed in the future")]
+        public string DefenceAdvocate { get; }
+
+        public RoomType? CurrentRoom { get; private set; }
+        public long? CurrentConsultationRoomId { get; set; }
+        public virtual ConsultationRoom CurrentConsultationRoom { get; set; }
+        public ConferenceRole ConferenceRole { get; private set; }
+        public virtual IList<ParticipantBase> ParticipantsLinked { get; set; } = new List<ParticipantBase>();
 
         public void UpdateDisplayName(string displayName)
         {
@@ -51,9 +55,23 @@ namespace VideoApi.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void AssignDefenceAdvocate(string username)
+        public void AddParticipantLink(ParticipantBase participant)
         {
-            DefenceAdvocate = username;
+            ArgumentNullException.ThrowIfNull(participant);
+            
+            participant.Endpoint = this;
+            participant.EndpointId = Id;
+            ParticipantsLinked.Add(participant);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void RemoveParticipantLink(ParticipantBase participant)
+        {
+            var linkedParticipant = ParticipantsLinked.FirstOrDefault(x => x.Id == participant.Id);
+            if (linkedParticipant == null)
+                return;
+
+            ParticipantsLinked.Remove(linkedParticipant);
             UpdatedAt = DateTime.UtcNow;
         }
 

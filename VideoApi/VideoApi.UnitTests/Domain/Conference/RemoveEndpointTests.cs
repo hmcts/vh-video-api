@@ -24,7 +24,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             var afterCount = conference.GetEndpoints().Count;
             afterCount.Should().BeLessThan(beforeCount);
         }
-
+        
         [Test]
         public void should_throw_exception_when_removing_an_endpoint_that_does_not_exist()
         {
@@ -33,7 +33,7 @@ namespace VideoApi.UnitTests.Domain.Conference
             var conference = new ConferenceBuilder().WithEndpoint(displayName, sipAddress).Build();
 
             var beforeCount = conference.GetEndpoints().Count;
-            var endpoint = new Endpoint("Display", "test@sip.com", "1234", "Defence Sol");
+            var endpoint = new Endpoint("Display", "test@sip.com", "1234");
             Action action = () =>  conference.RemoveEndpoint(endpoint);
             
             action.Should().Throw<DomainRuleException>().Where(x =>

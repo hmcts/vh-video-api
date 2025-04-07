@@ -7,29 +7,19 @@ using VideoApi.Domain;
 
 namespace VideoApi.DAL.Queries
 {
-    public class GetEndpointsForConferenceQuery : IQuery
+    public class GetEndpointsForConferenceQuery(Guid conferenceId) : IQuery
     {
-        public Guid ConferenceId { get; }
-        
-        public GetEndpointsForConferenceQuery(Guid conferenceId)
-        {
-            ConferenceId = conferenceId;
-        }
+        public Guid ConferenceId { get; } = conferenceId;
     }
 
-    public class GetEndpointsForConferenceQueryHandler : IQueryHandler<GetEndpointsForConferenceQuery, IList<Endpoint>>
+    public class GetEndpointsForConferenceQueryHandler(VideoApiDbContext context)
+        : IQueryHandler<GetEndpointsForConferenceQuery, IList<Endpoint>>
     {
-        private readonly VideoApiDbContext _context;
-
-        public GetEndpointsForConferenceQueryHandler(VideoApiDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<IList<Endpoint>> Handle(GetEndpointsForConferenceQuery query)
         {
-            var conference = await _context.Conferences
+            var conference = await context.Conferences
                 .Include(x => x.Endpoints).ThenInclude(e => e.CurrentConsultationRoom)
+                .Include(x => x.Endpoints).ThenInclude(e => e.ParticipantsLinked)
                 .AsNoTracking().SingleOrDefaultAsync(x => x.Id == query.ConferenceId);
 
             return conference == null ? new List<Endpoint>() : conference.GetEndpoints();

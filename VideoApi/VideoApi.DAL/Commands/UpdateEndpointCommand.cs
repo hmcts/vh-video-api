@@ -1,42 +1,37 @@
-using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Exceptions;
+using VideoApi.Domain;
 using VideoApi.Domain.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace VideoApi.DAL.Commands
 {
-    public class UpdateEndpointCommand : ICommand
+    public class UpdateEndpointCommand(
+        Guid conferenceId,
+        string sipAddress,
+        string displayName,
+        List<string> participantsLinked,
+        ConferenceRole conferenceRole)
+        : ICommand
     {
-        public Guid ConferenceId { get; }
-        public string SipAddress { get; }
-        public string DisplayName { get; }
-        public string DefenceAdvocate { get; }
-        public ConferenceRole ConferenceRole { get; }
-
-        public UpdateEndpointCommand(Guid conferenceId, string sipAddress, string displayName, string defenceAdvocate,
-            ConferenceRole conferenceRole)
-        {
-            ConferenceId = conferenceId;
-            SipAddress = sipAddress;
-            DisplayName = displayName;
-            DefenceAdvocate = defenceAdvocate;
-            ConferenceRole = conferenceRole;
-        }
+        public Guid ConferenceId { get; } = conferenceId;
+        public string SipAddress { get; } = sipAddress;
+        public string DisplayName { get; } = displayName;
+        public IList<string> ParticipantsLinked { get; } = participantsLinked ?? new List<string>();
+        public ConferenceRole ConferenceRole { get; } = conferenceRole;
     }
 
-    public class UpdateEndpointCommandHandler : ICommandHandler<UpdateEndpointCommand>
+    public class UpdateEndpointCommandHandler(VideoApiDbContext context) : ICommandHandler<UpdateEndpointCommand>
     {
-        private readonly VideoApiDbContext _context;
-        public UpdateEndpointCommandHandler(VideoApiDbContext context)
-        {
-            _context = context;
-        }
         public async Task Handle(UpdateEndpointCommand command)
         {
-            var conference = await _context.Conferences.Include(x => x.Endpoints)
+            var conference = await context.Conferences
+                .Include(x => x.Participants)
+                .Include(x => x.Endpoints).ThenInclude(x => x.ParticipantsLinked)
                 .SingleOrDefaultAsync(x => x.Id == command.ConferenceId);
 
             if (conference == null)
@@ -49,9 +44,29 @@ namespace VideoApi.DAL.Commands
             if (!string.IsNullOrWhiteSpace(command.DisplayName)) 
                 endpoint.UpdateDisplayName(command.DisplayName);
             
-            endpoint.AssignDefenceAdvocate(command.DefenceAdvocate);
+            if(command.ParticipantsLinked.Any())
+                UpdateParticipantsLinkedToEndpoint(command, conference, endpoint);
+            
             endpoint.UpdateConferenceRole(command.ConferenceRole);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+        }
+        
+        private static void UpdateParticipantsLinkedToEndpoint(UpdateEndpointCommand command, Conference conference,
+            Endpoint endpoint)
+        {
+            var participants = conference.GetParticipants();
+            var currentLinkedParticipants = endpoint.ParticipantsLinked.Select(p => p.Username).ToList();
+            
+            // Remove participants that are no longer linked
+            foreach (var participant in endpoint.ParticipantsLinked.Where(p => !command.ParticipantsLinked.Contains(p.Username)).ToList())
+                endpoint.RemoveParticipantLink(participant);
+            
+            // Add new participants
+            foreach (var newParticipantLink in command.ParticipantsLinked.Except(currentLinkedParticipants))
+            {
+                var participant = participants.SingleOrDefault(p => p.Username == newParticipantLink) ?? throw new ParticipantNotFoundException(newParticipantLink);
+                endpoint.AddParticipantLink(participant);
+            }
         }
     }
 }
