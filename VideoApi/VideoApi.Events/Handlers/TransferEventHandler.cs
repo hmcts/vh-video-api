@@ -55,7 +55,8 @@ namespace VideoApi.Events.Handlers
                     callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
             }
             else if (room.Status == RoomStatus.Live && room.RoomParticipants.Count == 0)
-            {
+            {                
+                Logger.LogInformation("No participants left in room {RoomLabel} - transferring all endpoints to waiting room", room.Label);
                 foreach (var endpoint in room.RoomEndpoints)
                 {
                     await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
@@ -84,8 +85,11 @@ namespace VideoApi.Events.Handlers
                     .ToList();
                 
                 // If no other participants linked to this endpoint are still in the room, transfer it to waiting room
-                if(linkedParticipantsStillInRoom.Count == 0)
+                if (linkedParticipantsStillInRoom.Count == 0)
+                {
+                    Logger.LogInformation("No other participants linked to endpoint {EndpointId} - transferring to waiting room", endpoint.Id);
                     await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.Id, RoomType.WaitingRoom.ToString());
+                }
             }
         }
 
