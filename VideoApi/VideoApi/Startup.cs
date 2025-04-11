@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using VideoApi.Common.Configuration;
@@ -43,11 +43,11 @@ namespace VideoApi
             Configuration = configuration;
             Environment = environment;
         }
-        
+
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment Environment { get; }
         private SettingsConfiguration SettingsConfiguration { get; set; }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -81,14 +81,19 @@ namespace VideoApi
                             .AddAttributes(new Dictionary<string, object>
                                 { ["service.instance.id"] = System.Environment.MachineName });
                     })
-                    .UseAzureMonitor(options => options.ConnectionString = instrumentationKey)
-                    .WithMetrics()
+                    .WithMetrics(metrics =>
+                    {
+                        metrics.AddAspNetCoreInstrumentation();
+                        metrics.AddHttpClientInstrumentation();
+                        metrics.AddAzureMonitorMetricExporter(o => o.ConnectionString = instrumentationKey);
+                    })
                     .WithTracing(tracerProvider =>
                     {
                         tracerProvider
                             .AddSource("SupplierLoggingDelegatingHandler")
                             .AddAspNetCoreInstrumentation(options => options.RecordException = true)
-                            .AddHttpClientInstrumentation(options => options.RecordException = true);
+                            .AddHttpClientInstrumentation(options => options.RecordException = true)
+                            .AddAzureMonitorTraceExporter(o => o.ConnectionString = instrumentationKey);
                     });
                 services.AddLogging(logging =>
                 {
@@ -96,12 +101,12 @@ namespace VideoApi
                     logging.AddDebug();
                     logging.AddOpenTelemetry(options =>
                     {
+                        options.IncludeFormattedMessage = true;
+                        options.IncludeScopes = true;
                         options.AddAzureMonitorLogExporter(o => o.ConnectionString = instrumentationKey);
                     });
                 });
             }
-                
-
             
             services.AddJsonOptions();
             RegisterSettings(services);
@@ -129,7 +134,7 @@ namespace VideoApi
                     builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null));
             });
         }
-        
+
         private void RegisterSettings(IServiceCollection services)
         {
             SettingsConfiguration = Configuration.Get<SettingsConfiguration>();
@@ -147,7 +152,7 @@ namespace VideoApi
             services.AddHostedService<LongRunningService>();
             services.AddSingleton<IBackgroundWorkerQueue, BackgroundWorkerQueue>();
         }
-        
+
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var securitySettings = Configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
@@ -172,7 +177,7 @@ namespace VideoApi
             serviceCollection.AddAuthorization(AddPolicies);
             serviceCollection.AddMvc(AddMvcPolicies);
         }
-        
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseOpenApi();
@@ -220,20 +225,20 @@ namespace VideoApi
                 });
             });
         }
-        
+
         private static void AddPolicies(AuthorizationOptions options)
         {
             options.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
         }
-        
+
         private static void AddMvcPolicies(MvcOptions options)
         {
             options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser().Build()));
         }
-        
+
         private async Task HealthCheckResponseWriter(HttpContext context, HealthReport report)
         {
             var result = JsonConvert.SerializeObject(new

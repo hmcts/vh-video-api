@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
@@ -12,6 +13,7 @@ using VideoApi.Mappings;
 
 namespace VideoApi.Controllers;
 
+[AllowAnonymous]
 [Consumes("application/json")]
 [Produces("application/json")]
 [Route("events")]

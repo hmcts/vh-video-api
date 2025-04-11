@@ -26,7 +26,7 @@ namespace VideoApi.Events.Handlers
         : EventHandlerBase<TransferEventHandler>(queryHandler, commandHandler, logger)
     {
         public override EventType EventType => EventType.Transfer;
-        
+
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             if(SourceParticipant == null) throw new ParticipantNotFoundException(callbackEvent.ParticipantId);
@@ -40,7 +40,7 @@ namespace VideoApi.Events.Handlers
             var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id, participantStatus, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
             await CommandHandler.Handle(command);
 
-            if (!callbackEvent.TransferredFromRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase) 
+            if (!callbackEvent.TransferredFromRoomLabel.Contains("consultation", StringComparison.CurrentCultureIgnoreCase) 
                 || callbackEvent.TransferTo == RoomType.HearingRoom)
             {
                 return;
@@ -66,13 +66,13 @@ namespace VideoApi.Events.Handlers
                 await HandleLinkedEndpoints(room);
             }
         }
-        
+
         private async Task HandleLinkedEndpoints(ConsultationRoom room)
         {
             //Get all endpoints this participant is linked to
             var endpointsLinked = SourceConference
                 .GetEndpoints()
-                .Where(x => x.ParticipantsLinked?.Contains(SourceParticipant) ?? false)
+                .Where(x => x.ParticipantsLinked?.Any(pl => pl.Id == SourceParticipant.Id) ?? false)
                 .ToList();
             
             foreach (var endpoint in endpointsLinked.Where(ep => room.RoomEndpoints.Any(e => e.EndpointId == ep.Id)))
@@ -88,10 +88,10 @@ namespace VideoApi.Events.Handlers
                     await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.Id, RoomType.WaitingRoom.ToString());
             }
         }
-        
+
         private static ParticipantState DeriveParticipantStatusForTransferEvent(CallbackEvent callbackEvent)
         {
-            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.Contains("consultation", System.StringComparison.CurrentCultureIgnoreCase))
+            if (!callbackEvent.TransferTo.HasValue && callbackEvent.TransferredToRoomLabel.Contains("consultation", StringComparison.CurrentCultureIgnoreCase))
             {
                 return ParticipantState.InConsultation;
             }
