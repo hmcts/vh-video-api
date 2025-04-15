@@ -3,7 +3,7 @@ namespace VideoApi.Common.Logging
     using System;
     using Microsoft.Extensions.Logging;
 
-    public static partial class ValidationsLogger
+    public static partial class ValidationLogger
     {
         [LoggerMessage(EventId = 9000, Level = LogLevel.Debug, Message = "Processing request")]
         public static partial void LogProcessingRequest(this ILogger logger);

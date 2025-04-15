@@ -3,7 +3,7 @@ namespace VideoApi.Common.Logging
     using System;
     using Microsoft.Extensions.Logging;
 
-    public static partial class InstantMessagesLogger
+    public static partial class InstantMessageLogger
     {
         [LoggerMessage(EventId = 4000, Level = LogLevel.Debug, Message = "Saving instant message")]
         public static partial void LogSavingInstantMessage(this ILogger logger);

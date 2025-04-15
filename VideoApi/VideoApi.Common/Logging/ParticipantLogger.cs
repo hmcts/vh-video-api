@@ -3,7 +3,7 @@ namespace VideoApi.Common.Logging
     using System;
     using Microsoft.Extensions.Logging;
 
-    public static partial class ParticipantsLogger
+    public static partial class ParticipantLogger
     {
         [LoggerMessage(EventId = 5000, Level = LogLevel.Debug, Message = "AddParticipantsToConference")]
         public static partial void LogAddParticipantsToConference(this ILogger logger);

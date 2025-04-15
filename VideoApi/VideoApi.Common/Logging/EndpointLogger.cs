@@ -3,7 +3,7 @@ namespace VideoApi.Common.Logging
     using System;
     using Microsoft.Extensions.Logging;
 
-    public static partial class EndpointsLogger
+    public static partial class EndpointLogger
     {
         [LoggerMessage(EventId = 2000, Level = LogLevel.Debug, Message = "Retrieving endpoints for conference {ConferenceId}")]
         public static partial void LogRetrievingEndpointsForConference(this ILogger logger, Guid conferenceId);

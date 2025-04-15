@@ -3,7 +3,7 @@ namespace VideoApi.Common.Logging
     using System;
     using Microsoft.Extensions.Logging;
 
-    public static partial class ConferencesLogger
+    public static partial class ConferenceLogger
     {
         [LoggerMessage(EventId = 1000, Level = LogLevel.Debug, Message = "BookNewConference")]
         public static partial void LogBookNewConference(this ILogger logger);

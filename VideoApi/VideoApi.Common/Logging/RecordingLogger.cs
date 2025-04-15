@@ -3,7 +3,7 @@ namespace VideoApi.Common.Logging
     using System;
     using Microsoft.Extensions.Logging;
 
-    public static partial class RecordingsLogger
+    public static partial class RecordingLogger
     {
         [LoggerMessage(
             EventId = 6000, 
@@ -26,7 +26,7 @@ namespace VideoApi.Common.Logging
         [LoggerMessage(
             EventId = 7000, 
             Level = LogLevel.Error,
-            Message = "Error: {Message}")]
+            Message = "{Message}")]
         public static partial void LogErrorGeneric(this ILogger logger, Exception ex, string message);
 
         [LoggerMessage(
