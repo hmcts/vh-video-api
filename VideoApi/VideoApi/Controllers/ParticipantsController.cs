@@ -34,11 +34,6 @@ namespace VideoApi.Controllers
         private readonly IQueryHandler _queryHandler;
         private readonly ISupplierPlatformServiceFactory _supplierPlatformServiceFactory;
 
-        private static class Constants
-        {
-            public const string UnableToFindConference = "Unable to find conference";
-        }
-        
         public ParticipantsController(ICommandHandler commandHandler, IQueryHandler queryHandler,
             ISupplierPlatformServiceFactory supplierPlatformServiceFactory, ILogger<ParticipantsController> logger)
         {
