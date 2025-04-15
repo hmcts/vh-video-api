@@ -21,7 +21,7 @@ namespace VideoApi.DAL.Commands
         public Guid ConferenceId { get; } = conferenceId;
         public string SipAddress { get; } = sipAddress;
         public string DisplayName { get; } = displayName;
-        public IList<string> ParticipantsLinked { get; } = participantsLinked ?? new List<string>();
+        public IList<string> ParticipantsLinked { get; } = participantsLinked ?? [];
         public ConferenceRole ConferenceRole { get; } = conferenceRole;
     }
 
@@ -50,7 +50,7 @@ namespace VideoApi.DAL.Commands
             endpoint.UpdateConferenceRole(command.ConferenceRole);
             await context.SaveChangesAsync();
         }
-        
+
         private static void UpdateParticipantsLinkedToEndpoint(UpdateEndpointCommand command, Conference conference,
             Endpoint endpoint)
         {
