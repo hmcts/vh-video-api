@@ -16,6 +16,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
 using Task = VideoApi.Domain.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers
 {
@@ -45,7 +46,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(List<TaskResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTasksForConferenceAsync(Guid conferenceId)
         {
-            _logger.LogDebug("GetTasksForConference");
+            _logger.LogGetTasksForConference();
             var query = new GetTasksForConferenceQuery(conferenceId);
             try
             {
@@ -55,7 +56,7 @@ namespace VideoApi.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Unable to find tasks");
+                _logger.LogUnableToFindTask(e);
                 return BadRequest();
             }
         }
@@ -75,7 +76,7 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> UpdateTaskStatusAsync(Guid conferenceId, long taskId,
             [FromBody] UpdateTaskRequest updateTaskRequest)
         {
-            _logger.LogDebug("UpdateTaskStatus");
+            _logger.LogUpdateTaskStatus();
             try
             {
                 var command = new UpdateTaskCommand(conferenceId, taskId, updateTaskRequest.UpdatedBy);
@@ -83,7 +84,7 @@ namespace VideoApi.Controllers
             }
             catch (TaskNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find task");
+                _logger.LogUnableToFindTask(ex);
                 return NotFound();
             }
 
@@ -92,7 +93,7 @@ namespace VideoApi.Controllers
             var task = tasks.SingleOrDefault(x => x.Id == taskId);
             if (task == null)
             {
-                _logger.LogError("Unable to find task");
+                _logger.LogUnableToFindTaskId(taskId);
                 return NotFound();
             }
             var response = TaskToResponseMapper.MapTaskToResponse(task);
@@ -111,8 +112,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> AddTaskAsync(Guid conferenceId, [FromBody] AddTaskRequest addTaskRequest)
         {
-            _logger.LogDebug("Adding a task {Body} for participant {Participant} in conference {Conference}",
-                addTaskRequest.Body, addTaskRequest.ParticipantId, conferenceId);
+            _logger.LogAddingTask(addTaskRequest.Body, addTaskRequest.ParticipantId, conferenceId);
             try
             {
                 var command = new AddTaskCommand(conferenceId, addTaskRequest.ParticipantId, addTaskRequest.Body, addTaskRequest.TaskType.MapToDomainEnum());
@@ -121,8 +121,7 @@ namespace VideoApi.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Unable to add a task {Body} for participant {Participant} in conference {Conference}", 
-                    addTaskRequest.Body, addTaskRequest.ParticipantId, conferenceId);
+                _logger.LogUnableToAddTask(addTaskRequest.Body, addTaskRequest.ParticipantId, conferenceId, e);
                 return BadRequest();
             }
         }

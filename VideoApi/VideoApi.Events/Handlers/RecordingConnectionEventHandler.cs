@@ -5,6 +5,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -18,7 +19,7 @@ namespace VideoApi.Events.Handlers
         
         protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            Logger.LogInformation("Recording connection failed callback - {ConferenceId}", SourceConference.Id);
+            Logger.LogInformationRecordingConnectionFailedCallback(SourceConference.Id);
             return Task.CompletedTask;
         }
     }

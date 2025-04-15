@@ -25,6 +25,7 @@ using VideoApi.Services.Mappers;
 using VideoApi.Validations;
 using Task = System.Threading.Tasks.Task;
 using ConferenceRoomType = VideoApi.Contract.Enums.ConferenceRoomType;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers;
 
@@ -42,6 +43,7 @@ public class ConferenceController(
     IBookingService bookingService)
     : ControllerBase
 {
+
     /// <summary>
     /// Request to book a conference
     /// </summary>
@@ -53,51 +55,47 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> BookNewConferenceAsync(BookNewConferenceRequest request)
     {
-        logger.LogDebug("BookNewConference");
-        
+        logger.LogBookNewConference();
+
         foreach (var participant in request.Participants)
         {
             participant.Username = participant.Username.ToLower().Trim();
             participant.DisplayName = participant.DisplayName.Trim();
         }
-        
+
         var audioIngestUrl = audioPlatformService.GetAudioIngestUrl(request.CaseTypeServiceId, request.CaseNumber, request.HearingRefId.ToString());
-        
+
         var conferenceId = await CreateConferenceWithRetiesAsync(request, audioIngestUrl);
-        logger.LogDebug("Conference Created");
-        
+        logger.LogConferenceCreatedDebug();
+
         var conferenceEndpoints = await queryHandler.Handle<GetEndpointsForConferenceQuery, IList<Endpoint>>(new GetEndpointsForConferenceQuery(conferenceId));
         var endpointDtos = conferenceEndpoints.Select(EndpointMapper.MapToEndpoint);
 
         var roomBookedSuccess = await BookMeetingRoomWithRetriesAsync(conferenceId, request.AudioRecordingRequired,
             audioIngestUrl, endpointDtos, request.ConferenceRoomType, request.AudioPlaybackLanguage,
             request.Supplier);
-        
+
         if (!roomBookedSuccess)
         {
             var message = $"Could not book and find meeting room for conferenceId: {conferenceId}";
-#pragma warning disable CA2254 // Template should be a static expression
-            logger.LogError(message);
-#pragma warning restore CA2254 // Template should be a static expression
+            logger.LogRoomBookingFailed(conferenceId);
             return StatusCode((int)HttpStatusCode.InternalServerError, message);
         }
-        
-        logger.LogDebug("Room Booked");
-        
+
+        logger.LogRoomBooked();
+
         var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-        var queriedConference =
-            await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-        
+        var queriedConference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
         var supplierPlatformService = supplierPlatformServiceFactory.Create((Domain.Enums.Supplier)request.Supplier);
         var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
         var response = ConferenceToDetailsResponseMapper.Map(queriedConference, supplierConfiguration);
-        
-        logger.LogInformation("Created conference {ResponseId} for hearing {HearingRefId}", response.Id,
-            request.HearingRefId);
-        
+
+        logger.LogConferenceCreatedInfo(response.Id, request.HearingRefId);
+
         return CreatedAtAction("GetConferenceDetailsById", new { conferenceId = response.Id }, response);
     }
-    
+
     /// <summary>
     /// Updates a conference
     /// </summary>
@@ -109,31 +107,30 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> UpdateConferenceAsync(UpdateConferenceRequest request)
     {
-        logger.LogDebug("UpdateConference");
-        
+        logger.LogUpdateConference();
+
         var query = new GetNonClosedConferenceByHearingRefIdQuery(request.HearingRefId);
-        var conferencesList =
-            await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
+        var conferencesList = await queryHandler.Handle<GetNonClosedConferenceByHearingRefIdQuery, List<Conference>>(query);
         var conference = conferencesList.FirstOrDefault();
         if (conference == null)
         {
-            logger.LogWarning("Unable to find conference with hearing id {HearingRefId}", request.HearingRefId);
+            logger.LogConferenceNotFoundWarning(request.HearingRefId);
             return NotFound();
         }
-        
+
         var endpointDtos = conference.GetEndpoints().Select(EndpointMapper.MapToEndpoint);
         var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
         await videoPlatformService.UpdateVirtualCourtRoomAsync(conference.Id, request.AudioRecordingRequired,
             endpointDtos, request.RoomType.MapToDomainEnum(), request.AudoAudioPlaybackLanguage.MapToDomainEnum());
-        
+
         try
         {
             var command = new UpdateConferenceDetailsCommand(request.HearingRefId, request.CaseNumber,
                 request.CaseType, request.CaseName, request.ScheduledDuration, request.ScheduledDateTime,
                 request.HearingVenueName, request.AudioRecordingRequired);
-            
+
             await commandHandler.Handle(command);
-            
+
             return Ok();
         }
         catch (ConferenceNotFoundException)
@@ -141,7 +138,7 @@ public class ConferenceController(
             return NotFound();
         }
     }
-    
+
     /// <summary>
     /// Get the details of a conference
     /// </summary>
@@ -154,25 +151,23 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferenceDetailsByIdAsync(Guid conferenceId)
     {
-        logger.LogDebug("GetConferenceDetailsById {ConferenceId}", conferenceId);
-        
+        logger.LogGetConferenceDetailsById(conferenceId);
+
         var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
-        var queriedConference =
-            await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
-        
+        var queriedConference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
+
         if (queriedConference == null)
         {
-            logger.LogWarning("Unable to find conference {ConferenceId}", conferenceId);
-            
+            logger.LogConferenceNotFound(conferenceId);
             return NotFound($"Unable to find a conference with the given id {conferenceId}");
         }
-        
+
         var supplierPlatformService = supplierPlatformServiceFactory.Create(queriedConference.Supplier);
         var supplierConfiguration = supplierPlatformService.GetSupplierConfiguration();
         var response = ConferenceToDetailsResponseMapper.Map(queriedConference, supplierConfiguration);
         return Ok(response);
     }
-    
+
     /// <summary>
     /// Remove an existing conference
     /// </summary>
@@ -185,28 +180,25 @@ public class ConferenceController(
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> RemoveConferenceAsync(Guid conferenceId)
     {
-        logger.LogDebug("RemoveConference {ConferenceId}", conferenceId);
+        logger.LogRemoveConference(conferenceId);
         var removeConferenceCommand = new RemoveConferenceCommand(conferenceId);
         try
         {
-            var conference =
-                await queryHandler.Handle<GetConferenceByIdQuery, Conference>(
-                    new GetConferenceByIdQuery(conferenceId));
+            var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             await commandHandler.Handle(removeConferenceCommand);
             await SafelyRemoveCourtRoomAsync(conferenceId, conference.Supplier);
-            
-            logger.LogInformation("Successfully removed conference {ConferenceId}", conferenceId);
-            
+
+            logger.LogConferenceRemoved(conferenceId);
+
             return NoContent();
         }
         catch (ConferenceNotFoundException ex)
         {
-            logger.LogError(ex, "Unable to find conference {ConferenceId}", conferenceId);
-            
+            logger.LogRemoveConferenceError(ex, conferenceId);
             return NotFound();
         }
     }
-    
+
     /// <summary>
     /// Get non-closed conferences for a participant by their username
     /// </summary>
@@ -218,21 +210,21 @@ public class ConferenceController(
     [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetConferencesTodayForIndividualByUsernameAsync([FromQuery] string username)
     {
-        logger.LogDebug("GetConferencesTodayForIndividualByUsername {Username}", username);
-        
+        logger.LogGetConferencesTodayForIndividual(username);
+
         if (!username.IsValidEmail())
         {
             ModelState.AddModelError(nameof(username), $"Please provide a valid {nameof(username)}");
-            logger.LogWarning("Invalid username {Username}", username);
+            logger.LogInvalidUsername(username);
             return ValidationProblem(ModelState);
         }
-        
+
         var query = new GetConferencesForTodayByIndividualQuery(username.ToLower().Trim());
-        var conferences =
-            await queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
+        var conferences = await queryHandler.Handle<GetConferencesForTodayByIndividualQuery, List<Conference>>(query);
         return Ok(conferences.Select(ConferenceCoreResponseMapper.Map));
     }
-    
+
+
     /// <summary>
     /// Get conferences by hearing ref ids
     /// </summary>
@@ -460,7 +452,7 @@ public class ConferenceController(
         }
         return Ok(conferencesForToday);
     }
-    
+
     private async Task<bool> BookMeetingRoomWithRetriesAsync(Guid conferenceId,
         bool audioRecordingRequired,
         string ingestUrl,
@@ -470,24 +462,23 @@ public class ConferenceController(
         3,
         _ => TimeSpan.FromSeconds(10),
         retryAttempt =>
-            logger.LogWarning("Failed to BookMeetingRoomAsync. Retrying attempt {RetryAttempt}", retryAttempt),
+            logger.LogRetryBookingMeetingRoom(retryAttempt),
         callResult => !callResult,
         async () => await bookingService.BookMeetingRoomAsync(conferenceId, audioRecordingRequired, ingestUrl,
             endpoints, roomType.MapToDomainEnum(), audioPlaybackLanguage.MapToDomainEnum(), supplier.MapToDomainEnum())
     );
-    
-    
+
+
     private async Task<Guid> CreateConferenceWithRetiesAsync(BookNewConferenceRequest request, string ingestUrl) =>
         await pollyRetryService.WaitAndRetryAsync<Exception, Guid>
         (
             3,
             _ => TimeSpan.FromSeconds(10),
-            retryAttempt => logger.LogWarning("Failed to CreateConferenceAsync. Retrying attempt {RetryAttempt}",
-                retryAttempt),
+            retryAttempt => logger.LogRetryCreateConference(retryAttempt),
             callResult => callResult == Guid.Empty,
             async () => await bookingService.CreateConferenceAsync(request, ingestUrl)
         );
-    
+
     private async Task SafelyRemoveCourtRoomAsync(Guid conferenceId, VideoApi.Domain.Enums.Supplier supplier)
     {
         var videoPlatformService = supplierPlatformServiceFactory.Create(supplier);

@@ -7,6 +7,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -21,8 +22,7 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            Logger.LogInformation("Disconnected callback - {ConferenceId}/{ParticipantId}",
-                SourceConference.Id, SourceParticipant.Id);
+            Logger.LogDisconnectedCallback(SourceConference.Id, SourceParticipant.Id);
             ValidateParticipantEventReceivedAfterLastUpdate(callbackEvent);
             await PublishParticipantDisconnectMessage();
         }

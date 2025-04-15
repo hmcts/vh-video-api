@@ -19,6 +19,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers
 {
@@ -61,7 +62,7 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> AddParticipantsToConferenceAsync(Guid conferenceId,
             AddParticipantsToConferenceRequest request)
         {
-            _logger.LogDebug("AddParticipantsToConference");
+            _logger.LogAddParticipantsToConference();
             var participants = request.Participants.Select(x =>
                     new Participant(x.ParticipantRefId,
                         x.DisplayName.Trim(), x.Username.ToLowerInvariant().Trim(), x.UserRole.MapToDomainEnum(),
@@ -88,7 +89,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, Constants.UnableToFindConference);
+                _logger.LogUnableToFindConferenceError(ex);
                 return NotFound();
             }
         }
@@ -108,7 +109,7 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> UpdateConferenceParticipantsAsync(Guid conferenceId,
             UpdateConferenceParticipantsRequest request)
         {
-            _logger.LogDebug("UpdateConferenceParticipants");
+            _logger.LogUpdateConferenceParticipants();
             try
             {
                 var existingParticipants = request.ExistingParticipants.Select(x =>
@@ -141,12 +142,12 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, Constants.UnableToFindConference);
+                _logger.LogUnableToFindConferenceError(ex);
                 return NotFound($"Unable to find conference {conferenceId}");
             }
             catch (ParticipantNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find participant");
+                _logger.LogUnableToFindParticipantError(ex);
                 return NotFound($"Unable to find participant {ex.ParticipantId} in conference {conferenceId}");
             }
         }
@@ -165,7 +166,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateParticipantDetailsAsync(Guid conferenceId, Guid participantId, UpdateParticipantRequest request)
         {
-            _logger.LogDebug("UpdateParticipantDetails");
+            _logger.LogUpdateParticipantDetails();
             try
             {
                 var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
@@ -200,12 +201,12 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, Constants.UnableToFindConference);
+                _logger.LogUnableToFindConferenceError(ex);
                 return NotFound();
             }
             catch (ParticipantNotFoundException ex)
             {
-                _logger.LogError(ex, "Unable to find participant");
+                _logger.LogUnableToFindParticipantError(ex);
                 return NotFound();
             }
         }
@@ -223,21 +224,21 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveParticipantFromConferenceAsync(Guid conferenceId, Guid participantId)
         {
-            _logger.LogDebug("RemoveParticipantFromConference");
+            _logger.LogRemoveParticipantFromConference();
             var getConferenceByIdQuery = new GetConferenceByIdQuery(conferenceId);
             var queriedConference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             
             if (queriedConference == null)
             {
-                _logger.LogWarning(Constants.UnableToFindConference);
+                _logger.LogUnableToFindConference();
                 return NotFound();
             }
             
             var participant = queriedConference.GetParticipants().SingleOrDefault(x => x.Id == participantId);
             if (participant == null)
             {
-                _logger.LogWarning("Unable to find participant");
+                _logger.LogUnableToFindParticipant(participantId);
                 return NotFound();
             }
             
@@ -259,7 +260,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetTestCallResultForParticipantAsync(Guid conferenceId, Guid participantId)
         {
-            _logger.LogDebug("GetTestCallResultForParticipant");
+            _logger.LogGetTestCallResultForParticipant();
             
             var conference =
                 await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(
@@ -269,7 +270,7 @@ namespace VideoApi.Controllers
             
             if (testCallResult == null)
             {
-                _logger.LogWarning("Unable to find test call result");
+                _logger.LogSavingTestCallResult();
                 return NotFound();
             }
             
@@ -278,7 +279,7 @@ namespace VideoApi.Controllers
             
             await _commandHandler.Handle(command);
             
-            _logger.LogDebug("Saving test call result");
+            _logger.LogSavingTestCallResult();
             
             var response = TaskCallResultResponseMapper.MapTaskToResponse(testCallResult);
             
@@ -300,7 +301,7 @@ namespace VideoApi.Controllers
             var testCallResult = await videoPlatformService.GetTestCallScoreAsync(participantId);
             if (testCallResult == null)
             {
-                _logger.LogWarning("Unable to find test call result");
+                _logger.LogUnableToFindTestCallResult();
                 return NotFound();
             }
             
@@ -320,7 +321,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId)
         {
-            _logger.LogDebug("GetHeartbeatDataForParticipantAsync");
+            _logger.LogGetHeartbeatDataForParticipant();
             
             var query = new GetHeartbeatsFromTimePointQuery(conferenceId, participantId, TimeSpan.FromMinutes(15));
             
@@ -347,12 +348,12 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> SaveHeartbeatDataForParticipantAsync(Guid conferenceId, Guid participantId,
             AddHeartbeatRequest request)
         {
-            _logger.LogDebug("SaveHeartbeatDataForParticipantAsync");
+            _logger.LogSaveHeartbeatDataForParticipant();
             
             if (request == null)
             {
                 const string error = "AddHeartbeatRequest is null";
-                _logger.LogWarning(error);
+                _logger.LogAddHeartbeatRequestNull();
                 ModelState.AddModelError(nameof(request), error);
                 return ValidationProblem(ModelState);
             }
@@ -391,13 +392,13 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetParticipantsByConferenceId(Guid conferenceId)
         {
-            _logger.LogDebug("GetParticipantsByConferenceId");
+            _logger.LogGetParticipantsByConferenceId();
             
             var query = new GetConferenceByIdQuery(conferenceId);
             var conference = await _queryHandler.Handle<GetConferenceByIdQuery, Conference>(query);
             if (conference == null)
             {
-                _logger.LogWarning(Constants.UnableToFindConference);
+                _logger.LogUnableToFindConference();
                 return NotFound();
             }
             
@@ -425,7 +426,7 @@ namespace VideoApi.Controllers
         public async Task<IActionResult> AddStaffMemberToConferenceAsync(Guid conferenceId,
             AddStaffMemberRequest request)
         {
-            _logger.LogDebug("AddStaffMemberToConference");
+            _logger.LogAddStaffMemberToConference();
             var participant = new Participant(request.DisplayName.Trim(), request.Username.ToLowerInvariant().Trim(),
                 request.UserRole.MapToDomainEnum(),
                 request.HearingRole, request.ContactEmail);
@@ -446,7 +447,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                _logger.LogError(ex, Constants.UnableToFindConference);
+                _logger.LogUnableToFindConferenceError(ex);
                 return NotFound();
             }
         }
@@ -517,7 +518,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(List<ParticipantInHearingResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetHostsInHearingsTodayAsync()
         {
-            _logger.LogDebug("GetHostsInHearingsToday");
+            _logger.LogGetHostsInHearingsToday();
             
             var conferences =
                 await _queryHandler.Handle<GetHostsInHearingsTodayQuery, List<Conference>>(

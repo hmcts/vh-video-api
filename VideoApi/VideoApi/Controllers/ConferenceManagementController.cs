@@ -19,6 +19,7 @@ using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using StartHearingRequest = VideoApi.Contract.Requests.StartHearingRequest;
 using Supplier = VideoApi.Domain.Enums.Supplier;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers
 {
@@ -45,7 +46,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> StartVideoHearingAsync(Guid conferenceId, StartHearingRequest request)
         {
-            logger.LogDebug("Attempting to start hearing");
+            logger.LogStartHearing();
             var hearingLayout =
                 HearingLayoutMapper.MapLayoutToVideoHearingLayout(
                     request.Layout.GetValueOrDefault(HearingLayout.Dynamic));
@@ -98,7 +99,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> PauseVideoHearingAsync(Guid conferenceId)
         {
-            logger.LogDebug("Attempting to pause hearing");
+            logger.LogPauseHearing();
             var conference =
                 await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
@@ -116,7 +117,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> EndVideoHearingAsync(Guid conferenceId)
         {
-            logger.LogDebug("Attempting to end hearing");
+            logger.LogEndHearing();
             var conference =
                 await queryHandler.Handle<GetConferenceByIdQuery, Conference>(new GetConferenceByIdQuery(conferenceId));
             var videoPlatformService = supplierPlatformServiceFactory.Create(conference.Supplier);
@@ -193,21 +194,17 @@ namespace VideoApi.Controllers
             switch (transferType)
             {
                 case TransferType.Call:
-                    logger.LogDebug("Attempting to transfer {Participant} into hearing room in {Conference}",
-                        supplierParticipantId, conferenceId);
+                    logger.LogTransferParticipantIntoHearing(supplierParticipantId, conferenceId);
                     await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                         transferFromRoomType, RoomType.HearingRoom.ToString(), role);
                     break;
                 case TransferType.Dismiss:
-                    logger.LogDebug("Attempting to transfer {Participant} out of hearing room in {Conference}",
-                        supplierParticipantId, conferenceId);
+                    logger.LogTransferParticipantOutOfHearing(supplierParticipantId, conferenceId);
                     await videoPlatformService.TransferParticipantAsync(conferenceId, supplierParticipantId,
                         RoomType.HearingRoom.ToString(), RoomType.WaitingRoom.ToString(), role);
                     break;
                 default:
-                    logger.LogWarning(
-                        "Unable to transfer Participant {Participant} in {Conference}. Transfer type {TransferType} is unsupported",
-                        supplierParticipantId, conferenceId, transferType);
+                    logger.LogUnsupportedTransferType(supplierParticipantId, conferenceId, transferType.ToString());
                     throw new InvalidOperationException($"Unsupported transfer type: {transferType}");
             }
 

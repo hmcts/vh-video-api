@@ -9,6 +9,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -26,8 +27,7 @@ namespace VideoApi.Events.Handlers
             var participantState =  ParticipantState.Available;
             var room = RoomType.WaitingRoom;
 
-            Logger.LogInformation("Room Participant Joined callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom}",
-                SourceConference.Id, SourceParticipant.Id, participantState, room, null, SourceParticipantRoom.Id);
+            Logger.LogRoomParticipantCallbackReceived(SourceConference.Id, SourceParticipant.Id, participantState.ToString(), room.ToString(), null, SourceParticipantRoom.Id);
             
             var participantIds = new List<Guid>
             {
