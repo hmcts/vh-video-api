@@ -46,7 +46,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.IncomingVideoResolution);
             builder.Property(x => x.IncomingVideoPacketReceived).HasColumnType(DataTypes.Int);
             builder.Property(x => x.IncomingVideoPacketsLost).HasColumnType(DataTypes.Int);
-            builder.Property(x => x.Timestamp);
+            builder.Property(x => x.Timestamp).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         }
     }
 }

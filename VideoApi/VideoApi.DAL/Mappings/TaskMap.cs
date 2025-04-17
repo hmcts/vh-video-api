@@ -17,8 +17,8 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.Body);
             builder.Property(x => x.Type);
             builder.Property(x => x.Status);
-            builder.Property(x => x.Created);
-            builder.Property(x => x.Updated);
+            builder.Property(x => x.Created).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            builder.Property(x => x.Updated).HasConversion(v => v, v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null);
             builder.Property(x => x.UpdatedBy);
         }
     }
