@@ -10,7 +10,8 @@ namespace VideoApi.DAL.Mappings
         {
             builder.ToTable(nameof(ParticipantToken));
             builder.Property(x => x.Jwt).IsRequired();
-            builder.Property(x => x.ExpiresAt).IsRequired();
+            builder.Property(x => x.ExpiresAt).IsRequired()
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         }
     }
 }

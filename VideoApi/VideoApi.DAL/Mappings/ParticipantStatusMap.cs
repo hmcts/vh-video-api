@@ -12,7 +12,7 @@ namespace VideoApi.DAL.Mappings
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.ParticipantState);
-            builder.Property(x => x.TimeStamp);
+            builder.Property(x => x.TimeStamp).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         }
     }
 }

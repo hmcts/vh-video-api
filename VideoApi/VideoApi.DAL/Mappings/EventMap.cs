@@ -15,7 +15,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.ConferenceId);
             builder.Property(x => x.ExternalEventId);
             builder.Property(x => x.EventType);
-            builder.Property(x => x.ExternalTimestamp);
+            builder.Property(x => x.ExternalTimestamp).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
             builder.Property(x => x.ParticipantId);
             builder.Property(x => x.TransferredFrom);
             builder.Property(x => x.TransferredTo);
