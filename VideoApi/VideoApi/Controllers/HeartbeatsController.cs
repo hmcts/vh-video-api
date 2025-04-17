@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using VideoApi.DAL.Commands;
+using VideoApi.Common.Logging;  
+
 
 namespace VideoApi.Controllers;
 
@@ -18,12 +20,12 @@ public class HeartbeatsController(ILogger<HeartbeatsController> logger, IBackgro
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     public async Task<IActionResult> RemoveHeartbeatsForConferencesAsync()
     {
-        logger.LogDebug("Remove heartbeats for conferences over 14 days old.");
+        logger.LogRemovingOldHeartbeats();
         
         var removeHeartbeatsCommand = new RemoveHeartbeatsForConferencesCommand();
         await backgroundWorkerQueue.QueueBackgroundWorkItem(removeHeartbeatsCommand);
         
-        logger.LogInformation($"Successfully removed heartbeats for conferences");
+        logger.LogSuccessfullyRemovedHeartbeats();
         return NoContent();
     }
 }

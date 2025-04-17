@@ -6,6 +6,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers;
 
@@ -19,8 +20,7 @@ public class TelephoneDisconnectedEventHandler(
 
     protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
     {
-        Logger.LogInformation("TelephoneDisconnected callback - {ConferenceId}/{TelephoneParticipantId}",
-            SourceConference.Id, SourceTelephoneParticipant.Id);
+        Logger.LogTelephoneDisconnectedCallback(SourceConference.Id, SourceTelephoneParticipant.Id);
         ValidateTelephoneParticipantEventReceivedAfterLastUpdate(callbackEvent);
         var command = new RemoveTelephoneParticipantCommand(SourceConference.Id, SourceTelephoneParticipant.Id);
         await CommandHandler.Handle(command);

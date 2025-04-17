@@ -15,6 +15,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 using VideoApi.Services.Dtos;
 using VideoApi.Services.Exceptions;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Services;
 
@@ -59,7 +60,7 @@ public class BookingService(
         }
         catch (DoubleBookingException ex)
         {
-            logger.LogError(ex, "Room already booked for conference {ConferenceId}", conferenceId);
+            logger.LogRoomAlreadyBooked(ex, conferenceId);
             
             meetingRoom = await videoPlatformService.GetVirtualCourtRoomAsync(conferenceId);
         }

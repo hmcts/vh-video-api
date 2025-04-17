@@ -10,6 +10,7 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Mappings;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers;
 
@@ -33,7 +34,7 @@ public class EndOfDayController(
     [ProducesResponseType(typeof(List<ConferenceCoreResponse>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetActiveConferences()
     {
-        logger.LogDebug("Getting all active conferences");
+        logger.LogGettingActiveConferences();
         var query = new GetActiveConferencesQuery();
         var conferences = await queryHandler.Handle<GetActiveConferencesQuery, List<Conference>>(query);
         return Ok(conferences.Select(ConferenceCoreResponseMapper.Map));

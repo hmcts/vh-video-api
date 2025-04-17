@@ -8,6 +8,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using VideoApi.Services;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers;
 
@@ -22,8 +23,7 @@ public class TelephoneJoinedEventHandler(
 
     protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
     {
-        Logger.LogInformation("TelephoneJoined callback - {ConferenceId}/{TelephoneParticipantId}",
-            SourceConference.Id, callbackEvent.ParticipantId);
+        Logger.LogTelephoneJoinedCallback(SourceConference.Id, callbackEvent.ParticipantId);
         ValidateTelephoneParticipantEventReceivedAfterLastUpdate(callbackEvent);
         
         var command =
@@ -36,12 +36,10 @@ public class TelephoneJoinedEventHandler(
 
     private void TransferToHearingRoomIfHearingIsAlreadyInSession(Guid telephoneParticipantId)
     {
-        Logger.LogInformation("Conference {ConferenceId} state is {ConferenceState}", SourceConference.Id,
-            SourceConference.State.ToString());
+        Logger.LogConferenceState(SourceConference.Id, SourceConference.State.ToString());
         if (SourceConference.State != ConferenceState.InSession) return;
             
-        Logger.LogInformation("Conference {ConferenceId} already in session, transferring telephone participant {TelephoneParticipantId} to hearing room",
-            SourceConference.Id, telephoneParticipantId);
+        Logger.LogTransferringTelephoneParticipantToHearingRoom(SourceConference.Id, telephoneParticipantId);
         var videoPlatformService = supplierPlatformServiceFactory.Create(SourceConference.Supplier);
         videoPlatformService.TransferParticipantAsync(SourceConference.Id, telephoneParticipantId.ToString(),
             RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), ConferenceRole.Guest);

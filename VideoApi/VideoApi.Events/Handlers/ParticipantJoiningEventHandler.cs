@@ -6,6 +6,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -20,8 +21,7 @@ namespace VideoApi.Events.Handlers
 
         protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            Logger.LogInformation("ParticipantJoining callback - {ConferenceId}/{ParticipantId}",
-                SourceConference.Id, SourceParticipant.Id);
+            Logger.LogParticipantJoiningCallbackReceived(SourceConference.Id, SourceParticipant.Id);
             var participantState = ParticipantState.Joining;
             var command = new UpdateParticipantStatusCommand(SourceConference.Id, SourceParticipant.Id, participantState);
             return CommandHandler.Handle(command);

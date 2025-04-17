@@ -6,6 +6,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -20,8 +21,7 @@ namespace VideoApi.Events.Handlers
 
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            Logger.LogInformation("EndpointTransferred callback - {ConferenceId}/{EndpointId}",
-                SourceConference.Id, SourceEndpoint.Id);
+            Logger.LogEndpointTransferredCallback(SourceConference.Id, SourceEndpoint.Id);
             var endpointStatus = DeriveEndpointStatusForTransferEvent(callbackEvent);
 
             var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointStatus,

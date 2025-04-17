@@ -16,6 +16,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
 using VideoApi.Services.Contracts;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers
 {
@@ -46,34 +47,34 @@ namespace VideoApi.Controllers
             var conference = await queryHandler.Handle<GetConferenceByIdQuery, Conference>(getConferenceByIdQuery);
             if (conference == null)
             {
-                logger.LogWarning("Unable to find conference");
+                logger.LogConferenceNotFound(request.ConferenceId);
                 return NotFound($"Unable to find conference {request.ConferenceId}");
             }
 
             var requestedBy = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedBy);
             if (request.RequestedBy != Guid.Empty && requestedBy == null)
             {
-                logger.LogWarning("Unable to find participant request by with id {RequestedBy}", request.RequestedBy);
+                logger.LogParticipantRequestedByNotFound(request.RequestedBy);
                 return NotFound();
             }
             
             var requestedFor = conference.GetParticipants().SingleOrDefault(x => x.Id == request.RequestedFor);
             if (requestedFor == null)
             {
-                logger.LogWarning("Unable to find participant request for with id {RequestedFor}", request.RequestedFor);
+                logger.LogParticipantRequestedForNotFound(request.RequestedFor);
                 return NotFound($"Unable to find participant id request for {request.RequestedFor}");
             }
 
             if (string.IsNullOrEmpty(request.RoomLabel))
             {
-                logger.LogWarning("Please provide a room label");
+                logger.LogMissingRoomLabel();
                 ModelState.AddModelError(nameof(request.RoomLabel), "Please provide a room label");
                 return ValidationProblem(ModelState);
             }
 
             if (request.Answer != ConsultationAnswer.Accepted)
             {
-                logger.LogInformation("Answered {Answer}", request.Answer);
+                logger.LogConsultationAnswer(request.Answer.ToString());
                 return NoContent();
             }
 
@@ -108,14 +109,14 @@ namespace VideoApi.Controllers
 
             if (conference == null)
             {
-                logger.LogWarning("Unable to find conference");
+                logger.LogConferenceNotFound(request.ConferenceId);
                 return NotFound($"Unable to find conference {request.ConferenceId}");
             }
 
             var endpoint = conference.GetEndpoints().SingleOrDefault(x => x.Id == request.EndpointId);
             if (endpoint == null)
             {
-                logger.LogWarning("Unable to find endpoint");
+                logger.LogEndpointNotFound(request.EndpointId);
                 return NotFound($"Unable to find endpoint {request.EndpointId}");
             }
 
@@ -132,21 +133,21 @@ namespace VideoApi.Controllers
             
             if (requestedBy == null)
             {
-                logger.LogWarning("Unable to find requestedBy participant");
+                logger.LogEndpointWithoutLinkedParticipant();
                 return NotFound($"Unable to find requestedBy participant {request.RequestedById}");
             }
             
             if (endpoint.ParticipantsLinked == null || !endpoint.ParticipantsLinked.Any())
             {
                 const string message = "Endpoint does not have a linked participant";
-                logger.LogWarning(message);
+                logger.LogEndpointWithoutLinkedParticipant();
                 return Unauthorized(message);
             }
 
             if (endpoint.ParticipantsLinked.All(p => p.Username != requestedBy.Username))
             {
                 const string message = "Participant is not linked to requested endpoint";
-                logger.LogWarning(message);
+                logger.LogParticipantNotLinkedToEndpoint();
                 return Unauthorized(message);
             }
 
@@ -154,13 +155,13 @@ namespace VideoApi.Controllers
             var room = await queryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
-                logger.LogWarning("Unable to find room {RoomLabel}", request.RoomLabel);
+                logger.LogRoomNotFound(request.RoomLabel);
                 return NotFound($"Unable to find room {request.RoomLabel}");
             }
 
             if (room.RoomEndpoints.Count != 0)
             {
-                logger.LogWarning("Unable to join endpoint {EndpointId} to {RoomLabel}", endpoint.Id, request.RoomLabel);
+                logger.LogUnableToJoinEndpointToRoom(endpoint.Id, request.RoomLabel);
                 ModelState.AddModelError("RoomLabel", "Room already has an active endpoint");
                 return ValidationProblem(ModelState);
             }
@@ -228,14 +229,14 @@ namespace VideoApi.Controllers
 
             if (conference == null)
             {
-                logger.LogWarning("Unable to find conference");
+                logger.LogConferenceNotFound(request.ConferenceId);
                 return NotFound();
             }
 
             var participant = conference.GetParticipants().SingleOrDefault(x => x.Id == request.ParticipantId);
             if (participant == null)
             {
-                logger.LogWarning("Unable to find participant request by id");
+                logger.LogUnableToFindParticipant(request.ParticipantId);
                 return NotFound();
             }
 

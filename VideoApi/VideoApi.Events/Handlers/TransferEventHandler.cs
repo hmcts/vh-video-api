@@ -15,6 +15,7 @@ using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -32,8 +33,7 @@ namespace VideoApi.Events.Handlers
             if(SourceParticipant == null) throw new ParticipantNotFoundException(callbackEvent.ParticipantId);
             BadRequestException.ThrowIfNull(callbackEvent.TransferredFromRoomLabel);
             BadRequestException.ThrowIfNull(callbackEvent.TransferredToRoomLabel);
-            Logger.LogInformation("Transfer callback received - {ConferenceId} - {ParticipantId}/{ParticipantRoomId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel}",
-                SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.ParticipantRoomId, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel);
+            Logger.LogTransferCallbackReceived(SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.ParticipantRoomId, callbackEvent.TransferFrom.ToString(), callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo.ToString(), callbackEvent.TransferredToRoomLabel);
             
             var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
 
@@ -50,13 +50,11 @@ namespace VideoApi.Events.Handlers
             var room = await QueryHandler.Handle<GetConsultationRoomByIdQuery, ConsultationRoom>(roomQuery);
             if (room == null)
             {
-                Logger.LogError(new RoomNotFoundException(SourceConference.Id, callbackEvent.TransferredFromRoomLabel),
-                    "Unable to find room {RoomLabel} in conference {ConferenceId}",
-                    callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
+                Logger.LogRoomNotFound(new RoomNotFoundException(SourceConference.Id, callbackEvent.TransferredFromRoomLabel), callbackEvent.TransferredFromRoomLabel, SourceConference.Id);
             }
             else if (room.Status == RoomStatus.Live && room.RoomParticipants.Count == 0)
             {                
-                Logger.LogInformation("No participants left in room {RoomLabel} - transferring all endpoints to waiting room", room.Label);
+                Logger.LogNoParticipantsLeftInRoom(room.Label);
                 foreach (var endpoint in room.RoomEndpoints)
                 {
                     await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.EndpointId, RoomType.WaitingRoom.ToString());
@@ -87,7 +85,7 @@ namespace VideoApi.Events.Handlers
                 // If no other participants linked to this endpoint are still in the room, transfer it to waiting room
                 if (linkedParticipantsStillInRoom.Count == 0)
                 {
-                    Logger.LogInformation("No other participants linked to endpoint {EndpointId} - transferring to waiting room", endpoint.Id);
+                    Logger.LogNoOtherParticipantsLinkedToEndpoint(endpoint.Id);
                     await consultationService.EndpointTransferToRoomAsync(SourceConference.Id, endpoint.Id, RoomType.WaitingRoom.ToString());
                 }
             }

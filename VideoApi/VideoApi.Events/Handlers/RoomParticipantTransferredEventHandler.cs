@@ -8,6 +8,7 @@ using VideoApi.Events.Exceptions;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -26,8 +27,7 @@ namespace VideoApi.Events.Handlers
             {
                 i++;
                 var participantStatus = DeriveParticipantStatusForTransferEvent(callbackEvent);
-                Logger.LogInformation("Room Participant Transferred ({Iteration}) callback received - {ConferenceId}/{ParticipantId} - {FromRoom} {FromRoomLabel} - {ToRoom} {ToRoomLabel} - {NewStatus}",
-                     i, SourceConference.Id, participant.Id, callbackEvent.TransferFrom, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo, callbackEvent.TransferredToRoomLabel, participantStatus);
+                Logger.LogRoomParticipantTransferredCallbackReceived(i, SourceConference.Id, participant.Id, callbackEvent.TransferFrom.ToString(), callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferTo.ToString(), callbackEvent.TransferredToRoomLabel, participantStatus.ToString());
 
                 var command =
                     new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, participant.ParticipantId, participantStatus,

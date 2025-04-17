@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using VideoApi.Extensions;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Middleware.Validation
 {
@@ -23,7 +24,7 @@ namespace VideoApi.Middleware.Validation
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            _logger.LogDebug("Processing request");
+            _logger.LogProcessingRequest();
             foreach (var property in context.ActionDescriptor.Parameters)
             {
                 var isNullable = Nullable.GetUnderlyingType(property.ParameterType) != null;
@@ -46,7 +47,7 @@ namespace VideoApi.Middleware.Validation
             if (!context.ModelState.IsValid)
             {
                 var errors = context.ModelState.Values.SelectMany(v => v.Errors.Select(b => b.ErrorMessage)).ToList();
-                _logger.LogWarning("Request Validation Failed: {Errors}", string.Join("; ", errors));
+                _logger.LogRequestValidationFailed(string.Join("; ", errors));
                 
                 context.Result = new BadRequestObjectResult(new ValidationProblemDetails(context.ModelState));
             }

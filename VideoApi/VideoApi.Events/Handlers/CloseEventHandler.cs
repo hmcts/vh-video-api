@@ -6,6 +6,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -25,8 +26,7 @@ namespace VideoApi.Events.Handlers
 
             var command = new UpdateConferenceStatusCommand(SourceConference.Id, conferenceState);
             
-            Logger.LogInformation("Close callback - {ConferenceId} {Tags}",
-                SourceConference.Id, Args);
+            Logger.LogCloseCallback(SourceConference.Id, string.Join(",", Args));
             return CommandHandler.Handle(command);
         }
     }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.DAL.Queries.Core
 {
@@ -23,10 +24,10 @@ namespace VideoApi.DAL.Queries.Core
             using (logger.BeginScope(properties))
             {
                 // Unfortunately this scope won't apply to the underlying handler as its already been resolved from the logger factory.
-                logger.LogDebug("Handling query");
+                logger.LogHandlingCommand(typeof(TQuery).Name);
                 var sw = Stopwatch.StartNew();
                 var result = await underlyingHandler.Handle(query);
-                logger.LogDebug("Handled query in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+                logger.LogHandledCommand(typeof(TQuery).Name, sw.ElapsedMilliseconds);
                 return result;
             }
         }

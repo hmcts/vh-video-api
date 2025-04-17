@@ -11,6 +11,7 @@ using EndpointState = VideoApi.Domain.Enums.EndpointState;
 using EventType = VideoApi.Domain.Enums.EventType;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using Supplier = VideoApi.Domain.Enums.Supplier;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -35,14 +36,12 @@ namespace VideoApi.Events.Handlers
                 new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, room,
                     null);
             
-            Logger.LogInformation("Endpoint joined callback - {ConferenceId}/{EndpointId}",
-                SourceConference.Id, SourceEndpoint.Id);
+            Logger.LogEndpointJoinedCallback(SourceConference.Id, SourceEndpoint.Id);
             ValidateJvsEventReceivedAfterLastUpdate(callbackEvent);
             
             if (SourceConference.Supplier == Supplier.Vodafone)
             {
-                Logger.LogInformation("Vodafone integration enabled, transferring endpoint {EndpointId} to hearing room if in session",
-                    SourceEndpoint.Id);
+                Logger.LogVodafoneIntegrationEnabled(SourceEndpoint.Id);
                 TransferToHearingRoomIfHearingIsAlreadyInSession();
             }
 
@@ -51,12 +50,11 @@ namespace VideoApi.Events.Handlers
 
         private void TransferToHearingRoomIfHearingIsAlreadyInSession()
         {
-            Logger.LogInformation("Conference {ConferenceId} state is {ConferenceState}", SourceConference.Id,
+            Logger.LogConferenceState(SourceConference.Id,
                 SourceConference.State.ToString());
             if (SourceConference.State == ConferenceState.InSession)
             {
-                Logger.LogInformation("Conference {ConferenceId} already in session, transferring endpoint {EndpointId} to hearing room",
-                    SourceConference.Id, SourceEndpoint.Id);
+                Logger.LogTransferringEndpointToHearingRoom(SourceConference.Id, SourceEndpoint.Id);
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(SourceConference.Supplier);
                 videoPlatformService.TransferParticipantAsync(SourceConference.Id, SourceEndpoint.Id.ToString(),
                     RoomType.WaitingRoom.ToString(), RoomType.HearingRoom.ToString(), SourceEndpoint.ConferenceRole);
