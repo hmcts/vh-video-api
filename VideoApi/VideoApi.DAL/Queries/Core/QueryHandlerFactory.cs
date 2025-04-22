@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace VideoApi.DAL.Queries.Core
+﻿namespace VideoApi.DAL.Queries.Core
 {
     public class QueryHandlerFactory : IQueryHandlerFactory
     {
