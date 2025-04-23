@@ -15,16 +15,16 @@ namespace VideoApi.DAL.Mappings
             builder.HasKey(x => x.Id);
             builder.Property(x => x.HearingRefId);
             builder.Property(x => x.CaseType);
-            builder.Property(x => x.ScheduledDateTime);
+            builder.Property(x => x.ScheduledDateTime).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
             builder.Property(x => x.CaseNumber);
             builder.Property(x => x.CaseName);
             builder.Property(x => x.ScheduledDuration);
-            builder.Property(x => x.ClosedDateTime);
+            builder.Property(x => x.ClosedDateTime).HasConversion(v => v, v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null);
             builder.Property<ConferenceState>("State");
             builder.Property(x => x.AudioRecordingRequired);
             builder.Property(x => x.IngestUrl);
-            builder.Property(x => x.ActualStartTime);
-            builder.Property(x => x.CreatedDateTime);
+            builder.Property(x => x.ActualStartTime).HasConversion(v => v, v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null);
+            builder.Property(x => x.CreatedDateTime).HasConversion(v => v, v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null);
             builder.Property<Supplier>("Supplier").HasDefaultValue(Supplier.Vodafone);
             builder.Property(x=> x.AudioPlaybackLanguage).HasDefaultValue(AudioPlaybackLanguage.EnglishAndWelsh);
 

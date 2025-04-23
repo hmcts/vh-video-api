@@ -14,7 +14,7 @@ namespace VideoApi.DAL.Mappings
             builder.Property(x => x.From).IsRequired();
             builder.Property(x => x.To).IsRequired(false);
             builder.Property(x => x.MessageText).IsRequired();
-            builder.Property(x => x.TimeStamp);
+            builder.Property(x => x.TimeStamp).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         }
     }
 }
