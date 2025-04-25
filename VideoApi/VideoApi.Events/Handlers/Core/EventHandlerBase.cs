@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -9,7 +8,6 @@ using VideoApi.DAL.Queries;
 using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain;
 using VideoApi.Domain.Enums;
-using VideoApi.Events.Exceptions;
 using VideoApi.Events.Models;
 using Task = System.Threading.Tasks.Task;
 using VideoApi.Common.Logging;
@@ -57,33 +55,5 @@ namespace VideoApi.Events.Handlers.Core
         }
 
         protected abstract Task PublishStatusAsync(CallbackEvent callbackEvent);
-
-        protected void ValidateParticipantEventReceivedAfterLastUpdate(CallbackEvent callbackEvent)
-        {
-            var eventReceivedAfterLastUpdate = SourceParticipant.UpdatedAt > callbackEvent.TimeStampUtc;
-            if (!eventReceivedAfterLastUpdate) return;
-            var innerException = new InvalidOperationException(
-                $"Participant {SourceParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc:O}. Current Status: {SourceParticipant.GetCurrentStatus().ParticipantState} - Last Updated At: {SourceParticipant.UpdatedAt.GetValueOrDefault():O}");
-            Logger.LogUnexpectedEventOrderForParticipant(new UnexpectedEventOrderException(callbackEvent, innerException));
-        }
-
-        protected void ValidateJvsEventReceivedAfterLastUpdate(CallbackEvent callbackEvent)
-        {
-            var eventReceivedAfterLastUpdate = SourceEndpoint.UpdatedAt > callbackEvent.TimeStampUtc;
-            if(!eventReceivedAfterLastUpdate) return;
-            var innerException = new InvalidOperationException(
-                $"Endpoint {SourceEndpoint.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc:O}. Current Status: {SourceEndpoint.State} - Last Updated At: {SourceEndpoint.UpdatedAt.GetValueOrDefault():O}");
-            Logger.LogUnexpectedEventOrderForEndpoint(new UnexpectedEventOrderException(callbackEvent, innerException));
-        }
-        
-        protected void ValidateTelephoneParticipantEventReceivedAfterLastUpdate(CallbackEvent callbackEvent)
-        {
-            // Telephone participants are added dynamically so we have to use the null operator
-            var eventReceivedAfterLastUpdate = SourceTelephoneParticipant?.UpdatedAt > callbackEvent.TimeStampUtc;
-            if(!eventReceivedAfterLastUpdate) return;
-            var innerException = new InvalidOperationException(
-                $"TelephoneParticipant {SourceTelephoneParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc:O}. Current Status: {SourceTelephoneParticipant.State} - Last Updated At: {SourceTelephoneParticipant.UpdatedAt.GetValueOrDefault():O}");
-            Logger.LogUnexpectedEventOrderForTelephoneParticipant(new UnexpectedEventOrderException(callbackEvent, innerException));
-        }
     }
 }

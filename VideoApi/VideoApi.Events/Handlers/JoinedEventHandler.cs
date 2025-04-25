@@ -36,7 +36,6 @@ namespace VideoApi.Events.Handlers
                 participantState, room, null);
             
             Logger.LogJoinedCallback(SourceConference.Id, SourceParticipant.Id);
-            ValidateParticipantEventReceivedAfterLastUpdate(callbackEvent);
             
             if (SourceConference.Supplier == Supplier.Vodafone)
             {

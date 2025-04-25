@@ -24,7 +24,6 @@ public class TelephoneJoinedEventHandler(
     protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
     {
         Logger.LogTelephoneJoinedCallback(SourceConference.Id, callbackEvent.ParticipantId);
-        ValidateTelephoneParticipantEventReceivedAfterLastUpdate(callbackEvent);
         
         var command =
             new AddTelephoneParticipantCommand(SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.Phone);

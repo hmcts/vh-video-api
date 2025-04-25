@@ -23,7 +23,6 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             Logger.LogDisconnectedCallback(SourceConference.Id, SourceParticipant.Id);
-            ValidateParticipantEventReceivedAfterLastUpdate(callbackEvent);
             await PublishParticipantDisconnectMessage();
         }
 

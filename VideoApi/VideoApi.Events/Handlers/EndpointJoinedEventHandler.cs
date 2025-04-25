@@ -37,7 +37,6 @@ namespace VideoApi.Events.Handlers
                     null);
             
             Logger.LogEndpointJoinedCallback(SourceConference.Id, SourceEndpoint.Id);
-            ValidateJvsEventReceivedAfterLastUpdate(callbackEvent);
             
             if (SourceConference.Supplier == Supplier.Vodafone)
             {

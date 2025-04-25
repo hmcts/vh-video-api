@@ -21,7 +21,6 @@ public class TelephoneDisconnectedEventHandler(
     protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
     {
         Logger.LogTelephoneDisconnectedCallback(SourceConference.Id, SourceTelephoneParticipant.Id);
-        ValidateTelephoneParticipantEventReceivedAfterLastUpdate(callbackEvent);
         var command = new RemoveTelephoneParticipantCommand(SourceConference.Id, SourceTelephoneParticipant.Id);
         await CommandHandler.Handle(command);
     }
