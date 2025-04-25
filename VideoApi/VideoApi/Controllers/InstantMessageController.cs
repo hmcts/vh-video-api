@@ -10,6 +10,7 @@ using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 using VideoApi.Mappings;
 using VideoApi.Services;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers
 {
@@ -34,7 +35,7 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddInstantMessageToConferenceAsync(Guid conferenceId, AddInstantMessageRequest request)
         {
-            logger.LogDebug("Saving instant message");
+            logger.LogSavingInstantMessage();
 
             try
             {
@@ -45,7 +46,7 @@ namespace VideoApi.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Unable to add instant messages");
+                logger.LogUnableToAddInstantMessages(e);
                 return BadRequest();
             }
         }
@@ -56,17 +57,17 @@ namespace VideoApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveInstantMessagesForConferenceAsync(Guid conferenceId)
         {
-            logger.LogDebug("RemoveInstantMessagesForConference");
+            logger.LogRemovingInstantMessagesForConference();
             try
             {
                 await instantMessageService.RemoveInstantMessagesForConferenceAsync(conferenceId);
 
-                logger.LogDebug("InstantMessage deleted");
+                logger.LogInstantMessageDeleted();
                 return Ok();
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Unable to remove instant messages");
+                logger.LogUnableToRemoveInstantMessages(e);
                 return BadRequest();
             }
         }
@@ -80,12 +81,12 @@ namespace VideoApi.Controllers
         [ProducesResponseType(typeof(List<ClosedConferencesResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetClosedConferencesWithInstantMessagesAsync()
         {
-            logger.LogDebug($"GetClosedConferencesWithInstantMessages");
+            logger.LogGettingClosedConferencesWithInstantMessages();
             var closedConferences = await instantMessageService.GetClosedConferencesWithInstantMessages();
 
             if (closedConferences.Count == 0)
             {
-                logger.LogDebug($"No closed conferences with instant messages found.");
+                logger.LogNoClosedConferencesWithInstantMessagesFound();
                 return Ok(new List<ClosedConferencesResponse>());
             }
 

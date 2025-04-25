@@ -9,6 +9,7 @@ using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
 using VideoApi.Services.Contracts;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -47,8 +48,7 @@ namespace VideoApi.Events.Handlers
                 await AddDisconnectedTask();
             }
             
-            Logger.LogInformation("Room Participant Disconnected callback received - {ConferenceId}/{ParticipantId} - {ParticipantState} - {Room} {RoomLabel} - {SourceRoom}",
-                SourceConference.Id, SourceParticipant.Id, participantState, null, null, SourceParticipantRoom.Id);
+            Logger.LogRoomParticipantCallbackReceived(SourceConference.Id, SourceParticipant.Id, participantState.ToString(), null, null, SourceParticipantRoom.Id);
         }
 
         private async Task ReturnRoomParticipantToWaitingRoom()

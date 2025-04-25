@@ -9,6 +9,7 @@ using VideoApi.DAL.Commands.Core;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Extensions;
 using VideoApi.Mappings;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers;
 
@@ -45,7 +46,7 @@ public class VideoEventsController(
         
         if (request.ShouldSkipEventHandler())
         {
-            logger.LogTrace("Handling CallbackEvent ({@Request}) skipped due to result of ShouldHandleEvent", request);
+            logger.LogHandlingCallbackEventSkipped(request);
             return NoContent();
         }
         

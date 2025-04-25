@@ -12,6 +12,7 @@ using VideoApi.Domain.Enums;
 using VideoApi.Events.Exceptions;
 using VideoApi.Events.Models;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers.Core
 {
@@ -36,7 +37,7 @@ namespace VideoApi.Events.Handlers.Core
 
         public virtual async Task HandleAsync(CallbackEvent callbackEvent)
         {
-            Logger.LogDebug("Handling callback");
+            Logger.LogHandlingCallback();
             var sw = Stopwatch.StartNew();
             SourceConference =
                 await QueryHandler.Handle<GetConferenceByIdForEventQuery, Conference>(
@@ -52,7 +53,7 @@ namespace VideoApi.Events.Handlers.Core
             SourceParticipantRoom = SourceConference.Rooms.OfType<ParticipantRoom>().SingleOrDefault(x =>x.Id == callbackEvent.ParticipantRoomId);
             
             await PublishStatusAsync(callbackEvent);
-            Logger.LogDebug("Handled callback in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+            Logger.LogHandlingTimeCallback(sw.ElapsedMilliseconds);
         }
 
         protected abstract Task PublishStatusAsync(CallbackEvent callbackEvent);
@@ -63,7 +64,7 @@ namespace VideoApi.Events.Handlers.Core
             if (!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
                 $"Participant {SourceParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc:O}. Current Status: {SourceParticipant.GetCurrentStatus().ParticipantState} - Last Updated At: {SourceParticipant.UpdatedAt.GetValueOrDefault():O}");
-            Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for participant");
+            Logger.LogUnexpectedEventOrderForParticipant(new UnexpectedEventOrderException(callbackEvent, innerException));
         }
 
         protected void ValidateJvsEventReceivedAfterLastUpdate(CallbackEvent callbackEvent)
@@ -72,7 +73,7 @@ namespace VideoApi.Events.Handlers.Core
             if(!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
                 $"Endpoint {SourceEndpoint.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc:O}. Current Status: {SourceEndpoint.State} - Last Updated At: {SourceEndpoint.UpdatedAt.GetValueOrDefault():O}");
-            Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for endpoint");
+            Logger.LogUnexpectedEventOrderForEndpoint(new UnexpectedEventOrderException(callbackEvent, innerException));
         }
         
         protected void ValidateTelephoneParticipantEventReceivedAfterLastUpdate(CallbackEvent callbackEvent)
@@ -82,7 +83,7 @@ namespace VideoApi.Events.Handlers.Core
             if(!eventReceivedAfterLastUpdate) return;
             var innerException = new InvalidOperationException(
                 $"TelephoneParticipant {SourceTelephoneParticipant.Id} has already been updated since this event {callbackEvent.EventType} with the time {callbackEvent.TimeStampUtc:O}. Current Status: {SourceTelephoneParticipant.State} - Last Updated At: {SourceTelephoneParticipant.UpdatedAt.GetValueOrDefault():O}");
-            Logger.LogError(new UnexpectedEventOrderException(callbackEvent, innerException), "Unexpected event order for telephone participant");
+            Logger.LogUnexpectedEventOrderForTelephoneParticipant(new UnexpectedEventOrderException(callbackEvent, innerException));
         }
     }
 }

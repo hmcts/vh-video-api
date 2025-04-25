@@ -6,6 +6,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -35,8 +36,7 @@ namespace VideoApi.Events.Handlers
             }
 
             var taskCommand = new AddTaskCommand(SourceConference.Id, SourceParticipant.Id, reason, TaskType.Hearing);
-            Logger.LogInformation("Suspend callback received - {ConferenceId}",
-                SourceConference.Id);
+            Logger.LogSuspendCallbackReceived(SourceConference.Id);
             await CommandHandler.Handle(taskCommand);
         }
     }

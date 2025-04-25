@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using VideoApi.Common.Helpers;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.DAL.Commands.Core
 {
@@ -20,10 +21,10 @@ namespace VideoApi.DAL.Commands.Core
             properties.Add(nameof(TCommand), typeof(TCommand).Name);
             using (logger.BeginScope(properties))
             {
-                logger.LogDebug("Handling command");
+                logger.LogHandlingCommand(typeof(TCommand).Name);
                 var sw = Stopwatch.StartNew();
                 await underlyingHandler.Handle(command);
-                logger.LogDebug("Handled command in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+                logger.LogHandledCommand(typeof(TCommand).Name, sw.ElapsedMilliseconds);
             }
         }
     }

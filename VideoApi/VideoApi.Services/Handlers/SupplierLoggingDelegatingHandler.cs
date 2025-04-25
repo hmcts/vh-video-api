@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Services.Handlers;
 
@@ -21,7 +22,7 @@ public class SupplierLoggingDelegatingHandler(ILogger<SupplierLoggingDelegatingH
         {
             var requestBody = await request.Content.ReadAsStringAsync(cancellationToken);
             activity?.SetTag("http.request.body", requestBody);
-            logger.LogInformation("Request to {RequestUri}: {RequestBody}", request.RequestUri, requestBody);
+            logger.LogRequestDetails(request.RequestUri.AbsoluteUri, requestBody);
         }
         
         var stopwatch = Stopwatch.StartNew();

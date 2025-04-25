@@ -5,6 +5,7 @@ using NSwag.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VideoApi.Common.Logging;
 using VideoApi.Common.Security;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Enums;
@@ -50,7 +51,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                logger.LogError(ex, "Unable to find conference");
+                logger.LogUnableToFindConferenceError(ex);
                 return NotFound(false);
             }
         }
@@ -93,7 +94,7 @@ namespace VideoApi.Controllers
             }
             catch (ConferenceNotFoundException ex)
             {
-                logger.LogError(ex, "Unable to find conference");
+                logger.LogConferenceNotFoundByHearingError(hearingId, ex);
                 return NotFound(false);
             }
         }
@@ -110,7 +111,7 @@ namespace VideoApi.Controllers
 
             if (quickLinkParticipant == null)
             {
-                logger.LogError("Unable to find QuickLink participant {UserName}", userName);
+                logger.LogQuickLinkNotFoundByUserNameError(userName);
                 return NotFound();
             }
 

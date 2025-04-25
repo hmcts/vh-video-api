@@ -12,6 +12,7 @@ using EventType = VideoApi.Domain.Enums.EventType;
 using ParticipantState = VideoApi.Domain.Enums.ParticipantState;
 using RoomType = VideoApi.Domain.Enums.RoomType;
 using Supplier = VideoApi.Domain.Enums.Supplier;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -34,8 +35,7 @@ namespace VideoApi.Events.Handlers
             var command = new UpdateParticipantStatusAndRoomCommand(SourceConference.Id, SourceParticipant.Id,
                 participantState, room, null);
             
-            Logger.LogInformation("Joined callback - {ConferenceId}/{ParticipantId}",
-                SourceConference.Id, SourceParticipant.Id);
+            Logger.LogJoinedCallback(SourceConference.Id, SourceParticipant.Id);
             ValidateParticipantEventReceivedAfterLastUpdate(callbackEvent);
             
             if (SourceConference.Supplier == Supplier.Vodafone)
@@ -48,13 +48,11 @@ namespace VideoApi.Events.Handlers
         
         private void TransferToHearingRoomIfHearingIsAlreadyInSession(CallbackEvent callbackEvent)
         {
-            Logger.LogInformation("Conference {ConferenceId} state is {ConferenceState}", SourceConference.Id,
-                SourceConference.State.ToString());
+            Logger.LogConferenceState(SourceConference.Id, SourceConference.State.ToString());
             
             if (SourceConference.State == ConferenceState.InSession && SourceParticipant.CanAutoTransferToHearingRoom())
             {
-                Logger.LogInformation("Conference {ConferenceId} already in session, transferring participant {ParticipantId} to hearing room",
-                    SourceConference.Id, SourceParticipant.Id);
+                Logger.LogTransferringParticipantToHearingRoom(SourceConference.Id, SourceParticipant.Id);
                 var videoPlatformService = _supplierPlatformServiceFactory.Create(SourceConference.Supplier);
                 // This flow is only triggered by Civilians
                 var role = callbackEvent.ConferenceRole ?? ConferenceRole.Guest;

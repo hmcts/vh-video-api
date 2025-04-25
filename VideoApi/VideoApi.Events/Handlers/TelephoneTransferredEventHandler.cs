@@ -7,6 +7,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers;
 
@@ -21,8 +22,7 @@ public class TelephoneTransferredEventHandler(
     protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
     {
         BadRequestException.ThrowIfNull(callbackEvent.TransferTo);
-        Logger.LogInformation("TelephoneTransferred callback - {ConferenceId}/{TelephoneParticipantId} from {FromRoomLabel} to {ToRoomLabel}",
-            SourceConference.Id, SourceTelephoneParticipant.Id, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferredToRoomLabel);
+        Logger.LogTelephoneTransferredCallback(SourceConference.Id, SourceTelephoneParticipant.Id, callbackEvent.TransferredFromRoomLabel, callbackEvent.TransferredToRoomLabel);
         var room = callbackEvent.TransferTo;
         var state =  room.HasValue ? TelephoneState.Connected : TelephoneState.Disconnected;
         var command = new UpdateTelephoneParticipantCommand(SourceConference.Id, SourceTelephoneParticipant.Id, room, state);

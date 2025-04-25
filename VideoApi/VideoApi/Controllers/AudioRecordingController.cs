@@ -12,6 +12,7 @@ using VideoApi.DAL.Exceptions;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Exceptions;
 using VideoApi.Services.Factories;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers;
 
@@ -36,7 +37,7 @@ public class AudioRecordingController(
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetAudioRecordingLinkAsync(string hearingReference)
     {
-        logger.LogInformation("Getting audio recording link");
+        logger.LogInformationGettingAudioLink();
         try
         {
             var azureStorageService = azureStorageServiceFactory.Create(AzureStorageServiceType.Vh);
@@ -54,7 +55,7 @@ public class AudioRecordingController(
         }
         catch (ConferenceNotFoundException ex)
         {
-            logger.LogError(ex, "Not found: {Message}", ex.Message);
+            logger.LogErrorNotFound(ex, ex.Message);
             return NotFound();
         }
     }
@@ -107,7 +108,7 @@ public class AudioRecordingController(
     [ProducesResponseType((int) HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetAudioRecordingLinkCvpAllAsync(string cloudRoom, string date, string caseReference)
     {
-        logger.LogInformation("Getting audio recording link for CVP cloud room");
+        logger.LogInformationGettingAudioLinkForCvp();
         
         try
         {
@@ -117,7 +118,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error: {Message}", ex.Message);
+            logger.LogErrorGeneric(ex, ex.Message);
             return NotFound();
         }
     }
@@ -134,7 +135,7 @@ public class AudioRecordingController(
     [ProducesResponseType((int) HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetAudioRecordingLinkCvpByCloudRoomAsync(string cloudRoom, string date)
     {
-        logger.LogInformation("Getting audio recording link for CVP cloud room");
+        logger.LogInformationGettingAudioLinkForCvp();
         
         try
         {
@@ -144,7 +145,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error: {Message}", ex.Message);
+            logger.LogErrorGeneric(ex, ex.Message);
             return NotFound();
         }
     }
@@ -161,7 +162,7 @@ public class AudioRecordingController(
     [ProducesResponseType((int) HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetAudioRecordingLinkCvpByDateAsync(string date, string caseReference)
     {
-        logger.LogInformation("Getting audio recording link for CVP");
+        logger.LogInformationGettingAudioLinkForCvp();
         
         try
         {
@@ -171,7 +172,7 @@ public class AudioRecordingController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error: {Message}", ex.Message);
+            logger.LogErrorGeneric(ex, ex.Message);
             return NotFound();
         }
     }

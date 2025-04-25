@@ -6,6 +6,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Events.Models;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers
 {
@@ -20,8 +21,7 @@ namespace VideoApi.Events.Handlers
 
         protected override Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
-            Logger.LogInformation("EndpointDisconnected callback - {ConferenceId}/{EndpointId}",
-                SourceConference.Id, SourceEndpoint.Id);
+            Logger.LogEndpointDisconnectedCallback(SourceConference.Id, SourceEndpoint.Id);
             ValidateJvsEventReceivedAfterLastUpdate(callbackEvent);
             const EndpointState endpointState = EndpointState.Disconnected;
             var command = new UpdateEndpointStatusAndRoomCommand(SourceConference.Id, SourceEndpoint.Id, endpointState, null, null);
