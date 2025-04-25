@@ -21,7 +21,6 @@ public class TelephoneDisconnectedEventHandler(
     {
         Logger.LogInformation("TelephoneDisconnected callback - {ConferenceId}/{TelephoneParticipantId}",
             SourceConference.Id, SourceTelephoneParticipant.Id);
-        ValidateTelephoneParticipantEventReceivedAfterLastUpdate(callbackEvent);
         var command = new RemoveTelephoneParticipantCommand(SourceConference.Id, SourceTelephoneParticipant.Id);
         await CommandHandler.Handle(command);
     }

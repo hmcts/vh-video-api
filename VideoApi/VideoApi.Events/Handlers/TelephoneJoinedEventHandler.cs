@@ -24,7 +24,6 @@ public class TelephoneJoinedEventHandler(
     {
         Logger.LogInformation("TelephoneJoined callback - {ConferenceId}/{TelephoneParticipantId}",
             SourceConference.Id, callbackEvent.ParticipantId);
-        ValidateTelephoneParticipantEventReceivedAfterLastUpdate(callbackEvent);
         
         var command =
             new AddTelephoneParticipantCommand(SourceConference.Id, callbackEvent.ParticipantId, callbackEvent.Phone);

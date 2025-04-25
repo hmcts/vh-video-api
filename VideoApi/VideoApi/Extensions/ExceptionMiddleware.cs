@@ -68,12 +68,6 @@ public class ExceptionMiddleware(RequestDelegate next)
                 await HandleExceptionAsync(httpContext, ex.StatusCode, ex);
             }
         }
-        catch (UnexpectedEventOrderException ex)
-        {
-            TraceException("Unexpected Event Order Exception", ex, null, null);
-            httpContext.Response.ContentType = "application/json";
-            httpContext.Response.StatusCode = (int) HttpStatusCode.NoContent;
-        }
         catch (Exception ex)
         {
             TraceException("API Exception", ex, null, null);
