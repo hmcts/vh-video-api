@@ -9,6 +9,7 @@ using NSwag.Annotations;
 using VideoApi.Contract.Responses;
 using VideoApi.Mappings;
 using VideoApi.Services;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Controllers;
 
@@ -31,7 +32,7 @@ public class InstantMessageHistoryController(
     [ProducesResponseType(typeof(List<InstantMessageResponse>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId)
     {
-        logger.LogDebug("Retrieving instant message history");
+        logger.LogRetrievingInstantMessageHistory(conferenceId);
 
         return await GetInstantMessageHistoryAsync(conferenceId, null);
     }
@@ -48,14 +49,14 @@ public class InstantMessageHistoryController(
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetInstantMessageHistoryForParticipantAsync(Guid conferenceId, string participantUsername)
     {
-        logger.LogDebug("Retrieving instant message history");
+        logger.LogRetrievingInstantMessageHistoryForParticipant(conferenceId, participantUsername);
 
         return await GetInstantMessageHistoryAsync(conferenceId, participantUsername);
     }
     
     private async Task<IActionResult> GetInstantMessageHistoryAsync(Guid conferenceId, string participantName)
     {
-        logger.LogDebug("Retrieving instant message history");
+        logger.LogRetrievingInstantMessageHistory(conferenceId);
         try
         {
             var messages =
@@ -66,7 +67,7 @@ public class InstantMessageHistoryController(
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Unable to find instant messages");
+            logger.LogUnableToRetrieveInstantMessageHistory(conferenceId, e);
             return NotFound();
         }
     }

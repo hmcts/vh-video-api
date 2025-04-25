@@ -10,6 +10,7 @@ using VideoApi.Domain;
 using VideoApi.Domain.Enums;
 using VideoApi.Events.Models;
 using Task = System.Threading.Tasks.Task;
+using VideoApi.Common.Logging;
 
 namespace VideoApi.Events.Handlers.Core
 {
@@ -34,7 +35,7 @@ namespace VideoApi.Events.Handlers.Core
 
         public virtual async Task HandleAsync(CallbackEvent callbackEvent)
         {
-            Logger.LogDebug("Handling callback");
+            Logger.LogHandlingCallback();
             var sw = Stopwatch.StartNew();
             SourceConference =
                 await QueryHandler.Handle<GetConferenceByIdForEventQuery, Conference>(
@@ -50,7 +51,7 @@ namespace VideoApi.Events.Handlers.Core
             SourceParticipantRoom = SourceConference.Rooms.OfType<ParticipantRoom>().SingleOrDefault(x =>x.Id == callbackEvent.ParticipantRoomId);
             
             await PublishStatusAsync(callbackEvent);
-            Logger.LogDebug("Handled callback in {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+            Logger.LogHandlingTimeCallback(sw.ElapsedMilliseconds);
         }
 
         protected abstract Task PublishStatusAsync(CallbackEvent callbackEvent);
