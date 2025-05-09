@@ -13,14 +13,15 @@ namespace VideoApi.UnitTests.Events
 {
     public class CountdownFinishedEventHandlerTests : EventHandlerTestBase<CountdownFinishedEventHandler>
     {
-        [Test]
-        public async Task Should_move_witness_to_waiting_room_when_countdown_is_finished()
+        [TestCase("Witness")]
+        [TestCase("Expert")]
+        public async Task Should_move_to_waiting_room_when_countdown_is_finished_and_hearing_role_is(string roleName)
         {
-            var witnessToAdd = new ParticipantBuilder().WithUserRole(UserRole.Individual).WithHearingRole("Witness").Build();
+            var witnessToAdd = new ParticipantBuilder().WithUserRole(UserRole.Individual).WithHearingRole(roleName).Build();
             TestConference.Participants.Add(witnessToAdd);
             var consultationRoom = new ConsultationRoom(TestConference.Id, "ConsultationRoom1",
                 VirtualCourtRoomType.Participant, false);
-            var witnesses = TestConference.Participants.Where(x=> x is Participant && ((Participant)x).IsAWitness()).ToList();
+            var witnesses = TestConference.Participants.Where(x=> x is Participant && ((Participant)x).IsAWitnessOrExpert()).ToList();
             foreach (var witness in witnesses)
             {
                 witness.State = ParticipantState.InConsultation;
@@ -47,7 +48,6 @@ namespace VideoApi.UnitTests.Events
                         x => x.LeaveConsultationAsync(TestConference.Id, witness.Id, consultationRoom.Label,
                             RoomType.WaitingRoom.ToString()), Times.Once());
             }
-            
         }
     }
 }

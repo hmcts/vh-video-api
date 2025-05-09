@@ -25,7 +25,7 @@ namespace VideoApi.Events.Handlers
         protected override async Task PublishStatusAsync(CallbackEvent callbackEvent)
         {
             Logger.LogCountdownFinishedCallback(SourceConference.Id);
-            var allWitnessesInConsultation = SourceConference.Participants.Where(x => x is Participant && ((Participant)x).IsAWitness())
+            var allWitnessesInConsultation = SourceConference.Participants.Where(x => x is Participant && ((Participant)x).IsAWitnessOrExpert())
                 .Where(x => x.State == ParticipantState.InConsultation);
             foreach (var witness in allWitnessesInConsultation)
             {

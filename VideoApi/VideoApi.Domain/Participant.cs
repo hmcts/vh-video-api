@@ -76,9 +76,10 @@ namespace VideoApi.Domain
             return UserRole == UserRole.VideoHearingsOfficer;
         }
         
-        public bool IsAWitness()
+        public bool IsAWitnessOrExpert()
         {
-            return HearingRole.Equals("Witness", StringComparison.CurrentCultureIgnoreCase);
+            return HearingRole.Equals("Witness", StringComparison.CurrentCultureIgnoreCase) || 
+                   HearingRole.Equals("Expert", StringComparison.CurrentCultureIgnoreCase);
         }
         
         public override void AddLink(Guid linkedId, LinkedParticipantType linkType)
