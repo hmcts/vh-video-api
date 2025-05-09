@@ -66,7 +66,13 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
         protected void AddWitnessToTestConference()
         {
             TestConference.AddParticipant(new VideoApi.Domain.Participant(Guid.NewGuid(), "contactEmail", 
-                "displayName", "userName") { HearingRole = "Witness", UserRole = UserRole.Individual, State = ParticipantState.Available });
+                "displayNameExpert", "userNameExpert") { HearingRole = "Witness", UserRole = UserRole.Individual, State = ParticipantState.Available });
+        }
+        
+        protected void AddExpertToTestConference()
+        {
+            TestConference.AddParticipant(new VideoApi.Domain.Participant(Guid.NewGuid(), "contactEmail", 
+                "displayName", "userName") { HearingRole = "Expert", UserRole = UserRole.Individual, State = ParticipantState.Available });
         }
         
         protected void AddTelephoneParticipantToTestConference()

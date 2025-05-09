@@ -102,6 +102,7 @@ namespace VideoApi.UnitTests.Controllers.ConferenceManagement
             var conferenceId = TestConference.Id;
             AddTelephoneParticipantToTestConference();
             AddWitnessToTestConference();
+            AddExpertToTestConference();
             AddQuicklinkToTestConference();
 
             var layout = HearingLayout.OnePlus7;
