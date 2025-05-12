@@ -23,7 +23,7 @@ public class SupplierStubApiClient(HttpClient httpClient) : ISupplierStubApiClie
         var response = await httpClient.PostAsync(requestUri, CreateRequestBodyContent(requestBody));
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper
-            .DeserialiseForSupplier<SupplierStubHearingModel>(response.Content.ReadAsStringAsync().Result)
+            .DeserialiseForSupplier<Hearing>(response.Content.ReadAsStringAsync().Result)
             .ToBookHearingResponse();
     }
 
@@ -143,22 +143,22 @@ public class SupplierStubApiClient(HttpClient httpClient) : ISupplierStubApiClie
         return new StringContent(ApiRequestHelper.SerialiseForSupplier(request), Encoding.UTF8, "application/json");
     }
 
-    private async Task<SupplierStubHearingModel> RetrieveHearing(Guid hearingId)
+    private async Task<Hearing> RetrieveHearing(Guid hearingId)
     {
         var requestUri = GetRequestUrl($"/hearings/{hearingId}");
         var response = await httpClient.GetAsync(requestUri);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper
-            .DeserialiseForSupplier<SupplierStubHearingModel>(response.Content.ReadAsStringAsync().Result);
+            .DeserialiseForSupplier<Hearing>(response.Content.ReadAsStringAsync().Result);
     }
 
-    private static SupplierStubRoomModel GenerateNewRoomForHearing(SupplierStubHearingModel hearing, string roomLabelPrefix)
+    private static Room GenerateNewRoomForHearing(Hearing hearing, string roomLabelPrefix)
     {
         var existingRoomsWithRequestedPrefix = hearing.Rooms?
             .Where(r => r.Label.StartsWith(roomLabelPrefix, StringComparison.CurrentCultureIgnoreCase))
             .ToList();
 
-        var newRoom = new SupplierStubRoomModel
+        var newRoom = new Room
         {
             Label = $"{roomLabelPrefix}{existingRoomsWithRequestedPrefix?.Count + 1}"
         };
@@ -166,12 +166,12 @@ public class SupplierStubApiClient(HttpClient httpClient) : ISupplierStubApiClie
         return newRoom;
     }
 
-    private async Task AddRoomToHearing(SupplierStubHearingModel hearing, SupplierStubRoomModel room)
+    private async Task AddRoomToHearing(Hearing hearing, Room room)
     {
         var requestUri = GetRequestUrl($"/hearings/{hearing.Id}");
         var updatedRooms = hearing.Rooms.ToList();
         updatedRooms.Add(room);
-        var requestBody = new SupplierStubAddRoomRequest
+        var requestBody = new AddRoomRequest
         {
             Rooms = updatedRooms
         };

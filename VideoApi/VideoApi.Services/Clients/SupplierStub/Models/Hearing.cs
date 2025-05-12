@@ -5,7 +5,7 @@ using VideoApi.Services.Clients.Models;
 namespace VideoApi.Services.Clients.SupplierStub.Models;
 
 // Json server uses a single model for data and responses
-public class SupplierStubHearingModel
+public class Hearing
 {
     /// <summary>
     /// The id of the hearing
@@ -23,5 +23,5 @@ public class SupplierStubHearingModel
     public string TelephoneConferenceId { get; set; }
     
     [JsonPropertyName("rooms")]
-    public List<SupplierStubRoomModel> Rooms { get; set; } = [];
+    public List<Room> Rooms { get; set; } = [];
 }

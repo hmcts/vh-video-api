@@ -5,9 +5,9 @@ namespace VideoApi.Services.Clients.SupplierStub;
 
 public static class SupplierStubApiClientMapper
 {
-    public static SupplierStubHearingModel ToSupplierStubHearingModel(this BookHearingRequest request)
+    public static Hearing ToSupplierStubHearingModel(this BookHearingRequest request)
     {
-        return new SupplierStubHearingModel
+        return new Hearing
         {
             Id = request.VirtualCourtroomId.Value,
             Uris = new MeetingUris
@@ -22,7 +22,7 @@ public static class SupplierStubApiClientMapper
         };
     }
 
-    public static BookHearingResponse ToBookHearingResponse(this SupplierStubHearingModel model)
+    public static BookHearingResponse ToBookHearingResponse(this Hearing model)
     {
         return new BookHearingResponse
         {
@@ -31,7 +31,7 @@ public static class SupplierStubApiClientMapper
         };
     }
 
-    public static RetrieveHearingResponse ToRetrieveHearingResponse(this SupplierStubHearingModel model)
+    public static RetrieveHearingResponse ToRetrieveHearingResponse(this Hearing model)
     {
         return new RetrieveHearingResponse
         {
