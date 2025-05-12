@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.Services.Clients.SupplierStub.Models;
@@ -20,4 +21,7 @@ public class SupplierStubHearingModel
     
     [JsonPropertyName("telephone_conference_id")]
     public string TelephoneConferenceId { get; set; }
+    
+    [JsonPropertyName("rooms")]
+    public List<SupplierStubRoomModel> Rooms { get; set; } = [];
 }

@@ -1,4 +1,3 @@
-using System;
 using VideoApi.Services.Clients.Models;
 using VideoApi.Services.Clients.SupplierStub.Models;
 
@@ -10,7 +9,7 @@ public static class SupplierStubApiClientMapper
     {
         return new SupplierStubHearingModel
         {
-            Id = Guid.NewGuid(),
+            Id = request.VirtualCourtroomId.Value,
             Uris = new MeetingUris
             {
                 PexipNode = "pexip_node",
