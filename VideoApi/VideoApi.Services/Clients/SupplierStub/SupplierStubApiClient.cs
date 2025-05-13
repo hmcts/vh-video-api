@@ -107,7 +107,8 @@ public class SupplierStubApiClient(HttpClient httpClient) : ISupplierStubApiClie
         
         try
         {
-            await httpClient.GetAsync(requestUri);
+            var response = await httpClient.GetAsync(requestUri);
+            EnsureSuccessStatusCodeOrThrowSupplierException(response);
         }
         catch (Exception)
         {
