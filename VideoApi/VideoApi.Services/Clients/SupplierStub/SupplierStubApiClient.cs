@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using VideoApi.Common.Helpers;
 using VideoApi.Services.Clients.Models;
@@ -12,10 +11,8 @@ namespace VideoApi.Services.Clients.SupplierStub;
 
 public interface ISupplierStubApiClient : ISupplierApiClient;
 
-public class SupplierStubApiClient(HttpClient httpClient) : ISupplierStubApiClient
+public class SupplierStubApiClient(HttpClient httpClient) : SupplierApiClientBase, ISupplierStubApiClient
 {
-    public string BaseUrlAddress { get; set; }
-    
     public async Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body)
     {
         var requestUri = GetRequestUrl("/hearings");
@@ -119,29 +116,6 @@ public class SupplierStubApiClient(HttpClient httpClient) : ISupplierStubApiClie
         {
             HealthStatus = healthStatus
         };
-    }
-    
-    private static void EnsureSuccessStatusCodeOrThrowSupplierException(HttpResponseMessage response)
-    {
-        try
-        {
-            response.EnsureSuccessStatusCode();
-        } catch (HttpRequestException e)
-        {
-            var responseText = response.Content.ReadAsStringAsync().Result;
-            throw new SupplierApiException(e.StatusCode, responseText, e);
-        }
-    }
-    
-    private string GetRequestUrl(string requestUri)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(requestUri);
-        return $"{BaseUrlAddress.TrimEnd('/')}{requestUri}";
-    }
-    
-    private static HttpContent CreateRequestBodyContent<T>(T request)
-    {
-        return new StringContent(ApiRequestHelper.SerialiseForSupplier(request), Encoding.UTF8, "application/json");
     }
 
     private async Task<Hearing> RetrieveHearing(Guid hearingId)
