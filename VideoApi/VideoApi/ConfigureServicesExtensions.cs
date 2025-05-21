@@ -151,12 +151,8 @@ namespace VideoApi
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
-                
-                services
-                    .AddHttpClient<ISupplierStubApiClient, SupplierStubApiClient>()
-                    .AddTypedClient<ISupplierStubApiClient>(httpClient =>
-                        BuildSupplierStubClient(supplierStubConfiguration.ApiUrl, httpClient))
-                    .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
+
+                services.AddScoped<ISupplierStubClient, SupplierStubClient>();
                 
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
@@ -215,16 +211,6 @@ namespace VideoApi
         {
             httpClient.BaseAddress = CreateSupplierApiBaseAddress(url);
             var client = new SupplierApiClient(httpClient)
-            {
-                BaseUrlAddress = url
-            };
-            return client;
-        }
-        
-        private static SupplierStubApiClient BuildSupplierStubClient(string url, HttpClient httpClient)
-        {
-            httpClient.BaseAddress = CreateSupplierApiBaseAddress(url);
-            var client = new SupplierStubApiClient(httpClient)
             {
                 BaseUrlAddress = url
             };

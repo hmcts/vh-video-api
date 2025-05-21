@@ -53,7 +53,7 @@ namespace VideoApi.UnitTests.Services
                     service.GetSupplierConfiguration().Should().BeAssignableTo<VodafoneConfiguration>();
                     break;
                 case Supplier.Stub:
-                    service.GetHttpClient().Should().BeAssignableTo<ISupplierStubApiClient>();
+                    service.GetHttpClient().Should().BeAssignableTo<ISupplierStubClient>();
                     service.GetSupplierConfiguration().Should().BeAssignableTo<SupplierStubConfiguration>();
                     break;
                 default:
@@ -68,7 +68,7 @@ namespace VideoApi.UnitTests.Services
 
         private void SetUpStubSupplier()
         {
-            SetUpSupplier<ISupplierStubApiClient, SupplierStubConfiguration>(typeof(ISupplierStubApiClient), typeof(SupplierStubConfiguration));
+            SetUpSupplier<ISupplierStubClient, SupplierStubConfiguration>(typeof(ISupplierStubClient), typeof(SupplierStubConfiguration));
         }
         
         private void SetUpSupplier<TApiClient, TConfig>(Type apiClientType, Type configType)

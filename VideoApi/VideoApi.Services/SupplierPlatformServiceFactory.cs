@@ -42,7 +42,7 @@ namespace VideoApi.Services
             supplier switch
             {
                 Supplier.Vodafone => serviceProvider.GetService<IVodafoneApiClient>(),
-                Supplier.Stub => serviceProvider.GetService<ISupplierStubApiClient>(),
+                Supplier.Stub => serviceProvider.GetService<ISupplierStubClient>(),
                 _ => throw new InvalidOperationException($"Unsupported supplier {supplier}")
             };
     }
