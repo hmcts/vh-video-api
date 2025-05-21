@@ -134,7 +134,7 @@ namespace VideoApi.Services
             ConsultationRoomRequest createConsultationRoomParams, Supplier supplier)
         {
             var supplierPlatformService = supplierPlatformServiceFactory.Create(supplier);
-            var supplierApiClient = supplierPlatformService.GetHttpClient();
+            var supplierApiClient = supplierPlatformService.GetClient();
             var response = await supplierApiClient.CreateConsultationRoomAsync(virtualCourtRoomId, createConsultationRoomParams);
             logger.LogInformation(
                 "Created a consultation in {VirtualCourtRoomId} with prefix {CreateConsultationRoomParamsPrefix} - Response {RoomLabel}",

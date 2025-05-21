@@ -24,7 +24,7 @@ namespace VideoApi.Services
             var logger = serviceProvider.GetRequiredService<ILogger<SupplierPlatformService>>();
             var pollyRetryService = serviceProvider.GetRequiredService<IPollyRetryService>();
 
-            var supplierApiClient = GetSupplierApiClient(supplier);
+            var supplierApiClient = GetSupplierClient(supplier);
             var supplierConfig = GetSupplierConfiguration(supplier);
 
             return new SupplierPlatformService(logger, pollyRetryService, supplierApiClient, supplierConfig, supplier);
@@ -38,7 +38,7 @@ namespace VideoApi.Services
                 _ => throw new InvalidOperationException($"Unsupported supplier {supplier}")
             };
         
-        private ISupplierApiClient GetSupplierApiClient(Supplier supplier) =>
+        private ISupplierClient GetSupplierClient(Supplier supplier) =>
             supplier switch
             {
                 Supplier.Vodafone => serviceProvider.GetService<IVodafoneApiClient>(),

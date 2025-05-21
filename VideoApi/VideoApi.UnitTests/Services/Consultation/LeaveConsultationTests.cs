@@ -27,7 +27,7 @@ namespace VideoApi.UnitTests.Services.Consultation
         {
             _mocker = AutoMock.GetLoose();
             _supplierPlatformService = _mocker.Mock<IVideoPlatformService>();
-            _supplierPlatformService.Setup(x => x.GetHttpClient()).Returns(_mocker.Mock<ISupplierApiClient>().Object);
+            _supplierPlatformService.Setup(x => x.GetClient()).Returns(_mocker.Mock<ISupplierClient>().Object);
             var supplierPlatformServiceFactory = _mocker.Mock<ISupplierPlatformServiceFactory>();
             supplierPlatformServiceFactory.Setup(x => x.Create(VideoApi.Domain.Enums.Supplier.Vodafone)).Returns(_supplierPlatformService.Object);
             _sut = _mocker.Create<ConsultationService>();

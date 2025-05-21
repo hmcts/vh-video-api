@@ -4,10 +4,12 @@ using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.Services.Clients.SupplierStub;
 
-public interface ISupplierStubClient : ISupplierApiClient;
+public interface ISupplierStubClient : ISupplierClient;
 
-public class SupplierStubClient : SupplierApiClientBase, ISupplierStubClient
+public class SupplierStubClient : ISupplierStubClient
 {
+    private readonly Random _random = new();
+
     public Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body)
     {
         return Task.FromResult(new BookHearingResponse
@@ -25,7 +27,7 @@ public class SupplierStubClient : SupplierApiClientBase, ISupplierStubClient
 
     public Task<CreateConsultationRoomResponse> CreateConsultationRoomAsync(Guid hearingId, ConsultationRoomRequest body)
     {
-        var roomNumber = new Random().Next(1, 10);
+        var roomNumber = _random.Next(1, 10);
         return Task.FromResult(new CreateConsultationRoomResponse
         {
             RoomLabel = $"{body.RoomLabelPrefix}{roomNumber}"

@@ -33,7 +33,7 @@ namespace VideoApi.Services.Contracts
         Task EndHearingAsync(Guid conferenceId);
         Task SuspendHearingAsync(Guid conferenceId);
         Task<HealthCheckResponse> GetPlatformHealthAsync();
-        ISupplierApiClient GetHttpClient();
+        ISupplierClient GetClient();
         SupplierConfiguration GetSupplierConfiguration();
         Task UpdateParticipantName(Guid conferenceId, Guid participantId, string name);
     }

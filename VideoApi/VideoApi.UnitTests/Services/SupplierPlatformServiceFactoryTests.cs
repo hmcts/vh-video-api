@@ -49,11 +49,11 @@ namespace VideoApi.UnitTests.Services
             switch (supplier)
             {
                 case Supplier.Vodafone:
-                    service.GetHttpClient().Should().BeAssignableTo<IVodafoneApiClient>();
+                    service.GetClient().Should().BeAssignableTo<IVodafoneApiClient>();
                     service.GetSupplierConfiguration().Should().BeAssignableTo<VodafoneConfiguration>();
                     break;
                 case Supplier.Stub:
-                    service.GetHttpClient().Should().BeAssignableTo<ISupplierStubClient>();
+                    service.GetClient().Should().BeAssignableTo<ISupplierStubClient>();
                     service.GetSupplierConfiguration().Should().BeAssignableTo<SupplierStubConfiguration>();
                     break;
                 default:
@@ -71,16 +71,16 @@ namespace VideoApi.UnitTests.Services
             SetUpSupplier<ISupplierStubClient, SupplierStubConfiguration>(typeof(ISupplierStubClient), typeof(SupplierStubConfiguration));
         }
         
-        private void SetUpSupplier<TApiClient, TConfig>(Type apiClientType, Type configType)
-            where TApiClient : class
+        private void SetUpSupplier<TClient, TConfig>(Type clientType, Type configType)
+            where TClient : class
             where TConfig : SupplierConfiguration, new()
         {
-            var apiClientMock = new Mock<TApiClient>();
+            var clientMock = new Mock<TClient>();
             var config = new TConfig();
             var configOptionsMock = new Mock<IOptions<TConfig>>();
             configOptionsMock.Setup(m => m.Value).Returns(config);
 
-            _serviceProvider.Setup(x => x.GetService(apiClientType)).Returns(apiClientMock.Object);
+            _serviceProvider.Setup(x => x.GetService(clientType)).Returns(clientMock.Object);
             _serviceProvider.Setup(x => x.GetService(typeof(IOptions<>).MakeGenericType(configType))).Returns(configOptionsMock.Object);
         }
     }

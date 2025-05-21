@@ -146,7 +146,7 @@ namespace VideoApi
                 services.AddTransient<SupplierLoggingDelegatingHandler>();
 
                 services
-                    .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
+                    .AddHttpClient<IVodafoneApiClient, SupplierClient>()
                     .AddTypedClient<IVodafoneApiClient>(httpClient =>
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
@@ -207,10 +207,10 @@ namespace VideoApi
             return services;
         }
         
-        private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient)
+        private static SupplierClient BuildSupplierClient(string url, HttpClient httpClient)
         {
             httpClient.BaseAddress = CreateSupplierApiBaseAddress(url);
-            var client = new SupplierApiClient(httpClient)
+            var client = new SupplierClient(httpClient)
             {
                 BaseUrlAddress = url
             };

@@ -9,7 +9,7 @@ using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.Services.Clients;
 
-public interface ISupplierApiClient
+public interface ISupplierClient
 {
     // hearing operations
     Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body);
@@ -39,7 +39,7 @@ public interface ISupplierApiClient
 /// </summary>
 /// <param name="httpClient"></param>
 [ExcludeFromCodeCoverage]
-public class SupplierApiClient(HttpClient httpClient) : SupplierApiClientBase, IVodafoneApiClient
+public class SupplierClient(HttpClient httpClient) : SupplierApiClientBase, IVodafoneApiClient
 {
     public async Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body)
     {

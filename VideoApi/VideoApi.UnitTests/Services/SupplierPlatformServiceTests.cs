@@ -30,7 +30,7 @@ namespace VideoApi.UnitTests.Services
     {
         private Mock<ILogger<SupplierPlatformService>> _loggerMock;
         private Mock<IPollyRetryService> _pollyRetryService;
-        private Mock<ISupplierApiClient> _supplierApiClientMock;
+        private Mock<ISupplierClient> _supplierApiClientMock;
         private SupplierConfiguration _supplierConfig;
         private SupplierPlatformService _supplierPlatformService;
         private Conference _testConference;
@@ -38,7 +38,7 @@ namespace VideoApi.UnitTests.Services
         [SetUp]
         public void Setup()
         {
-            _supplierApiClientMock = new Mock<ISupplierApiClient>();
+            _supplierApiClientMock = new Mock<ISupplierClient>();
             _supplierConfig = new VodafoneConfiguration
             {
                 CallbackUri = "CallbackUri", ApiUrl = "VodafoneApiUrl"
