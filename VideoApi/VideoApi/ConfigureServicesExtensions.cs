@@ -17,7 +17,6 @@ using NSwag.Generation.Processors.Security;
 using VideoApi.Common.Configuration;
 using VideoApi.Common.Helpers;
 using VideoApi.Common.Security;
-using VideoApi.Common.Security.Supplier.Stub;
 using VideoApi.Common.Security.Supplier.Vodafone;
 using VideoApi.DAL.Commands.Core;
 using VideoApi.DAL.Queries.Core;
@@ -108,7 +107,6 @@ namespace VideoApi
         {
             var container = services.BuildServiceProvider();
             var vodafoneConfiguration = container.GetService<IOptions<VodafoneConfiguration>>().Value;
-            var supplierStubConfiguration = container.GetService<IOptions<SupplierStubConfiguration>>().Value;
             var wowzaConfiguration = container.GetService<IOptions<WowzaConfiguration>>().Value;
             var cvpConfiguration = container.GetService<IOptions<CvpConfiguration>>().Value;
             
