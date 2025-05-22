@@ -96,7 +96,7 @@ namespace VideoApi.Services
             });
         }
         
-        public ISupplierApiClient GetHttpClient()
+        public ISupplierClient GetClient()
         {
             throw new NotImplementedException();
         }

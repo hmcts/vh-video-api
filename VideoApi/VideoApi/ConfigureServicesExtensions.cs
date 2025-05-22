@@ -23,6 +23,7 @@ using VideoApi.DAL.Queries.Core;
 using VideoApi.Events.Handlers.Core;
 using VideoApi.Services;
 using VideoApi.Services.Clients;
+using VideoApi.Services.Clients.SupplierStub;
 using VideoApi.Services.Contracts;
 using VideoApi.Services.Factories;
 using VideoApi.Services.Handlers;
@@ -143,11 +144,13 @@ namespace VideoApi
                 services.AddTransient<SupplierLoggingDelegatingHandler>();
 
                 services
-                    .AddHttpClient<IVodafoneApiClient, SupplierApiClient>()
+                    .AddHttpClient<IVodafoneApiClient, SupplierClient>()
                     .AddTypedClient<IVodafoneApiClient>(httpClient =>
                         BuildSupplierClient(vodafoneConfiguration.ApiUrl, httpClient))
                     .AddHttpMessageHandler<VodafoneApiTokenDelegatingHandler>()
                     .AddHttpMessageHandler<SupplierLoggingDelegatingHandler>();
+
+                services.AddScoped<ISupplierStubClient, SupplierStubClient>();
                 
                 services.AddScoped<IAudioPlatformService, AudioPlatformService>();
                 services.AddScoped<IConsultationService, ConsultationService>();
@@ -202,19 +205,24 @@ namespace VideoApi
             return services;
         }
         
-        private static SupplierApiClient BuildSupplierClient(string url, HttpClient httpClient)
+        private static SupplierClient BuildSupplierClient(string url, HttpClient httpClient)
+        {
+            httpClient.BaseAddress = CreateSupplierApiBaseAddress(url);
+            var client = new SupplierClient(httpClient)
+            {
+                BaseUrlAddress = url
+            };
+            return client;
+        }
+
+        private static Uri CreateSupplierApiBaseAddress(string url)
         {
             if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
             {
                 throw new InvalidOperationException($"Invalid Supplier API URL provided: {url}");
             }
             Console.WriteLine("Using Supplier API URL: " + url);
-            httpClient.BaseAddress = new Uri(url.TrimEnd('/'), UriKind.RelativeOrAbsolute);
-            var client = new SupplierApiClient(httpClient)
-            {
-                BaseUrlAddress = url
-            };
-            return client;
+            return new Uri(url.TrimEnd('/'), UriKind.RelativeOrAbsolute);
         }
         
         private static void RegisterEventHandlers(IServiceCollection serviceCollection)

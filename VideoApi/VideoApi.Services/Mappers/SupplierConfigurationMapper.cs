@@ -12,6 +12,7 @@ namespace VideoApi.Services.Mappers
             var supplierConfigurations = new List<SupplierConfigurationMapping>();
             
             CheckAndAddConfiguration(Supplier.Vodafone);
+            CheckAndAddConfiguration(Supplier.Stub);
 
             return supplierConfigurations;
 

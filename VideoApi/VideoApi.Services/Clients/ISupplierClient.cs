@@ -9,7 +9,7 @@ using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.Services.Clients;
 
-public interface ISupplierApiClient
+public interface ISupplierClient
 {
     // hearing operations
     Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body);
@@ -39,9 +39,8 @@ public interface ISupplierApiClient
 /// </summary>
 /// <param name="httpClient"></param>
 [ExcludeFromCodeCoverage]
-public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
+public class SupplierClient(HttpClient httpClient) : SupplierApiClientBase, IVodafoneApiClient
 {
-    public string BaseUrlAddress { get; set; }
     public async Task<BookHearingResponse> CreateHearingAsync(BookHearingRequest body)
     {
         var requestUri = GetRequestUrl("/hearing");
@@ -144,29 +143,6 @@ public class SupplierApiClient(HttpClient httpClient) : IVodafoneApiClient
         var response = await httpClient.GetAsync(requestUrl);
         EnsureSuccessStatusCodeOrThrowSupplierException(response);
         return ApiRequestHelper.DeserialiseForSupplier<HealthCheckResponse>(response.Content.ReadAsStringAsync().Result);
-    }
-    
-    private static void EnsureSuccessStatusCodeOrThrowSupplierException(HttpResponseMessage response)
-    {
-        try
-        {
-            response.EnsureSuccessStatusCode();
-        } catch (HttpRequestException e)
-        {
-            var responseText = response.Content.ReadAsStringAsync().Result;
-            throw new SupplierApiException(e.StatusCode, responseText, e);
-        }
-    }
-    
-    private string GetRequestUrl(string requestUri)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(requestUri);
-        return $"{BaseUrlAddress.TrimEnd('/')}{requestUri}";
-    }
-    
-    private static HttpContent CreateRequestBodyContent<T>(T request)
-    {
-        return new StringContent(ApiRequestHelper.SerialiseForSupplier(request), Encoding.UTF8, "application/json");
     }
 }
 

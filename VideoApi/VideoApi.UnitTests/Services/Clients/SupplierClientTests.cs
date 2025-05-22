@@ -9,7 +9,7 @@ using VideoApi.Services.Clients.Models;
 
 namespace VideoApi.UnitTests.Services.Clients;
 
-public class SupplierApiClientTests
+public class SupplierClientTests
 {
     [Test]
     public async Task should_map_conference_details_on_booking()
@@ -33,7 +33,7 @@ public class SupplierApiClientTests
         mockHttp.When(HttpMethod.Post, $"{baseAddress}/hearing")
             .Respond(HttpStatusCode.OK, "application/json", responseBody);
         var httpClient = mockHttp.ToHttpClient();
-        var supplierApiClient = new SupplierApiClient(httpClient)
+        var supplierApiClient = new SupplierClient(httpClient)
         {
             BaseUrlAddress = baseAddress
         };
@@ -82,7 +82,7 @@ public class SupplierApiClientTests
         mockHttp.When(HttpMethod.Get, $"{baseAddress}/hearing/{conferenceId}")
             .Respond(HttpStatusCode.OK, "application/json", responseBody);
         var httpClient = mockHttp.ToHttpClient();
-        var supplierApiClient = new SupplierApiClient(httpClient)
+        var supplierApiClient = new SupplierClient(httpClient)
         {
             BaseUrlAddress = baseAddress
         };
@@ -142,7 +142,7 @@ public class SupplierApiClientTests
             .Respond(HttpStatusCode.OK, "application/json", "response");
 
         var httpClient = mockHttp.ToHttpClient();
-        var supplierApiClient = new SupplierApiClient(httpClient)
+        var supplierApiClient = new SupplierClient(httpClient)
         {
             BaseUrlAddress = baseAddress
         };
